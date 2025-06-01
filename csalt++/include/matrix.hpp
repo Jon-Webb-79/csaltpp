@@ -25,91 +25,261 @@
 #include <cassert>
 
 #ifdef __AVX2__
-    #include <immintrin.h>
-    #define SIMD_WIDTH_FLOAT 8
-    #define SIMD_WIDTH_DOUBLE 4
+        #include <immintrin.h>
+        #define SIMD_WIDTH_FLOAT 8
+        #define SIMD_WIDTH_DOUBLE 4
 #elif defined(__SSE2__)
-    #include <emmintrin.h>
-    #define SIMD_WIDTH_FLOAT 4
-    #define SIMD_WIDTH_DOUBLE 2
+        #include <emmintrin.h>
+        #define SIMD_WIDTH_FLOAT 4
+        #define SIMD_WIDTH_DOUBLE 2
 #else
-    #define SIMD_WIDTH_FLOAT 1
-    #define SIMD_WIDTH_DOUBLE 1
+        #define SIMD_WIDTH_FLOAT 1
+        #define SIMD_WIDTH_DOUBLE 1
 #endif
+// ================================================================================ 
+// ================================================================================ 
 
-namespace slt {
+    namespace slt {
 
-    // SIMD traits
-    template<typename T>
-    struct simd_traits {
-        static constexpr bool supported = false;
-        static constexpr std::size_t width = 1;
-    };
+        // SIMD traits
+        template<typename T>
+        struct simd_traits {
+            static constexpr bool supported = false;
+            static constexpr std::size_t width = 1;
+        };
+// -------------------------------------------------------------------------------- 
 
-    template<>
-    struct simd_traits<float> {
-        static constexpr bool supported = SIMD_WIDTH_FLOAT > 1;
-        static constexpr std::size_t width = SIMD_WIDTH_FLOAT;
-    };
+        template<>
+        struct simd_traits<float> {
+            static constexpr bool supported = SIMD_WIDTH_FLOAT > 1;
+            static constexpr std::size_t width = SIMD_WIDTH_FLOAT;
+        };
+// -------------------------------------------------------------------------------- 
 
-    template<>
-    struct simd_traits<double> {
-        static constexpr bool supported = SIMD_WIDTH_DOUBLE > 1;
-        static constexpr std::size_t width = SIMD_WIDTH_DOUBLE;
-    };
+        template<>
+        struct simd_traits<double> {
+            static constexpr bool supported = SIMD_WIDTH_DOUBLE > 1;
+            static constexpr std::size_t width = SIMD_WIDTH_DOUBLE;
+        };
+// -------------------------------------------------------------------------------- 
 
-    // SIMD operations
-    template<typename T> struct simd_ops;
+        // SIMD operations
+        template<typename T> struct simd_ops;
 
-    template<>
-    struct simd_ops<float> {
-        static void add(const float* a, const float* b, float* result, std::size_t size) {
+// -------------------------------------------------------------------------------- 
+        // -------------------
+        // float specialization
+        // -------------------
+        template<>
+        struct simd_ops<float> {
+            static void add(const float* a, const float* b, float* result, std::size_t size) {
 #if defined(__AVX2__)
-            std::size_t end = size / 8 * 8;
-            for (std::size_t i = 0; i < end; i += 8) {
-                __m256 va = _mm256_loadu_ps(&a[i]);
-                __m256 vb = _mm256_loadu_ps(&b[i]);
-                __m256 vr = _mm256_add_ps(va, vb);
-                _mm256_storeu_ps(&result[i], vr);
-            }
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 va = _mm256_loadu_ps(&a[i]);
+                    __m256 vb = _mm256_loadu_ps(&b[i]);
+                    __m256 vr = _mm256_add_ps(va, vb);
+                    _mm256_storeu_ps(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 va = _mm_loadu_ps(&a[i]);
+                    __m128 vb = _mm_loadu_ps(&b[i]);
+                    __m128 vr = _mm_add_ps(va, vb);
+                    _mm_storeu_ps(&result[i], vr);
+                }
 #else
-            std::size_t end = size / 4 * 4;
-            for (std::size_t i = 0; i < end; i += 4) {
-                __m128 va = _mm_loadu_ps(&a[i]);
-                __m128 vb = _mm_loadu_ps(&b[i]);
-                __m128 vr = _mm_add_ps(va, vb);
-                _mm_storeu_ps(&result[i], vr);
-            }
+                std::size_t end = 0;
 #endif
-            for (std::size_t i = end; i < size; ++i)
-                result[i] = a[i] + b[i];
-        }
-    };
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] + b[i];
+            }
+// -------------------------------------------------------------------------------- 
 
-    template<>
-    struct simd_ops<double> {
-        static void add(const double* a, const double* b, double* result, std::size_t size) {
+            static void sub(const float* a, const float* b, float* result, std::size_t size) {
 #if defined(__AVX2__)
-            std::size_t end = size / 4 * 4;
-            for (std::size_t i = 0; i < end; i += 4) {
-                __m256d va = _mm256_loadu_pd(&a[i]);
-                __m256d vb = _mm256_loadu_pd(&b[i]);
-                __m256d vr = _mm256_add_pd(va, vb);
-                _mm256_storeu_pd(&result[i], vr);
-            }
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 va = _mm256_loadu_ps(&a[i]);
+                    __m256 vb = _mm256_loadu_ps(&b[i]);
+                    __m256 vr = _mm256_sub_ps(va, vb);
+                    _mm256_storeu_ps(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 va = _mm_loadu_ps(&a[i]);
+                    __m128 vb = _mm_loadu_ps(&b[i]);
+                    __m128 vr = _mm_sub_ps(va, vb);
+                    _mm_storeu_ps(&result[i], vr);
+                }
 #else
-            std::size_t end = size / 2 * 2;
-            for (std::size_t i = 0; i < end; i += 2) {
-                __m128d va = _mm_loadu_pd(&a[i]);
-                __m128d vb = _mm_loadu_pd(&b[i]);
-                __m128d vr = _mm_add_pd(va, vb);
-                _mm_storeu_pd(&result[i], vr);
-            }
+                std::size_t end = 0;
 #endif
-            for (std::size_t i = end; i < size; ++i)
-                result[i] = a[i] + b[i];
-        }
-    };
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] - b[i];
+            }
+// -------------------------------------------------------------------------------- 
+
+            static void add_scalar(const float* a, float scalar, float* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256 vscalar = _mm256_set1_ps(scalar);
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 va = _mm256_loadu_ps(&a[i]);
+                    __m256 vr = _mm256_add_ps(va, vscalar);
+                    _mm256_storeu_ps(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128 vscalar = _mm_set1_ps(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 va = _mm_loadu_ps(&a[i]);
+                    __m128 vr = _mm_add_ps(va, vscalar);
+                    _mm_storeu_ps(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] + scalar;
+            }
+// -------------------------------------------------------------------------------- 
+
+            static void sub_scalar(const float* a, float scalar, float* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256 vscalar = _mm256_set1_ps(scalar);
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 va = _mm256_loadu_ps(&a[i]);
+                    __m256 vr = _mm256_sub_ps(va, vscalar);
+                    _mm256_storeu_ps(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128 vscalar = _mm_set1_ps(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 va = _mm_loadu_ps(&a[i]);
+                    __m128 vr = _mm_sub_ps(va, vscalar);
+                    _mm_storeu_ps(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] - scalar;
+            }
+        };
+
+// -------------------------------------------------------------------------------- 
+
+        // --------------------
+        // double specialization
+        // --------------------
+        template<>
+        struct simd_ops<double> {
+            static void add(const double* a, const double* b, double* result, std::size_t size) {
+#if defined(__AVX2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d va = _mm256_loadu_pd(&a[i]);
+                    __m256d vb = _mm256_loadu_pd(&b[i]);
+                    __m256d vr = _mm256_add_pd(va, vb);
+                    _mm256_storeu_pd(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d va = _mm_loadu_pd(&a[i]);
+                    __m128d vb = _mm_loadu_pd(&b[i]);
+                    __m128d vr = _mm_add_pd(va, vb);
+                    _mm_storeu_pd(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] + b[i];
+            }
+// -------------------------------------------------------------------------------- 
+
+            static void sub(const double* a, const double* b, double* result, std::size_t size) {
+#if defined(__AVX2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d va = _mm256_loadu_pd(&a[i]);
+                    __m256d vb = _mm256_loadu_pd(&b[i]);
+                    __m256d vr = _mm256_sub_pd(va, vb);
+                    _mm256_storeu_pd(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d va = _mm_loadu_pd(&a[i]);
+                    __m128d vb = _mm_loadu_pd(&b[i]);
+                    __m128d vr = _mm_sub_pd(va, vb);
+                    _mm_storeu_pd(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] - b[i];
+            }
+// -------------------------------------------------------------------------------- 
+
+            static void add_scalar(const double* a, double scalar, double* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256d vscalar = _mm256_set1_pd(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d va = _mm256_loadu_pd(&a[i]);
+                    __m256d vr = _mm256_add_pd(va, vscalar);
+                    _mm256_storeu_pd(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128d vscalar = _mm_set1_pd(scalar);
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d va = _mm_loadu_pd(&a[i]);
+                    __m128d vr = _mm_add_pd(va, vscalar);
+                    _mm_storeu_pd(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] + scalar;
+            }
+// -------------------------------------------------------------------------------- 
+
+            static void sub_scalar(const double* a, double scalar, double* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256d vscalar = _mm256_set1_pd(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d va = _mm256_loadu_pd(&a[i]);
+                    __m256d vr = _mm256_sub_pd(va, vscalar);
+                    _mm256_storeu_pd(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128d vscalar = _mm_set1_pd(scalar);
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d va = _mm_loadu_pd(&a[i]);
+                    __m128d vr = _mm_sub_pd(va, vscalar);
+                    _mm_storeu_pd(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] - scalar;
+            }
+        };
+// ================================================================================ 
+// ================================================================================ 
 
     template<typename T>
     class MatrixBase {
@@ -122,11 +292,12 @@ namespace slt {
         virtual T get(std::size_t row, std::size_t col) const = 0;
         virtual void set(std::size_t row, std::size_t col, T value) = 0;
 
-        virtual void transpose() = 0;
         virtual std::unique_ptr<MatrixBase<T>> clone() const = 0;
     };
-
+// ================================================================================ 
+// ================================================================================ 
     // Dense matrix class
+
     template<typename T>
     class DenseMatrix : public MatrixBase<T> {
         static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
@@ -135,7 +306,7 @@ namespace slt {
     private:
         std::vector<T> data;
         std::size_t rows_, cols_;
-
+    // ================================================================================ 
     public:
         DenseMatrix(std::size_t r, std::size_t c, T value = T{}) : data(r * c, value), rows_(r), cols_(c) {}
 
@@ -203,7 +374,43 @@ namespace slt {
             return result;
         }
 
-        void transpose() override {
+        DenseMatrix operator-(const DenseMatrix& other) const {
+            if (rows_ != other.rows_ || cols_ != other.cols_)
+                throw std::invalid_argument("Matrix dimensions must match for subtraction");
+
+            DenseMatrix result(rows_, cols_);
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::sub(data.data(), other.data.data(), result.data.data(), data.size());
+            } else {
+                for (std::size_t i = 0; i < data.size(); ++i)
+                    result.data[i] = data[i] - other.data[i];
+            }
+            return result;
+        }
+
+        DenseMatrix operator+(T scalar) const {
+            DenseMatrix result(rows_, cols_);
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::add_scalar(data.data(), scalar, result.data.data(), data.size());
+            } else {
+                for (std::size_t i = 0; i < data.size(); ++i)
+                    result.data[i] = data[i] + scalar;
+            }
+            return result;
+        }
+
+        DenseMatrix operator-(T scalar) const {
+            DenseMatrix result(rows_, cols_);
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::sub_scalar(data.data(), scalar, result.data.data(), data.size());
+            } else {
+                for (std::size_t i = 0; i < data.size(); ++i)
+                    result.data[i] = data[i] - scalar;
+            }
+            return result;
+        }
+
+        void transpose() {
             std::vector<T> new_data(data.size());
             for (std::size_t i = 0; i < rows_; ++i) {
                 for (std::size_t j = 0; j < cols_; ++j) {
@@ -245,7 +452,6 @@ namespace slt {
         mat.print(os);
         return os;
     }
-
 } // namespace slt
 // ================================================================================ 
 // ================================================================================ 

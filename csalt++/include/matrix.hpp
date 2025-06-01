@@ -40,7 +40,12 @@
 // ================================================================================ 
 
     namespace slt {
-
+        /// @brief SIMD trait template to determine SIMD capabilities for a given type.
+        /// 
+        /// This generic template assumes no SIMD support. Specializations
+        /// for specific types (e.g., `float`, `double`) provide actual SIMD support info.
+        /// 
+        /// @tparam T The data type to query for SIMD support.
         // SIMD traits
         template<typename T>
         struct simd_traits {
@@ -49,6 +54,10 @@
         };
 // -------------------------------------------------------------------------------- 
 
+        /// @brief SIMD traits specialization for `float`.
+        ///
+        /// Provides SIMD capability and vector width information for `float` types,
+        /// based on compile-time SIMD availability (e.g., SSE, AVX).
         template<>
         struct simd_traits<float> {
             static constexpr bool supported = SIMD_WIDTH_FLOAT > 1;
@@ -56,6 +65,10 @@
         };
 // -------------------------------------------------------------------------------- 
 
+        /// @brief SIMD traits specialization for `double`.
+        ///
+        /// Provides SIMD capability and vector width information for `double` types,
+        /// based on compile-time SIMD availability (e.g., SSE2, AVX).
         template<>
         struct simd_traits<double> {
             static constexpr bool supported = SIMD_WIDTH_DOUBLE > 1;
@@ -67,11 +80,25 @@
         template<typename T> struct simd_ops;
 
 // -------------------------------------------------------------------------------- 
-        // -------------------
-        // float specialization
-        // -------------------
+       
+        /**
+         * @brief SIMD-accelerated operations for float arrays.
+         *
+         * This specialization of simd_ops provides AVX, SSE, or fallback implementations
+         * of basic arithmetic operations for `float` arrays. Used to accelerate matrix operations.
+         */
         template<>
         struct simd_ops<float> {
+            /**
+             * @brief Adds two float arrays element-wise.
+             *
+             * Performs `result[i] = a[i] + b[i]` for all elements. Uses AVX or SSE where available.
+             *
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the arrays.
+             */
             static void add(const float* a, const float* b, float* result, std::size_t size) {
 #if defined(__AVX2__)
                 std::size_t end = size / 8 * 8;
@@ -97,6 +124,16 @@
             }
 // -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtracts two float arrays element-wise.
+             *
+             * Performs `result[i] = a[i] - b[i]` for all elements. Uses AVX or SSE where available.
+             *
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the arrays.
+             */
             static void sub(const float* a, const float* b, float* result, std::size_t size) {
 #if defined(__AVX2__)
                 std::size_t end = size / 8 * 8;
@@ -122,6 +159,16 @@
             }
 // -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Adds a scalar to each element of a float array.
+             *
+             * Performs `result[i] = a[i] + scalar` for all elements. SIMD-accelerated where available.
+             *
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to add.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void add_scalar(const float* a, float scalar, float* result, std::size_t size) {
 #if defined(__AVX2__)
                 __m256 vscalar = _mm256_set1_ps(scalar);
@@ -147,6 +194,16 @@
             }
 // -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtracts a scalar from each element of a float array.
+             *
+             * Performs `result[i] = a[i] - scalar` for all elements. SIMD-accelerated where available.
+             *
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to subtract.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void sub_scalar(const float* a, float scalar, float* result, std::size_t size) {
 #if defined(__AVX2__)
                 __m256 vscalar = _mm256_set1_ps(scalar);
@@ -174,11 +231,25 @@
 
 // -------------------------------------------------------------------------------- 
 
-        // --------------------
-        // double specialization
-        // --------------------
+        /**
+         * @brief SIMD-accelerated operations for double arrays.
+         *
+         * This specialization of simd_ops provides AVX, SSE2, or fallback implementations
+         * of basic arithmetic operations for `double` arrays. Used to accelerate matrix operations.
+         */
         template<>
         struct simd_ops<double> {
+
+            /**
+             * @brief Adds two double arrays element-wise.
+             *
+             * Performs `result[i] = a[i] + b[i]` for all elements. Uses AVX or SSE2 where available.
+             *
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the arrays.
+             */
             static void add(const double* a, const double* b, double* result, std::size_t size) {
 #if defined(__AVX2__)
                 std::size_t end = size / 4 * 4;
@@ -204,6 +275,16 @@
             }
 // -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtracts two double arrays element-wise.
+             *
+             * Performs `result[i] = a[i] - b[i]` for all elements. Uses AVX or SSE2 where available.
+             *
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the arrays.
+             */ 
             static void sub(const double* a, const double* b, double* result, std::size_t size) {
 #if defined(__AVX2__)
                 std::size_t end = size / 4 * 4;
@@ -229,6 +310,16 @@
             }
 // -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Adds a scalar to each element of a double array.
+             *
+             * Performs `result[i] = a[i] + scalar` for all elements. SIMD-accelerated where available.
+             *
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to add.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void add_scalar(const double* a, double scalar, double* result, std::size_t size) {
 #if defined(__AVX2__)
                 __m256d vscalar = _mm256_set1_pd(scalar);
@@ -254,6 +345,16 @@
             }
 // -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtracts a scalar from each element of a double array.
+             *
+             * Performs `result[i] = a[i] - scalar` for all elements. SIMD-accelerated where available.
+             *
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to subtract.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void sub_scalar(const double* a, double scalar, double* result, std::size_t size) {
 #if defined(__AVX2__)
                 __m256d vscalar = _mm256_set1_pd(scalar);
@@ -451,6 +552,22 @@
     std::ostream& operator<<(std::ostream& os, const DenseMatrix<T>& mat) {
         mat.print(os);
         return os;
+    }
+
+    template<typename T>
+    DenseMatrix<T> operator+(T scalar, const DenseMatrix<T>& matrix) {
+        return matrix + scalar;  // Leverage existing member operator+
+    }
+
+    template<typename T>
+    DenseMatrix<T> operator-(T scalar, const DenseMatrix<T>& matrix) {
+        DenseMatrix<T> result(matrix.rows(), matrix.cols());
+        for (std::size_t i = 0; i < matrix.rows(); ++i) {
+            for (std::size_t j = 0; j < matrix.cols(); ++j) {
+                result.set(i, j, scalar - matrix.get(i, j));
+            }
+        }
+        return result;
     }
 } // namespace slt
 // ================================================================================ 

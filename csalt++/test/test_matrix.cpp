@@ -29,6 +29,18 @@ void expect_matrix_eq(const slt::DenseMatrix<T>& m, const std::vector<std::vecto
 }
 // -------------------------------------------------------------------------------- 
 
+template<typename T>
+void expect_matrix_eq(const slt::DenseMatrix<T>& a, const slt::DenseMatrix<T>& b, T epsilon = T(1e-5)) {
+    ASSERT_EQ(a.rows(), b.rows());
+    ASSERT_EQ(a.cols(), b.cols());
+    for (std::size_t i = 0; i < a.rows(); ++i) {
+        for (std::size_t j = 0; j < a.cols(); ++j) {
+            ASSERT_NEAR(a.get(i, j), b.get(i, j), epsilon);
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
 TEST(DenseMatrixTest, DefaultConstructorInitializesCorrectSize) {
     slt::DenseMatrix<float> mat(3, 4, 5.0f);
     EXPECT_EQ(mat.rows(), 3);
@@ -265,38 +277,103 @@ TEST(DenseMatrixScalarTest, SubtractScalarFloat) {
 }
 // -------------------------------------------------------------------------------- 
 
-// TEST(DenseMatrixScalarTest, AddScalarDouble) {
-//     slt::DenseMatrix<double> mat{
-//         {2.0, 4.0},
-//         {6.0, 8.0}
-//     };
-//
-//     auto result = mat + 0.5;
-//
-//     std::vector<std::vector<double>> expected = {
-//         {2.5, 4.5},
-//         {6.5, 8.5}
-//     };
-//
-//     expect_matrix_eq(result, expected);
-// }
-// // -------------------------------------------------------------------------------- 
-//
-// TEST(DenseMatrixScalarTest, SubtractScalarDouble) {
-//     slt::DenseMatrix<double> mat{
-//         {1.0, 0.0},
-//         {2.5, 3.0}
-//     };
-//
-//     auto result = mat - 1.0;
-//
-//     std::vector<std::vector<double>> expected = {
-//         {0.0, -1.0},
-//         {1.5, 2.0}
-//     };
-//
-//     expect_matrix_eq(result, expected);
-// }
+TEST(DenseMatrixScalarTest, AddScalarDouble) {
+    slt::DenseMatrix<double> mat{
+        {2.0, 4.0},
+        {6.0, 8.0}
+    };
+
+    auto result = mat + 0.5;
+
+    std::vector<std::vector<double>> expected = {
+        {2.5, 4.5},
+        {6.5, 8.5}
+    };
+
+    expect_matrix_eq(result, expected);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, SubtractScalarDouble) {
+    slt::DenseMatrix<double> mat{
+        {1.0, 0.0},
+        {2.5, 3.0}
+    };
+
+    auto result = mat - 1.0;
+
+    std::vector<std::vector<double>> expected = {
+        {0.0, -1.0},
+        {1.5, 2.0}
+    };
+
+    expect_matrix_eq(result, expected);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Float_MatrixPlusScalar) {
+    slt::DenseMatrix<float> mat = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    slt::DenseMatrix<float> expected = {{2.5f, 3.5f}, {4.5f, 5.5f}};
+    auto result = mat + 1.5f;
+    expect_matrix_eq(result, expected);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Float_ScalarPlusMatrix) {
+    slt::DenseMatrix<float> mat = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    slt::DenseMatrix<float> expected = {{2.5f, 3.5f}, {4.5f, 5.5f}};
+    auto result = 1.5f + mat;
+    expect_matrix_eq(result, expected);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Float_MatrixMinusScalar) {
+    slt::DenseMatrix<float> mat = {{3.0f, 4.0f}, {5.0f, 6.0f}};
+    slt::DenseMatrix<float> expected = {{1.5f, 2.5f}, {3.5f, 4.5f}};
+    auto result = mat - 1.5f;
+    expect_matrix_eq(result, expected);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Float_ScalarMinusMatrix) {
+    slt::DenseMatrix<float> mat = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    slt::DenseMatrix<float> expected = {{4.0f, 3.0f}, {2.0f, 1.0f}};
+    auto result = 5.0f - mat;
+    expect_matrix_eq(result, expected);
+}
+// -------------------------------------------------------------------------------- 
+// ------------------- DOUBLE TESTS -------------------
+
+TEST(DenseMatrixScalarTest, Double_MatrixPlusScalar) {
+    slt::DenseMatrix<double> mat = {{1.0, 2.0}, {3.0, 4.0}};
+    slt::DenseMatrix<double> expected = {{2.5, 3.5}, {4.5, 5.5}};
+    auto result = mat + 1.5;
+    expect_matrix_eq(result, expected, 1e-10);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Double_ScalarPlusMatrix) {
+    slt::DenseMatrix<double> mat = {{1.0, 2.0}, {3.0, 4.0}};
+    slt::DenseMatrix<double> expected = {{2.5, 3.5}, {4.5, 5.5}};
+    auto result = 1.5 + mat;
+    expect_matrix_eq(result, expected, 1e-10);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Double_MatrixMinusScalar) {
+    slt::DenseMatrix<double> mat = {{3.0, 4.0}, {5.0, 6.0}};
+    slt::DenseMatrix<double> expected = {{1.5, 2.5}, {3.5, 4.5}};
+    auto result = mat - 1.5;
+    expect_matrix_eq(result, expected, 1e-10);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Double_ScalarMinusMatrix) {
+    slt::DenseMatrix<double> mat = {{1.0, 2.0}, {3.0, 4.0}};
+    slt::DenseMatrix<double> expected = {{4.0, 3.0}, {2.0, 1.0}};
+    auto result = 5.0 - mat;
+    expect_matrix_eq(result, expected, 1e-10);
+}
 // ================================================================================
 // ================================================================================
 // eof

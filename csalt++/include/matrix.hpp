@@ -448,18 +448,42 @@
 // ================================================================================ 
     // Dense matrix class
 
+    /**
+     * @brief A dense matrix implementation supporting float or double values.
+     *
+     * Stores matrix elements in a contiguous 1D vector using row-major order.
+     * Supports basic arithmetic operations, element access, cloning, and transposition.
+     *
+     * @tparam T Must be float or double. Enforced via static assertion.
+     */
     template<typename T>
     class DenseMatrix : public MatrixBase<T> {
         static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                       "DenseMatrix only supports float or double");
 
     private:
-        std::vector<T> data;
-        std::size_t rows_, cols_;
+        std::vector<T> data; ///< Flat row-major storage of matrix elements. 
+        std::size_t rows_, cols_; ///< Matrix dimensions. 
     // ================================================================================ 
     public:
+        /**
+         * @brief Constructs a matrix with given dimensions and initial value.
+         *
+         * @param r Number of rows.
+         * @param c Number of columns.
+         * @param value Initial value for all elements (defaults to zero).
+         */
         DenseMatrix(std::size_t r, std::size_t c, T value = T{}) : data(r * c, value), rows_(r), cols_(c) {}
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Constructs a matrix from a 2D vector.
+         *
+         * All inner vectors must have the same length.
+         *
+         * @param vec 2D vector representing the matrix.
+         * @throws std::invalid_argument if inner vectors are uneven in length.
+         */
         DenseMatrix(const std::vector<std::vector<T>>& vec) {
             rows_ = vec.size();
             cols_ = rows_ ? vec[0].size() : 0;
@@ -472,7 +496,13 @@
                 }
             }
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Constructs a matrix from a fixed-size std::array of arrays.
+         *
+         * @param arr A static 2D array representing the matrix.
+         */
         template<std::size_t Rows, std::size_t Cols>
         DenseMatrix(const std::array<std::array<T, Cols>, Rows>& arr)
             : data(Rows * Cols), rows_(Rows), cols_(Cols) {
@@ -480,7 +510,16 @@
                 for (std::size_t j = 0; j < Cols; ++j)
                     data[i * Cols + j] = arr[i][j];
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Constructs a matrix from an initializer list of initializer lists.
+         *
+         * All inner initializer lists must be the same length.
+         *
+         * @param init_list Nested initializer list representing the matrix.
+         * @throws std::invalid_argument if rows have inconsistent lengths.
+         */
         DenseMatrix(std::initializer_list<std::initializer_list<T>> init_list) {
             rows_ = init_list.size();
             cols_ = rows_ ? init_list.begin()->size() : 0;
@@ -491,25 +530,60 @@
                 data.insert(data.end(), row.begin(), row.end());
             }
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Constructs a matrix from flat row-major data and dimensions.
+         *
+         * @param flat_data Vector containing r * c elements.
+         * @param r Number of rows.
+         * @param c Number of columns.
+         * @throws std::invalid_argument if flat_data size doesn't match r * c.
+         */
         DenseMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c)
             : data(flat_data), rows_(r), cols_(c) {
             if (flat_data.size() != r * c)
                 throw std::invalid_argument("Flat data size does not match matrix dimensions");
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Accesses a matrix element (modifiable).
+         *
+         * @param r Row index (zero-based).
+         * @param c Column index (zero-based).
+         * @return Reference to the element at (r, c).
+         * @throws std::out_of_range if r or c is out of bounds.
+         */
         T& operator()(std::size_t r, std::size_t c) {
             if (r >= rows_ || c >= cols_)
                 throw std::out_of_range("Index out of range");
             return data[r * cols_ + c];
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Accesses a matrix element (read-only).
+         *
+         * @param r Row index (zero-based).
+         * @param c Column index (zero-based).
+         * @return Const reference to the element at (r, c).
+         * @throws std::out_of_range if r or c is out of bounds.
+         */
         const T& operator()(std::size_t r, std::size_t c) const {
             if (r >= rows_ || c >= cols_)
                 throw std::out_of_range("Index out of range");
             return data[r * cols_ + c];
         }
+//  -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Adds two matrices element-wise.
+         *
+         * @param other Matrix to add.
+         * @return Resulting matrix.
+         * @throws std::invalid_argument if dimensions don't match.
+         */
         DenseMatrix operator+(const DenseMatrix& other) const {
             if (rows_ != other.rows_ || cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for addition");
@@ -523,7 +597,15 @@
             }
             return result;
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Subtracts another matrix element-wise.
+         *
+         * @param other Matrix to subtract.
+         * @return Resulting matrix.
+         * @throws std::invalid_argument if dimensions don't match.
+         */
         DenseMatrix operator-(const DenseMatrix& other) const {
             if (rows_ != other.rows_ || cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for subtraction");
@@ -537,7 +619,14 @@
             }
             return result;
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Adds a scalar to every matrix element.
+         *
+         * @param scalar Value to add.
+         * @return Resulting matrix.
+         */
         DenseMatrix operator+(T scalar) const {
             DenseMatrix result(rows_, cols_);
             if constexpr (simd_traits<T>::supported) {
@@ -548,7 +637,14 @@
             }
             return result;
         }
+// -------------------------------------------------------------------------------- 
 
+         /**
+         * @brief Subtracts a scalar from every matrix element.
+         *
+         * @param scalar Value to subtract.
+         * @return Resulting matrix.
+         */
         DenseMatrix operator-(T scalar) const {
             DenseMatrix result(rows_, cols_);
             if constexpr (simd_traits<T>::supported) {
@@ -559,7 +655,13 @@
             }
             return result;
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Transposes the matrix in-place.
+         *
+         * Swaps rows and columns.
+         */
         void transpose() {
             std::vector<T> new_data(data.size());
             for (std::size_t i = 0; i < rows_; ++i) {
@@ -570,22 +672,63 @@
             data.swap(new_data);
             std::swap(rows_, cols_);
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Returns the number of rows in the matrix.
+         */
         std::size_t rows() const override { return rows_; }
-        std::size_t cols() const override { return cols_; }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Returns the number of columns in the matrix.
+         */
+        std::size_t cols() const override { return cols_; }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Gets a matrix element.
+         *
+         * Implements the MatrixBase interface.
+         *
+         * @param row Row index.
+         * @param col Column index.
+         * @return Value at (row, col).
+         */
         T get(std::size_t row, std::size_t col) const override {
             return (*this)(row, col);
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Sets a matrix element.
+         *
+         * Implements the MatrixBase interface.
+         *
+         * @param row Row index.
+         * @param col Column index.
+         * @param value New value to assign.
+         */
         void set(std::size_t row, std::size_t col, T value) override {
             (*this)(row, col) = value;
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Creates a polymorphic deep copy of this matrix.
+         *
+         * @return Unique pointer to the copied matrix.
+         */
         std::unique_ptr<MatrixBase<T>> clone() const override {
             return std::make_unique<DenseMatrix>(*this);
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Prints the matrix to an output stream.
+         *
+         * @param os Output stream (defaults to std::cout).
+         */
         void print(std::ostream& os = std::cout) const {
             for (std::size_t i = 0; i < rows_; ++i) {
                 for (std::size_t j = 0; j < cols_; ++j) {
@@ -595,19 +738,45 @@
             }
         }
     };
+// ================================================================================ 
 
-    // Stream output
+    /**
+     * @brief Stream output operator for DenseMatrix.
+     *
+     * @tparam T Matrix element type.
+     * @param os Output stream.
+     * @param mat Matrix to print.
+     * @return Output stream.
+     */
     template<typename T>
     std::ostream& operator<<(std::ostream& os, const DenseMatrix<T>& mat) {
         mat.print(os);
         return os;
     }
+// -------------------------------------------------------------------------------- 
 
+    /**
+     * @brief Adds a scalar to each matrix element (scalar + matrix).
+     *
+     * @tparam T Matrix element type.
+     * @param scalar Scalar value.
+     * @param matrix Matrix operand.
+     * @return Resulting matrix.
+     */
     template<typename T>
     DenseMatrix<T> operator+(T scalar, const DenseMatrix<T>& matrix) {
         return matrix + scalar;  // Leverage existing member operator+
     }
+// -------------------------------------------------------------------------------- 
 
+    /**
+     * @brief Subtracts each matrix element from a scalar (scalar - matrix).
+     *
+     * @tparam T Matrix element type.
+     * @param scalar Scalar value.
+     * @param matrix Matrix operand.
+     * @return Resulting matrix.
+     */
     template<typename T>
     DenseMatrix<T> operator-(T scalar, const DenseMatrix<T>& matrix) {
         DenseMatrix<T> result(matrix.rows(), matrix.cols());

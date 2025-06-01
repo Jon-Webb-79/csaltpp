@@ -382,17 +382,66 @@
 // ================================================================================ 
 // ================================================================================ 
 
+    /**
+     * @brief Abstract base class for matrix types.
+     *
+     * Provides a uniform interface for different matrix implementations (e.g., dense, sparse),
+     * supporting essential matrix operations such as element access, mutation, and cloning.
+     *
+     * @tparam T The numeric type of the matrix elements (e.g., float, double).
+     */
     template<typename T>
     class MatrixBase {
     public:
+        /**
+         * @brief Virtual destructor for safe polymorphic deletion.
+         */
         virtual ~MatrixBase() = default;
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Returns the number of rows in the matrix.
+         *
+         * @return Number of rows.
+         */
         virtual std::size_t rows() const = 0;
+// -------------------------------------------------------------------------------- 
+    
+        /**
+         * @brief Returns the number of columns in the matrix.
+         *
+         * @return Number of columns.
+         */
         virtual std::size_t cols() const = 0;
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Retrieves the value at a specific matrix coordinate.
+         *
+         * @param row Zero-based row index.
+         * @param col Zero-based column index.
+         * @return Value at the specified location.
+         */
         virtual T get(std::size_t row, std::size_t col) const = 0;
-        virtual void set(std::size_t row, std::size_t col, T value) = 0;
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Sets the value at a specific matrix coordinate.
+         *
+         * @param row Zero-based row index.
+         * @param col Zero-based column index.
+         * @param value Value to assign.
+         */
+        virtual void set(std::size_t row, std::size_t col, T value) = 0;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Creates a polymorphic copy of the matrix object.
+         *
+         * Useful for cloning objects when only a base class pointer/reference is available.
+         *
+         * @return A std::unique_ptr to a new MatrixBase-derived object with the same contents.
+         */
         virtual std::unique_ptr<MatrixBase<T>> clone() const = 0;
     };
 // ================================================================================ 

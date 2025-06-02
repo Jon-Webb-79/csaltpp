@@ -155,11 +155,3 @@ Build the documentation using Sphinx:
     pip install -r requirements.txt
     make html
 
-Documentation is also hosted online:
-
-TBD
-
-License
-#######
-
-CSalt++ is provided under the MIT License. See the `LICENSE` file for details.

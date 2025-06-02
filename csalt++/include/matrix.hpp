@@ -1124,6 +1124,28 @@
             init[idx] = 1;
         }
 // -------------------------------------------------------------------------------- 
+        /**
+         * @brief Removes an element from the matrix by resetting its value and marking it uninitialized.
+         *
+         * This function sets the value at the specified (row, col) to zero and marks it as uninitialized.
+         * Attempting to remove an element that is not initialized will throw a runtime error.
+         *
+         * @param row Row index
+         * @param col Column index
+         *
+         * @throws std::out_of_range if the row or column index is out of bounds
+         * @throws std::runtime_error if the element is not initialized
+         */
+        void remove(std::size_t row, std::size_t col) {
+            if (row >= rows_ || col >= cols_)
+                throw std::out_of_range("Index out of range");
+            std::size_t idx = row * cols_ + col;
+            if (!init[idx]) 
+                throw std::runtime_error("Cannot remove value: element not initialized.");
+            data[idx] = T{0};      // Reset value
+            init[idx] = 0;         // Mark uninitialized
+        }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Updates the value of an already-initialized matrix element.

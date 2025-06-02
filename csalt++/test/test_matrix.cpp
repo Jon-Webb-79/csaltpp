@@ -516,6 +516,46 @@ TEST(DenseMatrixInverseTest, FloatInverseOf2x2Matrix) {
         for (std::size_t j = 0; j < 2; ++j)
             EXPECT_NEAR(Ainv.get(i, j), expected.get(i, j), 1e-5f);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixRemoveTest, RemoveInitializedElement) {
+    slt::DenseMatrix<double> mat = {{1.0, 2.0}, {3.0, 4.0}};
+    
+    mat.remove(0, 1);  // Remove value at (0, 1)
+
+    // Check that element is uninitialized
+    EXPECT_FALSE(mat.is_initialized(0, 1));
+
+    // Check that accessing it throws
+    EXPECT_THROW(mat.get(0, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixRemoveTest, RemoveUninitializedElementThrows) {
+    slt::DenseMatrix<double> mat(2, 2);  // All elements uninitialized
+
+    EXPECT_THROW(mat.remove(1, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixRemoveTest, RemoveOutOfBoundsThrows) {
+    slt::DenseMatrix<double> mat = {{1.0, 2.0}, {3.0, 4.0}};
+
+    EXPECT_THROW(mat.remove(2, 0), std::out_of_range);
+    EXPECT_THROW(mat.remove(0, 2), std::out_of_range);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixRemoveTest, RemoveThenSetSucceeds) {
+    slt::DenseMatrix<double> mat = {{5.0, 6.0}, {7.0, 8.0}};
+    mat.remove(1, 1);
+
+    EXPECT_FALSE(mat.is_initialized(1, 1));
+
+    mat.set(1, 1, 42.0);  // Should succeed
+    EXPECT_TRUE(mat.is_initialized(1, 1));
+    EXPECT_DOUBLE_EQ(mat.get(1, 1), 42.0);
+}
 // ================================================================================
 // ================================================================================
 // eof

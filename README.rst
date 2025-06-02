@@ -76,7 +76,7 @@ Clone the repository:
 
 .. code-block:: bash
 
-    git clone https://github.com/Jon-Webb-79/csalt.git
+    git clone https://github.com/Jon-Webb-79/csaltcpp.git
     cd csalt
 
 CMake Build Instructions
@@ -115,3 +115,29 @@ You may optionally run under `valgrind` (Linux only):
 .. code-block:: bash
 
     valgrind ./unit_tests
+
+Dependencies
+############
+
+Required:
+
+* C++ compiler supporting C++17 (tested with GCC 14.2.1 and Clang 16.0.6)
+* CMake ≥ 3.31.3
+* CMocka (for unit tests)
+
+Optional:
+
+* valgrind (memory leak detection)
+* Python 3.10+ and Sphinx (for documentation)
+
+Development & Contribution
+##########################
+
+This library is modular and extensible. Contributions are welcome!
+
+1. Fork the repo and create a branch
+2. Write or update code
+3. Add tests in the `test` directory
+4. Ensure tests pass under `debug` mode
+5. Update or add Sphinx docstrings
+6. Submit a pull request

@@ -299,8 +299,47 @@
                 for (std::size_t i = end; i < size; ++i)
                     result[i] = a[i] * scalar;
             }
-        };
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Divides each element of a float array by a scalar.
+             *
+             * Performs `result[i] = a[i] / scalar` for all elements. Utilizes AVX or SSE
+             * SIMD instructions for hardware-accelerated performance where available.
+             *
+             * @param a Pointer to the input float array.
+             * @param scalar The float scalar divisor.
+             * @param result Pointer to the output float array.
+             * @param size Number of elements in the array.
+             *
+             * @note Division by zero is undefined and may result in NaN or Inf.
+             */
+            static void div_scalar(const float* a, float scalar, float* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256 vscalar = _mm256_set1_ps(scalar);
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 va = _mm256_loadu_ps(&a[i]);
+                    __m256 vr = _mm256_div_ps(va, vscalar);
+                    _mm256_storeu_ps(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128 vscalar = _mm_set1_ps(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 va = _mm_loadu_ps(&a[i]);
+                    __m128 vr = _mm_div_ps(va, vscalar);
+                    _mm_storeu_ps(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] / scalar;
+            }
+
+
+        };
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -521,6 +560,44 @@
 #endif
                 for (std::size_t i = end; i < size; ++i)
                     result[i] = a[i] * scalar;
+            }
+// -------------------------------------------------------------------------------- 
+
+            /**
+             * @brief Divides each element of a double array by a scalar.
+             *
+             * Performs `result[i] = a[i] / scalar` for all elements. Utilizes AVX or SSE
+             * SIMD instructions for hardware-accelerated performance where available.
+             *
+             * @param a Pointer to the input double array.
+             * @param scalar The double scalar divisor.
+             * @param result Pointer to the output double array.
+             * @param size Number of elements in the array.
+             *
+             * @note Division by zero is undefined and may result in NaN or Inf.
+             */
+            static void div_scalar(const double* a, double scalar, double* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256d vscalar = _mm256_set1_pd(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d va = _mm256_loadu_pd(&a[i]);
+                    __m256d vr = _mm256_div_pd(va, vscalar);
+                    _mm256_storeu_pd(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128d vscalar = _mm_set1_pd(scalar);
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d va = _mm_loadu_pd(&a[i]);
+                    __m128d vr = _mm_div_pd(va, vscalar);
+                    _mm_storeu_pd(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] / scalar;
             }
         };
 // ================================================================================ 
@@ -866,6 +943,36 @@
             } else {
                 for (std::size_t i = 0; i < data.size(); ++i) {
                     result.data[i] = data[i] * scalar;
+                    result.init[i] = 1;
+                }
+            }
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Divides each element of the matrix by a scalar.
+         *
+         * Performs element-wise division: `result(i, j) = this(i, j) / scalar` for all
+         * initialized elements of the matrix. Uses SIMD acceleration where supported.
+         *
+         * @throws std::invalid_argument if scalar is zero.
+         *
+         * @return A new DenseMatrix<T> containing the result of the division. All elements
+         *         in the result are marked as initialized.
+         *
+         * @note Division by zero is explicitly checked and throws an exception.
+         */
+        DenseMatrix operator/(T scalar) const {
+            if (scalar == T{}) throw std::invalid_argument("Division by zero");
+
+            DenseMatrix result(rows_, cols_);
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::div_scalar(data.data(), scalar, result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);
+            } else {
+                for (std::size_t i = 0; i < data.size(); ++i) {
+                    result.data[i] = data[i] / scalar;
                     result.init[i] = 1;
                 }
             }

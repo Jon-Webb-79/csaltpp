@@ -416,6 +416,38 @@ TEST(DenseMatrixElementwiseTest, ThrowsOnMismatchedDimensions) {
 
     EXPECT_THROW({ auto result = A * B; }, std::invalid_argument);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarDivisionTest, Float_MatrixDividedByScalar) {
+    slt::DenseMatrix<float> mat = {{2.0f, 4.0f}, {6.0f, 8.0f}};
+    slt::DenseMatrix<float> expected = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+
+    auto result = mat / 2.0f;
+
+    EXPECT_FLOAT_EQ(result.get(0, 0), expected.get(0, 0));
+    EXPECT_FLOAT_EQ(result.get(0, 1), expected.get(0, 1));
+    EXPECT_FLOAT_EQ(result.get(1, 0), expected.get(1, 0));
+    EXPECT_FLOAT_EQ(result.get(1, 1), expected.get(1, 1));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarDivisionTest, Double_MatrixDividedByScalar) {
+    slt::DenseMatrix<double> mat = {{3.0, 6.0}, {9.0, 12.0}};
+    slt::DenseMatrix<double> expected = {{1.5, 3.0}, {4.5, 6.0}};
+
+    auto result = mat / 2.0;
+
+    EXPECT_DOUBLE_EQ(result.get(0, 0), expected.get(0, 0));
+    EXPECT_DOUBLE_EQ(result.get(0, 1), expected.get(0, 1));
+    EXPECT_DOUBLE_EQ(result.get(1, 0), expected.get(1, 0));
+    EXPECT_DOUBLE_EQ(result.get(1, 1), expected.get(1, 1));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarDivisionTest, DivisionByZeroThrows) {
+    slt::DenseMatrix<double> mat = {{1.0, 2.0}, {3.0, 4.0}};
+    EXPECT_THROW(mat / 0.0, std::invalid_argument);
+}
 // ================================================================================
 // ================================================================================
 // eof

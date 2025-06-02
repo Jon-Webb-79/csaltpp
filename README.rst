@@ -30,3 +30,34 @@ CSalt++ addresses these issues by offering:
 * Operator overloading for scalar and element-wise arithmetic
 * Support for inversion, transposition, and numerical manipulation
 
+Core Features
+#############
+
+Dense Matrix
+------------
+* Template-based for `float` or `double`
+* Row-major layout
+* Internal tracking of initialized elements to prevent invalid reads
+* SIMD-accelerated operations if compiled with `-march=native`, `-mavx`, or `-msse`
+* Operator overloading for:
+
+  - `+`, `-`, `*`, `/` with scalars
+  - `+`, `-`, `*` element-wise with other matrices
+  - Matrix transposition
+  - Matrix inversion (for square matrices)
+
+Sparse Formats (Planned)
+-------------------------
+* **COO** (Coordinate List)
+* **CSR** (Compressed Sparse Row)
+* Seamless conversion between formats based on runtime sparsity thresholds
+* Efficient memory layout for high-performance iterative solvers
+* Format-agnostic API
+
+Matrix Manager (Planned)
+-------------------------
+* Single front-end type `Matrix<T>` that wraps `DenseMatrix<T>`, `COOMatrix<T>`, or `CSRMatrix<T>`
+* Chooses best format at runtime
+* Allows automatic promotion/demotion of types as sparsity changes
+* Dispatches operations to correct internal type safely
+

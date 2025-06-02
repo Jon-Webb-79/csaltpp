@@ -144,3 +144,22 @@ This library is modular and extensible. Contributions are welcome!
 
 Documentation 
 #############
+
+Build the documentation using Sphinx:
+
+.. code-block:: bash
+
+    cd docs/doxygen
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    make html
+
+Documentation is also hosted online:
+
+TBD
+
+License
+#######
+
+CSalt++ is provided under the MIT License. See the `LICENSE` file for details.

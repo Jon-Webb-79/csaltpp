@@ -374,6 +374,48 @@ TEST(DenseMatrixScalarTest, Double_ScalarMinusMatrix) {
     auto result = 5.0 - mat;
     expect_matrix_eq(result, expected, 1e-10);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Float_MatrixTimesScalar) {
+    slt::DenseMatrix<float> mat = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    auto result = mat * 2.0f;
+
+    EXPECT_FLOAT_EQ(result.get(0, 0), 2.0f);
+    EXPECT_FLOAT_EQ(result.get(0, 1), 4.0f);
+    EXPECT_FLOAT_EQ(result.get(1, 0), 6.0f);
+    EXPECT_FLOAT_EQ(result.get(1, 1), 8.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixScalarTest, Float_ScalarTimesMatrix) {
+    slt::DenseMatrix<float> mat = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    auto result = 2.0f * mat;
+
+    EXPECT_FLOAT_EQ(result.get(0, 0), 2.0f);
+    EXPECT_FLOAT_EQ(result.get(0, 1), 4.0f);
+    EXPECT_FLOAT_EQ(result.get(1, 0), 6.0f);
+    EXPECT_FLOAT_EQ(result.get(1, 1), 8.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixElementwiseTest, Float_MatrixTimesMatrix) {
+    slt::DenseMatrix<float> A = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    slt::DenseMatrix<float> B = {{5.0f, 6.0f}, {7.0f, 8.0f}};
+    auto result = A * B;
+
+    EXPECT_FLOAT_EQ(result.get(0, 0), 5.0f);
+    EXPECT_FLOAT_EQ(result.get(0, 1), 12.0f);
+    EXPECT_FLOAT_EQ(result.get(1, 0), 21.0f);
+    EXPECT_FLOAT_EQ(result.get(1, 1), 32.0f);
+}
+// --------------------------------------------------------------------------------
+
+TEST(DenseMatrixElementwiseTest, ThrowsOnMismatchedDimensions) {
+    slt::DenseMatrix<float> A = {{1.0f, 2.0f}};
+    slt::DenseMatrix<float> B = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+
+    EXPECT_THROW({ auto result = A * B; }, std::invalid_argument);
+}
 // ================================================================================
 // ================================================================================
 // eof

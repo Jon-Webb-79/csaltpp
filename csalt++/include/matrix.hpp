@@ -227,6 +227,78 @@
                 for (std::size_t i = end; i < size; ++i)
                     result[i] = a[i] - scalar;
             }
+// -------------------------------------------------------------------------------- 
+
+            /**
+             * @brief Performs SIMD-accelerated element-wise multiplication of two float arrays.
+             *
+             * Multiplies each corresponding element of arrays `a` and `b`, storing the result in `result`.
+             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
+             *
+             * @param a       Pointer to the first input array.
+             * @param b       Pointer to the second input array.
+             * @param result  Pointer to the output array.
+             * @param size    Number of elements to process.
+             */
+            static void mul(const float* a, const float* b, float* result, std::size_t size) {
+#if defined(__AVX2__)
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 va = _mm256_loadu_ps(&a[i]);
+                    __m256 vb = _mm256_loadu_ps(&b[i]);
+                    __m256 vr = _mm256_mul_ps(va, vb);
+                    _mm256_storeu_ps(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 va = _mm_loadu_ps(&a[i]);
+                    __m128 vb = _mm_loadu_ps(&b[i]);
+                    __m128 vr = _mm_mul_ps(va, vb);
+                    _mm_storeu_ps(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] * b[i];
+            }
+// -------------------------------------------------------------------------------- 
+
+            /**
+             * @brief Performs SIMD-accelerated scalar multiplication on a float array.
+             *
+             * Multiplies each element in array `a` by the scalar `scalar`, storing the result in `result`.
+             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
+             *
+             * @param a       Pointer to the input array.
+             * @param scalar  Scalar value to multiply each element by.
+             * @param result  Pointer to the output array.
+             * @param size    Number of elements to process.
+             */
+            static void mul_scalar(const float* a, float scalar, float* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256 vscalar = _mm256_set1_ps(scalar);
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 va = _mm256_loadu_ps(&a[i]);
+                    __m256 vr = _mm256_mul_ps(va, vscalar);
+                    _mm256_storeu_ps(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128 vscalar = _mm_set1_ps(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 va = _mm_loadu_ps(&a[i]);
+                    __m128 vr = _mm_mul_ps(va, vscalar);
+                    _mm_storeu_ps(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] * scalar;
+            }
         };
 
 // -------------------------------------------------------------------------------- 
@@ -377,6 +449,78 @@
 #endif
                 for (std::size_t i = end; i < size; ++i)
                     result[i] = a[i] - scalar;
+            }
+// -------------------------------------------------------------------------------- 
+
+            /**
+             * @brief Performs SIMD-accelerated element-wise multiplication of two double arrays.
+             *
+             * Multiplies each corresponding element of arrays `a` and `b`, storing the result in `result`.
+             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
+             *
+             * @param a       Pointer to the first input array.
+             * @param b       Pointer to the second input array.
+             * @param result  Pointer to the output array.
+             * @param size    Number of elements to process.
+             */
+            static void mul(const double* a, const double* b, double* result, std::size_t size) {
+#if defined(__AVX2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d va = _mm256_loadu_pd(&a[i]);
+                    __m256d vb = _mm256_loadu_pd(&b[i]);
+                    __m256d vr = _mm256_mul_pd(va, vb);
+                    _mm256_storeu_pd(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d va = _mm_loadu_pd(&a[i]);
+                    __m128d vb = _mm_loadu_pd(&b[i]);
+                    __m128d vr = _mm_mul_pd(va, vb);
+                    _mm_storeu_pd(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] * b[i];
+            }
+// -------------------------------------------------------------------------------- 
+
+            /**
+             * @brief Performs SIMD-accelerated scalar multiplication on a double array.
+             *
+             * Multiplies each element in array `a` by the scalar `scalar`, storing the result in `result`.
+             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
+             *
+             * @param a       Pointer to the input array.
+             * @param scalar  Scalar value to multiply each element by.
+             * @param result  Pointer to the output array.
+             * @param size    Number of elements to process.
+             */
+            static void mul_scalar(const double* a, double scalar, double* result, std::size_t size) {
+#if defined(__AVX2__)
+                __m256d vscalar = _mm256_set1_pd(scalar);
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d va = _mm256_loadu_pd(&a[i]);
+                    __m256d vr = _mm256_mul_pd(va, vscalar);
+                    _mm256_storeu_pd(&result[i], vr);
+                }
+#elif defined(__SSE2__)
+                __m128d vscalar = _mm_set1_pd(scalar);
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d va = _mm_loadu_pd(&a[i]);
+                    __m128d vr = _mm_mul_pd(va, vscalar);
+                    _mm_storeu_pd(&result[i], vr);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    result[i] = a[i] * scalar;
             }
         };
 // ================================================================================ 
@@ -674,6 +818,62 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Performs element-wise multiplication between two matrices.
+         *
+         * Computes a new matrix where each element is the product of the corresponding elements
+         * from this matrix and the `other` matrix. Throws if the matrix dimensions do not match.
+         *
+         * SIMD acceleration is used if supported for the element type.
+         *
+         * @param other The matrix to multiply element-wise with.
+         * @return A new DenseMatrix containing the element-wise product.
+         * @throws std::invalid_argument if matrix dimensions do not match.
+         */
+        DenseMatrix operator*(const DenseMatrix& other) const {
+            if (rows_ != other.rows_ || cols_ != other.cols_)
+                throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
+
+            DenseMatrix result(rows_, cols_);
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::mul(data.data(), other.data.data(), result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);
+            } else {
+                for (std::size_t i = 0; i < data.size(); ++i) {
+                    result.data[i] = data[i] * other.data[i];
+                    result.init[i] = 1;
+                }
+            }
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Performs scalar multiplication on the matrix.
+         *
+         * Returns a new matrix where each element is the product of the corresponding matrix
+         * element and the provided scalar.
+         *
+         * SIMD acceleration is used if supported for the element type.
+         *
+         * @param scalar The scalar value to multiply with.
+         * @return A new DenseMatrix containing the result of scalar multiplication.
+         */
+        DenseMatrix operator*(T scalar) const {
+            DenseMatrix result(rows_, cols_);
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::mul_scalar(data.data(), scalar, result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);
+            } else {
+                for (std::size_t i = 0; i < data.size(); ++i) {
+                    result.data[i] = data[i] * scalar;
+                    result.init[i] = 1;
+                }
+            }
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Transposes the matrix in-place.
          *
          * Swaps rows and columns.
@@ -869,6 +1069,22 @@
             }
             return result;
         }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Global operator for scalar * matrix multiplication.
+     *
+     * Enables the syntax `scalar * matrix` for scalar multiplication, delegating
+     * to the matrix's member `operator*`.
+     *
+     * @param scalar The scalar multiplier.
+     * @param matrix The matrix operand.
+     * @return A new DenseMatrix containing the result.
+     */
+    template<typename T>
+    DenseMatrix<T> operator*(T scalar, const DenseMatrix<T>& matrix) {
+        return matrix * scalar;  // Leverage member function
+    }
 } // namespace slt
 // ================================================================================ 
 // ================================================================================ 

@@ -463,6 +463,7 @@
 
     private:
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
+        std::vector<uint8_t> init; ///< Flat row-major storage of matrix initialization elements.
         std::size_t rows_, cols_; ///< Matrix dimensions. 
     // ================================================================================ 
     public:
@@ -473,7 +474,8 @@
          * @param c Number of columns.
          * @param value Initial value for all elements (defaults to zero).
          */
-        DenseMatrix(std::size_t r, std::size_t c, T value = T{}) : data(r * c, value), rows_(r), cols_(c) {}
+        DenseMatrix(std::size_t r, std::size_t c, T value = T{})
+            : data(r * c, value), init(r * c, value != T{}), rows_(r), cols_(c) {}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -488,12 +490,12 @@
             rows_ = vec.size();
             cols_ = rows_ ? vec[0].size() : 0;
             data.resize(rows_ * cols_);
+            init.resize(rows_ * cols_, 1);
             for (std::size_t i = 0; i < rows_; ++i) {
                 if (vec[i].size() != cols_)
                     throw std::invalid_argument("All rows must have the same number of columns");
-                for (std::size_t j = 0; j < cols_; ++j) {
+                for (std::size_t j = 0; j < cols_; ++j)
                     data[i * cols_ + j] = vec[i][j];
-                }
             }
         }
 // -------------------------------------------------------------------------------- 
@@ -505,7 +507,7 @@
          */
         template<std::size_t Rows, std::size_t Cols>
         DenseMatrix(const std::array<std::array<T, Cols>, Rows>& arr)
-            : data(Rows * Cols), rows_(Rows), cols_(Cols) {
+            : data(Rows * Cols), init(Rows * Cols, 1), rows_(Rows), cols_(Cols) {
             for (std::size_t i = 0; i < Rows; ++i)
                 for (std::size_t j = 0; j < Cols; ++j)
                     data[i * Cols + j] = arr[i][j];
@@ -524,10 +526,12 @@
             rows_ = init_list.size();
             cols_ = rows_ ? init_list.begin()->size() : 0;
             data.reserve(rows_ * cols_);
+            init.reserve(rows_ * cols_);
             for (const auto& row : init_list) {
                 if (row.size() != cols_)
                     throw std::invalid_argument("All rows must have the same number of columns");
                 data.insert(data.end(), row.begin(), row.end());
+                init.insert(init.end(), row.size(), 1);
             }
         }
 // -------------------------------------------------------------------------------- 
@@ -541,7 +545,7 @@
          * @throws std::invalid_argument if flat_data size doesn't match r * c.
          */
         DenseMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c)
-            : data(flat_data), rows_(r), cols_(c) {
+            : data(flat_data), init(flat_data.size(), 1), rows_(r), cols_(c) {
             if (flat_data.size() != r * c)
                 throw std::invalid_argument("Flat data size does not match matrix dimensions");
         }
@@ -591,9 +595,12 @@
             DenseMatrix result(rows_, cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::add(data.data(), other.data.data(), result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);  // ← this line is crucial
             } else {
-                for (std::size_t i = 0; i < data.size(); ++i)
+                for (std::size_t i = 0; i < data.size(); ++i) {
                     result.data[i] = data[i] + other.data[i];
+                    result.init[i] = 1;  // ← also crucial
+                }
             }
             return result;
         }
@@ -613,9 +620,12 @@
             DenseMatrix result(rows_, cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::sub(data.data(), other.data.data(), result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);  // Mark all entries as initialized
             } else {
-                for (std::size_t i = 0; i < data.size(); ++i)
+                for (std::size_t i = 0; i < data.size(); ++i) {
                     result.data[i] = data[i] - other.data[i];
+                    result.init[i] = 1;  // Mark entry as initialized
+                }
             }
             return result;
         }
@@ -631,9 +641,12 @@
             DenseMatrix result(rows_, cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::add_scalar(data.data(), scalar, result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);
             } else {
-                for (std::size_t i = 0; i < data.size(); ++i)
+                for (std::size_t i = 0; i < data.size(); ++i) {
                     result.data[i] = data[i] + scalar;
+                    result.init[i] = 1;
+                }
             }
             return result;
         }
@@ -649,9 +662,12 @@
             DenseMatrix result(rows_, cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::sub_scalar(data.data(), scalar, result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);  // Mark as initialized
             } else {
-                for (std::size_t i = 0; i < data.size(); ++i)
+                for (std::size_t i = 0; i < data.size(); ++i) {
                     result.data[i] = data[i] - scalar;
+                    result.init[i] = 1;  // Mark each element as initialized
+                }
             }
             return result;
         }
@@ -696,7 +712,14 @@
          * @return Value at (row, col).
          */
         T get(std::size_t row, std::size_t col) const override {
-            return (*this)(row, col);
+            if (row >= rows_ || col >= cols_)
+                throw std::out_of_range("Index out of range");
+            
+            std::size_t idx = row * cols_ + col;
+            if (!init[idx])
+                throw std::runtime_error("Accessing uninitialized matrix element");
+            
+            return data[idx];
         }
 // -------------------------------------------------------------------------------- 
 
@@ -710,7 +733,45 @@
          * @param value New value to assign.
          */
         void set(std::size_t row, std::size_t col, T value) override {
-            (*this)(row, col) = value;
+            if (row >= rows_ || col >= cols_)
+                throw std::out_of_range("Index out of range");
+
+            std::size_t idx = row * cols_ + col;
+            if (init[idx])
+                throw std::runtime_error("Cannot set value: element already initialized. Use update instead.");
+
+            data[idx] = value;
+            init[idx] = 1;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Updates the value of an already-initialized matrix element.
+         *
+         * This function modifies the value at the specified (row, col) index
+         * **only if** the element has already been initialized using `set()`
+         * or a constructor that populates the matrix (e.g., with a 2D vector).
+         * 
+         * If the element has not been initialized, this function throws a
+         * `std::runtime_error` to avoid accidental overwrites of uninitialized data.
+         *
+         * @param row The zero-based row index of the element.
+         * @param col The zero-based column index of the element.
+         * @param value The new value to assign to the matrix element.
+         *
+         * @throws std::out_of_range if the row or column is out of bounds.
+         * @throws std::runtime_error if the element at (row, col) has not been initialized.
+         */
+        void update(std::size_t row, std::size_t col, T value) {
+            if (row >= rows_ || col >= cols_)
+                throw std::out_of_range("Update failed: index out of bounds");
+
+            std::size_t index = row * cols_ + col;
+
+            if (init[index] == 0)
+                throw std::runtime_error("Update failed: value not initialized");
+
+            data[index] = value;
         }
 // -------------------------------------------------------------------------------- 
 
@@ -736,6 +797,24 @@
                 }
                 os << '\n';
             }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Check whether the specified matrix element has been initialized.
+         *
+         * This method returns true if the element at the specified (row, col)
+         * index has been initialized via `set()` or a constructor, and false otherwise.
+         *
+         * @param row Row index of the matrix element.
+         * @param col Column index of the matrix element.
+         * @return true if initialized, false otherwise.
+         * @throws std::out_of_range if the index is invalid.
+         */
+        bool is_initialized(std::size_t row, std::size_t col) const {
+            if (row >= rows_ || col >= cols_)
+                throw std::out_of_range("Index out of range");
+            return init[row * cols_ + col] != 0;
         }
     };
 // ================================================================================ 
@@ -777,16 +856,19 @@
      * @param matrix Matrix operand.
      * @return Resulting matrix.
      */
-    template<typename T>
-    DenseMatrix<T> operator-(T scalar, const DenseMatrix<T>& matrix) {
-        DenseMatrix<T> result(matrix.rows(), matrix.cols());
-        for (std::size_t i = 0; i < matrix.rows(); ++i) {
-            for (std::size_t j = 0; j < matrix.cols(); ++j) {
-                result.set(i, j, scalar - matrix.get(i, j));
+        template<typename T>
+        slt::DenseMatrix<T> operator-(T scalar, const slt::DenseMatrix<T>& matrix) {
+            slt::DenseMatrix<T> result(matrix.rows(), matrix.cols());
+            for (std::size_t i = 0; i < matrix.rows(); ++i) {
+                for (std::size_t j = 0; j < matrix.cols(); ++j) {
+                    if (matrix.is_initialized(i, j)) {
+                        result.set(i, j, scalar - matrix.get(i, j));
+                    }
+                    // If not initialized, skip—result stays uninitialized
+                }
             }
+            return result;
         }
-        return result;
-    }
 } // namespace slt
 // ================================================================================ 
 // ================================================================================ 

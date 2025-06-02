@@ -998,6 +998,79 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Computes and returns the inverse of the matrix.
+         *
+         * Uses Gauss-Jordan elimination with partial pivoting to compute the inverse
+         * of the matrix. Throws an exception if the matrix is not square or is singular.
+         *
+         * @return A new DenseMatrix<T> representing the inverse of this matrix.
+         * @throws std::invalid_argument if the matrix is not square.
+         * @throws std::runtime_error if the matrix is singular or non-invertible.
+         */
+        DenseMatrix<T> inverse() const {
+            if (rows_ != cols_)
+                throw std::invalid_argument("Only square matrices can be inverted");
+
+            const std::size_t n = rows_;
+            DenseMatrix<T> A(*this);
+            DenseMatrix<T> I(n, n, T{});
+            for (std::size_t i = 0; i < n; ++i)
+                I.set(i, i, T{1});  // Identity matrix
+
+            for (std::size_t i = 0; i < n; ++i) {
+                // Pivot selection (partial pivoting)
+                std::size_t pivot = i;
+                T max_val = std::abs(A.get(i, i));
+                for (std::size_t j = i + 1; j < n; ++j) {
+                    T val = std::abs(A.get(j, i));
+                    if (val > max_val) {
+                        max_val = val;
+                        pivot = j;
+                    }
+                }
+
+                if (max_val == T{})
+                    throw std::runtime_error("Matrix is singular and cannot be inverted");
+
+                // Swap rows (corrected)
+                if (pivot != i) {
+                    for (std::size_t k = 0; k < n; ++k) {
+                        std::swap(A.data[i * n + k], A.data[pivot * n + k]);
+                        std::swap(A.init[i * n + k], A.init[pivot * n + k]);
+                        std::swap(I.data[i * n + k], I.data[pivot * n + k]);
+                        std::swap(I.init[i * n + k], I.init[pivot * n + k]);
+                    }
+                }
+
+                // Normalize pivot row
+                T pivot_val = A.data[i * n + i];
+                for (std::size_t k = 0; k < n; ++k) {
+                    A.data[i * n + k] /= pivot_val;
+                    A.init[i * n + k] = 1;
+
+                    I.data[i * n + k] /= pivot_val;
+                    I.init[i * n + k] = 1;
+                }
+
+                // Eliminate other rows
+                for (std::size_t j = 0; j < n; ++j) {
+                    if (j == i) continue;
+                    T factor = A.data[j * n + i];
+                    for (std::size_t k = 0; k < n; ++k) {
+                        A.data[j * n + k] -= factor * A.data[i * n + k];
+                        A.init[j * n + k] = 1;
+
+                        I.data[j * n + k] -= factor * I.data[i * n + k];
+                        I.init[j * n + k] = 1;
+                    }
+                }
+            }
+
+            return I;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Returns the number of rows in the matrix.
          */
         std::size_t rows() const override { return rows_; }

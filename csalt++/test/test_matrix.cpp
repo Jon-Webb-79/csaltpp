@@ -448,6 +448,74 @@ TEST(DenseMatrixScalarDivisionTest, DivisionByZeroThrows) {
     slt::DenseMatrix<double> mat = {{1.0, 2.0}, {3.0, 4.0}};
     EXPECT_THROW(mat / 0.0, std::invalid_argument);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixInverseTest, InverseOf2x2MatrixMatchesKnownValues) {
+    slt::DenseMatrix<double> A = {{4.0, 7.0}, {2.0, 6.0}};
+    auto Ainv = A.inverse();
+    // Known correct inverse of A
+    EXPECT_NEAR(Ainv.get(0, 0),  0.6, 1e-9);
+    EXPECT_NEAR(Ainv.get(0, 1), -0.7, 1e-9);
+    EXPECT_NEAR(Ainv.get(1, 0), -0.2, 1e-9);
+    EXPECT_NEAR(Ainv.get(1, 1),  0.4, 1e-9);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixInverseTest, InverseOf3x3Matrix) {
+    slt::DenseMatrix<double> A = {
+        {3.0, 0.0, 2.0},
+        {2.0, 0.0, -2.0},
+        {0.0, 1.0, 1.0}
+    };
+
+    auto Ainv = A.inverse();
+
+    // Known correct inverse of A
+    slt::DenseMatrix<double> expected = {
+        { 0.2,  0.2,  0.0},
+        {-0.2,  0.3,  1.0},
+        { 0.2, -0.3,  0.0}
+    };
+    for (std::size_t i = 0; i < 3; ++i)
+        for (std::size_t j = 0; j < 3; ++j)
+            EXPECT_NEAR(Ainv.get(i, j), expected.get(i, j), 1e-9);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixInverseTest, SingularMatrixThrowsRuntimeError) {
+    slt::DenseMatrix<double> A = {
+        {2.0, 4.0},
+        {1.0, 2.0}  // Linearly dependent rows
+    };
+
+    EXPECT_THROW(A.inverse(), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixInverseTest, NonSquareMatrixThrowsInvalidArgument) {
+    slt::DenseMatrix<double> A = {
+        {1.0, 2.0, 3.0},
+        {4.0, 5.0, 6.0}
+    };
+
+    EXPECT_THROW(A.inverse(), std::invalid_argument);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixInverseTest, FloatInverseOf2x2Matrix) {
+    slt::DenseMatrix<float> A = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    auto Ainv = A.inverse();
+
+    // Known inverse of A
+    slt::DenseMatrix<float> expected = {
+        {-2.0f,  1.0f},
+        { 1.5f, -0.5f}
+    };
+
+    for (std::size_t i = 0; i < 2; ++i)
+        for (std::size_t j = 0; j < 2; ++j)
+            EXPECT_NEAR(Ainv.get(i, j), expected.get(i, j), 1e-5f);
+}
 // ================================================================================
 // ================================================================================
 // eof

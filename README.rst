@@ -61,3 +61,57 @@ Matrix Manager (Planned)
 * Allows automatic promotion/demotion of types as sparsity changes
 * Dispatches operations to correct internal type safely
 
+Typical Use Cases
+#################
+
+* Engineering calculations (FEM, CFD, PDEs)
+* Adaptive data structures for large numerical grids
+* Real-time simulation or optimization
+* Any scenario where matrix sparsity evolves during computation
+
+Getting Started
+###############
+
+Clone the repository:
+
+.. code-block:: bash
+
+    git clone https://github.com/Jon-Webb-79/csalt.git
+    cd csalt
+
+CMake Build Instructions
+------------------------
+
+**Debug build (with tests):**
+
+.. code-block:: bash
+
+    cd scripts/bash
+    ./debug.sh
+
+**Static build (no tests):**
+
+.. code-block:: bash
+
+    cd scripts/bash
+    ./static.sh
+
+**Install system-wide (optional):**
+
+.. code-block:: bash
+
+    sudo ./install.sh
+
+Run Unit Tests
+--------------
+
+.. code-block:: bash
+
+    cd build/debug
+    ./unit_tests
+
+You may optionally run under `valgrind` (Linux only):
+
+.. code-block:: bash
+
+    valgrind ./unit_tests

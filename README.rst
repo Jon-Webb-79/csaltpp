@@ -141,3 +141,25 @@ This library is modular and extensible. Contributions are welcome!
 4. Ensure tests pass under `debug` mode
 5. Update or add Sphinx docstrings
 6. Submit a pull request
+
+Documentation
+=============
+
+Build the documentation using Sphinx:
+
+.. code-block:: bash
+
+    cd docs/doxygen
+    python3 -m venv .venv
+    source .venv/bin/activate
+    pip install -r requirements.txt
+    make html
+
+Documentation is also hosted online:
+
+`Read The Docs <https://csalt-lib.readthedocs.io/en/latest/>`_
+
+License
+#######
+
+CSalt++ is provided under the MIT License. See the `LICENSE` file for details.

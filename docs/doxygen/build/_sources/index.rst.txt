@@ -79,6 +79,7 @@ Typical Use Cases
    :caption: Modules:
 
     Matrix <Matrix>
+    SIMD <Simd>
     
 Indices and tables
 ==================

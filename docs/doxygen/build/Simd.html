@@ -1,0 +1,306 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SIMD Utilities &mdash; csalt++ 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Matrix Overview" href="Matrix.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            csalt++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Matrix.html"> Matrix</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> SIMD</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simd-traits">SIMD Traits</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0E11simd_traits"><code class="docutils literal notranslate"><span class="pre">simd_traits</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N11simd_traits9supportedE"><code class="docutils literal notranslate"><span class="pre">simd_traits::supported</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N11simd_traits5widthE"><code class="docutils literal notranslate"><span class="pre">simd_traits::width</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4IE11simd_traitsIfE"><code class="docutils literal notranslate"><span class="pre">simd_traits</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4IE11simd_traitsIdE"><code class="docutils literal notranslate"><span class="pre">simd_traits</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#simd-operations">SIMD Operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0E8simd_ops"><code class="docutils literal notranslate"><span class="pre">simd_ops</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4IE8simd_opsIfE"><code class="docutils literal notranslate"><span class="pre">simd_ops</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIfE3addEPKfPKfPfNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIfE3subEPKfPKfPfNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::sub()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIfE10add_scalarEPKffPfNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::add_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIfE10sub_scalarEPKffPfNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::sub_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIfE3mulEPKfPKfPfNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::mul()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIfE10mul_scalarEPKffPfNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::mul_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIfE10div_scalarEPKffPfNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::div_scalar()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4IE8simd_opsIdE"><code class="docutils literal notranslate"><span class="pre">simd_ops</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIdE3addEPKdPKdPdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::add()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIdE3subEPKdPKdPdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::sub()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIdE10add_scalarEPKddPdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::add_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIdE10sub_scalarEPKddPdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::sub_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIdE3mulEPKdPKdPdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::mul()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIdE10mul_scalarEPKddPdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::mul_scalar()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N8simd_opsIdE10div_scalarEPKddPdNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">simd_ops::div_scalar()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">csalt++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">SIMD Utilities</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Simd.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="simd-utilities">
+<h1>SIMD Utilities<a class="headerlink" href="#simd-utilities" title="Link to this heading"></a></h1>
+<p>This section documents the SIMD trait templates and operation specializations used to accelerate
+matrix operations for supported data types (<cite>float</cite> and <cite>double</cite>). These utilities are primarily
+used internally by matrix classes but may be of general interest to advanced users.</p>
+<section id="simd-traits">
+<h2>SIMD Traits<a class="headerlink" href="#simd-traits" title="Link to this heading"></a></h2>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0E11simd_traits">
+<span id="_CPPv3I0E11simd_traits"></span><span id="_CPPv2I0E11simd_traits"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">simd_traits</span></span></span><a class="headerlink" href="#_CPPv4I0E11simd_traits" title="Link to this definition"></a><br /></dt>
+<dd><p>A generic trait structure to determine SIMD support for a given type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – The data type to query for SIMD support</p>
+</dd>
+</dl>
+<dl class="cpp member">
+<dt class="sig sig-object cpp" id="_CPPv4N11simd_traits9supportedE">
+<span id="_CPPv3N11simd_traits9supportedE"></span><span id="_CPPv2N11simd_traits9supportedE"></span><span id="simd_traits::supported__b"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">supported</span></span></span><a class="headerlink" href="#_CPPv4N11simd_traits9supportedE" title="Link to this definition"></a><br /></dt>
+<dd><p>Indicates whether SIMD is supported for the given type.</p>
+</dd></dl>
+
+<dl class="cpp member">
+<dt class="sig sig-object cpp" id="_CPPv4N11simd_traits5widthE">
+<span id="_CPPv3N11simd_traits5widthE"></span><span id="_CPPv2N11simd_traits5widthE"></span><span id="simd_traits::width__std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">constexpr</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">width</span></span></span><a class="headerlink" href="#_CPPv4N11simd_traits5widthE" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of elements processed per SIMD register.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4IE11simd_traitsIfE">
+<span id="_CPPv3IE11simd_traitsIfE"></span><span id="_CPPv2IE11simd_traitsIfE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">simd_traits</span></span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">float</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4IE11simd_traitsIfE" title="Link to this definition"></a><br /></dt>
+<dd><p>Specialization of <cite>simd_traits</cite> for <cite>float</cite>. Uses compile-time flags to determine SIMD capability.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Var supported<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if <cite>SIMD_WIDTH_FLOAT &gt; 1</cite></p>
+</dd>
+<dt class="field-even">Var width<span class="colon">:</span></dt>
+<dd class="field-even"><p>SIMD vector width in elements</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4IE11simd_traitsIdE">
+<span id="_CPPv3IE11simd_traitsIdE"></span><span id="_CPPv2IE11simd_traitsIdE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">simd_traits</span></span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4IE11simd_traitsIdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Specialization of <cite>simd_traits</cite> for <cite>double</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Var supported<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if <cite>SIMD_WIDTH_DOUBLE &gt; 1</cite></p>
+</dd>
+<dt class="field-even">Var width<span class="colon">:</span></dt>
+<dd class="field-even"><p>SIMD vector width in elements</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="simd-operations">
+<h2>SIMD Operations<a class="headerlink" href="#simd-operations" title="Link to this heading"></a></h2>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0E8simd_ops">
+<span id="_CPPv3I0E8simd_ops"></span><span id="_CPPv2I0E8simd_ops"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">simd_ops</span></span></span><a class="headerlink" href="#_CPPv4I0E8simd_ops" title="Link to this definition"></a><br /></dt>
+<dd><p>Base template class for SIMD operations on type <cite>T</cite>. Specialized for supported types.</p>
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4IE8simd_opsIfE">
+<span id="_CPPv3IE8simd_opsIfE"></span><span id="_CPPv2IE8simd_opsIfE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">simd_ops</span></span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">float</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4IE8simd_opsIfE" title="Link to this definition"></a><br /></dt>
+<dd><p>Provides AVX/SSE/fallback implementations of basic arithmetic operations on float arrays.</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIfE3addEPKfPKfPfNSt6size_tE">
+<span id="_CPPv3N8simd_opsIfE3addEPKfPKfPfNSt6size_tE"></span><span id="_CPPv2N8simd_opsIfE3addEPKfPKfPfNSt6size_tE"></span><span id="simd_ops:float:::add__floatCP.floatCP.floatP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">add</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">b</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIfE3addEPKfPKfPfNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise addition of two float arrays.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIfE3subEPKfPKfPfNSt6size_tE">
+<span id="_CPPv3N8simd_opsIfE3subEPKfPKfPfNSt6size_tE"></span><span id="_CPPv2N8simd_opsIfE3subEPKfPKfPfNSt6size_tE"></span><span id="simd_ops:float:::sub__floatCP.floatCP.floatP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sub</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">b</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIfE3subEPKfPKfPfNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise subtraction of two float arrays.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIfE10add_scalarEPKffPfNSt6size_tE">
+<span id="_CPPv3N8simd_opsIfE10add_scalarEPKffPfNSt6size_tE"></span><span id="_CPPv2N8simd_opsIfE10add_scalarEPKffPfNSt6size_tE"></span><span id="simd_ops:float:::add_scalar__floatCP.float.floatP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">add_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIfE10add_scalarEPKffPfNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a scalar to each element of a float array.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIfE10sub_scalarEPKffPfNSt6size_tE">
+<span id="_CPPv3N8simd_opsIfE10sub_scalarEPKffPfNSt6size_tE"></span><span id="_CPPv2N8simd_opsIfE10sub_scalarEPKffPfNSt6size_tE"></span><span id="simd_ops:float:::sub_scalar__floatCP.float.floatP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sub_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIfE10sub_scalarEPKffPfNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Subtracts a scalar from each element of a float array.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIfE3mulEPKfPKfPfNSt6size_tE">
+<span id="_CPPv3N8simd_opsIfE3mulEPKfPKfPfNSt6size_tE"></span><span id="_CPPv2N8simd_opsIfE3mulEPKfPKfPfNSt6size_tE"></span><span id="simd_ops:float:::mul__floatCP.floatCP.floatP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mul</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">b</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIfE3mulEPKfPKfPfNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise multiplication of two float arrays.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIfE10mul_scalarEPKffPfNSt6size_tE">
+<span id="_CPPv3N8simd_opsIfE10mul_scalarEPKffPfNSt6size_tE"></span><span id="_CPPv2N8simd_opsIfE10mul_scalarEPKffPfNSt6size_tE"></span><span id="simd_ops:float:::mul_scalar__floatCP.float.floatP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mul_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIfE10mul_scalarEPKffPfNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Multiplies each float array element by a scalar.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIfE10div_scalarEPKffPfNSt6size_tE">
+<span id="_CPPv3N8simd_opsIfE10div_scalarEPKffPfNSt6size_tE"></span><span id="_CPPv2N8simd_opsIfE10div_scalarEPKffPfNSt6size_tE"></span><span id="simd_ops:float:::div_scalar__floatCP.float.floatP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">div_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">float</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIfE10div_scalarEPKffPfNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Divides each float array element by a scalar.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4IE8simd_opsIdE">
+<span id="_CPPv3IE8simd_opsIdE"></span><span id="_CPPv2IE8simd_opsIdE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">simd_ops</span></span></span><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">double</span></span><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4IE8simd_opsIdE" title="Link to this definition"></a><br /></dt>
+<dd><p>Provides AVX/SSE2/fallback implementations of basic arithmetic operations on double arrays.</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIdE3addEPKdPKdPdNSt6size_tE">
+<span id="_CPPv3N8simd_opsIdE3addEPKdPKdPdNSt6size_tE"></span><span id="_CPPv2N8simd_opsIdE3addEPKdPKdPdNSt6size_tE"></span><span id="simd_ops:double:::add__doubleCP.doubleCP.doubleP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">add</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">b</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIdE3addEPKdPKdPdNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise addition of two double arrays.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIdE3subEPKdPKdPdNSt6size_tE">
+<span id="_CPPv3N8simd_opsIdE3subEPKdPKdPdNSt6size_tE"></span><span id="_CPPv2N8simd_opsIdE3subEPKdPKdPdNSt6size_tE"></span><span id="simd_ops:double:::sub__doubleCP.doubleCP.doubleP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sub</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">b</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIdE3subEPKdPKdPdNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise subtraction of two double arrays.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIdE10add_scalarEPKddPdNSt6size_tE">
+<span id="_CPPv3N8simd_opsIdE10add_scalarEPKddPdNSt6size_tE"></span><span id="_CPPv2N8simd_opsIdE10add_scalarEPKddPdNSt6size_tE"></span><span id="simd_ops:double:::add_scalar__doubleCP.double.doubleP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">add_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIdE10add_scalarEPKddPdNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a scalar to each element of a double array.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIdE10sub_scalarEPKddPdNSt6size_tE">
+<span id="_CPPv3N8simd_opsIdE10sub_scalarEPKddPdNSt6size_tE"></span><span id="_CPPv2N8simd_opsIdE10sub_scalarEPKddPdNSt6size_tE"></span><span id="simd_ops:double:::sub_scalar__doubleCP.double.doubleP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sub_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIdE10sub_scalarEPKddPdNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Subtracts a scalar from each element of a double array.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIdE3mulEPKdPKdPdNSt6size_tE">
+<span id="_CPPv3N8simd_opsIdE3mulEPKdPKdPdNSt6size_tE"></span><span id="_CPPv2N8simd_opsIdE3mulEPKdPKdPdNSt6size_tE"></span><span id="simd_ops:double:::mul__doubleCP.doubleCP.doubleP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mul</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">b</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIdE3mulEPKdPKdPdNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise multiplication of two double arrays.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIdE10mul_scalarEPKddPdNSt6size_tE">
+<span id="_CPPv3N8simd_opsIdE10mul_scalarEPKddPdNSt6size_tE"></span><span id="_CPPv2N8simd_opsIdE10mul_scalarEPKddPdNSt6size_tE"></span><span id="simd_ops:double:::mul_scalar__doubleCP.double.doubleP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mul_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIdE10mul_scalarEPKddPdNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Multiplies each double array element by a scalar.</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N8simd_opsIdE10div_scalarEPKddPdNSt6size_tE">
+<span id="_CPPv3N8simd_opsIdE10div_scalarEPKddPdNSt6size_tE"></span><span id="_CPPv2N8simd_opsIdE10div_scalarEPKddPdNSt6size_tE"></span><span id="simd_ops:double:::div_scalar__doubleCP.double.doubleP.std::s"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">div_scalar</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="kt"><span class="pre">double</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">result</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8simd_opsIdE10div_scalarEPKddPdNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Divides each double array element by a scalar.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Matrix.html" class="btn btn-neutral float-left" title="Matrix Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

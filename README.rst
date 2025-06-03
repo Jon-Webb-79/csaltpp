@@ -157,7 +157,7 @@ Build the documentation using Sphinx:
 
 Documentation is also hosted online:
 
-TBD
+`CSalt++ <https://csaltpp.readthedocs.io/en/latest/>`_
 
 License
 #######

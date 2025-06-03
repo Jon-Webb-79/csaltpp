@@ -43,7 +43,52 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#"> Matrix</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Matrix</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#key-features">Key Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases">Use Cases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#densematrix-t">DenseMatrix&lt;T&gt;</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#constructors">Constructors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fixed-dimensions">Fixed Dimensions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#d-std-vector">2D std::vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#std-array-of-std-array">std::array of std::array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#initializer-list">Initializer List</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flat-data-vector">Flat Data Vector</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#core-methods">Core Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#get">get()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#set">set()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#update">update()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rows">rows()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cols">cols()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transpose">transpose()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#inverse">inverse()</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#operators">Operators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#element-access-operator">Element Access Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#assignment-operator">Assignment Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#equality-operator">Equality Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#matrix-multiplication-operator">Matrix Multiplication Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subtraction-operator">Subtraction Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#division-operator">Division Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scalar-multiplication">Scalar Multiplication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scalar-division">Scalar Division</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scalar-addition">Scalar Addition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scalar-subtraction">Scalar Subtraction</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#global-operators">Global Operators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#stream-output">Stream Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scalar-matrix">Scalar + Matrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id1">Scalar - Matrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id2">Scalar * Matrix</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 
         </div>
@@ -72,7 +117,748 @@
              
   <section id="matrix-overview">
 <h1>Matrix Overview<a class="headerlink" href="#matrix-overview" title="Link to this heading"></a></h1>
-<p>TBD</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">csalt++</span></code> matrix module provides a flexible, type-safe, and format-aware framework
+for working with two-dimensional numerical data in C++. It is designed for engineering
+applications that require efficient, adaptive storage and manipulation of large matrices,
+including dense and sparse formats.</p>
+<p>The library is built around a polymorphic architecture with a shared base class,
+<code class="docutils literal notranslate"><span class="pre">MatrixBase&lt;T&gt;</span></code>, from which format-specific matrix types inherit. This design allows
+developers to write high-level algorithms without binding to a specific storage format.</p>
+<p>Supported matrix types include:</p>
+<ul class="simple">
+<li><p><strong>DenseMatrix&lt;T&gt;</strong> — Row-major storage of all matrix elements with optional initialization tracking</p></li>
+<li><p><strong>COOMatrix&lt;T&gt;</strong> — Sparse storage using coordinate (triplet) format</p></li>
+<li><p><strong>CSRMatrix&lt;T&gt;</strong> — Compressed Sparse Row format optimized for matrix-vector products and row slicing</p></li>
+<li><p><strong>Matrix&lt;T&gt;</strong> - A wrapper class that selects the appropriate underlying class based on matrix sparsity</p></li>
+</ul>
+<section id="key-features">
+<h2>Key Features<a class="headerlink" href="#key-features" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Format-specific classes with common interface support (e.g., <code class="docutils literal notranslate"><span class="pre">get()</span></code>, <code class="docutils literal notranslate"><span class="pre">set()</span></code>, <code class="docutils literal notranslate"><span class="pre">rows()</span></code>, <code class="docutils literal notranslate"><span class="pre">cols()</span></code>)</p></li>
+<li><p>SIMD-accelerated operations for supported types (e.g., <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>)</p></li>
+<li><p>Automatic bounds checking and initialization safety</p></li>
+<li><p>Support for element-wise and matrix multiplication</p></li>
+<li><p>Determinant and inverse computations (for dense matrices)</p></li>
+<li><p>Easy expansion for other storage formats (e.g., ELL, DIA, Block)</p></li>
+</ul>
+</section>
+<section id="use-cases">
+<h2>Use Cases<a class="headerlink" href="#use-cases" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">csalt++</span></code> matrix types are ideal for:</p>
+<ul class="simple">
+<li><p>Solving large systems of equations in scientific computing</p></li>
+<li><p>Performing linear algebra operations in numerical simulations</p></li>
+<li><p>Representing sparsely populated matrices in PDE/FEM applications</p></li>
+<li><p>Dynamically switching between storage formats based on matrix sparsity</p></li>
+</ul>
+</section>
+<section id="densematrix-t">
+<h2>DenseMatrix&lt;T&gt;<a class="headerlink" href="#densematrix-t" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code> class provides a high-performance, row-major layout for matrix elements,
+suitable for use in tightly coupled linear algebra operations. It supports both single and
+double precision values (<code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">double</span></code>), with internal tracking of which elements
+have been initialized. This allows for safe manipulation of partially constructed matrices,
+and helps prevent unintentional reads of uninitialized memory.</p>
+<p><code class="docutils literal notranslate"><span class="pre">DenseMatrix</span></code> is optimized for numerical applications where full or mostly-full storage is expected.
+SIMD acceleration is applied automatically when supported by the underlying hardware for the type <code class="docutils literal notranslate"><span class="pre">T</span></code>.</p>
+<section id="constructors">
+<h3>Constructors<a class="headerlink" href="#constructors" title="Link to this heading"></a></h3>
+<p>DenseMatrix provides multiple constructors for initializing matrices in various ways,
+including fixed-size dimensions, nested containers, initializer lists, and flat storage.</p>
+<section id="fixed-dimensions">
+<h4>Fixed Dimensions<a class="headerlink" href="#fixed-dimensions" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T">
+<span id="_CPPv311DenseMatrixNSt6size_tENSt6size_tE1T"></span><span id="_CPPv211DenseMatrixNSt6size_tENSt6size_tE1T"></span><span id="DenseMatrix__std::s.std::s.T"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rows</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cols</span></span>, <span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a matrix of the given dimensions and initializes all values to <code class="docutils literal notranslate"><span class="pre">value</span></code>.
+If <code class="docutils literal notranslate"><span class="pre">value</span></code> is not provided, the elements default to zero. Elements are marked as initialized
+if <code class="docutils literal notranslate"><span class="pre">value</span> <span class="pre">!=</span> <span class="pre">T{}</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> – Number of rows in the matrix.</p></li>
+<li><p><strong>cols</strong> – Number of columns in the matrix.</p></li>
+<li><p><strong>value</strong> – Initial value for all elements (optional).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If either dimension is zero.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">);</span>          <span class="o">//</span> <span class="mi">3</span><span class="n">x3</span> <span class="n">zero</span> <span class="n">matrix</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>     <span class="o">//</span> <span class="mi">2</span><span class="n">x4</span> <span class="n">matrix</span> <span class="n">filled</span> <span class="k">with</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="d-std-vector">
+<h4>2D std::vector<a class="headerlink" href="#d-std-vector" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixRKNSt6vectorINSt6vectorI1TEEEE">
+<span id="_CPPv311DenseMatrixRKNSt6vectorINSt6vectorI1TEEEE"></span><span id="_CPPv211DenseMatrixRKNSt6vectorINSt6vectorI1TEEEE"></span><span id="DenseMatrix__std::vector:std::vector:T::CR"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixRKNSt6vectorINSt6vectorI1TEEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a matrix from a 2D <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>. All inner vectors must be the same length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – A 2D vector containing the matrix values.</p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the outer vector is empty or inner vectors have unequal lengths.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;&gt;</span> <span class="n">values</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">M</span><span class="p">(</span><span class="n">values</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="std-array-of-std-array">
+<h4>std::array of std::array<a class="headerlink" href="#std-array-of-std-array" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp">
+<span class="sig-name descname"><span class="pre">template&lt;std::size_t</span> <span class="pre">R,</span> <span class="pre">std::size_t</span> <span class="pre">C&gt;</span></span></dt>
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixRKNSt5arrayINSt5arrayI1T1CEE1REE">
+<span id="_CPPv311DenseMatrixRKNSt5arrayINSt5arrayI1T1CEE1REE"></span><span id="_CPPv211DenseMatrixRKNSt5arrayINSt5arrayI1T1CEE1REE"></span><span id="DenseMatrix__std::array:std::array:T.C:.R:CR"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">data</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixRKNSt5arrayINSt5arrayI1T1CEE1REE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a matrix from a fixed-size 2D <code class="docutils literal notranslate"><span class="pre">std::array</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> – A statically sized 2D array representing the matrix contents.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">array</span><span class="o">&lt;</span><span class="nb">float</span><span class="p">,</span> <span class="mi">2</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">{{</span>
+    <span class="p">{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">}</span>
+<span class="p">}};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="initializer-list">
+<h4>Initializer List<a class="headerlink" href="#initializer-list" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixNSt16initializer_listINSt16initializer_listI1TEEEE">
+<span id="_CPPv311DenseMatrixNSt16initializer_listINSt16initializer_listI1TEEEE"></span><span id="_CPPv211DenseMatrixNSt16initializer_listINSt16initializer_listI1TEEEE"></span><span id="DenseMatrix__std::initializer_list:std::initializer_list:T::"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">initializer_list</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">initializer_list</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">init_list</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixNSt16initializer_listINSt16initializer_listI1TEEEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a matrix from a nested initializer list. All rows must have the same number of columns.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>init_list</strong> – A nested initializer list.</p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the outer list is empty or inner lists have unequal lengths.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="flat-data-vector">
+<h4>Flat Data Vector<a class="headerlink" href="#flat-data-vector" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tE">
+<span id="_CPPv311DenseMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tE"></span><span id="_CPPv211DenseMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tE"></span><span id="DenseMatrix__std::vector:T:CR.std::s.std::s"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">flat_data</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rows</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cols</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a matrix from a flat data vector with explicit dimensions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flat_data</strong> – A flat vector containing matrix elements in row-major order.</p></li>
+<li><p><strong>rows</strong> – Number of rows.</p></li>
+<li><p><strong>cols</strong> – Number of columns.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If <code class="docutils literal notranslate"><span class="pre">flat_data.size()</span> <span class="pre">!=</span> <span class="pre">rows</span> <span class="pre">*</span> <span class="pre">cols</span></code> or any dimension is zero.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">flat</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="n">flat</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>  <span class="o">//</span> <span class="n">Creates</span> <span class="mi">2</span><span class="n">x2</span> <span class="n">matrix</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="core-methods">
+<h3>Core Methods<a class="headerlink" href="#core-methods" title="Link to this heading"></a></h3>
+<section id="get">
+<h4>get()<a class="headerlink" href="#get" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK3getENSt6size_tENSt6size_tE">
+<span id="_CPPv3NK3getENSt6size_tENSt6size_tE"></span><span id="_CPPv2NK3getENSt6size_tENSt6size_tE"></span><span id="get__std::s.std::sC"></span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3getENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the value at the specified (row, col) index.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row</strong> – Zero-based row index</p></li>
+<li><p><strong>col</strong> – Zero-based column index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Value of the matrix element</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – If the index is outside the matrix bounds.</p></li>
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the element is uninitialized.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">);</span>
+<span class="n">double</span> <span class="n">val</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>  <span class="o">//</span> <span class="n">val</span> <span class="o">==</span> <span class="mf">3.14</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="set">
+<h4>set()<a class="headerlink" href="#set" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv43setNSt6size_tENSt6size_tE1T">
+<span id="_CPPv33setNSt6size_tENSt6size_tE1T"></span><span id="_CPPv23setNSt6size_tENSt6size_tE1T"></span><span id="set__std::s.std::s.T"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span>, <span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv43setNSt6size_tENSt6size_tE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Sets the value at the specified (row, col) index only if the element
+is uninitialized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row</strong> – Zero-based row index</p></li>
+<li><p><strong>col</strong> – Zero-based column index</p></li>
+<li><p><strong>value</strong> – Value to assign</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – If the index is outside the matrix bounds.</p></li>
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the element has already been initialized.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">B</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">42.0</span><span class="n">f</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="update">
+<h4>update()<a class="headerlink" href="#update" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv46updateNSt6size_tENSt6size_tE1T">
+<span id="_CPPv36updateNSt6size_tENSt6size_tE1T"></span><span id="_CPPv26updateNSt6size_tENSt6size_tE1T"></span><span id="update__std::s.std::s.T"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">update</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span>, <span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv46updateNSt6size_tENSt6size_tE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Updates the value of an already-initialized element.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row</strong> – Zero-based row index</p></li>
+<li><p><strong>col</strong> – Zero-based column index</p></li>
+<li><p><strong>value</strong> – New value to assign</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – If the index is outside the matrix bounds.</p></li>
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the element is uninitialized.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">C</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">C</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.23</span><span class="p">);</span>
+<span class="n">C</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">4.56</span><span class="p">);</span>  <span class="o">//</span> <span class="n">Updates</span> <span class="n">value</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="rows">
+<h4>rows()<a class="headerlink" href="#rows" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4rowsEv">
+<span id="_CPPv3NK4rowsEv"></span><span id="_CPPv2NK4rowsEv"></span><span id="rowsC"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rows</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4rowsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the number of rows in the matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of rows</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">D</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="n">std</span><span class="p">::</span><span class="n">size_t</span> <span class="n">r</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">rows</span><span class="p">();</span>  <span class="o">//</span> <span class="n">r</span> <span class="o">==</span> <span class="mi">3</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="cols">
+<h4>cols()<a class="headerlink" href="#cols" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4colsEv">
+<span id="_CPPv3NK4colsEv"></span><span id="_CPPv2NK4colsEv"></span><span id="colsC"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cols</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4colsEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the number of columns in the matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of columns</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">D</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="n">std</span><span class="p">::</span><span class="n">size_t</span> <span class="n">c</span> <span class="o">=</span> <span class="n">D</span><span class="o">.</span><span class="n">cols</span><span class="p">();</span>  <span class="o">//</span> <span class="n">c</span> <span class="o">==</span> <span class="mi">4</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="transpose">
+<h4>transpose()<a class="headerlink" href="#transpose" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv49transposev">
+<span id="_CPPv39transposev"></span><span id="_CPPv29transposev"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">transpose</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv49transposev" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs an in-place transposition of the matrix. Converts an (r x c)
+matrix into a (c x r) matrix.</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">A</span><span class="o">.</span><span class="n">transpose</span><span class="p">();</span>
+<span class="o">//</span> <span class="n">A</span> <span class="ow">is</span> <span class="n">now</span><span class="p">:</span>
+<span class="o">//</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">]</span>
+<span class="o">//</span> <span class="p">[</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="inverse">
+<h4>inverse()<a class="headerlink" href="#inverse" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK7inverseEv">
+<span id="_CPPv3NK7inverseEv"></span><span id="_CPPv2NK7inverseEv"></span><span id="inverseC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">inverse</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK7inverseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes and returns the inverse of the matrix using Gauss-Jordan elimination.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code> representing the inverse</p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the matrix is not square.</p></li>
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the matrix is singular or not invertible.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">invA</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">inverse</span><span class="p">();</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="operators">
+<h3>Operators<a class="headerlink" href="#operators" title="Link to this heading"></a></h3>
+<p>The <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code> class overloads common operators to support arithmetic and comparison operations
+in a type-safe, intuitive manner. These include element access, assignment, equality, and matrix multiplication.</p>
+<section id="element-access-operator">
+<h4>Element Access Operator<a class="headerlink" href="#element-access-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKclENSt6size_tENSt6size_tE">
+<span id="_CPPv3NKclENSt6size_tENSt6size_tE"></span><span id="_CPPv2NKclENSt6size_tENSt6size_tE"></span><span id="call-operator__std::s.std::sC"></span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKclENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the value at the specified row and column index. Equivalent to calling <code class="docutils literal notranslate"><span class="pre">get(row,</span> <span class="pre">col)</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>row</strong> – Zero-based row index</p></li>
+<li><p><strong>col</strong> – Zero-based column index</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Element value</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – If index is out of bounds</p></li>
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If the element is uninitialized</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">3.14</span><span class="p">);</span>
+<span class="n">double</span> <span class="n">x</span> <span class="o">=</span> <span class="n">A</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>  <span class="o">//</span> <span class="n">x</span> <span class="o">==</span> <span class="mf">3.14</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="assignment-operator">
+<h4>Assignment Operator<a class="headerlink" href="#assignment-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4aSRK11DenseMatrixI1TE">
+<span id="_CPPv3aSRK11DenseMatrixI1TE"></span><span id="_CPPv2aSRK11DenseMatrixI1TE"></span><span id="assign-operator__DenseMatrix:T:CR"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4aSRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Assigns the contents of another matrix to this one. Performs a deep copy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Matrix to copy from</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to this matrix</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">);</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="p">;</span>  <span class="o">//</span> <span class="n">Uses</span> <span class="n">copy</span> <span class="n">constructor</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="p">;</span>  <span class="o">//</span> <span class="n">Uses</span> <span class="n">assignment</span> <span class="n">operator</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="equality-operator">
+<h4>Equality Operator<a class="headerlink" href="#equality-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKeqERK11DenseMatrixI1TE">
+<span id="_CPPv3NKeqERK11DenseMatrixI1TE"></span><span id="_CPPv2NKeqERK11DenseMatrixI1TE"></span><span id="eq-operator__DenseMatrix:T:CRC"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKeqERK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Compares two matrices for equality. Returns true if both matrices have the same dimensions,
+and all initialized elements are equal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Matrix to compare</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if matrices are equal, false otherwise</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">A</span> <span class="o">==</span> <span class="n">B</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="matrix-multiplication-operator">
+<h4>Matrix Multiplication Operator<a class="headerlink" href="#matrix-multiplication-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKmlERK11DenseMatrixI1TE">
+<span id="_CPPv3NKmlERK11DenseMatrixI1TE"></span><span id="_CPPv2NKmlERK11DenseMatrixI1TE"></span><span id="mul-operator__DenseMatrix:T:CRC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKmlERK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs matrix multiplication with another <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code>. Throws an exception
+if the dimensions are incompatible.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rhs</strong> – Right-hand side matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If inner dimensions do not match</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">2.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">B</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="subtraction-operator">
+<h4>Subtraction Operator<a class="headerlink" href="#subtraction-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKmiERK11DenseMatrixI1TE">
+<span id="_CPPv3NKmiERK11DenseMatrixI1TE"></span><span id="_CPPv2NKmiERK11DenseMatrixI1TE"></span><span id="sub-operator__DenseMatrix:T:CRC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKmiERK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise subtraction between two matrices. All elements must be initialized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rhs</strong> – Matrix to subtract</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If dimensions do not match</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">}};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">B</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="n">B</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="division-operator">
+<h4>Division Operator<a class="headerlink" href="#division-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKdvERK11DenseMatrixI1TE">
+<span id="_CPPv3NKdvERK11DenseMatrixI1TE"></span><span id="_CPPv2NKdvERK11DenseMatrixI1TE"></span><span id="div-operator__DenseMatrix:T:CRC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">/</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">rhs</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKdvERK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise division. All elements must be initialized. Division by zero will throw.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rhs</strong> – Divisor matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If dimensions do not match</p></li>
+<li><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">domain_error</span></span></span> – If division by zero is attempted</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">30.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">}};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">B</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">5.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">/</span> <span class="n">B</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="scalar-multiplication">
+<h4>Scalar Multiplication<a class="headerlink" href="#scalar-multiplication" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKmlE1T">
+<span id="_CPPv3NKmlE1T"></span><span id="_CPPv2NKmlE1T"></span><span id="mul-operator__TC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKmlE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a new matrix where each element is multiplied by a scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> – Scalar multiplier</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="mf">2.0</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="scalar-division">
+<h4>Scalar Division<a class="headerlink" href="#scalar-division" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKdvE1T">
+<span id="_CPPv3NKdvE1T"></span><span id="_CPPv2NKdvE1T"></span><span id="div-operator__TC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">/</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKdvE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a new matrix where each element is divided by a scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> – Scalar divisor</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">domain_error</span></span></span> – If scalar is zero</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">2.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">6.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">8.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="n">A</span> <span class="o">/</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="scalar-addition">
+<h4>Scalar Addition<a class="headerlink" href="#scalar-addition" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKplE1T">
+<span id="_CPPv3NKplE1T"></span><span id="_CPPv2NKplE1T"></span><span id="add-operator__TC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKplE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a new matrix where each initialized element is incremented by the scalar value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> – Scalar value to add</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If any element is uninitialized</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="n">A</span> <span class="o">+</span> <span class="mf">10.0</span><span class="p">;</span>
+<span class="o">//</span> <span class="n">B</span> <span class="ow">is</span> <span class="p">{{</span><span class="mf">11.0</span><span class="p">,</span> <span class="mf">12.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">13.0</span><span class="p">,</span> <span class="mf">14.0</span><span class="p">}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="scalar-subtraction">
+<h4>Scalar Subtraction<a class="headerlink" href="#scalar-subtraction" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NKmiE1T">
+<span id="_CPPv3NKmiE1T"></span><span id="_CPPv2NKmiE1T"></span><span id="sub-operator__TC"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKmiE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a new matrix where each initialized element is decremented by the scalar value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> – Scalar value to subtract</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If any element is uninitialized</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">5.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">6.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">7.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">8.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">;</span>
+<span class="o">//</span> <span class="n">B</span> <span class="ow">is</span> <span class="p">{{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">5.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">6.0</span><span class="n">f</span><span class="p">}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="global-operators">
+<h3>Global Operators<a class="headerlink" href="#global-operators" title="Link to this heading"></a></h3>
+<section id="stream-output">
+<h4>Stream Output<a class="headerlink" href="#stream-output" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4lsRNSt7ostreamERK11DenseMatrixI1TE">
+<span id="_CPPv3lsRNSt7ostreamERK11DenseMatrixI1TE"></span><span id="_CPPv2lsRNSt7ostreamERK11DenseMatrixI1TE"></span><span id="lshift-operator__osR.DenseMatrix:T:CR"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">mat</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4lsRNSt7ostreamERK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Outputs the matrix to the provided output stream using its internal <cite>print</cite> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>os</strong> – Output stream</p></li>
+<li><p><strong>mat</strong> – Matrix to print</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The output stream</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="n">std</span><span class="p">::</span><span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">A</span> <span class="o">&lt;&lt;</span> <span class="n">std</span><span class="p">::</span><span class="n">endl</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">1.0</span> <span class="mf">2.0</span>
+<span class="mf">3.0</span> <span class="mf">4.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="scalar-matrix">
+<h4>Scalar + Matrix<a class="headerlink" href="#scalar-matrix" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4pl1TRK11DenseMatrixI1TE">
+<span id="_CPPv3pl1TRK11DenseMatrixI1TE"></span><span id="_CPPv2pl1TRK11DenseMatrixI1TE"></span><span id="add-operator__T.DenseMatrix:T:CR"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4pl1TRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a scalar to each initialized element of the matrix (scalar on the left-hand side).
+Equivalent to <cite>matrix + scalar</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scalar</strong> – Scalar value to add</p></li>
+<li><p><strong>matrix</strong> – Matrix operand</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If any element is uninitialized</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">+</span> <span class="n">A</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="id1">
+<h4>Scalar - Matrix<a class="headerlink" href="#id1" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4mi1TRK11DenseMatrixI1TE">
+<span id="_CPPv3mi1TRK11DenseMatrixI1TE"></span><span id="_CPPv2mi1TRK11DenseMatrixI1TE"></span><span id="sub-operator__T.DenseMatrix:T:CR"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4mi1TRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Subtracts each initialized element of the matrix from the scalar.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scalar</strong> – Scalar value</p></li>
+<li><p><strong>matrix</strong> – Matrix to subtract from scalar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If any element is uninitialized</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">-</span> <span class="n">A</span><span class="p">;</span>  <span class="o">//</span> <span class="n">B</span> <span class="n">contains</span> <span class="p">{</span><span class="mf">9.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">},</span> <span class="p">{</span><span class="mf">7.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="id2">
+<h4>Scalar * Matrix<a class="headerlink" href="#id2" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4ml1TRK11DenseMatrixI1TE">
+<span id="_CPPv3ml1TRK11DenseMatrixI1TE"></span><span id="_CPPv2ml1TRK11DenseMatrixI1TE"></span><span id="mul-operator__T.DenseMatrix:T:CR"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4ml1TRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Multiplies each initialized matrix element by the scalar. Equivalent to <cite>matrix * scalar</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scalar</strong> – Scalar multiplier</p></li>
+<li><p><strong>matrix</strong> – Matrix operand</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Resulting matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">runtime_error</span></span></span> – If any element is uninitialized</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">}};</span>
+<span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="mf">2.0</span><span class="n">f</span> <span class="o">*</span> <span class="n">A</span><span class="p">;</span>  <span class="o">//</span> <span class="n">B</span> <span class="ow">is</span> <span class="p">{{</span><span class="mf">2.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">6.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">8.0</span><span class="n">f</span><span class="p">}}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
 </section>
 
 

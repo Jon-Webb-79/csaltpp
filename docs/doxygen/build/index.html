@@ -1,0 +1,276 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Welcome to CSalt++ documentation! &mdash; csalt++ 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Matrix Overview" href="Matrix.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            csalt++
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Matrix.html"> Matrix</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">csalt++</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Welcome to CSalt++ documentation!</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="welcome-to-csalt-documentation">
+<h1>Welcome to CSalt++ documentation!<a class="headerlink" href="#welcome-to-csalt-documentation" title="Link to this heading"></a></h1>
+<p>The <cite>csalt++</cite> project is a modern C++ library designed to support flexible,
+efficient, and safe numerical computing with matrices and vectors. It builds
+upon the ideas developed in the original C version of CSalt, enhancing them with
+templates, operator overloading, and runtime format adaptation.</p>
+<p>This library targets performance-critical applications such as scientific
+simulations, engineering solvers, and adaptive mesh computations where matrix
+structure can vary dramatically.</p>
+<section id="why-csalt">
+<h2>Why CSalt++<a class="headerlink" href="#why-csalt" title="Link to this heading"></a></h2>
+<p>C++ offers many improvements over C, but working with numerical data still
+involves challenges:</p>
+<ul class="simple">
+<li><p>Dynamic matrix manipulation is verbose and error-prone with raw arrays</p></li>
+<li><p>Standard containers lack built-in numerical semantics (e.g., transposition, inversion)</p></li>
+<li><p>No adaptive matrix types that convert formats based on sparsity or structure</p></li>
+<li><p>SIMD acceleration is not automatic</p></li>
+<li><p>Type safety and dimensionality checking must be implemented manually</p></li>
+</ul>
+<p>CSalt++ addresses these issues by offering:</p>
+<ul class="simple">
+<li><p>Strongly typed dense matrices with optional SIMD support for float/double</p></li>
+<li><p>Planned sparse formats (COO, CSR) with runtime format switching</p></li>
+<li><p>Format-agnostic interface via <cite>Matrix&lt;T&gt;</cite> manager class</p></li>
+<li><p>Safe access and modification with uninitialized memory tracking</p></li>
+<li><p>Operator overloading for scalar and element-wise arithmetic</p></li>
+<li><p>Support for inversion, transposition, and numerical manipulation</p></li>
+</ul>
+</section>
+<section id="core-features">
+<h2>Core Features<a class="headerlink" href="#core-features" title="Link to this heading"></a></h2>
+<section id="dense-matrix">
+<h3>Dense Matrix<a class="headerlink" href="#dense-matrix" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Template-based for <cite>float</cite> or <cite>double</cite></p></li>
+<li><p>Row-major layout</p></li>
+<li><p>Internal tracking of initialized elements to prevent invalid reads</p></li>
+<li><p>SIMD-accelerated operations if compiled with <cite>-march=native</cite>, <cite>-mavx</cite>, or <cite>-msse</cite></p></li>
+<li><p>Operator overloading for:</p>
+<ul>
+<li><p><cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite> with scalars</p></li>
+<li><p><cite>+</cite>, <cite>-</cite>, <cite>*</cite> element-wise with other matrices</p></li>
+<li><p>Matrix transposition</p></li>
+<li><p>Matrix inversion (for square matrices)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="sparse-formats-planned">
+<h3>Sparse Formats (Planned)<a class="headerlink" href="#sparse-formats-planned" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>COO</strong> (Coordinate List)</p></li>
+<li><p><strong>CSR</strong> (Compressed Sparse Row)</p></li>
+<li><p>Seamless conversion between formats based on runtime sparsity thresholds</p></li>
+<li><p>Efficient memory layout for high-performance iterative solvers</p></li>
+<li><p>Format-agnostic API</p></li>
+</ul>
+</section>
+<section id="matrix-manager-planned">
+<h3>Matrix Manager (Planned)<a class="headerlink" href="#matrix-manager-planned" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Single front-end type <cite>Matrix&lt;T&gt;</cite> that wraps <cite>DenseMatrix&lt;T&gt;</cite>, <cite>COOMatrix&lt;T&gt;</cite>, or <cite>CSRMatrix&lt;T&gt;</cite></p></li>
+<li><p>Chooses best format at runtime</p></li>
+<li><p>Allows automatic promotion/demotion of types as sparsity changes</p></li>
+<li><p>Dispatches operations to correct internal type safely</p></li>
+</ul>
+</section>
+</section>
+<section id="typical-use-cases">
+<h2>Typical Use Cases<a class="headerlink" href="#typical-use-cases" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Engineering calculations (FEM, CFD, PDEs)</p></li>
+<li><p>Adaptive data structures for large numerical grids</p></li>
+<li><p>Real-time simulation or optimization</p></li>
+<li><p>Any scenario where matrix sparsity evolves during computation</p></li>
+</ul>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="Matrix.html"> Matrix</a></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<p>Clone the repository:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Jon-Webb-79/csaltcpp.git
+<span class="nb">cd</span><span class="w"> </span>csalt
+</pre></div>
+</div>
+<section id="cmake-build-instructions">
+<h3>CMake Build Instructions<a class="headerlink" href="#cmake-build-instructions" title="Link to this heading"></a></h3>
+<p><strong>Debug build (with tests):</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>scripts/bash
+./debug.sh
+</pre></div>
+</div>
+<p><strong>Static build (no tests):</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>scripts/bash
+./static.sh
+</pre></div>
+</div>
+<p><strong>Install system-wide (optional):</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>./install.sh
+</pre></div>
+</div>
+</section>
+<section id="run-unit-tests">
+<h3>Run Unit Tests<a class="headerlink" href="#run-unit-tests" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>build/debug
+./unit_tests
+</pre></div>
+</div>
+<p>You may optionally run under <cite>valgrind</cite> (Linux only):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>valgrind<span class="w"> </span>./unit_tests
+</pre></div>
+</div>
+</section>
+</section>
+<section id="dependencies">
+<h2>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h2>
+<p>Required:</p>
+<ul class="simple">
+<li><p>C++ compiler supporting C++17 (tested with GCC 14.2.1 and Clang 16.0.6)</p></li>
+<li><p>CMake ≥ 3.31.3</p></li>
+<li><p>CMocka (for unit tests)</p></li>
+</ul>
+<p>Optional:</p>
+<ul class="simple">
+<li><p>valgrind (memory leak detection)</p></li>
+<li><p>Python 3.10+ and Sphinx (for documentation)</p></li>
+</ul>
+</section>
+<section id="development-contribution">
+<h2>Development &amp; Contribution<a class="headerlink" href="#development-contribution" title="Link to this heading"></a></h2>
+<p>This library is modular and extensible. Contributions are welcome!</p>
+<ol class="arabic simple">
+<li><p>Fork the repo and create a branch</p></li>
+<li><p>Write or update code</p></li>
+<li><p>Add tests in the <cite>test</cite> directory</p></li>
+<li><p>Ensure tests pass under <cite>debug</cite> mode</p></li>
+<li><p>Update or add Sphinx docstrings</p></li>
+<li><p>Submit a pull request</p></li>
+</ol>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<p>Build the documentation using Sphinx:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs/doxygen
+python3<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+make<span class="w"> </span>html
+</pre></div>
+</div>
+<p>Documentation is also hosted online:</p>
+<p>TBD</p>
+</section>
+<section id="license">
+<h2>License<a class="headerlink" href="#license" title="Link to this heading"></a></h2>
+<p>CSalt++ is provided under the MIT License. See the <cite>LICENSE</cite> file for details.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Matrix.html" class="btn btn-neutral float-right" title="Matrix Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

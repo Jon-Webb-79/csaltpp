@@ -621,6 +621,90 @@ TEST(DotProductTest, ArrayDouble) {
     EXPECT_DOUBLE_EQ(result, 32.0);
 }
 // -------------------------------------------------------------------------------- 
+
+TEST(CrossProductTest, CStyleArrayFloat) {
+    float a[3] = {1.0f, 0.0f, 0.0f};
+    float b[3] = {0.0f, 1.0f, 0.0f};
+    float result[3];
+
+    slt::cross(a, b, result);
+
+    EXPECT_FLOAT_EQ(result[0], 0.0f);
+    EXPECT_FLOAT_EQ(result[1], 0.0f);
+    EXPECT_FLOAT_EQ(result[2], 1.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(CrossProductTest, CStyleArrayDouble) {
+    double a[3] = {0.0, 1.0, 0.0};
+    double b[3] = {0.0, 0.0, 1.0};
+    double result[3];
+
+    slt::cross(a, b, result);
+
+    EXPECT_DOUBLE_EQ(result[0], 1.0);
+    EXPECT_DOUBLE_EQ(result[1], 0.0);
+    EXPECT_DOUBLE_EQ(result[2], 0.0);
+}
+// ----------------------------------------------------------------------------
+
+TEST(CrossProductTest, StdArrayFloat) {
+    std::array<float, 3> a = {0.0f, 0.0f, 1.0f};
+    std::array<float, 3> b = {1.0f, 0.0f, 0.0f};
+
+    auto result = slt::cross(a, b);
+
+    EXPECT_FLOAT_EQ(result[0], 0.0f);
+    EXPECT_FLOAT_EQ(result[1], 1.0f);
+    EXPECT_FLOAT_EQ(result[2], 0.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(CrossProductTest, StdArrayDouble) {
+    std::array<double, 3> a = {1.0, 2.0, 3.0};
+    std::array<double, 3> b = {4.0, 5.0, 6.0};
+
+    auto result = slt::cross(a, b);
+
+    EXPECT_DOUBLE_EQ(result[0], -3.0);
+    EXPECT_DOUBLE_EQ(result[1], 6.0);
+    EXPECT_DOUBLE_EQ(result[2], -3.0);
+}
+// ----------------------------------------------------------------------------
+
+// TEST(CrossProductTest, StdVectorFloat) {
+//     std::vector<float> a = {1.0f, 2.0f, 3.0f};
+//     std::vector<float> b = {4.0f, 5.0f, 6.0f};
+//
+//     auto result = slt::cross(a, b);
+//
+//     EXPECT_FLOAT_EQ(result[0], -3.0f);
+//     EXPECT_FLOAT_EQ(result[1], 6.0f);
+//     EXPECT_FLOAT_EQ(result[2], -3.0f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(CrossProductTest, StdVectorDouble) {
+//     std::vector<double> a = {0.0, 0.0, 1.0};
+//     std::vector<double> b = {1.0, 0.0, 0.0};
+//
+//     auto result = slt::cross(a, b);
+//
+//     EXPECT_DOUBLE_EQ(result[0], 0.0);
+//     EXPECT_DOUBLE_EQ(result[1], 1.0);
+//     EXPECT_DOUBLE_EQ(result[2], 0.0);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(CrossProductTest, StdVectorThrowsOnInvalidSize) {
+//     std::vector<double> a = {1.0, 2.0}; // Only 2 elements
+//     std::vector<double> b = {3.0, 4.0, 5.0};
+//
+//     EXPECT_DEATH(slt::cross(a, b), ".*");  // Use EXPECT_DEATH if your cross function asserts on size
+// }
+
+
+// -------------------------------------------------------------------------------- 
 // TEST(DenseMatrixMatMulTest, BasicMultiplicationFloat) {
 //     slt::DenseMatrix<float> A = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
 //     slt::DenseMatrix<float> B = {{7.0f, 8.0f}, {9.0f, 10.0f}, {11.0f, 12.0f}};

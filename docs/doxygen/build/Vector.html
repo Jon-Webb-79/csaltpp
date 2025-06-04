@@ -52,6 +52,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv43dotRKNSt5arrayI1T1NEERKNSt5arrayI1T1NEE"><code class="docutils literal notranslate"><span class="pre">dot()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#cross-product">Cross Product</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0E5crossvAL3E_K1TAL3E_K1TAL3E_1T"><code class="docutils literal notranslate"><span class="pre">cross()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0E5crossNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEE"><code class="docutils literal notranslate"><span class="pre">cross()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0E5crossNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEE"><code class="docutils literal notranslate"><span class="pre">cross()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Matrix.html"> Matrix</a></li>
@@ -182,6 +188,103 @@ and computing matrix products.</p>
 </div>
 </dd></dl>
 
+</section>
+<section id="cross-product">
+<h2>Cross Product<a class="headerlink" href="#cross-product" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">cross</span></code> function computes the cross product of two 3D vectors. It is
+for both <code class="docutils literal notranslate"><span class="pre">float</span></code> and <code class="docutils literal notranslate"><span class="pre">double</span></code> types, and
+supports C-style arrays, <code class="docutils literal notranslate"><span class="pre">std::array</span></code>, and <code class="docutils literal notranslate"><span class="pre">std::vector</span></code> as input.</p>
+<p>Given two 3-dimensional vectors:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{a} = \begin{bmatrix} a_1 \\ a_2 \\ a_3 \end{bmatrix}, \quad
+\mathbf{b} = \begin{bmatrix} b_1 \\ b_2 \\ b_3 \end{bmatrix}\end{split}\]</div>
+<p>Their cross product is defined as:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\mathbf{a} \times \mathbf{b} =
+\begin{bmatrix}
+a_2 b_3 - a_3 b_2 \\
+a_3 b_1 - a_1 b_3 \\
+a_1 b_2 - a_2 b_1
+\end{bmatrix}\end{split}\]</div>
+<p>The result is a vector orthogonal to both <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>, with a direction
+determined by the right-hand rule and magnitude equal to the area of the
+parallelogram spanned by <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0E5crossvAL3E_K1TAL3E_K1TAL3E_1T">
+<span id="_CPPv3I0E5crossAL3E_K1TAL3E_K1TAL3E_1T"></span><span id="_CPPv2I0E5crossA3_K1TA3_K1TA3_1T"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cross</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E5crossvAL3E_K1TAL3E_K1TAL3E_1T" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">a</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0E5crossvAL3E_K1TAL3E_K1TAL3E_1T" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">b</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span>, <a class="reference internal" href="#_CPPv4I0E5crossvAL3E_K1TAL3E_K1TAL3E_1T" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">result</span></span><span class="p"><span class="pre">[</span></span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">]</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0E5crossvAL3E_K1TAL3E_K1TAL3E_1T" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<p>Computes the cross product of two C-style arrays of length 3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param a<span class="colon">:</span></dt>
+<dd class="field-odd"><p>First input array (length 3)</p>
+</dd>
+<dt class="field-even">param b<span class="colon">:</span></dt>
+<dd class="field-even"><p>Second input array (length 3)</p>
+</dd>
+<dt class="field-odd">param result<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Output array to hold the cross product (length 3)</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">float</span> <span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">};</span>
+<span class="nb">float</span> <span class="n">b</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">};</span>
+<span class="nb">float</span> <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">];</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">cross</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">result</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0E5crossNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEE">
+<span id="_CPPv3I0E5crossRKNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEE"></span><span id="_CPPv2I0E5crossRKNSt5arrayI1TX3EEERKNSt5arrayI1TX3EEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E5crossNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEE" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cross</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E5crossNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEE" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E5crossNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEE" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="m"><span class="pre">3</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">b</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0E5crossNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEERKNSt5arrayI1TXL3EEEE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<p>Computes the cross product of two <code class="docutils literal notranslate"><span class="pre">std::array&lt;T,</span> <span class="pre">3&gt;</span></code> inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param a<span class="colon">:</span></dt>
+<dd class="field-odd"><p>First input array</p>
+</dd>
+<dt class="field-even">param b<span class="colon">:</span></dt>
+<dd class="field-even"><p>Second input array</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A new array representing the cross product</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">double</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">};</span>
+<span class="n">std</span><span class="p">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">double</span><span class="p">,</span> <span class="mi">3</span><span class="o">&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="p">{</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">};</span>
+<span class="n">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">slt</span><span class="p">::</span><span class="n">cross</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="o">-</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.0</span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0E5crossNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEE">
+<span id="_CPPv3I0E5crossRKNSt6vectorI1TEERKNSt6vectorI1TEE"></span><span id="_CPPv2I0E5crossRKNSt6vectorI1TEERKNSt6vectorI1TEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E5crossNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEE" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cross</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E5crossNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEE" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">a</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0E5crossNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEE" title="cross::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">b</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0E5crossNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEE" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<p>Computes the cross product of two <code class="docutils literal notranslate"><span class="pre">std::vector&lt;T&gt;</span></code> values, both of size 3.</p>
+<dl class="field-list simple">
+<dt class="field-odd">param a<span class="colon">:</span></dt>
+<dd class="field-odd"><p>First input vector</p>
+</dd>
+<dt class="field-even">param b<span class="colon">:</span></dt>
+<dd class="field-even"><p>Second input vector</p>
+</dd>
+<dt class="field-odd">returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A <code class="docutils literal notranslate"><span class="pre">std::vector&lt;T&gt;</span></code> containing the cross product</p>
+</dd>
+<dt class="field-even">throws std::invalid_argument<span class="colon">:</span></dt>
+<dd class="field-even"><p>If either vector is not of size 3</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">a</span> <span class="o">=</span> <span class="p">{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">};</span>
+<span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">b</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">};</span>
+<span class="n">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">slt</span><span class="p">::</span><span class="n">cross</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">);</span>
+<span class="o">//</span> <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">}</span>
+</pre></div>
+</div>
 </section>
 </section>
 

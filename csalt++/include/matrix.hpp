@@ -1324,6 +1324,42 @@
         return dot(a.data(), b.data(), N);
     }
 // -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    inline void cross(const T* a, const T* b, T* result) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "T must be float or double");
+        assert(a && b && result);
+
+        result[0] = a[1] * b[2] - a[2] * b[1];
+        result[1] = a[2] * b[0] - a[0] * b[2];
+        result[2] = a[0] * b[1] - a[1] * b[0];
+    }
+// -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    inline std::array<T, 3> cross(const std::array<T, 3>& a, const std::array<T, 3>& b) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "T must be float or double");
+
+        return {
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0]
+        };
+    }
+// -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    inline std::vector<T> cross(const std::vector<T>& a, const std::vector<T>& b) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>, "T must be float or double");
+
+        assert(a.size() == 3 && b.size() == 3);
+        return {
+            a[1] * b[2] - a[2] * b[1],
+            a[2] * b[0] - a[0] * b[2],
+            a[0] * b[1] - a[1] * b[0]
+        };
+    }
+// -------------------------------------------------------------------------------- 
     /**
      * @brief Multiplies two DenseMatrix<T> objects using SIMD acceleration.
      *

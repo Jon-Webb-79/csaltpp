@@ -81,4 +81,79 @@ This operation multiplies each corresponding pair of elements from the input vec
       std::array<float, 3> b = {4.0f, 5.0f, 6.0f};
       float result = dot(a, b);  // returns 32.0f
 
+Cross Product
+=============
+
+The ``cross`` function computes the cross product of two 3D vectors. It is 
+for both ``float`` and ``double`` types, and 
+supports C-style arrays, ``std::array``, and ``std::vector`` as input.
+
+Given two 3-dimensional vectors:
+
+.. math::
+
+   \mathbf{a} = \begin{bmatrix} a_1 \\ a_2 \\ a_3 \end{bmatrix}, \quad
+   \mathbf{b} = \begin{bmatrix} b_1 \\ b_2 \\ b_3 \end{bmatrix}
+
+Their cross product is defined as:
+
+.. math::
+
+   \mathbf{a} \times \mathbf{b} =
+   \begin{bmatrix}
+   a_2 b_3 - a_3 b_2 \\
+   a_3 b_1 - a_1 b_3 \\
+   a_1 b_2 - a_2 b_1
+   \end{bmatrix}
+
+The result is a vector orthogonal to both ``a`` and ``b``, with a direction 
+determined by the right-hand rule and magnitude equal to the area of the 
+parallelogram spanned by ``a`` and ``b``.
+
+.. cpp:function:: template<typename T> void cross(const T a[3], const T b[3], T result[3])
+
+Computes the cross product of two C-style arrays of length 3.
+
+:param a: First input array (length 3)
+:param b: Second input array (length 3)
+:param result: Output array to hold the cross product (length 3)
+
+Example::
+
+   float a[3] = {1.0f, 0.0f, 0.0f};
+   float b[3] = {0.0f, 1.0f, 0.0f};
+   float result[3];
+   slt::cross(a, b, result);
+   // result = {0.0f, 0.0f, 1.0f}
+
+.. cpp:function:: template<typename T> std::array<T, 3> cross(const std::array<T, 3>& a, const std::array<T, 3>& b)
+
+Computes the cross product of two ``std::array<T, 3>`` inputs.
+
+:param a: First input array
+:param b: Second input array
+:returns: A new array representing the cross product
+
+Example::
+
+   std::array<double, 3> a = {1.0, 2.0, 3.0};
+   std::array<double, 3> b = {4.0, 5.0, 6.0};
+   auto result = slt::cross(a, b);
+   // result = {-3.0, 6.0, -3.0}
+
+.. cpp:function:: template<typename T> std::vector<T> cross(const std::vector<T>& a, const std::vector<T>& b)
+
+Computes the cross product of two ``std::vector<T>`` values, both of size 3.
+
+:param a: First input vector
+:param b: Second input vector
+:returns: A ``std::vector<T>`` containing the cross product
+:throws std::invalid_argument: If either vector is not of size 3
+
+Example::
+
+   std::vector<float> a = {0.0f, 0.0f, 1.0f};
+   std::vector<float> b = {1.0f, 0.0f, 0.0f};
+   auto result = slt::cross(a, b);
+   // result = {0.0f, 1.0f, 0.0f}
 

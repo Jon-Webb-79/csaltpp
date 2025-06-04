@@ -686,6 +686,7 @@
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
         std::vector<uint8_t> init; ///< Flat row-major storage of matrix initialization elements.
         std::size_t rows_, cols_; ///< Matrix dimensions. 
+        std::size_t size() const {return rows_ * cols_;}
     // ================================================================================ 
     public:
         /**
@@ -1287,7 +1288,99 @@
     DenseMatrix<T> operator*(T scalar, const DenseMatrix<T>& matrix) {
         return matrix * scalar;  // Leverage member function
     }
-} // namespace slt
+// -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    T dot(const T* a, const T* b, std::size_t size) {
+        static_assert(std::is_same<T, float>::value || std::is_same<T, double>::value,
+                      "dot<T>: only float and double are supported");
+
+        if (!a || !b) throw std::invalid_argument("Null pointer passed to dot product");
+
+        std::vector<T> temp(size);
+        simd_ops<T>::mul(a, b, temp.data(), size);
+
+        // Reduce result (scalar fallback)
+        T sum = static_cast<T>(0);
+        for (std::size_t i = 0; i < size; ++i)
+            sum += temp[i];
+
+        return sum;
+    }
+// -------------------------------------------------------------------------------- 
+
+    // 2. std::vector overload
+    template<typename T>
+    T dot(const std::vector<T>& a, const std::vector<T>& b) {
+        if (a.size() != b.size())
+            throw std::invalid_argument("Vector sizes must match for dot product.");
+        return dot(a.data(), b.data(), a.size());
+    }
+// -------------------------------------------------------------------------------- 
+
+    // 3. std::array overload
+    template<typename T, std::size_t N>
+    T dot(const std::array<T, N>& a, const std::array<T, N>& b) {
+        return dot(a.data(), b.data(), N);
+    }
+// -------------------------------------------------------------------------------- 
+    /**
+     * @brief Multiplies two DenseMatrix<T> objects using SIMD acceleration.
+     *
+     * This function performs standard matrix multiplication: C = A × B
+     * where A is m×n, B is n×p, and the resulting matrix C is m×p.
+     * It leverages SIMD for inner dot products where supported.
+     *
+     * @tparam T Matrix element type (float or double)
+     * @param A Left-hand side matrix (m × n)
+     * @param B Right-hand side matrix (n × p)
+     * @return Resulting matrix (m × p)
+     * @throws std::invalid_argument if dimensions are incompatible
+     */
+    // template <typename T>
+    // DenseMatrix<T> mat_mul(const DenseMatrix<T>& A, const DenseMatrix<T>& B) {
+    //     if (A.cols() != B.rows()) {
+    //         throw std::invalid_argument("mat_mul: incompatible dimensions");
+    //     }
+    //
+    //     const std::size_t m = A.rows();
+    //     const std::size_t n = A.cols();
+    //     const std::size_t p = B.cols();
+    //
+    //     DenseMatrix<T> C(m, p);
+    //
+    //     for (std::size_t i = 0; i < m; ++i) {
+    //         for (std::size_t j = 0; j < p; ++j) {
+    //             // Allocate temporary arrays to hold the i-th row of A and j-th column of B
+    //             std::vector<T> row(n);
+    //             std::vector<T> col(n);
+    //
+    //             for (std::size_t k = 0; k < n; ++k) {
+    //                 if (A.is_initialized(i, k)) row[k] = A.get(i, k);
+    //                 else row[k] = T(0);
+    //
+    //                 if (B.is_initialized(k, j)) col[k] = B.get(k, j);
+    //                 else col[k] = T(0);
+    //             }
+    //
+    //             // Multiply element-wise and reduce
+    //             std::vector<T> prod(n, T(0));
+    //             simd_ops<T>::mul(row.data(), col.data(), prod.data(), n);
+    //
+    //             T sum = T(0);
+    //             simd_ops<T>::add_scalar(prod.data(), T(0), &sum, 1);  // Reduce fallback
+    //
+    //             for (std::size_t k = 0; k < n; ++k) {
+    //                 sum += prod[k];
+    //             }
+    //
+    //             C.set(i, j, sum);
+    //         }
+    //     }
+    //
+    //     return C;
+    // }
+ } // namespace slt
 // ================================================================================ 
 // ================================================================================ 
 #endif /* MATRIX_HPP */

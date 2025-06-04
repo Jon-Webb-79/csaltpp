@@ -78,6 +78,7 @@ Typical Use Cases
    :maxdepth: 1
    :caption: Modules:
 
+    Vector <Vector>
     Matrix <Matrix>
     SIMD <Simd>
     

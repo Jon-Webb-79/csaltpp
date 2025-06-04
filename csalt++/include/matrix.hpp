@@ -696,8 +696,18 @@
          * @param c Number of columns.
          * @param value Initial value for all elements (defaults to zero).
          */
-        DenseMatrix(std::size_t r, std::size_t c, T value = T{})
-            : data(r * c, value), init(r * c, value != T{}), rows_(r), cols_(c) {}
+        DenseMatrix(std::size_t r, std::size_t c, T value)
+            : data(r * c, value), init(r * c, 1), rows_(r), cols_(c) {}
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a matrix with given dimensions and initial value.
+         *
+         * @param r Number of rows.
+         * @param c Number of columns.
+         */
+        DenseMatrix(std::size_t r, std::size_t c)
+            : data(r * c, 0), init(r * c, 0), rows_(r), cols_(c) {}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1016,7 +1026,7 @@
             DenseMatrix<T> A(*this);
             DenseMatrix<T> I(n, n, T{});
             for (std::size_t i = 0; i < n; ++i)
-                I.set(i, i, T{1});  // Identity matrix
+                I.update(i, i, T{1});  // Identity matrix
 
             for (std::size_t i = 0; i < n; ++i) {
                 // Pivot selection (partial pivoting)
@@ -1360,6 +1370,40 @@
         };
     }
 // -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    DenseMatrix<T> mat_mul(const DenseMatrix<T>& A, const DenseMatrix<T>& B) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "mat_mul only supports float or double types.");
+
+        const std::size_t A_rows = A.rows();
+        const std::size_t A_cols = A.cols();
+        const std::size_t B_rows = B.rows();
+        const std::size_t B_cols = B.cols();
+
+        if (A_cols != B_rows) {
+            throw std::invalid_argument("Matrix dimensions are incompatible for multiplication.");
+        }
+
+        DenseMatrix<T> result(A_rows, B_cols);
+
+        for (std::size_t i = 0; i < A_rows; ++i) {
+            for (std::size_t j = 0; j < B_cols; ++j) {
+                // Extract row i of A and column j of B
+                std::vector<T> row(A_cols);
+                std::vector<T> col(A_cols);
+                for (std::size_t k = 0; k < A_cols; ++k) {
+                    row[k] = A.get(i, k);
+                    col[k] = B.get(k, j);
+                }
+                result.set(i, j, dot(row, col));
+            }
+        }
+
+        return result;
+    }
+
+
     /**
      * @brief Multiplies two DenseMatrix<T> objects using SIMD acceleration.
      *

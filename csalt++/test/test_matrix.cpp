@@ -672,104 +672,93 @@ TEST(CrossProductTest, StdArrayDouble) {
 }
 // ----------------------------------------------------------------------------
 
-// TEST(CrossProductTest, StdVectorFloat) {
-//     std::vector<float> a = {1.0f, 2.0f, 3.0f};
-//     std::vector<float> b = {4.0f, 5.0f, 6.0f};
-//
-//     auto result = slt::cross(a, b);
-//
-//     EXPECT_FLOAT_EQ(result[0], -3.0f);
-//     EXPECT_FLOAT_EQ(result[1], 6.0f);
-//     EXPECT_FLOAT_EQ(result[2], -3.0f);
-// }
-// // -------------------------------------------------------------------------------- 
-//
-// TEST(CrossProductTest, StdVectorDouble) {
-//     std::vector<double> a = {0.0, 0.0, 1.0};
-//     std::vector<double> b = {1.0, 0.0, 0.0};
-//
-//     auto result = slt::cross(a, b);
-//
-//     EXPECT_DOUBLE_EQ(result[0], 0.0);
-//     EXPECT_DOUBLE_EQ(result[1], 1.0);
-//     EXPECT_DOUBLE_EQ(result[2], 0.0);
-// }
-// // -------------------------------------------------------------------------------- 
-//
-// TEST(CrossProductTest, StdVectorThrowsOnInvalidSize) {
-//     std::vector<double> a = {1.0, 2.0}; // Only 2 elements
-//     std::vector<double> b = {3.0, 4.0, 5.0};
-//
-//     EXPECT_DEATH(slt::cross(a, b), ".*");  // Use EXPECT_DEATH if your cross function asserts on size
-// }
+TEST(CrossProductTest, StdVectorFloat) {
+    std::vector<float> a = {1.0f, 2.0f, 3.0f};
+    std::vector<float> b = {4.0f, 5.0f, 6.0f};
 
+    auto result = slt::cross(a, b);
 
-// -------------------------------------------------------------------------------- 
-// TEST(DenseMatrixMatMulTest, BasicMultiplicationFloat) {
-//     slt::DenseMatrix<float> A = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
-//     slt::DenseMatrix<float> B = {{7.0f, 8.0f}, {9.0f, 10.0f}, {11.0f, 12.0f}};
-//
-//     slt::DenseMatrix<float> C = slt::mat_mul(A, B);
-//
-//     C.print();
-    // ASSERT_FLOAT_EQ(C.get(0, 0), 58.0f);
-    // ASSERT_FLOAT_EQ(C.get(0, 1), 64.0f);
-    // ASSERT_FLOAT_EQ(C.get(1, 0), 139.0f);
-    // ASSERT_FLOAT_EQ(C.get(1, 1), 154.0f);
-//}
+    EXPECT_FLOAT_EQ(result[0], -3.0f);
+    EXPECT_FLOAT_EQ(result[1], 6.0f);
+    EXPECT_FLOAT_EQ(result[2], -3.0f);
+}
 // -------------------------------------------------------------------------------- 
 
-// TEST(DenseMatrixMatMulTest, IdentityMatrixMultiplication) {
-//     slt::DenseMatrix<double> I(3, 3);
-//     for (size_t i = 0; i < 3; ++i)
-//         I.set(i, i, 1.0);
-//
-//     slt::DenseMatrix<double> A(3, 3);
-//     A.set(0, 0, 5.0); A.set(0, 1, 6.0); A.set(0, 2, 7.0);
-//     A.set(1, 0, 1.0); A.set(1, 1, 2.0); A.set(1, 2, 3.0);
-//     A.set(2, 0, 4.0); A.set(2, 1, 0.0); A.set(2, 2, 8.0);
-//
-//     slt::DenseMatrix<double> C = slt::mat_mul(A, I);
-//
-//     for (size_t i = 0; i < 3; ++i)
-//         for (size_t j = 0; j < 3; ++j)
-//             ASSERT_DOUBLE_EQ(C.get(i, j), A.get(i, j));
-// }
-// // -------------------------------------------------------------------------------- 
-//
+TEST(CrossProductTest, StdVectorDouble) {
+    std::vector<double> a = {0.0, 0.0, 1.0};
+    std::vector<double> b = {1.0, 0.0, 0.0};
+
+    auto result = slt::cross(a, b);
+
+    EXPECT_DOUBLE_EQ(result[0], 0.0);
+    EXPECT_DOUBLE_EQ(result[1], 1.0);
+    EXPECT_DOUBLE_EQ(result[2], 0.0);
+}
+// -------------------------------------------------------------------------------- 
+TEST(DenseMatrixMatMulTest, BasicMultiplicationFloat) {
+    slt::DenseMatrix<float> A = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
+    slt::DenseMatrix<float> B = {{7.0f, 8.0f}, {9.0f, 10.0f}, {11.0f, 12.0f}};
+
+    slt::DenseMatrix<float> C = slt::mat_mul(A, B);
+
+    ASSERT_FLOAT_EQ(C.get(0, 0), 58.0f);
+    ASSERT_FLOAT_EQ(C.get(0, 1), 64.0f);
+    ASSERT_FLOAT_EQ(C.get(1, 0), 139.0f);
+    ASSERT_FLOAT_EQ(C.get(1, 1), 154.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMatMulTest, IdentityMatrixMultiplication) {
+    slt::DenseMatrix<double> I = {{1.0, 0.0, 0.0},
+                                  {0.0, 1.0, 0.0},
+                                  {0.0, 0.0, 1.0}};
+
+    // for (size_t i = 0; i < 3; ++i)
+    //     I.set(i, i, 1.0);
+
+    slt::DenseMatrix<double> A(3, 3);
+    A.set(0, 0, 5.0); A.set(0, 1, 6.0); A.set(0, 2, 7.0);
+    A.set(1, 0, 1.0); A.set(1, 1, 2.0); A.set(1, 2, 3.0);
+    A.set(2, 0, 4.0); A.set(2, 1, 0.0); A.set(2, 2, 8.0);
+    slt::DenseMatrix<double> C = slt::mat_mul(A, I);
+    for (size_t i = 0; i < 3; ++i)
+        for (size_t j = 0; j < 3; ++j)
+            ASSERT_DOUBLE_EQ(C.get(i, j), A.get(i, j));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMatMulTest, ZeroMatrixMultiplication) {
+    slt::DenseMatrix<float> A(2, 3, 5.0f);  // All values set to 0.0f and marked initialized
+    slt::DenseMatrix<float> B(3, 4, 0.0f);  // Same here
+    float a = A.get(0,0);
+    std::cout << a << "\n";
+    slt::DenseMatrix<float> C = slt::mat_mul(A, B);
+
+    for (size_t i = 0; i < C.rows(); ++i)
+        for (size_t j = 0; j < C.cols(); ++j)
+            ASSERT_FLOAT_EQ(C.get(i, j), 0.0f);
+}
+// -------------------------------------------------------------------------------- 
+
 // TEST(DenseMatrixMatMulTest, ZeroMatrixMultiplication) {
 //     slt::DenseMatrix<float> A(2, 3);
 //     slt::DenseMatrix<float> B(3, 4);
 //     slt::DenseMatrix<float> C = slt::mat_mul(A, B);
-//
+//     C.print();
 //     for (size_t i = 0; i < C.rows(); ++i)
 //         for (size_t j = 0; j < C.cols(); ++j)
 //             ASSERT_FLOAT_EQ(C.get(i, j), 0.0f);
 // }
-// // -------------------------------------------------------------------------------- 
-//
-// TEST(DenseMatrixMatMulTest, DimensionMismatchThrows) {
-//     slt::DenseMatrix<float> A(2, 3);
-//     slt::DenseMatrix<float> B(4, 2);  // Mismatched inner dimensions
-//
-//     EXPECT_THROW({
-//         slt::DenseMatrix<float> C = slt::mat_mul(A, B);
-//     }, std::invalid_argument);
-// }
-// // -------------------------------------------------------------------------------- 
-//
-// TEST(DenseMatrixMatMulTest, PartiallyInitializedMatrixDefaultsToZero) {
-//     slt::DenseMatrix<float> A(1, 3);
-//     slt::DenseMatrix<float> B(3, 1);
-//
-//     A.set(0, 0, 1.0f);              // A[0][1] and A[0][2] are default-initialized
-//     B.set(0, 0, 2.0f); B.set(1, 0, 3.0f);  // B[2][0] is default-initialized
-//
-//     slt::DenseMatrix<float> C = slt::mat_mul(A, B);
-//
-//     float expected = 1.0f * 2.0f + 0.0f * 3.0f + 0.0f * 0.0f;
-//     ASSERT_FLOAT_EQ(C.get(0, 0), expected);
-// }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMatMulTest, DimensionMismatchThrows) {
+    slt::DenseMatrix<float> A(2, 3, 0.0f);
+    slt::DenseMatrix<float> B(4, 2, 0.0f);  // Mismatched inner dimensions
+
+    EXPECT_THROW({
+        slt::DenseMatrix<float> C = slt::mat_mul(A, B);
+    }, std::invalid_argument);
+}
 // ================================================================================
 // ================================================================================
 // eof

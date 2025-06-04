@@ -59,22 +59,32 @@ including fixed-size dimensions, nested containers, initializer lists, and flat 
 Fixed Dimensions
 ~~~~~~~~~~~~~~~~
 
-.. cpp:function:: DenseMatrix(std::size_t rows, std::size_t cols, T value = T{})
+.. cpp:function:: DenseMatrix(std::size_t rows, std::size_t cols, T value)
 
    Constructs a matrix of the given dimensions and initializes all values to ``value``.
-   If ``value`` is not provided, the elements default to zero. Elements are marked as initialized
-   if ``value != T{}``.
 
    :param rows: Number of rows in the matrix.
    :param cols: Number of columns in the matrix.
-   :param value: Initial value for all elements (optional).
+   :param value: Initial value for all elements.
+
+   :throws std::invalid_argument: If either dimension is zero.
+
+   Example::
+
+      slt::DenseMatrix<float> B(2, 4, 1.0f);     // 2x4 matrix filled with 1.0
+
+.. cpp:function:: DenseMatrix(std::size_t rows, std::size_t cols)
+
+   Constructs a matrix of the given dimensions without initializing elements
+
+   :param rows: Number of rows in the matrix.
+   :param cols: Number of columns in the matrix.
 
    :throws std::invalid_argument: If either dimension is zero.
 
    Example::
 
       slt::DenseMatrix<double> A(3, 3);          // 3x3 zero matrix
-      slt::DenseMatrix<float> B(2, 4, 1.0f);     // 2x4 matrix filled with 1.0
 
 2D std::vector
 ~~~~~~~~~~~~~~
@@ -531,3 +541,79 @@ Scalar * Matrix
       slt::DenseMatrix<float> A = {{1.0f, 2.0f}, {3.0f, 4.0f}};
       auto B = 2.0f * A;  // B is {{2.0f, 4.0f}, {6.0f, 8.0f}}
 
+Matrix Multiplication
+~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template<typename T> DenseMatrix<T> mat_mul(const DenseMatrix<T>& A, const DenseMatrix<T>& B)
+
+   Performs matrix multiplication between two ``DenseMatrix<T>`` instances. This function computes the dot product 
+   of rows from the left-hand side matrix with columns of the right-hand side matrix. SIMD acceleration is applied 
+   internally to speed up dot product calculations when available.
+
+   The resulting matrix has dimensions :math:`(m \times n)` where:
+
+   - ``A`` is an :math:`(m \times k)` matrix
+   - ``B`` is a :math:`(k \times n)` matrix
+
+   The mathematical operation performed is:
+
+   .. math::
+
+      C_{i,j} = \sum_{l=1}^{k} A_{i,l} \cdot B_{l,j}
+
+   :param A: Left-hand side matrix of shape (m × k)
+   :param B: Right-hand side matrix of shape (k × n)
+   :returns: Resultant matrix of shape (m × n)
+   :throws std::invalid_argument: If inner dimensions (A.cols != B.rows) do not match
+   :throws std::runtime_error: If uninitialized elements are accessed during multiplication
+
+   ----
+
+   **Example (float)**
+
+   .. code-block:: cpp
+
+      #include "dense_matrix.hpp"
+
+      slt::DenseMatrix<float> A = {
+         {1.0f, 2.0f, 3.0f},
+         {4.0f, 5.0f, 6.0f}
+      };
+
+      slt::DenseMatrix<float> B = {
+         {7.0f, 8.0f},
+         {9.0f, 10.0f},
+         {11.0f, 12.0f}
+      };
+
+      slt::DenseMatrix<float> C = slt::mat_mul(A, B);
+      C.print();
+
+   **Output**::
+
+      58.0 64.0
+      139.0 154.0
+
+   ----
+
+   **Example (double)**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<double> A = {
+         {2.0, 0.0},
+         {1.0, 3.0}
+      };
+
+      slt::DenseMatrix<double> B = {
+         {1.0, 2.0},
+         {4.0, 5.0}
+      };
+
+      slt::DenseMatrix<double> C = slt::mat_mul(A, B);
+      C.print();
+
+   **Output**::
+
+      2.0 4.0
+      13.0 17.0

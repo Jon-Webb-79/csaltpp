@@ -338,8 +338,27 @@
                 for (std::size_t i = end; i < size; ++i)
                     result[i] = a[i] / scalar;
             }
+// -------------------------------------------------------------------------------- 
 
-
+            static void copy(const float* src, float* dst, std::size_t size) {
+#if defined(__AVX2__)
+                std::size_t end = size / 8 * 8;
+                for (std::size_t i = 0; i < end; i += 8) {
+                    __m256 v = _mm256_loadu_ps(&src[i]);
+                    _mm256_storeu_ps(&dst[i], v);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m128 v = _mm_loadu_ps(&src[i]);
+                    _mm_storeu_ps(&dst[i], v);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    dst[i] = src[i];
+            }
         };
 // -------------------------------------------------------------------------------- 
 
@@ -600,6 +619,27 @@
                 for (std::size_t i = end; i < size; ++i)
                     result[i] = a[i] / scalar;
             }
+// -------------------------------------------------------------------------------- 
+
+            static void copy(const double* src, double* dst, std::size_t size) {
+#if defined(__AVX2__)
+                std::size_t end = size / 4 * 4;
+                for (std::size_t i = 0; i < end; i += 4) {
+                    __m256d v = _mm256_loadu_pd(&src[i]);
+                    _mm256_storeu_pd(&dst[i], v);
+                }
+#elif defined(__SSE2__)
+                std::size_t end = size / 2 * 2;
+                for (std::size_t i = 0; i < end; i += 2) {
+                    __m128d v = _mm_loadu_pd(&src[i]);
+                    _mm_storeu_pd(&dst[i], v);
+                }
+#else
+                std::size_t end = 0;
+#endif
+                for (std::size_t i = end; i < size; ++i)
+                    dst[i] = src[i];
+            }
         };
 // ================================================================================ 
 // ================================================================================ 
@@ -695,9 +735,15 @@
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
         std::vector<uint8_t> init;
         std::size_t rows_, cols_; ///< Matrix dimensions. 
-        std::size_t size() const {return rows_ * cols_;}
     // ================================================================================ 
     public:
+        std::size_t size() const {return rows_ * cols_;}
+        const T* data_ptr() const {return data.data();}
+        T* data_ptr() {return data.data();}
+        const uint8_t* init_ptr() const {return init.data();}
+        uint8_t* init_ptr() {return init.data();}
+        std::size_t nonzero_count() const {return data.size();}
+
         /**
          * @brief Constructs a matrix with given dimensions and initial value.
          *
@@ -1452,7 +1498,6 @@
     private:
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
         std::size_t rows_, cols_; ///< Matrix dimensions. 
-        std::size_t size() const {return rows_ * cols_;}  ///< Returns the total number of elments in the matrix
 
         // COO Specific data
         std::vector<std::size_t> row; ///< A vector containing row indices
@@ -1469,6 +1514,22 @@
 // ================================================================================ 
 
     public:
+        std::size_t size() const {return rows_ * cols_;}  ///< Returns the total number of elments in the matrix
+        std::size_t nonzero_count() const {return data.size();}  ///< Returns the size of the data array
+        std::size_t row_index(std::size_t i) const {
+            if (i >= row.size()) throw std::out_of_range("Row index out of range");
+            return row[i];
+        }
+
+        std::size_t col_index(std::size_t i) const {
+            if (i >= col.size()) throw std::out_of_range("Column index out of range");
+            return col[i];
+        }
+
+        T value(std::size_t i) const {
+            if (i >= data.size()) throw std::out_of_range("Value index out of range");
+            return data[i];
+        }
         /**
          * @brief Constructs an empty sparse COO matrix with given dimensions.
          *
@@ -1558,6 +1619,140 @@
                 }
                 ++i;
             }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Accesses a matrix element (read-only).
+         *
+         * Retrieves the value at the specified row and column.
+         * If the element has not been set, throws an exception.
+         *
+         * @param r Row index (zero-based).
+         * @param c Column index (zero-based).
+         * @return The value at the given position.
+         * @throws std::out_of_range if indices are out of bounds.
+         * @throws std::runtime_error if the element is uninitialized.
+         */
+        T operator()(std::size_t r, std::size_t c) const {
+            return this->get(r, c);
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Adds two sparse matrices element-wise and returns the result as a dense matrix.
+         *
+         * Performs element-wise addition of two matrices in sparse COO format. The result is returned
+         * as a `DenseMatrix<T>` to ensure full representation of potential non-zero values in the output.
+         * 
+         * Both matrices must have identical dimensions. If either matrix contains a non-zero value
+         * at a given (row, col) index, the result will include that value. Internally, values are
+         * added using a nested loop and temporary dense buffer. This operation is not optimized
+         * for SIMD or sparsity-aware acceleration but is functionally correct and safe.
+         *
+         * @param other The sparse matrix to add.
+         * @return A dense matrix containing the result of the element-wise addition.
+         * @throws std::invalid_argument if the matrix dimensions do not match.
+         *
+         * @note This implementation uses full dense representation for the result, even if the
+         *       result remains sparse. Use a future `to_sparse_sum()` method if you want a sparse result.
+         *
+         * @example
+         * @code
+         * SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+         * SparseCOOMatrix<float> B = {{0.0f, 3.0f}, {4.0f, 0.0f}};
+         * DenseMatrix<float> result = A + B;
+         * // result: [[1.0, 3.0], [4.0, 2.0]]
+         * @endcode
+         */
+        DenseMatrix<T> operator+(const SparseCOOMatrix<T>& other) const {
+            if (rows_ != other.rows_ || cols_ != other.cols_)
+                throw std::invalid_argument("Matrix dimensions must match for addition");
+
+            DenseMatrix<T> result(rows_, cols_);
+
+            // Add all elements from this sparse matrix
+            for (std::size_t i = 0; i < data.size(); ++i)
+                result.set(row[i], col[i], data[i]);
+
+            // Add all elements from the other sparse matrix
+            for (std::size_t i = 0; i < other.data.size(); ++i) {
+                std::size_t r = other.row[i];
+                std::size_t c = other.col[i];
+                if (result.is_initialized(r, c))
+                    result.update(r, c, result(r, c) + other.data[i]);
+                else
+                    result.set(r, c, other.data[i]);
+            }
+
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Adds this sparse matrix to a dense matrix, returning a dense matrix.
+         *
+         * The dimensions of both matrices must match. The result is a dense matrix
+         * that contains the element-wise sum of the dense matrix and the sparse matrix.
+         * Only non-zero values from the sparse matrix contribute to the result.
+         *
+         * If SIMD acceleration is supported for the type `T`, the addition is accelerated.
+         *
+         * @param other Dense matrix operand.
+         * @return New DenseMatrix containing the result.
+         * @throws std::invalid_argument if matrix dimensions do not match.
+         */
+        DenseMatrix<T> operator+(const DenseMatrix<T>& other) const {
+            if (rows_ != other.rows() || cols_ != other.cols())
+                throw std::invalid_argument("Matrix dimensions must match for addition");
+
+            DenseMatrix<T> result(other.rows(), other.cols());
+
+            // SIMD copy: result = other
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::copy(other.data_ptr(), result.data_ptr(), result.size());
+            } else {
+                for (std::size_t i = 0; i < result.size(); ++i)
+                    result.data_ptr()[i] = other.data_ptr()[i];
+            }
+
+            // Mark all result entries as initialized
+            std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
+
+            // Add the sparse matrix non-zero entries
+            for (std::size_t i = 0; i < data.size(); ++i) {
+                std::size_t r = row[i];
+                std::size_t c = col[i];
+                result.update(r, c, result(r, c) + data[i]);
+            }
+
+            return result;
+        }
+        
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Adds a scalar to each non-zero element of the sparse matrix.
+         *
+         * Each stored value in the COO matrix has the scalar added to it. This preserves
+         * the sparsity pattern; zero elements not explicitly stored remain unchanged.
+         *
+         * @param scalar Scalar value to add.
+         * @return A new `SparseCOOMatrix` with updated values.
+         *
+         * @example
+         * @code
+         * SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+         * auto result = A + 1.0f;
+         * // result: {{2.0f, 0.0f}, {0.0f, 3.0f}};
+         * @endcode
+         */
+        SparseCOOMatrix operator+(T scalar) const {
+            SparseCOOMatrix result(*this);
+            for (auto& val : result.data) {
+                val += scalar;
+            }
+            return result;
         }
 // -------------------------------------------------------------------------------- 
         /**
@@ -1812,7 +2007,55 @@
             return fast_set;
         }
     };
- } // namespace slt
+// ================================================================================ 
+// ================================================================================ 
+// SparseCOOMatrix friend functions 
+
+    /**
+     * @brief Adds a scalar to each non-zero element of the sparse matrix (scalar + matrix).
+     *
+     * Symmetric to `matrix + scalar`. Adds `scalar` to each stored value in the sparse matrix.
+     * The result maintains the same sparsity pattern as the original.
+     *
+     * @tparam T Element type.
+     * @param scalar Scalar value to add.
+     * @param matrix Sparse COO matrix.
+     * @return A new `SparseCOOMatrix<T>` with scalar added to each stored element.
+     */
+    template<typename T>
+    SparseCOOMatrix<T> operator+(T scalar, const SparseCOOMatrix<T>& matrix) {
+        return matrix + scalar;  // Reuse member operator+
+    }
+// -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    DenseMatrix<T> operator+(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) {
+        if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols())
+            throw std::invalid_argument("Matrix dimensions must match for addition");
+
+        DenseMatrix<T> result(dense.rows(), dense.cols());
+
+        // Copy dense matrix data to result
+        if constexpr (simd_traits<T>::supported) {
+            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
+        } else {
+            for (std::size_t i = 0; i < dense.size(); ++i)
+                result.data_ptr()[i] = dense.data_ptr()[i];
+        }
+
+        // Mark all entries as initialized
+        std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
+
+        // Add sparse values
+        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
+            std::size_t r = sparse.row_index(i);
+            std::size_t c = sparse.col_index(i);
+            result.update(r, c, result(r, c) + sparse.value(i));
+        }
+
+        return result;
+    }
+} // namespace slt
 // ================================================================================ 
 // ================================================================================ 
 #endif /* MATRIX_HPP */

@@ -759,6 +759,82 @@ TEST(DenseMatrixMatMulTest, DimensionMismatchThrows) {
         slt::DenseMatrix<float> C = slt::mat_mul(A, B);
     }, std::invalid_argument);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixSparseAdditionTest, BasicAddition) {
+    slt::DenseMatrix<float> dense({
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    });
+
+    slt::SparseCOOMatrix<float> sparse({
+        {0.0f, 5.0f},
+        {0.0f, 1.0f}
+    });
+
+    auto result = dense + sparse;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(result(0, 1), 7.0f);
+    EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
+    EXPECT_FLOAT_EQ(result(1, 1), 5.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixSparseAdditionTest, AllZeroSparseMatrix) {
+    slt::DenseMatrix<float> dense({
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    });
+
+    slt::SparseCOOMatrix<float> sparse({
+        {0.0f, 0.0f},
+        {0.0f, 0.0f}
+    });
+
+    auto result = dense + sparse;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(result(0, 1), 2.0f);
+    EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
+    EXPECT_FLOAT_EQ(result(1, 1), 4.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixSparseAdditionTest, ThrowsOnSizeMismatch) {
+    slt::DenseMatrix<float> dense({
+        {1.0f, 2.0f}
+    });
+
+    slt::SparseCOOMatrix<float> sparse({
+        {0.0f, 1.0f},
+        {2.0f, 3.0f}
+    });
+
+    EXPECT_THROW({
+        auto result = dense + sparse;
+    }, std::invalid_argument);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixSparseAdditionTest, SparseOnlyAffectsSpecifiedEntries) {
+    slt::DenseMatrix<float> dense({
+        {10.0f, 20.0f},
+        {30.0f, 40.0f}
+    });
+
+    slt::SparseCOOMatrix<float> sparse({
+        {0.0f, 0.0f},
+        {0.0f, -40.0f}
+    });
+
+    auto result = dense + sparse;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 10.0f);
+    EXPECT_FLOAT_EQ(result(0, 1), 20.0f);
+    EXPECT_FLOAT_EQ(result(1, 0), 30.0f);
+    EXPECT_FLOAT_EQ(result(1, 1), 0.0f);  // 40 - 40
+}
 // ================================================================================ 
 // ================================================================================
 
@@ -935,6 +1011,148 @@ TEST(SparseCOOMatrixUpdateTest, ThrowsOnInvalidIndex) {
     mat.finalize();
 
     EXPECT_THROW(mat.update(2, 2, 5.0f), std::out_of_range);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixAdditionTest, NonOverlappingEntries) {
+    // Matrix A:
+    // [1 0]
+    // [0 0]
+    slt::SparseCOOMatrix<float> A({
+        {1.0f, 0.0f},
+        {0.0f, 0.0f}
+    });
+
+    // Matrix B:
+    // [0 0]
+    // [0 2]
+    slt::SparseCOOMatrix<float> B({
+        {0.0f, 0.0f},
+        {0.0f, 2.0f}
+    });
+
+    slt::DenseMatrix<float> result = A + B;
+
+    ASSERT_EQ(result.rows(), 2);
+    ASSERT_EQ(result.cols(), 2);
+
+    // Check expected values
+    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);  // from A
+    EXPECT_FLOAT_EQ(result(0, 1), 0.0f);  // empty
+    EXPECT_FLOAT_EQ(result(1, 0), 0.0f);  // empty
+    EXPECT_FLOAT_EQ(result(1, 1), 2.0f);  // from B
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixAdditionTest, OverlappingEntries) {
+    // Matrix A:
+    // [1 0]
+    // [0 2]
+    slt::SparseCOOMatrix<float> A({
+        {1.0f, 0.0f},
+        {0.0f, 2.0f}
+    });
+
+    // Matrix B:
+    // [3 0]
+    // [0 4]
+    slt::SparseCOOMatrix<float> B({
+        {3.0f, 0.0f},
+        {0.0f, 4.0f}
+    });
+
+    slt::DenseMatrix<float> result = A + B;
+
+    ASSERT_EQ(result.rows(), 2);
+    ASSERT_EQ(result.cols(), 2);
+
+    // Check element-wise sum
+    EXPECT_FLOAT_EQ(result(0, 0), 4.0f);  // 1 + 3
+    EXPECT_FLOAT_EQ(result(0, 1), 0.0f);
+    EXPECT_FLOAT_EQ(result(1, 0), 0.0f);
+    EXPECT_FLOAT_EQ(result(1, 1), 6.0f);  // 2 + 4
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseSparseAdditionTest, DensePlusSparseCOO) {
+    // Dense matrix:
+    // [1 2]
+    // [3 4]
+    slt::DenseMatrix<float> dense({
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    });
+
+    // Sparse matrix:
+    // [0 5]
+    // [6 0]
+    slt::SparseCOOMatrix<float> sparse({
+        {0.0f, 5.0f},
+        {6.0f, 0.0f}
+    });
+
+    slt::DenseMatrix<float> result = dense + sparse;
+
+    ASSERT_EQ(result.rows(), 2);
+    ASSERT_EQ(result.cols(), 2);
+
+    // Check values
+    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);  // 1 + 0
+    EXPECT_FLOAT_EQ(result(0, 1), 7.0f);  // 2 + 5
+    EXPECT_FLOAT_EQ(result(1, 0), 9.0f);  // 3 + 6
+    EXPECT_FLOAT_EQ(result(1, 1), 4.0f);  // 4 + 0
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseScalarAdditionTest, SparsePlusScalar) {
+    // Sparse matrix:
+    // [0 5]
+    // [6 0]
+    slt::SparseCOOMatrix<float> sparse({
+        {0.0f, 5.0f},
+        {6.0f, 0.0f}
+    });
+
+    float scalar = 3.0f;
+    auto result = sparse + scalar;
+
+    ASSERT_EQ(result.rows(), 2);
+    ASSERT_EQ(result.cols(), 2);
+    ASSERT_EQ(result.nonzero_count(), 2);
+
+    EXPECT_EQ(result.row_index(0), 0);
+    EXPECT_EQ(result.col_index(0), 1);
+    EXPECT_FLOAT_EQ(result.value(0), 8.0f);  // 5 + 3
+
+    EXPECT_EQ(result.row_index(1), 1);
+    EXPECT_EQ(result.col_index(1), 0);
+    EXPECT_FLOAT_EQ(result.value(1), 9.0f);  // 6 + 3
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseScalarAdditionTest, ScalarPlusSparse) {
+    // Sparse matrix:
+    // [0 2]
+    // [3 0]
+    slt::SparseCOOMatrix<float> sparse({
+        {0.0f, 2.0f},
+        {3.0f, 0.0f}
+    });
+
+    float scalar = 1.5f;
+    auto result = scalar + sparse;
+
+    ASSERT_EQ(result.rows(), 2);
+    ASSERT_EQ(result.cols(), 2);
+    ASSERT_EQ(result.nonzero_count(), 2);
+
+    EXPECT_EQ(result.row_index(0), 0);
+    EXPECT_EQ(result.col_index(0), 1);
+    EXPECT_FLOAT_EQ(result.value(0), 3.5f);  // 2 + 1.5
+
+    EXPECT_EQ(result.row_index(1), 1);
+    EXPECT_EQ(result.col_index(1), 0);
+    EXPECT_FLOAT_EQ(result.value(1), 4.5f);  // 3 + 1.5
 }
 // ================================================================================
 // ================================================================================

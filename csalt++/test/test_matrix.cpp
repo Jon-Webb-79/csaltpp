@@ -896,9 +896,46 @@ TEST(SparseCOOMatrixTest, ConstructFromInitializerList) {
 
     // Check uninitialized entries
     EXPECT_FALSE(mat.is_initialized(1, 1));
+    EXPECT_FALSE(mat.set_fast());
     EXPECT_THROW(mat.get(1, 1), std::runtime_error);
 }
+// -------------------------------------------------------------------------------- 
 
+TEST(SparseCOOMatrixUpdateTest, UpdatesExistingValueAfterFinalize) {
+    slt::SparseCOOMatrix<float> mat(3, 3);
+    mat.set(0, 1, 2.0f);
+    mat.set(2, 2, 5.0f);
+    mat.finalize();
+
+    EXPECT_FLOAT_EQ(mat.get(0, 1), 2.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixUpdateTest, ThrowsIfElementNotSet) {
+    slt::SparseCOOMatrix<double> mat(2, 2);
+    mat.set(0, 0, 3.14);
+    mat.finalize();
+
+    EXPECT_THROW(mat.update(1, 1, 2.71), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixUpdateTest, ThrowsIfNotFinalized) {
+    slt::SparseCOOMatrix<float> mat(2, 2);
+    mat.set(0, 0, 1.0f);
+    // Forgot to call finalize()
+
+    EXPECT_THROW(mat.update(0, 1, 3.0f), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixUpdateTest, ThrowsOnInvalidIndex) {
+    slt::SparseCOOMatrix<float> mat(2, 2);
+    mat.set(0, 0, 1.0f);
+    mat.finalize();
+
+    EXPECT_THROW(mat.update(2, 2, 5.0f), std::out_of_range);
+}
 // ================================================================================
 // ================================================================================
 // eof

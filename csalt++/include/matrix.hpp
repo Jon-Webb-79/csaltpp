@@ -1414,6 +1414,37 @@
 // ================================================================================ 
 // ================================================================================ 
 
+    /**
+     * @class SparseCOOMatrix
+     * @brief A sparse matrix implementation using the Coordinate List (COO) format.
+     *
+     * This class stores non-zero elements of a matrix using three parallel vectors:
+     * one for row indices, one for column indices, and one for the data values.
+     * It supports two operational modes:
+     * 
+     * - **Fast Insertion Mode (`fast_set = true`)**: Allows fast, unordered appends of
+     *   (row, column, value) triplets. This mode is ideal for incremental construction
+     *   of the matrix but requires a call to `finalize()` before performing reliable
+     *   access or update operations.
+     * 
+     * - **Finalized Mode (`fast_set = false`)**: Ensures the internal storage is sorted
+     *   lexicographically by (row, column). Enables efficient binary search for
+     *   `get()`, `update()`, and `is_initialized()` methods.
+     *
+     * The class conforms to a polymorphic base class `MatrixBase<T>`, allowing it to be
+     * used in a generic matrix interface with other matrix types such as dense or CSR.
+     *
+     * @tparam T The numeric type stored in the matrix (must be `float` or `double`).
+     *
+     * Example usage:
+     * @code
+     * SparseCOOMatrix<float> mat(3, 3);
+     * mat.set(0, 0, 1.0f);
+     * mat.set(2, 1, 5.0f);
+     * mat.finalize();
+     * float value = mat.get(2, 1);  // returns 5.0
+     * @endcode
+     */
     template<typename T>
     class SparseCOOMatrix : public MatrixBase<T> {
         static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
@@ -1766,7 +1797,18 @@
         }
 // --------------------------------------------------------------------------------
 
-        bool set_optimized() const {
+        /**
+         * @brief Returns whether the matrix is in fast insertion mode.
+         *
+         * This method reports the current status of the `fast_set` flag.
+         * When true, the matrix is in fast insertion mode—entries can be appended
+         * quickly without maintaining order or checking for duplicates. When false,
+         * the matrix is in finalized mode and supports efficient retrieval operations
+         * (e.g., via binary search).
+         *
+         * @return True if the matrix is in fast insertion mode; false if finalized.
+         */
+        bool set_fast() const {
             return fast_set;
         }
     };

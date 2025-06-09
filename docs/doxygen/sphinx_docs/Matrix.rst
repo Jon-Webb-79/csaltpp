@@ -289,6 +289,78 @@ inverse()
       };
       slt::DenseMatrix<double> invA = A.inverse();
 
+size()
+~~~~~~
+.. cpp:function:: std::size_t size() const
+
+   Returns the total number of elements in the matrix (i.e., ``rows() * cols()``).
+
+   :return: Total number of matrix elements.
+
+   Example::
+
+      slt::DenseMatrix<float> A(3, 4);
+      std::size_t total = A.size();  // total == 12
+
+data_ptr()
+~~~~~~~~~~
+.. cpp:function:: const T* data_ptr() const
+
+   Returns a raw pointer to the underlying data buffer (read-only).
+
+   :return: Pointer to the start of the matrix data (row-major order).
+
+.. cpp:function:: T* data_ptr()
+
+   Returns a mutable raw pointer to the underlying data buffer.
+
+   :return: Mutable pointer to the start of the matrix data (row-major order).
+
+   Example::
+
+      slt::DenseMatrix<float> A(2, 2, 1.0f);
+      const float* ptr = A.data_ptr();        // Access read-only values
+      float* modifiable = A.data_ptr();       // Modify values directly
+
+init_ptr()
+~~~~~~~~~~
+.. cpp:function:: const uint8_t* init_ptr() const
+
+   Returns a raw pointer to the internal initialization tracking buffer (read-only).
+   Each element is 1 if the corresponding matrix element has been initialized, and 0 otherwise.
+
+   :return: Pointer to initialization flags for each matrix entry.
+
+.. cpp:function:: uint8_t* init_ptr()
+
+   Returns a mutable pointer to the internal initialization tracking buffer.
+
+   :return: Mutable pointer to initialization flags for each matrix entry.
+
+   Example::
+
+      slt::DenseMatrix<double> A(2, 2);
+      A.set(0, 0, 5.0);
+      const uint8_t* flags = A.init_ptr();
+      assert(flags[0] == 1);  // Element (0,0) is initialized
+
+nonzero_count()
+~~~~~~~~~~~~~~~
+.. cpp:function:: std::size_t nonzero_count() const
+
+   Returns the number of initialized (non-zero) elements in the matrix.
+   This is equivalent to counting how many elements are marked as initialized.
+
+   :return: Number of initialized entries.
+
+   Example::
+
+      slt::DenseMatrix<float> A(2, 2);
+      A.set(0, 0, 1.0f);
+      A.set(1, 1, 2.0f);
+      std::size_t count = A.nonzero_count();  // count == 2
+
+
 Operators
 ---------
 

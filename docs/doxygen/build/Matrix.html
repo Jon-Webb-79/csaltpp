@@ -66,6 +66,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#cols">cols()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#transpose">transpose()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#inverse">inverse()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#size">size()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#data-ptr">data_ptr()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#init-ptr">init_ptr()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#nonzero-count">nonzero_count()</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#operators">Operators</a><ul>
@@ -492,6 +496,111 @@ matrix into a (c x r) matrix.</p>
     <span class="p">{</span><span class="mf">2.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">}</span>
 <span class="p">};</span>
 <span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">invA</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">inverse</span><span class="p">();</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="size">
+<h4>size()<a class="headerlink" href="#size" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4sizeEv">
+<span id="_CPPv3NK4sizeEv"></span><span id="_CPPv2NK4sizeEv"></span><span id="sizeC"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the total number of elements in the matrix (i.e., <code class="docutils literal notranslate"><span class="pre">rows()</span> <span class="pre">*</span> <span class="pre">cols()</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Total number of matrix elements.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+<span class="n">std</span><span class="p">::</span><span class="n">size_t</span> <span class="n">total</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">size</span><span class="p">();</span>  <span class="o">//</span> <span class="n">total</span> <span class="o">==</span> <span class="mi">12</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="data-ptr">
+<h4>data_ptr()<a class="headerlink" href="#data-ptr" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK8data_ptrEv">
+<span id="_CPPv3NK8data_ptrEv"></span><span id="_CPPv2NK8data_ptrEv"></span><span id="data_ptrC"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">data_ptr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK8data_ptrEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a raw pointer to the underlying data buffer (read-only).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the start of the matrix data (row-major order).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv48data_ptrv">
+<span id="_CPPv38data_ptrv"></span><span id="_CPPv28data_ptrv"></span><span id="data_ptr"></span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">data_ptr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48data_ptrv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a mutable raw pointer to the underlying data buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mutable pointer to the start of the matrix data (row-major order).</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">const</span> <span class="nb">float</span><span class="o">*</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">data_ptr</span><span class="p">();</span>        <span class="o">//</span> <span class="n">Access</span> <span class="n">read</span><span class="o">-</span><span class="n">only</span> <span class="n">values</span>
+<span class="nb">float</span><span class="o">*</span> <span class="n">modifiable</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">data_ptr</span><span class="p">();</span>       <span class="o">//</span> <span class="n">Modify</span> <span class="n">values</span> <span class="n">directly</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="init-ptr">
+<h4>init_ptr()<a class="headerlink" href="#init-ptr" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK8init_ptrEv">
+<span id="_CPPv3NK8init_ptrEv"></span><span id="_CPPv2NK8init_ptrEv"></span><span id="init_ptrC"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">init_ptr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK8init_ptrEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a raw pointer to the internal initialization tracking buffer (read-only).
+Each element is 1 if the corresponding matrix element has been initialized, and 0 otherwise.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to initialization flags for each matrix entry.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv48init_ptrv">
+<span id="_CPPv38init_ptrv"></span><span id="_CPPv28init_ptrv"></span><span id="init_ptr"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">init_ptr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv48init_ptrv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a mutable pointer to the internal initialization tracking buffer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mutable pointer to initialization flags for each matrix entry.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">);</span>
+<span class="n">const</span> <span class="n">uint8_t</span><span class="o">*</span> <span class="n">flags</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">init_ptr</span><span class="p">();</span>
+<span class="k">assert</span><span class="p">(</span><span class="n">flags</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">);</span>  <span class="o">//</span> <span class="n">Element</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="ow">is</span> <span class="n">initialized</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="nonzero-count">
+<h4>nonzero_count()<a class="headerlink" href="#nonzero-count" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK13nonzero_countEv">
+<span id="_CPPv3NK13nonzero_countEv"></span><span id="_CPPv2NK13nonzero_countEv"></span><span id="nonzero_countC"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nonzero_count</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK13nonzero_countEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns the number of initialized (non-zero) elements in the matrix.
+This is equivalent to counting how many elements are marked as initialized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of initialized entries.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">std</span><span class="p">::</span><span class="n">size_t</span> <span class="n">count</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">nonzero_count</span><span class="p">();</span>  <span class="o">//</span> <span class="n">count</span> <span class="o">==</span> <span class="mi">2</span>
 </pre></div>
 </div>
 </dd></dl>

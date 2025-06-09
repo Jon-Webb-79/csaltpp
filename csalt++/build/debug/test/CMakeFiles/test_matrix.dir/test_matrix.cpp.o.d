@@ -278,6 +278,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: \
  /usr/include/c++/11/algorithm \
  /usr/include/c++/11/pstl/glue_algorithm_defs.h \
  /usr/include/c++/11/iomanip /usr/include/c++/11/bits/quoted_string.h \
+ /usr/include/c++/11/numeric /usr/include/c++/11/bits/stl_numeric.h \
+ /usr/include/c++/11/pstl/glue_numeric_defs.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h \

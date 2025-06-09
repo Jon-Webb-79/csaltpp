@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <iomanip>
 #include <cassert>
+#include <numeric>
 
 #ifdef __AVX2__
         #include <immintrin.h>
@@ -664,6 +665,14 @@
          * @return A std::unique_ptr to a new MatrixBase-derived object with the same contents.
          */
         virtual std::unique_ptr<MatrixBase<T>> clone() const = 0;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Determines if a row column pair is initialized 
+         *
+         * @return true if initialized false otherwise
+         */
+        virtual bool is_initialized(std::size_t row, std::size_t col) const = 0;
     };
 // ================================================================================ 
 // ================================================================================ 
@@ -684,7 +693,7 @@
 
     private:
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
-        std::vector<uint8_t> init; ///< Flat row-major storage of matrix initialization elements.
+        std::vector<uint8_t> init;
         std::size_t rows_, cols_; ///< Matrix dimensions. 
         std::size_t size() const {return rows_ * cols_;}
     // ================================================================================ 
@@ -1224,7 +1233,7 @@
          * @return true if initialized, false otherwise.
          * @throws std::out_of_range if the index is invalid.
          */
-        bool is_initialized(std::size_t row, std::size_t col) const {
+        bool is_initialized(std::size_t row, std::size_t col) const override {
             if (row >= rows_ || col >= cols_)
                 throw std::out_of_range("Index out of range");
             return init[row * cols_ + col] != 0;
@@ -1402,64 +1411,365 @@
 
         return result;
     }
+// ================================================================================ 
+// ================================================================================ 
 
+    template<typename T>
+    class SparseCOOMatrix : public MatrixBase<T> {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "DenseMatrix only supports float or double");
+    private:
+        std::vector<T> data; ///< Flat row-major storage of matrix elements. 
+        std::size_t rows_, cols_; ///< Matrix dimensions. 
+        std::size_t size() const {return rows_ * cols_;}  ///< Returns the total number of elments in the matrix
 
-    /**
-     * @brief Multiplies two DenseMatrix<T> objects using SIMD acceleration.
-     *
-     * This function performs standard matrix multiplication: C = A × B
-     * where A is m×n, B is n×p, and the resulting matrix C is m×p.
-     * It leverages SIMD for inner dot products where supported.
-     *
-     * @tparam T Matrix element type (float or double)
-     * @param A Left-hand side matrix (m × n)
-     * @param B Right-hand side matrix (n × p)
-     * @return Resulting matrix (m × p)
-     * @throws std::invalid_argument if dimensions are incompatible
-     */
-    // template <typename T>
-    // DenseMatrix<T> mat_mul(const DenseMatrix<T>& A, const DenseMatrix<T>& B) {
-    //     if (A.cols() != B.rows()) {
-    //         throw std::invalid_argument("mat_mul: incompatible dimensions");
-    //     }
-    //
-    //     const std::size_t m = A.rows();
-    //     const std::size_t n = A.cols();
-    //     const std::size_t p = B.cols();
-    //
-    //     DenseMatrix<T> C(m, p);
-    //
-    //     for (std::size_t i = 0; i < m; ++i) {
-    //         for (std::size_t j = 0; j < p; ++j) {
-    //             // Allocate temporary arrays to hold the i-th row of A and j-th column of B
-    //             std::vector<T> row(n);
-    //             std::vector<T> col(n);
-    //
-    //             for (std::size_t k = 0; k < n; ++k) {
-    //                 if (A.is_initialized(i, k)) row[k] = A.get(i, k);
-    //                 else row[k] = T(0);
-    //
-    //                 if (B.is_initialized(k, j)) col[k] = B.get(k, j);
-    //                 else col[k] = T(0);
-    //             }
-    //
-    //             // Multiply element-wise and reduce
-    //             std::vector<T> prod(n, T(0));
-    //             simd_ops<T>::mul(row.data(), col.data(), prod.data(), n);
-    //
-    //             T sum = T(0);
-    //             simd_ops<T>::add_scalar(prod.data(), T(0), &sum, 1);  // Reduce fallback
-    //
-    //             for (std::size_t k = 0; k < n; ++k) {
-    //                 sum += prod[k];
-    //             }
-    //
-    //             C.set(i, j, sum);
-    //         }
-    //     }
-    //
-    //     return C;
-    // }
+        // COO Specific data
+        std::vector<std::size_t> row; ///< A vector containing row indices
+        std::vector<std::size_t> col; ///< A vector containing column indices
+        bool fast_set = true;  ///< true if vectors are optimized for insertation, false if optimized for retrieval
+
+        // Comparator for sorting and binary search
+        struct COOComparator {
+            bool operator()(std::pair<std::size_t, std::size_t> a,
+                            std::pair<std::size_t, std::size_t> b) const {
+                return a.first < b.first || (a.first == b.first && a.second < b.second);
+            }
+        };
+// ================================================================================ 
+
+    public:
+        /**
+         * @brief Constructs an empty sparse COO matrix with given dimensions.
+         *
+         * Initializes internal storage with a small reserved capacity and sets the
+         * fast insertion mode according to `fastInsert`.
+         *
+         * @param r Number of rows in the matrix.
+         * @param c Number of columns in the matrix.
+         * @param fastInsert If true, enables fast insertion mode (default: true).
+         */
+        explicit SparseCOOMatrix(std::size_t r, std::size_t c, bool fastInsert = true)
+            : rows_(r), cols_(c), fast_set(fastInsert) {
+            row.reserve(8);
+            col.reserve(8);
+            data.reserve(8);
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a sparse COO matrix from a 2D std::vector.
+         *
+         * Non-zero elements from the input vector are inserted into the sparse matrix.
+         * If `fastInsert` is true, elements are inserted in append mode and `finalize()`
+         * must be called manually before sorted access (e.g., get()).
+         *
+         * @param vec A 2D vector representing the matrix.
+         * @param fastInsert Enables fast insertion mode if true (default: true).
+         * @throws std::invalid_argument if rows have inconsistent lengths.
+         */
+        SparseCOOMatrix(const std::vector<std::vector<T>>& vec, bool fastInsert = true)
+            : rows_(vec.size()), cols_(vec.empty() ? 0 : vec[0].size()), fast_set(fastInsert) {
+            for (std::size_t i = 0; i < rows_; ++i) {
+                if (vec[i].size() != cols_)
+                    throw std::invalid_argument("All rows must have the same number of columns");
+
+                for (std::size_t j = 0; j < cols_; ++j) {
+                    if (vec[i][j] != T{})  // Skip zeros
+                        this->set(i, j, vec[i][j]);
+                }
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a sparse COO matrix from a fixed-size std::array.
+         *
+         * Non-zero values in the 2D array are inserted into the matrix.
+         *
+         * @tparam Rows Number of rows in the static array.
+         * @tparam Cols Number of columns in the static array.
+         * @param arr Fixed-size array of values to initialize the matrix.
+         * @param fastInsert Enables fast insertion mode if true (default: true).
+         */
+        template<std::size_t Rows, std::size_t Cols>
+        explicit SparseCOOMatrix(const std::array<std::array<T, Cols>, Rows>& arr, bool fastInsert = true)
+            : rows_(Rows), cols_(Cols), fast_set(fastInsert) {
+            for (std::size_t i = 0; i < Rows; ++i) {
+                for (std::size_t j = 0; j < Cols; ++j) {
+                    if (arr[i][j] != T{})  // Skip zeros
+                        this->set(i, j, arr[i][j]);
+                }
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a sparse COO matrix from a nested initializer list.
+         *
+         * This allows convenient initialization using brace-enclosed lists. Only
+         * non-zero elements are stored. Rows must be of consistent length.
+         *
+         * @param initList Nested initializer list (e.g., `{{1, 0}, {0, 2}}`).
+         * @param fastInsert Enables fast insertion mode if true (default: true).
+         * @throws std::invalid_argument if inner lists have inconsistent sizes.
+         */
+        SparseCOOMatrix(std::initializer_list<std::initializer_list<T>> initList, bool fastInsert = true)
+            : rows_(initList.size()), cols_(initList.begin()->size()), fast_set(fastInsert) {
+            std::size_t i = 0;
+            for (const auto& rowList : initList) {
+                if (rowList.size() != cols_)
+                    throw std::invalid_argument("All rows must have the same number of columns");
+                std::size_t j = 0;
+                for (const T& val : rowList) {
+                    if (val != T{})
+                        this->set(i, j, val);
+                    ++j;
+                }
+                ++i;
+            }
+        }
+// -------------------------------------------------------------------------------- 
+        /**
+        * @brief Returns the number of rows in the matrix.
+        */
+        std::size_t rows() const override { return rows_; }
+// -------------------------------------------------------------------------------- 
+
+        /**
+        * @brief Returns the number of columns in the matrix.
+        */
+        std::size_t cols() const override { return cols_; }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Gets a matrix element.
+         *
+         * Implements the MatrixBase interface.
+         *
+         * @param row Row index.
+         * @param col Column index.
+         * @return Value at (row, col).
+         */
+        T get(std::size_t r, std::size_t c) const override {
+            if (r >= rows_ || c >= cols_)
+                throw std::out_of_range("Index out of bounds");
+
+            if (fast_set) {
+                // Linear search (O(n)) for unsorted data
+                for (std::size_t i = 0; i < data.size(); ++i) {
+                    if (row[i] == r && col[i] == c)
+                        return data[i];
+                }
+                throw std::runtime_error("Accessing uninitialized matrix element");
+            }
+
+            // Binary search (O(log n)) for sorted data
+            std::size_t left = 0;
+            std::size_t right = data.size();
+
+            while (left < right) {
+                std::size_t mid = left + (right - left) / 2;
+                if (row[mid] == r && col[mid] == c) {
+                    return data[mid];
+                } else if (row[mid] < r || (row[mid] == r && col[mid] < c)) {
+                    left = mid + 1;
+                } else {
+                    right = mid;
+                }
+            }
+
+            throw std::runtime_error("Accessing uninitialized matrix element");
+        }
+// -------------------------------------------------------------------------------- 
+    
+        /**
+         * @brief Creates a polymorphic deep copy of this matrix.
+         *
+         * @return Unique pointer to the copied matrix.
+         */
+        std::unique_ptr<MatrixBase<T>> clone() const override {
+            return std::make_unique<SparseCOOMatrix>(*this);
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Sets a value in the matrix at the given (row, column) index.
+         *
+         * If `fast_set` is true, the value is appended without checking for duplicates
+         * or maintaining order (O(1) insertion). This is efficient for bulk construction
+         * but requires calling `finalize()` before reliable queries.
+         *
+         * If `fast_set` is false, the method performs a binary search and inserts the
+         * value at the correct sorted position. Duplicate insertions will throw.
+         *
+         * @param r Row index of the element.
+         * @param c Column index of the element.
+         * @param value Value to insert.
+         * @return True on successful insertion.
+         * @throws std::out_of_range if indices are invalid.
+         * @throws std::runtime_error if value already exists and `fast_set` is false.
+         */
+        void set(std::size_t r, std::size_t c, T value) override {
+            if (r >= rows_ || c >= cols_)
+                throw std::out_of_range("Index out of bounds");
+
+            if (fast_set) {
+                // Fast insert: append to end without checking for duplicates
+                row.push_back(r);
+                col.push_back(c);
+                data.push_back(value);
+                return;
+            }
+
+            // Sorted insert with binary search
+            auto it = std::lower_bound(
+                row.begin(), row.end(),
+                std::make_pair(r, c),
+                [this](std::size_t i, const std::pair<std::size_t, std::size_t>& target) {
+                    return std::pair<std::size_t, std::size_t>{row[i], col[i]} < target;
+                });
+
+            std::size_t index = std::distance(row.begin(), it);
+
+            if (index < row.size() && row[index] == r && col[index] == c) {
+                throw std::runtime_error("Value already set. Use update() instead.");
+            }
+
+            row.insert(row.begin() + index, r);
+            col.insert(col.begin() + index, c);
+            data.insert(data.begin() + index, value);
+            return;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Updates an existing value in the matrix at (row, column).
+         *
+         * Performs a binary search for the target index. If the element is found,
+         * the value is updated in-place. If the element does not exist, an exception
+         * is thrown (you must call `set()` first).
+         *
+         * This method requires `finalize()` to have been called if the matrix was
+         * initially constructed in fast insertion mode.
+         *
+         * @param r Row index of the element.
+         * @param c Column index of the element.
+         * @param value New value to assign to the existing element.
+         * @return True on successful update.
+         * @throws std::out_of_range if indices are invalid.
+         * @throws std::runtime_error if the element is not already set.
+         */
+        void update(std::size_t r, std::size_t c, T value) {
+            if (r >= rows_ || c >= cols_)
+                throw std::out_of_range("Index out of bounds");
+
+            // Step 1: Binary search for the index
+            auto it = std::lower_bound(
+                row.begin(), row.end(),
+                std::make_pair(r, c),
+                [this](size_t i, const std::pair<size_t, size_t>& target) {
+                    return std::pair<size_t, size_t>{row[i], col[i]} < target;
+                });
+
+            std::size_t index = std::distance(row.begin(), it);
+
+            // Step 2: Must already exist
+            if (index >= row.size() || row[index] != r || col[index] != c) {
+                throw std::runtime_error("Element not set yet. Use set() first.");
+            }
+
+            data[index] = value;
+            return;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Checks whether an element at (row, column) has been initialized.
+         *
+         * Searches for the target index using binary search. The result is reliable
+         * only if `finalize()` has been called after using fast insertion mode.
+         *
+         * @param r Row index of the element.
+         * @param c Column index of the element.
+         * @return True if the element has been initialized (i.e., set or updated).
+         * @throws std::out_of_range if indices are invalid.
+         */
+        bool is_initialized(std::size_t r, std::size_t c) const override {
+            if (r >= rows_ || c >= cols_)
+                throw std::out_of_range("Index out of range");
+
+            if (fast_set) {
+                // Linear search for unsorted data
+                for (std::size_t i = 0; i < data.size(); ++i) {
+                    if (row[i] == r && col[i] == c)
+                        return true;
+                }
+                return false;
+            } else {
+                // Binary search for sorted data
+                std::size_t left = 0;
+                std::size_t right = data.size();
+
+                while (left < right) {
+                    std::size_t mid = left + (right - left) / 2;
+                    if (row[mid] == r && col[mid] == c)
+                        return true;
+                    else if (row[mid] < r || (row[mid] == r && col[mid] < c))
+                        left = mid + 1;
+                    else
+                        right = mid;
+                }
+
+                return false;
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Finalizes the internal COO representation for querying.
+         *
+         * This method is required after using fast insertion mode (`fast_set = true`)
+         * to sort the (row, column, value) triplets into lexicographic order. Once
+         * finalized, efficient binary search and reliable get/update/is_initialized
+         * operations are enabled.
+         *
+         * This method performs a stable sort and disables fast insertion mode.
+         */
+        void finalize() {
+            if (!fast_set) return;
+
+            std::vector<std::size_t> indices(data.size());
+            std::iota(indices.begin(), indices.end(), 0);
+
+            std::stable_sort(indices.begin(), indices.end(),
+                [this](std::size_t a, std::size_t b) {
+                    return std::tie(row[a], col[a]) < std::tie(row[b], col[b]);
+                });
+
+            std::vector<std::size_t> sorted_row, sorted_col;
+            std::vector<T> sorted_data;
+            sorted_row.reserve(row.size());
+            sorted_col.reserve(col.size());
+            sorted_data.reserve(data.size());
+
+            for (std::size_t idx : indices) {
+                sorted_row.push_back(row[idx]);
+                sorted_col.push_back(col[idx]);
+                sorted_data.push_back(data[idx]);
+            }
+
+            row = std::move(sorted_row);
+            col = std::move(sorted_col);
+            data = std::move(sorted_data);
+
+            fast_set = false;
+        }
+// --------------------------------------------------------------------------------
+
+        bool set_optimized() const {
+            return fast_set;
+        }
+    };
  } // namespace slt
 // ================================================================================ 
 // ================================================================================ 

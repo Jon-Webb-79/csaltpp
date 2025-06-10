@@ -95,6 +95,17 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#sparsecoomatrix-t">SparseCOOMatrix&lt;T&gt;</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Constructors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Fixed Dimensions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id5">2D std::vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#d-std-array">2D std::array</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Initializer List</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#flat-storage-constructor">Flat Storage Constructor</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Simd.html"> SIMD</a></li>
@@ -1065,6 +1076,177 @@ internally to speed up dot product calculations when available.</p>
 <p><strong>Output</strong>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">2.0</span> <span class="mf">4.0</span>
 <span class="mf">13.0</span> <span class="mf">17.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+<section id="sparsecoomatrix-t">
+<h2>SparseCOOMatrix&lt;T&gt;<a class="headerlink" href="#sparsecoomatrix-t" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code> class provides a memory-efficient representation of sparse matrices
+using the Coordinate List (COO) format. It stores non-zero values along with their corresponding
+row and column indices, making it ideal for matrices with a high proportion of zero entries.</p>
+<p>This class supports both <code class="docutils literal notranslate"><span class="pre">float</span></code> and <code class="docutils literal notranslate"><span class="pre">double</span></code> element types. Internally, it maintains
+fast and final insertion modes to optimize construction versus access patterns. Arithmetic operations
+with other sparse and dense matrices are supported, as well as scalar operations.</p>
+<section id="id3">
+<h3>Constructors<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p>SparseCOOMatrix provides several constructors for different initialization scenarios, including
+fixed dimensions, nested containers, fixed-size arrays, and initializer lists.</p>
+<section id="id4">
+<h4>Fixed Dimensions<a class="headerlink" href="#id4" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixNSt6size_tENSt6size_tEb">
+<span id="_CPPv315SparseCOOMatrixNSt6size_tENSt6size_tEb"></span><span id="_CPPv215SparseCOOMatrixNSt6size_tENSt6size_tEb"></span><span id="SparseCOOMatrix__std::s.std::s.b"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">rows</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">cols</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fastInsert</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixNSt6size_tENSt6size_tEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an empty sparse matrix with the given number of rows and columns. No elements are initialized.
+If <code class="docutils literal notranslate"><span class="pre">fastInsert</span></code> is true (default), insertions will be performed in append-only mode for efficiency.
+Call <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">finalize()</span></code> to enable fast retrievals (via binary search) after bulk construction.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>rows</strong> – Number of rows in the matrix.</p></li>
+<li><p><strong>cols</strong> – Number of columns in the matrix.</p></li>
+<li><p><strong>fastInsert</strong> – Enables fast insertion mode if true (default: true).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If either dimension is zero.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">mat</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">);</span>            <span class="o">//</span> <span class="mi">4</span><span class="n">x5</span> <span class="n">sparse</span> <span class="n">matrix</span> <span class="ow">in</span> <span class="n">fast</span> <span class="n">insert</span> <span class="n">mode</span>
+<span class="n">mat</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">3.5</span><span class="n">f</span><span class="p">);</span>                               <span class="o">//</span> <span class="n">Insert</span> <span class="n">non</span><span class="o">-</span><span class="n">zero</span> <span class="n">element</span>
+<span class="n">mat</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>                                    <span class="o">//</span> <span class="n">Sort</span> <span class="ow">and</span> <span class="n">finalize</span> <span class="k">for</span> <span class="n">access</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="id5">
+<h4>2D std::vector<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixRKNSt6vectorINSt6vectorI1TEEEEb">
+<span id="_CPPv315SparseCOOMatrixRKNSt6vectorINSt6vectorI1TEEEEb"></span><span id="_CPPv215SparseCOOMatrixRKNSt6vectorINSt6vectorI1TEEEEb"></span><span id="SparseCOOMatrix__std::vector:std::vector:T::CR.b"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fastInsert</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixRKNSt6vectorINSt6vectorI1TEEEEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a sparse matrix from a 2D <code class="docutils literal notranslate"><span class="pre">std::vector</span></code> by inserting all non-zero values. All rows
+must have the same number of columns. If <code class="docutils literal notranslate"><span class="pre">fastInsert</span></code> is true (default), the matrix is optimized
+for bulk construction and must be finalized before access operations like <a class="reference internal" href="#_CPPv4NK3getENSt6size_tENSt6size_tE" title="get"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">get()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – A 2D vector representing the matrix.</p></li>
+<li><p><strong>fastInsert</strong> – Enables fast insertion mode if true (default: true).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If rows have inconsistent lengths.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;&gt;</span> <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.5</span><span class="n">f</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">mat</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+<span class="n">mat</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>  <span class="o">//</span> <span class="n">Recommended</span> <span class="n">before</span> <span class="n">calls</span> <span class="n">to</span> <span class="n">get</span><span class="p">()</span> <span class="ow">or</span> <span class="n">update</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="d-std-array">
+<h4>2D std::array<a class="headerlink" href="#d-std-array" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixRKNSt5arrayINSt5arrayI1T1CEE1REEb">
+<span id="_CPPv315SparseCOOMatrixRKNSt5arrayINSt5arrayI1T1CEE1REEb"></span><span id="_CPPv215SparseCOOMatrixRKNSt5arrayINSt5arrayI1T1CEE1REEb"></span><span id="SparseCOOMatrix__std::array:std::array:T.C:.R:CR.b"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">C</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fastInsert</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixRKNSt5arrayINSt5arrayI1T1CEE1REEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a sparse matrix from a fixed-size 2D <code class="docutils literal notranslate"><span class="pre">std::array</span></code> by inserting all non-zero values.
+If <code class="docutils literal notranslate"><span class="pre">fastInsert</span></code> is true (default), entries are added in append mode and require a call to
+<code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">finalize()</span></code> before using binary search operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>R</strong> – Number of rows (deduced from the array).</p></li>
+<li><p><strong>C</strong> – Number of columns (deduced from the array).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>data</strong> – A statically sized 2D array.</p></li>
+<li><p><strong>fastInsert</strong> – Enables fast insertion mode if true (default: true).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">std</span><span class="p">::</span><span class="n">array</span><span class="o">&lt;</span><span class="nb">float</span><span class="p">,</span> <span class="mi">2</span><span class="o">&gt;</span><span class="p">,</span> <span class="mi">2</span><span class="o">&gt;</span> <span class="n">arr</span> <span class="o">=</span> <span class="p">{{</span>
+    <span class="p">{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.5</span><span class="n">f</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">1.2</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">}</span>
+<span class="p">}};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">mat</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+<span class="n">mat</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="id6">
+<h4>Initializer List<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixNSt16initializer_listINSt16initializer_listI1TEEEEb">
+<span id="_CPPv315SparseCOOMatrixNSt16initializer_listINSt16initializer_listI1TEEEEb"></span><span id="_CPPv215SparseCOOMatrixNSt16initializer_listINSt16initializer_listI1TEEEEb"></span><span id="SparseCOOMatrix__std::initializer_list:std::initializer_list:T::.b"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">initializer_list</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">initializer_list</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">init_list</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fastInsert</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixNSt16initializer_listINSt16initializer_listI1TEEEEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a sparse matrix from a nested initializer list. All rows must be the same length.
+Only non-zero values are inserted. If <code class="docutils literal notranslate"><span class="pre">fastInsert</span></code> is true (default), you must call
+<code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">finalize()</span></code> before retrieval operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>init_list</strong> – Nested initializer list representing matrix data.</p></li>
+<li><p><strong>fastInsert</strong> – Enables fast insertion mode if true (default: true).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If inner lists have unequal lengths.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">mat</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="p">{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">3.0</span><span class="n">f</span><span class="p">},</span>
+    <span class="p">{</span><span class="mf">4.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">}</span>
+<span class="p">};</span>
+<span class="n">mat</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="flat-storage-constructor">
+<h4>Flat Storage Constructor<a class="headerlink" href="#flat-storage-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tEb">
+<span id="_CPPv315SparseCOOMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tEb"></span><span id="_CPPv215SparseCOOMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tEb"></span><span id="SparseCOOMatrix__std::vector:T:CR.std::s.std::s.b"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">flat_data</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">fastInsert</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixRKNSt6vectorI1TEENSt6size_tENSt6size_tEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a sparse matrix from a flat 1D vector in row-major order.
+Only non-zero elements from the vector are stored. If <code class="docutils literal notranslate"><span class="pre">fastInsert</span></code> is enabled,
+the entries are appended efficiently and require a call to <code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">finalize()</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>flat_data</strong> – A flat vector of values in row-major order.</p></li>
+<li><p><strong>r</strong> – Number of rows in the matrix.</p></li>
+<li><p><strong>c</strong> – Number of columns in the matrix.</p></li>
+<li><p><strong>fastInsert</strong> – Enables fast insertion mode (default: true).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the size of the vector does not match <code class="docutils literal notranslate"><span class="pre">r</span> <span class="pre">*</span> <span class="pre">c</span></code>.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">flat</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="mf">0.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.0</span>
+<span class="p">};</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">mat</span><span class="p">(</span><span class="n">flat</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">mat</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>
 </pre></div>
 </div>
 </dd></dl>

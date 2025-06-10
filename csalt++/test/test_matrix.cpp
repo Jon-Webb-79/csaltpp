@@ -1154,6 +1154,57 @@ TEST(SparseScalarAdditionTest, ScalarPlusSparse) {
     EXPECT_EQ(result.col_index(1), 0);
     EXPECT_FLOAT_EQ(result.value(1), 4.5f);  // 3 + 1.5
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTest, FlatConstructor_PopulatesNonZeroValues) {
+    std::vector<float> flat = {
+        0.0f, 2.0f,
+        3.0f, 0.0f
+    };
+
+    slt::SparseCOOMatrix<float> mat(flat, 2, 2);
+    mat.finalize();
+
+    EXPECT_EQ(mat.nonzero_count(), 2);
+    EXPECT_TRUE(mat.is_initialized(0, 1));
+    EXPECT_TRUE(mat.is_initialized(1, 0));
+    EXPECT_FLOAT_EQ(mat(0, 1), 2.0f);
+    EXPECT_FLOAT_EQ(mat(1, 0), 3.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTest, FlatConstructor_AllZero) {
+    std::vector<double> flat(6, 0.0);
+    slt::SparseCOOMatrix<double> mat(flat, 2, 3);
+    mat.finalize();
+
+    EXPECT_EQ(mat.nonzero_count(), 0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTest, FlatConstructor_InvalidSizeThrows) {
+    std::vector<float> flat = {1.0f, 2.0f, 3.0f};  // Should be 2x2 but only 3 elements
+
+    EXPECT_THROW({
+            slt::SparseCOOMatrix<float> mat(flat, 2, 2);
+    }, std::invalid_argument);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTest, FlatConstructor_CorrectIndexing) {
+    std::vector<float> flat = {
+        1.0f, 0.0f,
+        0.0f, 4.0f
+    };
+
+    slt::SparseCOOMatrix<float> mat(flat, 2, 2);
+    mat.finalize();
+
+    EXPECT_EQ(mat.row_index(0), 0);
+    EXPECT_EQ(mat.col_index(0), 0);
+    EXPECT_EQ(mat.row_index(1), 1);
+    EXPECT_EQ(mat.col_index(1), 1);
+}
 // ================================================================================
 // ================================================================================
 // eof

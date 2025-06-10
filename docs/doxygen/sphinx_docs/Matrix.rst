@@ -689,3 +689,132 @@ Matrix Multiplication
 
       2.0 4.0
       13.0 17.0
+
+SparseCOOMatrix<T>
+==================
+
+The ``SparseCOOMatrix<T>`` class provides a memory-efficient representation of sparse matrices
+using the Coordinate List (COO) format. It stores non-zero values along with their corresponding
+row and column indices, making it ideal for matrices with a high proportion of zero entries.
+
+This class supports both ``float`` and ``double`` element types. Internally, it maintains
+fast and final insertion modes to optimize construction versus access patterns. Arithmetic operations
+with other sparse and dense matrices are supported, as well as scalar operations.
+
+Constructors
+------------
+
+SparseCOOMatrix provides several constructors for different initialization scenarios, including
+fixed dimensions, nested containers, fixed-size arrays, and initializer lists.
+
+Fixed Dimensions
+~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix(std::size_t rows, std::size_t cols, bool fastInsert = true)
+
+   Constructs an empty sparse matrix with the given number of rows and columns. No elements are initialized.
+   If ``fastInsert`` is true (default), insertions will be performed in append-only mode for efficiency.
+   Call :cpp:func:`finalize()` to enable fast retrievals (via binary search) after bulk construction.
+
+   :param rows: Number of rows in the matrix.
+   :param cols: Number of columns in the matrix.
+   :param fastInsert: Enables fast insertion mode if true (default: true).
+   :throws std::invalid_argument: If either dimension is zero.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> mat(4, 5);            // 4x5 sparse matrix in fast insert mode
+      mat.set(1, 2, 3.5f);                               // Insert non-zero element
+      mat.finalize();                                    // Sort and finalize for access
+
+2D std::vector
+~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix(const std::vector<std::vector<T>>& data, bool fastInsert = true)
+
+   Constructs a sparse matrix from a 2D ``std::vector`` by inserting all non-zero values. All rows
+   must have the same number of columns. If ``fastInsert`` is true (default), the matrix is optimized
+   for bulk construction and must be finalized before access operations like :cpp:func:`get()`.
+
+   :param data: A 2D vector representing the matrix.
+   :param fastInsert: Enables fast insertion mode if true (default: true).
+   :throws std::invalid_argument: If rows have inconsistent lengths.
+
+   Example::
+
+      std::vector<std::vector<float>> data = {
+          {0.0f, 2.5f},
+          {3.0f, 0.0f}
+      };
+      slt::SparseCOOMatrix<float> mat(data);
+      mat.finalize();  // Recommended before calls to get() or update()
+
+2D std::array
+~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix(const std::array<std::array<T, C>, R>& data, bool fastInsert = true)
+
+   Constructs a sparse matrix from a fixed-size 2D ``std::array`` by inserting all non-zero values.
+   If ``fastInsert`` is true (default), entries are added in append mode and require a call to
+   :cpp:func:`finalize()` before using binary search operations.
+
+   :tparam R: Number of rows (deduced from the array).
+   :tparam C: Number of columns (deduced from the array).
+   :param data: A statically sized 2D array.
+   :param fastInsert: Enables fast insertion mode if true (default: true).
+
+   Example::
+
+      std::array<std::array<float, 2>, 2> arr = {{
+          {0.0f, 4.5f},
+          {1.2f, 0.0f}
+      }};
+      slt::SparseCOOMatrix<float> mat(arr);
+      mat.finalize();
+
+Initializer List
+~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix(std::initializer_list<std::initializer_list<T>> init_list, bool fastInsert = true)
+
+   Constructs a sparse matrix from a nested initializer list. All rows must be the same length.
+   Only non-zero values are inserted. If ``fastInsert`` is true (default), you must call
+   :cpp:func:`finalize()` before retrieval operations.
+
+   :param init_list: Nested initializer list representing matrix data.
+   :param fastInsert: Enables fast insertion mode if true (default: true).
+   :throws std::invalid_argument: If inner lists have unequal lengths.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> mat = {
+          {0.0f, 3.0f},
+          {4.0f, 0.0f}
+      };
+      mat.finalize();
+
+Flat Storage Constructor
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c, bool fastInsert = true)
+
+   Constructs a sparse matrix from a flat 1D vector in row-major order.
+   Only non-zero elements from the vector are stored. If ``fastInsert`` is enabled,
+   the entries are appended efficiently and require a call to :cpp:func:`finalize()`.
+
+   :param flat_data: A flat vector of values in row-major order.
+   :param r: Number of rows in the matrix.
+   :param c: Number of columns in the matrix.
+   :param fastInsert: Enables fast insertion mode (default: true).
+
+   :throws std::invalid_argument: If the size of the vector does not match ``r * c``.
+
+   Example::
+
+      std::vector<double> flat = {
+          0.0, 3.0,
+          1.5, 0.0
+      };
+      slt::SparseCOOMatrix<double> mat(flat, 2, 2);
+      mat.finalize();
+

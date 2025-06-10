@@ -1623,6 +1623,35 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Constructs a sparse COO matrix from a flat vector in row-major order.
+         *
+         * Only non-zero values are inserted into the matrix. The resulting matrix will
+         * include only the explicitly stored entries. If `fastInsert` is true, entries
+         * are added in append mode and require `finalize()` before sorted access.
+         *
+         * @param flat_data A 1D vector in row-major order.
+         * @param r Number of rows in the matrix.
+         * @param c Number of columns in the matrix.
+         * @param fastInsert Enables fast insertion mode if true (default: true).
+         * @throws std::invalid_argument if the size of flat_data != r * c.
+         */
+        SparseCOOMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c, bool fastInsert = true)
+            : rows_(r), cols_(c), fast_set(fastInsert) {
+            if (flat_data.size() != r * c)
+                throw std::invalid_argument("Flat data size does not match matrix dimensions");
+
+            for (std::size_t i = 0; i < r; ++i) {
+                for (std::size_t j = 0; j < c; ++j) {
+                    T val = flat_data[i * c + j];
+                    if (val != T{})
+                        this->set(i, j, val);
+                }
+            }
+        }
+
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Accesses a matrix element (read-only).
          *
          * Retrieves the value at the specified row and column.

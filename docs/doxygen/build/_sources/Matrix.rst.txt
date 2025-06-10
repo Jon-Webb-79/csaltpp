@@ -472,6 +472,22 @@ Division Operator
       slt::DenseMatrix<double> B = {{2.0, 4.0}, {5.0, 8.0}};
       auto C = A / B;
 
+Addition Operator 
+~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T> operator+(DenseMatrix<T>& rhs)
+
+   Returns a matrix that is an element wise addition between the two matrices 
+
+   :param rhs: A DenseMatrix
+   :returns: Resulting matrix
+
+   Example::
+
+      slt::DenseMatrix<double> A = {{1.0, 2.0}, {3.0, 4.0}};
+      slt::DenseMatrix<double> B = {5.0, 6.0}, {7.0, 8.0}};
+      auto C = A + B;
+
 Scalar Multiplication
 ~~~~~~~~~~~~~~~~~~~~~
 
@@ -536,6 +552,25 @@ Scalar Subtraction
       slt::DenseMatrix<float> A = {{5.0f, 6.0f}, {7.0f, 8.0f}};
       auto B = A - 2.0f;
       // B is {{3.0f, 4.0f}, {5.0f, 6.0f}}
+
+Sparse Matrix Addition 
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T> operator+(cnst DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) const
+
+    Returns a new dense matrix that is the element wise sum of a dense and sparse matrix
+
+   :param dense: A DenseMatrix 
+   :param sparse: A SparseCOOMatrix
+   :returns: Resulting DenseMatrix
+   :throws std::runtime_error: If any element is uninitialized
+
+   Example::
+
+      slt::DenseMatrix<float> A = {{5.0f, 6.0f}, {7.0f, 8.0f}};
+      slt::SparseCOOMatrix<float> B = {{9.0f, 10.0f}, {11.0f, 12.0f}};
+      DenseMatrix<float> C = A + B;
+      // C is {{14.0f, 16.0f}, {18.0f, 20.0f}}
 
 Global Operators
 ----------------
@@ -817,4 +852,257 @@ Flat Storage Constructor
       };
       slt::SparseCOOMatrix<double> mat(flat, 2, 2);
       mat.finalize();
+
+Core Methods
+------------
+
+get()
+~~~~~
+
+.. cpp:function:: T get(std::size_t row, std::size_t col) const
+
+   Returns the value at the specified (row, col) index.
+
+   Performs a linear search if the matrix is in fast insertion mode; otherwise, a binary search is used after finalization.
+
+   :param row: Zero-based row index
+   :param col: Zero-based column index
+   :return: Value of the matrix element
+   :throws std::out_of_range: If the index is outside the matrix bounds.
+   :throws std::runtime_error: If the element is uninitialized (i.e., not present in storage).
+
+   Example::
+
+      slt::SparseCOOMatrix<double> A(2, 2);
+      A.set(0, 1, 3.14);
+      A.finalize();
+      double val = A.get(0, 1);  // val == 3.14
+
+set()
+~~~~~
+
+.. cpp:function:: void set(std::size_t row, std::size_t col, T value)
+
+   Inserts a value at the specified (row, col) position.
+
+   - If ``fast_set`` is true, the value is appended with no duplicate checks.
+   - If ``fast_set`` is false, values are inserted in sorted order with uniqueness enforcement.
+
+   :param row: Zero-based row index
+   :param col: Zero-based column index
+   :param value: Value to insert
+   :throws std::out_of_range: If the index is out of bounds.
+   :throws std::runtime_error: If inserting into a sorted matrix where the value already exists.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(1, 0, 42.0f);
+
+update()
+~~~~~~~~
+
+.. cpp:function:: void update(std::size_t row, std::size_t col, T value)
+
+   Updates the value of an already-initialized element.
+
+   Requires finalized state (i.e., fast insertion mode must be disabled).
+
+   :param row: Zero-based row index
+   :param col: Zero-based column index
+   :param value: New value to assign
+   :throws std::out_of_range: If the index is invalid.
+   :throws std::runtime_error: If the element has not been inserted using ``set()``.
+
+   Example::
+
+      slt::SparseCOOMatrix<double> C(2, 2, false);
+      C.set(0, 0, 1.23);
+      C.update(0, 0, 4.56);  // Updates value
+
+rows()
+~~~~~~~
+
+.. cpp:function:: std::size_t rows() const
+
+   Returns the number of rows in the sparse matrix.
+
+   :return: Row dimension
+
+   Example::
+
+      slt::SparseCOOMatrix<float> D(3, 4);
+      std::size_t r = D.rows();  // r == 3
+
+cols()
+~~~~~~~
+
+.. cpp:function:: std::size_t cols() const
+
+   Returns the number of columns in the sparse matrix.
+
+   :return: Column dimension
+
+   Example::
+
+      slt::SparseCOOMatrix<float> D(3, 4);
+      std::size_t c = D.cols();  // c == 4
+
+is_initialized()
+~~~~~~~~~~~~~~~~
+
+.. cpp:function:: bool is_initialized(std::size_t row, std::size_t col) const
+
+   Checks whether the specified (row, col) element has been explicitly set.
+
+   Performs a linear search in fast insertion mode; otherwise, binary search is used in finalized mode.
+
+   :param row: Zero-based row index
+   :param col: Zero-based column index
+   :return: ``true`` if the element has been initialized, otherwise ``false``
+   :throws std::out_of_range: If the index is outside the matrix bounds.
+
+   Example::
+
+      slt::SparseCOOMatrix<double> A(3, 3);
+      A.set(0, 1, 2.5);
+      bool found = A.is_initialized(0, 1);  // true
+      bool missing = A.is_initialized(2, 2);  // false
+
+finalize()
+~~~~~~~~~~
+
+.. cpp:function:: void finalize()
+
+   Sorts the internal coordinate arrays (by row-major order) and eliminates duplicate entries.
+
+   This method must be called before performing operations like `update()` or before enabling fast access modes.
+   After finalization, all operations assume sorted data for efficient lookups.
+
+   :throws std::runtime_error: If duplicates are found when `fast_set` is false and unique entries are expected.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 0, 1.0f);
+      B.set(1, 1, 2.0f);
+      B.finalize();  // Enables optimized operations
+
+nonzero_count()
+~~~~~~~~~~~~~~~
+
+.. cpp:function:: std::size_t nonzero_count() const
+
+   Returns the number of explicitly stored (non-zero) entries in the sparse matrix.
+
+   :return: Number of non-zero elements
+
+   Example::
+
+      slt::SparseCOOMatrix<double> C(4, 4);
+      C.set(0, 0, 1.0);
+      C.set(2, 3, 5.0);
+      std::size_t count = C.nonzero_count();  // count == 2
+
+Operator Overloads
+------------------
+
+Function Call Operator
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: T operator()(std::size_t row, std::size_t col) const
+
+   Accesses the element at the specified position using function call syntax.
+
+   This is equivalent to calling ``get(row, col)`` and performs the same bounds and initialization checks.
+
+   :param row: Zero-based row index
+   :param col: Zero-based column index
+   :return: Value of the matrix element
+   :throws std::out_of_range: If the index is out of bounds.
+   :throws std::runtime_error: If the element is uninitialized.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(3, 3);
+      A.set(1, 2, 9.81f);
+      A.finalize();
+      float value = A(1, 2);  // value == 9.81
+
+Addition: Sparse + Sparse
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T> operator+(const SparseCOOMatrix<T>& other) const
+
+   Adds two sparse matrices element-wise.
+
+   Returns a ``DenseMatrix`` containing the element-wise sum. This ensures correct representation
+   of overlapping non-zero entries.
+
+   :param other: The other sparse matrix operand.
+   :return: A fully dense matrix representing the sum.
+   :throws std::invalid_argument: If matrix dimensions do not match.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+      slt::SparseCOOMatrix<float> B = {{0.0f, 3.0f}, {4.0f, 0.0f}};
+      slt::DenseMatrix<float> C = A + B;
+
+Addition: Sparse + Dense
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T> operator+(const DenseMatrix<T>& other) const
+
+   Adds a sparse matrix to a dense matrix element-wise.
+
+   The result is a new ``DenseMatrix``. If supported, SIMD acceleration is applied to the dense operand
+   before sparse additions are performed.
+
+   :param other: The dense matrix operand.
+   :return: A dense matrix containing the sum.
+   :throws std::invalid_argument: If matrix dimensions do not match.
+
+   Example::
+
+      slt::DenseMatrix<double> dense(2, 2, 1.0);
+      slt::SparseCOOMatrix<double> sparse(2, 2);
+      sparse.set(1, 1, 3.0);
+      sparse.finalize();
+      auto result = sparse + dense;
+
+Addition: Sparse + Scalar
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix<T> operator+(T scalar) const
+
+   Adds a scalar value to each non-zero element in the sparse matrix.
+
+   The result is another sparse matrix with the same structure but updated values.
+
+   :param scalar: The scalar to add.
+   :return: A new ``SparseCOOMatrix`` with updated values.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A = {{0.0f, 2.0f}, {0.0f, 0.0f}};
+      auto B = A + 1.0f;
+
+Addition: Scalar + Sparse (Friend)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template<typename T>SparseCOOMatrix<T> operator+(T scalar, const SparseCOOMatrix<T>& matrix)
+
+   Adds a scalar to each non-zero element of a sparse matrix (commutative overload).
+
+   This is the friend equivalent of ``matrix + scalar`` and uses the member function internally.
+
+   :param scalar: The scalar value to add.
+   :param matrix: The sparse matrix.
+   :return: A new ``SparseCOOMatrix`` with scalar applied.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A = {{0.0f, 2.0f}, {1.0f, 0.0f}};
+      auto B = 1.0f + A;
 

@@ -159,6 +159,46 @@ Flat Data Vector
       std::vector<double> flat = {1.0, 2.0, 3.0, 4.0};
       slt::DenseMatrix<double> A(flat, 2, 2);  // Creates 2x2 matrix
 
+Copy Constructor
+~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix(const DenseMatrix<T>& other)
+
+   Constructs a deep copy of an existing ``DenseMatrix``.
+
+   This constructor allocates new memory for the internal storage and copies all element values and initialization flags from ``other``.
+
+   :param other: Source matrix to copy
+   :throws std::bad_alloc: If memory allocation fails
+
+   Example::
+
+      slt::DenseMatrix<float> A({1.0f, 2.0f, 3.0f, 4.0f}, 2, 2);
+      slt::DenseMatrix<float> B(A);  // Deep copy of A
+
+      // B is now a separate matrix with the same content as A
+      REQUIRE(B(1, 0) == 3.0f);
+
+Move Constructor
+~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix(DenseMatrix<T>&& other) noexcept
+
+   Constructs a new ``DenseMatrix`` by transferring the resources from ``other``.
+
+   The move constructor avoids deep copying and instead takes ownership of the internal buffers from ``other``, which is left in a valid but unspecified state.
+
+   :param other: Source matrix to move from
+   :post: ``other`` is left empty and should not be used further
+
+   Example::
+
+      slt::DenseMatrix<float> A({5.0f, 6.0f, 7.0f, 8.0f}, 2, 2);
+      slt::DenseMatrix<float> B(std::move(A));  // Move A into B
+
+      // B now owns the data originally in A
+      REQUIRE(B(0, 1) == 6.0f);
+
 Core Methods
 ------------
 
@@ -364,8 +404,48 @@ nonzero_count()
 Operators
 ---------
 
-The ``DenseMatrix<T>`` class overloads common operators to support arithmetic and comparison operations
-in a type-safe, intuitive manner. These include element access, assignment, equality, and matrix multiplication.
+Copy Assignment Operator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T>& operator=(const DenseMatrix<T>& other)
+
+   Overwrites the contents of the current matrix with a deep copy of ``other``.
+
+   Allocates new memory and copies all values and initialization flags. Existing data is discarded.
+
+   :param other: Source matrix to copy
+   :returns: Reference to the updated matrix
+   :throws std::bad_alloc: If memory allocation fails
+
+   Example::
+
+      slt::DenseMatrix<float> A({1.0f, 2.0f, 3.0f, 4.0f}, 2, 2);
+      slt::DenseMatrix<float> B;
+      B = A;  // Deep copy from A into B
+
+      REQUIRE(B(0, 1) == 2.0f);
+
+Move Assignment Operator
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T>& operator=(DenseMatrix<T>&& other) noexcept
+
+   Transfers ownership of all resources from ``other`` to the current matrix.
+
+   The existing data is discarded and replaced by the moved content. ``other`` is left in a valid but unspecified state.
+
+   :param other: Source matrix to move from
+   :returns: Reference to the updated matrix
+   :post: ``other`` is cleared and should not be used
+   :note: No memory is copied; only ownership is transferred
+
+   Example::
+
+      slt::DenseMatrix<float> A({5.0f, 6.0f, 7.0f, 8.0f}, 2, 2);
+      slt::DenseMatrix<float> B;
+      B = std::move(A);  // Transfer ownership from A to B
+
+      REQUIRE(B(1, 0) == 7.0f);
 
 Element Access Operator
 ~~~~~~~~~~~~~~~~~~~~~~~
@@ -853,6 +933,9 @@ Flat Storage Constructor
       slt::SparseCOOMatrix<double> mat(flat, 2, 2);
       mat.finalize();
 
+Copy Constructor 
+~~~~~~~~~~~~~~~
+
 .. cpp:function:: SparseCOOMatrix(const SparseCOOMatrix<T>& other)
 
    Copy constructor for ``SparseCOOMatrix``.
@@ -871,6 +954,30 @@ Flat Storage Constructor
 
       SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
       SparseCOOMatrix<float> B(A);  // Deep copy of A
+
+Move Constructor 
+~~~~~~~~~~~~~~~~
+.. cpp:function:: SparseCOOMatrix(SparseCOOMatrix<T>&& other) noexcept
+
+   Move constructor for the :cpp:class:`SparseCOOMatrix`.
+
+   Transfers ownership of the matrix contents from another instance, avoiding deep copies.
+   This constructor moves the internal data structures (`row`, `col`, `data`) from the
+   source matrix and resets the source to an empty, valid state.
+
+   :param other: The matrix to move from. After the move, `other` is valid but empty.
+
+   .. note::
+      This constructor is noexcept and provides efficient transfer of ownership
+      for temporary objects or explicit `std::move` usage.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCOOMatrix<float> original = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+      slt::SparseCOOMatrix<float> moved_to = std::move(original);
+      // `moved_to` now owns the matrix data; `original` is empty
 
 
 Core Methods

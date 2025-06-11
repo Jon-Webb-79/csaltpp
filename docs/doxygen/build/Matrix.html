@@ -56,6 +56,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#std-array-of-std-array">std::array of std::array</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#initializer-list">Initializer List</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flat-data-vector">Flat Data Vector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#copy-constructor">Copy Constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#move-constructor">Move Constructor</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#core-methods">Core Methods</a><ul>
@@ -73,6 +75,8 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#operators">Operators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#copy-assignment-operator">Copy Assignment Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#move-assignment-operator">Move Assignment Operator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#element-access-operator">Element Access Operator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#assignment-operator">Assignment Operator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#equality-operator">Equality Operator</a></li>
@@ -104,21 +108,23 @@
 <li class="toctree-l4"><a class="reference internal" href="#d-std-array">2D std::array</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id6">Initializer List</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#flat-storage-constructor">Flat Storage Constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Copy Constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id8">Move Constructor</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id7">Core Methods</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id8">get()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id9">set()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id10">update()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11">rows()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id12">cols()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Core Methods</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id10">get()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">set()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">update()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">rows()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">cols()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#is-initialized">is_initialized()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#finalize">finalize()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id13">nonzero_count()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">nonzero_count()</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#operator-overloads">Operator Overloads</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id14">Equality Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">Equality Operator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#operator-copy">operator= (copy)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#operator-move">operator= (move)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#function-call-operator">Function Call Operator</a></li>
@@ -349,6 +355,58 @@ including fixed-size dimensions, nested containers, initializer lists, and flat 
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="p">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">flat</span> <span class="o">=</span> <span class="p">{</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">};</span>
 <span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="n">double</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="n">flat</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>  <span class="o">//</span> <span class="n">Creates</span> <span class="mi">2</span><span class="n">x2</span> <span class="n">matrix</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="copy-constructor">
+<h4>Copy Constructor<a class="headerlink" href="#copy-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixRK11DenseMatrixI1TE">
+<span id="_CPPv311DenseMatrixRK11DenseMatrixI1TE"></span><span id="_CPPv211DenseMatrixRK11DenseMatrixI1TE"></span><span id="DenseMatrix__DenseMatrix:T:CR"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixRK11DenseMatrixI1TE" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a deep copy of an existing <code class="docutils literal notranslate"><span class="pre">DenseMatrix</span></code>.</p>
+<p>This constructor allocates new memory for the internal storage and copies all element values and initialization flags from <code class="docutils literal notranslate"><span class="pre">other</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Source matrix to copy</p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">bad_alloc</span></span></span> – If memory allocation fails</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">({</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">},</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>  <span class="o">//</span> <span class="n">Deep</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">A</span>
+
+<span class="o">//</span> <span class="n">B</span> <span class="ow">is</span> <span class="n">now</span> <span class="n">a</span> <span class="n">separate</span> <span class="n">matrix</span> <span class="k">with</span> <span class="n">the</span> <span class="n">same</span> <span class="n">content</span> <span class="k">as</span> <span class="n">A</span>
+<span class="n">REQUIRE</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mf">3.0</span><span class="n">f</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="move-constructor">
+<h4>Move Constructor<a class="headerlink" href="#move-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixRR11DenseMatrixI1TE">
+<span id="_CPPv311DenseMatrixRR11DenseMatrixI1TE"></span><span id="_CPPv211DenseMatrixRR11DenseMatrixI1TE"></span><span id="DenseMatrix__DenseMatrix:T:RR"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411DenseMatrixRR11DenseMatrixI1TE" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv411DenseMatrixRR11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a new <code class="docutils literal notranslate"><span class="pre">DenseMatrix</span></code> by transferring the resources from <code class="docutils literal notranslate"><span class="pre">other</span></code>.</p>
+<p>The move constructor avoids deep copying and instead takes ownership of the internal buffers from <code class="docutils literal notranslate"><span class="pre">other</span></code>, which is left in a valid but unspecified state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Source matrix to move from</p>
+</dd>
+<dt class="field-even">Post<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">other</span></code> is left empty and should not be used further</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">({</span><span class="mf">5.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">6.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">7.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">8.0</span><span class="n">f</span><span class="p">},</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="n">std</span><span class="p">::</span><span class="n">move</span><span class="p">(</span><span class="n">A</span><span class="p">));</span>  <span class="o">//</span> <span class="n">Move</span> <span class="n">A</span> <span class="n">into</span> <span class="n">B</span>
+
+<span class="o">//</span> <span class="n">B</span> <span class="n">now</span> <span class="n">owns</span> <span class="n">the</span> <span class="n">data</span> <span class="n">originally</span> <span class="ow">in</span> <span class="n">A</span>
+<span class="n">REQUIRE</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mf">6.0</span><span class="n">f</span><span class="p">);</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -644,8 +702,67 @@ This is equivalent to counting how many elements are marked as initialized.</p>
 </section>
 <section id="operators">
 <h3>Operators<a class="headerlink" href="#operators" title="Link to this heading"></a></h3>
-<p>The <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code> class overloads common operators to support arithmetic and comparison operations
-in a type-safe, intuitive manner. These include element access, assignment, equality, and matrix multiplication.</p>
+<section id="copy-assignment-operator">
+<h4>Copy Assignment Operator<a class="headerlink" href="#copy-assignment-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4aSRK11DenseMatrixI1TE">
+<span id="_CPPv3aSRK11DenseMatrixI1TE"></span><span id="_CPPv2aSRK11DenseMatrixI1TE"></span><span id="assign-operator__DenseMatrix:T:CR"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4aSRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Overwrites the contents of the current matrix with a deep copy of <code class="docutils literal notranslate"><span class="pre">other</span></code>.</p>
+<p>Allocates new memory and copies all values and initialization flags. Existing data is discarded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Source matrix to copy</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the updated matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">bad_alloc</span></span></span> – If memory allocation fails</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">({</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">3.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">},</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">;</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="p">;</span>  <span class="o">//</span> <span class="n">Deep</span> <span class="n">copy</span> <span class="kn">from</span><span class="w"> </span><span class="nn">A</span> <span class="n">into</span> <span class="n">B</span>
+
+<span class="n">REQUIRE</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="move-assignment-operator">
+<h4>Move Assignment Operator<a class="headerlink" href="#move-assignment-operator" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4aSRR11DenseMatrixI1TE">
+<span id="_CPPv3aSRR11DenseMatrixI1TE"></span><span id="_CPPv2aSRR11DenseMatrixI1TE"></span><span id="assign-operator__DenseMatrix:T:RR"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4aSRR11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Transfers ownership of all resources from <code class="docutils literal notranslate"><span class="pre">other</span></code> to the current matrix.</p>
+<p>The existing data is discarded and replaced by the moved content. <code class="docutils literal notranslate"><span class="pre">other</span></code> is left in a valid but unspecified state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Source matrix to move from</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the updated matrix</p>
+</dd>
+<dt class="field-odd">Post<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">other</span></code> is cleared and should not be used</p>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>No memory is copied; only ownership is transferred</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">({</span><span class="mf">5.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">6.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">7.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">8.0</span><span class="n">f</span><span class="p">},</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">;</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">std</span><span class="p">::</span><span class="n">move</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>  <span class="o">//</span> <span class="n">Transfer</span> <span class="n">ownership</span> <span class="kn">from</span><span class="w"> </span><span class="nn">A</span> <span class="n">to</span> <span class="n">B</span>
+
+<span class="n">REQUIRE</span><span class="p">(</span><span class="n">B</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mf">7.0</span><span class="n">f</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 <section id="element-access-operator">
 <h4>Element Access Operator<a class="headerlink" href="#element-access-operator" title="Link to this heading"></a></h4>
 <dl class="cpp function">
@@ -681,8 +798,8 @@ in a type-safe, intuitive manner. These include element access, assignment, equa
 <section id="assignment-operator">
 <h4>Assignment Operator<a class="headerlink" href="#assignment-operator" title="Link to this heading"></a></h4>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4aSRK11DenseMatrixI1TE">
-<span id="_CPPv3aSRK11DenseMatrixI1TE"></span><span id="_CPPv2aSRK11DenseMatrixI1TE"></span><span id="assign-operator__DenseMatrix:T:CR"></span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4aSRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dt class="sig sig-object cpp">
+<a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv411DenseMatrixNSt6size_tENSt6size_tE1T" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><br /></dt>
 <dd><p>Assigns the contents of another matrix to this one. Performs a deep copy.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -1330,6 +1447,9 @@ the entries are appended efficiently and require a call to <a class="reference i
 </div>
 </dd></dl>
 
+</section>
+<section id="id7">
+<h4>Copy Constructor<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixRK15SparseCOOMatrixI1TE">
 <span id="_CPPv315SparseCOOMatrixRK15SparseCOOMatrixI1TE"></span><span id="_CPPv215SparseCOOMatrixRK15SparseCOOMatrixI1TE"></span><span id="SparseCOOMatrix__SparseCOOMatrix:T:CR"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SparseCOOMatrixRK15SparseCOOMatrixI1TE" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixRK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
@@ -1354,11 +1474,39 @@ completely independent from the original.</p>
 </dd></dl>
 
 </section>
-</section>
-<section id="id7">
-<h3>Core Methods<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
 <section id="id8">
-<h4>get()<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<h4>Move Constructor<a class="headerlink" href="#id8" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixRR15SparseCOOMatrixI1TE">
+<span id="_CPPv315SparseCOOMatrixRR15SparseCOOMatrixI1TE"></span><span id="_CPPv215SparseCOOMatrixRR15SparseCOOMatrixI1TE"></span><span id="SparseCOOMatrix__SparseCOOMatrix:T:RR"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415SparseCOOMatrixRR15SparseCOOMatrixI1TE" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv415SparseCOOMatrixRR15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Move constructor for the <a class="reference internal" href="#_CPPv415SparseCOOMatrixRR15SparseCOOMatrixI1TE" title="SparseCOOMatrix"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">SparseCOOMatrix</span></code></a>.</p>
+<p>Transfers ownership of the matrix contents from another instance, avoiding deep copies.
+This constructor moves the internal data structures (<cite>row</cite>, <cite>col</cite>, <cite>data</cite>) from the
+source matrix and resets the source to an empty, valid state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The matrix to move from. After the move, <cite>other</cite> is valid but empty.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This constructor is noexcept and provides efficient transfer of ownership
+for temporary objects or explicit <cite>std::move</cite> usage.</p>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">original</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}};</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">moved_to</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">original</span><span class="p">);</span>
+<span class="c1">// `moved_to` now owns the matrix data; `original` is empty</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+</section>
+<section id="id9">
+<h3>Core Methods<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<section id="id10">
+<h4>get()<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp">
 <span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><br /></dt>
@@ -1391,8 +1539,8 @@ completely independent from the original.</p>
 </dd></dl>
 
 </section>
-<section id="id9">
-<h4>set()<a class="headerlink" href="#id9" title="Link to this heading"></a></h4>
+<section id="id11">
+<h4>set()<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span>, <span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><br /></dt>
@@ -1424,8 +1572,8 @@ completely independent from the original.</p>
 </dd></dl>
 
 </section>
-<section id="id10">
-<h4>update()<a class="headerlink" href="#id10" title="Link to this heading"></a></h4>
+<section id="id12">
+<h4>update()<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp">
 <span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">update</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">row</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">col</span></span>, <span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><br /></dt>
@@ -1455,8 +1603,8 @@ completely independent from the original.</p>
 </dd></dl>
 
 </section>
-<section id="id11">
-<h4>rows()<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<section id="id13">
+<h4>rows()<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp">
 <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">rows</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><br /></dt>
@@ -1474,8 +1622,8 @@ completely independent from the original.</p>
 </dd></dl>
 
 </section>
-<section id="id12">
-<h4>cols()<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<section id="id14">
+<h4>cols()<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp">
 <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cols</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><br /></dt>
@@ -1547,8 +1695,8 @@ After finalization, all operations assume sorted data for efficient lookups.</p>
 </dd></dl>
 
 </section>
-<section id="id13">
-<h4>nonzero_count()<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<section id="id15">
+<h4>nonzero_count()<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp">
 <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">nonzero_count</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><br /></dt>
@@ -1571,8 +1719,8 @@ After finalization, all operations assume sorted data for efficient lookups.</p>
 </section>
 <section id="operator-overloads">
 <h3>Operator Overloads<a class="headerlink" href="#operator-overloads" title="Link to this heading"></a></h3>
-<section id="id14">
-<h4>Equality Operator<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
+<section id="id16">
+<h4>Equality Operator<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NKeqERK15SparseCOOMatrixI1TE">
 <span id="_CPPv3NKeqERK15SparseCOOMatrixI1TE"></span><span id="_CPPv2NKeqERK15SparseCOOMatrixI1TE"></span><span id="eq-operator__SparseCOOMatrix:T:CRC"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SparseCOOMatrixNSt6size_tENSt6size_tEb" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NKeqERK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>

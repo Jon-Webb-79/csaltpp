@@ -838,6 +838,60 @@ TEST(DenseMatrixSparseAdditionTest, SparseOnlyAffectsSpecifiedEntries) {
 // ================================================================================ 
 // ================================================================================
 
+
+TEST(DenseMatrixTest, CopyConstructor) {
+    slt::DenseMatrix<float> A({1.0f, 2.0f, 3.0f, 4.0f}, 2, 2);
+    slt::DenseMatrix<float> B(A);  // Copy constructor
+
+    EXPECT_EQ(B.rows(), 2);
+    EXPECT_EQ(B.cols(), 2);
+    EXPECT_EQ(B(0, 0), 1.0f);
+    EXPECT_EQ(B(0, 1), 2.0f);
+    EXPECT_EQ(B(1, 0), 3.0f);
+    EXPECT_EQ(B(1, 1), 4.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixTest, MoveConstructor) {
+    slt::DenseMatrix<float> A({5.0f, 6.0f, 7.0f, 8.0f}, 2, 2);
+    slt::DenseMatrix<float> B(std::move(A));  // Move constructor
+
+    EXPECT_EQ(B.rows(), 2);
+    EXPECT_EQ(B.cols(), 2);
+    EXPECT_EQ(B(0, 0), 5.0f);
+    EXPECT_EQ(B(0, 1), 6.0f);
+    EXPECT_EQ(B(1, 0), 7.0f);
+    EXPECT_EQ(B(1, 1), 8.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixTest, CopyAssignment) {
+    slt::DenseMatrix<double> A({1.1, 2.2, 3.3, 4.4}, 2, 2);
+    slt::DenseMatrix<double> B(2, 2);
+    B = A;  // Copy assignment
+
+    EXPECT_EQ(B.rows(), 2);
+    EXPECT_EQ(B.cols(), 2);
+    EXPECT_DOUBLE_EQ(B(0, 0), 1.1);
+    EXPECT_DOUBLE_EQ(B(0, 1), 2.2);
+    EXPECT_DOUBLE_EQ(B(1, 0), 3.3);
+    EXPECT_DOUBLE_EQ(B(1, 1), 4.4);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixTest, MoveAssignment) {
+    slt::DenseMatrix<float> A({9.0f, 10.0f, 11.0f, 12.0f}, 2, 2);
+    slt::DenseMatrix<float> B(2, 2);
+    B = std::move(A);  // Move assignment
+
+    EXPECT_EQ(B.rows(), 2);
+    EXPECT_EQ(B.cols(), 2);
+    EXPECT_EQ(B(0, 0), 9.0f);
+    EXPECT_EQ(B(0, 1), 10.0f);
+    EXPECT_EQ(B(1, 0), 11.0f);
+    EXPECT_EQ(B(1, 1), 12.0f);
+}
+// -------------------------------------------------------------------------------- 
 TEST(SparseCOOMatrixTest, ConstructorInitializesDimensionsCorrectly) {
     slt::SparseCOOMatrix<float> mat(5, 7);
     EXPECT_EQ(mat.rows(), 5);

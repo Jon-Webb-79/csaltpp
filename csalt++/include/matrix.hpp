@@ -839,6 +839,37 @@
             if (flat_data.size() != r * c)
                 throw std::invalid_argument("Flat data size does not match matrix dimensions");
         }
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Constructs a new DenseMatrix as a deep copy of another matrix.
+         *
+         * Allocates a new matrix with the same dimensions and content as the source.
+         * Copies both the data and initialization flags.
+         *
+         * @param other The source DenseMatrix to copy.
+         */
+        DenseMatrix(const DenseMatrix<T>& other)
+            : data(other.data),
+              init(other.init),
+              rows_(other.rows_),
+              cols_(other.cols_) {}
+
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a new DenseMatrix by transferring ownership of another matrix.
+         *
+         * Efficiently transfers internal storage from the source matrix to this matrix.
+         * After the move, the source matrix is left in a valid but unspecified state.
+         *
+         * @param other The DenseMatrix to move from.
+         */
+        DenseMatrix(DenseMatrix<T>&& other) noexcept
+            : data(std::move(other.data)),
+              init(std::move(other.init)),
+              rows_(std::exchange(other.rows_, 0)),
+              cols_(std::exchange(other.cols_, 0)) {}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -856,6 +887,46 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Assigns the contents of another DenseMatrix to this matrix.
+         *
+         * Performs a deep copy of the data, initialization flags, and dimensions.
+         * Self-assignment is safely handled.
+         *
+         * @param other The DenseMatrix to copy from.
+         * @return Reference to this matrix.
+         */
+        DenseMatrix<T>& operator=(const DenseMatrix<T>& other) {
+            if (this != &other) {
+                data = other.data;
+                init = other.init;
+                rows_ = other.rows_;
+                cols_ = other.cols_;
+            }
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Assigns the contents of another DenseMatrix by moving them.
+         *
+         * Transfers the internal storage and dimensions from the source matrix.
+         * Leaves the source matrix in a valid but unspecified state.
+         * Self-assignment is safely handled.
+         *
+         * @param other The DenseMatrix to move from.
+         * @return Reference to this matrix.
+         */
+        DenseMatrix<T>& operator=(DenseMatrix<T>&& other) noexcept {
+            if (this != &other) {
+                data = std::move(other.data);
+                init = std::move(other.init);
+                rows_ = std::exchange(other.rows_, 0);
+                cols_ = std::exchange(other.cols_, 0);
+            }
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
         /**
          * @brief Accesses a matrix element (read-only).
          *
@@ -1672,6 +1743,31 @@
               row(other.row),
               col(other.col),
               fast_set(other.fast_set){}
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Move constructor for SparseCOOMatrix.
+         *
+         * Constructs a new sparse matrix by transferring ownership of data from another
+         * matrix. This constructor performs a shallow move of internal vectors and resets
+         * the source matrix to a default, empty state.
+         *
+         * This is more efficient than the copy constructor, as it avoids deep copying of
+         * data and instead reuses existing memory buffers. After the move, the source matrix
+         * is left in a valid but unspecified state (typically empty).
+         *
+         * @param other The matrix to move from. After the operation, `other` is empty.
+         *
+         * @note The `fast_set` flag is also transferred and reset in the source.
+         */
+        SparseCOOMatrix(SparseCOOMatrix<T>&& other) noexcept
+            : MatrixBase<T>(),
+              data(std::move(other.data)),
+              rows_(std::exchange(other.rows_, 0)),
+              cols_(std::exchange(other.cols_, 0)),
+              row(std::move(other.row)),
+              col(std::move(other.col)),
+              fast_set(std::exchange(other.fast_set, true)) {}
 // -------------------------------------------------------------------------------- 
 
         /**

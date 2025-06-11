@@ -24,6 +24,9 @@
 #include <iomanip>
 #include <cassert>
 #include <numeric>
+#include <cmath>
+#include <type_traits>
+
 
 #ifdef __AVX2__
         #include <immintrin.h>
@@ -1669,6 +1672,63 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Compares two sparse COO matrices for equality.
+         *
+         * Determines whether this matrix and the given matrix are equal by checking:
+         * - Matrix dimensions (rows and columns),
+         * - Number of non-zero entries,
+         * - Each corresponding (row, col, value) triple.
+         *
+         * If both matrices are finalized (i.e., `fast_set == false`), a direct comparison
+         * of the underlying storage is used. If either matrix is not finalized,
+         * both matrices are converted to dense format and compared entry-wise.
+         *
+         * For floating-point types, approximate comparison is used with a tolerance of `1e-6`.
+         *
+         * @param other The matrix to compare against.
+         * @return true if the matrices are equal, false otherwise.
+         *
+         * @note Equality is defined structurally and numerically. Two matrices with
+         *       the same non-zero values but in different insertion orders will still
+         *       compare equal if finalized.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> A(2, 2);
+         * A.set(0, 0, 1.0f);
+         * A.set(1, 1, 2.0f);
+         * A.finalize();
+         *
+         * slt::SparseCOOMatrix<float> B(2, 2);
+         * B.set(0, 0, 1.0f);
+         * B.set(1, 1, 2.0f);
+         * B.finalize();
+         *
+         * assert(A == B);  // true
+         * @endcode
+         */
+        bool operator==(const SparseCOOMatrix<T>& other) const {
+            if (rows_ != other.rows_ || cols_ != other.cols_)
+                return false;
+
+            if (row != other.row || col != other.col || data.size() != other.data.size())
+                return false;
+
+            for (std::size_t i = 0; i < data.size(); ++i) {
+                if constexpr (std::is_floating_point_v<T>) {
+                    if (std::fabs(data[i] - other.data[i]) > 1e-6)
+                        return false;
+                } else {
+                    if (data[i] != other.data[i])
+                        return false;
+                }
+            }
+
+            return true;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Adds two sparse matrices element-wise and returns the result as a dense matrix.
          *
          * Performs element-wise addition of two matrices in sparse COO format. The result is returned
@@ -1869,32 +1929,65 @@
                 throw std::out_of_range("Index out of bounds");
 
             if (fast_set) {
-                // Fast insert: append to end without checking for duplicates
+                // Fast insert: append without duplicate checks
                 row.push_back(r);
                 col.push_back(c);
                 data.push_back(value);
                 return;
             }
 
-            // Sorted insert with binary search
-            auto it = std::lower_bound(
-                row.begin(), row.end(),
-                std::make_pair(r, c),
-                [this](std::size_t i, const std::pair<std::size_t, std::size_t>& target) {
-                    return std::pair<std::size_t, std::size_t>{row[i], col[i]} < target;
-                });
+            // Construct index pairs to search safely
+            std::vector<std::pair<std::size_t, std::size_t>> indices;
+            indices.reserve(row.size());
+            for (std::size_t i = 0; i < row.size(); ++i) {
+                indices.emplace_back(row[i], col[i]);
+            }
 
-            std::size_t index = std::distance(row.begin(), it);
+            auto target = std::make_pair(r, c);
+            auto it = std::lower_bound(indices.begin(), indices.end(), target);
 
-            if (index < row.size() && row[index] == r && col[index] == c) {
+            std::size_t index = std::distance(indices.begin(), it);
+
+            if (index < indices.size() && indices[index] == target) {
                 throw std::runtime_error("Value already set. Use update() instead.");
             }
 
             row.insert(row.begin() + index, r);
             col.insert(col.begin() + index, c);
             data.insert(data.begin() + index, value);
-            return;
         }
+
+        // void set(std::size_t r, std::size_t c, T value) override {
+        //     if (r >= rows_ || c >= cols_)
+        //         throw std::out_of_range("Index out of bounds");
+        //
+        //     if (fast_set) {
+        //         // Fast insert: append to end without checking for duplicates
+        //         row.push_back(r);
+        //         col.push_back(c);
+        //         data.push_back(value);
+        //         return;
+        //     }
+        //
+        //     // Sorted insert with binary search
+        //     auto it = std::lower_bound(
+        //         row.begin(), row.end(),
+        //         std::make_pair(r, c),
+        //         [this](std::size_t i, const std::pair<std::size_t, std::size_t>& target) {
+        //             return std::pair<std::size_t, std::size_t>{row[i], col[i]} < target;
+        //         });
+        //
+        //     std::size_t index = std::distance(row.begin(), it);
+        //
+        //     if (index < row.size() && row[index] == r && col[index] == c) {
+        //         throw std::runtime_error("Value already set. Use update() instead.");
+        //     }
+        //
+        //     row.insert(row.begin() + index, r);
+        //     col.insert(col.begin() + index, c);
+        //     data.insert(data.begin() + index, value);
+        //     return;
+        // }
 // -------------------------------------------------------------------------------- 
 
         /**

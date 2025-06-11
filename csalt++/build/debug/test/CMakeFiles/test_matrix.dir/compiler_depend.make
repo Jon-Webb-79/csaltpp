@@ -94,6 +94,7 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
   /usr/include/c++/11/bits/shared_ptr.h \
   /usr/include/c++/11/bits/shared_ptr_atomic.h \
   /usr/include/c++/11/bits/shared_ptr_base.h \
+  /usr/include/c++/11/bits/specfun.h \
   /usr/include/c++/11/bits/sstream.tcc \
   /usr/include/c++/11/bits/std_abs.h \
   /usr/include/c++/11/bits/std_function.h \
@@ -135,6 +136,7 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
   /usr/include/c++/11/cerrno \
   /usr/include/c++/11/chrono \
   /usr/include/c++/11/clocale \
+  /usr/include/c++/11/cmath \
   /usr/include/c++/11/condition_variable \
   /usr/include/c++/11/cstddef \
   /usr/include/c++/11/cstdint \
@@ -186,6 +188,18 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
   /usr/include/c++/11/string \
   /usr/include/c++/11/string_view \
   /usr/include/c++/11/system_error \
+  /usr/include/c++/11/tr1/bessel_function.tcc \
+  /usr/include/c++/11/tr1/beta_function.tcc \
+  /usr/include/c++/11/tr1/ell_integral.tcc \
+  /usr/include/c++/11/tr1/exp_integral.tcc \
+  /usr/include/c++/11/tr1/gamma.tcc \
+  /usr/include/c++/11/tr1/hypergeometric.tcc \
+  /usr/include/c++/11/tr1/legendre_function.tcc \
+  /usr/include/c++/11/tr1/modified_bessel_func.tcc \
+  /usr/include/c++/11/tr1/poly_hermite.tcc \
+  /usr/include/c++/11/tr1/poly_laguerre.tcc \
+  /usr/include/c++/11/tr1/riemann_zeta.tcc \
+  /usr/include/c++/11/tr1/special_function_util.h \
   /usr/include/c++/11/tuple \
   /usr/include/c++/11/type_traits \
   /usr/include/c++/11/typeinfo \
@@ -207,6 +221,7 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
   /usr/include/linux/stddef.h \
   /usr/include/linux/types.h \
   /usr/include/locale.h \
+  /usr/include/math.h \
   /usr/include/pthread.h \
   /usr/include/regex.h \
   /usr/include/sched.h \
@@ -236,11 +251,20 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
   /usr/include/x86_64-linux-gnu/bits/errno.h \
   /usr/include/x86_64-linux-gnu/bits/floatn-common.h \
   /usr/include/x86_64-linux-gnu/bits/floatn.h \
+  /usr/include/x86_64-linux-gnu/bits/flt-eval-method.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-fast.h \
+  /usr/include/x86_64-linux-gnu/bits/fp-logb.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_core.h \
   /usr/include/x86_64-linux-gnu/bits/getopt_posix.h \
+  /usr/include/x86_64-linux-gnu/bits/iscanonical.h \
   /usr/include/x86_64-linux-gnu/bits/libc-header-start.h \
+  /usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h \
   /usr/include/x86_64-linux-gnu/bits/locale.h \
   /usr/include/x86_64-linux-gnu/bits/long-double.h \
+  /usr/include/x86_64-linux-gnu/bits/math-vector.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h \
+  /usr/include/x86_64-linux-gnu/bits/mathcalls.h \
   /usr/include/x86_64-linux-gnu/bits/posix_opt.h \
   /usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h \
   /usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h \
@@ -365,8 +389,6 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
-/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
-
 /usr/include/x86_64-linux-gnu/c++/11/bits/time_members.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/gthr.h:
@@ -427,8 +449,6 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 
-/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
-
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
@@ -463,6 +483,36 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/x86_64-linux-gnu/bits/sigstksz.h:
 
+/usr/include/x86_64-linux-gnu/bits/signal_ext.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:
+
+/usr/include/x86_64-linux-gnu/bits/siginfo-arch.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigevent-consts.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigcontext.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h:
+
+/usr/include/x86_64-linux-gnu/bits/sigaction.h:
+
+/usr/include/x86_64-linux-gnu/bits/time.h:
+
+/usr/include/x86_64-linux-gnu/bits/select.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
+
+/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-helper-functions.h:
+
+/usr/include/x86_64-linux-gnu/bits/math-vector.h:
+
+/usr/include/x86_64-linux-gnu/bits/long-double.h:
+
 /usr/include/c++/11/bits/cxxabi_init_exception.h:
 
 /usr/include/wchar.h:
@@ -473,6 +523,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/c++/11/bits/atomic_lockfree_defines.h:
 
+/usr/include/c++/11/tr1/bessel_function.tcc:
+
 /usr/include/x86_64-linux-gnu/bits/struct_stat.h:
 
 /usr/include/c++/11/bits/stl_set.h:
@@ -480,6 +532,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_FILE.h:
+
+/usr/include/x86_64-linux-gnu/bits/libm-simd-decl-stubs.h:
 
 /usr/include/c++/11/string_view:
 
@@ -493,8 +547,6 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/c++/11/bits/stl_iterator.h:
 
-/usr/include/x86_64-linux-gnu/bits/sigevent-consts.h:
-
 /usr/include/c++/11/bits/stl_pair.h:
 
 /usr/include/c++/11/bits/locale_facets_nonio.tcc:
@@ -505,7 +557,15 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/c++/11/bits/stl_function.h:
 
-/usr/include/c++/11/bits/std_mutex.h:
+/usr/include/c++/11/tr1/exp_integral.tcc:
+
+/usr/include/x86_64-linux-gnu/bits/signum-generic.h:
+
+/usr/include/c++/11/bits/quoted_string.h:
+
+/usr/include/x86_64-linux-gnu/bits/types/__FILE.h:
+
+/usr/include/math.h:
 
 /usr/include/c++/11/bits/string_view.tcc:
 
@@ -537,13 +597,21 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-death-test-internal
 
 _deps/googletest-src/googletest/include/gtest/gtest-typed-test.h:
 
+/usr/include/c++/11/tr1/hypergeometric.tcc:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
 /usr/include/c++/11/bits/locale_facets.tcc:
 
+/usr/include/c++/11/tr1/poly_hermite.tcc:
+
 /usr/include/c++/11/bits/locale_conv.h:
 
 /usr/include/c++/11/bits/locale_classes.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs-64.h:
+
+/usr/include/c++/11/tr1/gamma.tcc:
 
 /usr/include/linux/stat.h:
 
@@ -552,6 +620,8 @@ _deps/googletest-src/googletest/include/gtest/gtest-typed-test.h:
 /usr/include/c++/11/bits/ios_base.h:
 
 /usr/include/c++/11/set:
+
+/usr/include/x86_64-linux-gnu/bits/fp-logb.h:
 
 /usr/include/x86_64-linux-gnu/bits/statx-generic.h:
 
@@ -581,13 +651,13 @@ _deps/googletest-src/googletest/include/gtest/gtest-typed-test.h:
 
 /usr/include/asm-generic/errno.h:
 
+/usr/include/c++/11/tr1/ell_integral.tcc:
+
 /usr/include/c++/11/bits/stl_construct.h:
 
 /usr/include/c++/11/bits/shared_ptr.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
-
-/usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h:
 
@@ -605,11 +675,13 @@ _deps/googletest-src/googletest/include/gtest/gtest-matchers.h:
 
 /usr/include/c++/11/bits/basic_ios.h:
 
+/usr/include/x86_64-linux-gnu/bits/sigstack.h:
+
+/usr/include/c++/11/clocale:
+
 _deps/googletest-src/googletest/include/gtest/internal/gtest-param-util.h:
 
 /usr/include/c++/11/bits/locale_facets_nonio.h:
-
-/usr/include/c++/11/bits/allocator.h:
 
 /usr/include/c++/11/bits/stl_tempbuf.h:
 
@@ -618,14 +690,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-param-util.h:
 /usr/include/c++/11/pstl/pstl_config.h:
 
 /usr/include/c++/11/algorithm:
-
-/usr/include/x86_64-linux-gnu/bits/time.h:
-
-/usr/include/x86_64-linux-gnu/bits/select.h:
-
-/usr/include/c++/11/iostream:
-
-/usr/include/c++/11/bits/node_handle.h:
 
 _deps/googletest-src/googletest/include/gtest/internal/custom/gtest-printers.h:
 
@@ -641,9 +705,21 @@ _deps/googletest-src/googletest/include/gtest/gtest_prod.h:
 
 /usr/include/c++/11/cstdlib:
 
+/usr/include/c++/11/bits/std_mutex.h:
+
+/usr/include/c++/11/tr1/poly_laguerre.tcc:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls-narrow.h:
+
 /usr/include/c++/11/bits/postypes.h:
 
+/usr/include/x86_64-linux-gnu/bits/siginfo-consts-arch.h:
+
+/usr/include/c++/11/tr1/special_function_util.h:
+
 _deps/googletest-src/googletest/include/gtest/gtest-test-part.h:
+
+/usr/include/c++/11/tr1/beta_function.tcc:
 
 /usr/include/c++/11/array:
 
@@ -675,6 +751,12 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-internal.h:
 
 /usr/include/c++/11/bits/locale_classes.tcc:
 
+/usr/include/c++/11/iostream:
+
+/usr/include/c++/11/bits/node_handle.h:
+
+/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
+
 /home/jonwebb/Code_Dev/C++/csalt++/csalt++/test/test_matrix.cpp:
 
 /usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
@@ -682,10 +764,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-internal.h:
 _deps/googletest-src/googletest/include/gtest/gtest-param-test.h:
 
 /usr/include/asm-generic/posix_types.h:
-
-/usr/include/c++/11/bits/unordered_map.h:
-
-_deps/googletest-src/googletest/include/gtest/gtest-assertion-result.h:
 
 _deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
 
@@ -704,6 +782,14 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
 _deps/googletest-src/googletest/include/gtest/gtest-message.h:
 
 _deps/googletest-src/googletest/include/gtest/gtest-printers.h:
+
+_deps/googletest-src/googletest/include/gtest/gtest-assertion-result.h:
+
+/usr/include/c++/11/bits/unordered_map.h:
+
+/usr/include/c++/11/bits/specfun.h:
+
+/usr/include/x86_64-linux-gnu/bits/mathcalls.h:
 
 _deps/googletest-src/googletest/include/gtest/gtest_pred_impl.h:
 
@@ -757,8 +843,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/bits/allocated_ptr.h:
 
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes.h:
-
 /usr/include/c++/11/bits/stl_raw_storage_iter.h:
 
 /usr/include/c++/11/bits/shared_ptr_base.h:
@@ -772,10 +856,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 /usr/include/c++/11/cwchar:
 
 /usr/include/c++/11/bits/basic_string.tcc:
-
-/usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h:
-
-/usr/include/x86_64-linux-gnu/bits/sigaction.h:
 
 /usr/include/c++/11/bits/basic_ios.tcc:
 
@@ -799,6 +879,8 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/bits/stl_map.h:
 
+/usr/include/x86_64-linux-gnu/bits/iscanonical.h:
+
 /usr/include/c++/11/bits/stl_iterator_base_funcs.h:
 
 /usr/include/c++/11/bits/cpp_type_traits.h:
@@ -806,6 +888,10 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 /usr/include/pthread.h:
 
 /usr/include/c++/11/bits/cxxabi_forced.h:
+
+/usr/include/x86_64-linux-gnu/bits/sched.h:
+
+/usr/include/c++/11/ext/alloc_traits.h:
 
 /usr/include/c++/11/bits/stl_vector.h:
 
@@ -818,6 +904,10 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 /usr/include/c++/11/bits/locale_facets.h:
 
 /usr/include/c++/11/bits/exception.h:
+
+/usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/include/c++/11/pstl/glue_numeric_defs.h:
 
 /usr/include/c++/11/bits/unique_lock.h:
 
@@ -838,6 +928,10 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 /usr/include/c++/11/chrono:
 
 /usr/include/c++/11/cstdio:
+
+/usr/include/c++/11/bits/allocator.h:
+
+/usr/include/c++/11/cmath:
 
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
@@ -873,8 +967,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/iomanip:
 
-/usr/include/x86_64-linux-gnu/bits/sigcontext.h:
-
 /usr/include/c++/11/ext/type_traits.h:
 
 /usr/include/c++/11/pstl/glue_memory_defs.h:
@@ -895,10 +987,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/linux/errno.h:
 
-/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
-
 /usr/include/c++/11/memory:
 
 /usr/include/c++/11/bits/algorithmfwd.h:
@@ -914,6 +1002,20 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 /usr/include/c++/11/stdexcept:
 
 /usr/include/c++/11/string:
+
+/usr/include/x86_64-linux-gnu/c++/11/bits/c++config.h:
+
+/usr/include/x86_64-linux-gnu/bits/pthread_stack_min-dynamic.h:
+
+/usr/include/c++/11/tr1/legendre_function.tcc:
+
+/usr/include/c++/11/tr1/modified_bessel_func.tcc:
+
+/usr/include/libintl.h:
+
+/usr/include/x86_64-linux-gnu/bits/endianness.h:
+
+/usr/include/c++/11/tr1/riemann_zeta.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
 
@@ -933,11 +1035,9 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 
 /usr/include/features-time64.h:
 
-/usr/include/libintl.h:
-
-/usr/include/x86_64-linux-gnu/bits/endianness.h:
-
 /usr/include/linux/posix_types.h:
+
+/usr/include/x86_64-linux-gnu/bits/flt-eval-method.h:
 
 /usr/include/c++/11/bits/refwrap.h:
 
@@ -952,8 +1052,6 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 /usr/include/c++/11/backward/binders.h:
 
 /usr/include/x86_64-linux-gnu/asm/bitsperlong.h:
-
-/usr/include/x86_64-linux-gnu/bits/pthreadtypes-arch.h:
 
 /usr/include/strings.h:
 
@@ -985,13 +1083,15 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 
 /usr/include/wctype.h:
 
+/usr/include/x86_64-linux-gnu/bits/signum-arch.h:
+
+/usr/include/x86_64-linux-gnu/bits/errno.h:
+
 /usr/include/x86_64-linux-gnu/asm/errno.h:
 
 /usr/include/x86_64-linux-gnu/asm/posix_types.h:
 
 /usr/include/x86_64-linux-gnu/bits/confname.h:
-
-/usr/include/x86_64-linux-gnu/bits/siginfo-arch.h:
 
 /usr/include/x86_64-linux-gnu/asm/posix_types_64.h:
 
@@ -1011,38 +1111,10 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
 
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
-
-/usr/include/c++/11/pstl/glue_numeric_defs.h:
-
-/usr/include/x86_64-linux-gnu/bits/locale.h:
-
-/usr/include/x86_64-linux-gnu/bits/long-double.h:
-
-/usr/include/x86_64-linux-gnu/bits/posix_opt.h:
-
-/usr/include/c++/11/ext/alloc_traits.h:
-
-/usr/include/x86_64-linux-gnu/bits/sched.h:
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
 
 /usr/include/time.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
 
-/usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
-/usr/include/x86_64-linux-gnu/bits/siginfo-consts.h:
-
-/usr/include/x86_64-linux-gnu/bits/signal_ext.h:
-
-/usr/include/x86_64-linux-gnu/bits/errno.h:
-
-/usr/include/x86_64-linux-gnu/bits/signum-arch.h:
-
-/usr/include/c++/11/bits/quoted_string.h:
-
-/usr/include/x86_64-linux-gnu/bits/signum-generic.h:
-
-/usr/include/c++/11/clocale:
-
-/usr/include/x86_64-linux-gnu/bits/sigstack.h:
+/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:

@@ -1205,6 +1205,76 @@ TEST(SparseCOOMatrixTest, FlatConstructor_CorrectIndexing) {
     EXPECT_EQ(mat.row_index(1), 1);
     EXPECT_EQ(mat.col_index(1), 1);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixEquality, IdenticalMatrices) {
+    slt::SparseCOOMatrix<float> A(2, 2, false);
+    A.set(0, 0, 1.0f);
+    A.set(1, 1, 2.0f);
+    A.finalize();
+
+    slt::SparseCOOMatrix<float> B(2, 2, false);
+    B.set(0, 0, 1.0f);
+    B.set(1, 1, 2.0f);
+    B.finalize();
+
+    EXPECT_TRUE(A == B);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixEquality, DifferentDimensions) {
+    slt::SparseCOOMatrix<float> A(2, 2, false);
+    A.set(0, 0, 1.0f);
+
+    slt::SparseCOOMatrix<float> B(3, 2, false);
+    B.set(0, 0, 1.0f);
+
+    EXPECT_FALSE(A == B);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixEquality, DifferentValues) {
+    slt::SparseCOOMatrix<float> A(2, 2, false);
+    A.set(0, 0, 1.0f);
+    A.set(1, 1, 2.0f);
+    A.finalize();
+
+    slt::SparseCOOMatrix<float> B(2, 2, false);
+    B.set(0, 0, 1.0f);
+    B.set(1, 1, 3.0f);  // different value
+    B.finalize();
+
+    EXPECT_FALSE(A == B);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixEquality, SameValuesDifferentOrder) {
+    slt::SparseCOOMatrix<float> A(2, 2, false);
+    A.set(0, 0, 1.0f);
+    A.set(1, 1, 2.0f);
+    A.finalize();
+
+    slt::SparseCOOMatrix<float> B(2, 2, false);
+    B.set(1, 1, 2.0f);
+    B.set(0, 0, 1.0f);
+    B.finalize();
+
+    EXPECT_TRUE(A == B);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixEquality, NotFinalizedVsFinalized) {
+    slt::SparseCOOMatrix<float> A(2, 2, true);
+    A.set(0, 0, 1.0f);
+    A.set(1, 1, 2.0f);
+
+    slt::SparseCOOMatrix<float> B(2, 2, false);
+    B.set(0, 0, 1.0f);
+    B.set(1, 1, 2.0f);
+    B.finalize();
+
+    EXPECT_TRUE(A == B);
+}
 // ================================================================================
 // ================================================================================
 // eof

@@ -850,7 +850,8 @@
          * @param other The source DenseMatrix to copy.
          */
         DenseMatrix(const DenseMatrix<T>& other)
-            : data(other.data),
+            : MatrixBase<T>(),
+              data(other.data),
               init(other.init),
               rows_(other.rows_),
               cols_(other.cols_) {}
@@ -866,7 +867,8 @@
          * @param other The DenseMatrix to move from.
          */
         DenseMatrix(DenseMatrix<T>&& other) noexcept
-            : data(std::move(other.data)),
+            : MatrixBase<T>(),
+              data(std::move(other.data)),
               init(std::move(other.init)),
               rows_(std::exchange(other.rows_, 0)),
               cols_(std::exchange(other.cols_, 0)) {}

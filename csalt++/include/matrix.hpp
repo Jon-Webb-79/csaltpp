@@ -1651,7 +1651,27 @@
                 }
             }
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Copy constructor for SparseCOOMatrix.
+         *
+         * Constructs a new SparseCOOMatrix as a deep copy of the provided matrix.
+         * All internal data structures (values, row/column indices, flags) are duplicated,
+         * preserving the state of the original matrix while ensuring full independence.
+         *
+         * @param other The SparseCOOMatrix instance to copy.
+         *
+         * @note This performs a deep copy. Changes to the new matrix will not affect the original.
+         */
+        SparseCOOMatrix(const SparseCOOMatrix<T>& other)
+            : MatrixBase<T>(),
+              data(other.data),
+              rows_(other.rows_),
+              cols_(other.cols_),
+              row(other.row),
+              col(other.col),
+              fast_set(other.fast_set){}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1725,6 +1745,52 @@
             }
 
             return true;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Deep copy assignment operator.
+         *
+         * Copies all metadata and contents (rows, cols, data, etc.) from another
+         * SparseCOOMatrix. The two matrices become fully independent.
+         *
+         * @param other Source matrix to copy from.
+         * @return Reference to this matrix.
+         */
+        SparseCOOMatrix<T>& operator=(const SparseCOOMatrix<T>& other) {
+            if (this != &other) {
+                rows_ = other.rows_;
+                cols_ = other.cols_;
+                fast_set = other.fast_set;
+
+                row = other.row;
+                col = other.col;
+                data = other.data;
+            }
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Move assignment operator.
+         *
+         * Transfers resources from another SparseCOOMatrix, leaving the source in a
+         * valid but empty state. Enables efficient transfer of large matrices.
+         *
+         * @param other Source matrix to move from.
+         * @return Reference to this matrix.
+         */
+        SparseCOOMatrix<T>& operator=(SparseCOOMatrix<T>&& other) noexcept {
+            if (this != &other) {
+                rows_ = std::exchange(other.rows_, 0);
+                cols_ = std::exchange(other.cols_, 0);
+                fast_set = std::exchange(other.fast_set, true);
+
+                row = std::move(other.row);
+                col = std::move(other.col);
+                data = std::move(other.data);
+            }
+            return *this;
         }
 // -------------------------------------------------------------------------------- 
 
@@ -1817,7 +1883,6 @@
 
             return result;
         }
-        
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1956,38 +2021,6 @@
             col.insert(col.begin() + index, c);
             data.insert(data.begin() + index, value);
         }
-
-        // void set(std::size_t r, std::size_t c, T value) override {
-        //     if (r >= rows_ || c >= cols_)
-        //         throw std::out_of_range("Index out of bounds");
-        //
-        //     if (fast_set) {
-        //         // Fast insert: append to end without checking for duplicates
-        //         row.push_back(r);
-        //         col.push_back(c);
-        //         data.push_back(value);
-        //         return;
-        //     }
-        //
-        //     // Sorted insert with binary search
-        //     auto it = std::lower_bound(
-        //         row.begin(), row.end(),
-        //         std::make_pair(r, c),
-        //         [this](std::size_t i, const std::pair<std::size_t, std::size_t>& target) {
-        //             return std::pair<std::size_t, std::size_t>{row[i], col[i]} < target;
-        //         });
-        //
-        //     std::size_t index = std::distance(row.begin(), it);
-        //
-        //     if (index < row.size() && row[index] == r && col[index] == c) {
-        //         throw std::runtime_error("Value already set. Use update() instead.");
-        //     }
-        //
-        //     row.insert(row.begin() + index, r);
-        //     col.insert(col.begin() + index, c);
-        //     data.insert(data.begin() + index, value);
-        //     return;
-        // }
 // -------------------------------------------------------------------------------- 
 
         /**

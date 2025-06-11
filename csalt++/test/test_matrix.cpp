@@ -1275,6 +1275,51 @@ TEST(SparseCOOMatrixEquality, NotFinalizedVsFinalized) {
 
     EXPECT_TRUE(A == B);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixAssignment, CopyAssignmentIndependence) {
+    slt::SparseCOOMatrix<float> A(2, 2, false);
+    A.set(0, 0, 1.0f);
+    A.set(1, 1, 2.0f);
+    A.finalize();
+
+    slt::SparseCOOMatrix<float> B(1, 1);
+    B = A;  // Deep copy
+
+    // Matrices should be equal
+    EXPECT_TRUE(A == B);
+
+    // Modify B independently
+    B.update(1, 1, 3.0f);
+
+    // Original A should remain unchanged
+    EXPECT_FLOAT_EQ(A.get(1, 1), 2.0f);
+    EXPECT_FLOAT_EQ(B.get(1, 1), 3.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixAssignment, MoveAssignmentTransfersResources) {
+    slt::SparseCOOMatrix<float> A(2, 2, false);
+    A.set(0, 0, 4.0f);
+    A.set(1, 1, 5.0f);
+    A.finalize();
+
+    slt::SparseCOOMatrix<float> B(1, 1);
+    B = std::move(A);  // Move assignment
+
+    // Values should exist in B
+    EXPECT_FLOAT_EQ(B.get(0, 0), 4.0f);
+    EXPECT_FLOAT_EQ(B.get(1, 1), 5.0f);
+
+    // Dimensions should match
+    EXPECT_EQ(B.rows(), 2);
+    EXPECT_EQ(B.cols(), 2);
+
+    // A is in a valid but empty state; we check dimensions and size
+    EXPECT_EQ(A.rows(), 0);
+    EXPECT_EQ(A.cols(), 0);
+    EXPECT_EQ(A.nonzero_count(), 0);
+}
 // ================================================================================
 // ================================================================================
 // eof

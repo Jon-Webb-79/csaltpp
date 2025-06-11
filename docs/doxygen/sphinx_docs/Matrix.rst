@@ -853,6 +853,26 @@ Flat Storage Constructor
       slt::SparseCOOMatrix<double> mat(flat, 2, 2);
       mat.finalize();
 
+.. cpp:function:: SparseCOOMatrix(const SparseCOOMatrix<T>& other)
+
+   Copy constructor for ``SparseCOOMatrix``.
+
+   Creates a deep copy of another sparse matrix in coordinate (COO) format.
+   This includes copying the row indices, column indices, data values,
+   and the internal insertion optimization flag. The new matrix is
+   completely independent from the original.
+
+   :param other: The source sparse matrix to copy.
+   :type other: const SparseCOOMatrix<T>&
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+      SparseCOOMatrix<float> B(A);  // Deep copy of A
+
+
 Core Methods
 ------------
 
@@ -1034,6 +1054,52 @@ Equality Operator
       B.finalize();
 
       bool equal = (A == B);  // equal == true
+
+operator= (copy)
+~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix<T>& operator=(const SparseCOOMatrix<T>& other)
+
+   Performs a deep copy of another ``SparseCOOMatrix`` into this instance.
+
+   All dimensions, insertion mode, and internal coordinate storage (row, col, data) are duplicated.
+   The two matrices will be fully independent after the operation.
+
+   :param other: Source matrix to copy
+   :return: Reference to this matrix
+   :throws: None
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 1, 3.14f);
+      A.finalize();
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B = A;  // Deep copy
+
+operator= (move)
+~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix<T>& operator=(SparseCOOMatrix<T>&& other) noexcept
+
+   Transfers ownership of resources from another ``SparseCOOMatrix`` into this one.
+
+   After the operation, the ``other`` matrix is left in a valid but empty state.
+
+   :param other: Rvalue reference to the source matrix
+   :return: Reference to this matrix
+   :throws: None
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(1, 0, 42.0f);
+      A.finalize();
+
+      slt::SparseCOOMatrix<float> B;
+      B = std::move(A);  // Transfer ownership
+
 
 Function Call Operator
 ~~~~~~~~~~~~~~~~~~~~~~

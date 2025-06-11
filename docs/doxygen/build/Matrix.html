@@ -119,6 +119,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#operator-overloads">Operator Overloads</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id14">Equality Operator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#operator-copy">operator= (copy)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#operator-move">operator= (move)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#function-call-operator">Function Call Operator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#addition-sparse-sparse">Addition: Sparse + Sparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#addition-sparse-dense">Addition: Sparse + Dense</a></li>
@@ -1328,6 +1330,29 @@ the entries are appended efficiently and require a call to <a class="reference i
 </div>
 </dd></dl>
 
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixRK15SparseCOOMatrixI1TE">
+<span id="_CPPv315SparseCOOMatrixRK15SparseCOOMatrixI1TE"></span><span id="_CPPv215SparseCOOMatrixRK15SparseCOOMatrixI1TE"></span><span id="SparseCOOMatrix__SparseCOOMatrix:T:CR"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SparseCOOMatrixRK15SparseCOOMatrixI1TE" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixRK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copy constructor for <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix</span></code>.</p>
+<p>Creates a deep copy of another sparse matrix in coordinate (COO) format.
+This includes copying the row indices, column indices, data values,
+and the internal insertion optimization flag. The new matrix is
+completely independent from the original.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The source sparse matrix to copy.</p>
+</dd>
+<dt class="field-even">Type other<span class="colon">:</span></dt>
+<dd class="field-even"><p>const SparseCOOMatrix&lt;T&gt;&amp;</p>
+</dd>
+</dl>
+<p><strong>Example:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}};</span>
+<span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">B</span><span class="p">(</span><span class="n">A</span><span class="p">);</span><span class="w">  </span><span class="c1">// Deep copy of A</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 </section>
 <section id="id7">
@@ -1578,6 +1603,67 @@ for floating-point imprecision (when <code class="docutils literal notranslate">
 <span class="n">B</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>
 
 <span class="nb">bool</span> <span class="n">equal</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span> <span class="o">==</span> <span class="n">B</span><span class="p">);</span>  <span class="o">//</span> <span class="n">equal</span> <span class="o">==</span> <span class="n">true</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="operator-copy">
+<h4>operator= (copy)<a class="headerlink" href="#operator-copy" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4aSRK15SparseCOOMatrixI1TE">
+<span id="_CPPv3aSRK15SparseCOOMatrixI1TE"></span><span id="_CPPv2aSRK15SparseCOOMatrixI1TE"></span><span id="assign-operator__SparseCOOMatrix:T:CR"></span><a class="reference internal" href="#_CPPv415SparseCOOMatrixNSt6size_tENSt6size_tEb" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SparseCOOMatrixNSt6size_tENSt6size_tEb" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4aSRK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs a deep copy of another <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix</span></code> into this instance.</p>
+<p>All dimensions, insertion mode, and internal coordinate storage (row, col, data) are duplicated.
+The two matrices will be fully independent after the operation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Source matrix to copy</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to this matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">3.14</span><span class="n">f</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>
+
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="p">;</span>  <span class="o">//</span> <span class="n">Deep</span> <span class="n">copy</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="operator-move">
+<h4>operator= (move)<a class="headerlink" href="#operator-move" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4aSRR15SparseCOOMatrixI1TE">
+<span id="_CPPv3aSRR15SparseCOOMatrixI1TE"></span><span id="_CPPv2aSRR15SparseCOOMatrixI1TE"></span><span id="assign-operator__SparseCOOMatrix:T:RR"></span><a class="reference internal" href="#_CPPv415SparseCOOMatrixNSt6size_tENSt6size_tEb" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415SparseCOOMatrixNSt6size_tENSt6size_tEb" title="SparseCOOMatrix"><span class="n"><span class="pre">SparseCOOMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4aSRR15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Transfers ownership of resources from another <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix</span></code> into this one.</p>
+<p>After the operation, the <code class="docutils literal notranslate"><span class="pre">other</span></code> matrix is left in a valid but empty state.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Rvalue reference to the source matrix</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to this matrix</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">42.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">finalize</span><span class="p">();</span>
+
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">;</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">std</span><span class="p">::</span><span class="n">move</span><span class="p">(</span><span class="n">A</span><span class="p">);</span>  <span class="o">//</span> <span class="n">Transfer</span> <span class="n">ownership</span>
 </pre></div>
 </div>
 </dd></dl>

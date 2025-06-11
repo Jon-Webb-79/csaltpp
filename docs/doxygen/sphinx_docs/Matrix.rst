@@ -1007,6 +1007,34 @@ nonzero_count()
 Operator Overloads
 ------------------
 
+Equality Operator 
+~~~~~~~~~~~~~~~~~
+.. cpp:function:: bool operator==(const SparseCOOMatrix<T>& other) const
+
+   Compares two sparse COO matrices for equality.
+
+   This operator returns ``true`` if both matrices have the same dimensions and 
+   identical non-zero entries at the same positions. The comparison accounts 
+   for floating-point imprecision (when ``T`` is a floating-point type) using an absolute difference threshold.
+
+   :param other: The matrix to compare against
+   :return: ``true`` if matrices are equal; otherwise, ``false``
+   :throws std::runtime_error: If either matrix is not finalized
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2, false);
+      A.set(0, 0, 1.0f);
+      A.set(1, 1, 2.0f);
+      A.finalize();
+
+      slt::SparseCOOMatrix<float> B(2, 2, false);
+      B.set(1, 1, 2.0f);
+      B.set(0, 0, 1.0f);
+      B.finalize();
+
+      bool equal = (A == B);  // equal == true
+
 Function Call Operator
 ~~~~~~~~~~~~~~~~~~~~~~
 

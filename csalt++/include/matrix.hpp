@@ -1943,47 +1943,6 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Adds this sparse matrix to a dense matrix, returning a dense matrix.
-         *
-         * The dimensions of both matrices must match. The result is a dense matrix
-         * that contains the element-wise sum of the dense matrix and the sparse matrix.
-         * Only non-zero values from the sparse matrix contribute to the result.
-         *
-         * If SIMD acceleration is supported for the type `T`, the addition is accelerated.
-         *
-         * @param other Dense matrix operand.
-         * @return New DenseMatrix containing the result.
-         * @throws std::invalid_argument if matrix dimensions do not match.
-         */
-        DenseMatrix<T> operator+(const DenseMatrix<T>& other) const {
-            if (rows_ != other.rows() || cols_ != other.cols())
-                throw std::invalid_argument("Matrix dimensions must match for addition");
-
-            DenseMatrix<T> result(other.rows(), other.cols());
-
-            // SIMD copy: result = other
-            if constexpr (simd_traits<T>::supported) {
-                simd_ops<T>::copy(other.data_ptr(), result.data_ptr(), result.size());
-            } else {
-                for (std::size_t i = 0; i < result.size(); ++i)
-                    result.data_ptr()[i] = other.data_ptr()[i];
-            }
-
-            // Mark all result entries as initialized
-            std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
-
-            // Add the sparse matrix non-zero entries
-            for (std::size_t i = 0; i < data.size(); ++i) {
-                std::size_t r = row[i];
-                std::size_t c = col[i];
-                result.update(r, c, result(r, c) + data[i]);
-            }
-
-            return result;
-        }
-// -------------------------------------------------------------------------------- 
-
-        /**
          * @brief Adds a scalar to each non-zero element of the sparse matrix.
          *
          * Each stored value in the COO matrix has the scalar added to it. This preserves
@@ -2281,8 +2240,97 @@
     }
 // -------------------------------------------------------------------------------- 
 
+    /**
+     * @brief Adds a DenseMatrix and a SparseCOOMatrix element-wise.
+     *
+     * This function returns a new DenseMatrix that represents the element-wise
+     * sum of the input dense and sparse matrices. All initialized values in
+     * the sparse matrix are added to the corresponding entries in the dense matrix.
+     *
+     * The result is fully initialized regardless of which elements were modified by the sparse matrix.
+     *
+     * @tparam T Type of matrix elements (must be float or double).
+     * @param dense The dense matrix operand.
+     * @param sparse The sparse COO matrix operand.
+     * @return A new DenseMatrix<T> containing the result of the addition.
+     * @throws std::invalid_argument If the input matrices do not have the same shape.
+     *
+     * Example:
+     * @code
+     * DenseMatrix<float> A(2, 2);
+     * A.set(0, 0, 1.0f);
+     * A.set(1, 1, 2.0f);
+     *
+     * SparseCOOMatrix<float> B(2, 2);
+     * B.set(0, 1, 3.0f);
+     *
+     * DenseMatrix<float> C = A + B;
+     * // C(0, 0) == 1.0
+     * // C(0, 1) == 3.0
+     * // C(1, 1) == 2.0
+     * @endcode
+     */
     template<typename T>
     DenseMatrix<T> operator+(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) {
+        if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols())
+            throw std::invalid_argument("Matrix dimensions must match for addition");
+
+        DenseMatrix<T> result(dense.rows(), dense.cols());
+
+        // Copy dense matrix data to result
+        if constexpr (simd_traits<T>::supported) {
+            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
+        } else {
+            for (std::size_t i = 0; i < dense.size(); ++i)
+                result.data_ptr()[i] = dense.data_ptr()[i];
+        }
+
+        // Mark all entries as initialized
+        std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
+
+        // Add sparse values
+        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
+            std::size_t r = sparse.row_index(i);
+            std::size_t c = sparse.col_index(i);
+            result.update(r, c, result(r, c) + sparse.value(i));
+        }
+
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+/**
+     * @brief Adds a DenseMatrix and a SparseCOOMatrix element-wise.
+     *
+     * This function returns a new DenseMatrix that represents the element-wise
+     * sum of the input dense and sparse matrices. All initialized values in
+     * the sparse matrix are added to the corresponding entries in the dense matrix.
+     *
+     * The result is fully initialized regardless of which elements were modified by the sparse matrix.
+     *
+     * @tparam T Type of matrix elements (must be float or double).
+     * @param sparse The sparse COO matrix operand.
+     * @param dense The dense matrix operand.
+     * @return A new DenseMatrix<T> containing the result of the addition.
+     * @throws std::invalid_argument If the input matrices do not have the same shape.
+     *
+     * Example:
+     * @code
+     * DenseMatrix<float> A(2, 2);
+     * A.set(0, 0, 1.0f);
+     * A.set(1, 1, 2.0f);
+     *
+     * SparseCOOMatrix<float> B(2, 2);
+     * B.set(0, 1, 3.0f);
+     *
+     * DenseMatrix<float> C = A + B;
+     * // C(0, 0) == 1.0
+     * // C(0, 1) == 3.0
+     * // C(1, 1) == 2.0
+     * @endcode
+     */
+    template<typename T>
+    DenseMatrix<T> operator+(const SparseCOOMatrix<T>& sparse, const DenseMatrix<T>& dense) {
         if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols())
             throw std::invalid_argument("Matrix dimensions must match for addition");
 

@@ -108,8 +108,7 @@ Fixed Dimensions
 std::array of std::array
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. cpp:function:: template<std::size_t R, std::size_t C>
-                  DenseMatrix(const std::array<std::array<T, C>, R>& data)
+.. cpp:function:: template<std::size_t R, std::size_t C>DenseMatrix(const std::array<std::array<T, C>, R>& data)
 
    Constructs a matrix from a fixed-size 2D ``std::array``.
 
@@ -205,7 +204,7 @@ Core Methods
 get()
 ~~~~~
 
-.. cpp:function:: T get(std::size_t row, std::size_t col) const
+.. cpp:function:: T DenseMatrix::get(std::size_t row, std::size_t col) const
 
    Returns the value at the specified (row, col) index.
 
@@ -225,7 +224,7 @@ get()
 set()
 ~~~~~
 
-.. cpp:function:: void set(std::size_t row, std::size_t col, T value)
+.. cpp:function:: void DenseMatrix::set(std::size_t row, std::size_t col, T value)
 
    Sets the value at the specified (row, col) index only if the element
    is uninitialized.
@@ -245,7 +244,7 @@ set()
 update()
 ~~~~~~~~
 
-.. cpp:function:: void update(std::size_t row, std::size_t col, T value)
+.. cpp:function:: void DenseMatrix::update(std::size_t row, std::size_t col, T value)
 
    Updates the value of an already-initialized element.
 
@@ -265,7 +264,7 @@ update()
 rows()
 ~~~~~~~
 
-.. cpp:function:: std::size_t rows() const
+.. cpp:function:: std::size_t DenseMatrix::rows() const
 
    Returns the number of rows in the matrix.
 
@@ -279,7 +278,7 @@ rows()
 cols()
 ~~~~~~~
 
-.. cpp:function:: std::size_t cols() const
+.. cpp:function:: std::size_t DenseMatrix::cols() const
 
    Returns the number of columns in the matrix.
 
@@ -293,7 +292,7 @@ cols()
 transpose()
 ~~~~~~~~~~~
 
-.. cpp:function:: void transpose()
+.. cpp:function:: void DenseMatrix::transpose()
 
    Performs an in-place transposition of the matrix. Converts an (r x c)
    matrix into a (c x r) matrix.
@@ -312,7 +311,7 @@ transpose()
 inverse()
 ~~~~~~~~~
 
-.. cpp:function:: DenseMatrix<T> inverse() const
+.. cpp:function:: DenseMatrix<T> DenseMatrix::inverse() const
 
    Computes and returns the inverse of the matrix using Gauss-Jordan elimination.
 
@@ -331,7 +330,7 @@ inverse()
 
 size()
 ~~~~~~
-.. cpp:function:: std::size_t size() const
+.. cpp:function:: std::size_t DenseMatrix::size() const
 
    Returns the total number of elements in the matrix (i.e., ``rows() * cols()``).
 
@@ -344,13 +343,13 @@ size()
 
 data_ptr()
 ~~~~~~~~~~
-.. cpp:function:: const T* data_ptr() const
+.. cpp:function:: const T* DenseMatrix::data_ptr() const
 
    Returns a raw pointer to the underlying data buffer (read-only).
 
    :return: Pointer to the start of the matrix data (row-major order).
 
-.. cpp:function:: T* data_ptr()
+.. cpp:function:: T* DenseMatrix::data_ptr()
 
    Returns a mutable raw pointer to the underlying data buffer.
 
@@ -364,14 +363,14 @@ data_ptr()
 
 init_ptr()
 ~~~~~~~~~~
-.. cpp:function:: const uint8_t* init_ptr() const
+.. cpp:function:: const uint8_t* DenseMatrix::init_ptr() const
 
    Returns a raw pointer to the internal initialization tracking buffer (read-only).
    Each element is 1 if the corresponding matrix element has been initialized, and 0 otherwise.
 
    :return: Pointer to initialization flags for each matrix entry.
 
-.. cpp:function:: uint8_t* init_ptr()
+.. cpp:function:: uint8_t* DenseMatrix::init_ptr()
 
    Returns a mutable pointer to the internal initialization tracking buffer.
 
@@ -386,7 +385,7 @@ init_ptr()
 
 nonzero_count()
 ~~~~~~~~~~~~~~~
-.. cpp:function:: std::size_t nonzero_count() const
+.. cpp:function:: std::size_t DenseMatrix::nonzero_count() const
 
    Returns the number of initialized (non-zero) elements in the matrix.
    This is equivalent to counting how many elements are marked as initialized.
@@ -465,22 +464,6 @@ Element Access Operator
       slt::DenseMatrix<double> A(2, 2);
       A.set(0, 1, 3.14);
       double x = A(0, 1);  // x == 3.14
-
-Assignment Operator
-~~~~~~~~~~~~~~~~~~~
-
-.. cpp:function:: DenseMatrix<T>& operator=(const DenseMatrix<T>& other)
-
-   Assigns the contents of another matrix to this one. Performs a deep copy.
-
-   :param other: Matrix to copy from
-   :returns: Reference to this matrix
-
-   Example::
-
-      slt::DenseMatrix<double> A(2, 2, 1.0);
-      slt::DenseMatrix<double> B = A;  // Uses copy constructor
-      B = A;  // Uses assignment operator
 
 Equality Operator
 ~~~~~~~~~~~~~~~~~
@@ -633,23 +616,23 @@ Scalar Subtraction
       auto B = A - 2.0f;
       // B is {{3.0f, 4.0f}, {5.0f, 6.0f}}
 
-Sparse Matrix Addition 
+Sparse Matrix Addition
 ~~~~~~~~~~~~~~~~~~~~~~
 
-.. cpp:function:: DenseMatrix<T> operator+(cnst DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) const
+.. cpp:function:: template<typename T> DenseMatrix<T> operator+(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse)
 
-    Returns a new dense matrix that is the element wise sum of a dense and sparse matrix
+   Returns a new dense matrix that is the element-wise sum of a dense and sparse matrix.
 
-   :param dense: A DenseMatrix 
-   :param sparse: A SparseCOOMatrix
+   :param dense: A DenseMatrix object
+   :param sparse: A SparseCOOMatrix object
    :returns: Resulting DenseMatrix
-   :throws std::runtime_error: If any element is uninitialized
+   :throws std::invalid_argument: If matrix dimensions do not match
 
    Example::
 
       slt::DenseMatrix<float> A = {{5.0f, 6.0f}, {7.0f, 8.0f}};
       slt::SparseCOOMatrix<float> B = {{9.0f, 10.0f}, {11.0f, 12.0f}};
-      DenseMatrix<float> C = A + B;
+      slt::DenseMatrix<float> C = A + B;
       // C is {{14.0f, 16.0f}, {18.0f, 20.0f}}
 
 Global Operators
@@ -934,7 +917,7 @@ Flat Storage Constructor
       mat.finalize();
 
 Copy Constructor 
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~
 
 .. cpp:function:: SparseCOOMatrix(const SparseCOOMatrix<T>& other)
 
@@ -986,7 +969,7 @@ Core Methods
 get()
 ~~~~~
 
-.. cpp:function:: T get(std::size_t row, std::size_t col) const
+.. cpp:function:: T SparseCOOMatrix::get(std::size_t row, std::size_t col) const
 
    Returns the value at the specified (row, col) index.
 
@@ -1008,7 +991,7 @@ get()
 set()
 ~~~~~
 
-.. cpp:function:: void set(std::size_t row, std::size_t col, T value)
+.. cpp:function:: void SparseCOOMatrix::set(std::size_t row, std::size_t col, T value)
 
    Inserts a value at the specified (row, col) position.
 
@@ -1029,7 +1012,7 @@ set()
 update()
 ~~~~~~~~
 
-.. cpp:function:: void update(std::size_t row, std::size_t col, T value)
+.. cpp:function:: void SparseCOOMatrix::update(std::size_t row, std::size_t col, T value)
 
    Updates the value of an already-initialized element.
 
@@ -1050,7 +1033,7 @@ update()
 rows()
 ~~~~~~~
 
-.. cpp:function:: std::size_t rows() const
+.. cpp:function:: std::size_t SparseCOOMatrix::rows() const
 
    Returns the number of rows in the sparse matrix.
 
@@ -1064,7 +1047,7 @@ rows()
 cols()
 ~~~~~~~
 
-.. cpp:function:: std::size_t cols() const
+.. cpp:function:: std::size_t SparseCOOMatrix::cols() const
 
    Returns the number of columns in the sparse matrix.
 
@@ -1078,7 +1061,7 @@ cols()
 is_initialized()
 ~~~~~~~~~~~~~~~~
 
-.. cpp:function:: bool is_initialized(std::size_t row, std::size_t col) const
+.. cpp:function:: bool SparseCOOMatrix::is_initialized(std::size_t row, std::size_t col) const
 
    Checks whether the specified (row, col) element has been explicitly set.
 
@@ -1099,7 +1082,7 @@ is_initialized()
 finalize()
 ~~~~~~~~~~
 
-.. cpp:function:: void finalize()
+.. cpp:function:: void SparseCOOMatrix::finalize()
 
    Sorts the internal coordinate arrays (by row-major order) and eliminates duplicate entries.
 
@@ -1118,7 +1101,7 @@ finalize()
 nonzero_count()
 ~~~~~~~~~~~~~~~
 
-.. cpp:function:: std::size_t nonzero_count() const
+.. cpp:function:: std::size_t SparseCOOMatrix::nonzero_count() const
 
    Returns the number of explicitly stored (non-zero) entries in the sparse matrix.
 

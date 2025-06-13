@@ -1386,19 +1386,20 @@ TEST(SparseCOOMatrixTest, SubtractScalarFromSparseMatrix) {
     EXPECT_EQ(result.rows(), 2);
     EXPECT_EQ(result.cols(), 2);
     EXPECT_EQ(result.nonzero_count(), 2);
-    EXPECT_FLOAT_EQ(result.value(0), 0.0f);  // at (0,0)
-    EXPECT_FLOAT_EQ(result.value(1), 1.0f);  // at (1,1)
+    EXPECT_FLOAT_EQ(result(0,0), 0.0f);
+    EXPECT_FLOAT_EQ(result(1,1), 1.0f);
 }
 // -------------------------------------------------------------------------------- 
 
 TEST(SparseCOOMatrixTest, SubtractSparseFromSparse) {
-    slt::SparseCOOMatrix<float> A(2, 2);
-    A.set(0, 0, 1.0f);
-    A.set(1, 1, 2.0f);
-
-    slt::SparseCOOMatrix<float> B(2, 2);
-    B.set(0, 1, 3.0f);
-    B.set(1, 0, 4.0f);
+    slt::SparseCOOMatrix<float> A{
+        {1.0, 0.0},
+        {0.0, 2.0}
+    };
+    slt::SparseCOOMatrix<float> B{
+        {0.0, 3.0},
+        {4.0, 0.0}
+    };
 
     slt::DenseMatrix<float> result = A - B;
 
@@ -1408,6 +1409,24 @@ TEST(SparseCOOMatrixTest, SubtractSparseFromSparse) {
     EXPECT_FLOAT_EQ(result(0, 1), -3.0f);
     EXPECT_FLOAT_EQ(result(1, 0), -4.0f);
     EXPECT_FLOAT_EQ(result(1, 1), 2.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixOperators, ScalarMinusMatrix) {
+    slt::SparseCOOMatrix<float> A(2, 2);
+    A.set(0, 0, 3.0f);
+    A.set(1, 1, 1.0f);
+
+    // Perform scalar - matrix
+    slt::SparseCOOMatrix<float> B = 5.0f - A;
+
+    // Check values: B(0,0) = 2.0, B(1,1) = 4.0
+    EXPECT_FLOAT_EQ(B.get(0, 0), 2.0f);
+    EXPECT_FLOAT_EQ(B.get(1, 1), 4.0f);
+
+    // Check that dimensions are preserved
+    EXPECT_EQ(B.rows(), 2);
+    EXPECT_EQ(B.cols(), 2);
 }
 // ================================================================================
 // ================================================================================

@@ -1398,21 +1398,21 @@
      * @tparam T Matrix element type.
      * @param scalar Scalar value.
      * @param matrix Matrix operand.
-     * @return Resulting matrix.
-     */
-        template<typename T>
-        slt::DenseMatrix<T> operator-(T scalar, const slt::DenseMatrix<T>& matrix) {
-            slt::DenseMatrix<T> result(matrix.rows(), matrix.cols());
-            for (std::size_t i = 0; i < matrix.rows(); ++i) {
-                for (std::size_t j = 0; j < matrix.cols(); ++j) {
-                    if (matrix.is_initialized(i, j)) {
-                        result.set(i, j, scalar - matrix.get(i, j));
-                    }
-                    // If not initialized, skip—result stays uninitialized
+    * @return Resulting matrix.
+    */
+    template<typename T>
+    slt::DenseMatrix<T> operator-(T scalar, const slt::DenseMatrix<T>& matrix) {
+        slt::DenseMatrix<T> result(matrix.rows(), matrix.cols());
+        for (std::size_t i = 0; i < matrix.rows(); ++i) {
+            for (std::size_t j = 0; j < matrix.cols(); ++j) {
+                if (matrix.is_initialized(i, j)) {
+                    result.set(i, j, scalar - matrix.get(i, j));
                 }
+                // If not initialized, skip—result stays uninitialized
             }
-            return result;
         }
+        return result;
+    }
 // -------------------------------------------------------------------------------- 
 
     /**
@@ -1995,7 +1995,7 @@
          */
         DenseMatrix<T> operator-(const SparseCOOMatrix<T>& other) const {
             if (rows_ != other.rows_ || cols_ != other.cols_)
-                throw std::invalid_argument("Matrix dimensions must match for addition");
+                throw std::invalid_argument("Matrix dimensions must match for subtraction");
 
             DenseMatrix<T> result(rows_, cols_);
 
@@ -2003,14 +2003,14 @@
             for (std::size_t i = 0; i < data.size(); ++i)
                 result.set(row[i], col[i], data[i]);
 
-            // Add all elements from the other sparse matrix
+            // Subtract all elements from the other sparse matrix
             for (std::size_t i = 0; i < other.data.size(); ++i) {
                 std::size_t r = other.row[i];
                 std::size_t c = other.col[i];
                 if (result.is_initialized(r, c))
                     result.update(r, c, result(r, c) - other.data[i]);
                 else
-                    result.set(r, c, other.data[i]);
+                    result.set(r, c, -other.data[i]);  // <-- Fix: negate value
             }
 
             return result;
@@ -2427,6 +2427,46 @@
             std::size_t r = sparse.row_index(i);
             std::size_t c = sparse.col_index(i);
             result.update(r, c, result(r, c) + sparse.value(i));
+        }
+
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Subtracts each non-zero element of a SparseCOOMatrix from a scalar value.
+     *
+     * Creates a new SparseCOOMatrix where each stored element is the result of
+     * subtracting the matrix element from the given scalar (i.e., `scalar - value`).
+     * Unstored zero elements remain zero and are not added to the result.
+     *
+     * This operation preserves the sparsity pattern of the original matrix.
+     *
+     * @param scalar The scalar value to subtract each matrix element from.
+     * @param matrix The input SparseCOOMatrix.
+     * @return A new SparseCOOMatrix with updated values.
+     *
+     * @throws std::invalid_argument if the matrix is improperly initialized.
+     *
+     * @example
+     * @code
+     * SparseCOOMatrix<float> A(2, 2);
+     * A.set(0, 0, 3.0f);
+     * A.set(1, 1, 1.0f);
+     *
+     * SparseCOOMatrix<float> B = 5.0f - A;
+     * // B.get(0, 0) == 2.0f, B.get(1, 1) == 4.0f
+     * @endcode
+     */
+    template<typename T>
+    SparseCOOMatrix<T> operator-(T scalar, const SparseCOOMatrix<T>& matrix) {
+        SparseCOOMatrix<T> result(matrix.rows(), matrix.cols());
+
+        for (std::size_t i = 0; i < matrix.nonzero_count(); ++i) {
+            std::size_t r = matrix.row_index(i);
+            std::size_t c = matrix.col_index(i);
+            T val = scalar - matrix.value(i);
+            result.set(r, c, val);
         }
 
         return result;

@@ -1338,3 +1338,29 @@ Subtraction: Sparse + Scalar
       auto result = A - 1.0f;
       // result: (0,0)=0.0, (1,1)=1.0
 
+Subtraction: Scalar + Sparse 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template<typename T> SparseCOOMatrix<T> operator-(T scalar, const SparseCOOMatrix<T>& matrix)
+
+   Returns a new sparse matrix whose elements are the result of subtracting each non-zero entry 
+   in the input matrix from the scalar. That is, each stored value becomes ``scalar - value``.
+
+   This preserves the sparsity pattern of the original matrix. Only initialized (non-zero) elements 
+   are modified and included in the result.
+
+   :param scalar: The scalar to subtract each matrix value from.
+   :param matrix: The input sparse matrix.
+   :returns: A SparseCOOMatrix containing ``scalar - value`` for each non-zero element.
+   :throws std::invalid_argument: If the matrix is improperly initialized.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 3.0f);
+      A.set(1, 1, 1.0f);
+
+      auto B = 5.0f - A;
+      // B.get(0, 0) == 2.0f
+      // B.get(1, 1) == 4.0f
+

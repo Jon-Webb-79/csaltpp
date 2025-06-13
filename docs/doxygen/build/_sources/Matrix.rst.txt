@@ -616,8 +616,8 @@ Scalar Subtraction
       auto B = A - 2.0f;
       // B is {{3.0f, 4.0f}, {5.0f, 6.0f}}
 
-Sparse Matrix Addition
-~~~~~~~~~~~~~~~~~~~~~~
+Dense Matrix Addition
+~~~~~~~~~~~~~~~~~~~~~
 
 .. cpp:function:: template<typename T> DenseMatrix<T> operator+(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse)
 
@@ -1289,4 +1289,52 @@ Addition: Scalar + Sparse (Friend)
 
       slt::SparseCOOMatrix<float> A = {{0.0f, 2.0f}, {1.0f, 0.0f}};
       auto B = 1.0f + A;
+
+Subtraction: Sparse + Sparse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T> SparseCOOMatrix<T>::operator-(const SparseCOOMatrix<T>& other) const
+
+   Performs element-wise subtraction of two sparse COO matrices and returns the result as a dense matrix.
+
+   Both input matrices must have the same dimensions. Values from `other` are subtracted from the calling matrix.
+   If either matrix contains a non-zero value at a given index, the result includes it in dense form.
+
+   :param other: The sparse matrix to subtract.
+   :returns: A DenseMatrix representing the result of A - B
+   :throws std::invalid_argument: If matrix dimensions do not match.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 1.0f);
+      A.set(1, 1, 2.0f);
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 1, 3.0f);
+      B.set(1, 0, 4.0f);
+
+      slt::DenseMatrix<float> C = A - B;
+      // Result: C(0,0)=1.0, C(0,1)=-3.0, C(1,0)=-4.0, C(1,1)=2.0
+
+Subtraction: Sparse + Scalar
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix<T> SparseCOOMatrix<T>::operator-(T scalar) const
+
+   Subtracts a scalar from every stored (non-zero) element in the sparse COO matrix. Uninitialized elements remain untouched.
+
+   This operation preserves the sparsity structure, only modifying explicitly stored entries.
+
+   :param scalar: Scalar value to subtract.
+   :returns: A new SparseCOOMatrix with updated values.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 1.0f);
+      A.set(1, 1, 2.0f);
+
+      auto result = A - 1.0f;
+      // result: (0,0)=0.0, (1,1)=1.0
 

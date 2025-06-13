@@ -87,7 +87,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#scalar-division">Scalar Division</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#scalar-addition">Scalar Addition</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#scalar-subtraction">Scalar Subtraction</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#sparse-matrix-addition">Sparse Matrix Addition</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dense-matrix-addition">Dense Matrix Addition</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#global-operators">Global Operators</a><ul>
@@ -131,6 +131,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#addition-sparse-dense">Addition: Sparse + Dense</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#addition-sparse-scalar">Addition: Sparse + Scalar</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#addition-scalar-sparse-friend">Addition: Scalar + Sparse (Friend)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subtraction-sparse-sparse">Subtraction: Sparse + Sparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subtraction-sparse-scalar">Subtraction: Sparse + Scalar</a></li>
 </ul>
 </li>
 </ul>
@@ -1020,8 +1022,8 @@ if the dimensions are incompatible.</p>
 </dd></dl>
 
 </section>
-<section id="sparse-matrix-addition">
-<h4>Sparse Matrix Addition<a class="headerlink" href="#sparse-matrix-addition" title="Link to this heading"></a></h4>
+<section id="dense-matrix-addition">
+<h4>Dense Matrix Addition<a class="headerlink" href="#dense-matrix-addition" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4I0Epl11DenseMatrixI1TERK11DenseMatrixI1TERK15SparseCOOMatrixI1TE">
 <span id="_CPPv3I0EplRK11DenseMatrixI1TERK15SparseCOOMatrixI1TE"></span><span id="_CPPv2I0EplRK11DenseMatrixI1TERK15SparseCOOMatrixI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0Epl11DenseMatrixI1TERK11DenseMatrixI1TERK15SparseCOOMatrixI1TE" title="operator+::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0Epl11DenseMatrixI1TERK11DenseMatrixI1TERK15SparseCOOMatrixI1TE" title="operator+::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dense</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0Epl11DenseMatrixI1TERK11DenseMatrixI1TERK15SparseCOOMatrixI1TE" title="operator+::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sparse</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0Epl11DenseMatrixI1TERK11DenseMatrixI1TERK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
@@ -1925,6 +1927,68 @@ before sparse additions are performed.</p>
 <p>Example:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span> <span class="o">=</span> <span class="p">{{</span><span class="mf">0.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">},</span> <span class="p">{</span><span class="mf">1.0</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="n">f</span><span class="p">}};</span>
 <span class="n">auto</span> <span class="n">B</span> <span class="o">=</span> <span class="mf">1.0</span><span class="n">f</span> <span class="o">+</span> <span class="n">A</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="subtraction-sparse-sparse">
+<h4>Subtraction: Sparse + Sparse<a class="headerlink" href="#subtraction-sparse-sparse" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4IENK15SparseCOOMatrixI1TEmiE11DenseMatrixI1TERK15SparseCOOMatrixI1TE">
+<span id="_CPPv3IENK15SparseCOOMatrixI1TEmiERK15SparseCOOMatrixI1TE"></span><span id="_CPPv2IENK15SparseCOOMatrixI1TEmiERK15SparseCOOMatrixI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4IENK15SparseCOOMatrixI1TEmiE11DenseMatrixI1TERK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise subtraction of two sparse COO matrices and returns the result as a dense matrix.</p>
+<p>Both input matrices must have the same dimensions. Values from <cite>other</cite> are subtracted from the calling matrix.
+If either matrix contains a non-zero value at a given index, the result includes it in dense form.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The sparse matrix to subtract.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A DenseMatrix representing the result of A - B</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If matrix dimensions do not match.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">B</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">3.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">B</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="n">B</span><span class="p">;</span>
+<span class="o">//</span> <span class="n">Result</span><span class="p">:</span> <span class="n">C</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">C</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=-</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">C</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=-</span><span class="mf">4.0</span><span class="p">,</span> <span class="n">C</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mf">2.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="subtraction-sparse-scalar">
+<h4>Subtraction: Sparse + Scalar<a class="headerlink" href="#subtraction-sparse-scalar" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4IENK15SparseCOOMatrixI1TEmiE15SparseCOOMatrixI1TE1T">
+<span id="_CPPv3IENK15SparseCOOMatrixI1TEmiE1T"></span><span id="_CPPv2IENK15SparseCOOMatrixI1TEmiE1T"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4IENK15SparseCOOMatrixI1TEmiE15SparseCOOMatrixI1TE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Subtracts a scalar from every stored (non-zero) element in the sparse COO matrix. Uninitialized elements remain untouched.</p>
+<p>This operation preserves the sparsity structure, only modifying explicitly stored entries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>scalar</strong> – Scalar value to subtract.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A new SparseCOOMatrix with updated values.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">);</span>
+
+<span class="n">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="mf">1.0</span><span class="n">f</span><span class="p">;</span>
+<span class="o">//</span> <span class="n">result</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">=</span><span class="mf">1.0</span>
 </pre></div>
 </div>
 </dd></dl>

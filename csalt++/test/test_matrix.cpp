@@ -1374,6 +1374,41 @@ TEST(SparseCOOMatrixAssignment, MoveAssignmentTransfersResources) {
     EXPECT_EQ(A.cols(), 0);
     EXPECT_EQ(A.nonzero_count(), 0);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTest, SubtractScalarFromSparseMatrix) {
+    slt::SparseCOOMatrix<float> A(2, 2);
+    A.set(0, 0, 1.0f);
+    A.set(1, 1, 2.0f);
+
+    auto result = A - 1.0f;
+
+    EXPECT_EQ(result.rows(), 2);
+    EXPECT_EQ(result.cols(), 2);
+    EXPECT_EQ(result.nonzero_count(), 2);
+    EXPECT_FLOAT_EQ(result.value(0), 0.0f);  // at (0,0)
+    EXPECT_FLOAT_EQ(result.value(1), 1.0f);  // at (1,1)
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTest, SubtractSparseFromSparse) {
+    slt::SparseCOOMatrix<float> A(2, 2);
+    A.set(0, 0, 1.0f);
+    A.set(1, 1, 2.0f);
+
+    slt::SparseCOOMatrix<float> B(2, 2);
+    B.set(0, 1, 3.0f);
+    B.set(1, 0, 4.0f);
+
+    slt::DenseMatrix<float> result = A - B;
+
+    EXPECT_EQ(result.rows(), 2);
+    EXPECT_EQ(result.cols(), 2);
+    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(result(0, 1), -3.0f);
+    EXPECT_FLOAT_EQ(result(1, 0), -4.0f);
+    EXPECT_FLOAT_EQ(result(1, 1), 2.0f);
+}
 // ================================================================================
 // ================================================================================
 // eof

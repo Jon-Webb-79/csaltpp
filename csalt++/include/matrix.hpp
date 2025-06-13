@@ -1966,6 +1966,81 @@
             return result;
         }
 // -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Subtracts two sparse matrices element-wise and returns the result as a dense matrix.
+         *
+         * Performs element-wise subtraction of two matrices in sparse COO format. The result is returned
+         * as a `DenseMatrix<T>` to ensure full representation of potential non-zero values in the output.
+         * 
+         * Both matrices must have identical dimensions. If either matrix contains a non-zero value
+         * at a given (row, col) index, the result will include that value. Internally, values are
+         * added using a nested loop and temporary dense buffer. This operation is not optimized
+         * for SIMD or sparsity-aware acceleration but is functionally correct and safe.
+         *
+         * @param other The sparse matrix to add.
+         * @return A dense matrix containing the result of the element-wise addition.
+         * @throws std::invalid_argument if the matrix dimensions do not match.
+         *
+         * @note This implementation uses full dense representation for the result, even if the
+         *       result remains sparse. Use a future `to_sparse_sum()` method if you want a sparse result.
+         *
+         * @example
+         * @code
+         * SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+         * SparseCOOMatrix<float> B = {{0.0f, 3.0f}, {4.0f, 0.0f}};
+         * DenseMatrix<float> result = A - B;
+         * // result: [[1.0, -3.0], [-4.0, 2.0]]
+         * @endcode
+         */
+        DenseMatrix<T> operator-(const SparseCOOMatrix<T>& other) const {
+            if (rows_ != other.rows_ || cols_ != other.cols_)
+                throw std::invalid_argument("Matrix dimensions must match for addition");
+
+            DenseMatrix<T> result(rows_, cols_);
+
+            // Add all elements from this sparse matrix
+            for (std::size_t i = 0; i < data.size(); ++i)
+                result.set(row[i], col[i], data[i]);
+
+            // Add all elements from the other sparse matrix
+            for (std::size_t i = 0; i < other.data.size(); ++i) {
+                std::size_t r = other.row[i];
+                std::size_t c = other.col[i];
+                if (result.is_initialized(r, c))
+                    result.update(r, c, result(r, c) - other.data[i]);
+                else
+                    result.set(r, c, other.data[i]);
+            }
+
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Subtracts a scalar to each non-zero element of the sparse matrix.
+         *
+         * Each stored value in the COO matrix has the scalar added to it. This preserves
+         * the sparsity pattern; zero elements not explicitly stored remain unchanged.
+         *
+         * @param scalar Scalar value to add.
+         * @return A new `SparseCOOMatrix` with updated values.
+         *
+         * @example
+         * @code
+         * SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+         * auto result = A - 1.0f;
+         * // result: {{0.0f, -1.0f}, {-1.0f, 1.0f}};
+         * @endcode
+         */
+        SparseCOOMatrix operator-(T scalar) const {
+            SparseCOOMatrix result(*this);
+            for (auto& val : result.data) {
+                val -= scalar;
+            }
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
         /**
         * @brief Returns the number of rows in the matrix.
         */

@@ -362,6 +362,9 @@
                 for (std::size_t i = end; i < size; ++i)
                     dst[i] = src[i];
             }
+// -------------------------------------------------------------------------------- 
+
+
         };
 // -------------------------------------------------------------------------------- 
 
@@ -2467,6 +2470,114 @@
             std::size_t c = matrix.col_index(i);
             T val = scalar - matrix.value(i);
             result.set(r, c, val);
+        }
+
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Subtracts a dense matrix from a sparse matrix and returns the result as a dense matrix.
+     *
+     * Performs element-wise subtraction: result(i,j) = sparse(i,j) - dense(i,j). The result is 
+     * stored in a DenseMatrix<T> to account for all positions, including those with implicit zeros 
+     * in the sparse matrix. This function assumes that both matrices have the same dimensions.
+     *
+     * Internally, this negates all values in the dense matrix and adds the sparse values.
+     * SIMD acceleration is used if available.
+     *
+     * @tparam T Floating-point type (float or double)
+     * @param sparse The left-hand operand, a sparse matrix
+     * @param dense The right-hand operand, a dense matrix
+     * @return DenseMatrix<T> containing the result of the subtraction
+     * @throws std::invalid_argument if matrix dimensions do not match
+     *
+     * @example
+     * @code
+     * slt::SparseCOOMatrix<float> A = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+     * slt::DenseMatrix<float> B = {{5.0f, 6.0f}, {7.0f, 8.0f}};
+     * slt::DenseMatrix<float> C = A - B;
+     * // C == {{-4.0f, -6.0f}, {-7.0f, -6.0f}};
+     * @endcode
+     */
+    template<typename T>
+    DenseMatrix<T> operator-(const SparseCOOMatrix<T>& sparse, const DenseMatrix<T>& dense) {
+        if (sparse.rows() != dense.rows() || sparse.cols() != dense.cols())
+            throw std::invalid_argument("Matrix dimensions must match for subtraction");
+
+        DenseMatrix<T> result(dense.rows(), dense.cols());
+
+        // Negate dense matrix and store in result
+        if constexpr (simd_traits<T>::supported) {
+            simd_ops<T>::mul_scalar(dense.data_ptr(), static_cast<T>(-1), result.data_ptr(), dense.size());
+        } else {
+            for (std::size_t i = 0; i < dense.size(); ++i)
+                result.data_ptr()[i] = -dense.data_ptr()[i];
+        }
+
+        // Mark all entries as initialized
+        std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
+
+        // Add sparse matrix values to result
+        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
+            std::size_t r = sparse.row_index(i);
+            std::size_t c = sparse.col_index(i);
+            result.update(r, c, result(r, c) + sparse.value(i));
+        }
+
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Subtracts a sparse matrix from a dense matrix and returns the result as a dense matrix.
+     *
+     * Performs element-wise subtraction: result(i,j) = dense(i,j) - sparse(i,j). The result is 
+     * stored in a DenseMatrix<T> to preserve all values. Zero entries in the sparse matrix do not 
+     * affect the result.
+     *
+     * The function requires that both matrices have matching dimensions. SIMD is used to accelerate
+     * the copy phase where supported.
+     *
+     * @tparam T Floating-point type (float or double)
+     * @param dense The left-hand operand, a dense matrix
+     * @param sparse The right-hand operand, a sparse matrix
+     * @return DenseMatrix<T> representing the subtraction result
+     * @throws std::invalid_argument if matrix dimensions do not match
+     *
+     * @example
+     * @code
+     * slt::DenseMatrix<float> A = {{5.0f, 6.0f}, {7.0f, 8.0f}};
+     * slt::SparseCOOMatrix<float> B = {{1.0f, 0.0f}, {0.0f, 2.0f}};
+     * slt::DenseMatrix<float> C = A - B;
+     * // C == {{4.0f, 6.0f}, {7.0f, 6.0f}};
+     * @endcode
+     */
+    template<typename T>
+    DenseMatrix<T> operator-(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) {
+        if (sparse.rows() != dense.rows() || sparse.cols() != dense.cols()) {
+            throw std::invalid_argument("Matrix dimensions must match for subtraction");
+        }
+
+        DenseMatrix<T> result(dense.rows(), dense.cols());
+
+        // Copy dense values
+        if constexpr (simd_traits<T>::supported) {
+            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
+        } else {
+            for (std::size_t i = 0; i < dense.size(); ++i) {
+                result.data_ptr()[i] = dense.data_ptr()[i];
+            }
+        }
+
+        // Mark all entries as initialized
+        std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
+
+        // Subtract sparse values
+        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
+            std::size_t r = sparse.row_index(i);
+            std::size_t c = sparse.col_index(i);
+            result.update(r, c, result(r, c) - sparse.value(i));
         }
 
         return result;

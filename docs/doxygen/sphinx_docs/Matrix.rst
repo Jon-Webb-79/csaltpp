@@ -1364,3 +1364,59 @@ Subtraction: Scalar + Sparse
       // B.get(0, 0) == 2.0f
       // B.get(1, 1) == 4.0f
 
+Subtraction: Sparse - Dense
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T> operator-(const SparseCOOMatrix<T>& sparse, const DenseMatrix<T>& dense)
+
+   Computes the element-wise difference between a sparse matrix and a dense matrix, 
+   returning the result as a new dense matrix.
+
+   This operation returns ``result(i,j) = sparse(i,j) - dense(i,j)`` for all 
+   ``(i,j)``. Elements from the sparse matrix are subtracted from the corresponding 
+   values in the dense matrix.
+
+   :param sparse: A ``SparseCOOMatrix<T>`` representing the left-hand side of the subtraction.
+   :param dense: A ``DenseMatrix<T>`` representing the right-hand side of the subtraction.
+   :returns: A new ``DenseMatrix<T>`` with the computed result.
+   :throws std::invalid_argument: If matrix dimensions do not match.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 2.0f);
+      A.set(1, 1, 3.0f);
+
+      slt::DenseMatrix<float> B(2, 2, 1.0f);
+      slt::DenseMatrix<float> C = A - B;
+
+      // C(0, 0) == 1.0, C(1, 1) == 2.0, other values == -1.0
+
+Subtraction: Dense - Sparse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: DenseMatrix<T> operator-(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse)
+
+   Computes the element-wise difference between a dense matrix and a sparse matrix, 
+   returning the result as a new dense matrix.
+
+   This operation returns ``result(i,j) = dense(i,j) - sparse(i,j)`` for all 
+   ``(i,j)``. Sparse values are subtracted from the initialized dense matrix values.
+
+   :param dense: A ``DenseMatrix<T>`` representing the left-hand side of the subtraction.
+   :param sparse: A ``SparseCOOMatrix<T>`` representing the right-hand side of the subtraction.
+   :returns: A new ``DenseMatrix<T>`` containing the result.
+   :throws std::invalid_argument: If matrix dimensions do not match.
+
+   Example::
+
+      slt::DenseMatrix<float> A(2, 2, 1.0f);
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 0, 0.5f);
+      B.set(1, 1, 2.0f);
+
+      slt::DenseMatrix<float> C = A - B;
+
+      // C(0, 0) == 0.5, C(1, 1) == -1.0, other values == 1.0
+

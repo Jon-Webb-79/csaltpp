@@ -1428,6 +1428,50 @@ TEST(SparseCOOMatrixOperators, ScalarMinusMatrix) {
     EXPECT_EQ(B.rows(), 2);
     EXPECT_EQ(B.cols(), 2);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixOperators, SparseMinusDense) {
+    slt::SparseCOOMatrix<float> A(2, 2);
+    A.set(0, 0, 3.0f);
+    A.set(1, 1, 1.0f);
+
+    slt::DenseMatrix<float> B(2, 2, 0.0f);
+    B.update(0, 0, 1.0f);
+    B.update(0, 1, 2.0f);
+    B.update(1, 0, 3.0f);
+    B.update(1, 1, 4.0f);
+
+    slt::DenseMatrix<float> result = A - B;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 2.0f);   // 3 - 1
+    EXPECT_FLOAT_EQ(result(0, 1), -2.0f);  // 0 - 2
+    EXPECT_FLOAT_EQ(result(1, 0), -3.0f);  // 0 - 3
+    EXPECT_FLOAT_EQ(result(1, 1), -3.0f);  // 1 - 4
+
+    EXPECT_EQ(result.rows(), 2);
+    EXPECT_EQ(result.cols(), 2);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixOperators, DenseMinusSparse) {
+    slt::DenseMatrix<float> A(2, 2, 5.0f);
+    A.update(0, 0, 7.0f);
+    A.update(1, 1, 9.0f);
+
+    slt::SparseCOOMatrix<float> B(2, 2);
+    B.set(0, 0, 2.0f);
+    B.set(1, 1, 4.0f);
+
+    slt::DenseMatrix<float> result = A - B;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 5.0f);   // 7 - 2
+    EXPECT_FLOAT_EQ(result(0, 1), 5.0f);   // 5 - 0
+    EXPECT_FLOAT_EQ(result(1, 0), 5.0f);   // 5 - 0
+    EXPECT_FLOAT_EQ(result(1, 1), 5.0f);   // 9 - 4
+
+    EXPECT_EQ(result.rows(), 2);
+    EXPECT_EQ(result.cols(), 2);
+}
 // ================================================================================
 // ================================================================================
 // eof

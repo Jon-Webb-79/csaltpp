@@ -1420,3 +1420,30 @@ Subtraction: Dense - Sparse
 
       // C(0, 0) == 0.5, C(1, 1) == -1.0, other values == 1.0
 
+Multiplication: Sparse * Sparse
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCOOMatrix<T> SparseCOOMatrix<T>::operator*(const SparseCOOMatrix<T>& other) const
+
+   Performs element-wise multiplication between two sparse matrices. This operation only includes elements
+   at positions where both matrices have non-zero entries. The result is a new ``SparseCOOMatrix<T>``
+   representing the Hadamard product.
+
+   :param other: Another sparse matrix of the same dimensions.
+   :returns: A ``SparseCOOMatrix<T>`` where each stored value is the product of overlapping non-zero entries.
+   :throws std::invalid_argument: If the matrix dimensions do not match.
+
+   Example::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 2.0f);
+      A.set(1, 1, 3.0f);
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 0, 4.0f);
+      B.set(0, 1, 5.0f);
+
+      slt::SparseCOOMatrix<float> C = A * B;
+      // C has only (0,0) = 8.0f because it is the only overlapping initialized position
+
+

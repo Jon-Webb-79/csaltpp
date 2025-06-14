@@ -2044,6 +2044,35 @@
             return result;
         }
 // -------------------------------------------------------------------------------- 
+    /**
+     * @brief Performs element-wise multiplication of two sparse matrices.
+     *
+     * Multiplies corresponding non-zero elements where both matrices store a value.
+     * Returns a new SparseCOOMatrix containing only the overlapping non-zero positions.
+     *
+     * @param other The other SparseCOOMatrix to multiply with.
+     * @return SparseCOOMatrix containing the element-wise product.
+     * @throws std::invalid_argument if the matrix dimensions do not match.
+     */
+    SparseCOOMatrix operator*(const SparseCOOMatrix& other) const {
+        if (rows_ != other.rows_ || cols_ != other.cols_)
+            throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
+
+        SparseCOOMatrix<T> result(rows_, cols_);
+
+        for (std::size_t i = 0; i < data.size(); ++i) {
+            std::size_t r = row[i];
+            std::size_t c = col[i];
+
+            if (other.is_initialized(r, c)) {
+                T product = data[i] * other.get(r, c);
+                result.set(r, c, product);
+            }
+        }
+
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
         /**
         * @brief Returns the number of rows in the matrix.
         */

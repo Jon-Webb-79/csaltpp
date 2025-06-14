@@ -1472,6 +1472,59 @@ TEST(SparseCOOMatrixOperators, DenseMinusSparse) {
     EXPECT_EQ(result.rows(), 2);
     EXPECT_EQ(result.cols(), 2);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixOperators, ElementWiseMultiplyMatchingEntries) {
+    slt::SparseCOOMatrix<float> A{
+        {1.0f, 0.0f},
+        {0.0f, 2.0f}
+    };
+    slt::SparseCOOMatrix<float> B{
+        {0.0f, 3.0f},
+        {0.0f, 4.0f}
+    };
+
+    slt::SparseCOOMatrix<float> result = A * B;
+
+    EXPECT_EQ(result.rows(), 2);
+    EXPECT_EQ(result.cols(), 2);
+
+    // Only one overlapping non-zero at (1,1): 2.0 * 4.0 = 8.0
+    EXPECT_FLOAT_EQ(result.get(1, 1), 8.0f);
+
+    // Non-overlapping positions should not be present
+    EXPECT_THROW(result.get(0, 0), std::runtime_error);
+    EXPECT_THROW(result.get(0, 1), std::runtime_error);
+    EXPECT_THROW(result.get(1, 0), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixOperators, MultiplyWithNoOverlap) {
+    slt::SparseCOOMatrix<float> A(2, 2);
+    A.set(0, 0, 5.0f);
+
+    slt::SparseCOOMatrix<float> B(2, 2);
+    B.set(1, 1, 10.0f);
+
+    slt::SparseCOOMatrix<float> result = A * B;
+
+    EXPECT_EQ(result.rows(), 2);
+    EXPECT_EQ(result.cols(), 2);
+
+    // No overlapping positions -> result should be empty
+    EXPECT_THROW(result.get(0, 0), std::runtime_error);
+    EXPECT_THROW(result.get(1, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixOperators, MismatchedDimensionsThrows) {
+    slt::SparseCOOMatrix<float> A(2, 3);
+    slt::SparseCOOMatrix<float> B(3, 2);
+
+    EXPECT_THROW({
+        auto result = A * B;
+    }, std::invalid_argument);
+}
 // ================================================================================
 // ================================================================================
 // eof

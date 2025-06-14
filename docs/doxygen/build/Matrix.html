@@ -136,6 +136,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#subtraction-scalar-sparse">Subtraction: Scalar + Sparse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#subtraction-sparse-dense">Subtraction: Sparse - Dense</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#subtraction-dense-sparse">Subtraction: Dense - Sparse</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multiplication-sparse-sparse">Multiplication: Sparse * Sparse</a></li>
 </ul>
 </li>
 </ul>
@@ -2104,6 +2105,41 @@ returning the result as a new dense matrix.</p>
 <span class="n">slt</span><span class="p">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">-</span> <span class="n">B</span><span class="p">;</span>
 
 <span class="o">//</span> <span class="n">C</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="mf">0.5</span><span class="p">,</span> <span class="n">C</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">other</span> <span class="n">values</span> <span class="o">==</span> <span class="mf">1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="multiplication-sparse-sparse">
+<h4>Multiplication: Sparse * Sparse<a class="headerlink" href="#multiplication-sparse-sparse" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4IENK15SparseCOOMatrixI1TEmlE15SparseCOOMatrixI1TERK15SparseCOOMatrixI1TE">
+<span id="_CPPv3IENK15SparseCOOMatrixI1TEmlERK15SparseCOOMatrixI1TE"></span><span id="_CPPv2IENK15SparseCOOMatrixI1TEmlERK15SparseCOOMatrixI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4IENK15SparseCOOMatrixI1TEmlE15SparseCOOMatrixI1TERK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise multiplication between two sparse matrices. This operation only includes elements
+at positions where both matrices have non-zero entries. The result is a new <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code>
+representing the Hadamard product.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – Another sparse matrix of the same dimensions.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code> where each stored value is the product of overlapping non-zero entries.</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the matrix dimensions do not match.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">2.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">A</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">3.0</span><span class="n">f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">B</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="n">B</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">4.0</span><span class="n">f</span><span class="p">);</span>
+<span class="n">B</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">5.0</span><span class="n">f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="p">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span> <span class="n">C</span> <span class="o">=</span> <span class="n">A</span> <span class="o">*</span> <span class="n">B</span><span class="p">;</span>
+<span class="o">//</span> <span class="n">C</span> <span class="n">has</span> <span class="n">only</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span> <span class="o">=</span> <span class="mf">8.0</span><span class="n">f</span> <span class="n">because</span> <span class="n">it</span> <span class="ow">is</span> <span class="n">the</span> <span class="n">only</span> <span class="n">overlapping</span> <span class="n">initialized</span> <span class="n">position</span>
 </pre></div>
 </div>
 </dd></dl>

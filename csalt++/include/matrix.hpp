@@ -719,6 +719,22 @@
          * @return true if initialized false otherwise
          */
         virtual bool is_initialized(std::size_t row, std::size_t col) const = 0;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns the number of initialized elements in the matrix 
+         *
+         * @return The number of initialized elements in the matrix
+         */
+        virtual std::size_t nonzero_count() const = 0;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief The total size of the matrix 
+         *
+         * @return The number of columns multiplied by the number of rows
+         */
+        virtual std::size_t size() const = 0;
     };
 // ================================================================================ 
 // ================================================================================ 
@@ -749,7 +765,7 @@
          *
          * @return The number of rows multiplied by the number of columns, 0 if not initialized
          */
-        std::size_t size() const {return rows_ * cols_;}
+        std::size_t size() const override {return rows_ * cols_;}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -878,7 +894,7 @@
          * Initialized elements: 2
          * @endcode
          */
-        std::size_t nonzero_count() const {
+        std::size_t nonzero_count() const override {
             if (init.empty()) return 0;
             return std::count(init.begin(), init.end(), static_cast<uint8_t>(1));
         }
@@ -2240,7 +2256,8 @@
                       "DenseMatrix only supports float or double");
     private:
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
-        std::size_t rows_, cols_; ///< Matrix dimensions. 
+        std::size_t rows_ = 0; ///< Number of Matrix rows.
+        std::size_t cols_ = 0; ///< Number of Matrix columns.
 
         // COO Specific data
         std::vector<std::size_t> row; ///< A vector containing row indices
@@ -2257,22 +2274,117 @@
 // ================================================================================ 
 
     public:
-        std::size_t size() const {return rows_ * cols_;}  ///< Returns the total number of elments in the matrix
-        std::size_t nonzero_count() const {return data.size();}  ///< Returns the size of the data array
+        /**
+         * @brief The total size of the matrix 
+         *
+         * @return The number of rows multiplied by the number of columns, 0 if not initialized
+         */
+        std::size_t size() const override {return rows_ * cols_;} 
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns the number of explicitly stored non-zero elements.
+         *
+         * This function returns the number of entries stored in the sparse COO matrix,
+         * which corresponds to the number of non-zero elements it currently tracks. 
+         * Unlike a dense matrix, uninitialized values are implicitly zero and are not stored.
+         *
+         * @return The number of stored non-zero elements.
+         *
+         * @code
+         * #include <iostream>
+         * #include "matrix.hpp"
+         *
+         * int main() {
+         *     slt::SparseCOOMatrix<float> mat({
+         *         {1.0f, 0.0f},
+         *         {0.0f, 2.0f}
+         *     });
+         *     std::cout << "Non-zero elements: " << mat.nonzero_count() << std::endl;
+         *     return 0;
+         * }
+         * @endcode
+         *
+         * Output:
+         * @code
+         * Non-zero elements: 2
+         * @endcode
+         */
+        std::size_t nonzero_count() const override {return data.size();} 
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns the row index of the i-th non-zero element.
+         *
+         * This accessor returns the row position associated with the i-th stored
+         * non-zero value in the sparse COO matrix. Bounds checking is performed.
+         *
+         * @param i Index of the non-zero element.
+         * @return Row index corresponding to the i-th element.
+         * @throws std::out_of_range if the index is outside the valid range.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat({
+         *     {1.0f, 0.0f},
+         *     {0.0f, 2.0f}
+         * });
+         * std::size_t r = mat.row_index(1);  // Returns row index of second non-zero
+         * @endcode
+         */
         std::size_t row_index(std::size_t i) const {
             if (i >= row.size()) throw std::out_of_range("Row index out of range");
             return row[i];
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Returns the column index of the i-th non-zero element.
+         *
+         * This accessor returns the column position associated with the i-th stored
+         * non-zero value in the sparse COO matrix. Bounds checking is performed.
+         *
+         * @param i Index of the non-zero element.
+         * @return Column index corresponding to the i-th element.
+         * @throws std::out_of_range if the index is outside the valid range.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat({
+         *     {1.0f, 0.0f},
+         *     {0.0f, 2.0f}
+         * });
+         * std::size_t c = mat.col_index(1);  // Returns column index of second non-zero
+         * @endcode
+         */
         std::size_t col_index(std::size_t i) const {
             if (i >= col.size()) throw std::out_of_range("Column index out of range");
             return col[i];
         }
+// -------------------------------------------------------------------------------- 
 
-        T value(std::size_t i) const {
+        /**
+         * @brief Returns the value of the i-th non-zero element.
+         *
+         * This accessor returns the stored numerical value of the i-th non-zero entry
+         * in the sparse COO matrix. Bounds checking is performed.
+         *
+         * @param i Index of the non-zero element.
+         * @return The value of the i-th non-zero element.
+         * @throws std::out_of_range if the index is outside the valid range.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat({
+         *     {1.0f, 0.0f},
+         *     {0.0f, 2.0f}
+         * });
+         * float v = mat.value_index(1);  // Returns 2.0f
+         * @endcode
+         */
+        T value_index(std::size_t i) const {
             if (i >= data.size()) throw std::out_of_range("Value index out of range");
             return data[i];
         }
+// -------------------------------------------------------------------------------- 
+
         /**
          * @brief Constructs an empty sparse COO matrix with given dimensions.
          *
@@ -2737,26 +2849,65 @@
         return result;
     }
 // -------------------------------------------------------------------------------- 
+
         /**
-        * @brief Returns the number of rows in the matrix.
-        */
+         * @brief Returns the number of rows in the matrix.
+         *
+         * This function provides the total number of rows defined in the matrix,
+         * regardless of how many entries are explicitly stored or initialized.
+         *
+         * @return The total number of rows.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 4);
+         * std::size_t r = mat.rows();  // Returns 3
+         * @endcode
+         */
         std::size_t rows() const override { return rows_; }
 // -------------------------------------------------------------------------------- 
 
         /**
-        * @brief Returns the number of columns in the matrix.
-        */
+         * @brief Returns the number of columns in the matrix.
+         *
+         * This function returns the total number of columns allocated for the matrix,
+         * which includes all column indices regardless of whether they contain non-zero entries.
+         *
+         * @return The total number of columns.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 4);
+         * std::size_t c = mat.cols();  // Returns 4
+         * @endcode
+         */
         std::size_t cols() const override { return cols_; }
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Gets a matrix element.
+         * @brief Retrieves the value at the specified matrix location.
          *
-         * Implements the MatrixBase interface.
+         * Returns the value stored at the given row and column index in the sparse matrix.
+         * If the element has not been explicitly initialized (i.e., not stored in the COO format),
+         * the function throws a runtime exception.
          *
-         * @param row Row index.
-         * @param col Column index.
-         * @return Value at (row, col).
+         * The function uses a linear search if the matrix was constructed with `fast_set == true`,
+         * and a binary search if the entries are sorted (`fast_set == false`), allowing efficient
+         * retrieval in both cases depending on construction strategy.
+         *
+         * @param r Row index of the target element.
+         * @param c Column index of the target element.
+         * @return The value at the specified matrix location.
+         *
+         * @throws std::out_of_range If the provided row or column index is outside the matrix bounds.
+         * @throws std::runtime_error If the specified element is uninitialized and thus not stored.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat({
+         *     {1.0f, 0.0f},
+         *     {0.0f, 3.0f}
+         * });
+         * float val = mat.get(1, 1);  // Returns 3.0f
+         * float missing = mat.get(0, 1);  // Throws runtime_error
+         * @endcode
          */
         T get(std::size_t r, std::size_t c) const override {
             if (r >= rows_ || c >= cols_)
@@ -2893,15 +3044,31 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Checks whether an element at (row, column) has been initialized.
+         * @brief Checks if the element at the specified row and column is initialized (non-zero).
          *
-         * Searches for the target index using binary search. The result is reliable
-         * only if `finalize()` has been called after using fast insertion mode.
+         * This function determines whether a value has been explicitly assigned to the given
+         * row and column in the sparse matrix. It supports two modes:
+         *
+         * - **Fast set mode (`fast_set = true`)**: Performs a linear search through the unsorted COO entries.
+         * - **Sorted mode (`fast_set = false`)**: Performs a binary search assuming the entries are sorted
+         *   by row-major order (i.e., row first, then column).
+         *
+         * This is useful for determining if a matrix entry is actively stored (i.e., not a structural zero).
          *
          * @param r Row index of the element.
          * @param c Column index of the element.
-         * @return True if the element has been initialized (i.e., set or updated).
-         * @throws std::out_of_range if indices are invalid.
+         * @return `true` if the element is explicitly initialized (non-zero); otherwise `false`.
+         * @throws std::out_of_range if the given row or column index is outside the matrix bounds.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat({
+         *     {1.0f, 0.0f},
+         *     {0.0f, 2.0f}
+         * });
+         *
+         * bool found = mat.is_initialized(1, 1);  // Returns true
+         * bool empty = mat.is_initialized(0, 1);  // Returns false
+         * @endcode
          */
         bool is_initialized(std::size_t r, std::size_t c) const override {
             if (r >= rows_ || c >= cols_)

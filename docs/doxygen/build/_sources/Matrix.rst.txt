@@ -232,9 +232,6 @@ size()
 data_ptr()
 ~~~~~~~~~~
 
-.. doxygenfunction:: slt::DenseMatrix::data_ptr()
-   :project: csalt++
-
 .. doxygenfunction:: slt::DenseMatrix::data_ptr() const
    :project: csalt++
 
@@ -248,6 +245,7 @@ nonzero_count()
 ~~~~~~~~~~~~~~~
 
 .. doxygenfunction:: slt::DenseMatrix::nonzero_count() const
+   :project: csalt++
 
 is_initialized()
 ~~~~~~~~~~~~~~~~
@@ -329,6 +327,60 @@ Operator Overloads
 
 Data Access Methods 
 -------------------
+
+size()
+~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::size
+   :project: csalt++
+
+nonzero_count()
+~~~~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::nonzero_count() const
+   :project: csalt++
+
+row_index()
+~~~~~~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::row_index(std::size_t) const
+   :project: csalt++
+
+col_index()
+~~~~~~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::col_index(std::size_t) const
+   :project: csalt++
+
+value()
+~~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::value_index(std::size_t) const
+   :project: csalt++
+
+is_initialized()
+~~~~~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::is_initialized(std::size_t, std::size_t) const
+   :project: csalt++
+
+rows()
+~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::rows() const
+   :project: csalt++
+
+cols()
+~~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::cols() const
+   :project: csalt++
+
+get()
+~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::get(std::size_t, std::size_t) const
+   :project: csalt++
 
 Operations 
 ----------

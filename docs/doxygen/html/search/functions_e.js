@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['value_115',['value',['../classslt_1_1SparseCOOMatrix.html#a7cf8f962d4fa6ec16575c0e7031e3447',1,'slt::SparseCOOMatrix']]]
+  ['value_5findex_115',['value_index',['../classslt_1_1SparseCOOMatrix.html#ae41de6aa5a303e7997a29c1d4422477b',1,'slt::SparseCOOMatrix']]]
 ];

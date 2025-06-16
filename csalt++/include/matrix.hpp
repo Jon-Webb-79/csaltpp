@@ -739,45 +739,242 @@
 
     private:
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
-        std::vector<uint8_t> init;
-        std::size_t rows_, cols_; ///< Matrix dimensions. 
+        std::vector<uint8_t> init; ///< A vector containin a binary representation of array initialization.
+        std::size_t rows_ = 0; ///< Number of rows 
+        std::size_t cols_ = 0; ///< Number of cols 
     // ================================================================================ 
     public:
+        /**
+         * @brief The total size of the matrix 
+         *
+         * @return The number of rows multiplied by the number of columns, 0 if not initialized
+         */
         std::size_t size() const {return rows_ * cols_;}
-        const T* data_ptr() const {return data.data();}
-        T* data_ptr() {return data.data();}
-        const uint8_t* init_ptr() const {return init.data();}
-        uint8_t* init_ptr() {return init.data();}
-        std::size_t nonzero_count() const {return data.size();}
+// -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a matrix with given dimensions and initial value.
+         * @brief Pointer to the first value within the data array.
          *
+         * Returns a pointer to the beginning of the matrix's internal data array,
+         * stored in row-major order. This is useful for passing the data to low-level
+         * numerical libraries or performing custom SIMD operations.
+         *
+         * @return A const pointer to the beginning of the matrix data in contiguous memory. Returns nullptr if not initialized
+         *
+         * @code
+         * #include <iostream>
+         * #include "matrix.hpp" // assuming DenseMatrix is defined here
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat(2, 3, 1.5f);
+         *     const float* ptr = mat.data_ptr();
+         *
+         *     for (std::size_t i = 0; i < mat.size(); ++i)
+         *         std::cout << ptr[i] << " ";
+         *     std::cout << std::endl;
+         *     return 0;
+         * }
+         * @endcode
+         *
+         * Output:
+         * @code
+         * 1.5 1.5 1.5 1.5 1.5 1.5
+         * @endcode
+         */
+        const T* data_ptr() const {return data.data();}
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Pointer to the first value within the data array.
+         *
+         * Returns a pointer to the beginning of the matrix's internal data array,
+         * stored in row-major order. This is useful for passing the data to low-level
+         * numerical libraries or performing custom SIMD operations.
+         *
+         * @return A pointer to the beginning of the matrix data in contiguous memory.  Returns nullptr if not initialized
+         *
+         * @code
+         * #include <iostream>
+         * #include "matrix.hpp" // assuming DenseMatrix is defined here
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat(2, 3, 1.5f);
+         *     float* ptr = mat.data_ptr();
+         *
+         *     for (std::size_t i = 0; i < mat.size(); ++i)
+         *         std::cout << ptr[i] << " ";
+         *     std::cout << std::endl;
+         *     return 0;
+         * }
+         * @endcode
+         *
+         * Output:
+         * @code
+         * 1.5 1.5 1.5 1.5 1.5 1.5
+         * @endcode
+         */
+        T* data_ptr() {return data.data();}
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Pointer to the first value within the init array.
+         *
+         * Returns a pointer to the beginning of the matrix's internal init array,
+         * stored in row-major order. This is may be useful for debugging issues if initialized data is showing as uninitialized
+         *
+         * @return A pointer to the beginning of the matrix data in contiguous memory.  Returns nullptr if not initialized
+         *
+         * @code
+         * #include <iostream>
+         * #include <stdint>
+         * #include "matrix.hpp" // assuming DenseMatrix is defined here
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat(2, 3);
+         *     mat.set(0, 0, 1.0f);
+         *     mat.set(0, 1, 2.0f);
+         *     uint8_t* ptr = mat.init_ptr();
+         *
+         *     for (std::size_t i = 0; i < mat.size(); ++i)
+         *         std::cout << ptr[i] << " ";
+         *     std::cout << std::endl;
+         *     return 0;
+         * }
+         * @endcode
+         *
+         * Output:
+         * @code
+         * 1, 1, 0, 0, 0, 0
+         * @endcode
+         */
+        const uint8_t* init_ptr() const {return init.data();}
+        uint8_t* init_ptr() {return init.data();}
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns the number of initialized elements in the matrix.
+         *
+         * This function scans the internal `init` vector and returns the number
+         * of elements that have been explicitly initialized. This allows tracking
+         * sparse-style usage in a dense matrix implementation.
+         *
+         * @return The number of initialized elements in the matrix.
+         *
+         * @code
+         * #include <iostream>
+         * #include "matrix.hpp"  // assuming DenseMatrix is defined here
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat(2, 3);
+         *     mat.set(0, 0, 3.14f);
+         *     mat.set(1, 1, 2.71f);
+         *     std::cout << "Initialized elements: " << mat.nonzero_count() << std::endl;
+         *     return 0;
+         * }
+         * @endcode
+         *
+         * Output:
+         * @code
+         * Initialized elements: 2
+         * @endcode
+         */
+        std::size_t nonzero_count() const {
+            if (init.empty()) return 0;
+            return std::count(init.begin(), init.end(), static_cast<uint8_t>(1));
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a matrix with given dimensions and fills it with a specified value.
+         *
+         * This constructor initializes all elements of the matrix to a given value
+         * and marks them as initialized.
+         *
+         * @tparam T Numeric data type of matrix elements.  Must be either `float` or `double`.
          * @param r Number of rows.
          * @param c Number of columns.
-         * @param value Initial value for all elements (defaults to zero).
+         * @param value The value to assign to each matrix element.
+         *
+         * @code
+         * #include <iostream>
+         * #include "matrix.hpp"  // assuming DenseMatrix is defined here
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat(2, 3, 5.0f);
+         *     const float* ptr = mat.data_ptr();
+         *
+         *     for (std::size_t i = 0; i < mat.size(); ++i)
+         *         std::cout << ptr[i] << " ";
+         *     std::cout << std::endl;
+         *     return 0;
+         * }
+         * @endcode
+         *
+         * Output:
+         * @code
+         * 5 5 5 5 5 5
+         * @endcode
          */
         DenseMatrix(std::size_t r, std::size_t c, T value)
             : data(r * c, value), init(r * c, 1), rows_(r), cols_(c) {}
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a matrix with given dimensions and initial value.
+         * @brief Constructs a matrix with given dimensions and zero-initializes all elements.
+         *
+         * This constructor sets all values in the matrix to zero and marks them as uninitialized.
+         * It is typically used when data will be populated later via `set()` or similar methods.
          *
          * @param r Number of rows.
          * @param c Number of columns.
+         *
+         * @code
+         * #include <iostream>
+         * #include "matrix.hpp"  // assuming DenseMatrix is defined here
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat(2, 3);
+         *     mat.set(0, 1, 42.0f);
+         *     mat.set(1, 2, 7.0f);
+         *
+         *     const float* ptr = mat.data_ptr();
+         *     for (std::size_t i = 0; i < mat.size(); ++i)
+         *         std::cout << ptr[i] << " ";
+         *     std::cout << std::endl;
+         *
+         *     std::cout << "Initialized count: " << mat.nonzero_count() << std::endl;
+         *     return 0;
+         * }
+         * @endcode
+         *
+         * Output:
+         * @code
+         * 0 42 0 0 0 7
+         * Initialized count: 2
+         * @endcode
          */
         DenseMatrix(std::size_t r, std::size_t c)
             : data(r * c, 0), init(r * c, 0), rows_(r), cols_(c) {}
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a matrix from a 2D vector.
+         * @brief Constructs a matrix from a nested std::vector of values.
          *
-         * All inner vectors must have the same length.
+         * Initializes the matrix with the contents of a row-major nested `std::vector`.
+         * All rows must have the same number of columns, otherwise an exception is thrown.
          *
-         * @param vec 2D vector representing the matrix.
-         * @throws std::invalid_argument if inner vectors are uneven in length.
+         * @tparam T Numeric data type of matrix elements.  Must be either `float` or `double`.
+         * @param vec A 2D vector representing matrix data in row-major order.
+         * @throws std::invalid_argument if rows have inconsistent sizes.
+         *
+         * @code
+         * std::vector<std::vector<float>> values = {
+         *     {1.0f, 2.0f},
+         *     {3.0f, 4.0f}
+         * };
+         * slt::DenseMatrix<float> mat(values);
+         * std::cout << mat.get(1, 0); // Output: 3.0
+         * @endcode
          */
         DenseMatrix(const std::vector<std::vector<T>>& vec) {
             rows_ = vec.size();
@@ -794,9 +991,27 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a matrix from a fixed-size std::array of arrays.
+         * @brief Constructs a matrix from a fixed-size std::array of std::array values.
          *
-         * @param arr A static 2D array representing the matrix.
+         * This constructor allows initializing a matrix from a compile-time known
+         * 2D `std::array` layout. The matrix is fully initialized.
+         *
+         * @tparam Rows Number of rows (inferred at compile time)
+         * @tparam Cols Number of columns (inferred at compile time)
+         * @tparam T Numeric data type of matrix elements.  Must be either `float` or `double`.
+
+
+         * @param arr A 2D array containing matrix values in row-major order.
+         
+         *
+         * @code
+         * std::array<std::array<double, 2>, 2> arr = {{
+         *     {1.1, 1.2},
+         *     {2.1, 2.2}
+         * }};
+         * slt::DenseMatrix<double> mat(arr);
+         * std::cout << mat.get(0, 1); // Output: 1.2
+         * @endcode
          */
         template<std::size_t Rows, std::size_t Cols>
         DenseMatrix(const std::array<std::array<T, Cols>, Rows>& arr)
@@ -810,10 +1025,25 @@
         /**
          * @brief Constructs a matrix from an initializer list of initializer lists.
          *
-         * All inner initializer lists must be the same length.
+         * Enables matrix initialization using brace-enclosed values in row-major order.
+         * All rows must be of equal length or an exception will be thrown.
          *
-         * @param init_list Nested initializer list representing the matrix.
-         * @throws std::invalid_argument if rows have inconsistent lengths.
+         * @param init_list Nested initializer list representing the matrix contents.
+         * @throws std::invalid_argument if any row has inconsistent size.
+         *
+         * @code
+         * #include "matrix.hpp"
+         * #include <iostream>
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat = {
+         *         {1.0f, 2.0f},
+         *         {3.0f, 4.0f}
+         *     };
+         *     std::cout << mat.get(1, 0); // Output: 3.0
+         *     return 0;
+         * }
+         * @endcode
          */
         DenseMatrix(std::initializer_list<std::initializer_list<T>> init_list) {
             rows_ = init_list.size();
@@ -830,27 +1060,83 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a matrix from flat row-major data and dimensions.
+         * @brief Constructs a matrix from a flat data vector with explicit dimensions.
          *
-         * @param flat_data Vector containing r * c elements.
+         * The data must be laid out in row-major order, and the vector must have exactly
+         * `rows * cols` elements. All elements are marked initialized.
+         *
+         * @param flat_data Flat vector of values in row-major order.
          * @param r Number of rows.
          * @param c Number of columns.
-         * @throws std::invalid_argument if flat_data size doesn't match r * c.
+         * @throws std::invalid_argument if the data size does not match r * c.
+         *
+         * @code
+         * #include "matrix.hpp"
+         * #include <iostream>
+         * #include <vector>
+         *
+         * int main() {
+         *     std::vector<double> data = {1.0, 2.0, 3.0, 4.0};
+         *     slt::DenseMatrix<double> mat(data, 2, 2);
+         *     std::cout << mat.get(0, 1); // Output: 2.0
+         *     return 0;
+         * }
+         * @endcode
          */
         DenseMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c)
             : data(flat_data), init(flat_data.size(), 1), rows_(r), cols_(c) {
             if (flat_data.size() != r * c)
                 throw std::invalid_argument("Flat data size does not match matrix dimensions");
         }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a matrix from a flat std::array with specified dimensions.
+         *
+         * The flat array must be laid out in row-major order and its size must exactly
+         * match `rows * cols`. All elements are marked initialized.
+         *
+         * @tparam N Size of the flat std::array.
+         * @param arr Flat array containing matrix data in row-major order.
+         * @param r Number of rows.
+         * @param c Number of columns.
+         * @throws std::invalid_argument if N does not match r * c.
+         *
+         * @code
+         * #include "matrix.hpp"
+         * #include <array>
+         * #include <iostream>
+         *
+         * int main() {
+         *     std::array<float, 6> arr = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+         *     slt::DenseMatrix<float> mat(arr, 2, 3);
+         *     std::cout << mat.get(1, 2); // Output: 6.0
+         *     return 0;
+         * }
+         * @endcode
+         */
+        template<std::size_t N>
+        DenseMatrix(const std::array<T, N>& arr, std::size_t r, std::size_t c)
+            : data(arr.begin(), arr.end()), init(N, 1), rows_(r), cols_(c) {
+            if (N != r * c)
+                throw std::invalid_argument("Flat array size does not match matrix dimensions");
+        }
+
 // --------------------------------------------------------------------------------
 
         /**
-         * @brief Constructs a new DenseMatrix as a deep copy of another matrix.
+         * @brief Copy constructor for DenseMatrix.
          *
-         * Allocates a new matrix with the same dimensions and content as the source.
-         * Copies both the data and initialization flags.
+         * Creates a deep copy of another DenseMatrix, duplicating its internal data and
+         * initialization state. The resulting matrix is independent of the original.
          *
-         * @param other The source DenseMatrix to copy.
+         * @param other The DenseMatrix instance to copy.
+         *
+         * @code
+         * slt::DenseMatrix<double> A(2, 2, 1.0);
+         * slt::DenseMatrix<double> B(A);  // B is a deep copy of A
+         * std::cout << B.get(0, 0);        // Output: 1.0
+         * @endcode
          */
         DenseMatrix(const DenseMatrix<T>& other)
             : MatrixBase<T>(),
@@ -862,12 +1148,20 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a new DenseMatrix by transferring ownership of another matrix.
+         * @brief Move constructor for DenseMatrix.
          *
-         * Efficiently transfers internal storage from the source matrix to this matrix.
-         * After the move, the source matrix is left in a valid but unspecified state.
+         * Transfers ownership of the internal data from another DenseMatrix. This is a
+         * lightweight operation that avoids deep copying, and the original matrix is
+         * left in a valid but empty state.
          *
-         * @param other The DenseMatrix to move from.
+         * @param other The DenseMatrix to move from. It will be reset to a zero-sized state.
+         *
+         * @code
+         * slt::DenseMatrix<float> A(3, 3, 2.0f);
+         * slt::DenseMatrix<float> B = std::move(A);  // B takes ownership of A's data
+         * std::cout << B.get(2, 2);                  // Output: 2.0
+         * std::cout << A.size();                     // Output: 0
+         * @endcode
          */
         DenseMatrix(DenseMatrix<T>&& other) noexcept
             : MatrixBase<T>(),
@@ -878,28 +1172,110 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Accesses a matrix element (modifiable).
+         * @brief Constructs a square identity matrix of size n x n.
          *
-         * @param r Row index (zero-based).
-         * @param c Column index (zero-based).
-         * @return Reference to the element at (r, c).
-         * @throws std::out_of_range if r or c is out of bounds.
+         * This constructor initializes a square matrix with 1s on the main diagonal and
+         * 0s elsewhere. It marks all diagonal entries as initialized.
+         *
+         * @param n Size of the identity matrix (rows and columns).
+         *
+         * @throws std::invalid_argument if n is zero.
          */
-        T& operator()(std::size_t r, std::size_t c) {
-            if (r >= rows_ || c >= cols_)
-                throw std::out_of_range("Index out of range");
-            return data[r * cols_ + c];
+        explicit DenseMatrix(std::size_t n) : data(n * n, 0), init(n * n, 0), rows_(n), cols_(n) {
+            if (n == 0)
+                throw std::invalid_argument("Size of identity matrix must be greater than zero");
+
+            for (std::size_t i = 0; i < n; ++i) {
+                std::size_t idx = i * n + i;
+                data[idx] = static_cast<T>(1);
+                init[idx] = 1;
+            }
         }
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Assigns the contents of another DenseMatrix to this matrix.
+         * @brief Access or assign a value at the specified matrix index (r, c).
          *
-         * Performs a deep copy of the data, initialization flags, and dimensions.
-         * Self-assignment is safely handled.
+         * This non-const overload allows users to assign a value to an element. If the
+         * element has not been previously initialized (tracked via the internal `init` vector),
+         * it will be marked as initialized. If already initialized, it acts as a regular update.
          *
-         * @param other The DenseMatrix to copy from.
-         * @return Reference to this matrix.
+         * Bounds checking is performed; if the index is out of range, std::out_of_range is thrown.
+         *
+         * @param r Row index
+         * @param c Column index
+         * @return Reference to the value at the specified index
+         *
+         * @code
+         * slt::DenseMatrix<float> mat(2, 3);
+         * mat(0, 1) = 4.2f;  // Initializes and sets the value
+         * mat(0, 1) = 5.0f;  // Updates existing value
+         * std::cout << mat(0, 1);  // Outputs: 5.0
+         * @endcode
+         */
+        T& operator()(std::size_t r, std::size_t c) {
+            if (r >= rows_ || c >= cols_)
+                throw std::out_of_range("Matrix index out of bounds");
+
+            std::size_t idx = r * cols_ + c;
+
+            // If value is not initialized, we assume this is the first assignment
+            if (!init[idx])
+                init[idx] = 1;
+
+            return data[idx];
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Read-only access to a matrix element at (r, c).
+         *
+         * This const overload allows read-only access to a matrix element.
+         * Throws a std::runtime_error if the element has not been initialized via `set()`,
+         * `operator()`, or `update()`.
+         *
+         * Bounds checking is performed; if the index is out of range, std::out_of_range is thrown.
+         *
+         * @param r Row index
+         * @param c Column index
+         * @return Const reference to the initialized value at (r, c)
+         *
+         * @code
+         * slt::DenseMatrix<float> mat(2, 3);
+         * mat.set(1, 2, 8.5f);
+         * std::cout << mat(1, 2);  // Outputs: 8.5
+         *
+         * // mat(0, 0); // Would throw std::runtime_error since it's uninitialized
+         * @endcode
+         */
+        const T& operator()(std::size_t r, std::size_t c) const {
+            if (r >= rows_ || c >= cols_)
+                throw std::out_of_range("Matrix index out of bounds");
+
+            std::size_t idx = r * cols_ + c;
+
+            if (!init[idx])
+                throw std::runtime_error("Attempted to access uninitialized matrix value");
+
+            return data[idx];
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Copy assignment operator for DenseMatrix.
+         *
+         * Copies the contents of another matrix, including data values,
+         * initialization status, and dimensions.
+         *
+         * @param other The matrix to copy from.
+         * @return Reference to the current matrix after copy.
+         *
+         * @code
+         * slt::DenseMatrix<double> A(2, 2, 1.0);
+         * slt::DenseMatrix<double> B = A;  // uses copy constructor
+         * slt::DenseMatrix<double> C;
+         * C = A;  // uses copy assignment
+         * @endcode
          */
         DenseMatrix<T>& operator=(const DenseMatrix<T>& other) {
             if (this != &other) {
@@ -913,15 +1289,37 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Assigns the contents of another DenseMatrix by moving them.
+         * @brief Move assignment operator for DenseMatrix.
          *
-         * Transfers the internal storage and dimensions from the source matrix.
-         * Leaves the source matrix in a valid but unspecified state.
-         * Self-assignment is safely handled.
+         * Transfers ownership of the resources from another matrix to this one.
+         * After the move, the source matrix is left in a valid but unspecified state
+         * (typically zero dimensions and empty internal buffers).
          *
-         * @param other The DenseMatrix to move from.
-         * @return Reference to this matrix.
-         */
+         * This is useful for efficient reassignment of temporary matrices without
+         * deep copying data.
+         *
+         * @param other The source matrix to move from (rvalue reference).
+         * @return Reference to this matrix after move assignment.
+         *
+         * @code
+         * #include <iostream>
+         * #include <utility>  // For std::move
+         * #include "matrix.hpp"
+         *
+         * int main() {
+         *     slt::DenseMatrix<float> mat1(2, 2, 3.0f);
+         *     slt::DenseMatrix<float> mat2;
+         *
+         *     mat2 = std::move(mat1);  // Efficient resource transfer
+         *
+         *     std::cout << mat2(0, 0);  // Outputs: 3.0
+         *
+         *     // mat1 is now in a valid but empty state
+         *     std::cout << "Size after move: " << mat1.size();  // Outputs: 0
+         *     return 0;
+         * }
+         * @endcode
+         */ 
         DenseMatrix<T>& operator=(DenseMatrix<T>&& other) noexcept {
             if (this != &other) {
                 data = std::move(other.data);
@@ -932,27 +1330,26 @@
             return *this;
         }
 // -------------------------------------------------------------------------------- 
-        /**
-         * @brief Accesses a matrix element (read-only).
-         *
-         * @param r Row index (zero-based).
-         * @param c Column index (zero-based).
-         * @return Const reference to the element at (r, c).
-         * @throws std::out_of_range if r or c is out of bounds.
-         */
-        const T& operator()(std::size_t r, std::size_t c) const {
-            if (r >= rows_ || c >= cols_)
-                throw std::out_of_range("Index out of range");
-            return data[r * cols_ + c];
-        }
-//  -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Adds two matrices element-wise.
+         * @brief Adds two DenseMatrix objects element-wise.
          *
-         * @param other Matrix to add.
-         * @return Resulting matrix.
-         * @throws std::invalid_argument if dimensions don't match.
+         * Performs element-wise addition between two matrices of equal dimensions.
+         * If SIMD is supported, the addition is vectorized for performance.
+         *
+         * The returned matrix will be fully initialized.
+         *
+         * @param other The matrix to add.
+         * @return A new DenseMatrix containing the sum of the current matrix and `other`.
+         *
+         * @throws std::invalid_argument if matrix dimensions do not match.
+         *
+         * @code
+         * slt::DenseMatrix<float> A(2, 2, 1.0f);
+         * slt::DenseMatrix<float> B(2, 2, 2.0f);
+         * slt::DenseMatrix<float> C = A + B;
+         * std::cout << C(0, 0);  // Outputs: 3.0
+         * @endcode
          */
         DenseMatrix operator+(const DenseMatrix& other) const {
             if (rows_ != other.rows_ || cols_ != other.cols_)
@@ -973,11 +1370,54 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Subtracts another matrix element-wise.
+         * @brief Adds a scalar to all elements of the matrix.
          *
-         * @param other Matrix to subtract.
-         * @return Resulting matrix.
-         * @throws std::invalid_argument if dimensions don't match.
+         * Each element of the matrix is incremented by the given scalar value.
+         * The result is stored in a new DenseMatrix that is fully initialized.
+         * SIMD acceleration is used if supported by the platform.
+         *
+         * @param scalar The value to add to each element.
+         * @return A new DenseMatrix containing the result of the scalar addition.
+         *
+         * @code
+         * slt::DenseMatrix<float> A(2, 2, 1.0f);
+         * slt::DenseMatrix<float> B = A + 3.0f;
+         * std::cout << B(0, 0);  // Outputs: 4.0
+         * @endcode
+         */
+        DenseMatrix operator+(T scalar) const {
+            DenseMatrix result(rows_, cols_);
+            if constexpr (simd_traits<T>::supported) {
+                simd_ops<T>::add_scalar(data.data(), scalar, result.data.data(), data.size());
+                std::fill(result.init.begin(), result.init.end(), 1);
+            } else {
+                for (std::size_t i = 0; i < data.size(); ++i) {
+                    result.data[i] = data[i] + scalar;
+                    result.init[i] = 1;
+                }
+            }
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Element-wise matrix subtraction.
+         *
+         * Subtracts another DenseMatrix from this matrix element-wise. Both matrices
+         * must have the same shape, otherwise an exception is thrown. If SIMD is supported,
+         * subtraction is performed using optimized SIMD instructions.
+         *
+         * @param other Matrix to subtract from this matrix.
+         * @return A new DenseMatrix representing the result of the subtraction.
+         *
+         * @throws std::invalid_argument if matrix dimensions do not match.
+         *
+         * @code
+         * slt::DenseMatrix<float> A(2, 2, 4.0f);
+         * slt::DenseMatrix<float> B(2, 2, 1.0f);
+         * auto C = A - B;
+         * // C now contains all 3.0 values
+         * @endcode
          */
         DenseMatrix operator-(const DenseMatrix& other) const {
             if (rows_ != other.rows_ || cols_ != other.cols_)
@@ -998,31 +1438,19 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Adds a scalar to every matrix element.
+         * @brief Scalar subtraction from all elements of the matrix.
          *
-         * @param scalar Value to add.
-         * @return Resulting matrix.
-         */
-        DenseMatrix operator+(T scalar) const {
-            DenseMatrix result(rows_, cols_);
-            if constexpr (simd_traits<T>::supported) {
-                simd_ops<T>::add_scalar(data.data(), scalar, result.data.data(), data.size());
-                std::fill(result.init.begin(), result.init.end(), 1);
-            } else {
-                for (std::size_t i = 0; i < data.size(); ++i) {
-                    result.data[i] = data[i] + scalar;
-                    result.init[i] = 1;
-                }
-            }
-            return result;
-        }
-// -------------------------------------------------------------------------------- 
-
-         /**
-         * @brief Subtracts a scalar from every matrix element.
+         * Subtracts a scalar value from each element in the matrix. If SIMD is available,
+         * it uses optimized instructions for faster execution.
          *
-         * @param scalar Value to subtract.
-         * @return Resulting matrix.
+         * @param scalar Value to subtract from each element.
+         * @return A new DenseMatrix containing the result.
+         *
+         * @code
+         * slt::DenseMatrix<double> mat(2, 2, 5.0);
+         * auto result = mat - 2.0;
+         * // result contains all 3.0 values
+         * @endcode
          */
         DenseMatrix operator-(T scalar) const {
             DenseMatrix result(rows_, cols_);
@@ -1040,16 +1468,25 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Performs element-wise multiplication between two matrices.
+         * @brief Element-wise matrix multiplication.
          *
-         * Computes a new matrix where each element is the product of the corresponding elements
-         * from this matrix and the `other` matrix. Throws if the matrix dimensions do not match.
+         * Multiplies this matrix element-wise with another matrix of the same dimensions.
+         * Throws an exception if the matrices differ in shape. Uses SIMD acceleration if supported.
          *
-         * SIMD acceleration is used if supported for the element type.
-         *
-         * @param other The matrix to multiply element-wise with.
+         * @param other The matrix to multiply with.
          * @return A new DenseMatrix containing the element-wise product.
+         *
          * @throws std::invalid_argument if matrix dimensions do not match.
+         *
+         * @code
+         * slt::DenseMatrix<float> A(2, 2);
+         * A.set(0, 0, 2.0f); A.set(0, 1, 3.0f);
+         * A.set(1, 0, 4.0f); A.set(1, 1, 5.0f);
+         *
+         * slt::DenseMatrix<float> B(2, 2, 2.0f);  // filled with 2.0
+         * auto C = A * B;
+         * std::cout << C(0, 0);  // Outputs: 4.0
+         * @endcode
          */
         DenseMatrix operator*(const DenseMatrix& other) const {
             if (rows_ != other.rows_ || cols_ != other.cols_)
@@ -1070,15 +1507,19 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Performs scalar multiplication on the matrix.
+         * @brief Multiply all matrix elements by a scalar.
          *
-         * Returns a new matrix where each element is the product of the corresponding matrix
-         * element and the provided scalar.
+         * Returns a new matrix with each element multiplied by the provided scalar value.
+         * This operation uses SIMD acceleration if available.
          *
-         * SIMD acceleration is used if supported for the element type.
+         * @param scalar Value to multiply each matrix element by.
+         * @return A new DenseMatrix containing the scaled values.
          *
-         * @param scalar The scalar value to multiply with.
-         * @return A new DenseMatrix containing the result of scalar multiplication.
+         * @code
+         * slt::DenseMatrix<double> A(2, 2, 3.0);
+         * auto B = A * 2.0;
+         * std::cout << B(1, 1);  // Outputs: 6.0
+         * @endcode
          */
         DenseMatrix operator*(T scalar) const {
             DenseMatrix result(rows_, cols_);
@@ -1096,17 +1537,22 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Divides each element of the matrix by a scalar.
+         * @brief Divide all matrix elements by a scalar.
          *
-         * Performs element-wise division: `result(i, j) = this(i, j) / scalar` for all
-         * initialized elements of the matrix. Uses SIMD acceleration where supported.
+         * Returns a new matrix with each element divided by the given scalar value.
+         * Uses SIMD acceleration if available. Division by zero is explicitly checked
+         * and will throw an exception if detected.
+         *
+         * @param scalar The scalar divisor.
+         * @return A new DenseMatrix with scaled-down values.
          *
          * @throws std::invalid_argument if scalar is zero.
          *
-         * @return A new DenseMatrix<T> containing the result of the division. All elements
-         *         in the result are marked as initialized.
-         *
-         * @note Division by zero is explicitly checked and throws an exception.
+         * @code
+         * slt::DenseMatrix<float> A(2, 2, 8.0f);
+         * auto B = A / 2.0f;
+         * std::cout << B(0, 0);  // Outputs: 4.0
+         * @endcode
          */
         DenseMatrix operator/(T scalar) const {
             if (scalar == T{}) throw std::invalid_argument("Division by zero");
@@ -1128,7 +1574,22 @@
         /**
          * @brief Transposes the matrix in-place.
          *
-         * Swaps rows and columns.
+         * This function swaps the rows and columns of the matrix, modifying it directly.
+         * It is only applicable to dense matrices and is performed without creating a new object.
+         *
+         * The `init` state of all elements is preserved.
+         *
+         * @code
+         * slt::DenseMatrix<float> mat({
+         *     {1.0f, 2.0f},
+         *     {3.0f, 4.0f}
+         * });
+         *
+         * mat.transpose();
+         *
+         * std::cout << mat(0, 1);  // Outputs: 3.0
+         * std::cout << mat(1, 0);  // Outputs: 2.0
+         * @endcode
          */
         void transpose() {
             std::vector<T> new_data(data.size());
@@ -1143,14 +1604,28 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Computes and returns the inverse of the matrix.
+         * @brief Computes and returns the inverse of a square matrix.
          *
-         * Uses Gauss-Jordan elimination with partial pivoting to compute the inverse
-         * of the matrix. Throws an exception if the matrix is not square or is singular.
+         * This function implements Gauss-Jordan elimination with partial pivoting.
+         * It throws if the matrix is not square or is singular (i.e., non-invertible).
          *
-         * @return A new DenseMatrix<T> representing the inverse of this matrix.
+         * All elements of the result are marked as initialized.
+         *
+         * @return A new DenseMatrix object containing the inverse.
+         *
          * @throws std::invalid_argument if the matrix is not square.
-         * @throws std::runtime_error if the matrix is singular or non-invertible.
+         * @throws std::runtime_error if the matrix is singular and cannot be inverted.
+         *
+         * @code
+         * slt::DenseMatrix<double> mat({
+         *     {4.0, 7.0},
+         *     {2.0, 6.0}
+         * });
+         *
+         * auto inv = mat.inverse();
+         * std::cout << inv(0, 0);  // Outputs approximately 0.6
+         * std::cout << inv(1, 1);  // Outputs approximately 0.4
+         * @endcode
          */
         DenseMatrix<T> inverse() const {
             if (rows_ != cols_)
@@ -1217,24 +1692,54 @@
 
         /**
          * @brief Returns the number of rows in the matrix.
+         *
+         * This function provides access to the total number of rows stored in the matrix.
+         *
+         * @return Number of rows in the matrix.
+         *
+         * @code
+         * slt::DenseMatrix<float> mat(3, 5);
+         * std::cout << mat.rows();  // Outputs: 3
+         * @endcode
          */
         std::size_t rows() const override { return rows_; }
 // -------------------------------------------------------------------------------- 
 
         /**
          * @brief Returns the number of columns in the matrix.
+         *
+         * This function provides access to the total number of columns stored in the matrix.
+         *
+         * @return Number of columns in the matrix.
+         *
+         * @code
+         * slt::DenseMatrix<float> mat(3, 5);
+         * std::cout << mat.cols();  // Outputs: 5
+         * @endcode
          */
         std::size_t cols() const override { return cols_; }
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Gets a matrix element.
+         * @brief Retrieves a copy of the value at the specified matrix index.
          *
-         * Implements the MatrixBase interface.
+         * This method allows read-only access to an individual matrix element.
+         * If the index is out of bounds or the element is uninitialized, an exception is thrown.
          *
-         * @param row Row index.
-         * @param col Column index.
-         * @return Value at (row, col).
+         * @param row Row index
+         * @param col Column index
+         * @return Value at the specified index
+         *
+         * @throws std::out_of_range if `row` or `col` is outside the matrix bounds.
+         * @throws std::runtime_error if the element at the given index is uninitialized.
+         *
+         * @code
+         * slt::DenseMatrix<double> mat(3, 3);
+         * mat.set(1, 1, 42.0);
+         * std::cout << mat.get(1, 1);  // Outputs: 42.0
+         *
+         * // mat.get(0, 0);  // Would throw std::runtime_error
+         * @endcode
          */
         T get(std::size_t row, std::size_t col) const override {
             if (row >= rows_ || col >= cols_)
@@ -1249,13 +1754,25 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Sets a matrix element.
+         * @brief Sets the value at the given matrix index, marking it as initialized.
          *
-         * Implements the MatrixBase interface.
+         * This function assigns a value to the matrix at position (row, col), but only
+         * if the element is currently uninitialized. If the element is already initialized,
+         * it throws an exception. Use `update()` instead to modify existing values.
          *
-         * @param row Row index.
-         * @param col Column index.
-         * @param value New value to assign.
+         * @param row Row index
+         * @param col Column index
+         * @param value Value to assign
+         *
+         * @throws std::out_of_range if the index is outside the matrix bounds
+         * @throws std::runtime_error if the element is already initialized
+         *
+         * @code
+         * slt::DenseMatrix<float> mat(3, 3);
+         * mat.set(1, 2, 9.5f);  // Initializes and sets value
+         *
+         * // mat.set(1, 2, 4.3f);  // Throws std::runtime_error
+         * @endcode
          */
         void set(std::size_t row, std::size_t col, T value) override {
             if (row >= rows_ || col >= cols_)
@@ -1269,17 +1786,26 @@
             init[idx] = 1;
         }
 // -------------------------------------------------------------------------------- 
+
         /**
-         * @brief Removes an element from the matrix by resetting its value and marking it uninitialized.
+         * @brief Removes a value from the matrix by clearing its data and initialization flag.
          *
-         * This function sets the value at the specified (row, col) to zero and marks it as uninitialized.
-         * Attempting to remove an element that is not initialized will throw a runtime error.
+         * This function resets the element at (row, col) to the default value of type `T` and
+         * marks it as uninitialized. If the value was not initialized to begin with, an error is thrown.
          *
          * @param row Row index
          * @param col Column index
          *
-         * @throws std::out_of_range if the row or column index is out of bounds
-         * @throws std::runtime_error if the element is not initialized
+         * @throws std::out_of_range if the index is invalid
+         * @throws std::runtime_error if the element was not initialized
+         *
+         * @code
+         * slt::DenseMatrix<float> mat(2, 2);
+         * mat.set(0, 1, 3.14f);
+         * mat.remove(0, 1);  // Successfully removes
+         *
+         * // mat.remove(0, 1);  // Throws std::runtime_error
+         * @endcode
          */
         void remove(std::size_t row, std::size_t col) {
             if (row >= rows_ || col >= cols_)
@@ -1293,21 +1819,25 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Updates the value of an already-initialized matrix element.
+         * @brief Updates the value at the given matrix index, assuming it is already initialized.
          *
-         * This function modifies the value at the specified (row, col) index
-         * **only if** the element has already been initialized using `set()`
-         * or a constructor that populates the matrix (e.g., with a 2D vector).
-         * 
-         * If the element has not been initialized, this function throws a
-         * `std::runtime_error` to avoid accidental overwrites of uninitialized data.
+         * This method allows modifying the value of an element that has already been initialized.
+         * It does not change the initialization state. Use `set()` if the value is uninitialized.
          *
-         * @param row The zero-based row index of the element.
-         * @param col The zero-based column index of the element.
-         * @param value The new value to assign to the matrix element.
+         * @param row Row index
+         * @param col Column index
+         * @param value New value to assign
          *
-         * @throws std::out_of_range if the row or column is out of bounds.
-         * @throws std::runtime_error if the element at (row, col) has not been initialized.
+         * @throws std::out_of_range if the index is out of bounds
+         * @throws std::runtime_error if the target element is uninitialized
+         *
+         * @code
+         * slt::DenseMatrix<int> mat(3, 3);
+         * mat.set(2, 1, 5);
+         * mat.update(2, 1, 10);  // Replaces value
+         *
+         * // mat.update(0, 0, 1);  // Throws std::runtime_error if not previously set
+         * @endcode
          */
         void update(std::size_t row, std::size_t col, T value) {
             if (row >= rows_ || col >= cols_)
@@ -1323,9 +1853,18 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Creates a polymorphic deep copy of this matrix.
+         * @brief Creates a deep copy of the current matrix instance.
          *
-         * @return Unique pointer to the copied matrix.
+         * This method returns a new `DenseMatrix` object that is a deep copy of the current
+         * matrix. The returned pointer is cast to the base class `MatrixBase<T>` and stored
+         * in a `std::unique_ptr` for memory-safe polymorphic use.
+         *
+         * @return A `std::unique_ptr` to a new copy of this matrix.
+         *
+         * @code
+         * std::unique_ptr<MatrixBase<float>> original = std::make_unique<slt::DenseMatrix<float>>(2, 2);
+         * std::unique_ptr<MatrixBase<float>> copy = original->clone();
+         * @endcode
          */
         std::unique_ptr<MatrixBase<T>> clone() const override {
             return std::make_unique<DenseMatrix>(*this);
@@ -1333,9 +1872,33 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Prints the matrix to an output stream.
+         * @brief Prints the contents of the matrix to the given output stream.
          *
-         * @param os Output stream (defaults to std::cout).
+         * Displays the matrix in a human-readable 2D format. Each element is printed
+         * with fixed width spacing for readability. The default stream is `std::cout`, 
+         * but any `std::ostream` can be passed (e.g., `std::ostringstream` for testing).
+         *
+         * Only initialized elements are printed. Uninitialized elements accessed through
+         * this method may trigger runtime exceptions if bounds or initialization are violated.
+         *
+         * @param os The output stream to print to (defaults to `std::cout`)
+         *
+         * @code
+         * slt::DenseMatrix<int> mat(2, 3);
+         * mat.set(0, 0, 1);
+         * mat.set(0, 1, 2);
+         * mat.set(0, 2, 3);
+         * mat.set(1, 0, 4);
+         * mat.set(1, 1, 5);
+         * mat.set(1, 2, 6);
+         * mat.print();
+         * @endcode
+         *
+         * Output:
+         * @verbatim
+         *          1          2          3 
+         *          4          5          6 
+         * @endverbatim
          */
         void print(std::ostream& os = std::cout) const {
             for (std::size_t i = 0; i < rows_; ++i) {
@@ -1348,15 +1911,22 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Check whether the specified matrix element has been initialized.
+         * @brief Checks whether a specific matrix element has been initialized.
          *
-         * This method returns true if the element at the specified (row, col)
-         * index has been initialized via `set()` or a constructor, and false otherwise.
+         * Returns `true` if the element at the specified row and column has been initialized
+         * using `set()`, `update()`, or the assignment operator. Otherwise, returns `false`.
          *
-         * @param row Row index of the matrix element.
-         * @param col Column index of the matrix element.
-         * @return true if initialized, false otherwise.
-         * @throws std::out_of_range if the index is invalid.
+         * @param row Row index
+         * @param col Column index
+         * @return `true` if the element is initialized, `false` otherwise
+         *
+         * @throws std::out_of_range if the index is outside the matrix bounds
+         *
+         * @code
+         * slt::DenseMatrix<float> mat(3, 3);
+         * mat.set(1, 1, 2.0f);
+         * bool check = mat.is_initialized(1, 1);  // true
+         * @endcode
          */
         bool is_initialized(std::size_t row, std::size_t col) const override {
             if (row >= rows_ || col >= cols_)
@@ -1382,13 +1952,34 @@
 // -------------------------------------------------------------------------------- 
 
     /**
-     * @brief Adds a scalar to each matrix element (scalar + matrix).
+     * @brief Adds a scalar to each initialized element of a matrix.
      *
-     * @tparam T Matrix element type.
-     * @param scalar Scalar value.
-     * @param matrix Matrix operand.
-     * @return Resulting matrix.
-     */
+     * This overload enables `scalar + matrix` syntax by forwarding the operation
+     * to the existing `matrix + scalar` member operator. Only initialized elements
+     * are updated in the result; uninitialized elements remain uninitialized.
+     *
+     * @tparam T The type of the matrix elements.
+     * @param scalar The scalar value to add.
+     * @param matrix The DenseMatrix to which the scalar is added.
+     * @return A new DenseMatrix<T> with `scalar + matrix(i,j)` for each initialized element.
+     *
+     * @code
+     * slt::DenseMatrix<float> A(2, 2);
+     * A.set(0, 0, 1.0f);
+     * A.set(0, 1, 2.0f);
+     * A.set(1, 0, 3.0f);
+     * A.set(1, 1, 4.0f);
+     *
+     * slt::DenseMatrix<float> B = 10.0f + A;
+     * B.print();
+     * @endcode
+     *
+     * Output:
+     * @verbatim
+     *         11         12
+     *         13         14
+     * @endverbatim
+     */ 
     template<typename T>
     DenseMatrix<T> operator+(T scalar, const DenseMatrix<T>& matrix) {
         return matrix + scalar;  // Leverage existing member operator+
@@ -1396,13 +1987,34 @@
 // -------------------------------------------------------------------------------- 
 
     /**
-     * @brief Subtracts each matrix element from a scalar (scalar - matrix).
+     * @brief Subtracts each element of a matrix from a scalar.
      *
-     * @tparam T Matrix element type.
-     * @param scalar Scalar value.
-     * @param matrix Matrix operand.
-    * @return Resulting matrix.
-    */
+     * This function computes the difference between a scalar and each initialized element
+     * in the given matrix. Only initialized elements contribute to the result; uninitialized
+     * elements remain uninitialized in the result.
+     *
+     * @tparam T The element type of the matrix.
+     * @param scalar The scalar value to subtract from.
+     * @param matrix The matrix whose values will be subtracted from the scalar.
+     * @return A new DenseMatrix<T> where each initialized element is `scalar - matrix(i,j)`
+     *
+     * @code
+     * slt::DenseMatrix<float> A(2, 2);
+     * A.set(0, 0, 1.0f);
+     * A.set(0, 1, 2.0f);
+     * A.set(1, 0, 3.0f);
+     * A.set(1, 1, 4.0f);
+     *
+     * slt::DenseMatrix<float> B = 10.0f - A;
+     * B.print();
+     * @endcode
+     *
+     * Output:
+     * @verbatim
+     *          9          8 
+     *          7          6 
+     * @endverbatim
+     */
     template<typename T>
     slt::DenseMatrix<T> operator-(T scalar, const slt::DenseMatrix<T>& matrix) {
         slt::DenseMatrix<T> result(matrix.rows(), matrix.cols());
@@ -1419,14 +2031,32 @@
 // -------------------------------------------------------------------------------- 
 
     /**
-     * @brief Global operator for scalar * matrix multiplication.
+     * @brief Multiplies each element of a matrix by a scalar.
      *
-     * Enables the syntax `scalar * matrix` for scalar multiplication, delegating
-     * to the matrix's member `operator*`.
+     * Performs element-wise multiplication between a scalar and all initialized values
+     * of the matrix. This overload allows `scalar * matrix` in addition to `matrix * scalar`.
      *
+     * @tparam T The type of the matrix elements.
      * @param scalar The scalar multiplier.
-     * @param matrix The matrix operand.
-     * @return A new DenseMatrix containing the result.
+     * @param matrix The matrix whose values will be multiplied.
+     * @return A new DenseMatrix<T> with each element equal to `scalar * matrix(i,j)`
+     *
+     * @code
+     * slt::DenseMatrix<int> A(2, 2);
+     * A.set(0, 0, 1);
+     * A.set(0, 1, 2);
+     * A.set(1, 0, 3);
+     * A.set(1, 1, 4);
+     *
+     * slt::DenseMatrix<int> B = 5 * A;
+     * B.print();
+     * @endcode
+     *
+     * Output:
+     * @verbatim
+     *          5         10 
+     *         15         20 
+     * @endverbatim
      */
     template<typename T>
     DenseMatrix<T> operator*(T scalar, const DenseMatrix<T>& matrix) {
@@ -1505,6 +2135,40 @@
     }
 // -------------------------------------------------------------------------------- 
 
+    /**
+     * @brief Perform standard matrix multiplication (A × B) for dense matrices.
+     *
+     * This function multiplies two dense matrices A and B, producing a new matrix C.
+     * It supports only `float` and `double` data types (enforced via static_assert).
+     * 
+     * Each element of the resulting matrix is computed as the dot product of a row of A and
+     * a column of B. All accessed values must be initialized in A and B.
+     *
+     * @tparam T The numeric type of the matrix (must be float or double)
+     * @param A The left matrix operand (dimensions: m × n)
+     * @param B The right matrix operand (dimensions: n × p)
+     * @return Resulting matrix C of dimensions m × p
+     *
+     * @throws std::invalid_argument if the number of columns in A does not match
+     *         the number of rows in B.
+     *
+     * @code
+     * slt::DenseMatrix<float> A({
+     *     {1.0f, 2.0f},
+     *     {3.0f, 4.0f}
+     * });
+     *
+     * slt::DenseMatrix<float> B({
+     *     {5.0f, 6.0f},
+     *     {7.0f, 8.0f}
+     * });
+     *
+     * auto C = mat_mul(A, B);
+     * C.print();  // Output:
+     *             //      19      22
+     *             //      43      50
+     * @endcode
+     */
     template<typename T>
     DenseMatrix<T> mat_mul(const DenseMatrix<T>& A, const DenseMatrix<T>& B) {
         static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,

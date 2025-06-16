@@ -740,17 +740,6 @@ TEST(DenseMatrixMatMulTest, ZeroMatrixMultiplication) {
 }
 // -------------------------------------------------------------------------------- 
 
-// TEST(DenseMatrixMatMulTest, ZeroMatrixMultiplication) {
-//     slt::DenseMatrix<float> A(2, 3);
-//     slt::DenseMatrix<float> B(3, 4);
-//     slt::DenseMatrix<float> C = slt::mat_mul(A, B);
-//     C.print();
-//     for (size_t i = 0; i < C.rows(); ++i)
-//         for (size_t j = 0; j < C.cols(); ++j)
-//             ASSERT_FLOAT_EQ(C.get(i, j), 0.0f);
-// }
-// -------------------------------------------------------------------------------- 
-
 TEST(DenseMatrixMatMulTest, DimensionMismatchThrows) {
     slt::DenseMatrix<float> A(2, 3, 0.0f);
     slt::DenseMatrix<float> B(4, 2, 0.0f);  // Mismatched inner dimensions
@@ -892,639 +881,702 @@ TEST(DenseMatrixTest, MoveAssignment) {
     EXPECT_EQ(B(1, 1), 12.0f);
 }
 // -------------------------------------------------------------------------------- 
-TEST(SparseCOOMatrixTest, ConstructorInitializesDimensionsCorrectly) {
-    slt::SparseCOOMatrix<float> mat(5, 7);
-    EXPECT_EQ(mat.rows(), 5);
-    EXPECT_EQ(mat.cols(), 7);
-}
-// -------------------------------------------------------------------------------- 
 
-TEST(SparseCOOMatrixTest, ConstructorDefaultsToFastInsertTrue) {
-    slt::SparseCOOMatrix<double> mat(3, 3);
-    // Try inserting two values and then call get (should throw because not finalized)
-    mat.set(0, 0, 1.23);
-    mat.set(2, 1, 4.56);
-    EXPECT_THROW(mat.get(2, 0), std::runtime_error);  // Not finalized
-    mat.finalize();
-    EXPECT_NO_THROW(mat.get(0, 0));
-    EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.23);
-    EXPECT_DOUBLE_EQ(mat.get(2, 1), 4.56);
-}
-// -------------------------------------------------------------------------------- 
+TEST(DenseMatrixSizeAndNonzeroCountTest, SizeAndNonzeroCountBehavior) {
+    // Construct 3x3 matrix
+    slt::DenseMatrix<float> mat(3, 3);
 
-TEST(SparseCOOMatrixTest, FastInsertFalseAllowsImmediateAccess) {
-    slt::SparseCOOMatrix<float> mat(4, 4, false);  // Sorted mode
-    mat.set(1, 2, 3.14f);
-    EXPECT_NO_THROW(mat.get(1, 2));
-    EXPECT_FLOAT_EQ(mat.get(1, 2), 3.14f);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, IsInitializedReturnsFalseInitially) {
-    slt::SparseCOOMatrix<float> mat(2, 2);
-    EXPECT_FALSE(mat.is_initialized(0, 0));
-    EXPECT_FALSE(mat.is_initialized(1, 1));
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, OutOfBoundsThrowsInGetAndSet) {
-    slt::SparseCOOMatrix<float> mat(2, 2);
-    EXPECT_THROW(mat.set(5, 0, 1.0f), std::out_of_range);
-    EXPECT_THROW(mat.set(0, 5, 1.0f), std::out_of_range);
-    EXPECT_THROW(mat.get(3, 1), std::out_of_range);
-}
-// -------------------------------------------------------------------------------- 
-
-// Test: Constructor from std::vector<std::vector<T>>
-TEST(SparseCOOMatrixTest, ConstructFrom2DVector) {
-    std::vector<std::vector<double>> input = {
-        {1.0, 0.0, 2.0},
-        {0.0, 0.0, 0.0},
-        {0.0, 3.0, 0.0}
-    };
-
-    slt::SparseCOOMatrix mat(input);
-    EXPECT_EQ(mat.rows(), 3);
-    EXPECT_EQ(mat.cols(), 3);
-
-    mat.finalize();
-
-    EXPECT_TRUE(mat.is_initialized(0, 0));
-    EXPECT_TRUE(mat.is_initialized(0, 2));
-    EXPECT_TRUE(mat.is_initialized(2, 1));
-
-    EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.0);
-    EXPECT_DOUBLE_EQ(mat.get(0, 2), 2.0);
-    EXPECT_DOUBLE_EQ(mat.get(2, 1), 3.0);
-
-    EXPECT_FALSE(mat.is_initialized(1, 1));
-    EXPECT_FALSE(mat.is_initialized(2, 2));
-
-    EXPECT_THROW(mat.get(1, 1), std::runtime_error);
-}
-
-// ---------------------------------------------------------------------------
-
-TEST(SparseCOOMatrixTest, ThrowsOnInvalidShape) {
-    std::vector<std::vector<double>> bad_input = {
-        {1.0, 0.0},
-        {2.0}  // shorter row
-    };
-
-    EXPECT_THROW(slt::SparseCOOMatrix mat(bad_input), std::invalid_argument);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, ConstructFromFixedSizeArray) {
-    std::array<std::array<double, 3>, 3> arr = {{
-        {1.0, 0.0, 2.0},
-        {0.0, 0.0, 0.0},
-        {0.0, 3.0, 0.0}
-    }};
-
-    slt::SparseCOOMatrix mat(arr);
-    EXPECT_EQ(mat.rows(), 3);
-    EXPECT_EQ(mat.cols(), 3);
-
-    mat.finalize();
-
-    EXPECT_TRUE(mat.is_initialized(0, 0));
-    EXPECT_TRUE(mat.is_initialized(0, 2));
-    EXPECT_TRUE(mat.is_initialized(2, 1));
-
-    EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.0);
-    EXPECT_DOUBLE_EQ(mat.get(0, 2), 2.0);
-    EXPECT_DOUBLE_EQ(mat.get(2, 1), 3.0);
-
-    EXPECT_FALSE(mat.is_initialized(1, 1));
-    EXPECT_FALSE(mat.is_initialized(2, 2));
-
-    EXPECT_THROW(mat.get(1, 1), std::runtime_error);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, ConstructFromInitializerList) {
-    slt::SparseCOOMatrix mat{
-        {1.0, 0.0, 2.0},
-        {0.0, 0.0, 0.0},
-        {0.0, 3.0, 0.0}
-    };
-
-    EXPECT_EQ(mat.rows(), 3);
-    EXPECT_EQ(mat.cols(), 3);
-
-    mat.finalize();  // Required for accurate lookup after fast insertion
-
-    // Check expected initialized elements
-    EXPECT_TRUE(mat.is_initialized(0, 0));
-    EXPECT_TRUE(mat.is_initialized(0, 2));
-    EXPECT_TRUE(mat.is_initialized(2, 1));
-
-    EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.0);
-    EXPECT_DOUBLE_EQ(mat.get(0, 2), 2.0);
-    EXPECT_DOUBLE_EQ(mat.get(2, 1), 3.0);
-
-    // Check uninitialized entries
-    EXPECT_FALSE(mat.is_initialized(1, 1));
-    EXPECT_FALSE(mat.set_fast());
-    EXPECT_THROW(mat.get(1, 1), std::runtime_error);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixUpdateTest, UpdatesExistingValueAfterFinalize) {
-    slt::SparseCOOMatrix<float> mat(3, 3);
-    mat.set(0, 1, 2.0f);
-    mat.set(2, 2, 5.0f);
-    mat.finalize();
-
-    EXPECT_FLOAT_EQ(mat.get(0, 1), 2.0f);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixUpdateTest, ThrowsIfElementNotSet) {
-    slt::SparseCOOMatrix<double> mat(2, 2);
-    mat.set(0, 0, 3.14);
-    mat.finalize();
-
-    EXPECT_THROW(mat.update(1, 1, 2.71), std::runtime_error);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixUpdateTest, ThrowsIfNotFinalized) {
-    slt::SparseCOOMatrix<float> mat(2, 2);
-    mat.set(0, 0, 1.0f);
-    // Forgot to call finalize()
-
-    EXPECT_THROW(mat.update(0, 1, 3.0f), std::runtime_error);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixUpdateTest, ThrowsOnInvalidIndex) {
-    slt::SparseCOOMatrix<float> mat(2, 2);
-    mat.set(0, 0, 1.0f);
-    mat.finalize();
-
-    EXPECT_THROW(mat.update(2, 2, 5.0f), std::out_of_range);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixAdditionTest, NonOverlappingEntries) {
-    // Matrix A:
-    // [1 0]
-    // [0 0]
-    slt::SparseCOOMatrix<float> A({
-        {1.0f, 0.0f},
-        {0.0f, 0.0f}
-    });
-
-    // Matrix B:
-    // [0 0]
-    // [0 2]
-    slt::SparseCOOMatrix<float> B({
-        {0.0f, 0.0f},
-        {0.0f, 2.0f}
-    });
-
-    slt::DenseMatrix<float> result = A + B;
-
-    ASSERT_EQ(result.rows(), 2);
-    ASSERT_EQ(result.cols(), 2);
-
-    // Check expected values
-    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);  // from A
-    EXPECT_FLOAT_EQ(result(0, 1), 0.0f);  // empty
-    EXPECT_FLOAT_EQ(result(1, 0), 0.0f);  // empty
-    EXPECT_FLOAT_EQ(result(1, 1), 2.0f);  // from B
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixAdditionTest, OverlappingEntries) {
-    // Matrix A:
-    // [1 0]
-    // [0 2]
-    slt::SparseCOOMatrix<float> A({
-        {1.0f, 0.0f},
-        {0.0f, 2.0f}
-    });
-
-    // Matrix B:
-    // [3 0]
-    // [0 4]
-    slt::SparseCOOMatrix<float> B({
-        {3.0f, 0.0f},
-        {0.0f, 4.0f}
-    });
-
-    slt::DenseMatrix<float> result = A + B;
-
-    ASSERT_EQ(result.rows(), 2);
-    ASSERT_EQ(result.cols(), 2);
-
-    // Check element-wise sum
-    EXPECT_FLOAT_EQ(result(0, 0), 4.0f);  // 1 + 3
-    EXPECT_FLOAT_EQ(result(0, 1), 0.0f);
-    EXPECT_FLOAT_EQ(result(1, 0), 0.0f);
-    EXPECT_FLOAT_EQ(result(1, 1), 6.0f);  // 2 + 4
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(DenseSparseAdditionTest, DensePlusSparseCOO) {
-    // Dense matrix:
-    // [1 2]
-    // [3 4]
-    slt::DenseMatrix<float> dense({
-        {1.0f, 2.0f},
-        {3.0f, 4.0f}
-    });
-
-    // Sparse matrix:
-    // [0 5]
-    // [6 0]
-    slt::SparseCOOMatrix<float> sparse({
-        {0.0f, 5.0f},
-        {6.0f, 0.0f}
-    });
-
-    slt::DenseMatrix<float> result = dense + sparse;
-
-    ASSERT_EQ(result.rows(), 2);
-    ASSERT_EQ(result.cols(), 2);
-
-    // Check values
-    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);  // 1 + 0
-    EXPECT_FLOAT_EQ(result(0, 1), 7.0f);  // 2 + 5
-    EXPECT_FLOAT_EQ(result(1, 0), 9.0f);  // 3 + 6
-    EXPECT_FLOAT_EQ(result(1, 1), 4.0f);  // 4 + 0
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseScalarAdditionTest, SparsePlusScalar) {
-    // Sparse matrix:
-    // [0 5]
-    // [6 0]
-    slt::SparseCOOMatrix<float> sparse({
-        {0.0f, 5.0f},
-        {6.0f, 0.0f}
-    });
-
-    float scalar = 3.0f;
-    auto result = sparse + scalar;
-
-    ASSERT_EQ(result.rows(), 2);
-    ASSERT_EQ(result.cols(), 2);
-    ASSERT_EQ(result.nonzero_count(), 2);
-
-    EXPECT_EQ(result.row_index(0), 0);
-    EXPECT_EQ(result.col_index(0), 1);
-    EXPECT_FLOAT_EQ(result.value(0), 8.0f);  // 5 + 3
-
-    EXPECT_EQ(result.row_index(1), 1);
-    EXPECT_EQ(result.col_index(1), 0);
-    EXPECT_FLOAT_EQ(result.value(1), 9.0f);  // 6 + 3
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseScalarAdditionTest, ScalarPlusSparse) {
-    // Sparse matrix:
-    // [0 2]
-    // [3 0]
-    slt::SparseCOOMatrix<float> sparse({
-        {0.0f, 2.0f},
-        {3.0f, 0.0f}
-    });
-
-    float scalar = 1.5f;
-    auto result = scalar + sparse;
-
-    ASSERT_EQ(result.rows(), 2);
-    ASSERT_EQ(result.cols(), 2);
-    ASSERT_EQ(result.nonzero_count(), 2);
-
-    EXPECT_EQ(result.row_index(0), 0);
-    EXPECT_EQ(result.col_index(0), 1);
-    EXPECT_FLOAT_EQ(result.value(0), 3.5f);  // 2 + 1.5
-
-    EXPECT_EQ(result.row_index(1), 1);
-    EXPECT_EQ(result.col_index(1), 0);
-    EXPECT_FLOAT_EQ(result.value(1), 4.5f);  // 3 + 1.5
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, FlatConstructor_PopulatesNonZeroValues) {
-    std::vector<float> flat = {
-        0.0f, 2.0f,
-        3.0f, 0.0f
-    };
-
-    slt::SparseCOOMatrix<float> mat(flat, 2, 2);
-    mat.finalize();
-
-    EXPECT_EQ(mat.nonzero_count(), 2);
-    EXPECT_TRUE(mat.is_initialized(0, 1));
-    EXPECT_TRUE(mat.is_initialized(1, 0));
-    EXPECT_FLOAT_EQ(mat(0, 1), 2.0f);
-    EXPECT_FLOAT_EQ(mat(1, 0), 3.0f);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, FlatConstructor_AllZero) {
-    std::vector<double> flat(6, 0.0);
-    slt::SparseCOOMatrix<double> mat(flat, 2, 3);
-    mat.finalize();
-
+    // Initially all values should be uninitialized
+    EXPECT_EQ(mat.size(), 9);
     EXPECT_EQ(mat.nonzero_count(), 0);
+
+    // Set a single element
+    mat.set(0, 0, 1.0f);
+    EXPECT_EQ(mat.nonzero_count(), 1);
+
+    // Update another element
+    mat.set(1, 1, 2.0f);
+    EXPECT_EQ(mat.nonzero_count(), 2);
+
+    // Remove one element
+    mat.remove(1, 1);
+    EXPECT_EQ(mat.nonzero_count(), 1);
+
+    // Fill all elements
+    for (std::size_t i = 0; i < 3; ++i) {
+        for (std::size_t j = 0; j < 3; ++j) {
+            if (!mat.is_initialized(i, j)) {
+                mat.set(i, j, static_cast<float>(i * 3 + j));
+            }
+        }
+    }
+
+    EXPECT_EQ(mat.nonzero_count(), 9);
 }
 // -------------------------------------------------------------------------------- 
 
-TEST(SparseCOOMatrixTest, FlatConstructor_InvalidSizeThrows) {
-    std::vector<float> flat = {1.0f, 2.0f, 3.0f};  // Should be 2x2 but only 3 elements
+TEST(DenseMatrixArrayConstructorTest, ValidArrayInitialization) {
+    std::array<float, 6> values = {1.0f, 2.0f, 3.0f, 4.0f, 5.0f, 6.0f};
+
+    slt::DenseMatrix<float> mat(values, 2, 3);
+
+    EXPECT_EQ(mat.rows(), 2);
+    EXPECT_EQ(mat.cols(), 3);
+    EXPECT_EQ(mat.size(), 6);
+    EXPECT_EQ(mat.nonzero_count(), 6);
+
+    EXPECT_FLOAT_EQ(mat(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(mat(0, 1), 2.0f);
+    EXPECT_FLOAT_EQ(mat(0, 2), 3.0f);
+    EXPECT_FLOAT_EQ(mat(1, 0), 4.0f);
+    EXPECT_FLOAT_EQ(mat(1, 1), 5.0f);
+    EXPECT_FLOAT_EQ(mat(1, 2), 6.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixArrayConstructorTest, MismatchedDimensionsThrows) {
+    std::array<float, 5> bad_values = {1, 2, 3, 4, 5};  // 5 elements
 
     EXPECT_THROW({
-            slt::SparseCOOMatrix<float> mat(flat, 2, 2);
+        slt::DenseMatrix<float> bad_mat(bad_values, 2, 3);  // 2x3 = 6 expected
     }, std::invalid_argument);
 }
+// ================================================================================ 
+// ================================================================================ 
+
+// TEST(SparseCOOMatrixTest, ConstructorInitializesDimensionsCorrectly) {
+//     slt::SparseCOOMatrix<float> mat(5, 7);
+//     EXPECT_EQ(mat.rows(), 5);
+//     EXPECT_EQ(mat.cols(), 7);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, ConstructorDefaultsToFastInsertTrue) {
+//     slt::SparseCOOMatrix<double> mat(3, 3);
+//     // Try inserting two values and then call get (should throw because not finalized)
+//     mat.set(0, 0, 1.23);
+//     mat.set(2, 1, 4.56);
+//     EXPECT_THROW(mat.get(2, 0), std::runtime_error);  // Not finalized
+//     mat.finalize();
+//     EXPECT_NO_THROW(mat.get(0, 0));
+//     EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.23);
+//     EXPECT_DOUBLE_EQ(mat.get(2, 1), 4.56);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, FastInsertFalseAllowsImmediateAccess) {
+//     slt::SparseCOOMatrix<float> mat(4, 4, false);  // Sorted mode
+//     mat.set(1, 2, 3.14f);
+//     EXPECT_NO_THROW(mat.get(1, 2));
+//     EXPECT_FLOAT_EQ(mat.get(1, 2), 3.14f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, IsInitializedReturnsFalseInitially) {
+//     slt::SparseCOOMatrix<float> mat(2, 2);
+//     EXPECT_FALSE(mat.is_initialized(0, 0));
+//     EXPECT_FALSE(mat.is_initialized(1, 1));
+// }
 // -------------------------------------------------------------------------------- 
 
-TEST(SparseCOOMatrixTest, FlatConstructor_CorrectIndexing) {
-    std::vector<float> flat = {
-        1.0f, 0.0f,
-        0.0f, 4.0f
-    };
-
-    slt::SparseCOOMatrix<float> mat(flat, 2, 2);
-    mat.finalize();
-
-    EXPECT_EQ(mat.row_index(0), 0);
-    EXPECT_EQ(mat.col_index(0), 0);
-    EXPECT_EQ(mat.row_index(1), 1);
-    EXPECT_EQ(mat.col_index(1), 1);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixEquality, IdenticalMatrices) {
-    slt::SparseCOOMatrix<float> A(2, 2, false);
-    A.set(0, 0, 1.0f);
-    A.set(1, 1, 2.0f);
-    A.finalize();
-
-    slt::SparseCOOMatrix<float> B(2, 2, false);
-    B.set(0, 0, 1.0f);
-    B.set(1, 1, 2.0f);
-    B.finalize();
-
-    EXPECT_TRUE(A == B);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixEquality, DifferentDimensions) {
-    slt::SparseCOOMatrix<float> A(2, 2, false);
-    A.set(0, 0, 1.0f);
-
-    slt::SparseCOOMatrix<float> B(3, 2, false);
-    B.set(0, 0, 1.0f);
-
-    EXPECT_FALSE(A == B);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixEquality, DifferentValues) {
-    slt::SparseCOOMatrix<float> A(2, 2, false);
-    A.set(0, 0, 1.0f);
-    A.set(1, 1, 2.0f);
-    A.finalize();
-
-    slt::SparseCOOMatrix<float> B(2, 2, false);
-    B.set(0, 0, 1.0f);
-    B.set(1, 1, 3.0f);  // different value
-    B.finalize();
-
-    EXPECT_FALSE(A == B);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixEquality, SameValuesDifferentOrder) {
-    slt::SparseCOOMatrix<float> A(2, 2, false);
-    A.set(0, 0, 1.0f);
-    A.set(1, 1, 2.0f);
-    A.finalize();
-
-    slt::SparseCOOMatrix<float> B(2, 2, false);
-    B.set(1, 1, 2.0f);
-    B.set(0, 0, 1.0f);
-    B.finalize();
-
-    EXPECT_TRUE(A == B);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixEquality, NotFinalizedVsFinalized) {
-    slt::SparseCOOMatrix<float> A(2, 2, true);
-    A.set(0, 0, 1.0f);
-    A.set(1, 1, 2.0f);
-
-    slt::SparseCOOMatrix<float> B(2, 2, false);
-    B.set(0, 0, 1.0f);
-    B.set(1, 1, 2.0f);
-    B.finalize();
-
-    EXPECT_TRUE(A == B);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixAssignment, CopyAssignmentIndependence) {
-    slt::SparseCOOMatrix<float> A(2, 2, false);
-    A.set(0, 0, 1.0f);
-    A.set(1, 1, 2.0f);
-    A.finalize();
-
-    slt::SparseCOOMatrix<float> B(1, 1);
-    B = A;  // Deep copy
-
-    // Matrices should be equal
-    EXPECT_TRUE(A == B);
-
-    // Modify B independently
-    B.update(1, 1, 3.0f);
-
-    // Original A should remain unchanged
-    EXPECT_FLOAT_EQ(A.get(1, 1), 2.0f);
-    EXPECT_FLOAT_EQ(B.get(1, 1), 3.0f);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixAssignment, MoveAssignmentTransfersResources) {
-    slt::SparseCOOMatrix<float> A(2, 2, false);
-    A.set(0, 0, 4.0f);
-    A.set(1, 1, 5.0f);
-    A.finalize();
-
-    slt::SparseCOOMatrix<float> B(1, 1);
-    B = std::move(A);  // Move assignment
-
-    // Values should exist in B
-    EXPECT_FLOAT_EQ(B.get(0, 0), 4.0f);
-    EXPECT_FLOAT_EQ(B.get(1, 1), 5.0f);
-
-    // Dimensions should match
-    EXPECT_EQ(B.rows(), 2);
-    EXPECT_EQ(B.cols(), 2);
-
-    // A is in a valid but empty state; we check dimensions and size
-    EXPECT_EQ(A.rows(), 0);
-    EXPECT_EQ(A.cols(), 0);
-    EXPECT_EQ(A.nonzero_count(), 0);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, SubtractScalarFromSparseMatrix) {
-    slt::SparseCOOMatrix<float> A(2, 2);
-    A.set(0, 0, 1.0f);
-    A.set(1, 1, 2.0f);
-
-    auto result = A - 1.0f;
-
-    EXPECT_EQ(result.rows(), 2);
-    EXPECT_EQ(result.cols(), 2);
-    EXPECT_EQ(result.nonzero_count(), 2);
-    EXPECT_FLOAT_EQ(result(0,0), 0.0f);
-    EXPECT_FLOAT_EQ(result(1,1), 1.0f);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixTest, SubtractSparseFromSparse) {
-    slt::SparseCOOMatrix<float> A{
-        {1.0, 0.0},
-        {0.0, 2.0}
-    };
-    slt::SparseCOOMatrix<float> B{
-        {0.0, 3.0},
-        {4.0, 0.0}
-    };
-
-    slt::DenseMatrix<float> result = A - B;
-
-    EXPECT_EQ(result.rows(), 2);
-    EXPECT_EQ(result.cols(), 2);
-    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
-    EXPECT_FLOAT_EQ(result(0, 1), -3.0f);
-    EXPECT_FLOAT_EQ(result(1, 0), -4.0f);
-    EXPECT_FLOAT_EQ(result(1, 1), 2.0f);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixOperators, ScalarMinusMatrix) {
-    slt::SparseCOOMatrix<float> A(2, 2);
-    A.set(0, 0, 3.0f);
-    A.set(1, 1, 1.0f);
-
-    // Perform scalar - matrix
-    slt::SparseCOOMatrix<float> B = 5.0f - A;
-
-    // Check values: B(0,0) = 2.0, B(1,1) = 4.0
-    EXPECT_FLOAT_EQ(B.get(0, 0), 2.0f);
-    EXPECT_FLOAT_EQ(B.get(1, 1), 4.0f);
-
-    // Check that dimensions are preserved
-    EXPECT_EQ(B.rows(), 2);
-    EXPECT_EQ(B.cols(), 2);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixOperators, SparseMinusDense) {
-    slt::SparseCOOMatrix<float> A(2, 2);
-    A.set(0, 0, 3.0f);
-    A.set(1, 1, 1.0f);
-
-    slt::DenseMatrix<float> B(2, 2, 0.0f);
-    B.update(0, 0, 1.0f);
-    B.update(0, 1, 2.0f);
-    B.update(1, 0, 3.0f);
-    B.update(1, 1, 4.0f);
-
-    slt::DenseMatrix<float> result = A - B;
-
-    EXPECT_FLOAT_EQ(result(0, 0), 2.0f);   // 3 - 1
-    EXPECT_FLOAT_EQ(result(0, 1), -2.0f);  // 0 - 2
-    EXPECT_FLOAT_EQ(result(1, 0), -3.0f);  // 0 - 3
-    EXPECT_FLOAT_EQ(result(1, 1), -3.0f);  // 1 - 4
-
-    EXPECT_EQ(result.rows(), 2);
-    EXPECT_EQ(result.cols(), 2);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixOperators, DenseMinusSparse) {
-    slt::DenseMatrix<float> A(2, 2, 5.0f);
-    A.update(0, 0, 7.0f);
-    A.update(1, 1, 9.0f);
-
-    slt::SparseCOOMatrix<float> B(2, 2);
-    B.set(0, 0, 2.0f);
-    B.set(1, 1, 4.0f);
-
-    slt::DenseMatrix<float> result = A - B;
-
-    EXPECT_FLOAT_EQ(result(0, 0), 5.0f);   // 7 - 2
-    EXPECT_FLOAT_EQ(result(0, 1), 5.0f);   // 5 - 0
-    EXPECT_FLOAT_EQ(result(1, 0), 5.0f);   // 5 - 0
-    EXPECT_FLOAT_EQ(result(1, 1), 5.0f);   // 9 - 4
-
-    EXPECT_EQ(result.rows(), 2);
-    EXPECT_EQ(result.cols(), 2);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixOperators, ElementWiseMultiplyMatchingEntries) {
-    slt::SparseCOOMatrix<float> A{
-        {1.0f, 0.0f},
-        {0.0f, 2.0f}
-    };
-    slt::SparseCOOMatrix<float> B{
-        {0.0f, 3.0f},
-        {0.0f, 4.0f}
-    };
-
-    slt::SparseCOOMatrix<float> result = A * B;
-
-    EXPECT_EQ(result.rows(), 2);
-    EXPECT_EQ(result.cols(), 2);
-
-    // Only one overlapping non-zero at (1,1): 2.0 * 4.0 = 8.0
-    EXPECT_FLOAT_EQ(result.get(1, 1), 8.0f);
-
-    // Non-overlapping positions should not be present
-    EXPECT_THROW(result.get(0, 0), std::runtime_error);
-    EXPECT_THROW(result.get(0, 1), std::runtime_error);
-    EXPECT_THROW(result.get(1, 0), std::runtime_error);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixOperators, MultiplyWithNoOverlap) {
-    slt::SparseCOOMatrix<float> A(2, 2);
-    A.set(0, 0, 5.0f);
-
-    slt::SparseCOOMatrix<float> B(2, 2);
-    B.set(1, 1, 10.0f);
-
-    slt::SparseCOOMatrix<float> result = A * B;
-
-    EXPECT_EQ(result.rows(), 2);
-    EXPECT_EQ(result.cols(), 2);
-
-    // No overlapping positions -> result should be empty
-    EXPECT_THROW(result.get(0, 0), std::runtime_error);
-    EXPECT_THROW(result.get(1, 1), std::runtime_error);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(SparseCOOMatrixOperators, MismatchedDimensionsThrows) {
-    slt::SparseCOOMatrix<float> A(2, 3);
-    slt::SparseCOOMatrix<float> B(3, 2);
-
-    EXPECT_THROW({
-        auto result = A * B;
-    }, std::invalid_argument);
-}
+// TEST(SparseCOOMatrixTest, OutOfBoundsThrowsInGetAndSet) {
+//     slt::SparseCOOMatrix<float> mat(2, 2);
+//     EXPECT_THROW(mat.set(5, 0, 1.0f), std::out_of_range);
+//     EXPECT_THROW(mat.set(0, 5, 1.0f), std::out_of_range);
+//     EXPECT_THROW(mat.get(3, 1), std::out_of_range);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// // Test: Constructor from std::vector<std::vector<T>>
+// TEST(SparseCOOMatrixTest, ConstructFrom2DVector) {
+//     std::vector<std::vector<double>> input = {
+//         {1.0, 0.0, 2.0},
+//         {0.0, 0.0, 0.0},
+//         {0.0, 3.0, 0.0}
+//     };
+//
+//     slt::SparseCOOMatrix mat(input);
+//     EXPECT_EQ(mat.rows(), 3);
+//     EXPECT_EQ(mat.cols(), 3);
+//
+//     mat.finalize();
+//
+//     EXPECT_TRUE(mat.is_initialized(0, 0));
+//     EXPECT_TRUE(mat.is_initialized(0, 2));
+//     EXPECT_TRUE(mat.is_initialized(2, 1));
+//
+//     EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.0);
+//     EXPECT_DOUBLE_EQ(mat.get(0, 2), 2.0);
+//     EXPECT_DOUBLE_EQ(mat.get(2, 1), 3.0);
+//
+//     EXPECT_FALSE(mat.is_initialized(1, 1));
+//     EXPECT_FALSE(mat.is_initialized(2, 2));
+//
+//     EXPECT_THROW(mat.get(1, 1), std::runtime_error);
+// }
+//
+// // ---------------------------------------------------------------------------
+//
+// TEST(SparseCOOMatrixTest, ThrowsOnInvalidShape) {
+//     std::vector<std::vector<double>> bad_input = {
+//         {1.0, 0.0},
+//         {2.0}  // shorter row
+//     };
+//
+//     EXPECT_THROW(slt::SparseCOOMatrix mat(bad_input), std::invalid_argument);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, ConstructFromFixedSizeArray) {
+//     std::array<std::array<double, 3>, 3> arr = {{
+//         {1.0, 0.0, 2.0},
+//         {0.0, 0.0, 0.0},
+//         {0.0, 3.0, 0.0}
+//     }};
+//
+//     slt::SparseCOOMatrix mat(arr);
+//     EXPECT_EQ(mat.rows(), 3);
+//     EXPECT_EQ(mat.cols(), 3);
+//
+//     mat.finalize();
+//
+//     EXPECT_TRUE(mat.is_initialized(0, 0));
+//     EXPECT_TRUE(mat.is_initialized(0, 2));
+//     EXPECT_TRUE(mat.is_initialized(2, 1));
+//
+//     EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.0);
+//     EXPECT_DOUBLE_EQ(mat.get(0, 2), 2.0);
+//     EXPECT_DOUBLE_EQ(mat.get(2, 1), 3.0);
+//
+//     EXPECT_FALSE(mat.is_initialized(1, 1));
+//     EXPECT_FALSE(mat.is_initialized(2, 2));
+//
+//     EXPECT_THROW(mat.get(1, 1), std::runtime_error);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, ConstructFromInitializerList) {
+//     slt::SparseCOOMatrix mat{
+//         {1.0, 0.0, 2.0},
+//         {0.0, 0.0, 0.0},
+//         {0.0, 3.0, 0.0}
+//     };
+//
+//     EXPECT_EQ(mat.rows(), 3);
+//     EXPECT_EQ(mat.cols(), 3);
+//
+//     mat.finalize();  // Required for accurate lookup after fast insertion
+//
+//     // Check expected initialized elements
+//     EXPECT_TRUE(mat.is_initialized(0, 0));
+//     EXPECT_TRUE(mat.is_initialized(0, 2));
+//     EXPECT_TRUE(mat.is_initialized(2, 1));
+//
+//     EXPECT_DOUBLE_EQ(mat.get(0, 0), 1.0);
+//     EXPECT_DOUBLE_EQ(mat.get(0, 2), 2.0);
+//     EXPECT_DOUBLE_EQ(mat.get(2, 1), 3.0);
+//
+//     // Check uninitialized entries
+//     EXPECT_FALSE(mat.is_initialized(1, 1));
+//     EXPECT_FALSE(mat.set_fast());
+//     EXPECT_THROW(mat.get(1, 1), std::runtime_error);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixUpdateTest, UpdatesExistingValueAfterFinalize) {
+//     slt::SparseCOOMatrix<float> mat(3, 3);
+//     mat.set(0, 1, 2.0f);
+//     mat.set(2, 2, 5.0f);
+//     mat.finalize();
+//
+//     EXPECT_FLOAT_EQ(mat.get(0, 1), 2.0f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixUpdateTest, ThrowsIfElementNotSet) {
+//     slt::SparseCOOMatrix<double> mat(2, 2);
+//     mat.set(0, 0, 3.14);
+//     mat.finalize();
+//
+//     EXPECT_THROW(mat.update(1, 1, 2.71), std::runtime_error);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixUpdateTest, ThrowsIfNotFinalized) {
+//     slt::SparseCOOMatrix<float> mat(2, 2);
+//     mat.set(0, 0, 1.0f);
+//     // Forgot to call finalize()
+//
+//     EXPECT_THROW(mat.update(0, 1, 3.0f), std::runtime_error);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixUpdateTest, ThrowsOnInvalidIndex) {
+//     slt::SparseCOOMatrix<float> mat(2, 2);
+//     mat.set(0, 0, 1.0f);
+//     mat.finalize();
+//
+//     EXPECT_THROW(mat.update(2, 2, 5.0f), std::out_of_range);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixAdditionTest, NonOverlappingEntries) {
+//     // Matrix A:
+//     // [1 0]
+//     // [0 0]
+//     slt::SparseCOOMatrix<float> A({
+//         {1.0f, 0.0f},
+//         {0.0f, 0.0f}
+//     });
+//
+//     // Matrix B:
+//     // [0 0]
+//     // [0 2]
+//     slt::SparseCOOMatrix<float> B({
+//         {0.0f, 0.0f},
+//         {0.0f, 2.0f}
+//     });
+//
+//     slt::DenseMatrix<float> result = A + B;
+//
+//     ASSERT_EQ(result.rows(), 2);
+//     ASSERT_EQ(result.cols(), 2);
+//
+//     // Check expected values
+//     EXPECT_FLOAT_EQ(result(0, 0), 1.0f);  // from A
+//     EXPECT_FLOAT_EQ(result(0, 1), 0.0f);  // empty
+//     EXPECT_FLOAT_EQ(result(1, 0), 0.0f);  // empty
+//     EXPECT_FLOAT_EQ(result(1, 1), 2.0f);  // from B
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixAdditionTest, OverlappingEntries) {
+//     // Matrix A:
+//     // [1 0]
+//     // [0 2]
+//     slt::SparseCOOMatrix<float> A({
+//         {1.0f, 0.0f},
+//         {0.0f, 2.0f}
+//     });
+//
+//     // Matrix B:
+//     // [3 0]
+//     // [0 4]
+//     slt::SparseCOOMatrix<float> B({
+//         {3.0f, 0.0f},
+//         {0.0f, 4.0f}
+//     });
+//
+//     slt::DenseMatrix<float> result = A + B;
+//
+//     ASSERT_EQ(result.rows(), 2);
+//     ASSERT_EQ(result.cols(), 2);
+//
+//     // Check element-wise sum
+//     EXPECT_FLOAT_EQ(result(0, 0), 4.0f);  // 1 + 3
+//     EXPECT_FLOAT_EQ(result(0, 1), 0.0f);
+//     EXPECT_FLOAT_EQ(result(1, 0), 0.0f);
+//     EXPECT_FLOAT_EQ(result(1, 1), 6.0f);  // 2 + 4
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(DenseSparseAdditionTest, DensePlusSparseCOO) {
+//     // Dense matrix:
+//     // [1 2]
+//     // [3 4]
+//     slt::DenseMatrix<float> dense({
+//         {1.0f, 2.0f},
+//         {3.0f, 4.0f}
+//     });
+//
+//     // Sparse matrix:
+//     // [0 5]
+//     // [6 0]
+//     slt::SparseCOOMatrix<float> sparse({
+//         {0.0f, 5.0f},
+//         {6.0f, 0.0f}
+//     });
+//
+//     slt::DenseMatrix<float> result = dense + sparse;
+//
+//     ASSERT_EQ(result.rows(), 2);
+//     ASSERT_EQ(result.cols(), 2);
+//
+//     // Check values
+//     EXPECT_FLOAT_EQ(result(0, 0), 1.0f);  // 1 + 0
+//     EXPECT_FLOAT_EQ(result(0, 1), 7.0f);  // 2 + 5
+//     EXPECT_FLOAT_EQ(result(1, 0), 9.0f);  // 3 + 6
+//     EXPECT_FLOAT_EQ(result(1, 1), 4.0f);  // 4 + 0
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseScalarAdditionTest, SparsePlusScalar) {
+//     // Sparse matrix:
+//     // [0 5]
+//     // [6 0]
+//     slt::SparseCOOMatrix<float> sparse({
+//         {0.0f, 5.0f},
+//         {6.0f, 0.0f}
+//     });
+//
+//     float scalar = 3.0f;
+//     auto result = sparse + scalar;
+//
+//     ASSERT_EQ(result.rows(), 2);
+//     ASSERT_EQ(result.cols(), 2);
+//     ASSERT_EQ(result.nonzero_count(), 2);
+//
+//     EXPECT_EQ(result.row_index(0), 0);
+//     EXPECT_EQ(result.col_index(0), 1);
+//     EXPECT_FLOAT_EQ(result.value(0), 8.0f);  // 5 + 3
+//
+//     EXPECT_EQ(result.row_index(1), 1);
+//     EXPECT_EQ(result.col_index(1), 0);
+//     EXPECT_FLOAT_EQ(result.value(1), 9.0f);  // 6 + 3
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseScalarAdditionTest, ScalarPlusSparse) {
+//     // Sparse matrix:
+//     // [0 2]
+//     // [3 0]
+//     slt::SparseCOOMatrix<float> sparse({
+//         {0.0f, 2.0f},
+//         {3.0f, 0.0f}
+//     });
+//
+//     float scalar = 1.5f;
+//     auto result = scalar + sparse;
+//
+//     ASSERT_EQ(result.rows(), 2);
+//     ASSERT_EQ(result.cols(), 2);
+//     ASSERT_EQ(result.nonzero_count(), 2);
+//
+//     EXPECT_EQ(result.row_index(0), 0);
+//     EXPECT_EQ(result.col_index(0), 1);
+//     EXPECT_FLOAT_EQ(result.value(0), 3.5f);  // 2 + 1.5
+//
+//     EXPECT_EQ(result.row_index(1), 1);
+//     EXPECT_EQ(result.col_index(1), 0);
+//     EXPECT_FLOAT_EQ(result.value(1), 4.5f);  // 3 + 1.5
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, FlatConstructor_PopulatesNonZeroValues) {
+//     std::vector<float> flat = {
+//         0.0f, 2.0f,
+//         3.0f, 0.0f
+//     };
+//
+//     slt::SparseCOOMatrix<float> mat(flat, 2, 2);
+//     mat.finalize();
+//
+//     EXPECT_EQ(mat.nonzero_count(), 2);
+//     EXPECT_TRUE(mat.is_initialized(0, 1));
+//     EXPECT_TRUE(mat.is_initialized(1, 0));
+//     EXPECT_FLOAT_EQ(mat(0, 1), 2.0f);
+//     EXPECT_FLOAT_EQ(mat(1, 0), 3.0f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, FlatConstructor_AllZero) {
+//     std::vector<double> flat(6, 0.0);
+//     slt::SparseCOOMatrix<double> mat(flat, 2, 3);
+//     mat.finalize();
+//
+//     EXPECT_EQ(mat.nonzero_count(), 0);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, FlatConstructor_InvalidSizeThrows) {
+//     std::vector<float> flat = {1.0f, 2.0f, 3.0f};  // Should be 2x2 but only 3 elements
+//
+//     EXPECT_THROW({
+//             slt::SparseCOOMatrix<float> mat(flat, 2, 2);
+//     }, std::invalid_argument);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, FlatConstructor_CorrectIndexing) {
+//     std::vector<float> flat = {
+//         1.0f, 0.0f,
+//         0.0f, 4.0f
+//     };
+//
+//     slt::SparseCOOMatrix<float> mat(flat, 2, 2);
+//     mat.finalize();
+//
+//     EXPECT_EQ(mat.row_index(0), 0);
+//     EXPECT_EQ(mat.col_index(0), 0);
+//     EXPECT_EQ(mat.row_index(1), 1);
+//     EXPECT_EQ(mat.col_index(1), 1);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixEquality, IdenticalMatrices) {
+//     slt::SparseCOOMatrix<float> A(2, 2, false);
+//     A.set(0, 0, 1.0f);
+//     A.set(1, 1, 2.0f);
+//     A.finalize();
+//
+//     slt::SparseCOOMatrix<float> B(2, 2, false);
+//     B.set(0, 0, 1.0f);
+//     B.set(1, 1, 2.0f);
+//     B.finalize();
+//
+//     EXPECT_TRUE(A == B);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixEquality, DifferentDimensions) {
+//     slt::SparseCOOMatrix<float> A(2, 2, false);
+//     A.set(0, 0, 1.0f);
+//
+//     slt::SparseCOOMatrix<float> B(3, 2, false);
+//     B.set(0, 0, 1.0f);
+//
+//     EXPECT_FALSE(A == B);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixEquality, DifferentValues) {
+//     slt::SparseCOOMatrix<float> A(2, 2, false);
+//     A.set(0, 0, 1.0f);
+//     A.set(1, 1, 2.0f);
+//     A.finalize();
+//
+//     slt::SparseCOOMatrix<float> B(2, 2, false);
+//     B.set(0, 0, 1.0f);
+//     B.set(1, 1, 3.0f);  // different value
+//     B.finalize();
+//
+//     EXPECT_FALSE(A == B);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixEquality, SameValuesDifferentOrder) {
+//     slt::SparseCOOMatrix<float> A(2, 2, false);
+//     A.set(0, 0, 1.0f);
+//     A.set(1, 1, 2.0f);
+//     A.finalize();
+//
+//     slt::SparseCOOMatrix<float> B(2, 2, false);
+//     B.set(1, 1, 2.0f);
+//     B.set(0, 0, 1.0f);
+//     B.finalize();
+//
+//     EXPECT_TRUE(A == B);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixEquality, NotFinalizedVsFinalized) {
+//     slt::SparseCOOMatrix<float> A(2, 2, true);
+//     A.set(0, 0, 1.0f);
+//     A.set(1, 1, 2.0f);
+//
+//     slt::SparseCOOMatrix<float> B(2, 2, false);
+//     B.set(0, 0, 1.0f);
+//     B.set(1, 1, 2.0f);
+//     B.finalize();
+//
+//     EXPECT_TRUE(A == B);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixAssignment, CopyAssignmentIndependence) {
+//     slt::SparseCOOMatrix<float> A(2, 2, false);
+//     A.set(0, 0, 1.0f);
+//     A.set(1, 1, 2.0f);
+//     A.finalize();
+//
+//     slt::SparseCOOMatrix<float> B(1, 1);
+//     B = A;  // Deep copy
+//
+//     // Matrices should be equal
+//     EXPECT_TRUE(A == B);
+//
+//     // Modify B independently
+//     B.update(1, 1, 3.0f);
+//
+//     // Original A should remain unchanged
+//     EXPECT_FLOAT_EQ(A.get(1, 1), 2.0f);
+//     EXPECT_FLOAT_EQ(B.get(1, 1), 3.0f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixAssignment, MoveAssignmentTransfersResources) {
+//     slt::SparseCOOMatrix<float> A(2, 2, false);
+//     A.set(0, 0, 4.0f);
+//     A.set(1, 1, 5.0f);
+//     A.finalize();
+//
+//     slt::SparseCOOMatrix<float> B(1, 1);
+//     B = std::move(A);  // Move assignment
+//
+//     // Values should exist in B
+//     EXPECT_FLOAT_EQ(B.get(0, 0), 4.0f);
+//     EXPECT_FLOAT_EQ(B.get(1, 1), 5.0f);
+//
+//     // Dimensions should match
+//     EXPECT_EQ(B.rows(), 2);
+//     EXPECT_EQ(B.cols(), 2);
+//
+//     // A is in a valid but empty state; we check dimensions and size
+//     EXPECT_EQ(A.rows(), 0);
+//     EXPECT_EQ(A.cols(), 0);
+//     EXPECT_EQ(A.nonzero_count(), 0);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, SubtractScalarFromSparseMatrix) {
+//     slt::SparseCOOMatrix<float> A(2, 2);
+//     A.set(0, 0, 1.0f);
+//     A.set(1, 1, 2.0f);
+//
+//     auto result = A - 1.0f;
+//
+//     EXPECT_EQ(result.rows(), 2);
+//     EXPECT_EQ(result.cols(), 2);
+//     EXPECT_EQ(result.nonzero_count(), 2);
+//     EXPECT_FLOAT_EQ(result(0,0), 0.0f);
+//     EXPECT_FLOAT_EQ(result(1,1), 1.0f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixTest, SubtractSparseFromSparse) {
+//     slt::SparseCOOMatrix<float> A{
+//         {1.0, 0.0},
+//         {0.0, 2.0}
+//     };
+//     slt::SparseCOOMatrix<float> B{
+//         {0.0, 3.0},
+//         {4.0, 0.0}
+//     };
+//
+//     slt::DenseMatrix<float> result = A - B;
+//
+//     EXPECT_EQ(result.rows(), 2);
+//     EXPECT_EQ(result.cols(), 2);
+//     EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+//     EXPECT_FLOAT_EQ(result(0, 1), -3.0f);
+//     EXPECT_FLOAT_EQ(result(1, 0), -4.0f);
+//     EXPECT_FLOAT_EQ(result(1, 1), 2.0f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixOperators, ScalarMinusMatrix) {
+//     slt::SparseCOOMatrix<float> A(2, 2);
+//     A.set(0, 0, 3.0f);
+//     A.set(1, 1, 1.0f);
+//
+//     // Perform scalar - matrix
+//     slt::SparseCOOMatrix<float> B = 5.0f - A;
+//
+//     // Check values: B(0,0) = 2.0, B(1,1) = 4.0
+//     EXPECT_FLOAT_EQ(B.get(0, 0), 2.0f);
+//     EXPECT_FLOAT_EQ(B.get(1, 1), 4.0f);
+//
+//     // Check that dimensions are preserved
+//     EXPECT_EQ(B.rows(), 2);
+//     EXPECT_EQ(B.cols(), 2);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixOperators, SparseMinusDense) {
+//     slt::SparseCOOMatrix<float> A(2, 2);
+//     A.set(0, 0, 3.0f);
+//     A.set(1, 1, 1.0f);
+//
+//     slt::DenseMatrix<float> B(2, 2, 0.0f);
+//     B.update(0, 0, 1.0f);
+//     B.update(0, 1, 2.0f);
+//     B.update(1, 0, 3.0f);
+//     B.update(1, 1, 4.0f);
+//
+//     slt::DenseMatrix<float> result = A - B;
+//
+//     EXPECT_FLOAT_EQ(result(0, 0), 2.0f);   // 3 - 1
+//     EXPECT_FLOAT_EQ(result(0, 1), -2.0f);  // 0 - 2
+//     EXPECT_FLOAT_EQ(result(1, 0), -3.0f);  // 0 - 3
+//     EXPECT_FLOAT_EQ(result(1, 1), -3.0f);  // 1 - 4
+//
+//     EXPECT_EQ(result.rows(), 2);
+//     EXPECT_EQ(result.cols(), 2);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixOperators, DenseMinusSparse) {
+//     slt::DenseMatrix<float> A(2, 2, 5.0f);
+//     A.update(0, 0, 7.0f);
+//     A.update(1, 1, 9.0f);
+//
+//     slt::SparseCOOMatrix<float> B(2, 2);
+//     B.set(0, 0, 2.0f);
+//     B.set(1, 1, 4.0f);
+//
+//     slt::DenseMatrix<float> result = A - B;
+//
+//     EXPECT_FLOAT_EQ(result(0, 0), 5.0f);   // 7 - 2
+//     EXPECT_FLOAT_EQ(result(0, 1), 5.0f);   // 5 - 0
+//     EXPECT_FLOAT_EQ(result(1, 0), 5.0f);   // 5 - 0
+//     EXPECT_FLOAT_EQ(result(1, 1), 5.0f);   // 9 - 4
+//
+//     EXPECT_EQ(result.rows(), 2);
+//     EXPECT_EQ(result.cols(), 2);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixOperators, ElementWiseMultiplyMatchingEntries) {
+//     slt::SparseCOOMatrix<float> A{
+//         {1.0f, 0.0f},
+//         {0.0f, 2.0f}
+//     };
+//     slt::SparseCOOMatrix<float> B{
+//         {0.0f, 3.0f},
+//         {0.0f, 4.0f}
+//     };
+//
+//     slt::SparseCOOMatrix<float> result = A * B;
+//
+//     EXPECT_EQ(result.rows(), 2);
+//     EXPECT_EQ(result.cols(), 2);
+//
+//     // Only one overlapping non-zero at (1,1): 2.0 * 4.0 = 8.0
+//     EXPECT_FLOAT_EQ(result.get(1, 1), 8.0f);
+//
+//     // Non-overlapping positions should not be present
+//     EXPECT_THROW(result.get(0, 0), std::runtime_error);
+//     EXPECT_THROW(result.get(0, 1), std::runtime_error);
+//     EXPECT_THROW(result.get(1, 0), std::runtime_error);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixOperators, MultiplyWithNoOverlap) {
+//     slt::SparseCOOMatrix<float> A(2, 2);
+//     A.set(0, 0, 5.0f);
+//
+//     slt::SparseCOOMatrix<float> B(2, 2);
+//     B.set(1, 1, 10.0f);
+//
+//     slt::SparseCOOMatrix<float> result = A * B;
+//
+//     EXPECT_EQ(result.rows(), 2);
+//     EXPECT_EQ(result.cols(), 2);
+//
+//     // No overlapping positions -> result should be empty
+//     EXPECT_THROW(result.get(0, 0), std::runtime_error);
+//     EXPECT_THROW(result.get(1, 1), std::runtime_error);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(SparseCOOMatrixOperators, MismatchedDimensionsThrows) {
+//     slt::SparseCOOMatrix<float> A(2, 3);
+//     slt::SparseCOOMatrix<float> B(3, 2);
+//
+//     EXPECT_THROW({
+//         auto result = A * B;
+//     }, std::invalid_argument);
+// }
 // ================================================================================
 // ================================================================================
 // eof

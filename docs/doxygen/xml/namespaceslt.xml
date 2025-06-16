@@ -1,0 +1,823 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="namespaceslt" kind="namespace" language="C++">
+    <compoundname>slt</compoundname>
+    <innerclass refid="structslt_1_1simd__traits" prot="public">slt::simd_traits</innerclass>
+    <innerclass refid="structslt_1_1simd__traits_3_01float_01_4" prot="public">slt::simd_traits&lt; float &gt;</innerclass>
+    <innerclass refid="structslt_1_1simd__traits_3_01double_01_4" prot="public">slt::simd_traits&lt; double &gt;</innerclass>
+    <innerclass refid="structslt_1_1simd__ops" prot="public">slt::simd_ops</innerclass>
+    <innerclass refid="structslt_1_1simd__ops_3_01float_01_4" prot="public">slt::simd_ops&lt; float &gt;</innerclass>
+    <innerclass refid="structslt_1_1simd__ops_3_01double_01_4" prot="public">slt::simd_ops&lt; double &gt;</innerclass>
+    <innerclass refid="classslt_1_1MatrixBase" prot="public">slt::MatrixBase</innerclass>
+    <innerclass refid="classslt_1_1DenseMatrix" prot="public">slt::DenseMatrix</innerclass>
+    <innerclass refid="classslt_1_1SparseCOOMatrix" prot="public">slt::SparseCOOMatrix</innerclass>
+      <sectiondef kind="func">
+      <memberdef kind="function" id="namespaceslt_1adbc6a9912aba420a4fe67ba6abd729a9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; slt::operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, const DenseMatrix&lt; T &gt; &amp;mat)</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>mat</declname>
+        </param>
+        <briefdescription>
+<para>Stream output operator for <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix element type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>os</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output stream. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>mat</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to print. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Output stream. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1947" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1947" bodyend="1950"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1ae726d568aa0e281c4bd86d71f337b8c4" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::operator+</definition>
+        <argsstring>(T scalar, const DenseMatrix&lt; T &gt; &amp;matrix)</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+<para>Adds a scalar to each initialized element of a matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This overload enables <computeroutput>scalar + matrix</computeroutput> syntax by forwarding the operation to the existing <computeroutput>matrix + scalar</computeroutput> member operator. Only initialized elements are updated in the result; uninitialized elements remain uninitialized.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the matrix elements. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The scalar value to add. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>matrix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> to which the scalar is added. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new DenseMatrix&lt;T&gt; with <computeroutput>scalar + matrix(i,j)</computeroutput> for each initialized element.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>1,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>0,<sp/>3.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>1,<sp/>4.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B<sp/>=<sp/>10.0f<sp/>+<sp/>A;</highlight></codeline>
+<codeline><highlight class="normal">B.print();</highlight></codeline>
+</programlisting></para>
+<para>Output: <verbatim>*         11         12
+*         13         14
+* </verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1983" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1983" bodyend="1985"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1ab7a55d8c976eb591ad233a83bffc43ce" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">slt::DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>slt::DenseMatrix&lt;T&gt; slt::operator-</definition>
+        <argsstring>(T scalar, const slt::DenseMatrix&lt; T &gt; &amp;matrix)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">slt::DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+<para>Subtracts each element of a matrix from a scalar. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function computes the difference between a scalar and each initialized element in the given matrix. Only initialized elements contribute to the result; uninitialized elements remain uninitialized in the result.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The element type of the matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The scalar value to subtract from. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>matrix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix whose values will be subtracted from the scalar. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new DenseMatrix&lt;T&gt; where each initialized element is <computeroutput>scalar - matrix(i,j)</computeroutput></para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>1,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>0,<sp/>3.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>1,<sp/>4.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B<sp/>=<sp/>10.0f<sp/>-<sp/>A;</highlight></codeline>
+<codeline><highlight class="normal">B.print();</highlight></codeline>
+</programlisting></para>
+<para>Output: <verbatim>*          9          8 
+*          7          6 
+* </verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2018" column="22" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2018" bodyend="2029"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a7a4f1a42d7dfbc00af75ce9cb1ec6d8b" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::operator*</definition>
+        <argsstring>(T scalar, const DenseMatrix&lt; T &gt; &amp;matrix)</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+<para>Multiplies each element of a matrix by a scalar. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Performs element-wise multiplication between a scalar and all initialized values of the matrix. This overload allows <computeroutput>scalar * matrix</computeroutput> in addition to <computeroutput>matrix * scalar</computeroutput>.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the matrix elements. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The scalar multiplier. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>matrix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix whose values will be multiplied. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new DenseMatrix&lt;T&gt; with each element equal to <computeroutput>scalar * matrix(i,j)</computeroutput></para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;int&gt;<sp/>A(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>0,<sp/>1);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>1,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>0,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>1,<sp/>4);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;int&gt;<sp/>B<sp/>=<sp/>5<sp/>*<sp/>A;</highlight></codeline>
+<codeline><highlight class="normal">B.print();</highlight></codeline>
+</programlisting></para>
+<para>Output: <verbatim>*          5         10 
+*         15         20 
+* </verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2061" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2061" bodyend="2063"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a1edc8aa1413efcf30b6b2317064465a3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T slt::dot</definition>
+        <argsstring>(const T *a, const T *b, std::size_t size)</argsstring>
+        <name>dot</name>
+        <param>
+          <type>const T *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const T *</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>size</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2067" column="7" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2067" bodyend="2082"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a9910c7975866778b91fc95552ff64c65" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T slt::dot</definition>
+        <argsstring>(const std::vector&lt; T &gt; &amp;a, const std::vector&lt; T &gt; &amp;b)</argsstring>
+        <name>dot</name>
+        <param>
+          <type>const std::vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; T &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2087" column="7" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2087" bodyend="2091"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1ae7431018925bd517b4e5737be4a4308f" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+          <param>
+            <type>std::size_t</type>
+            <declname>N</declname>
+            <defname>N</defname>
+          </param>
+        </templateparamlist>
+        <type>T</type>
+        <definition>T slt::dot</definition>
+        <argsstring>(const std::array&lt; T, N &gt; &amp;a, const std::array&lt; T, N &gt; &amp;b)</argsstring>
+        <name>dot</name>
+        <param>
+          <type>const std::array&lt; T, N &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const std::array&lt; T, N &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2096" column="7" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2096" bodyend="2098"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a4a91f90ca1405d694326b5ec7e8d3be7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void slt::cross</definition>
+        <argsstring>(const T *a, const T *b, T *result)</argsstring>
+        <name>cross</name>
+        <param>
+          <type>const T *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const T *</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type>T *</type>
+          <declname>result</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2102" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2102" bodyend="2109"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1ae7ff72be7d69132d3448cd441bca0926" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::array&lt; T, 3 &gt;</type>
+        <definition>std::array&lt;T, 3&gt; slt::cross</definition>
+        <argsstring>(const std::array&lt; T, 3 &gt; &amp;a, const std::array&lt; T, 3 &gt; &amp;b)</argsstring>
+        <name>cross</name>
+        <param>
+          <type>const std::array&lt; T, 3 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const std::array&lt; T, 3 &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2113" column="23" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2113" bodyend="2121"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1af8ce1187a032f89a2bda89146b18de61" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type>std::vector&lt; T &gt;</type>
+        <definition>std::vector&lt;T&gt; slt::cross</definition>
+        <argsstring>(const std::vector&lt; T &gt; &amp;a, const std::vector&lt; T &gt; &amp;b)</argsstring>
+        <name>cross</name>
+        <param>
+          <type>const std::vector&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; T &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2125" column="24" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2125" bodyend="2134"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a65e705fbd81f19d98c1fcf81ef098e2c" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::mat_mul</definition>
+        <argsstring>(const DenseMatrix&lt; T &gt; &amp;A, const DenseMatrix&lt; T &gt; &amp;B)</argsstring>
+        <name>mat_mul</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>A</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>B</declname>
+        </param>
+        <briefdescription>
+<para>Perform standard matrix multiplication (A × B) for dense matrices. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function multiplies two dense matrices A and B, producing a new matrix C. It supports only <computeroutput>float</computeroutput> and <computeroutput>double</computeroutput> data types (enforced via static_assert).</para>
+<para>Each element of the resulting matrix is computed as the dot product of a row of A and a column of B. All accessed values must be initialized in A and B.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The numeric type of the matrix (must be float or double) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>A</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The left matrix operand (dimensions: m × n) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>B</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The right matrix operand (dimensions: n × p) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Resulting matrix C of dimensions m × p</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the number of columns in A does not match the number of rows in B.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1.0f,<sp/>2.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{3.0f,<sp/>4.0f}</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{5.0f,<sp/>6.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{7.0f,<sp/>8.0f}</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>C<sp/>=<sp/>mat_mul(A,<sp/>B);</highlight></codeline>
+<codeline><highlight class="normal">C.print();<sp/><sp/>//<sp/>Output:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/><sp/><sp/><sp/>19<sp/><sp/><sp/><sp/><sp/><sp/>22</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/><sp/><sp/><sp/>43<sp/><sp/><sp/><sp/><sp/><sp/>50</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2172" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2172" bodyend="2201"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1aba3b949337f86cced07f922710ac5484" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt;</type>
+        <definition>SparseCOOMatrix&lt;T&gt; slt::operator+</definition>
+        <argsstring>(T scalar, const SparseCOOMatrix&lt; T &gt; &amp;matrix)</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+<para>Adds a scalar to each non-zero element of the sparse matrix (scalar + matrix). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Symmetric to <computeroutput>matrix + scalar</computeroutput>. Adds <computeroutput>scalar</computeroutput> to each stored value in the sparse matrix. The result maintains the same sparsity pattern as the original.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element type. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Scalar value to add. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>matrix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Sparse COO matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <computeroutput><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt;T&gt;</computeroutput> with scalar added to each stored element. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3008" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3008" bodyend="3010"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1ab74ab4d078bb5d1815d13e64e4ad6298" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::operator+</definition>
+        <argsstring>(const DenseMatrix&lt; T &gt; &amp;dense, const SparseCOOMatrix&lt; T &gt; &amp;sparse)</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>dense</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>sparse</declname>
+        </param>
+        <briefdescription>
+<para>Adds a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> and a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> element-wise. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function returns a new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> that represents the element-wise sum of the input dense and sparse matrices. All initialized values in the sparse matrix are added to the corresponding entries in the dense matrix.</para>
+<para>The result is fully initialized regardless of which elements were modified by the sparse matrix.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of matrix elements (must be float or double). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dense</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dense matrix operand. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>sparse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sparse COO matrix operand. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new DenseMatrix&lt;T&gt; containing the result of the addition. </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input matrices do not have the same shape.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Example: <programlisting><codeline><highlight class="normal">DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>1,<sp/>2.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">SparseCOOMatrix&lt;float&gt;<sp/>B(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">B.set(0,<sp/>1,<sp/>3.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">DenseMatrix&lt;float&gt;<sp/>C<sp/>=<sp/>A<sp/>+<sp/>B;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>C(0,<sp/>0)<sp/>==<sp/>1.0</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>C(0,<sp/>1)<sp/>==<sp/>3.0</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>C(1,<sp/>1)<sp/>==<sp/>2.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3044" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3044" bodyend="3069"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1aba45a823392432d473bf3ee30c48958a" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::operator+</definition>
+        <argsstring>(const SparseCOOMatrix&lt; T &gt; &amp;sparse, const DenseMatrix&lt; T &gt; &amp;dense)</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>sparse</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>dense</declname>
+        </param>
+        <briefdescription>
+<para>Adds a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> and a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> element-wise. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function returns a new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> that represents the element-wise sum of the input dense and sparse matrices. All initialized values in the sparse matrix are added to the corresponding entries in the dense matrix.</para>
+<para>The result is fully initialized regardless of which elements were modified by the sparse matrix.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Type of matrix elements (must be float or double). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>sparse</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The sparse COO matrix operand. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dense</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The dense matrix operand. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new DenseMatrix&lt;T&gt; containing the result of the addition. </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the input matrices do not have the same shape.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Example: <programlisting><codeline><highlight class="normal">DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>1,<sp/>2.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">SparseCOOMatrix&lt;float&gt;<sp/>B(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">B.set(0,<sp/>1,<sp/>3.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">DenseMatrix&lt;float&gt;<sp/>C<sp/>=<sp/>A<sp/>+<sp/>B;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>C(0,<sp/>0)<sp/>==<sp/>1.0</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>C(0,<sp/>1)<sp/>==<sp/>3.0</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>C(1,<sp/>1)<sp/>==<sp/>2.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3103" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3103" bodyend="3128"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a3840e0b3524470b354e960022f48bcd9" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt;</type>
+        <definition>SparseCOOMatrix&lt;T&gt; slt::operator-</definition>
+        <argsstring>(T scalar, const SparseCOOMatrix&lt; T &gt; &amp;matrix)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>matrix</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3157" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3157" bodyend="3168"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a24443a933fbac935cc2f22733147f920" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::operator-</definition>
+        <argsstring>(const SparseCOOMatrix&lt; T &gt; &amp;sparse, const DenseMatrix&lt; T &gt; &amp;dense)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>sparse</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>dense</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3196" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3196" bodyend="3221"/>
+      </memberdef>
+      <memberdef kind="function" id="namespaceslt_1a9269d76bcc65736bfc566ff3c609405e" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::operator-</definition>
+        <argsstring>(const DenseMatrix&lt; T &gt; &amp;dense, const SparseCOOMatrix&lt; T &gt; &amp;sparse)</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>dense</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>sparse</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3249" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3249" bodyend="3276"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="46" column="5"/>
+  </compounddef>
+</doxygen>

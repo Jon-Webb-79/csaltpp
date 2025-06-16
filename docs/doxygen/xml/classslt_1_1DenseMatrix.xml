@@ -1,0 +1,1852 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classslt_1_1DenseMatrix" kind="class" language="C++" prot="public">
+    <compoundname>slt::DenseMatrix</compoundname>
+    <basecompoundref refid="classslt_1_1MatrixBase" prot="public" virt="non-virtual">slt::MatrixBase&lt; T &gt;</basecompoundref>
+    <includes refid="matrix_8hpp" local="no">matrix.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classslt_1_1DenseMatrix_1ab63789902cfdc1e5cbf8e0777f5c9fb9" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; T &gt;</type>
+        <definition>std::vector&lt;T&gt; slt::DenseMatrix&lt; T &gt;::data</definition>
+        <argsstring></argsstring>
+        <name>data</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+<para>Flat row-major storage of matrix elements. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="741" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="741" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classslt_1_1DenseMatrix_1ae860a596275b6746c9c8e4a39a8671f5" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; uint8_t &gt;</type>
+        <definition>std::vector&lt;uint8_t&gt; slt::DenseMatrix&lt; T &gt;::init</definition>
+        <argsstring></argsstring>
+        <name>init</name>
+        <initializer>= nullptr</initializer>
+        <briefdescription>
+<para>A vector containin a binary representation of array initialization. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="742" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="742" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classslt_1_1DenseMatrix_1a1cee72c413fc6a704706569e9571243d" prot="private" static="no" mutable="no">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::DenseMatrix&lt; T &gt;::rows_</definition>
+        <argsstring></argsstring>
+        <name>rows_</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Number of rows. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="743" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="743" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classslt_1_1DenseMatrix_1a8ff8f8302614df9bc21407878384eaf2" prot="private" static="no" mutable="no">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::DenseMatrix&lt; T &gt;::cols_</definition>
+        <argsstring></argsstring>
+        <name>cols_</name>
+        <initializer>= 0</initializer>
+        <briefdescription>
+<para>Number of cols. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="744" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="744" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a02b7df353b3562388432f1bbbb8bab54" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::DenseMatrix&lt; T &gt;::size</definition>
+        <argsstring>() const</argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>The total size of the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The number of rows multiplied by the number of columns, 0 if not initialized </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="752" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="752" bodyend="752"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a529848163b44a2168460198adda171f7" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const T *</type>
+        <definition>const T* slt::DenseMatrix&lt; T &gt;::data_ptr</definition>
+        <argsstring>() const</argsstring>
+        <name>data_ptr</name>
+        <briefdescription>
+<para>Pointer to the first value within the data array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a pointer to the beginning of the matrix&apos;s internal data array, stored in row-major order. This is useful for passing the data to low-level numerical libraries or performing custom SIMD operations.</para>
+<para><simplesect kind="return"><para>A const pointer to the beginning of the matrix data in contiguous memory. Returns nullptr if not initialized</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;<sp/>//<sp/>assuming<sp/>DenseMatrix<sp/>is<sp/>defined<sp/>here</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3,<sp/>1.5f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>float*<sp/>ptr<sp/>=<sp/>mat.data_ptr();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>mat.size();<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>ptr[i]<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Output: <programlisting><codeline><highlight class="normal">1.5<sp/>1.5<sp/>1.5<sp/>1.5<sp/>1.5<sp/>1.5</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="784" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="784" bodyend="784"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a4cdc9d44da3d03b7941e9eb1eec36340" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T *</type>
+        <definition>T* slt::DenseMatrix&lt; T &gt;::data_ptr</definition>
+        <argsstring>()</argsstring>
+        <name>data_ptr</name>
+        <briefdescription>
+<para>Pointer to the first value within the data array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a pointer to the beginning of the matrix&apos;s internal data array, stored in row-major order. This is useful for passing the data to low-level numerical libraries or performing custom SIMD operations.</para>
+<para><simplesect kind="return"><para>A pointer to the beginning of the matrix data in contiguous memory. Returns nullptr if not initialized</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;<sp/>//<sp/>assuming<sp/>DenseMatrix<sp/>is<sp/>defined<sp/>here</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3,<sp/>1.5f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>float*<sp/>ptr<sp/>=<sp/>mat.data_ptr();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>mat.size();<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>ptr[i]<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Output: <programlisting><codeline><highlight class="normal">1.5<sp/>1.5<sp/>1.5<sp/>1.5<sp/>1.5<sp/>1.5</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="816" column="11" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="816" bodyend="816"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a631142d8a7cbb38a6e8210569e8605d4" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const uint8_t *</type>
+        <definition>const uint8_t* slt::DenseMatrix&lt; T &gt;::init_ptr</definition>
+        <argsstring>() const</argsstring>
+        <name>init_ptr</name>
+        <briefdescription>
+<para>Pointer to the first value within the init array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a pointer to the beginning of the matrix&apos;s internal init array, stored in row-major order. This is may be useful for debugging issues if initialized data is showing as uninitialized</para>
+<para><simplesect kind="return"><para>A pointer to the beginning of the matrix data in contiguous memory. Returns nullptr if not initialized</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;stdint&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;<sp/>//<sp/>assuming<sp/>DenseMatrix<sp/>is<sp/>defined<sp/>here</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(0,<sp/>1,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>uint8_t*<sp/>ptr<sp/>=<sp/>mat.init_ptr();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>mat.size();<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>ptr[i]<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Output: <programlisting><codeline><highlight class="normal">1,<sp/>1,<sp/>0,<sp/>0,<sp/>0,<sp/>0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="850" column="23" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="850" bodyend="850"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a33d3181181df8997b1f81135ba6fe1d2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::DenseMatrix&lt; T &gt;::nonzero_count</definition>
+        <argsstring>() const</argsstring>
+        <name>nonzero_count</name>
+        <briefdescription>
+<para>Returns the number of initialized elements in the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function scans the internal <computeroutput>init</computeroutput> vector and returns the number of elements that have been explicitly initialized. This allows tracking sparse-style usage in a dense matrix implementation.</para>
+<para><simplesect kind="return"><para>The number of initialized elements in the matrix.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;<sp/><sp/>//<sp/>assuming<sp/>DenseMatrix<sp/>is<sp/>defined<sp/>here</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(0,<sp/>0,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(1,<sp/>1,<sp/>2.71f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Initialized<sp/>elements:<sp/>&quot;<sp/>&lt;&lt;<sp/>mat.nonzero_count()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Output: <programlisting><codeline><highlight class="normal">Initialized<sp/>elements:<sp/>2</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="880" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="880" bodyend="883"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1aefb68f3c5f27bd69a67d1e1f7b51831e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c, T value)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a matrix with given dimensions and fills it with a specified value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This constructor initializes all elements of the matrix to a given value and marks them as initialized.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Numeric data type of matrix elements. Must be either <computeroutput>float</computeroutput> or <computeroutput>double</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to assign to each matrix element.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;<sp/><sp/>//<sp/>assuming<sp/>DenseMatrix<sp/>is<sp/>defined<sp/>here</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3,<sp/>5.0f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>float*<sp/>ptr<sp/>=<sp/>mat.data_ptr();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>mat.size();<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>ptr[i]<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Output: <programlisting><codeline><highlight class="normal">5<sp/>5<sp/>5<sp/>5<sp/>5<sp/>5</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="917" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="917" bodyend="918"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a85b119a507ec3de68409be6404505239" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a matrix with given dimensions and zero-initializes all elements. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This constructor sets all values in the matrix to zero and marks them as uninitialized. It is typically used when data will be populated later via <computeroutput><ref refid="classslt_1_1DenseMatrix_1a06b7efc75ec0ecfa24c628b422f73f53" kindref="member">set()</ref></computeroutput> or similar methods.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;<sp/><sp/>//<sp/>assuming<sp/>DenseMatrix<sp/>is<sp/>defined<sp/>here</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(0,<sp/>1,<sp/>42.0f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(1,<sp/>2,<sp/>7.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>const<sp/>float*<sp/>ptr<sp/>=<sp/>mat.data_ptr();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>for<sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>mat.size();<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>ptr[i]<sp/>&lt;&lt;<sp/>&quot;<sp/>&quot;;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Initialized<sp/>count:<sp/>&quot;<sp/>&lt;&lt;<sp/>mat.nonzero_count()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para>Output: <programlisting><codeline><highlight class="normal">0<sp/>42<sp/>0<sp/>0<sp/>0<sp/>7</highlight></codeline>
+<codeline><highlight class="normal">Initialized<sp/>count:<sp/>2</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="955" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="955" bodyend="956"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a04b54af6e439372387f32809fdb354eb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(const std::vector&lt; std::vector&lt; T &gt;&gt; &amp;vec)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>const std::vector&lt; std::vector&lt; T &gt;&gt; &amp;</type>
+          <declname>vec</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a matrix from a nested std::vector of values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Initializes the matrix with the contents of a row-major nested <computeroutput>std::vector</computeroutput>. All rows must have the same number of columns, otherwise an exception is thrown.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Numeric data type of matrix elements. Must be either <computeroutput>float</computeroutput> or <computeroutput>double</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>vec</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A 2D vector representing matrix data in row-major order. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if rows have inconsistent sizes.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">std::vector&lt;std::vector&lt;float&gt;&gt;<sp/>values<sp/>=<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1.0f,<sp/>2.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{3.0f,<sp/>4.0f}</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(values);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat.get(1,<sp/>0);<sp/>//<sp/>Output:<sp/>3.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="978" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="978" bodyend="989"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a1527e4de225bc7b3537e3c4a1af474f3" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>std::size_t</type>
+            <declname>Rows</declname>
+            <defname>Rows</defname>
+          </param>
+          <param>
+            <type>std::size_t</type>
+            <declname>Cols</declname>
+            <defname>Cols</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(const std::array&lt; std::array&lt; T, Cols &gt;, Rows &gt; &amp;arr)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>const std::array&lt; std::array&lt; T, Cols &gt;, Rows &gt; &amp;</type>
+          <declname>arr</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a matrix from a fixed-size std::array of std::array values. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This constructor allows initializing a matrix from a compile-time known 2D <computeroutput>std::array</computeroutput> layout. The matrix is fully initialized.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Rows</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows (inferred at compile time) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Cols</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns (inferred at compile time) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Numeric data type of matrix elements. Must be either <computeroutput>float</computeroutput> or <computeroutput>double</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A 2D array containing matrix values in row-major order.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">std::array&lt;std::array&lt;double,<sp/>2&gt;,<sp/>2&gt;<sp/>arr<sp/>=<sp/>{{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1.1,<sp/>1.2},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{2.1,<sp/>2.2}</highlight></codeline>
+<codeline><highlight class="normal">}};</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>mat(arr);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat.get(0,<sp/>1);<sp/>//<sp/>Output:<sp/>1.2</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1016" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1016" bodyend="1021"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a8cc9938ed4a846403bc6584ee47a9bd9" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(std::initializer_list&lt; std::initializer_list&lt; T &gt;&gt; init_list)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>std::initializer_list&lt; std::initializer_list&lt; T &gt;&gt;</type>
+          <declname>init_list</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a matrix from an initializer list of initializer lists. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Enables matrix initialization using brace-enclosed values in row-major order. All rows must be of equal length or an exception will be thrown.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>init_list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Nested initializer list representing the matrix contents. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if any row has inconsistent size.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat<sp/>=<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{1.0f,<sp/>2.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{3.0f,<sp/>4.0f}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>mat.get(1,<sp/>0);<sp/>//<sp/>Output:<sp/>3.0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1047" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1047" bodyend="1058"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1adcf2b60ad5bd47d6dabaf714dd1f6727" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(const std::vector&lt; T &gt; &amp;flat_data, std::size_t r, std::size_t c)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>const std::vector&lt; T &gt; &amp;</type>
+          <declname>flat_data</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a matrix from a flat data vector with explicit dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The data must be laid out in row-major order, and the vector must have exactly <computeroutput>rows * cols</computeroutput> elements. All elements are marked initialized.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>flat_data</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flat vector of values in row-major order. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the data size does not match r * c.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;vector&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::vector&lt;double&gt;<sp/>data<sp/>=<sp/>{1.0,<sp/>2.0,<sp/>3.0,<sp/>4.0};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;double&gt;<sp/>mat(data,<sp/>2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>mat.get(0,<sp/>1);<sp/>//<sp/>Output:<sp/>2.0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1085" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1085" bodyend="1089"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a48b3d24ccb26cc6fba021da75cdca42e" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>std::size_t</type>
+            <declname>N</declname>
+            <defname>N</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(const std::array&lt; T, N &gt; &amp;arr, std::size_t r, std::size_t c)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>const std::array&lt; T, N &gt; &amp;</type>
+          <declname>arr</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a matrix from a flat std::array with specified dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The flat array must be laid out in row-major order and its size must exactly match <computeroutput>rows * cols</computeroutput>. All elements are marked initialized.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>N</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the flat std::array. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>arr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Flat array containing matrix data in row-major order. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if N does not match r * c.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;array&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::array&lt;float,<sp/>6&gt;<sp/>arr<sp/>=<sp/>{1.0f,<sp/>2.0f,<sp/>3.0f,<sp/>4.0f,<sp/>5.0f,<sp/>6.0f};</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat(arr,<sp/>2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>mat.get(1,<sp/>2);<sp/>//<sp/>Output:<sp/>6.0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1118" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1118" bodyend="1122"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1ac64fec350273642bd69b2500001c63be" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(const DenseMatrix&lt; T &gt; &amp;other)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor for <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates a deep copy of another <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>, duplicating its internal data and initialization state. The resulting matrix is independent of the original.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> instance to copy.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>A(2,<sp/>2,<sp/>1.0);</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>B(A);<sp/><sp/>//<sp/>B<sp/>is<sp/>a<sp/>deep<sp/>copy<sp/>of<sp/>A</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>B.get(0,<sp/>0);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Output:<sp/>1.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1140" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1140" bodyend="1145"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1acfda95ba96454680c4339e636195c58b" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(DenseMatrix&lt; T &gt; &amp;&amp;other) noexcept</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor for <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Transfers ownership of the internal data from another <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. This is a lightweight operation that avoids deep copying, and the original matrix is left in a valid but empty state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> to move from. It will be reset to a zero-sized state.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(3,<sp/>3,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B<sp/>=<sp/>std::move(A);<sp/><sp/>//<sp/>B<sp/>takes<sp/>ownership<sp/>of<sp/>A&apos;s<sp/>data</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>B.get(2,<sp/>2);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Output:<sp/>2.0</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>A.size();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Output:<sp/>0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1165" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1165" bodyend="1170"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a4755d6afb58a6cb916b70a153f4aa7ef" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::DenseMatrix&lt; T &gt;::DenseMatrix</definition>
+        <argsstring>(std::size_t n)</argsstring>
+        <name>DenseMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a square identity matrix of size n x n. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This constructor initializes a square matrix with 1s on the main diagonal and 0s elsewhere. It marks all diagonal entries as initialized.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>n</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of the identity matrix (rows and columns).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if n is zero. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1183" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1183" bodyend="1192"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a77c081ccac829706e7b345faf2acf42d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>T &amp;</type>
+        <definition>T&amp; slt::DenseMatrix&lt; T &gt;::operator()</definition>
+        <argsstring>(std::size_t r, std::size_t c)</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Access or assign a value at the specified matrix index (r, c). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This non-const overload allows users to assign a value to an element. If the element has not been previously initialized (tracked via the internal <computeroutput>init</computeroutput> vector), it will be marked as initialized. If already initialized, it acts as a regular update.</para>
+<para>Bounds checking is performed; if the index is out of range, std::out_of_range is thrown.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to the value at the specified index</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat(0,<sp/>1)<sp/>=<sp/>4.2f;<sp/><sp/>//<sp/>Initializes<sp/>and<sp/>sets<sp/>the<sp/>value</highlight></codeline>
+<codeline><highlight class="normal">mat(0,<sp/>1)<sp/>=<sp/>5.0f;<sp/><sp/>//<sp/>Updates<sp/>existing<sp/>value</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat(0,<sp/>1);<sp/><sp/>//<sp/>Outputs:<sp/>5.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1215" column="11" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1215" bodyend="1226"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a031fc322b994002ef9c2c10540a99603" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>const T &amp;</type>
+        <definition>const T&amp; slt::DenseMatrix&lt; T &gt;::operator()</definition>
+        <argsstring>(std::size_t r, std::size_t c) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Read-only access to a matrix element at (r, c). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This const overload allows read-only access to a matrix element. Throws a std::runtime_error if the element has not been initialized via <computeroutput><ref refid="classslt_1_1DenseMatrix_1a06b7efc75ec0ecfa24c628b422f73f53" kindref="member">set()</ref></computeroutput>, <computeroutput>operator()</computeroutput>, or <computeroutput><ref refid="classslt_1_1DenseMatrix_1aa051172f51cb694e62d2ac92212e2b42" kindref="member">update()</ref></computeroutput>.</para>
+<para>Bounds checking is performed; if the index is out of range, std::out_of_range is thrown.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Const reference to the initialized value at (r, c)</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>2,<sp/>8.5f);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat(1,<sp/>2);<sp/><sp/>//<sp/>Outputs:<sp/>8.5</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>mat(0,<sp/>0);<sp/>//<sp/>Would<sp/>throw<sp/>std::runtime_error<sp/>since<sp/>it&apos;s<sp/>uninitialized</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1250" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1250" bodyend="1260"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a4f16ef2fe485bfeaff37e07be5cbb437" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>DenseMatrix&lt;T&gt;&amp; slt::DenseMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(const DenseMatrix&lt; T &gt; &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy assignment operator for <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Copies the contents of another matrix, including data values, initialization status, and dimensions.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix to copy from. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to the current matrix after copy.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>A(2,<sp/>2,<sp/>1.0);</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>B<sp/>=<sp/>A;<sp/><sp/>//<sp/>uses<sp/>copy<sp/>constructor</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>C;</highlight></codeline>
+<codeline><highlight class="normal">C<sp/>=<sp/>A;<sp/><sp/>//<sp/>uses<sp/>copy<sp/>assignment</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1279" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1279" bodyend="1287"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a2edb94832d0cb9421cfe9e85b8d56b33" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>DenseMatrix&lt;T&gt;&amp; slt::DenseMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(DenseMatrix&lt; T &gt; &amp;&amp;other) noexcept</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator for <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Transfers ownership of the resources from another matrix to this one. After the move, the source matrix is left in a valid but unspecified state (typically zero dimensions and empty internal buffers).</para>
+<para>This is useful for efficient reassignment of temporary matrices without deep copying data.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The source matrix to move from (rvalue reference). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to this matrix after move assignment.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;utility&gt;<sp/><sp/>//<sp/>For<sp/>std::move</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&quot;matrix.hpp&quot;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat1(2,<sp/>2,<sp/>3.0f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::DenseMatrix&lt;float&gt;<sp/>mat2;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat2<sp/>=<sp/>std::move(mat1);<sp/><sp/>//<sp/>Efficient<sp/>resource<sp/>transfer</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>mat2(0,<sp/>0);<sp/><sp/>//<sp/>Outputs:<sp/>3.0</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>mat1<sp/>is<sp/>now<sp/>in<sp/>a<sp/>valid<sp/>but<sp/>empty<sp/>state</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;Size<sp/>after<sp/>move:<sp/>&quot;<sp/>&lt;&lt;<sp/>mat1.size();<sp/><sp/>//<sp/>Outputs:<sp/>0</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1322" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1322" bodyend="1330"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a01bfb57f1f4c7f11110926bd3625834a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></type>
+        <definition>DenseMatrix slt::DenseMatrix&lt; T &gt;::operator+</definition>
+        <argsstring>(const DenseMatrix &amp;other) const</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Adds two <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> objects element-wise. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Performs element-wise addition between two matrices of equal dimensions. If SIMD is supported, the addition is vectorized for performance.</para>
+<para>The returned matrix will be fully initialized.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix to add. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> containing the sum of the current matrix and <computeroutput>other</computeroutput>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if matrix dimensions do not match.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B(2,<sp/>2,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>C<sp/>=<sp/>A<sp/>+<sp/>B;</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>C(0,<sp/>0);<sp/><sp/>//<sp/>Outputs:<sp/>3.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1353" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1353" bodyend="1368"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a76746086f9f6b50cd82d09b7d648b38e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></type>
+        <definition>DenseMatrix slt::DenseMatrix&lt; T &gt;::operator+</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+<para>Adds a scalar to all elements of the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Each element of the matrix is incremented by the given scalar value. The result is stored in a new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> that is fully initialized. SIMD acceleration is used if supported by the platform.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The value to add to each element. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> containing the result of the scalar addition.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B<sp/>=<sp/>A<sp/>+<sp/>3.0f;</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>B(0,<sp/>0);<sp/><sp/>//<sp/>Outputs:<sp/>4.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1387" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1387" bodyend="1399"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a64a5482eb0dbba6aa16825fda6eac2ac" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></type>
+        <definition>DenseMatrix slt::DenseMatrix&lt; T &gt;::operator-</definition>
+        <argsstring>(const DenseMatrix &amp;other) const</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Element-wise matrix subtraction. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Subtracts another <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> from this matrix element-wise. Both matrices must have the same shape, otherwise an exception is thrown. If SIMD is supported, subtraction is performed using optimized SIMD instructions.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Matrix to subtract from this matrix. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> representing the result of the subtraction.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if matrix dimensions do not match.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2,<sp/>4.0f);</highlight></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B(2,<sp/>2,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>C<sp/>=<sp/>A<sp/>-<sp/>B;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>C<sp/>now<sp/>contains<sp/>all<sp/>3.0<sp/>values</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1421" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1421" bodyend="1436"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a97d52da76847341fc62f9101b961d98d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></type>
+        <definition>DenseMatrix slt::DenseMatrix&lt; T &gt;::operator-</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+<para>Scalar subtraction from all elements of the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Subtracts a scalar value from each element in the matrix. If SIMD is available, it uses optimized instructions for faster execution.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to subtract from each element. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> containing the result.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>mat(2,<sp/>2,<sp/>5.0);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>mat<sp/>-<sp/>2.0;</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>result<sp/>contains<sp/>all<sp/>3.0<sp/>values</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1454" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1454" bodyend="1466"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1ab28b2210e92edcb57fb8d042e185571f" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></type>
+        <definition>DenseMatrix slt::DenseMatrix&lt; T &gt;::operator*</definition>
+        <argsstring>(const DenseMatrix &amp;other) const</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Element-wise matrix multiplication. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Multiplies this matrix element-wise with another matrix of the same dimensions. Throws an exception if the matrices differ in shape. Uses SIMD acceleration if supported.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix to multiply with. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> containing the element-wise product.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if matrix dimensions do not match.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">A.set(0,<sp/>0,<sp/>2.0f);<sp/>A.set(0,<sp/>1,<sp/>3.0f);</highlight></codeline>
+<codeline><highlight class="normal">A.set(1,<sp/>0,<sp/>4.0f);<sp/>A.set(1,<sp/>1,<sp/>5.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>B(2,<sp/>2,<sp/>2.0f);<sp/><sp/>//<sp/>filled<sp/>with<sp/>2.0</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>C<sp/>=<sp/>A<sp/>*<sp/>B;</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>C(0,<sp/>0);<sp/><sp/>//<sp/>Outputs:<sp/>4.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1490" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1490" bodyend="1505"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a5eea42d2bdb71d69270abed1daf55168" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></type>
+        <definition>DenseMatrix slt::DenseMatrix&lt; T &gt;::operator*</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+<para>Multiply all matrix elements by a scalar. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a new matrix with each element multiplied by the provided scalar value. This operation uses SIMD acceleration if available.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to multiply each matrix element by. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> containing the scaled values.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>A(2,<sp/>2,<sp/>3.0);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>B<sp/>=<sp/>A<sp/>*<sp/>2.0;</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>B(1,<sp/>1);<sp/><sp/>//<sp/>Outputs:<sp/>6.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1523" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1523" bodyend="1535"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a36182695820d97a3e651f6cdb93faf0a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></type>
+        <definition>DenseMatrix slt::DenseMatrix&lt; T &gt;::operator/</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator/</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+<para>Divide all matrix elements by a scalar. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns a new matrix with each element divided by the given scalar value. Uses SIMD acceleration if available. Division by zero is explicitly checked and will throw an exception if detected.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>scalar</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The scalar divisor. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> with scaled-down values.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if scalar is zero.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>A(2,<sp/>2,<sp/>8.0f);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>B<sp/>=<sp/>A<sp/>/<sp/>2.0f;</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>B(0,<sp/>0);<sp/><sp/>//<sp/>Outputs:<sp/>4.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1556" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1556" bodyend="1570"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a09a6958aa43a7ead237b48114527ef5b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::DenseMatrix&lt; T &gt;::transpose</definition>
+        <argsstring>()</argsstring>
+        <name>transpose</name>
+        <briefdescription>
+<para>Transposes the matrix in-place. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function swaps the rows and columns of the matrix, modifying it directly. It is only applicable to dense matrices and is performed without creating a new object.</para>
+<para>The <computeroutput>init</computeroutput> state of all elements is preserved.</para>
+<para><programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1.0f,<sp/>2.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{3.0f,<sp/>4.0f}</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">mat.transpose();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat(0,<sp/>1);<sp/><sp/>//<sp/>Outputs:<sp/>3.0</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat(1,<sp/>0);<sp/><sp/>//<sp/>Outputs:<sp/>2.0</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1593" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1593" bodyend="1602"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1ae7443b52dd5c9229b1e57836c62734e5" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::DenseMatrix&lt; T &gt;::inverse</definition>
+        <argsstring>() const</argsstring>
+        <name>inverse</name>
+        <briefdescription>
+<para>Computes and returns the inverse of a square matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function implements Gauss-Jordan elimination with partial pivoting. It throws if the matrix is not square or is singular (i.e., non-invertible).</para>
+<para>All elements of the result are marked as initialized.</para>
+<para><simplesect kind="return"><para>A new <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> object containing the inverse.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::invalid_argument</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the matrix is not square. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the matrix is singular and cannot be inverted.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>mat({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{4.0,<sp/>7.0},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{2.0,<sp/>6.0}</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>inv<sp/>=<sp/>mat.inverse();</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>inv(0,<sp/>0);<sp/><sp/>//<sp/>Outputs<sp/>approximately<sp/>0.6</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>inv(1,<sp/>1);<sp/><sp/>//<sp/>Outputs<sp/>approximately<sp/>0.4</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1629" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1629" bodyend="1689"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1ae6666df109b2705e298cae85028014b6" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::DenseMatrix&lt; T &gt;::rows</definition>
+        <argsstring>() const override</argsstring>
+        <name>rows</name>
+        <reimplements refid="classslt_1_1MatrixBase_1af5247088bf3743574e25430da458ff46">rows</reimplements>
+        <briefdescription>
+<para>Returns the number of rows in the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function provides access to the total number of rows stored in the matrix.</para>
+<para><simplesect kind="return"><para>Number of rows in the matrix.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(3,<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat.rows();<sp/><sp/>//<sp/>Outputs:<sp/>3</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1704" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1704" bodyend="1704"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1ac182317252d8e104ea9be539358fe1b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::DenseMatrix&lt; T &gt;::cols</definition>
+        <argsstring>() const override</argsstring>
+        <name>cols</name>
+        <reimplements refid="classslt_1_1MatrixBase_1acee40c97e44474a9619b808b63d1868b">cols</reimplements>
+        <briefdescription>
+<para>Returns the number of columns in the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function provides access to the total number of columns stored in the matrix.</para>
+<para><simplesect kind="return"><para>Number of columns in the matrix.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(3,<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat.cols();<sp/><sp/>//<sp/>Outputs:<sp/>5</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1719" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1719" bodyend="1719"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a64113fe72d74abc3e8f957e5f0bbee9e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>T</type>
+        <definition>T slt::DenseMatrix&lt; T &gt;::get</definition>
+        <argsstring>(std::size_t row, std::size_t col) const override</argsstring>
+        <name>get</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a5fe460dc2d97ee440c32635d5f3192fc">get</reimplements>
+        <param>
+          <type>std::size_t</type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+<para>Retrieves a copy of the value at the specified matrix index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method allows read-only access to an individual matrix element. If the index is out of bounds or the element is uninitialized, an exception is thrown.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>row</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>col</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Value at the specified index</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if <computeroutput>row</computeroutput> or <computeroutput>col</computeroutput> is outside the matrix bounds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the element at the given index is uninitialized.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;double&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>1,<sp/>42.0);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>mat.get(1,<sp/>1);<sp/><sp/>//<sp/>Outputs:<sp/>42.0</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>mat.get(0,<sp/>0);<sp/><sp/>//<sp/>Would<sp/>throw<sp/>std::runtime_error</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1743" column="11" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1743" bodyend="1752"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a06b7efc75ec0ecfa24c628b422f73f53" prot="public" static="no" const="no" explicit="no" inline="yes" virt="virtual">
+        <type>void</type>
+        <definition>void slt::DenseMatrix&lt; T &gt;::set</definition>
+        <argsstring>(std::size_t row, std::size_t col, T value) override</argsstring>
+        <name>set</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a2925cbdba8ec46c258f8d8e1fb1b730d">set</reimplements>
+        <param>
+          <type>std::size_t</type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>col</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Sets the value at the given matrix index, marking it as initialized. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function assigns a value to the matrix at position (row, col), but only if the element is currently uninitialized. If the element is already initialized, it throws an exception. Use <computeroutput><ref refid="classslt_1_1DenseMatrix_1aa051172f51cb694e62d2ac92212e2b42" kindref="member">update()</ref></computeroutput> instead to modify existing values.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>row</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>col</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to assign</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the index is outside the matrix bounds </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the element is already initialized</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>2,<sp/>9.5f);<sp/><sp/>//<sp/>Initializes<sp/>and<sp/>sets<sp/>value</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>mat.set(1,<sp/>2,<sp/>4.3f);<sp/><sp/>//<sp/>Throws<sp/>std::runtime_error</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1776" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1776" bodyend="1786"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1ae55af06b38c452c75279bbfe4d0abaf4" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::DenseMatrix&lt; T &gt;::remove</definition>
+        <argsstring>(std::size_t row, std::size_t col)</argsstring>
+        <name>remove</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+<para>Removes a value from the matrix by clearing its data and initialization flag. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function resets the element at (row, col) to the default value of type <computeroutput>T</computeroutput> and marks it as uninitialized. If the value was not initialized to begin with, an error is thrown.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>row</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>col</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the index is invalid </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the element was not initialized</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>1,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal">mat.remove(0,<sp/>1);<sp/><sp/>//<sp/>Successfully<sp/>removes</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>mat.remove(0,<sp/>1);<sp/><sp/>//<sp/>Throws<sp/>std::runtime_error</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1809" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1809" bodyend="1817"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1aa051172f51cb694e62d2ac92212e2b42" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::DenseMatrix&lt; T &gt;::update</definition>
+        <argsstring>(std::size_t row, std::size_t col, T value)</argsstring>
+        <name>update</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>col</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Updates the value at the given matrix index, assuming it is already initialized. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method allows modifying the value of an element that has already been initialized. It does not change the initialization state. Use <computeroutput><ref refid="classslt_1_1DenseMatrix_1a06b7efc75ec0ecfa24c628b422f73f53" kindref="member">set()</ref></computeroutput> if the value is uninitialized.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>row</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>col</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New value to assign</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the index is out of bounds </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the target element is uninitialized</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;int&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(2,<sp/>1,<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal">mat.update(2,<sp/>1,<sp/>10);<sp/><sp/>//<sp/>Replaces<sp/>value</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>mat.update(0,<sp/>0,<sp/>1);<sp/><sp/>//<sp/>Throws<sp/>std::runtime_error<sp/>if<sp/>not<sp/>previously<sp/>set</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1841" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1841" bodyend="1851"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a66bf4b77281db6ded265fc44f8b3a309" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::unique_ptr&lt; <ref refid="classslt_1_1MatrixBase" kindref="compound">MatrixBase</ref>&lt; T &gt; &gt;</type>
+        <definition>std::unique_ptr&lt;MatrixBase&lt;T&gt; &gt; slt::DenseMatrix&lt; T &gt;::clone</definition>
+        <argsstring>() const override</argsstring>
+        <name>clone</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a10ca9a5de506b53de715596507c77321">clone</reimplements>
+        <briefdescription>
+<para>Creates a deep copy of the current matrix instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method returns a new <computeroutput><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></computeroutput> object that is a deep copy of the current matrix. The returned pointer is cast to the base class <computeroutput><ref refid="classslt_1_1MatrixBase" kindref="compound">MatrixBase</ref>&lt;T&gt;</computeroutput> and stored in a <computeroutput>std::unique_ptr</computeroutput> for memory-safe polymorphic use.</para>
+<para><simplesect kind="return"><para>A <computeroutput>std::unique_ptr</computeroutput> to a new copy of this matrix.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">std::unique_ptr&lt;MatrixBase&lt;float&gt;&gt;<sp/>original<sp/>=<sp/>std::make_unique&lt;slt::DenseMatrix&lt;float&gt;&gt;(2,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">std::unique_ptr&lt;MatrixBase&lt;float&gt;&gt;<sp/>copy<sp/>=<sp/>original-&gt;clone();</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1868" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1868" bodyend="1870"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1a0439627319cdaed291451c4135c33c2b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::DenseMatrix&lt; T &gt;::print</definition>
+        <argsstring>(std::ostream &amp;os=std::cout) const</argsstring>
+        <name>print</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+          <defval>std::cout</defval>
+        </param>
+        <briefdescription>
+<para>Prints the contents of the matrix to the given output stream. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Displays the matrix in a human-readable 2D format. Each element is printed with fixed width spacing for readability. The default stream is <computeroutput>std::cout</computeroutput>, but any <computeroutput>std::ostream</computeroutput> can be passed (e.g., <computeroutput>std::ostringstream</computeroutput> for testing).</para>
+<para>Only initialized elements are printed. Uninitialized elements accessed through this method may trigger runtime exceptions if bounds or initialization are violated.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>os</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The output stream to print to (defaults to <computeroutput>std::cout</computeroutput>)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;int&gt;<sp/>mat(2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>0,<sp/>1);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>1,<sp/>2);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>2,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>0,<sp/>4);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>1,<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>2,<sp/>6);</highlight></codeline>
+<codeline><highlight class="normal">mat.print();</highlight></codeline>
+</programlisting></para>
+<para>Output: <verbatim>*          1          2          3 
+*          4          5          6 
+* </verbatim> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1902" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1902" bodyend="1909"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1DenseMatrix_1aecc5061bed3861b391292058e43ae1b2" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool slt::DenseMatrix&lt; T &gt;::is_initialized</definition>
+        <argsstring>(std::size_t row, std::size_t col) const override</argsstring>
+        <name>is_initialized</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a069249b28295c9776df81efed6076589">is_initialized</reimplements>
+        <param>
+          <type>std::size_t</type>
+          <declname>row</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>col</declname>
+        </param>
+        <briefdescription>
+<para>Checks whether a specific matrix element has been initialized. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns <computeroutput>true</computeroutput> if the element at the specified row and column has been initialized using <computeroutput><ref refid="classslt_1_1DenseMatrix_1a06b7efc75ec0ecfa24c628b422f73f53" kindref="member">set()</ref></computeroutput>, <computeroutput><ref refid="classslt_1_1DenseMatrix_1aa051172f51cb694e62d2ac92212e2b42" kindref="member">update()</ref></computeroutput>, or the assignment operator. Otherwise, returns <computeroutput>false</computeroutput>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>row</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>col</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the element is initialized, <computeroutput>false</computeroutput> otherwise</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the index is outside the matrix bounds</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>1,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal">bool<sp/>check<sp/>=<sp/>mat.is_initialized(1,<sp/>1);<sp/><sp/>//<sp/>true</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="1930" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="1930" bodyend="1934"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>A dense matrix implementation supporting float or double values. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Stores matrix elements in a contiguous 1D vector using row-major order. Supports basic arithmetic operations, element access, cloning, and transposition.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Must be float or double. Enforced via static assertion. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>slt::MatrixBase&lt; T &gt;</label>
+        <link refid="classslt_1_1MatrixBase"/>
+      </node>
+      <node id="1">
+        <label>slt::DenseMatrix&lt; T &gt;</label>
+        <link refid="classslt_1_1DenseMatrix"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>slt::MatrixBase&lt; T &gt;</label>
+        <link refid="classslt_1_1MatrixBase"/>
+      </node>
+      <node id="1">
+        <label>slt::DenseMatrix&lt; T &gt;</label>
+        <link refid="classslt_1_1DenseMatrix"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="736" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="736" bodyend="1935"/>
+    <listofallmembers>
+      <member refid="classslt_1_1DenseMatrix_1a66bf4b77281db6ded265fc44f8b3a309" prot="public" virt="virtual"><scope>slt::DenseMatrix</scope><name>clone</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ac182317252d8e104ea9be539358fe1b2" prot="public" virt="virtual"><scope>slt::DenseMatrix</scope><name>cols</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a8ff8f8302614df9bc21407878384eaf2" prot="private" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>cols_</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ab63789902cfdc1e5cbf8e0777f5c9fb9" prot="private" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>data</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a529848163b44a2168460198adda171f7" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>data_ptr</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a4cdc9d44da3d03b7941e9eb1eec36340" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>data_ptr</name></member>
+      <member refid="classslt_1_1DenseMatrix_1aefb68f3c5f27bd69a67d1e1f7b51831e" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a85b119a507ec3de68409be6404505239" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a04b54af6e439372387f32809fdb354eb" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a1527e4de225bc7b3537e3c4a1af474f3" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a8cc9938ed4a846403bc6584ee47a9bd9" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1adcf2b60ad5bd47d6dabaf714dd1f6727" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a48b3d24ccb26cc6fba021da75cdca42e" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ac64fec350273642bd69b2500001c63be" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1acfda95ba96454680c4339e636195c58b" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a4755d6afb58a6cb916b70a153f4aa7ef" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>DenseMatrix</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a64113fe72d74abc3e8f957e5f0bbee9e" prot="public" virt="virtual"><scope>slt::DenseMatrix</scope><name>get</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ae860a596275b6746c9c8e4a39a8671f5" prot="private" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>init</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a631142d8a7cbb38a6e8210569e8605d4" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>init_ptr</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ae7443b52dd5c9229b1e57836c62734e5" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>inverse</name></member>
+      <member refid="classslt_1_1DenseMatrix_1aecc5061bed3861b391292058e43ae1b2" prot="public" virt="virtual"><scope>slt::DenseMatrix</scope><name>is_initialized</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a33d3181181df8997b1f81135ba6fe1d2" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>nonzero_count</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a77c081ccac829706e7b345faf2acf42d" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator()</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a031fc322b994002ef9c2c10540a99603" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator()</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ab28b2210e92edcb57fb8d042e185571f" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator*</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a5eea42d2bdb71d69270abed1daf55168" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator*</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a01bfb57f1f4c7f11110926bd3625834a" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator+</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a76746086f9f6b50cd82d09b7d648b38e" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator+</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a64a5482eb0dbba6aa16825fda6eac2ac" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator-</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a97d52da76847341fc62f9101b961d98d" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator-</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a36182695820d97a3e651f6cdb93faf0a" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator/</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a4f16ef2fe485bfeaff37e07be5cbb437" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a2edb94832d0cb9421cfe9e85b8d56b33" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a0439627319cdaed291451c4135c33c2b" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>print</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ae55af06b38c452c75279bbfe4d0abaf4" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>remove</name></member>
+      <member refid="classslt_1_1DenseMatrix_1ae6666df109b2705e298cae85028014b6" prot="public" virt="virtual"><scope>slt::DenseMatrix</scope><name>rows</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a1cee72c413fc6a704706569e9571243d" prot="private" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>rows_</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a06b7efc75ec0ecfa24c628b422f73f53" prot="public" virt="virtual"><scope>slt::DenseMatrix</scope><name>set</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a02b7df353b3562388432f1bbbb8bab54" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>size</name></member>
+      <member refid="classslt_1_1DenseMatrix_1a09a6958aa43a7ead237b48114527ef5b" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>transpose</name></member>
+      <member refid="classslt_1_1DenseMatrix_1aa051172f51cb694e62d2ac92212e2b42" prot="public" virt="non-virtual"><scope>slt::DenseMatrix</scope><name>update</name></member>
+      <member refid="classslt_1_1MatrixBase_1a3bbb4cd026c2c1da1ba0881c918630b1" prot="public" virt="virtual"><scope>slt::DenseMatrix</scope><name>~MatrixBase</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

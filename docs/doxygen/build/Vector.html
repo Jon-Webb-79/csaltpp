@@ -58,6 +58,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0E5crossNSt6vectorI1TEERKNSt6vectorI1TEERKNSt6vectorI1TEE"><code class="docutils literal notranslate"><span class="pre">cross()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#magnitude">Magnitude</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN3slt9magnitudeE1TPK1TNSt6size_tE"><code class="docutils literal notranslate"><span class="pre">magnitude()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN3slt9magnitudeE1TRKNSt6vectorI1TEE"><code class="docutils literal notranslate"><span class="pre">magnitude()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0_NSt6size_tEEN3slt9magnitudeE1TRKNSt5arrayI1T1NEE"><code class="docutils literal notranslate"><span class="pre">magnitude()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Matrix.html"> Matrix</a></li>
@@ -285,6 +291,83 @@ parallelogram spanned by <code class="docutils literal notranslate"><span class=
 <span class="c1">// result = {0.0f, 1.0f, 0.0f}</span>
 </pre></div>
 </div>
+</section>
+<section id="magnitude">
+<h2>Magnitude<a class="headerlink" href="#magnitude" title="Link to this heading"></a></h2>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3slt9magnitudeE1TPK1TNSt6size_tE">
+<span id="_CPPv3I0EN3slt9magnitudeEPK1TNSt6size_tE"></span><span id="_CPPv2I0EN3slt9magnitudeEPK1TNSt6size_tE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><a class="reference internal" href="#_CPPv4I0EN3slt9magnitudeE1TPK1TNSt6size_tE" title="slt::magnitude::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">magnitude</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN3slt9magnitudeE1TPK1TNSt6size_tE" title="slt::magnitude::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">data</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">size</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN3slt9magnitudeE1TPK1TNSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the Euclidean magnitude of a 1D C-style array <code class="docutils literal notranslate"><span class="pre">data</span></code> of length <code class="docutils literal notranslate"><span class="pre">size</span></code>.
+Internally uses SIMD-accelerated accumulation (if supported) via <cite>slt::simd_ops&lt;T&gt;</cite>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Pointer to the beginning of the array</p></li>
+<li><p><strong>size</strong> – Number of elements in the array</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Euclidean magnitude (i.e., sqrt of sum of squares)</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If <code class="docutils literal notranslate"><span class="pre">data</span></code> is <code class="docutils literal notranslate"><span class="pre">nullptr</span></code></p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="kt">float</span><span class="w"> </span><span class="n">a</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">};</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slt</span><span class="o">::</span><span class="n">magnitude</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="c1">// result = 3.0f</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3slt9magnitudeE1TRKNSt6vectorI1TEE">
+<span id="_CPPv3I0EN3slt9magnitudeERKNSt6vectorI1TEE"></span><span id="_CPPv2I0EN3slt9magnitudeERKNSt6vectorI1TEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><a class="reference internal" href="#_CPPv4I0EN3slt9magnitudeE1TRKNSt6vectorI1TEE" title="slt::magnitude::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">magnitude</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">vector</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN3slt9magnitudeE1TRKNSt6vectorI1TEE" title="slt::magnitude::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">vec</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0EN3slt9magnitudeE1TRKNSt6vectorI1TEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the Euclidean magnitude of a <code class="docutils literal notranslate"><span class="pre">std::vector&lt;T&gt;</span></code>.
+This function checks that SIMD is available for <code class="docutils literal notranslate"><span class="pre">T</span></code> and calls an optimized accumulation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>vec</strong> – The vector to compute the magnitude of</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Euclidean magnitude (sqrt of sum of squares)</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the input vector is empty</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">3.0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0</span><span class="p">};</span>
+<span class="kt">double</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slt</span><span class="o">::</span><span class="n">magnitude</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+<span class="c1">// result = 5.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0_NSt6size_tEEN3slt9magnitudeE1TRKNSt5arrayI1T1NEE">
+<span id="_CPPv3I0_NSt6size_tEEN3slt9magnitudeERKNSt5arrayI1T1NEE"></span><span id="_CPPv2I0_NSt6size_tEEN3slt9magnitudeERKNSt5arrayI1T1NEE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">N</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><a class="reference internal" href="#_CPPv4I0_NSt6size_tEEN3slt9magnitudeE1TRKNSt5arrayI1T1NEE" title="slt::magnitude::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">magnitude</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">array</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0_NSt6size_tEEN3slt9magnitudeE1TRKNSt5arrayI1T1NEE" title="slt::magnitude::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0_NSt6size_tEEN3slt9magnitudeE1TRKNSt5arrayI1T1NEE" title="slt::magnitude::N"><span class="n"><span class="pre">N</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">arr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0_NSt6size_tEEN3slt9magnitudeE1TRKNSt5arrayI1T1NEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Computes the Euclidean magnitude of a <code class="docutils literal notranslate"><span class="pre">std::array&lt;T,</span> <span class="pre">N&gt;</span></code> using SIMD where available.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>arr</strong> – The input array</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The Euclidean magnitude</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If <code class="docutils literal notranslate"><span class="pre">N</span> <span class="pre">==</span> <span class="pre">0</span></code></p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">float</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="mf">6.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">8.0f</span><span class="p">};</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slt</span><span class="o">::</span><span class="n">magnitude</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+<span class="c1">// result = 10.0f</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 </section>
 

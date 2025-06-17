@@ -134,6 +134,18 @@ Functions</h2></td></tr>
 <tr class="memitem:af8ce1187a032f89a2bda89146b18de61"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:af8ce1187a032f89a2bda89146b18de61"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceslt.html#af8ce1187a032f89a2bda89146b18de61">cross</a> (const std::vector&lt; T &gt; &amp;a, const std::vector&lt; T &gt; &amp;b)</td></tr>
 <tr class="separator:af8ce1187a032f89a2bda89146b18de61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a115fe8b809ef5875cd05967d33943e90"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:a115fe8b809ef5875cd05967d33943e90"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">magnitude</a> (const T *data, std::size_t size)</td></tr>
+<tr class="memdesc:a115fe8b809ef5875cd05967d33943e90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the Euclidean magnitude (L2 norm) of a c-style array.  <a href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">More...</a><br /></td></tr>
+<tr class="separator:a115fe8b809ef5875cd05967d33943e90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6106daba1126cac8e043e2e14d0a773"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
+<tr class="memitem:ad6106daba1126cac8e043e2e14d0a773"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceslt.html#ad6106daba1126cac8e043e2e14d0a773">magnitude</a> (const std::vector&lt; T &gt; &amp;vec)</td></tr>
+<tr class="memdesc:ad6106daba1126cac8e043e2e14d0a773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the Euclidean magnitude (L2 norm) of a vector.  <a href="namespaceslt.html#ad6106daba1126cac8e043e2e14d0a773">More...</a><br /></td></tr>
+<tr class="separator:ad6106daba1126cac8e043e2e14d0a773"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2c0b152049a9313c9101b63492d5253"><td class="memTemplParams" colspan="2">template&lt;typename T , std::size_t N&gt; </td></tr>
+<tr class="memitem:ae2c0b152049a9313c9101b63492d5253"><td class="memTemplItemLeft" align="right" valign="top">T&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceslt.html#ae2c0b152049a9313c9101b63492d5253">magnitude</a> (const std::array&lt; T, N &gt; &amp;arr)</td></tr>
+<tr class="memdesc:ae2c0b152049a9313c9101b63492d5253"><td class="mdescLeft">&#160;</td><td class="mdescRight">Computes the squared Euclidean norm of an array.  <a href="namespaceslt.html#ae2c0b152049a9313c9101b63492d5253">More...</a><br /></td></tr>
+<tr class="separator:ae2c0b152049a9313c9101b63492d5253"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a65e705fbd81f19d98c1fcf81ef098e2c"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a65e705fbd81f19d98c1fcf81ef098e2c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classslt_1_1DenseMatrix.html">DenseMatrix</a>&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">mat_mul</a> (const <a class="el" href="classslt_1_1DenseMatrix.html">DenseMatrix</a>&lt; T &gt; &amp;A, const <a class="el" href="classslt_1_1DenseMatrix.html">DenseMatrix</a>&lt; T &gt; &amp;B)</td></tr>
 <tr class="memdesc:a65e705fbd81f19d98c1fcf81ef098e2c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform standard matrix multiplication (A × B) for dense matrices.  <a href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">More...</a><br /></td></tr>
@@ -381,6 +393,139 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ae2c0b152049a9313c9101b63492d5253"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2c0b152049a9313c9101b63492d5253">&#9670;&nbsp;</a></span>magnitude() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , std::size_t N&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T slt::magnitude </td>
+          <td>(</td>
+          <td class="paramtype">const std::array&lt; T, N &gt; &amp;&#160;</td>
+          <td class="paramname"><em>arr</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes the squared Euclidean norm of an array. </p>
+<p>This internal helper function calculates the sum of squares of all elements in a vector. SIMD acceleration is used via <code><a class="el" href="structslt_1_1simd__ops.html">simd_ops</a>&lt;T&gt;</code> if supported. Typically used inside the <code><a class="el" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90" title="Computes the Euclidean magnitude (L2 norm) of a c-style array.">magnitude()</a></code> function.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The numeric type of the elements (<code>float</code> or <code>double</code> only). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>Pointer to the input array. </td></tr>
+    <tr><td class="paramname">size</td><td>Number of elements in the array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The sum of squared elements (i.e., squared magnitude).</dd></dl>
+<p>Example: </p><div class="fragment"><div class="line"><span class="comment">// Called internally by `magnitude()`, typically not used directly by users.</span></div>
+<div class="line">std::array&lt;float, 3&gt; v = {1.0f, 2.0f, 2.0f};</div>
+<div class="line"><span class="keywordtype">float</span> mag = <a class="code" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">magnitude</a>(v);</div>
+<div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Squared magnitude: &quot;</span> &lt;&lt; mag &lt;&lt; std::endl;  <span class="comment">// Output: 9.0</span></div>
+<div class="ttc" id="anamespaceslt_html_a115fe8b809ef5875cd05967d33943e90"><div class="ttname"><a href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">slt::magnitude</a></div><div class="ttdeci">T magnitude(const T *data, std::size_t size)</div><div class="ttdoc">Computes the Euclidean magnitude (L2 norm) of a c-style array.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2237</div></div>
+</div><!-- fragment --> 
+</div>
+</div>
+<a id="ad6106daba1126cac8e043e2e14d0a773"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6106daba1126cac8e043e2e14d0a773">&#9670;&nbsp;</a></span>magnitude() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T slt::magnitude </td>
+          <td>(</td>
+          <td class="paramtype">const std::vector&lt; T &gt; &amp;&#160;</td>
+          <td class="paramname"><em>vec</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes the Euclidean magnitude (L2 norm) of a vector. </p>
+<p>This function calculates the square root of the sum of squares of all elements in a vector. Internally, it uses SIMD acceleration (via <code><a class="el" href="structslt_1_1simd__ops.html">simd_ops</a></code>) when available. Supports <code>float</code> and <code>double</code> types, enforced by <code>static_assert</code>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The numeric type of the vector elements (<code>float</code> or <code>double</code> only). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>Pointer to the start of the array. </td></tr>
+    <tr><td class="paramname">size</td><td>Number of elements in the array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The Euclidean magnitude of the vector.</dd></dl>
+<p>int main() { std::vector&lt;double&gt; vec = {1.0, 2.0, 2.0}; double result = magnitude(vec.data()); std::cout &lt;&lt; "Magnitude: " &lt;&lt; result &lt;&lt; std::endl; // Output: 3.0 return 0; }  </p>
+
+</div>
+</div>
+<a id="a115fe8b809ef5875cd05967d33943e90"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a115fe8b809ef5875cd05967d33943e90">&#9670;&nbsp;</a></span>magnitude() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">T slt::magnitude </td>
+          <td>(</td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>size</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Computes the Euclidean magnitude (L2 norm) of a c-style array. </p>
+<p>This function calculates the square root of the sum of squares of all elements in a vector. Internally, it uses SIMD acceleration (via <code><a class="el" href="structslt_1_1simd__ops.html">simd_ops</a></code>) when available. Supports <code>float</code> and <code>double</code> types, enforced by <code>static_assert</code>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>The numeric type of the vector elements (<code>float</code> or <code>double</code> only). </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">data</td><td>Pointer to the start of the array. </td></tr>
+    <tr><td class="paramname">size</td><td>Number of elements in the array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The Euclidean magnitude of the vector.</dd></dl>
+<p>Example (float array): </p><div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><span class="keywordtype">float</span> data[] = {3.0f, 4.0f};</div>
+<div class="line"><span class="keywordtype">float</span> result = <a class="code" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">magnitude</a>(data, 2);</div>
+<div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Magnitude: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;  <span class="comment">// Output: 5.0</span></div>
+</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a47">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+</dl>
+
+</div>
+</div>
 <a id="a65e705fbd81f19d98c1fcf81ef098e2c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a65e705fbd81f19d98c1fcf81ef098e2c">&#9670;&nbsp;</a></span>mat_mul()</h2>
 
@@ -446,10 +591,10 @@ template&lt;typename T &gt; </div>
 <div class="line">C.<a class="code" href="classslt_1_1DenseMatrix.html#a0439627319cdaed291451c4135c33c2b">print</a>();  <span class="comment">// Output:</span></div>
 <div class="line">            <span class="comment">//      19      22</span></div>
 <div class="line">            <span class="comment">//      43      50</span></div>
-<div class="ttc" id="aclassslt_1_1DenseMatrix_html"><div class="ttname"><a href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a></div><div class="ttdoc">A dense matrix implementation supporting float or double values.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:752</div></div>
-<div class="ttc" id="aclassslt_1_1DenseMatrix_html_a0439627319cdaed291451c4135c33c2b"><div class="ttname"><a href="classslt_1_1DenseMatrix.html#a0439627319cdaed291451c4135c33c2b">slt::DenseMatrix::print</a></div><div class="ttdeci">void print(std::ostream &amp;os=std::cout) const</div><div class="ttdoc">Prints the contents of the matrix to the given output stream.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:1919</div></div>
-<div class="ttc" id="anamespaceslt_html_a65e705fbd81f19d98c1fcf81ef098e2c"><div class="ttname"><a href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">slt::mat_mul</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; mat_mul(const DenseMatrix&lt; T &gt; &amp;A, const DenseMatrix&lt; T &gt; &amp;B)</div><div class="ttdoc">Perform standard matrix multiplication (A × B) for dense matrices.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2189</div></div>
-</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a47">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<div class="ttc" id="aclassslt_1_1DenseMatrix_html"><div class="ttname"><a href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a></div><div class="ttdoc">A dense matrix implementation supporting float or double values.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:814</div></div>
+<div class="ttc" id="aclassslt_1_1DenseMatrix_html_a0439627319cdaed291451c4135c33c2b"><div class="ttname"><a href="classslt_1_1DenseMatrix.html#a0439627319cdaed291451c4135c33c2b">slt::DenseMatrix::print</a></div><div class="ttdeci">void print(std::ostream &amp;os=std::cout) const</div><div class="ttdoc">Prints the contents of the matrix to the given output stream.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:1981</div></div>
+<div class="ttc" id="anamespaceslt_html_a65e705fbd81f19d98c1fcf81ef098e2c"><div class="ttname"><a href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">slt::mat_mul</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; mat_mul(const DenseMatrix&lt; T &gt; &amp;A, const DenseMatrix&lt; T &gt; &amp;B)</div><div class="ttdoc">Perform standard matrix multiplication (A × B) for dense matrices.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2334</div></div>
+</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a48">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>

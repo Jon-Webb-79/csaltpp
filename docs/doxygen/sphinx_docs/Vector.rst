@@ -157,3 +157,54 @@ Example::
    auto result = slt::cross(a, b);
    // result = {0.0f, 1.0f, 0.0f}
 
+Magnitude 
+=========
+
+.. cpp:function:: template<typename T> T slt::magnitude(const T* data, std::size_t size)
+
+   Computes the Euclidean magnitude of a 1D C-style array ``data`` of length ``size``.
+   Internally uses SIMD-accelerated accumulation (if supported) via `slt::simd_ops<T>`.
+
+   :param data: Pointer to the beginning of the array
+   :param size: Number of elements in the array
+   :returns: The Euclidean magnitude (i.e., sqrt of sum of squares)
+   :throws std::invalid_argument: If ``data`` is ``nullptr``
+
+   Example::
+
+      float a[3] = {1.0f, 2.0f, 2.0f};
+      float result = slt::magnitude(a, 3);
+      // result = 3.0f
+
+.. cpp:function:: template<typename T> T slt::magnitude(const std::vector<T>& vec)
+
+   Computes the Euclidean magnitude of a ``std::vector<T>``.
+   This function checks that SIMD is available for ``T`` and calls an optimized accumulation.
+
+   :param vec: The vector to compute the magnitude of
+   :returns: The Euclidean magnitude (sqrt of sum of squares)
+   :throws std::invalid_argument: If the input vector is empty
+
+   Example::
+
+      std::vector<double> v = {3.0, 4.0};
+      double result = slt::magnitude(v);
+      // result = 5.0
+
+.. cpp:function:: template<typename T, std::size_t N> T slt::magnitude(const std::array<T, N>& arr)
+
+   Computes the Euclidean magnitude of a ``std::array<T, N>`` using SIMD where available.
+
+   :param arr: The input array
+   :returns: The Euclidean magnitude
+   :throws std::invalid_argument: If ``N == 0``
+
+   Example::
+
+      std::array<float, 2> arr = {6.0f, 8.0f};
+      float result = slt::magnitude(arr);
+      // result = 10.0f
+
+
+
+

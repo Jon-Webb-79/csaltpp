@@ -695,6 +695,27 @@ TEST(CrossProductTest, StdVectorDouble) {
     EXPECT_DOUBLE_EQ(result[2], 0.0);
 }
 // -------------------------------------------------------------------------------- 
+
+TEST(MagnitudeTest, CArrayFloat) {
+    float data[] = {3.0f, 4.0f};
+    float result = slt::magnitude(data, 2);
+    EXPECT_FLOAT_EQ(result, 5.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(MagnitudeTest, VectorDouble) {
+    std::vector<double> vec = {6.0, 8.0};
+    double result = slt::magnitude(vec);
+    EXPECT_DOUBLE_EQ(result, 10.0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(MagnitudeTest, StdArrayFloat) {
+    std::array<float, 3> arr = {1.0f, 2.0f, 2.0f};
+    float result = slt::magnitude(arr);
+    EXPECT_FLOAT_EQ(result, 3.0f);
+}
+// -------------------------------------------------------------------------------- 
 TEST(DenseMatrixMatMulTest, BasicMultiplicationFloat) {
     slt::DenseMatrix<float> A = {{1.0f, 2.0f, 3.0f}, {4.0f, 5.0f, 6.0f}};
     slt::DenseMatrix<float> B = {{7.0f, 8.0f}, {9.0f, 10.0f}, {11.0f, 12.0f}};

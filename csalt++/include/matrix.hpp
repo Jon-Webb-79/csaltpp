@@ -364,7 +364,37 @@
             }
 // -------------------------------------------------------------------------------- 
 
+            static float magnitude_squared(const float* data, std::size_t size) {
+#if defined(__AVX2__)
+                __m256 vsum = _mm256_setzero_ps();
+                std::size_t i = 0;
+                for (; i + 8 <= size; i += 8) {
+                    __m256 v = _mm256_loadu_ps(&data[i]);
+                    vsum = _mm256_add_ps(vsum, _mm256_mul_ps(v, v));
+                }
+                float buffer[8];
+                _mm256_storeu_ps(buffer, vsum);
+                T total = buffer[0] + buffer[1] + buffer[2] + buffer[3] +
+                          buffer[4] + buffer[5] + buffer[6] + buffer[7];
+#elif defined(__SSE2__)
+                __m128 vsum = _mm_setzero_ps();
+                std::size_t i = 0;
+                for (; i + 4 <= size; i += 4) {
+                    __m128 v = _mm_loadu_ps(&data[i]);
+                    vsum = _mm_add_ps(vsum, _mm_mul_ps(v, v));
+                }
+                float buffer[4];
+                _mm_storeu_ps(buffer, vsum);
+                float total = buffer[0] + buffer[1] + buffer[2] + buffer[3];
+#else
+                std::size_t i = 0;
+                T total = 0;
+#endif
+                for (; i < size; ++i)
+                    total += data[i] * data[i];
 
+                return total;
+            }
         };
 // -------------------------------------------------------------------------------- 
 
@@ -645,6 +675,38 @@
 #endif
                 for (std::size_t i = end; i < size; ++i)
                     dst[i] = src[i];
+            }
+// -------------------------------------------------------------------------------- 
+
+            static double magnitude_squared(const double* data, std::size_t size) {
+#if defined(__AVX2__)
+                __m256d vsum = _mm256_setzero_pd();
+                std::size_t i = 0;
+                for (; i + 4 <= size; i += 4) {
+                    __m256d v = _mm256_loadu_pd(&data[i]);
+                    vsum = _mm256_add_pd(vsum, _mm256_mul_pd(v, v));
+                }
+                double buffer[4];
+                _mm256_storeu_pd(buffer, vsum);
+                double total = buffer[0] + buffer[1] + buffer[2] + buffer[3];
+#elif defined(__SSE2__)
+                __m128d vsum = _mm_setzero_pd();
+                std::size_t i = 0;
+                for (; i + 2 <= size; i += 2) {
+                    __m128d v = _mm_loadu_pd(&data[i]);
+                    vsum = _mm_add_pd(vsum, _mm_mul_pd(v, v));
+                }
+                double buffer[2];
+                _mm_storeu_pd(buffer, vsum);
+                double total = buffer[0] + buffer[1];
+#else
+                std::size_t i = 0;
+                double total = 0.0;
+#endif
+                for (; i < size; ++i)
+                    total += data[i] * data[i];
+
+                return total;
             }
         };
 // ================================================================================ 
@@ -2152,6 +2214,89 @@
 // -------------------------------------------------------------------------------- 
 
     /**
+     * @brief Computes the Euclidean magnitude (L2 norm) of a c-style array
+     *
+     * This function calculates the square root of the sum of squares of all elements
+     * in a vector. Internally, it uses SIMD acceleration (via `simd_ops`) when available.
+     * Supports `float` and `double` types, enforced by `static_assert`.
+     *
+     * @tparam T The numeric type of the vector elements (`float` or `double` only).
+     * @param data Pointer to the start of the array.
+     * @param size Number of elements in the array.
+     * @return The Euclidean magnitude of the vector.
+     *
+     * Example (float array):
+     * @code
+     * #include <iostream>
+     * float data[] = {3.0f, 4.0f};
+     * float result = magnitude(data, 2);
+     * std::cout << "Magnitude: " << result << std::endl;  // Output: 5.0
+     * @endcode
+     */
+    template<typename T>
+    T magnitude(const T* data, std::size_t size) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "magnitude is only supported for float and double types");
+
+        T mag_sq = simd_ops<T>::magnitude_squared(data, size);
+        return std::sqrt(mag_sq);
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Computes the Euclidean magnitude (L2 norm) of a vector.
+     *
+     * This function calculates the square root of the sum of squares of all elements
+     * in a vector. Internally, it uses SIMD acceleration (via `simd_ops`) when available.
+     * Supports `float` and `double` types, enforced by `static_assert`.
+     *
+     * @tparam T The numeric type of the vector elements (`float` or `double` only).
+     * @param data Pointer to the start of the array.
+     * @param size Number of elements in the array.
+     * @return The Euclidean magnitude of the vector.
+     *
+     * int main() {
+     *     std::vector<double> vec = {1.0, 2.0, 2.0};
+     *     double result = magnitude(vec.data());
+     *     std::cout << "Magnitude: " << result << std::endl;  // Output: 3.0
+     *     return 0;
+     * }
+     * @endcode
+     */
+
+    template<typename T>
+    T magnitude(const std::vector<T>& vec) {
+        return magnitude(vec.data(), vec.size());
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Computes the squared Euclidean norm of an array
+     *
+     * This internal helper function calculates the sum of squares of all elements
+     * in a vector. SIMD acceleration is used via `simd_ops<T>` if supported.
+     * Typically used inside the `magnitude()` function.
+     *
+     * @tparam T The numeric type of the elements (`float` or `double` only).
+     * @param data Pointer to the input array.
+     * @param size Number of elements in the array.
+     * @return The sum of squared elements (i.e., squared magnitude).
+     *
+     * Example:
+     * @code
+     * // Called internally by `magnitude()`, typically not used directly by users.
+     * std::array<float, 3> v = {1.0f, 2.0f, 2.0f};
+     * float mag = magnitude(v);
+     * std::cout << "Squared magnitude: " << mag << std::endl;  // Output: 9.0
+     * @endcode
+     */
+    template<typename T, std::size_t N>
+    T magnitude(const std::array<T, N>& arr) {
+        return magnitude(arr.data(), N);
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
      * @brief Perform standard matrix multiplication (A × B) for dense matrices.
      *
      * This function multiplies two dense matrices A and B, producing a new matrix C.
@@ -3230,7 +3375,7 @@
         for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
             std::size_t r = sparse.row_index(i);
             std::size_t c = sparse.col_index(i);
-            result.update(r, c, result(r, c) + sparse.value(i));
+            result.update(r, c, result(r, c) + sparse.value_index(i));
         }
 
         return result;

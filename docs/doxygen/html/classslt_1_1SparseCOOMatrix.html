@@ -210,7 +210,7 @@ Private Attributes</h2></td></tr>
 class slt::SparseCOOMatrix&lt; T &gt;</h3>
 
 <p>Sparse Coordinate (COO) Matrix class. </p>
-<p>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a Triplet&lt;T&gt;, containing (row, column, value).</p>
+<p>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a <code><a class="el" href="structslt_1_1Triplet.html" title="Represents a single non-zero entry in a sparse COO matrix.">Triplet</a></code> object, containing (row, column, value).</p>
 <p>The matrix supports two internal insertion modes:</p><ul>
 <li>**Fast insert mode (<code>fast_set == true</code>)**: Triplets are appended to the internal vector in O(1) time. This allows very efficient construction of the matrix, but requires the user to call <code><a class="el" href="classslt_1_1SparseCOOMatrix.html#af2dd10fb10528bb4abee019204d3fc64" title="Finalizes the internal COO representation for querying.">finalize()</a></code> before performing retrievals such as <code><a class="el" href="classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71" title="Retrieves the value at the specified matrix location.">get()</a></code> or binary searches.</li>
 <li>**Sorted mode (<code>fast_set == false</code>)**: Triplets are kept sorted by (row, column), allowing efficient retrieval using binary search, at the cost of slower insertions.</li>

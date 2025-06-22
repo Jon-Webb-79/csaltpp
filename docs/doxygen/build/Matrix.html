@@ -155,6 +155,24 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#triplet-t">Triplet&lt;T&gt;</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN3slt7TripletE"><code class="docutils literal notranslate"><span class="pre">Triplet</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id24">Constructors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#default-constructor">Default Constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameterized-constructor">Parameterized Constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#copy-constructor">Copy Constructor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#move-constructor">Move Constructor</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#operators">Operators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id25">operator()=</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id26">operator()==</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id27">operator()&lt;</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#equals">equals()</a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Simd.html"> SIMD</a></li>
@@ -1443,7 +1461,7 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 <dt class="sig sig-object cpp" id="_CPPv4I0EN3slt15SparseCOOMatrixE">
 <span id="_CPPv3I0EN3slt15SparseCOOMatrixE"></span><span id="_CPPv2I0EN3slt15SparseCOOMatrixE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classslt_1_1SparseCOOMatrix"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4I0EN3slt10MatrixBaseE" title="slt::MatrixBase"><span class="n"><span class="pre">MatrixBase</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN3slt15SparseCOOMatrixE" title="slt::SparseCOOMatrix::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4I0EN3slt15SparseCOOMatrixE" title="Link to this definition"></a><br /></dt>
 <dd><p>Sparse Coordinate (COO) Matrix class. </p>
-<p>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a Triplet&lt;T&gt;, containing (row, column, value).</p>
+<p>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a <code class="docutils literal notranslate"><span class="pre">Triplet</span></code> object, containing (row, column, value).</p>
 <p>The matrix supports two internal insertion modes:<ul class="simple">
 <li><p>**Fast insert mode (<code class="docutils literal notranslate"><span class="pre">fast_set</span> <span class="pre">==</span> <span class="pre">true</span></code>)**: Triplets are appended to the internal vector in O(1) time. This allows very efficient construction of the matrix, but requires the user to call <code class="docutils literal notranslate"><span class="pre">finalize()</span></code> before performing retrievals such as <code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71"><span class="std std-ref"><span class="pre">get()</span></span></a></code> or binary searches.</p></li>
 <li><p>**Sorted mode (<code class="docutils literal notranslate"><span class="pre">fast_set</span> <span class="pre">==</span> <span class="pre">false</span></code>)**: Triplets are kept sorted by (row, column), allowing efficient retrieval using binary search, at the cost of slower insertions.</p></li>
@@ -1474,6 +1492,7 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 </dl>
 </dd></dl>
 
+<p>See also: <a class="reference internal" href="#triplet-class"><span class="std std-ref">Triplet&lt;T&gt;</span></a></p>
 <section id="id6">
 <h3>Constructors<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 </section>
@@ -1866,6 +1885,223 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 <span class="c1">// C(0, 1) == 1*6 + 2*8 == 22</span>
 </pre></div>
 </div>
+</dd></dl>
+
+</section>
+</section>
+</section>
+<section id="triplet-t">
+<span id="triplet-class"></span><h2>Triplet&lt;T&gt;<a class="headerlink" href="#triplet-t" title="Link to this heading"></a></h2>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3slt7TripletE">
+<span id="_CPPv3I0EN3slt7TripletE"></span><span id="_CPPv2I0EN3slt7TripletE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">Triplet</span></span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN3slt7TripletE" title="slt::Triplet::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4I0EN3slt7TripletE" title="Link to this definition"></a><br /></dt>
+<dd><p>Represents a single non-zero entry in a sparse COO matrix.</p>
+<p>Stores the <strong>row index</strong>, <strong>column index</strong>, and <strong>value</strong> for a sparse matrix element.
+Supports sorting and equality comparison based on (row, col) order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – Must be either <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">double</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<section id="id24">
+<h3>Constructors<a class="headerlink" href="#id24" title="Link to this heading"></a></h3>
+<section id="default-constructor">
+<h4>Default Constructor<a class="headerlink" href="#default-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt7Triplet7TripletEv">
+<span id="_CPPv3N3slt7Triplet7TripletEv"></span><span id="_CPPv2N3slt7Triplet7TripletEv"></span><span id="slt::Triplet::Triplet"></span><span class="target" id="structslt_1_1Triplet_1af3528b194b32f103afe887b84f8ad7cd"></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">Triplet</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N3slt7Triplet7TripletEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an empty Triplet with default values (0, 0, 0). </p>
+<p>Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t</span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">row</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">col</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">);</span>
+</pre></div>
+</div>
+</p>
+</dd></dl>
+
+</section>
+<section id="parameterized-constructor">
+<h4>Parameterized Constructor<a class="headerlink" href="#parameterized-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt7Triplet7TripletENSt6size_tENSt6size_tE1T">
+<span id="_CPPv3N3slt7Triplet7TripletENSt6size_tENSt6size_tE1T"></span><span id="_CPPv2N3slt7Triplet7TripletENSt6size_tENSt6size_tE1T"></span><span id="slt::Triplet::Triplet__std::s.std::s.T"></span><span class="target" id="structslt_1_1Triplet_1ab3d5e4e4f971dc1768e4a97b52beec31"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">Triplet</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span>, <span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">v</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt7Triplet7TripletENSt6size_tENSt6size_tE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a Triplet with specified row, column, and value. </p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3.14</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">t</span><span class="p">.</span><span class="n">row</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">col</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mf">3.14</span><span class="p">);</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>r</strong> – Row index. </p></li>
+<li><p><strong>c</strong> – Column index. </p></li>
+<li><p><strong>v</strong> – Value to store.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="copy-constructor">
+<h4>Copy Constructor<a class="headerlink" href="#copy-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt7Triplet7TripletERK7Triplet">
+<span id="_CPPv3N3slt7Triplet7TripletERK7Triplet"></span><span id="_CPPv2N3slt7Triplet7TripletERK7Triplet"></span><span id="slt::Triplet::Triplet__TripletCR"></span><span class="target" id="structslt_1_1Triplet_1ab787c653c70ae589ecfc4eb9fbf45abe"></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">Triplet</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N3slt7Triplet7TripletERK7Triplet" title="slt::Triplet::Triplet"><span class="n"><span class="pre">Triplet</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N3slt7Triplet7TripletERK7Triplet" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a copy of another Triplet. </p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t1</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t2</span><span class="p">(</span><span class="n">t1</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">t2</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t1</span><span class="p">));</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The Triplet to copy.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="move-constructor">
+<h4>Move Constructor<a class="headerlink" href="#move-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt7Triplet7TripletERR7Triplet">
+<span id="_CPPv3N3slt7Triplet7TripletERR7Triplet"></span><span id="_CPPv2N3slt7Triplet7TripletERR7Triplet"></span><span id="slt::Triplet::Triplet__TripletRR"></span><span class="target" id="structslt_1_1Triplet_1ae23786bc40518674b26f4905fa72f077"></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">Triplet</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N3slt7Triplet7TripletERR7Triplet" title="slt::Triplet::Triplet"><span class="n"><span class="pre">Triplet</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N3slt7Triplet7TripletERR7Triplet" title="Link to this definition"></a><br /></dt>
+<dd><p>Move constructor for efficient transfer of Triplet. </p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t1</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t2</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">t1</span><span class="p">));</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The Triplet to move from.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+<section id="operators">
+<h3>Operators<a class="headerlink" href="#operators" title="Link to this heading"></a></h3>
+<section id="id25">
+<h4>operator()=<a class="headerlink" href="#id25" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt7TripletaSERK7Triplet">
+<span id="_CPPv3N3slt7TripletaSERK7Triplet"></span><span id="_CPPv2N3slt7TripletaSERK7Triplet"></span><span id="slt::Triplet::assign-operator__TripletCR"></span><span class="n"><span class="pre">Triplet</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Triplet</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt7TripletaSERK7Triplet" title="Link to this definition"></a><br /></dt>
+<dd><p>Copy-assigns another Triplet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The Triplet to copy from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the current object.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t1</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t2</span><span class="p">;</span>
+<span class="n">t2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">t1</span><span class="p">;</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">t2</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">t1</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt7TripletaSERR7Triplet">
+<span id="_CPPv3N3slt7TripletaSERR7Triplet"></span><span id="_CPPv2N3slt7TripletaSERR7Triplet"></span><span id="slt::Triplet::assign-operator__TripletRR"></span><span class="n"><span class="pre">Triplet</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">Triplet</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt7TripletaSERR7Triplet" title="Link to this definition"></a><br /></dt>
+<dd><p>Move-assigns another Triplet.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The Triplet to move from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to the current object.</p>
+</dd>
+</dl>
+<p>Example:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t1</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">t2</span><span class="p">;</span>
+<span class="n">t2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">t1</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="id26">
+<h4>operator()==<a class="headerlink" href="#id26" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK3slt7TripleteqERK7Triplet">
+<span id="_CPPv3NK3slt7TripleteqERK7Triplet"></span><span id="_CPPv2NK3slt7TripleteqERK7Triplet"></span><span id="slt::Triplet::eq-operator__TripletCRC"></span><span class="target" id="structslt_1_1Triplet_1a5e32e03541562ce68d05f6c5465126d9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Triplet</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt7TripleteqERK7Triplet" title="Link to this definition"></a><br /></dt>
+<dd><p>Checks if two Triplets refer to the same (row, col) location. </p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w"> </span><span class="c1">// Value is ignored</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The Triplet to compare with. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if row and column are equal.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id27">
+<h4>operator()&lt;<a class="headerlink" href="#id27" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK3slt7TripletltERK7Triplet">
+<span id="_CPPv3NK3slt7TripletltERK7Triplet"></span><span id="_CPPv2NK3slt7TripletltERK7Triplet"></span><span id="slt::Triplet::lt-operator__TripletCRC"></span><span class="target" id="structslt_1_1Triplet_1a78c5b600b74b5338676fd2f787ec3fb2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Triplet</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt7TripletltERK7Triplet" title="Link to this definition"></a><br /></dt>
+<dd><p>Compares Triplets by row-major order (row, then column). </p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The Triplet to compare with. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if this Triplet precedes the other.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="equals">
+<h4>equals()<a class="headerlink" href="#equals" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK3slt7Triplet6equalsERK7Triplet">
+<span id="_CPPv3NK3slt7Triplet6equalsERK7Triplet"></span><span id="_CPPv2NK3slt7Triplet6equalsERK7Triplet"></span><span id="slt::Triplet::equals__TripletCRC"></span><span class="target" id="structslt_1_1Triplet_1a1269f49a5366465a212b9deb99c42401"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">Triplet</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">equals</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">Triplet</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt7Triplet6equalsERK7Triplet" title="Link to this definition"></a><br /></dt>
+<dd><p>Compares full equality (row, column, and value). </p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">Triplet</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">equals</span><span class="p">(</span><span class="n">b</span><span class="p">));</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The Triplet to compare with. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all fields are equal.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

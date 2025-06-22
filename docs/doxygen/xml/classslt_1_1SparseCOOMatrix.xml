@@ -1205,7 +1205,7 @@ Example: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatri
 <para>Sparse Coordinate (COO) Matrix class. </para>
     </briefdescription>
     <detaileddescription>
-<para>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a Triplet&lt;T&gt;, containing (row, column, value).</para>
+<para>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a <computeroutput><ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref></computeroutput> object, containing (row, column, value).</para>
 <para>The matrix supports two internal insertion modes:<itemizedlist>
 <listitem><para>**Fast insert mode (<computeroutput>fast_set == true</computeroutput>)**: Triplets are appended to the internal vector in O(1) time. This allows very efficient construction of the matrix, but requires the user to call <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1af2dd10fb10528bb4abee019204d3fc64" kindref="member">finalize()</ref></computeroutput> before performing retrievals such as <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71" kindref="member">get()</ref></computeroutput> or binary searches.</para>
 </listitem><listitem><para>**Sorted mode (<computeroutput>fast_set == false</computeroutput>)**: Triplets are kept sorted by (row, column), allowing efficient retrieval using binary search, at the cost of slower insertions.</para>

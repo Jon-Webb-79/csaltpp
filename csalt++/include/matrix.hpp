@@ -2513,7 +2513,7 @@
      * @brief Sparse Coordinate (COO) Matrix class.
      *
      * This class represents a sparse matrix using the Coordinate List (COO) format.
-     * Each non-zero element of the matrix is stored as a Triplet<T>, containing (row, column, value).
+     * Each non-zero element of the matrix is stored as a `Triplet` object, containing (row, column, value).
      * 
      * The matrix supports two internal insertion modes:
      * - **Fast insert mode (`fast_set == true`)**: Triplets are appended to the internal vector in O(1) time.

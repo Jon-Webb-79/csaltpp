@@ -328,6 +328,8 @@ SparseCOOMatrix<T>
 .. doxygenclass:: slt::SparseCOOMatrix
    :project: csalt++
 
+See also: :ref:`triplet_class`
+
 Constructors
 ------------
 
@@ -520,3 +522,95 @@ DenseMatrix * DenseMatrix
       // C(0, 0) == 1*5 + 2*7 == 19
       // C(0, 1) == 1*6 + 2*8 == 22
 
+
+.. _triplet_class:
+
+Triplet<T>
+==========
+
+.. cpp:class:: template <typename T> slt::Triplet<T>
+
+   Represents a single non-zero entry in a sparse COO matrix.
+
+   Stores the **row index**, **column index**, and **value** for a sparse matrix element.
+   Supports sorting and equality comparison based on (row, col) order.
+
+   :tparam T: Must be either ``float`` or ``double``.
+
+Constructors 
+------------
+
+Default Constructor
+~~~~~~~~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::Triplet::Triplet()
+   :project: csalt++
+
+Parameterized Constructor
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::Triplet::Triplet(std::size_t, std::size_t, T)
+   :project: csalt++
+
+Copy Constructor 
+~~~~~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::Triplet::Triplet(const Triplet&)
+   :project: csalt++
+
+Move Constructor 
+~~~~~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::Triplet::Triplet(Triplet&&) nooexcept
+   :project: csalt++
+
+Operators 
+---------
+
+operator()=
+~~~~~~~~~~~
+
+.. cpp:function:: Triplet& slt::Triplet::operator=(const Triplet& other)
+
+   Copy-assigns another Triplet.
+
+   :param other: The Triplet to copy from.
+   :return: Reference to the current object.
+
+   Example::
+
+      slt::Triplet<double> t1(1, 2, 3.0);
+      slt::Triplet<double> t2;
+      t2 = t1;
+      assert(t2.equals(t1));
+
+.. cpp:function:: Triplet& slt::Triplet::operator=(Triplet&& other)
+
+   Move-assigns another Triplet.
+
+   :param other: The Triplet to move from.
+   :return: Reference to the current object.
+
+   Example::
+
+      slt::Triplet<float> t1(1, 2, 3.0f);
+      slt::Triplet<float> t2;
+      t2 = std::move(t1);
+
+operator()==
+~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::Triplet::operator==(const Triplet&) const
+   :project: csalt++
+
+operator()<
+~~~~~~~~~~~
+
+.. doxygenfunction:: slt::Triplet::operator<(const Triplet&) const
+   :project: csalt++
+
+equals()
+~~~~~~~~
+
+.. doxygenfunction:: slt::Triplet::equals(const Triplet&) const
+   :project: csalt++

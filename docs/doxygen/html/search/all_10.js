@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7ematrixbase_64',['~MatrixBase',['../classslt_1_1MatrixBase.html#a3bbb4cd026c2c1da1ba0881c918630b1',1,'slt::MatrixBase']]]
+  ['value_64',['value',['../structslt_1_1Triplet.html#aa32038f0c43f5e09bd63be9ae0378169',1,'slt::Triplet']]]
 ];

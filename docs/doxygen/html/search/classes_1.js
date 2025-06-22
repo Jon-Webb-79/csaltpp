@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['densematrix_66',['DenseMatrix',['../classslt_1_1DenseMatrix.html',1,'slt']]]
+  ['matrixbase_68',['MatrixBase',['../classslt_1_1MatrixBase.html',1,'slt']]]
 ];

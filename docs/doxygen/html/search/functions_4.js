@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['get_89',['get',['../classslt_1_1MatrixBase.html#a5fe460dc2d97ee440c32635d5f3192fc',1,'slt::MatrixBase::get()'],['../classslt_1_1DenseMatrix.html#a64113fe72d74abc3e8f957e5f0bbee9e',1,'slt::DenseMatrix::get()'],['../classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71',1,'slt::SparseCOOMatrix::get()']]]
+  ['end_89',['end',['../classslt_1_1DenseMatrix.html#af0945532d1c4c45bae1a0e2a65bc6dac',1,'slt::DenseMatrix::end()'],['../classslt_1_1SparseCOOMatrix.html#addf50368708419f7a86e00d7591a235a',1,'slt::SparseCOOMatrix::end()']]],
+  ['equals_90',['equals',['../structslt_1_1Triplet.html#a1269f49a5366465a212b9deb99c42401',1,'slt::Triplet']]]
 ];

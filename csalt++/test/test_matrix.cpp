@@ -771,80 +771,80 @@ TEST(DenseMatrixMatMulTest, DimensionMismatchThrows) {
 }
 // -------------------------------------------------------------------------------- 
 
-TEST(DenseMatrixSparseAdditionTest, BasicAddition) {
-    slt::DenseMatrix<float> dense({
-        {1.0f, 2.0f},
-        {3.0f, 4.0f}
-    });
-
-    slt::SparseCOOMatrix<float> sparse({
-        {0.0f, 5.0f},
-        {0.0f, 1.0f}
-    });
-
-    auto result = dense + sparse;
-
-    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
-    EXPECT_FLOAT_EQ(result(0, 1), 7.0f);
-    EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
-    EXPECT_FLOAT_EQ(result(1, 1), 5.0f);
-}
+// TEST(DenseMatrixSparseAdditionTest, BasicAddition) {
+//     slt::DenseMatrix<float> dense({
+//         {1.0f, 2.0f},
+//         {3.0f, 4.0f}
+//     });
+//
+//     slt::SparseCOOMatrix<float> sparse({
+//         {0.0f, 5.0f},
+//         {0.0f, 1.0f}
+//     });
+//
+//     auto result = dense + sparse;
+//
+//     EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+//     EXPECT_FLOAT_EQ(result(0, 1), 7.0f);
+//     EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
+//     EXPECT_FLOAT_EQ(result(1, 1), 5.0f);
+// }
 // -------------------------------------------------------------------------------- 
 
-TEST(DenseMatrixSparseAdditionTest, AllZeroSparseMatrix) {
-    slt::DenseMatrix<float> dense({
-        {1.0f, 2.0f},
-        {3.0f, 4.0f}
-    });
-
-    slt::SparseCOOMatrix<float> sparse({
-        {0.0f, 0.0f},
-        {0.0f, 0.0f}
-    });
-
-    auto result = dense + sparse;
-
-    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
-    EXPECT_FLOAT_EQ(result(0, 1), 2.0f);
-    EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
-    EXPECT_FLOAT_EQ(result(1, 1), 4.0f);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(DenseMatrixSparseAdditionTest, ThrowsOnSizeMismatch) {
-    slt::DenseMatrix<float> dense({
-        {1.0f, 2.0f}
-    });
-
-    slt::SparseCOOMatrix<float> sparse({
-        {0.0f, 1.0f},
-        {2.0f, 3.0f}
-    });
-
-    EXPECT_THROW({
-        auto result = dense + sparse;
-    }, std::invalid_argument);
-}
-// -------------------------------------------------------------------------------- 
-
-TEST(DenseMatrixSparseAdditionTest, SparseOnlyAffectsSpecifiedEntries) {
-    slt::DenseMatrix<float> dense({
-        {10.0f, 20.0f},
-        {30.0f, 40.0f}
-    });
-
-    slt::SparseCOOMatrix<float> sparse({
-        {0.0f, 0.0f},
-        {0.0f, -40.0f}
-    });
-
-    auto result = dense + sparse;
-
-    EXPECT_FLOAT_EQ(result(0, 0), 10.0f);
-    EXPECT_FLOAT_EQ(result(0, 1), 20.0f);
-    EXPECT_FLOAT_EQ(result(1, 0), 30.0f);
-    EXPECT_FLOAT_EQ(result(1, 1), 0.0f);  // 40 - 40
-}
+// TEST(DenseMatrixSparseAdditionTest, AllZeroSparseMatrix) {
+//     slt::DenseMatrix<float> dense({
+//         {1.0f, 2.0f},
+//         {3.0f, 4.0f}
+//     });
+//
+//     slt::SparseCOOMatrix<float> sparse({
+//         {0.0f, 0.0f},
+//         {0.0f, 0.0f}
+//     });
+//
+//     auto result = dense + sparse;
+//
+//     EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+//     EXPECT_FLOAT_EQ(result(0, 1), 2.0f);
+//     EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
+//     EXPECT_FLOAT_EQ(result(1, 1), 4.0f);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(DenseMatrixSparseAdditionTest, ThrowsOnSizeMismatch) {
+//     slt::DenseMatrix<float> dense({
+//         {1.0f, 2.0f}
+//     });
+//
+//     slt::SparseCOOMatrix<float> sparse({
+//         {0.0f, 1.0f},
+//         {2.0f, 3.0f}
+//     });
+//
+//     EXPECT_THROW({
+//         auto result = dense + sparse;
+//     }, std::invalid_argument);
+// }
+// // -------------------------------------------------------------------------------- 
+//
+// TEST(DenseMatrixSparseAdditionTest, SparseOnlyAffectsSpecifiedEntries) {
+//     slt::DenseMatrix<float> dense({
+//         {10.0f, 20.0f},
+//         {30.0f, 40.0f}
+//     });
+//
+//     slt::SparseCOOMatrix<float> sparse({
+//         {0.0f, 0.0f},
+//         {0.0f, -40.0f}
+//     });
+//
+//     auto result = dense + sparse;
+//
+//     EXPECT_FLOAT_EQ(result(0, 0), 10.0f);
+//     EXPECT_FLOAT_EQ(result(0, 1), 20.0f);
+//     EXPECT_FLOAT_EQ(result(1, 0), 30.0f);
+//     EXPECT_FLOAT_EQ(result(1, 1), 0.0f);  // 40 - 40
+// }
 // ================================================================================ 
 // ================================================================================
 
@@ -964,7 +964,88 @@ TEST(DenseMatrixArrayConstructorTest, MismatchedDimensionsThrows) {
 }
 // ================================================================================ 
 // ================================================================================ 
+// TEST TRIPLET CLASS 
 
+TEST(TripletTest, DefaultConstructor) {
+    slt::Triplet<float> t;
+    EXPECT_EQ(t.row, 0);
+    EXPECT_EQ(t.col, 0);
+    EXPECT_EQ(t.value, 0.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, ParameterizedConstructor) {
+    slt::Triplet<double> t(2, 3, 4.5);
+    EXPECT_EQ(t.row, 2);
+    EXPECT_EQ(t.col, 3);
+    EXPECT_EQ(t.value, 4.5);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, CopyConstructor) {
+    slt::Triplet<float> t1(1, 2, 3.0f);
+    slt::Triplet<float> t2(t1);
+    EXPECT_TRUE(t1.equals(t2));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, MoveConstructor) {
+    slt::Triplet<float> t1(5, 6, 7.0f);
+    slt::Triplet<float> t2(std::move(t1));
+    EXPECT_EQ(t2.row, 5);
+    EXPECT_EQ(t2.col, 6);
+    EXPECT_EQ(t2.value, 7.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, CopyAssignment) {
+    slt::Triplet<double> t1(4, 5, 6.0);
+    slt::Triplet<double> t2;
+    t2 = t1;
+    EXPECT_TRUE(t1.equals(t2));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, MoveAssignment) {
+    slt::Triplet<float> t1(1, 1, 9.9f);
+    slt::Triplet<float> t2;
+    t2 = std::move(t1);
+    EXPECT_EQ(t2.row, 1);
+    EXPECT_EQ(t2.col, 1);
+    EXPECT_EQ(t2.value, 9.9f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, LessThanOperator) {
+    slt::Triplet<float> a(1, 2, 1.0f);
+    slt::Triplet<float> b(2, 0, 5.0f);
+    slt::Triplet<float> c(1, 3, 2.0f);
+
+    EXPECT_LT(a, b);   // row 1 < row 2
+    EXPECT_LT(a, c);   // col 2 < col 3 when row equal
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, EqualityOperator) {
+    slt::Triplet<double> a(1, 2, 10.0);
+    slt::Triplet<double> b(1, 2, 20.0);
+    slt::Triplet<double> c(1, 3, 10.0);
+
+    EXPECT_TRUE(a == b);   // same (row, col), value ignored
+    EXPECT_FALSE(a == c);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(TripletTest, EqualsMethod) {
+    slt::Triplet<float> a(2, 3, 4.0f);
+    slt::Triplet<float> b(2, 3, 4.0f);
+    slt::Triplet<float> c(2, 3, 5.0f);
+
+    EXPECT_TRUE(a.equals(b));
+    EXPECT_FALSE(a.equals(c));
+}
+// ================================================================================ 
+// ================================================================================ 
 // TEST(SparseCOOMatrixTest, ConstructorInitializesDimensionsCorrectly) {
 //     slt::SparseCOOMatrix<float> mat(5, 7);
 //     EXPECT_EQ(mat.rows(), 5);

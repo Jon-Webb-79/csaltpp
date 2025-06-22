@@ -229,10 +229,16 @@ size()
 .. doxygenfunction:: slt::DenseMatrix::size
    :project: csalt++
 
-data_ptr()
-~~~~~~~~~~
+begin() 
+~~~~~~~
 
-.. doxygenfunction:: slt::DenseMatrix::data_ptr() const
+.. doxygenfunction:: slt::DenseMatrix::begin
+   :project: csalt++
+
+end()
+~~~~~
+
+.. doxygenfunction:: slt::DenseMatrix::end
    :project: csalt++
 
 init_ptr()
@@ -319,6 +325,9 @@ print()
 SparseCOOMatrix<T>
 ==================
 
+.. doxygenclass:: slt::SparseCOOMatrix
+   :project: csalt++
+
 Constructors
 ------------
 
@@ -340,22 +349,16 @@ nonzero_count()
 .. doxygenfunction:: slt::SparseCOOMatrix::nonzero_count() const
    :project: csalt++
 
-row_index()
-~~~~~~~~~~~
-
-.. doxygenfunction:: slt::SparseCOOMatrix::row_index(std::size_t) const
-   :project: csalt++
-
-col_index()
-~~~~~~~~~~~
-
-.. doxygenfunction:: slt::SparseCOOMatrix::col_index(std::size_t) const
-   :project: csalt++
-
-value()
+begin() 
 ~~~~~~~
 
-.. doxygenfunction:: slt::SparseCOOMatrix::value_index(std::size_t) const
+.. doxygenfunction:: slt::SparseCOOMatrix::begin
+   :project: csalt++
+
+end()
+~~~~~
+
+.. doxygenfunction:: slt::SparseCOOMatrix::end
    :project: csalt++
 
 is_initialized()

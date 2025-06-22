@@ -89,7 +89,8 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#data-access-methods">Data Access Methods</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#size">size()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#data-ptr">data_ptr()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#begin">begin()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#end">end()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#init-ptr">init_ptr()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#nonzero-count">nonzero_count()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#is-initialized">is_initialized()</a></li>
@@ -111,28 +112,28 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#sparsecoomatrix-t">SparseCOOMatrix&lt;T&gt;</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN3slt15SparseCOOMatrixE"><code class="docutils literal notranslate"><span class="pre">slt::SparseCOOMatrix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Constructors</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id7">Operator Overloads</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id8">Data Access Methods</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#id9">size()</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#id10">nonzero_count()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#row-index">row_index()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#col-index">col_index()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#value">value()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id11">is_initialized()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id12">rows()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id13">cols()</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#id14">get()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id11">begin()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">end()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">is_initialized()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id14">rows()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id15">cols()</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id16">get()</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#id15">Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id17">Operations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#sparsecsrmatrix-t">SparseCSRMatrix&lt;T&gt;</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id16">Constructors</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id17">Operator Overloads</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id18">Data Access Methods</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id19">Operations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id18">Constructors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id19">Operator Overloads</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id20">Data Access Methods</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id21">Operations</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#global-operators">Global Operators</a><ul>
@@ -141,11 +142,11 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#subtraction">Subtraction</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id20">Scalar - DenseMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id22">Scalar - DenseMatrix</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#multiplication">Multiplication</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#id21">Scalar * DenseMatrix</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id23">Scalar * DenseMatrix</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#matrix-muultiplication">Matrix Muultiplication</a><ul>
@@ -237,7 +238,7 @@ to implement custom matrix formats.</p>
 <dd class="field-odd"><p><strong>T</strong> – The numeric type of the matrix elements (e.g., float, double). </p>
 </dd>
 </dl>
-<p>Subclassed by <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">slt::DenseMatrix&lt; T &gt;</span></a>, slt::SparseCOOMatrix&lt; T &gt;</p>
+<p>Subclassed by <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">slt::DenseMatrix&lt; T &gt;</span></a>, <a class="reference internal" href="#classslt_1_1SparseCOOMatrix"><span class="std std-ref">slt::SparseCOOMatrix&lt; T &gt;</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
@@ -1002,35 +1003,51 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 </dd></dl>
 
 </section>
-<section id="data-ptr">
-<h4>data_ptr()<a class="headerlink" href="#data-ptr" title="Link to this heading"></a></h4>
+<section id="begin">
+<h4>begin()<a class="headerlink" href="#begin" title="Link to this heading"></a></h4>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK3slt11DenseMatrix8data_ptrEv">
-<span id="_CPPv3NK3slt11DenseMatrix8data_ptrEv"></span><span id="_CPPv2NK3slt11DenseMatrix8data_ptrEv"></span><span id="slt::DenseMatrix::data_ptrC"></span><span class="target" id="classslt_1_1DenseMatrix_1a529848163b44a2168460198adda171f7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">data_ptr</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt11DenseMatrix8data_ptrEv" title="Link to this definition"></a><br /></dt>
-<dd><p>Pointer to the first value within the data array. </p>
-<p>Returns a pointer to the beginning of the matrix’s internal data array, stored in row-major order. This is useful for passing the data to low-level numerical libraries or performing custom SIMD operations.</p>
-<p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;matrix.hpp&quot;</span><span class="c1"> // assuming DenseMatrix is defined here</span>
+<dt class="sig sig-object cpp" id="_CPPv4NK3slt11DenseMatrix5beginEv">
+<span id="_CPPv3NK3slt11DenseMatrix5beginEv"></span><span id="_CPPv2NK3slt11DenseMatrix5beginEv"></span><span id="slt::DenseMatrix::beginC"></span><span class="target" id="classslt_1_1DenseMatrix_1ae33d62d5f0f6f2164b5b16de735c9d19"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt11DenseMatrix5beginEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns an iterator to the beginning of the data array. </p>
+<p>This allows iteration over all elements of the dense matrix in row-major order, using range-based for loops or STL algorithms.</p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
 
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mf">1.5f</span><span class="p">);</span>
-<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">data_ptr</span><span class="p">();</span>
-
-<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
-<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ptr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">;</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">it</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="o">*</span><span class="n">it</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">;</span>
 <span class="p">}</span>
+<span class="c1">// Output: 1 1 1 1 1 1</span>
 </pre></div>
 </div>
-</p>
-<p>Output: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="mf">1.5</span><span class="w"> </span><span class="mf">1.5</span><span class="w"> </span><span class="mf">1.5</span><span class="w"> </span><span class="mf">1.5</span><span class="w"> </span><span class="mf">1.5</span><span class="w"> </span><span class="mf">1.5</span>
-</pre></div>
-</div>
-</p>
+ </p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A const pointer to the beginning of the matrix data in contiguous memory. Returns nullptr if not initialized</p>
+<dd class="field-odd"><p>Iterator to the first value in the matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="end">
+<h4>end()<a class="headerlink" href="#end" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK3slt11DenseMatrix3endEv">
+<span id="_CPPv3NK3slt11DenseMatrix3endEv"></span><span id="_CPPv2NK3slt11DenseMatrix3endEv"></span><span id="slt::DenseMatrix::endC"></span><span class="target" id="classslt_1_1DenseMatrix_1af0945532d1c4c45bae1a0e2a65bc6dac"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt11DenseMatrix3endEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns an iterator to one-past-the-end of the data array. </p>
+<p>Used for iteration over the dense matrix in row-major order using range-based for loops or STL algorithms.</p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">);</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; &quot;</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// Output: 2 2 2 2 2 2</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator to one past the last value.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1422,6 +1439,41 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 </section>
 <section id="sparsecoomatrix-t">
 <h2>SparseCOOMatrix&lt;T&gt;<a class="headerlink" href="#sparsecoomatrix-t" title="Link to this heading"></a></h2>
+<dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN3slt15SparseCOOMatrixE">
+<span id="_CPPv3I0EN3slt15SparseCOOMatrixE"></span><span id="_CPPv2I0EN3slt15SparseCOOMatrixE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classslt_1_1SparseCOOMatrix"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4I0EN3slt10MatrixBaseE" title="slt::MatrixBase"><span class="n"><span class="pre">MatrixBase</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN3slt15SparseCOOMatrixE" title="slt::SparseCOOMatrix::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><a class="headerlink" href="#_CPPv4I0EN3slt15SparseCOOMatrixE" title="Link to this definition"></a><br /></dt>
+<dd><p>Sparse Coordinate (COO) Matrix class. </p>
+<p>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a Triplet&lt;T&gt;, containing (row, column, value).</p>
+<p>The matrix supports two internal insertion modes:<ul class="simple">
+<li><p>**Fast insert mode (<code class="docutils literal notranslate"><span class="pre">fast_set</span> <span class="pre">==</span> <span class="pre">true</span></code>)**: Triplets are appended to the internal vector in O(1) time. This allows very efficient construction of the matrix, but requires the user to call <code class="docutils literal notranslate"><span class="pre">finalize()</span></code> before performing retrievals such as <code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71"><span class="std std-ref"><span class="pre">get()</span></span></a></code> or binary searches.</p></li>
+<li><p>**Sorted mode (<code class="docutils literal notranslate"><span class="pre">fast_set</span> <span class="pre">==</span> <span class="pre">false</span></code>)**: Triplets are kept sorted by (row, column), allowing efficient retrieval using binary search, at the cost of slower insertions.</p></li>
+</ul>
+</p>
+<p>Supported operations:<ul class="simple">
+<li><p>Insertion of new elements (<code class="docutils literal notranslate"><span class="pre">set()</span></code>)</p></li>
+<li><p>Updating existing elements (<code class="docutils literal notranslate"><span class="pre">update()</span></code>)</p></li>
+<li><p>Element-wise arithmetic with other <a class="reference internal" href="#classslt_1_1SparseCOOMatrix"><span class="std std-ref">SparseCOOMatrix</span></a> or <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a></p></li>
+<li><p>Scalar operations (+, -, *)</p></li>
+<li><p>Conversion to <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a></p></li>
+<li><p>Iteration over stored triplets (<code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1a18b33a42b1cfc9f44c22f8093936da75"><span class="std std-ref"><span class="pre">begin()</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1addf50368708419f7a86e00d7591a235a"><span class="std std-ref"><span class="pre">end()</span></span></a></code>)</p></li>
+</ul>
+</p>
+<p>Template parameter T must be either float or double.</p>
+<p>Example usage: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mf">5.5f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">finalize</span><span class="p">();</span>
+<span class="kt">float</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// returns 5.5f</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – The type of the matrix elements (float or double). </p>
+</dd>
+</dl>
+</dd></dl>
+
 <section id="id6">
 <h3>Constructors<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
 </section>
@@ -1449,123 +1501,84 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix13nonzero_countEv">
 <span id="_CPPv3NK3slt15SparseCOOMatrix13nonzero_countEv"></span><span id="_CPPv2NK3slt15SparseCOOMatrix13nonzero_countEv"></span><span id="slt::SparseCOOMatrix::nonzero_countC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a5daf5e8c69cd9f68f468cd41e06cd45e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">nonzero_count</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix13nonzero_countEv" title="Link to this definition"></a><br /></dt>
-<dd><p>Returns the number of explicitly stored non-zero elements. </p>
-<p>This function returns the number of entries stored in the sparse COO matrix, which corresponds to the number of non-zero elements it currently tracks. Unlike a dense matrix, uninitialized values are implicitly zero and are not stored.</p>
-<p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
-<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;matrix.hpp&quot;</span>
-
-<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
-<span class="w">    </span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">({</span>
-<span class="w">        </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
-<span class="w">        </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}</span>
-<span class="w">    </span><span class="p">});</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Non-zero elements: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">nonzero_count</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
-<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
+<dd><p>Returns the number of non-zero elements stored in the matrix. </p>
+<p>This function returns the number of elements currently stored in the internal <code class="docutils literal notranslate"><span class="pre">triplet</span></code> vector, which corresponds to the number of explicitly initialized non-zero entries in the sparse matrix.</p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Non-zero count: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">nonzero_count</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
 </pre></div>
 </div>
 </p>
-<p>Output: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Non</span><span class="o">-</span><span class="n">zero</span><span class="w"> </span><span class="n">elements</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span>
+<p>Output: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">Non</span><span class="o">-</span><span class="n">zero</span><span class="w"> </span><span class="n">count</span><span class="o">:</span><span class="w"> </span><span class="mi">2</span>
 </pre></div>
 </div>
 </p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The number of stored non-zero elements.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="row-index">
-<h4>row_index()<a class="headerlink" href="#row-index" title="Link to this heading"></a></h4>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix9row_indexENSt6size_tE">
-<span id="_CPPv3NK3slt15SparseCOOMatrix9row_indexENSt6size_tE"></span><span id="_CPPv2NK3slt15SparseCOOMatrix9row_indexENSt6size_tE"></span><span id="slt::SparseCOOMatrix::row_index__std::sC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a26f9d4289054f90dc5248edee3385f2d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">row_index</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix9row_indexENSt6size_tE" title="Link to this definition"></a><br /></dt>
-<dd><p>Returns the row index of the i-th non-zero element. </p>
-<p>This accessor returns the row position associated with the i-th stored non-zero value in the sparse COO matrix. Bounds checking is performed.</p>
-<p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">({</span>
-<span class="w">    </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
-<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}</span>
-<span class="p">});</span>
-<span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">row_index</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Returns row index of second non-zero</span>
-</pre></div>
-</div>
- </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>i</strong> – Index of the non-zero element. </p>
-</dd>
-<dt class="field-even">Throws<span class="colon">:</span></dt>
-<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – if the index is outside the valid range.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Row index corresponding to the i-th element. </p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="col-index">
-<h4>col_index()<a class="headerlink" href="#col-index" title="Link to this heading"></a></h4>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix9col_indexENSt6size_tE">
-<span id="_CPPv3NK3slt15SparseCOOMatrix9col_indexENSt6size_tE"></span><span id="_CPPv2NK3slt15SparseCOOMatrix9col_indexENSt6size_tE"></span><span id="slt::SparseCOOMatrix::col_index__std::sC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a0d82d6bb156ed5dbb372bb7c8155b7d5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">col_index</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix9col_indexENSt6size_tE" title="Link to this definition"></a><br /></dt>
-<dd><p>Returns the column index of the i-th non-zero element. </p>
-<p>This accessor returns the column position associated with the i-th stored non-zero value in the sparse COO matrix. Bounds checking is performed.</p>
-<p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">({</span>
-<span class="w">    </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
-<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}</span>
-<span class="p">});</span>
-<span class="n">std</span><span class="o">::</span><span class="kt">size_t</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">col_index</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Returns column index of second non-zero</span>
-</pre></div>
-</div>
- </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>i</strong> – Index of the non-zero element. </p>
-</dd>
-<dt class="field-even">Throws<span class="colon">:</span></dt>
-<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – if the index is outside the valid range.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Column index corresponding to the i-th element. </p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
-<section id="value">
-<h4>value()<a class="headerlink" href="#value" title="Link to this heading"></a></h4>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix11value_indexENSt6size_tE">
-<span id="_CPPv3NK3slt15SparseCOOMatrix11value_indexENSt6size_tE"></span><span id="_CPPv2NK3slt15SparseCOOMatrix11value_indexENSt6size_tE"></span><span id="slt::SparseCOOMatrix::value_index__std::sC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1ae41de6aa5a303e7997a29c1d4422477b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">value_index</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">i</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix11value_indexENSt6size_tE" title="Link to this definition"></a><br /></dt>
-<dd><p>Returns the value of the i-th non-zero element. </p>
-<p>This accessor returns the stored numerical value of the i-th non-zero entry in the sparse COO matrix. Bounds checking is performed.</p>
-<p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">({</span>
-<span class="w">    </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
-<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}</span>
-<span class="p">});</span>
-<span class="kt">float</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">value_index</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Returns 2.0f</span>
-</pre></div>
-</div>
- </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>i</strong> – Index of the non-zero element. </p>
-</dd>
-<dt class="field-even">Throws<span class="colon">:</span></dt>
-<dd class="field-even"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">out_of_range</span></span></span> – if the index is outside the valid range.</p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The value of the i-th non-zero element. </p>
+<dd class="field-odd"><p>The number of non-zero elements.</p>
 </dd>
 </dl>
 </dd></dl>
 
 </section>
 <section id="id11">
-<h4>is_initialized()<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<h4>begin()<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix5beginEv">
+<span id="_CPPv3NK3slt15SparseCOOMatrix5beginEv"></span><span id="_CPPv2NK3slt15SparseCOOMatrix5beginEv"></span><span id="slt::SparseCOOMatrix::beginC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a18b33a42b1cfc9f44c22f8093936da75"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix5beginEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns an iterator to the beginning of the triplet vector. </p>
+<p>This allows iteration over all non-zero entries of the sparse matrix using range-based for loops or STL algorithms.</p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0f</span><span class="p">);</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">mat</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;(&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">row</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">col</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;) = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">t</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator to the first Triplet in the matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id12">
+<h4>end()<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix3endEv">
+<span id="_CPPv3NK3slt15SparseCOOMatrix3endEv"></span><span id="_CPPv2NK3slt15SparseCOOMatrix3endEv"></span><span id="slt::SparseCOOMatrix::endC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1addf50368708419f7a86e00d7591a235a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix3endEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns an iterator to one-past-the-end of the triplet vector. </p>
+<p>Used for iteration over the matrix using range-based for loops or STL algorithms.</p>
+<p>
+Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0f</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;(&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">row</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;, &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">col</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;) = &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">value</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="o">++</span><span class="n">it</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator to one past the last Triplet.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="id13">
+<h4>is_initialized()<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix14is_initializedENSt6size_tENSt6size_tE">
 <span id="_CPPv3NK3slt15SparseCOOMatrix14is_initializedENSt6size_tENSt6size_tE"></span><span id="_CPPv2NK3slt15SparseCOOMatrix14is_initializedENSt6size_tENSt6size_tE"></span><span id="slt::SparseCOOMatrix::is_initialized__std::s.std::sC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a889f1c98e467ceb29a74a1fa3efa6d44"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">is_initialized</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix14is_initializedENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
@@ -1604,8 +1617,8 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 </dd></dl>
 
 </section>
-<section id="id12">
-<h4>rows()<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<section id="id14">
+<h4>rows()<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix4rowsEv">
 <span id="_CPPv3NK3slt15SparseCOOMatrix4rowsEv"></span><span id="_CPPv2NK3slt15SparseCOOMatrix4rowsEv"></span><span id="slt::SparseCOOMatrix::rowsC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1aa8f0e3fdab670152566ce8353a9c42fa"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">rows</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix4rowsEv" title="Link to this definition"></a><br /></dt>
@@ -1624,8 +1637,8 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 </dd></dl>
 
 </section>
-<section id="id13">
-<h4>cols()<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<section id="id15">
+<h4>cols()<a class="headerlink" href="#id15" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix4colsEv">
 <span id="_CPPv3NK3slt15SparseCOOMatrix4colsEv"></span><span id="_CPPv2NK3slt15SparseCOOMatrix4colsEv"></span><span id="slt::SparseCOOMatrix::colsC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a1ccef3397e1eeb5c9a4a1e895ff25866"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">cols</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix4colsEv" title="Link to this definition"></a><br /></dt>
@@ -1644,8 +1657,8 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 </dd></dl>
 
 </section>
-<section id="id14">
-<h4>get()<a class="headerlink" href="#id14" title="Link to this heading"></a></h4>
+<section id="id16">
+<h4>get()<a class="headerlink" href="#id16" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix3getENSt6size_tENSt6size_tE">
 <span id="_CPPv3NK3slt15SparseCOOMatrix3getENSt6size_tENSt6size_tE"></span><span id="_CPPv2NK3slt15SparseCOOMatrix3getENSt6size_tENSt6size_tE"></span><span id="slt::SparseCOOMatrix::get__std::s.std::sC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix3getENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
@@ -1682,23 +1695,23 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 
 </section>
 </section>
-<section id="id15">
-<h3>Operations<a class="headerlink" href="#id15" title="Link to this heading"></a></h3>
+<section id="id17">
+<h3>Operations<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
 </section>
 </section>
 <section id="sparsecsrmatrix-t">
 <span id="sparsecsr-matrix"></span><h2>SparseCSRMatrix&lt;T&gt;<a class="headerlink" href="#sparsecsrmatrix-t" title="Link to this heading"></a></h2>
-<section id="id16">
-<h3>Constructors<a class="headerlink" href="#id16" title="Link to this heading"></a></h3>
-</section>
-<section id="id17">
-<h3>Operator Overloads<a class="headerlink" href="#id17" title="Link to this heading"></a></h3>
-</section>
 <section id="id18">
-<h3>Data Access Methods<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
+<h3>Constructors<a class="headerlink" href="#id18" title="Link to this heading"></a></h3>
 </section>
 <section id="id19">
-<h3>Operations<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+<h3>Operator Overloads<a class="headerlink" href="#id19" title="Link to this heading"></a></h3>
+</section>
+<section id="id20">
+<h3>Data Access Methods<a class="headerlink" href="#id20" title="Link to this heading"></a></h3>
+</section>
+<section id="id21">
+<h3>Operations<a class="headerlink" href="#id21" title="Link to this heading"></a></h3>
 </section>
 </section>
 <section id="global-operators">
@@ -1741,8 +1754,8 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 </section>
 <section id="subtraction">
 <h3>Subtraction<a class="headerlink" href="#subtraction" title="Link to this heading"></a></h3>
-<section id="id20">
-<h4>Scalar - DenseMatrix<a class="headerlink" href="#id20" title="Link to this heading"></a></h4>
+<section id="id22">
+<h4>Scalar - DenseMatrix<a class="headerlink" href="#id22" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4I0Emi11DenseMatrixI1TE1TRK11DenseMatrixI1TE">
 <span id="_CPPv3I0Emi1TRK11DenseMatrixI1TE"></span><span id="_CPPv2I0Emi1TRK11DenseMatrixI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0Emi11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="operator-::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">-</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0Emi11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="operator-::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0Emi11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="operator-::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0Emi11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
@@ -1777,8 +1790,8 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 </section>
 <section id="multiplication">
 <h3>Multiplication<a class="headerlink" href="#multiplication" title="Link to this heading"></a></h3>
-<section id="id21">
-<h4>Scalar * DenseMatrix<a class="headerlink" href="#id21" title="Link to this heading"></a></h4>
+<section id="id23">
+<h4>Scalar * DenseMatrix<a class="headerlink" href="#id23" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4I0Eml11DenseMatrixI1TE1TRK11DenseMatrixI1TE">
 <span id="_CPPv3I0Eml1TRK11DenseMatrixI1TE"></span><span id="_CPPv2I0Eml1TRK11DenseMatrixI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0Eml11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="operator*::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">*</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0Eml11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="operator*::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0Eml11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="operator*::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">matrix</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4I0Eml11DenseMatrixI1TE1TRK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>

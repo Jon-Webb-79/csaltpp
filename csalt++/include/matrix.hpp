@@ -831,67 +831,45 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Pointer to the first value within the data array.
+         * @brief Returns an iterator to the beginning of the data array.
          *
-         * Returns a pointer to the beginning of the matrix's internal data array,
-         * stored in row-major order. This is useful for passing the data to low-level
-         * numerical libraries or performing custom SIMD operations.
+         * This allows iteration over all elements of the dense matrix in row-major order,
+         * using range-based for loops or STL algorithms.
          *
-         * @return A const pointer to the beginning of the matrix data in contiguous memory. Returns nullptr if not initialized
+         * @return Iterator to the first value in the matrix.
          *
+         * Example:
          * @code
-         * #include <iostream>
-         * #include "matrix.hpp" // assuming DenseMatrix is defined here
+         * slt::DenseMatrix<float> mat(2, 3, 1.0f);
          *
-         * int main() {
-         *     slt::DenseMatrix<float> mat(2, 3, 1.5f);
-         *     const float* ptr = mat.data_ptr();
-         *
-         *     for (std::size_t i = 0; i < mat.size(); ++i)
-         *         std::cout << ptr[i] << " ";
-         *     std::cout << std::endl;
-         *     return 0;
+         * for (auto it = mat.begin(); it != mat.end(); ++it) {
+         *     std::cout << *it << " ";
          * }
-         * @endcode
-         *
-         * Output:
-         * @code
-         * 1.5 1.5 1.5 1.5 1.5 1.5
+         * // Output: 1 1 1 1 1 1
          * @endcode
          */
-        const T* data_ptr() const {return data.data();}
+        const T* begin() const { return data.begin(); }
+
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Pointer to the first value within the data array.
+         * @brief Returns an iterator to one-past-the-end of the data array.
          *
-         * Returns a pointer to the beginning of the matrix's internal data array,
-         * stored in row-major order. This is useful for passing the data to low-level
-         * numerical libraries or performing custom SIMD operations.
+         * Used for iteration over the dense matrix in row-major order using range-based for loops or STL algorithms.
          *
-         * @return A pointer to the beginning of the matrix data in contiguous memory.  Returns nullptr if not initialized
+         * @return Iterator to one past the last value.
          *
+         * Example:
          * @code
-         * #include <iostream>
-         * #include "matrix.hpp" // assuming DenseMatrix is defined here
+         * slt::DenseMatrix<float> mat(2, 3, 2.0f);
          *
-         * int main() {
-         *     slt::DenseMatrix<float> mat(2, 3, 1.5f);
-         *     float* ptr = mat.data_ptr();
-         *
-         *     for (std::size_t i = 0; i < mat.size(); ++i)
-         *         std::cout << ptr[i] << " ";
-         *     std::cout << std::endl;
-         *     return 0;
+         * for (const auto& value : mat) {
+         *     std::cout << value << " ";
          * }
-         * @endcode
-         *
-         * Output:
-         * @code
-         * 1.5 1.5 1.5 1.5 1.5 1.5
+         * // Output: 2 2 2 2 2 2
          * @endcode
          */
-        T* data_ptr() {return data.data();}
+        const T* end() const { return data.end(); }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -926,6 +904,8 @@
          * @endcode
          */
         const uint8_t* init_ptr() const {return init.data();}
+// -------------------------------------------------------------------------------- 
+
         uint8_t* init_ptr() {return init.data();}
 // -------------------------------------------------------------------------------- 
 
@@ -2365,57 +2345,213 @@
 // ================================================================================ 
 
     /**
-     * @class SparseCOOMatrix
-     * @brief A sparse matrix implementation using the Coordinate List (COO) format.
+     * @brief Represents a single non-zero entry in a sparse COO matrix.
      *
-     * This class stores non-zero elements of a matrix using three parallel vectors:
-     * one for row indices, one for column indices, and one for the data values.
-     * It supports two operational modes:
+     * Stores the row index, column index, and value for a sparse matrix element.
+     * Supports sorting and equality comparison based on (row, col) order.
+     *
+     * @tparam T Must be either float or double.
+     */
+    template<typename T>
+    struct Triplet {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "Triplet<T> only supports float or double");
+
+        std::size_t row{};  ///< Row index of the entry.
+        std::size_t col{};  ///< Column index of the entry.
+        T value{};          ///< Value at the specified matrix position.
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs an empty Triplet with default values (0, 0, 0).
+         *
+         * Example:
+         * @code
+         * slt::Triplet<float> t;
+         * assert(t.row == 0 && t.col == 0 && t.value == 0.0f);
+         * @endcode
+         */
+        Triplet() = default;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a Triplet with specified row, column, and value.
+         * 
+         * @param r Row index.
+         * @param c Column index.
+         * @param v Value to store.
+         * 
+         * Example:
+         * @code
+         * slt::Triplet<double> t(1, 2, 3.14);
+         * assert(t.row == 1 && t.col == 2 && t.value == 3.14);
+         * @endcode
+         */
+        Triplet(std::size_t r, std::size_t c, T v)
+            : row(r), col(c), value(v) {}
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a copy of another Triplet.
+         * 
+         * @param other The Triplet to copy.
+         *
+         * Example:
+         * @code
+         * slt::Triplet<float> t1(0, 1, 1.0f);
+         * slt::Triplet<float> t2(t1);
+         * assert(t2.equals(t1));
+         * @endcode
+         */
+        Triplet(const Triplet& other) = default;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Move constructor for efficient transfer of Triplet.
+         * 
+         * @param other The Triplet to move from.
+         *
+         * Example:
+         * @code
+         * slt::Triplet<float> t1(0, 1, 2.0f);
+         * slt::Triplet<float> t2(std::move(t1));
+         * @endcode
+         */
+        Triplet(Triplet&& other) noexcept = default;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Copy-assigns another Triplet.
+         * 
+         * @param other The Triplet to copy from.
+         * @return Reference to the current object.
+         *
+         * Example:
+         * @code
+         * slt::Triplet<double> t1(1, 2, 3.0);
+         * slt::Triplet<double> t2;
+         * t2 = t1;
+         * assert(t2.equals(t1));
+         * @endcode
+         */
+        Triplet& operator=(const Triplet& other) = default;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Move-assigns another Triplet.
+         * 
+         * @param other The Triplet to move from.
+         * @return Reference to the current object.
+         *
+         * Example:
+         * @code
+         * slt::Triplet<float> t1(1, 2, 3.0f);
+         * slt::Triplet<float> t2;
+         * t2 = std::move(t1);
+         * @endcode
+         */
+        Triplet& operator=(Triplet&& other) noexcept = default;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Compares Triplets by row-major order (row, then column).
+         * 
+         * @param other The Triplet to compare with.
+         * @return True if this Triplet precedes the other.
+         *
+         * Example:
+         * @code
+         * slt::Triplet<float> a(1, 0, 2.0f);
+         * slt::Triplet<float> b(1, 2, 2.0f);
+         * assert(a < b);
+         * @endcode
+         */
+        bool operator<(const Triplet& other) const {
+            return std::tie(row, col) < std::tie(other.row, other.col);
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Checks if two Triplets refer to the same (row, col) location.
+         * 
+         * @param other The Triplet to compare with.
+         * @return True if row and column are equal.
+         *
+         * Example:
+         * @code
+         * slt::Triplet<double> a(0, 0, 1.0);
+         * slt::Triplet<double> b(0, 0, 2.0);
+         * assert(a == b); // Value is ignored
+         * @endcode
+         */
+        bool operator==(const Triplet& other) const {
+            return row == other.row && col == other.col;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Compares full equality (row, column, and value).
+         * 
+         * @param other The Triplet to compare with.
+         * @return True if all fields are equal.
+         *
+         * Example:
+         * @code
+         * slt::Triplet<float> a(0, 1, 1.0f);
+         * slt::Triplet<float> b(0, 1, 1.0f);
+         * assert(a.equals(b));
+         * @endcode
+         */
+        bool equals(const Triplet& other) const {
+            return row == other.row && col == other.col && value == other.value;
+        }
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Sparse Coordinate (COO) Matrix class.
+     *
+     * This class represents a sparse matrix using the Coordinate List (COO) format.
+     * Each non-zero element of the matrix is stored as a Triplet<T>, containing (row, column, value).
      * 
-     * - **Fast Insertion Mode (`fast_set = true`)**: Allows fast, unordered appends of
-     *   (row, column, value) triplets. This mode is ideal for incremental construction
-     *   of the matrix but requires a call to `finalize()` before performing reliable
-     *   access or update operations.
+     * The matrix supports two internal insertion modes:
+     * - **Fast insert mode (`fast_set == true`)**: Triplets are appended to the internal vector in O(1) time.
+     *   This allows very efficient construction of the matrix, but requires the user to call `finalize()`
+     *   before performing retrievals such as `get()` or binary searches.
+     * - **Sorted mode (`fast_set == false`)**: Triplets are kept sorted by (row, column), allowing efficient
+     *   retrieval using binary search, at the cost of slower insertions.
+     *
+     * Supported operations:
+     * - Insertion of new elements (`set()`)
+     * - Updating existing elements (`update()`)
+     * - Element-wise arithmetic with other SparseCOOMatrix or DenseMatrix
+     * - Scalar operations (+, -, *) 
+     * - Conversion to DenseMatrix
+     * - Iteration over stored triplets (`begin()`, `end()`)
      * 
-     * - **Finalized Mode (`fast_set = false`)**: Ensures the internal storage is sorted
-     *   lexicographically by (row, column). Enables efficient binary search for
-     *   `get()`, `update()`, and `is_initialized()` methods.
-     *
-     * The class conforms to a polymorphic base class `MatrixBase<T>`, allowing it to be
-     * used in a generic matrix interface with other matrix types such as dense or CSR.
-     *
-     * @tparam T The numeric type stored in the matrix (must be `float` or `double`).
-     *
+     * Template parameter T must be either float or double.
+     * 
      * Example usage:
      * @code
-     * SparseCOOMatrix<float> mat(3, 3);
+     * slt::SparseCOOMatrix<float> mat(5, 5);
      * mat.set(0, 0, 1.0f);
-     * mat.set(2, 1, 5.0f);
+     * mat.set(2, 3, 5.5f);
      * mat.finalize();
-     * float value = mat.get(2, 1);  // returns 5.0
+     * float val = mat.get(2, 3);  // returns 5.5f
      * @endcode
+     * 
+     * @tparam T The type of the matrix elements (float or double).
      */
     template<typename T>
     class SparseCOOMatrix : public MatrixBase<T> {
         static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                       "DenseMatrix only supports float or double");
     private:
-        std::vector<T> data; ///< Flat row-major storage of matrix elements. 
         std::size_t rows_ = 0; ///< Number of Matrix rows.
         std::size_t cols_ = 0; ///< Number of Matrix columns.
-
-        // COO Specific data
-        std::vector<std::size_t> row; ///< A vector containing row indices
-        std::vector<std::size_t> col; ///< A vector containing column indices
+        std::vector<Triplet<T>> triplet; ///< A vector of triplet objects
         bool fast_set = true;  ///< true if vectors are optimized for insertation, false if optimized for retrieval
-
-        // Comparator for sorting and binary search
-        struct COOComparator {
-            bool operator()(std::pair<std::size_t, std::size_t> a,
-                            std::pair<std::size_t, std::size_t> b) const {
-                return a.first < b.first || (a.first == b.first && a.second < b.second);
-            }
-        };
 // ================================================================================ 
 
     public:
@@ -2428,225 +2564,179 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Returns the number of explicitly stored non-zero elements.
+         * @brief Returns the number of non-zero elements stored in the matrix.
          *
-         * This function returns the number of entries stored in the sparse COO matrix,
-         * which corresponds to the number of non-zero elements it currently tracks. 
-         * Unlike a dense matrix, uninitialized values are implicitly zero and are not stored.
+         * This function returns the number of elements currently stored in the internal
+         * `triplet` vector, which corresponds to the number of explicitly initialized
+         * non-zero entries in the sparse matrix.
          *
-         * @return The number of stored non-zero elements.
+         * @return The number of non-zero elements.
+         *
+         * Example:
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 3);
+         * mat.set(0, 0, 1.0f);
+         * mat.set(1, 2, 2.5f);
+         * std::cout << "Non-zero count: " << mat.nonzero_count() << std::endl;
+         * @endcode
+         *
+         * Output:
+         * @code
+         * Non-zero count: 2
+         * @endcode
+         */
+        std::size_t nonzero_count() const override {return triplet.size();} 
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs an empty sparse COO matrix with specified dimensions.
+         *
+         * This constructor initializes a matrix of size `r` x `c` in fast insertion mode.
+         * Entries can be added efficiently using `set()`. To enable optimized access through
+         * methods like `get()` or `is_initialized()`, the user must call `finalize()` after
+         * all insertions are complete.
+         *
+         * @param r Number of rows in the matrix.
+         * @param c Number of columns in the matrix.
+         * @param initial_capacity Optional initial reservation size for internal storage vectors
+         *                         (default: 16), which can reduce reallocations during insertion.
          *
          * @code
+         * #include "sparse_coo_matrix.hpp"
          * #include <iostream>
-         * #include "matrix.hpp"
          *
          * int main() {
-         *     slt::SparseCOOMatrix<float> mat({
-         *         {1.0f, 0.0f},
-         *         {0.0f, 2.0f}
-         *     });
-         *     std::cout << "Non-zero elements: " << mat.nonzero_count() << std::endl;
+         *     // Create a 3x3 sparse matrix
+         *     slt::SparseCOOMatrix<float> mat(3, 3);
+         *
+         *     // Insert values (in fast insertion mode)
+         *     mat.set(0, 0, 1.0f);
+         *     mat.set(1, 2, 2.5f);
+         *     mat.set(2, 1, -3.2f);
+         *
+         *     // Finalize before using get() or is_initialized()
+         *     mat.finalize();
+         *
+         *     // Access and print a value
+         *     if (mat.is_initialized(1, 2)) {
+         *         std::cout << "mat(1, 2) = " << mat.get(1, 2) << std::endl;
+         *     }
+         *
          *     return 0;
          * }
          * @endcode
          *
          * Output:
-         * @code
-         * Non-zero elements: 2
+         * mat(1, 2) = 2.5
          * @endcode
-         */
-        std::size_t nonzero_count() const override {return data.size();} 
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Returns the row index of the i-th non-zero element.
-         *
-         * This accessor returns the row position associated with the i-th stored
-         * non-zero value in the sparse COO matrix. Bounds checking is performed.
-         *
-         * @param i Index of the non-zero element.
-         * @return Row index corresponding to the i-th element.
-         * @throws std::out_of_range if the index is outside the valid range.
-         *
-         * @code
-         * slt::SparseCOOMatrix<float> mat({
-         *     {1.0f, 0.0f},
-         *     {0.0f, 2.0f}
-         * });
-         * std::size_t r = mat.row_index(1);  // Returns row index of second non-zero
-         * @endcode
-         */
-        std::size_t row_index(std::size_t i) const {
-            if (i >= row.size()) throw std::out_of_range("Row index out of range");
-            return row[i];
+         */ 
+        explicit SparseCOOMatrix(std::size_t r, std::size_t c, std::size_t initial_capacity = 16)
+            : rows_(r), cols_(c) {
+            triplet.reserve(initial_capacity);
         }
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Returns the column index of the i-th non-zero element.
+         * @brief Constructs a SparseCOOMatrix from a vector of Triplet<T>.
          *
-         * This accessor returns the column position associated with the i-th stored
-         * non-zero value in the sparse COO matrix. Bounds checking is performed.
-         *
-         * @param i Index of the non-zero element.
-         * @return Column index corresponding to the i-th element.
-         * @throws std::out_of_range if the index is outside the valid range.
-         *
-         * @code
-         * slt::SparseCOOMatrix<float> mat({
-         *     {1.0f, 0.0f},
-         *     {0.0f, 2.0f}
-         * });
-         * std::size_t c = mat.col_index(1);  // Returns column index of second non-zero
-         * @endcode
-         */
-        std::size_t col_index(std::size_t i) const {
-            if (i >= col.size()) throw std::out_of_range("Column index out of range");
-            return col[i];
-        }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Returns the value of the i-th non-zero element.
-         *
-         * This accessor returns the stored numerical value of the i-th non-zero entry
-         * in the sparse COO matrix. Bounds checking is performed.
-         *
-         * @param i Index of the non-zero element.
-         * @return The value of the i-th non-zero element.
-         * @throws std::out_of_range if the index is outside the valid range.
-         *
-         * @code
-         * slt::SparseCOOMatrix<float> mat({
-         *     {1.0f, 0.0f},
-         *     {0.0f, 2.0f}
-         * });
-         * float v = mat.value_index(1);  // Returns 2.0f
-         * @endcode
-         */
-        T value_index(std::size_t i) const {
-            if (i >= data.size()) throw std::out_of_range("Value index out of range");
-            return data[i];
-        }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Constructs an empty sparse COO matrix with given dimensions.
-         *
-         * Initializes internal storage with a small reserved capacity and sets the
-         * fast insertion mode according to `fastInsert`.
+         * The resulting matrix is initialized with the provided triplets.
+         * The internal storage is automatically sorted in row-major order (row, then col),
+         * and the matrix is ready for optimized access (fast_set = false).
          *
          * @param r Number of rows in the matrix.
          * @param c Number of columns in the matrix.
-         * @param fastInsert If true, enables fast insertion mode (default: true).
+         * @param triplets Vector of triplet values to insert.
+         *
+         * @code
+         * std::vector<slt::Triplet<float>> triplets = {
+         *     {0, 0, 1.0f},
+         *     {1, 2, 2.5f},
+         *     {4, 4, 3.1f}
+         * };
+         * slt::SparseCOOMatrix<float> mat(5, 5, triplets);
+         * @endcode
          */
-        explicit SparseCOOMatrix(std::size_t r, std::size_t c, bool fastInsert = true)
-            : rows_(r), cols_(c), fast_set(fastInsert) {
-            row.reserve(8);
-            col.reserve(8);
-            data.reserve(8);
+        SparseCOOMatrix(std::size_t r, std::size_t c, const std::vector<Triplet<T>>& triplets)
+            : rows_(r), cols_(c), triplet(triplets), fast_set(false)
+        {
+            std::sort(triplet.begin(), triplet.end());
         }
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a sparse COO matrix from a 2D std::vector.
+         * @brief Constructs a SparseCOOMatrix from a fixed-size std::array of Triplet<T>.
          *
-         * Non-zero elements from the input vector are inserted into the sparse matrix.
-         * If `fastInsert` is true, elements are inserted in append mode and `finalize()`
-         * must be called manually before sorted access (e.g., get()).
+         * The matrix is initialized with the given triplets and automatically sorted.
          *
-         * @param vec A 2D vector representing the matrix.
-         * @param fastInsert Enables fast insertion mode if true (default: true).
-         * @throws std::invalid_argument if rows have inconsistent lengths.
-         */
-        SparseCOOMatrix(const std::vector<std::vector<T>>& vec, bool fastInsert = true)
-            : rows_(vec.size()), cols_(vec.empty() ? 0 : vec[0].size()), fast_set(fastInsert) {
-            for (std::size_t i = 0; i < rows_; ++i) {
-                if (vec[i].size() != cols_)
-                    throw std::invalid_argument("All rows must have the same number of columns");
-
-                for (std::size_t j = 0; j < cols_; ++j) {
-                    if (vec[i][j] != T{})  // Skip zeros
-                        this->set(i, j, vec[i][j]);
-                }
-            }
-        }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Constructs a sparse COO matrix from a fixed-size std::array.
-         *
-         * Non-zero values in the 2D array are inserted into the matrix.
-         *
-         * @tparam Rows Number of rows in the static array.
-         * @tparam Cols Number of columns in the static array.
-         * @param arr Fixed-size array of values to initialize the matrix.
-         * @param fastInsert Enables fast insertion mode if true (default: true).
-         */
-        template<std::size_t Rows, std::size_t Cols>
-        explicit SparseCOOMatrix(const std::array<std::array<T, Cols>, Rows>& arr, bool fastInsert = true)
-            : rows_(Rows), cols_(Cols), fast_set(fastInsert) {
-            for (std::size_t i = 0; i < Rows; ++i) {
-                for (std::size_t j = 0; j < Cols; ++j) {
-                    if (arr[i][j] != T{})  // Skip zeros
-                        this->set(i, j, arr[i][j]);
-                }
-            }
-        }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Constructs a sparse COO matrix from a nested initializer list.
-         *
-         * This allows convenient initialization using brace-enclosed lists. Only
-         * non-zero elements are stored. Rows must be of consistent length.
-         *
-         * @param initList Nested initializer list (e.g., `{{1, 0}, {0, 2}}`).
-         * @param fastInsert Enables fast insertion mode if true (default: true).
-         * @throws std::invalid_argument if inner lists have inconsistent sizes.
-         */
-        SparseCOOMatrix(std::initializer_list<std::initializer_list<T>> initList, bool fastInsert = true)
-            : rows_(initList.size()), cols_(initList.begin()->size()), fast_set(fastInsert) {
-            std::size_t i = 0;
-            for (const auto& rowList : initList) {
-                if (rowList.size() != cols_)
-                    throw std::invalid_argument("All rows must have the same number of columns");
-                std::size_t j = 0;
-                for (const T& val : rowList) {
-                    if (val != T{})
-                        this->set(i, j, val);
-                    ++j;
-                }
-                ++i;
-            }
-        }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Constructs a sparse COO matrix from a flat vector in row-major order.
-         *
-         * Only non-zero values are inserted into the matrix. The resulting matrix will
-         * include only the explicitly stored entries. If `fastInsert` is true, entries
-         * are added in append mode and require `finalize()` before sorted access.
-         *
-         * @param flat_data A 1D vector in row-major order.
+         * @tparam N Number of triplets.
          * @param r Number of rows in the matrix.
          * @param c Number of columns in the matrix.
-         * @param fastInsert Enables fast insertion mode if true (default: true).
-         * @throws std::invalid_argument if the size of flat_data != r * c.
+         * @param triplets Array of triplet values to insert.
+         *
+         * @code
+         * std::array<slt::Triplet<double>, 2> triplets = {
+         *     slt::Triplet<double>(0, 1, 3.14),
+         *     slt::Triplet<double>(2, 2, 2.71)
+         * };
+         * slt::SparseCOOMatrix<double> mat(3, 3, triplets);
+         * @endcode
          */
-        SparseCOOMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c, bool fastInsert = true)
-            : rows_(r), cols_(c), fast_set(fastInsert) {
-            if (flat_data.size() != r * c)
-                throw std::invalid_argument("Flat data size does not match matrix dimensions");
+        template<std::size_t N>
+        SparseCOOMatrix(std::size_t r, std::size_t c, const std::array<Triplet<T>, N>& triplets)
+            : rows_(r), cols_(c), triplet(triplets.begin(), triplets.end()), fast_set(false)
+        {
+            std::sort(triplet.begin(), triplet.end());
+        }
+// -------------------------------------------------------------------------------- 
 
-            for (std::size_t i = 0; i < r; ++i) {
-                for (std::size_t j = 0; j < c; ++j) {
-                    T val = flat_data[i * c + j];
-                    if (val != T{})
-                        this->set(i, j, val);
-                }
-            }
+        /**
+         * @brief Constructs a SparseCOOMatrix from a C-style array of Triplet<T>.
+         *
+         * Useful for integrating with legacy code or simple fixed data.
+         * The matrix is sorted automatically after construction.
+         *
+         * @param r Number of rows in the matrix.
+         * @param c Number of columns in the matrix.
+         * @param triplets Pointer to an array of Triplet<T>.
+         * @param count Number of triplets in the array.
+         *
+         * @code
+         * slt::Triplet<float> triplets[] = {
+         *     {0, 0, 1.0f},
+         *     {2, 3, 4.5f}
+         * };
+         * slt::SparseCOOMatrix<float> mat(4, 4, triplets, 2);
+         * @endcode
+         */
+        SparseCOOMatrix(std::size_t r, std::size_t c, const Triplet<T>* triplets, std::size_t count)
+            : rows_(r), cols_(c), triplet(triplets, triplets + count), fast_set(false)
+        {
+            std::sort(triplet.begin(), triplet.end());
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a SparseCOOMatrix from an initializer list of Triplet<T>.
+         *
+         * Allows convenient inline initialization using brace-enclosed lists.
+         * The matrix is sorted automatically after construction.
+         *
+         * @param r Number of rows in the matrix.
+         * @param c Number of columns in the matrix.
+         * @param init_list List of triplets to insert.
+         *
+         * @code
+         * slt::SparseCOOMatrix<float> mat(4, 4, {
+         *     {0, 1, 1.5f},
+         *     {2, 0, 3.0f},
+         *     {3, 3, 2.0f}
+         * });
+         * @endcode
+         */
+        SparseCOOMatrix(std::size_t r, std::size_t c, std::initializer_list<Triplet<T>> init_list)
+            : rows_(r), cols_(c), triplet(init_list), fast_set(false)
+        {
+            std::sort(triplet.begin(), triplet.end());
         }
 // -------------------------------------------------------------------------------- 
 
@@ -2663,12 +2753,10 @@
          */
         SparseCOOMatrix(const SparseCOOMatrix<T>& other)
             : MatrixBase<T>(),
-              data(other.data),
-              rows_(other.rows_),
-              cols_(other.cols_),
-              row(other.row),
-              col(other.col),
-              fast_set(other.fast_set){}
+            rows_(other.rows_),
+            cols_(other.cols_),
+            triplet(other.triplet),
+            fast_set(other.fast_set) {}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -2688,11 +2776,9 @@
          */
         SparseCOOMatrix(SparseCOOMatrix<T>&& other) noexcept
             : MatrixBase<T>(),
-              data(std::move(other.data)),
               rows_(std::exchange(other.rows_, 0)),
               cols_(std::exchange(other.cols_, 0)),
-              row(std::move(other.row)),
-              col(std::move(other.col)),
+              triplet(std::move(other.triplet)),
               fast_set(std::exchange(other.fast_set, true)) {}
 // -------------------------------------------------------------------------------- 
 
@@ -2753,15 +2839,20 @@
             if (rows_ != other.rows_ || cols_ != other.cols_)
                 return false;
 
-            if (row != other.row || col != other.col || data.size() != other.data.size())
+            if (triplet.size() != other.triplet.size())
                 return false;
 
-            for (std::size_t i = 0; i < data.size(); ++i) {
+            for (std::size_t i = 0; i < triplet.size(); ++i) {
+                if (triplet[i].row != other.triplet[i].row ||
+                    triplet[i].col != other.triplet[i].col) {
+                    return false;
+                }
+
                 if constexpr (std::is_floating_point_v<T>) {
-                    if (std::fabs(data[i] - other.data[i]) > 1e-6)
+                    if (std::fabs(triplet[i].value - other.triplet[i].value) > 1e-6)
                         return false;
                 } else {
-                    if (data[i] != other.data[i])
+                    if (triplet[i].value != other.triplet[i].value)
                         return false;
                 }
             }
@@ -2784,10 +2875,7 @@
                 rows_ = other.rows_;
                 cols_ = other.cols_;
                 fast_set = other.fast_set;
-
-                row = other.row;
-                col = other.col;
-                data = other.data;
+                triplet = other.triplet;
             }
             return *this;
         }
@@ -2808,9 +2896,7 @@
                 cols_ = std::exchange(other.cols_, 0);
                 fast_set = std::exchange(other.fast_set, true);
 
-                row = std::move(other.row);
-                col = std::move(other.col);
-                data = std::move(other.data);
+                triplet = std::move(other.triplet);
             }
             return *this;
         }
@@ -2849,17 +2935,15 @@
             DenseMatrix<T> result(rows_, cols_);
 
             // Add all elements from this sparse matrix
-            for (std::size_t i = 0; i < data.size(); ++i)
-                result.set(row[i], col[i], data[i]);
+            for (const auto& t : triplet)
+                result.set(t.row, t.col, t.value);
 
             // Add all elements from the other sparse matrix
-            for (std::size_t i = 0; i < other.data.size(); ++i) {
-                std::size_t r = other.row[i];
-                std::size_t c = other.col[i];
-                if (result.is_initialized(r, c))
-                    result.update(r, c, result(r, c) + other.data[i]);
+            for (const auto& t : other.triplet) {
+                if (result.is_initialized(t.row, t.col))
+                    result.update(t.row, t.col, result(t.row, t.col) + t.value);
                 else
-                    result.set(r, c, other.data[i]);
+                    result.set(t.row, t.col, t.value);
             }
 
             return result;
@@ -2884,8 +2968,8 @@
          */
         SparseCOOMatrix operator+(T scalar) const {
             SparseCOOMatrix result(*this);
-            for (auto& val : result.data) {
-                val += scalar;
+            for (auto& t : result.triplet) {
+                t.value += scalar;
             }
             return result;
         }
@@ -2924,17 +3008,16 @@
             DenseMatrix<T> result(rows_, cols_);
 
             // Add all elements from this sparse matrix
-            for (std::size_t i = 0; i < data.size(); ++i)
-                result.set(row[i], col[i], data[i]);
+            for (const auto& t : triplet) {
+                result.set(t.row, t.col, t.value);
+            }
 
             // Subtract all elements from the other sparse matrix
-            for (std::size_t i = 0; i < other.data.size(); ++i) {
-                std::size_t r = other.row[i];
-                std::size_t c = other.col[i];
-                if (result.is_initialized(r, c))
-                    result.update(r, c, result(r, c) - other.data[i]);
+            for (const auto& t : other.triplet) {
+                if (result.is_initialized(t.row, t.col))
+                    result.update(t.row, t.col, result(t.row, t.col) - t.value);
                 else
-                    result.set(r, c, -other.data[i]);  // <-- Fix: negate value
+                    result.set(t.row, t.col, -t.value);  // store the negative value
             }
 
             return result;
@@ -2959,40 +3042,57 @@
          */
         SparseCOOMatrix operator-(T scalar) const {
             SparseCOOMatrix result(*this);
-            for (auto& val : result.data) {
-                val -= scalar;
+            for (auto& t : result.triplet) {
+                t.value -= scalar;
             }
             return result;
         }
 // -------------------------------------------------------------------------------- 
-    /**
-     * @brief Performs element-wise multiplication of two sparse matrices.
-     *
-     * Multiplies corresponding non-zero elements where both matrices store a value.
-     * Returns a new SparseCOOMatrix containing only the overlapping non-zero positions.
-     *
-     * @param other The other SparseCOOMatrix to multiply with.
-     * @return SparseCOOMatrix containing the element-wise product.
-     * @throws std::invalid_argument if the matrix dimensions do not match.
-     */
-    SparseCOOMatrix operator*(const SparseCOOMatrix& other) const {
-        if (rows_ != other.rows_ || cols_ != other.cols_)
-            throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
+        
+        SparseCOOMatrix operator*(const SparseCOOMatrix& other) const {
+            if (rows_ != other.rows_ || cols_ != other.cols_)
+                throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
 
-        SparseCOOMatrix<T> result(rows_, cols_);
+            SparseCOOMatrix<T> result(rows_, cols_);
 
-        for (std::size_t i = 0; i < data.size(); ++i) {
-            std::size_t r = row[i];
-            std::size_t c = col[i];
+            for (const auto& t : triplet) {
+                std::size_t r = t.row;
+                std::size_t c = t.col;
 
-            if (other.is_initialized(r, c)) {
-                T product = data[i] * other.get(r, c);
-                result.set(r, c, product);
+                if (other.is_initialized(r, c)) {
+                    T product = t.value * other.get(r, c);
+                    result.set(r, c, product);
+                }
             }
-        }
 
-        return result;
-    }
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        SparseCOOMatrix operator*(T scalar) const {
+            SparseCOOMatrix<T> result(rows_, cols_);
+
+            for (const auto& t : triplet) {
+                result.set(t.row, t.col, t.value * scalar);
+            }
+
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        SparseCOOMatrix operator/(T scalar) const {
+            if (scalar == T{}) {
+                throw std::invalid_argument("Division by zero");
+            }
+
+            SparseCOOMatrix<T> result(rows_, cols_);
+
+            for (const auto& t : triplet) {
+                result.set(t.row, t.col, t.value / scalar);
+            }
+
+            return result;
+        }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -3058,31 +3158,25 @@
             if (r >= rows_ || c >= cols_)
                 throw std::out_of_range("Index out of bounds");
 
+            Triplet<T> target(r, c, T{});
+
             if (fast_set) {
-                // Linear search (O(n)) for unsorted data
-                for (std::size_t i = 0; i < data.size(); ++i) {
-                    if (row[i] == r && col[i] == c)
-                        return data[i];
+                // Linear search for unsorted triplet vector
+                for (const auto& t : triplet) {
+                    if (t.row == r && t.col == c)
+                        return t.value;
                 }
                 throw std::runtime_error("Accessing uninitialized matrix element");
-            }
+            } else {
+                // Binary search for sorted triplet vector
+                auto it = std::lower_bound(triplet.begin(), triplet.end(), target);
 
-            // Binary search (O(log n)) for sorted data
-            std::size_t left = 0;
-            std::size_t right = data.size();
-
-            while (left < right) {
-                std::size_t mid = left + (right - left) / 2;
-                if (row[mid] == r && col[mid] == c) {
-                    return data[mid];
-                } else if (row[mid] < r || (row[mid] == r && col[mid] < c)) {
-                    left = mid + 1;
+                if (it != triplet.end() && it->row == r && it->col == c) {
+                    return it->value;
                 } else {
-                    right = mid;
+                    throw std::runtime_error("Accessing uninitialized matrix element");
                 }
             }
-
-            throw std::runtime_error("Accessing uninitialized matrix element");
         }
 // -------------------------------------------------------------------------------- 
     
@@ -3117,33 +3211,23 @@
             if (r >= rows_ || c >= cols_)
                 throw std::out_of_range("Index out of bounds");
 
+            Triplet<T> target(r, c, value);
+
             if (fast_set) {
-                // Fast insert: append without duplicate checks
-                row.push_back(r);
-                col.push_back(c);
-                data.push_back(value);
-                return;
+                // O(1) append, no duplicate checks
+                triplet.push_back(target);
+            } else {
+                // Find insertion point using binary search
+                auto it = std::lower_bound(triplet.begin(), triplet.end(), target);
+
+                // If element already exists, throw
+                if (it != triplet.end() && it->row == r && it->col == c) {
+                    throw std::runtime_error("Value already set. Use update() instead.");
+                }
+
+                // Insert new triplet at correct position
+                triplet.insert(it, target);
             }
-
-            // Construct index pairs to search safely
-            std::vector<std::pair<std::size_t, std::size_t>> indices;
-            indices.reserve(row.size());
-            for (std::size_t i = 0; i < row.size(); ++i) {
-                indices.emplace_back(row[i], col[i]);
-            }
-
-            auto target = std::make_pair(r, c);
-            auto it = std::lower_bound(indices.begin(), indices.end(), target);
-
-            std::size_t index = std::distance(indices.begin(), it);
-
-            if (index < indices.size() && indices[index] == target) {
-                throw std::runtime_error("Value already set. Use update() instead.");
-            }
-
-            row.insert(row.begin() + index, r);
-            col.insert(col.begin() + index, c);
-            data.insert(data.begin() + index, value);
         }
 // -------------------------------------------------------------------------------- 
 
@@ -3168,23 +3252,31 @@
             if (r >= rows_ || c >= cols_)
                 throw std::out_of_range("Index out of bounds");
 
-            // Step 1: Binary search for the index
-            auto it = std::lower_bound(
-                row.begin(), row.end(),
-                std::make_pair(r, c),
-                [this](size_t i, const std::pair<size_t, size_t>& target) {
-                    return std::pair<size_t, size_t>{row[i], col[i]} < target;
-                });
+            Triplet<T> target(r, c, T{});
 
-            std::size_t index = std::distance(row.begin(), it);
-
-            // Step 2: Must already exist
-            if (index >= row.size() || row[index] != r || col[index] != c) {
+            if (fast_set) {
+                // Linear search for unsorted triplet vector
+                for (auto& t : triplet) {
+                    if (t.row == r && t.col == c) {
+                        t.value = value;
+                        return;
+                    }
+                }
                 throw std::runtime_error("Element not set yet. Use set() first.");
-            }
+            } else {
+                // Binary search for sorted triplet vector
+                auto it = std::lower_bound(
+                    triplet.begin(), triplet.end(), target,
+                    [](const Triplet<T>& a, const Triplet<T>& b) {
+                        return std::tie(a.row, a.col) < std::tie(b.row, b.col);
+                    });
 
-            data[index] = value;
-            return;
+                if (it != triplet.end() && it->row == r && it->col == c) {
+                    it->value = value;
+                } else {
+                    throw std::runtime_error("Element not set yet. Use set() first.");
+                }
+            }
         }
 // -------------------------------------------------------------------------------- 
 
@@ -3219,29 +3311,24 @@
             if (r >= rows_ || c >= cols_)
                 throw std::out_of_range("Index out of range");
 
+            Triplet<T> target(r, c, T{});
+
             if (fast_set) {
-                // Linear search for unsorted data
-                for (std::size_t i = 0; i < data.size(); ++i) {
-                    if (row[i] == r && col[i] == c)
+                // Linear search for unsorted triplet vector
+                for (const auto& t : triplet) {
+                    if (t.row == r && t.col == c)
                         return true;
                 }
                 return false;
             } else {
-                // Binary search for sorted data
-                std::size_t left = 0;
-                std::size_t right = data.size();
+                // Binary search for sorted triplet vector
+                auto it = std::lower_bound(
+                    triplet.begin(), triplet.end(), target,
+                    [](const Triplet<T>& a, const Triplet<T>& b) {
+                        return std::tie(a.row, a.col) < std::tie(b.row, b.col);
+                    });
 
-                while (left < right) {
-                    std::size_t mid = left + (right - left) / 2;
-                    if (row[mid] == r && col[mid] == c)
-                        return true;
-                    else if (row[mid] < r || (row[mid] == r && col[mid] < c))
-                        left = mid + 1;
-                    else
-                        right = mid;
-                }
-
-                return false;
+                return (it != triplet.end() && it->row == r && it->col == c);
             }
         }
 // -------------------------------------------------------------------------------- 
@@ -3257,32 +3344,10 @@
          * This method performs a stable sort and disables fast insertion mode.
          */
         void finalize() {
-            if (!fast_set) return;
+            if (!fast_set)
+                return;  // Already finalized
 
-            std::vector<std::size_t> indices(data.size());
-            std::iota(indices.begin(), indices.end(), 0);
-
-            std::stable_sort(indices.begin(), indices.end(),
-                [this](std::size_t a, std::size_t b) {
-                    return std::tie(row[a], col[a]) < std::tie(row[b], col[b]);
-                });
-
-            std::vector<std::size_t> sorted_row, sorted_col;
-            std::vector<T> sorted_data;
-            sorted_row.reserve(row.size());
-            sorted_col.reserve(col.size());
-            sorted_data.reserve(data.size());
-
-            for (std::size_t idx : indices) {
-                sorted_row.push_back(row[idx]);
-                sorted_col.push_back(col[idx]);
-                sorted_data.push_back(data[idx]);
-            }
-
-            row = std::move(sorted_row);
-            col = std::move(sorted_col);
-            data = std::move(sorted_data);
-
+            std::sort(triplet.begin(), triplet.end());
             fast_set = false;
         }
 // --------------------------------------------------------------------------------
@@ -3301,9 +3366,53 @@
         bool set_fast() const {
             return fast_set;
         }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns an iterator to the beginning of the triplet vector.
+         *
+         * This allows iteration over all non-zero entries of the sparse matrix using range-based for loops or STL algorithms.
+         *
+         * @return Iterator to the first Triplet in the matrix.
+         *
+         * Example:
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 3);
+         * mat.set(0, 1, 2.5f);
+         * mat.set(2, 0, 4.0f);
+         *
+         * for (const auto& t : mat) {
+         *     std::cout << "(" << t.row << ", " << t.col << ") = " << t.value << std::endl;
+         * }
+         * @endcode
+         */
+        auto begin() const { return triplet.begin(); }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns an iterator to one-past-the-end of the triplet vector.
+         *
+         * Used for iteration over the matrix using range-based for loops or STL algorithms.
+         *
+         * @return Iterator to one past the last Triplet.
+         *
+         * Example:
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 3);
+         * mat.set(0, 1, 2.5f);
+         * mat.set(2, 0, 4.0f);
+         *
+         * auto it = mat.begin();
+         * while (it != mat.end()) {
+         *     std::cout << "(" << it->row << ", " << it->col << ") = " << it->value << std::endl;
+         *     ++it;
+         * }
+         * @endcode
+         */
+        auto end() const { return triplet.end(); }
     };
-// ================================================================================ 
-// ================================================================================ 
+// // ================================================================================ 
+// // ================================================================================ 
 // SparseCOOMatrix friend functions 
 
     /**
@@ -3355,27 +3464,28 @@
      */
     template<typename T>
     DenseMatrix<T> operator+(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) {
-        if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols())
+        if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols()) {
             throw std::invalid_argument("Matrix dimensions must match for addition");
+        }
 
         DenseMatrix<T> result(dense.rows(), dense.cols());
 
         // Copy dense matrix data to result
         if constexpr (simd_traits<T>::supported) {
-            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
+            simd_ops<T>::copy(dense.begin(), result.begin(), dense.size());
         } else {
             for (std::size_t i = 0; i < dense.size(); ++i)
-                result.data_ptr()[i] = dense.data_ptr()[i];
+                result.begin()[i] = dense.begin()[i];
         }
 
         // Mark all entries as initialized
         std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
 
         // Add sparse values
-        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
-            std::size_t r = sparse.row_index(i);
-            std::size_t c = sparse.col_index(i);
-            result.update(r, c, result(r, c) + sparse.value_index(i));
+        for (const auto& t : sparse.triplet) {
+            std::size_t r = t.row;
+            std::size_t c = t.col;
+            result.update(r, c, result(r, c) + t.value);
         }
 
         return result;
@@ -3414,30 +3524,8 @@
      */
     template<typename T>
     DenseMatrix<T> operator+(const SparseCOOMatrix<T>& sparse, const DenseMatrix<T>& dense) {
-        if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols())
-            throw std::invalid_argument("Matrix dimensions must match for addition");
-
-        DenseMatrix<T> result(dense.rows(), dense.cols());
-
-        // Copy dense matrix data to result
-        if constexpr (simd_traits<T>::supported) {
-            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
-        } else {
-            for (std::size_t i = 0; i < dense.size(); ++i)
-                result.data_ptr()[i] = dense.data_ptr()[i];
-        }
-
-        // Mark all entries as initialized
-        std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
-
-        // Add sparse values
-        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
-            std::size_t r = sparse.row_index(i);
-            std::size_t c = sparse.col_index(i);
-            result.update(r, c, result(r, c) + sparse.value(i));
-        }
-
-        return result;
+        // Simply call the existing operator+ where DenseMatrix is the first argument
+        return dense + sparse;
     }
 // -------------------------------------------------------------------------------- 
 
@@ -3468,13 +3556,11 @@
      */
     template<typename T>
     SparseCOOMatrix<T> operator-(T scalar, const SparseCOOMatrix<T>& matrix) {
-        SparseCOOMatrix<T> result(matrix.rows(), matrix.cols());
+        SparseCOOMatrix<T> result(matrix.rows(), matrix.cols(), matrix.triplet_capacity());
 
-        for (std::size_t i = 0; i < matrix.nonzero_count(); ++i) {
-            std::size_t r = matrix.row_index(i);
-            std::size_t c = matrix.col_index(i);
-            T val = scalar - matrix.value(i);
-            result.set(r, c, val);
+        for (const auto& t : matrix.triplet) {
+            T val = scalar - t.value;
+            result.set(t.row, t.col, val);
         }
 
         return result;
@@ -3514,20 +3600,18 @@
 
         // Negate dense matrix and store in result
         if constexpr (simd_traits<T>::supported) {
-            simd_ops<T>::mul_scalar(dense.data_ptr(), static_cast<T>(-1), result.data_ptr(), dense.size());
+            simd_ops<T>::mul_scalar(dense.begin(), static_cast<T>(-1), result.begin(), dense.size());
         } else {
             for (std::size_t i = 0; i < dense.size(); ++i)
-                result.data_ptr()[i] = -dense.data_ptr()[i];
+                result.begin()[i] = -dense.begin()[i];
         }
 
         // Mark all entries as initialized
         std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
 
         // Add sparse matrix values to result
-        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
-            std::size_t r = sparse.row_index(i);
-            std::size_t c = sparse.col_index(i);
-            result.update(r, c, result(r, c) + sparse.value(i));
+        for (const auto& t : sparse.triplet) {
+            result.update(t.row, t.col, result(t.row, t.col) + t.value);
         }
 
         return result;
@@ -3566,12 +3650,12 @@
 
         DenseMatrix<T> result(dense.rows(), dense.cols());
 
-        // Copy dense values
+        // Copy dense values to result
         if constexpr (simd_traits<T>::supported) {
-            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
+            simd_ops<T>::copy(dense.begin(), result.begin(), dense.size());
         } else {
             for (std::size_t i = 0; i < dense.size(); ++i) {
-                result.data_ptr()[i] = dense.data_ptr()[i];
+                result.begin()[i] = dense.begin()[i];
             }
         }
 
@@ -3579,13 +3663,47 @@
         std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
 
         // Subtract sparse values
-        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
-            std::size_t r = sparse.row_index(i);
-            std::size_t c = sparse.col_index(i);
-            result.update(r, c, result(r, c) - sparse.value(i));
+        for (const auto& t : sparse.triplet) {
+            result.update(t.row, t.col, result(t.row, t.col) - t.value);
         }
 
         return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    SparseCOOMatrix<T> operator*(T scalar, const SparseCOOMatrix<T>& matrix) {
+        return matrix * scalar;  // Leverage existing member function
+    }
+// -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    DenseMatrix<T> operator*(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) {
+        if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols())
+            throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
+
+        DenseMatrix<T> result(dense.rows(), dense.cols());
+
+        // Initialize result with zeros
+        std::fill(result.begin(), result.begin() + result.size(), T{});
+        std::fill(result.begin(), result.begin() + result.size(), 0);
+
+        // Only multiply at sparse matrix locations
+        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
+            std::size_t r = sparse.row_index(i);
+            std::size_t c = sparse.col_index(i);
+            T value = dense(r, c) * sparse.value(i);
+            result.set(r, c, value);
+        }
+
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    template<typename T>
+    DenseMatrix<T> operator*(const SparseCOOMatrix<T>& sparse, const DenseMatrix<T>& dense) {
+        // Reuse the function above — multiplication is commutative
+        return dense * sparse;
     }
 } // namespace slt
 // ================================================================================ 

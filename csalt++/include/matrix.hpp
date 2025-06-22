@@ -3090,7 +3090,38 @@
             return result;
         }
 // -------------------------------------------------------------------------------- 
-        
+
+        /**
+         * @brief Performs element-wise multiplication of two sparse matrices.
+         *
+         * Computes the Hadamard (element-wise) product of two sparse matrices in COO format.
+         * Only non-zero entries that are present in both matrices at the same (row, col) index
+         * will appear in the result. The output is also stored in sparse COO format.
+         *
+         * Both matrices must have identical dimensions.
+         * The operation preserves sparsity — it does not densify the result.
+         *
+         * @param other The second sparse matrix to multiply with.
+         * @return A new SparseCOOMatrix<T> representing the element-wise product.
+         * @throws std::invalid_argument if matrix dimensions do not match.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> A(2, 2, {
+         *     {0, 0, 1.0f},
+         *     {0, 1, 2.0f}
+         * });
+         *
+         * slt::SparseCOOMatrix<float> B(2, 2, {
+         *     {0, 0, 3.0f},
+         *     {1, 1, 4.0f}
+         * });
+         *
+         * auto result = A * B;
+         * // result contains: (0,0) = 1.0 * 3.0 = 3.0
+         * // other entries are not in both matrices and are omitted.
+         * @endcode
+         */
         SparseCOOMatrix operator*(const SparseCOOMatrix& other) const {
             if (rows_ != other.rows_ || cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
@@ -3111,6 +3142,28 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Multiplies every non-zero element of the sparse matrix by a scalar.
+         *
+         * Each stored value in the COO matrix is multiplied by the provided scalar.
+         * The sparsity pattern remains unchanged — only the values are scaled.
+         *
+         * This operation is performed in a new SparseCOOMatrix<T>, leaving the original unchanged.
+         *
+         * @param scalar The scalar multiplier.
+         * @return A new SparseCOOMatrix<T> with scaled values.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> A(2, 2, {
+         *     {0, 0, 2.0f},
+         *     {1, 1, 4.0f}
+         * });
+         *
+         * auto result = A * 2.0f;
+         * // result contains (0,0) = 4.0f, (1,1) = 8.0f
+         * @endcode
+         */
         SparseCOOMatrix operator*(T scalar) const {
             SparseCOOMatrix<T> result(rows_, cols_);
 
@@ -3122,6 +3175,29 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Divides each non-zero element of the sparse matrix by a scalar.
+         *
+         * Each stored value in the COO matrix is divided by the provided scalar.
+         * The sparsity pattern is preserved — zero elements remain unrepresented.
+         *
+         * Division by zero is not allowed and will throw an exception.
+         *
+         * @param scalar The divisor.
+         * @return A new SparseCOOMatrix<T> with divided values.
+         * @throws std::invalid_argument if scalar == 0.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> A(2, 2, {
+         *     {0, 0, 6.0f},
+         *     {1, 1, 3.0f}
+         * });
+         *
+         * auto result = A / 3.0f;
+         * // result contains (0,0) = 2.0f, (1,1) = 1.0f
+         * @endcode
+         */
         SparseCOOMatrix operator/(T scalar) const {
             if (scalar == T{}) {
                 throw std::invalid_argument("Division by zero");
@@ -3233,21 +3309,37 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Sets a value in the matrix at the given (row, column) index.
+         * @brief Sets a value in the sparse matrix at the specified (row, column) position.
          *
-         * If `fast_set` is true, the value is appended without checking for duplicates
-         * or maintaining order (O(1) insertion). This is efficient for bulk construction
-         * but requires calling `finalize()` before reliable queries.
+         * This function inserts a new non-zero value into the matrix at coordinates (r, c).
+         * 
+         * - If `fast_set == true`:  
+         *   The value is appended to the internal triplet vector in **O(1)** time.  
+         *   This mode is intended for bulk construction of the matrix (fast insert mode).  
+         *   No duplicate checking is performed, and triplets may be out of order.  
+         *   You must call `finalize()` to sort the matrix before using `get()`, `operator()`, or binary search operations.
+         * 
+         * - If `fast_set == false`:  
+         *   The function performs a **binary search** to maintain the sorted invariant (row-major order).  
+         *   If a value already exists at the position (r, c), an exception is thrown.  
+         *   This mode guarantees correct ordering and safe query operations.
          *
-         * If `fast_set` is false, the method performs a binary search and inserts the
-         * value at the correct sorted position. Duplicate insertions will throw.
+         * @param r Row index of the element (0-based).
+         * @param c Column index of the element (0-based).
+         * @param value The value to insert at (r, c).
          *
-         * @param r Row index of the element.
-         * @param c Column index of the element.
-         * @param value Value to insert.
-         * @return True on successful insertion.
-         * @throws std::out_of_range if indices are invalid.
-         * @throws std::runtime_error if value already exists and `fast_set` is false.
+         * @throws std::out_of_range if the (r, c) indices are out of matrix bounds.
+         * @throws std::runtime_error if fast_set is false and the position already contains a value.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 3);
+         * mat.set(0, 1, 5.0f);
+         * mat.set(2, 2, 7.0f);
+         * mat.finalize();  // Now ready for queries
+         *
+         * float val = mat.get(0, 1);  // Returns 5.0f
+         * @endcode
          */
         void set(std::size_t r, std::size_t c, T value) override {
             if (r >= rows_ || c >= cols_)
@@ -3274,21 +3366,39 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Updates an existing value in the matrix at (row, column).
+         * @brief Updates an existing value in the matrix at the specified (row, column) position.
          *
-         * Performs a binary search for the target index. If the element is found,
-         * the value is updated in-place. If the element does not exist, an exception
-         * is thrown (you must call `set()` first).
+         * This function modifies the value of an **already-inserted** element in the sparse matrix.
          *
-         * This method requires `finalize()` to have been called if the matrix was
-         * initially constructed in fast insertion mode.
+         * - If `fast_set == true`:  
+         *   A **linear search** is performed to locate the element.  
+         *   The matrix must have previously stored this value via `set()`.  
+         *   If the element is not found, an exception is thrown.
          *
-         * @param r Row index of the element.
-         * @param c Column index of the element.
+         * - If `fast_set == false`:  
+         *   A **binary search** is performed over the sorted triplet vector (requires prior `finalize()`).  
+         *   If the element exists, its value is updated in-place.  
+         *   If the element does not exist, an exception is thrown — you must call `set()` first.
+         *
+         * @param r Row index of the element (0-based).
+         * @param c Column index of the element (0-based).
          * @param value New value to assign to the existing element.
-         * @return True on successful update.
-         * @throws std::out_of_range if indices are invalid.
-         * @throws std::runtime_error if the element is not already set.
+         *
+         * @throws std::out_of_range if the (r, c) indices are out of matrix bounds.
+         * @throws std::runtime_error if the element does not exist and was never set.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> mat(4, 4);
+         * mat.set(1, 1, 3.0f);
+         * mat.finalize();
+         * 
+         * mat.update(1, 1, 7.5f);  // Successfully updates the existing element
+         * 
+         * float val = mat.get(1, 1);  // Returns 7.5f
+         * 
+         * // mat.update(2, 2, 9.0f);  // Would throw runtime_error -- element not set
+         * @endcode
          */
         void update(std::size_t r, std::size_t c, T value) {
             if (r >= rows_ || c >= cols_)

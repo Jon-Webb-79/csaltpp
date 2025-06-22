@@ -3753,9 +3753,9 @@
      */
     template<typename T>
     SparseCOOMatrix<T> operator-(T scalar, const SparseCOOMatrix<T>& matrix) {
-        SparseCOOMatrix<T> result(matrix.rows(), matrix.cols(), matrix.triplet_capacity());
+        SparseCOOMatrix<T> result(matrix.rows(), matrix.cols(), matrix.nonzero_count());
 
-        for (const auto& t : matrix.triplet) {
+        for (const auto& t : matrix) {
             T val = scalar - t.value;
             result.set(t.row, t.col, val);
         }
@@ -3797,17 +3797,17 @@
 
         // Negate dense matrix and store in result
         if constexpr (simd_traits<T>::supported) {
-            simd_ops<T>::mul_scalar(dense.begin(), static_cast<T>(-1), result.begin(), dense.size());
+            simd_ops<T>::mul_scalar(dense.data_ptr(), static_cast<T>(-1), result.data_ptr(), dense.size());
         } else {
             for (std::size_t i = 0; i < dense.size(); ++i)
-                result.begin()[i] = -dense.begin()[i];
+                result.data_ptr()[i] = -dense.data_ptr()[i];
         }
 
         // Mark all entries as initialized
         std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
 
         // Add sparse matrix values to result
-        for (const auto& t : sparse.triplet) {
+        for (const auto& t : sparse) {
             result.update(t.row, t.col, result(t.row, t.col) + t.value);
         }
 
@@ -3849,10 +3849,10 @@
 
         // Copy dense values to result
         if constexpr (simd_traits<T>::supported) {
-            simd_ops<T>::copy(dense.begin(), result.begin(), dense.size());
+            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
         } else {
             for (std::size_t i = 0; i < dense.size(); ++i) {
-                result.begin()[i] = dense.begin()[i];
+                result.data_ptr()[i] = dense.data_ptr()[i];
             }
         }
 
@@ -3860,7 +3860,7 @@
         std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
 
         // Subtract sparse values
-        for (const auto& t : sparse.triplet) {
+        for (const auto& t : sparse) {
             result.update(t.row, t.col, result(t.row, t.col) - t.value);
         }
 

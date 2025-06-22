@@ -3613,15 +3613,31 @@
 // SparseCOOMatrix friend functions 
 
     /**
-     * @brief Adds a scalar to each non-zero element of the sparse matrix (scalar + matrix).
+     * @brief Adds a scalar to each non-zero element of a SparseCOOMatrix.
      *
-     * Symmetric to `matrix + scalar`. Adds `scalar` to each stored value in the sparse matrix.
-     * The result maintains the same sparsity pattern as the original.
+     * This free function allows symmetric scalar addition: `scalar + matrix`.
+     * 
+     * The operation is equivalent to `matrix + scalar` (implemented via member function),
+     * and preserves the sparsity pattern: only stored elements are modified.
+     * 
+     * Unstored zero elements remain unaffected.
      *
-     * @tparam T Element type.
      * @param scalar Scalar value to add.
-     * @param matrix Sparse COO matrix.
-     * @return A new `SparseCOOMatrix<T>` with scalar added to each stored element.
+     * @param matrix Sparse matrix to operate on.
+     * @return A new `SparseCOOMatrix<T>` with updated values.
+     *
+     * @example
+     * @code
+     * slt::SparseCOOMatrix<float> A(2, 2, {
+     *     {0, 0, 2.0f},
+     *     {1, 1, 5.0f}
+     * });
+     * 
+     * auto result = 3.0f + A;
+     * 
+     * // result.get(0, 0) == 5.0f
+     * // result.get(1, 1) == 8.0f
+     * @endcode
      */
     template<typename T>
     SparseCOOMatrix<T> operator+(T scalar, const SparseCOOMatrix<T>& matrix) {
@@ -3868,12 +3884,75 @@
     }
 // -------------------------------------------------------------------------------- 
 
+    /**
+     * @brief Multiplies every non-zero element of a SparseCOOMatrix by a scalar value.
+     *
+     * Creates a new SparseCOOMatrix where each stored value is multiplied by the given scalar.
+     * This operation preserves the sparsity pattern of the input matrix — zero elements remain zero
+     * and are not explicitly added to the result.
+     *
+     * Internally, this operator simply delegates to the member `SparseCOOMatrix::operator*(T scalar)` function.
+     *
+     * @param scalar The scalar value to multiply each matrix element by.
+     * @param matrix The input SparseCOOMatrix.
+     * @return A new SparseCOOMatrix with updated values.
+     *
+     * @example
+     * @code
+     * slt::SparseCOOMatrix<float> A(2, 2);
+     * A.set(0, 0, 2.0f);
+     * A.set(1, 1, 4.0f);
+     *
+     * auto B = 3.0f * A;
+     * // B.get(0, 0) == 6.0f
+     * // B.get(1, 1) == 12.0f
+     * @endcode
+     */
     template<typename T>
     SparseCOOMatrix<T> operator*(T scalar, const SparseCOOMatrix<T>& matrix) {
         return matrix * scalar;  // Leverage existing member function
     }
 // -------------------------------------------------------------------------------- 
 
+    /**
+     * @brief Performs element-wise multiplication of a DenseMatrix and a SparseCOOMatrix.
+     *
+     * Returns a new DenseMatrix<T> where each element is the product of corresponding entries
+     * in the dense and sparse matrices. Multiplication is performed only at non-zero positions
+     * of the sparse matrix — implicit zero entries are skipped.
+     *
+     * The result is fully initialized as a DenseMatrix. Positions in the dense matrix that
+     * do not correspond to a non-zero entry in the sparse matrix are left as zero.
+     *
+     * This operation does not affect the sparsity of the sparse operand. It is intended for
+     * element-wise scaling of selected elements in a dense matrix.
+     *
+     * @tparam T Floating-point type (float or double)
+     * @param dense The dense matrix operand.
+     * @param sparse The sparse COO matrix operand.
+     * @return A new DenseMatrix<T> containing the element-wise product.
+     * @throws std::invalid_argument if matrix dimensions do not match.
+     *
+     * @example
+     * @code
+     * slt::DenseMatrix<float> A(2, 2);
+     * A.set(0, 0, 1.0f);
+     * A.set(0, 1, 2.0f);
+     * A.set(1, 0, 3.0f);
+     * A.set(1, 1, 4.0f);
+     *
+     * slt::SparseCOOMatrix<float> B(2, 2);
+     * B.set(0, 1, 5.0f);
+     * B.set(1, 0, 6.0f);
+     *
+     * slt::DenseMatrix<float> C = A * B;
+     *
+     * // C(0,0) == 0.0f
+     * // C(0,1) == 10.0f  (2.0 * 5.0)
+     * // C(1,0) == 18.0f  (3.0 * 6.0)
+     * // C(1,1) == 0.0f
+     * @endcode
+     */
     template<typename T>
     DenseMatrix<T> operator*(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse) {
         if (dense.rows() != sparse.rows() || dense.cols() != sparse.cols())
@@ -3897,6 +3976,40 @@
     }
 // -------------------------------------------------------------------------------- 
 
+    /**
+     * @brief Performs element-wise multiplication of a SparseCOOMatrix and a DenseMatrix.
+     *
+     * Returns a new DenseMatrix<T> containing the element-wise product of the operands.
+     * 
+     * This function is equivalent to: `dense * sparse`, and simply reuses that implementation.
+     * The multiplication is commutative in this case — only positions with non-zero entries
+     * in the sparse matrix are affected.
+     *
+     * @tparam T Floating-point type (float or double)
+     * @param sparse The sparse COO matrix operand.
+     * @param dense The dense matrix operand.
+     * @return A new DenseMatrix<T> with the element-wise product.
+     * @throws std::invalid_argument if matrix dimensions do not match.
+     *
+     * @example
+     * @code
+     * slt::SparseCOOMatrix<float> A(2, 2);
+     * A.set(0, 1, 2.0f);
+     * A.set(1, 0, 4.0f);
+     *
+     * slt::DenseMatrix<float> B(2, 2);
+     * B.set(0, 0, 10.0f);
+     * B.set(0, 1, 20.0f);
+     * B.set(1, 0, 30.0f);
+     * B.set(1, 1, 40.0f);
+     *
+     * slt::DenseMatrix<float> C = A * B;
+     *
+     * // C(0,1) == 40.0f (2.0 * 20.0)
+     * // C(1,0) == 120.0f (4.0 * 30.0)
+     * // Other entries == 0.0f
+     * @endcode
+     */
     template<typename T>
     DenseMatrix<T> operator*(const SparseCOOMatrix<T>& sparse, const DenseMatrix<T>& dense) {
         // Reuse the function above — multiplication is commutative

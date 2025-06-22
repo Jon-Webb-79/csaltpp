@@ -884,6 +884,96 @@ Scalar + DenseMatrix
 
       // B(0, 0) == 4.0, B(1, 1) == 5.0
 
+Scalar + SparseCOOMatrix 
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::SparseCOOMatrix slt::operator+(T scalar, const slt::SparseCOOMatrix<T>& matrix)
+
+   Adds a scalar to each non-zero element of a ``SparseCOOMatrix<T>``.
+
+   This operator allows symmetric scalar addition: ``scalar + matrix``.  
+   The operation is equivalent to ``matrix + scalar`` and preserves the sparsity pattern:  
+   only stored elements are modified. Unstored zero elements remain unaffected.
+
+   :param scalar: Scalar value to add.
+   :param matrix: Sparse matrix to operate on.
+   :returns: A new ``SparseCOOMatrix<T>`` with updated values.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 2, {
+          {0, 0, 2.0f},
+          {1, 1, 5.0f}
+      });
+
+      auto result = 3.0f + A;
+
+      // result.get(0, 0) == 5.0f
+      // result.get(1, 1) == 8.0f
+
+DenseMatrix + SparseCOOMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::DenseMatrix slt::operator+(const slt::DenseMatrix<T>& dense, const slt::SparseCOOMatrix<T>& sparse)
+
+   Adds a ``DenseMatrix<T>`` and a ``SparseCOOMatrix<T>`` element-wise.
+
+   Returns a new ``DenseMatrix<T>`` where each non-zero value in the sparse matrix is added to the corresponding entry in the dense matrix.  
+   The result is fully initialized and will have the same dimensions as the input matrices.
+
+   :tparam T: The type of matrix elements (must be ``float`` or ``double``).
+   :param dense: The dense matrix operand.
+   :param sparse: The sparse COO matrix operand.
+   :returns: A new ``DenseMatrix<T>`` containing the result.
+   :throws std::invalid_argument: If the input matrices do not have the same shape.
+
+   **Example**::
+
+      slt::DenseMatrix<float> A(2, 2);
+      A.set(0, 0, 1.0f);
+      A.set(1, 1, 2.0f);
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 1, 3.0f);
+
+      slt::DenseMatrix<float> C = A + B;
+
+      // C(0, 0) == 1.0
+      // C(0, 1) == 3.0
+      // C(1, 1) == 2.0
+
+SparseCOOMatrix + DenseMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::DenseMatrix slt::operator+(const slt::SparseCOOMatrix<T>& sparse, const slt::DenseMatrix<T>& dense)
+
+   Adds a ``SparseCOOMatrix<T>`` and a ``DenseMatrix<T>`` element-wise.
+
+   Returns a new ``DenseMatrix<T>`` where each non-zero value in the sparse matrix is added to the corresponding entry in the dense matrix.  
+   The result is fully initialized and will have the same dimensions as the input matrices.
+
+   :tparam T: The type of matrix elements (must be ``float`` or ``double``).
+   :param sparse: The sparse COO matrix operand.
+   :param dense: The dense matrix operand.
+   :returns: A new ``DenseMatrix<T>`` containing the result.
+   :throws std::invalid_argument: If the input matrices do not have the same shape.
+
+   **Example**::
+
+      slt::DenseMatrix<float> A(2, 2);
+      A.set(0, 0, 1.0f);
+      A.set(1, 1, 2.0f);
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 1, 3.0f);
+
+      slt::DenseMatrix<float> C = A + B;
+
+      // C(0, 0) == 1.0
+      // C(0, 1) == 3.0
+      // C(1, 1) == 2.0
+
+
 Subtraction
 -----------
 
@@ -909,6 +999,103 @@ Scalar - DenseMatrix
       auto B = 5.0f - A;
 
       // B(0, 0) == 4.0, B(1, 1) == 3.0
+
+scalar - SparseCOOMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::SparseCOOMatrix slt::operator-(T scalar, const slt::SparseCOOMatrix<T>& matrix)
+
+   Subtracts each non-zero element of a ``SparseCOOMatrix<T>`` from a scalar value.
+
+   Creates a new sparse matrix where each stored element is computed as ``scalar - value``.  
+   Unstored zero elements remain zero and are not explicitly added to the result.
+
+   This operation preserves the sparsity pattern of the original matrix.
+
+   :param scalar: The scalar value to subtract each matrix element from.
+   :param matrix: The input ``SparseCOOMatrix<T>``.
+   :returns: A new ``SparseCOOMatrix<T>`` with updated values.
+   :throws std::invalid_argument: If the matrix is improperly initialized.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 3.0f);
+      A.set(1, 1, 1.0f);
+
+      auto B = 5.0f - A;
+
+      // B.get(0, 0) == 2.0f
+      // B.get(1, 1) == 4.0f
+
+SparseCOOMatrix - DenseMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::DenseMatrix slt::operator-(const slt::SparseCOOMatrix<T>& sparse, const slt::DenseMatrix<T>& dense)
+
+   Subtracts a ``DenseMatrix<T>`` from a ``SparseCOOMatrix<T>`` and returns a ``DenseMatrix<T>``.
+
+   Computes element-wise: ``result(i,j) = sparse(i,j) - dense(i,j)``.  
+   The result is stored as a fully initialized dense matrix to capture all entries,  
+   including those with implicit zeros in the sparse matrix.
+
+   SIMD acceleration is used for the negation of the dense matrix if available.
+
+   :tparam T: Floating-point type (``float`` or ``double``).
+   :param sparse: The sparse matrix operand.
+   :param dense: The dense matrix operand.
+   :returns: ``DenseMatrix<T>`` with the subtraction result.
+   :throws std::invalid_argument: If matrix dimensions do not match.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 1.0f);
+      A.set(1, 1, 2.0f);
+
+      slt::DenseMatrix<float> B(2, 2);
+      B.set(0, 0, 5.0f);
+      B.set(0, 1, 6.0f);
+      B.set(1, 0, 7.0f);
+      B.set(1, 1, 8.0f);
+
+      slt::DenseMatrix<float> C = A - B;
+
+      // C == {{-4.0f, -6.0f}, {-7.0f, -6.0f}};
+
+DenseMatrix - SparseCOOMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::DenseMatrix slt::operator-(const slt::DenseMatrix<T>& dense, const slt::SparseCOOMatrix<T>& sparse)
+
+   Subtracts a ``SparseCOOMatrix<T>`` from a ``DenseMatrix<T>`` and returns a ``DenseMatrix<T>``.
+
+   Computes element-wise: ``result(i,j) = dense(i,j) - sparse(i,j)``.  
+   The result preserves the original dense structure and includes any corrections from the sparse matrix.
+
+   SIMD acceleration is used to copy the dense matrix where available.
+
+   :tparam T: Floating-point type (``float`` or ``double``).
+   :param dense: The dense matrix operand.
+   :param sparse: The sparse matrix operand.
+   :returns: ``DenseMatrix<T>`` with the subtraction result.
+   :throws std::invalid_argument: If matrix dimensions do not match.
+
+   **Example**::
+
+      slt::DenseMatrix<float> A(2, 2);
+      A.set(0, 0, 5.0f);
+      A.set(0, 1, 6.0f);
+      A.set(1, 0, 7.0f);
+      A.set(1, 1, 8.0f);
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 0, 1.0f);
+      B.set(1, 1, 2.0f);
+
+      slt::DenseMatrix<float> C = A - B;
+
+      // C == {{4.0f, 6.0f}, {7.0f, 6.0f}};
 
 Multiplication 
 --------------
@@ -936,6 +1123,106 @@ Scalar * DenseMatrix
 
       // B(0, 0) == 6.0, B(1, 1) == 4.0
 
+scalar * SparseCOOMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::SparseCOOMatrix slt::operator*(T scalar, const slt::SparseCOOMatrix<T>& matrix)
+
+   Multiplies every non-zero element of a ``SparseCOOMatrix<T>`` by a scalar value.
+
+   Creates a new sparse matrix where each stored value is multiplied by the given scalar.  
+   Zero elements remain zero and are not explicitly added to the result.
+
+   Internally, this operator delegates to the member ``SparseCOOMatrix::operator*(T scalar)``.
+
+   :param scalar: The scalar value to multiply each matrix element by.
+   :param matrix: The input ``SparseCOOMatrix<T>``.
+   :returns: A new ``SparseCOOMatrix<T>`` with updated values.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 0, 2.0f);
+      A.set(1, 1, 4.0f);
+
+      auto B = 3.0f * A;
+
+      // B.get(0, 0) == 6.0f
+      // B.get(1, 1) == 12.0f
+
+DenseMatrix * SparseCOOMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template <typename T> DenseMatrix<T> slt::operator*(const DenseMatrix<T>& dense, const SparseCOOMatrix<T>& sparse)
+
+   Performs element-wise multiplication of a ``DenseMatrix`` and a ``SparseCOOMatrix``.
+
+   Returns a new ``DenseMatrix<T>`` where each element is the product of corresponding entries
+   in the dense and sparse matrices. Multiplication is performed only at non-zero positions
+   of the sparse matrix — implicit zero entries are skipped.
+
+   The result is fully initialized. Positions in the dense matrix that do not correspond to
+   a non-zero entry in the sparse matrix are set to zero.
+
+   :param dense: The dense matrix operand.
+   :param sparse: The sparse COO matrix operand.
+   :return: A new ``DenseMatrix<T>`` with the element-wise product.
+   :throws std::invalid_argument: If the matrix dimensions do not match.
+
+   **Example**::
+
+      slt::DenseMatrix<float> A(2, 2);
+      A.set(0, 0, 1.0f);
+      A.set(0, 1, 2.0f);
+      A.set(1, 0, 3.0f);
+      A.set(1, 1, 4.0f);
+
+      slt::SparseCOOMatrix<float> B(2, 2);
+      B.set(0, 1, 5.0f);
+      B.set(1, 0, 6.0f);
+
+      slt::DenseMatrix<float> C = A * B;
+
+      // C(0, 0) == 0.0f
+      // C(0, 1) == 10.0f
+      // C(1, 0) == 18.0f
+      // C(1, 1) == 0.0f
+
+SparseCOOMatrix * DenseMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template <typename T> DenseMatrix<T> slt::operator*(const SparseCOOMatrix<T>& sparse, const DenseMatrix<T>& dense)
+
+   Performs element-wise multiplication of a ``SparseCOOMatrix`` and a ``DenseMatrix``.
+
+   This function is equivalent to ``dense * sparse`` and reuses that implementation.
+   The multiplication is commutative in this case — only positions with non-zero entries
+   in the sparse matrix are affected.
+
+   :param sparse: The sparse COO matrix operand.
+   :param dense: The dense matrix operand.
+   :return: A new ``DenseMatrix<T>`` with the element-wise product.
+   :throws std::invalid_argument: If the matrix dimensions do not match.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 2);
+      A.set(0, 1, 2.0f);
+      A.set(1, 0, 4.0f);
+
+      slt::DenseMatrix<float> B(2, 2);
+      B.set(0, 0, 10.0f);
+      B.set(0, 1, 20.0f);
+      B.set(1, 0, 30.0f);
+      B.set(1, 1, 40.0f);
+
+      slt::DenseMatrix<float> C = A * B;
+
+      // C(0, 1) == 40.0f
+      // C(1, 0) == 120.0f
+      // Other entries == 0.0f
+
+
 Matrix Muultiplication 
 ----------------------
 
@@ -945,6 +1232,8 @@ DenseMatrix * DenseMatrix
 .. cpp:function:: template<typename T> DenseMatrix<T> mat_mul(const DenseMatrix<T>& A, const DenseMatrix<T>& B)
 
    Performs matrix multiplication between two DenseMatrix objects.
+   **NOTE:** This function results in a true matrix multiplication and not an
+   element wise multiplication.
 
    :param A: Left-hand matrix operand of size M × N.
    :param B: Right-hand matrix operand of size N × P.

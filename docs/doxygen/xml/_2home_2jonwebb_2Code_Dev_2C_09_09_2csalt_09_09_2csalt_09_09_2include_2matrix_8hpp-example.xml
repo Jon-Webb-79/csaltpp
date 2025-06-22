@@ -3,41 +3,24 @@
   <compounddef id="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example" kind="example">
     <compoundname>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</compoundname>
     <briefdescription>
-<para>Compares two sparse COO matrices for equality. </para>
+<para>Constructs an identity matrix as a SparseCOOMatrix&lt;T&gt;. </para>
     </briefdescription>
     <detaileddescription>
-<para>Compares two sparse COO matrices for equality.Determines whether this matrix and the given matrix are equal by checking:<itemizedlist>
-<listitem><para>Matrix dimensions (rows and columns),</para>
-</listitem><listitem><para>Number of non-zero entries,</para>
-</listitem><listitem><para>Each corresponding (row, col, value) triple.</para>
-</listitem></itemizedlist>
-</para>
-<para>If both matrices are finalized (i.e., <computeroutput>fast_set == false</computeroutput>), a direct comparison of the underlying storage is used. If either matrix is not finalized, both matrices are converted to dense format and compared entry-wise.</para>
-<para>For floating-point types, approximate comparison is used with a tolerance of <computeroutput>1e-6</computeroutput>.</para>
+<para>Constructs an identity matrix as a SparseCOOMatrix&lt;T&gt;.Creates a square sparse matrix of size n x n, with ones on the main diagonal and zeros elsewhere. The resulting matrix is sorted and ready for optimized access.</para>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>other</parametername>
+<parametername>n</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The matrix to compare against. </para>
+<para>The number of rows and columns (matrix is n x n).</para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>true if the matrices are equal, false otherwise.</para>
-</simplesect>
-<simplesect kind="note"><para>Equality is defined structurally and numerically. Two matrices with the same non-zero values but in different insertion orders will still compare equal if finalized.</para>
-</simplesect>
-<programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>A(2,<sp/>2);</highlight></codeline>
-<codeline><highlight class="normal">A.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
-<codeline><highlight class="normal">A.set(1,<sp/>1,<sp/>2.0f);</highlight></codeline>
-<codeline><highlight class="normal">A.finalize();</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>B(2,<sp/>2);</highlight></codeline>
-<codeline><highlight class="normal">B.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
-<codeline><highlight class="normal">B.set(1,<sp/>1,<sp/>2.0f);</highlight></codeline>
-<codeline><highlight class="normal">B.finalize();</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">assert(A<sp/>==<sp/>B);<sp/><sp/>//<sp/>true</highlight></codeline>
+<programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>I(4);<sp/><sp/>//<sp/>4x4<sp/>identity<sp/>matrix</highlight></codeline>
+<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(0,<sp/>0),<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(1,<sp/>1),<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(2,<sp/>2),<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(3,<sp/>3),<sp/>1.0f);</highlight></codeline>
 </programlisting> <programlisting filename="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp"><codeline><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-<sp/>File:<sp/><sp/><sp/><sp/>matrix.hpp</highlight><highlight class="normal"></highlight></codeline>
@@ -1324,6 +1307,16 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------------<sp/></highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">explicit</highlight><highlight class="normal"><sp/><ref refid="classslt_1_1SparseCOOMatrix_1ac19d7e9ef6e0089973428a5873546a31" kindref="member">SparseCOOMatrix</ref>(std::size_t<sp/>n)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="classslt_1_1SparseCOOMatrix_1a82dc765141e8635009ff85e9f1c1b1f6" kindref="member">rows_</ref>(n),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1a1d5ba6c9996a3b093529cc4f135079d5" kindref="member">cols_</ref>(n),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1ab890c296bec63f265a2c1cd167a88eec" kindref="member">fast_set</ref>(false)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>.reserve(n);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>n;<sp/>++i)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>.emplace_back(i,<sp/>i,<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">T</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(1));</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------------<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1SparseCOOMatrix_1ac19d7e9ef6e0089973428a5873546a31" kindref="member">SparseCOOMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>SparseCOOMatrix&lt;T&gt;&amp;<sp/>other)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/>MatrixBase&lt;T&gt;(),</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1SparseCOOMatrix_1a82dc765141e8635009ff85e9f1c1b1f6" kindref="member">rows_</ref>(other.<ref refid="classslt_1_1SparseCOOMatrix_1a82dc765141e8635009ff85e9f1c1b1f6" kindref="member">rows_</ref>),</highlight></codeline>
@@ -1696,9 +1689,9 @@
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>T&gt;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>SparseCOOMatrix&lt;T&gt;<sp/><ref refid="namespaceslt_1ab7a55d8c976eb591ad233a83bffc43ce" kindref="member">operator-</ref>(T<sp/>scalar,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>SparseCOOMatrix&lt;T&gt;&amp;<sp/>matrix)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SparseCOOMatrix&lt;T&gt;<sp/>result(matrix.rows(),<sp/>matrix.cols(),<sp/>matrix.triplet_capacity());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>SparseCOOMatrix&lt;T&gt;<sp/>result(matrix.rows(),<sp/>matrix.cols(),<sp/>matrix.nonzero_count());</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>t<sp/>:<sp/>matrix.triplet)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>t<sp/>:<sp/>matrix)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>T<sp/>val<sp/>=<sp/>scalar<sp/>-<sp/>t.value;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result.set(t.row,<sp/>t.col,<sp/>val);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
@@ -1716,17 +1709,17 @@
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Negate<sp/>dense<sp/>matrix<sp/>and<sp/>store<sp/>in<sp/>result</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(<ref refid="structslt_1_1simd__traits_1a4250fe797cbbc73a64195b10f199f277" kindref="member">simd_traits&lt;T&gt;::supported</ref>)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>simd_ops&lt;T&gt;::mul_scalar(dense.begin(),<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">T</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(-1),<sp/>result.begin(),<sp/>dense.size());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>simd_ops&lt;T&gt;::mul_scalar(dense.data_ptr(),<sp/></highlight><highlight class="keyword">static_cast&lt;</highlight><highlight class="normal">T</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(-1),<sp/>result.data_ptr(),<sp/>dense.size());</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>dense.size();<sp/>++i)</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result.begin()[i]<sp/>=<sp/>-dense.begin()[i];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result.data_ptr()[i]<sp/>=<sp/>-dense.data_ptr()[i];</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Mark<sp/>all<sp/>entries<sp/>as<sp/>initialized</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::fill(result.init_ptr(),<sp/>result.init_ptr()<sp/>+<sp/>result.size(),<sp/>1);</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Add<sp/>sparse<sp/>matrix<sp/>values<sp/>to<sp/>result</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>t<sp/>:<sp/>sparse.triplet)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>t<sp/>:<sp/>sparse)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result.update(t.row,<sp/>t.col,<sp/>result(t.row,<sp/>t.col)<sp/>+<sp/>t.value);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
@@ -1744,10 +1737,10 @@
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>dense<sp/>values<sp/>to<sp/>result</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>constexpr<sp/>(<ref refid="structslt_1_1simd__traits_1a4250fe797cbbc73a64195b10f199f277" kindref="member">simd_traits&lt;T&gt;::supported</ref>)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>simd_ops&lt;T&gt;::copy(dense.begin(),<sp/>result.begin(),<sp/>dense.size());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>simd_ops&lt;T&gt;::copy(dense.data_ptr(),<sp/>result.data_ptr(),<sp/>dense.size());</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(std::size_t<sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>dense.size();<sp/>++i)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result.begin()[i]<sp/>=<sp/>dense.begin()[i];</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result.data_ptr()[i]<sp/>=<sp/>dense.data_ptr()[i];</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
@@ -1755,7 +1748,7 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::fill(result.init_ptr(),<sp/>result.init_ptr()<sp/>+<sp/>result.size(),<sp/>1);</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Subtract<sp/>sparse<sp/>values</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>t<sp/>:<sp/>sparse.triplet)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal">&amp;<sp/>t<sp/>:<sp/>sparse)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>result.update(t.row,<sp/>t.col,<sp/>result(t.row,<sp/>t.col)<sp/>-<sp/>t.value);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>

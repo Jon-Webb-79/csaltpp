@@ -114,6 +114,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#sparsecoomatrix-t">SparseCOOMatrix&lt;T&gt;</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN3slt15SparseCOOMatrixE"><code class="docutils literal notranslate"><span class="pre">slt::SparseCOOMatrix</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#id6">Constructors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#identity-constructor">Identity Constructor</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#sparsecoomatrix-std-size-t-std-size-t-std-size-t">SparseCOOMatrix(std::size_t, std::size_t, std::size_t)</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#std-vector-slt-triplet-t">std::vector&lt;slt::Triplet&lt;T&gt;&gt;</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#std-array-triplet-t-n">std::array&lt;Triplet&lt;T&gt;, N&gt;</a></li>
@@ -1562,6 +1563,31 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 <p>See also: <a class="reference internal" href="#triplet-class"><span class="std std-ref">Triplet&lt;T&gt;</span></a></p>
 <section id="id6">
 <h3>Constructors<a class="headerlink" href="#id6" title="Link to this heading"></a></h3>
+<section id="identity-constructor">
+<h4>Identity Constructor<a class="headerlink" href="#identity-constructor" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixENSt6size_tE">
+<span id="_CPPv3N3slt15SparseCOOMatrix15SparseCOOMatrixENSt6size_tE"></span><span id="_CPPv2N3slt15SparseCOOMatrix15SparseCOOMatrixENSt6size_tE"></span><span id="slt::SparseCOOMatrix::SparseCOOMatrix__std::s"></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">n</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixENSt6size_tE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs an <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">n</span></code> sparse identity matrix.</p>
+<p>Only the diagonal elements <code class="docutils literal notranslate"><span class="pre">(i,</span> <span class="pre">i)</span></code> are stored in the COO format with value <code class="docutils literal notranslate"><span class="pre">1.0</span></code>.
+Off-diagonal entries are implicitly zero.</p>
+<p>The matrix is returned in sorted form (<code class="docutils literal notranslate"><span class="pre">fast_set</span> <span class="pre">=</span> <span class="pre">false</span></code>), ready for efficient queries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>n</strong> – The number of rows and columns (must be square).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A sparse identity matrix of size <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">x</span> <span class="pre">n</span></code>.</p>
+</dd>
+</dl>
+<p><strong>Example</strong>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">I</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+<span class="c1">// I(0,0) == 1.0, I(1,1) == 1.0, I(2,2) == 1.0, I(3,3) == 1.0</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 <section id="sparsecoomatrix-std-size-t-std-size-t-std-size-t">
 <h4>SparseCOOMatrix(std::size_t, std::size_t, std::size_t)<a class="headerlink" href="#sparsecoomatrix-std-size-t-std-size-t-std-size-t" title="Link to this heading"></a></h4>
 <dl class="cpp function">

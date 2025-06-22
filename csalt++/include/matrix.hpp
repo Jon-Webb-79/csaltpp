@@ -2783,6 +2783,33 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Constructs an identity matrix as a SparseCOOMatrix<T>.
+         *
+         * Creates a square sparse matrix of size n x n, with ones on the main diagonal
+         * and zeros elsewhere. The resulting matrix is sorted and ready for optimized access.
+         *
+         * @param n The number of rows and columns (matrix is n x n).
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> I(4);  // 4x4 identity matrix
+         * EXPECT_FLOAT_EQ(I.get(0, 0), 1.0f);
+         * EXPECT_FLOAT_EQ(I.get(1, 1), 1.0f);
+         * EXPECT_FLOAT_EQ(I.get(2, 2), 1.0f);
+         * EXPECT_FLOAT_EQ(I.get(3, 3), 1.0f);
+         * @endcode
+         */
+        explicit SparseCOOMatrix(std::size_t n)
+            : rows_(n), cols_(n), fast_set(false)
+        {
+            triplet.reserve(n);
+            for (std::size_t i = 0; i < n; ++i) {
+                triplet.emplace_back(i, i, static_cast<T>(1));
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Copy constructor for SparseCOOMatrix.
          *
          * Constructs a new SparseCOOMatrix as a deep copy of the provided matrix.

@@ -339,6 +339,26 @@ See also: :ref:`triplet_class`
 Constructors
 ------------
 
+Identity Constructor
+~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: slt::SparseCOOMatrix::SparseCOOMatrix(std::size_t n)
+
+   Constructs an ``n x n`` sparse identity matrix.
+
+   Only the diagonal elements ``(i, i)`` are stored in the COO format with value ``1.0``.
+   Off-diagonal entries are implicitly zero.
+
+   The matrix is returned in sorted form (``fast_set = false``), ready for efficient queries.
+
+   :param n: The number of rows and columns (must be square).
+   :returns: A sparse identity matrix of size ``n x n``.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> I(4);
+      // I(0,0) == 1.0, I(1,1) == 1.0, I(2,2) == 1.0, I(3,3) == 1.0
+
 SparseCOOMatrix(std::size_t, std::size_t, std::size_t)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

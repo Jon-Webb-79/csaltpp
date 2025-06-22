@@ -1570,6 +1570,29 @@ TEST(SparseCOOMatrixOperators, DivisionByZeroThrows) {
         auto result = A / 0.0f;
     }, std::invalid_argument);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTest, IdentityConstructor) {
+    const std::size_t N = 3;
+    slt::SparseCOOMatrix<float> I(N);
+
+    ASSERT_EQ(I.rows(), N);
+    ASSERT_EQ(I.cols(), N);
+    ASSERT_EQ(I.nonzero_count(), N);
+
+    for (std::size_t i = 0; i < N; ++i) {
+        EXPECT_FLOAT_EQ(I.get(i, i), 1.0f);
+    }
+
+    // Check off-diagonal elements throw (since they are uninitialized)
+    for (std::size_t r = 0; r < N; ++r) {
+        for (std::size_t c = 0; c < N; ++c) {
+            if (r != c) {
+                EXPECT_THROW(I.get(r, c), std::runtime_error);
+            }
+        }
+    }
+}
 // ================================================================================
 // ================================================================================
 // eof

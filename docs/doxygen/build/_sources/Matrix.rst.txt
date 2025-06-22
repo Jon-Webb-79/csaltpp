@@ -1,4 +1,4 @@
-***************
+**************
 Matrix Overview
 ***************
 
@@ -97,6 +97,31 @@ DenseMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c)
 
 .. doxygenfunction:: slt::DenseMatrix::DenseMatrix(const std::vector<T>&, std::size_t, std::size_t)
    :project: csalt++
+
+.. cpp:function:: slt::DenseMatrix::DenseMatrix(std::vector<T>&& flat_data, std::size_t r, std::size_t c)
+
+   Constructs a ``DenseMatrix<T>`` by moving a flat ``std::vector<T>`` in row-major order.
+
+   Transfers ownership of the flat vector into the matrix, avoiding extra memory copies.
+   The input vector must contain exactly ``r * c`` elements.
+
+   :param flat_data: Rvalue reference to a ``std::vector<T>`` in row-major order.
+   :param r: Number of rows.
+   :param c: Number of columns.
+   :throws std::invalid_argument: If ``flat_data.size() != r * c``.
+
+   **Example**::
+
+      std::vector<float> flat = {
+          1.0f, 2.0f, 3.0f,
+          4.0f, 5.0f, 6.0f
+      };
+
+      slt::DenseMatrix<float> mat(std::move(flat), 2, 3);
+
+      // mat(0,0) == 1.0f
+      // mat(1,2) == 6.0f
+      // flat is now empty
 
 DenseMatrix(const std::array<T, N>& arr, std::size_t r, std::size_t c)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -389,6 +414,36 @@ std::vector<slt::Triplet<T>>
       };
 
       slt::SparseCOOMatrix<float> mat(5, 5, triplets);
+
+.. cpp:function:: slt::SparseCOOMatrix::SparseCOOMatrix(std::size_t r, std::size_t c, std::vector<slt::Triplet<T>>&& triplets)
+
+   Constructs a ``SparseCOOMatrix<T>`` from an rvalue ``std::vector< Triplet<T> >`` (move).
+
+   Moves the contents of the given vector into the matrix to avoid unnecessary copying.
+   This is the most efficient way to initialize a large sparse matrix from a temporary
+   or intermediate vector of triplets. After the move, the input vector will be empty.
+
+   The triplets are automatically sorted in row-major order (row first, then column),  
+   and the matrix is ready for optimized access (``fast_set = false``).
+
+   :param r: Number of rows in the matrix.
+   :param c: Number of columns in the matrix.
+   :param triplets: Rvalue reference to a vector of triplet values to move into the matrix.
+
+   **Note:** The original vector passed in will be left empty after construction.
+
+   **Example**::
+
+      std::vector<slt::Triplet<float>> triplets = {
+          {0, 0, 1.0f},
+          {1, 2, 2.5f},
+          {4, 4, 3.1f}
+      };
+
+      // Efficient move construction
+      slt::SparseCOOMatrix<float> mat(5, 5, std::move(triplets));
+
+      // After this, triplets.size() == 0
 
 std::array<Triplet<T>, N>
 ~~~~~~~~~~~~~~~~~~~~~~~~~

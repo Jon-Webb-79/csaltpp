@@ -3,24 +3,48 @@
   <compounddef id="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example" kind="example">
     <compoundname>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</compoundname>
     <briefdescription>
-<para>Constructs an identity matrix as a SparseCOOMatrix&lt;T&gt;. </para>
+<para>Constructs a SparseCOOMatrix from an rvalue vector of Triplet&lt;T&gt; (move). </para>
     </briefdescription>
     <detaileddescription>
-<para>Constructs an identity matrix as a SparseCOOMatrix&lt;T&gt;.Creates a square sparse matrix of size n x n, with ones on the main diagonal and zeros elsewhere. The resulting matrix is sorted and ready for optimized access.</para>
+<para>Constructs a SparseCOOMatrix from an rvalue vector of Triplet&lt;T&gt; (move).Moves the contents of the given vector into the matrix to avoid unnecessary copying. This is the most efficient way to initialize a large sparse matrix from a temporary or intermediate vector of triplets. After the move, the input vector will be empty.</para>
+<para>The triplets are automatically sorted in row-major order (row first, then col), and the matrix is ready for optimized access (<computeroutput>fast_set = false</computeroutput>).</para>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>n</parametername>
+<parametername>r</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>The number of rows and columns (matrix is n x n).</para>
+<para>Number of rows in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>triplets</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rvalue reference to a vector of triplet values to move into the matrix.</para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-<programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>I(4);<sp/><sp/>//<sp/>4x4<sp/>identity<sp/>matrix</highlight></codeline>
-<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(0,<sp/>0),<sp/>1.0f);</highlight></codeline>
-<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(1,<sp/>1),<sp/>1.0f);</highlight></codeline>
-<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(2,<sp/>2),<sp/>1.0f);</highlight></codeline>
-<codeline><highlight class="normal">EXPECT_FLOAT_EQ(I.get(3,<sp/>3),<sp/>1.0f);</highlight></codeline>
+<simplesect kind="note"><para>The original vector passed in will be left empty after construction.</para>
+</simplesect>
+<programlisting><codeline><highlight class="normal">std::vector&lt;slt::Triplet&lt;float&gt;&gt;<sp/>triplets<sp/>=<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{0,<sp/>0,<sp/>1.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1,<sp/>2,<sp/>2.5f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{4,<sp/>4,<sp/>3.1f}</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Efficient<sp/>move<sp/>construction</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(5,<sp/>5,<sp/>std::move(triplets));</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>After<sp/>this,<sp/>triplets.size()<sp/>==<sp/>0</highlight></codeline>
 </programlisting> <programlisting filename="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp"><codeline><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>-<sp/>File:<sp/><sp/><sp/><sp/>matrix.hpp</highlight><highlight class="normal"></highlight></codeline>
@@ -691,6 +715,13 @@
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------------<sp/></highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1DenseMatrix_1aefb68f3c5f27bd69a67d1e1f7b51831e" kindref="member">DenseMatrix</ref>(std::vector&lt;T&gt;&amp;&amp;<sp/>flat_data,<sp/>std::size_t<sp/>r,<sp/>std::size_t<sp/>c)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="classslt_1_1DenseMatrix_1ab63789902cfdc1e5cbf8e0777f5c9fb9" kindref="member">data</ref>(std::move(flat_data)),<sp/><ref refid="classslt_1_1DenseMatrix_1ae860a596275b6746c9c8e4a39a8671f5" kindref="member">init</ref>(<ref refid="classslt_1_1DenseMatrix_1ab63789902cfdc1e5cbf8e0777f5c9fb9" kindref="member">data</ref>.<ref refid="classslt_1_1DenseMatrix_1a39a9fb8ff6233685c347386728cf7ef7" kindref="member">size</ref>(),<sp/>1),<sp/><ref refid="classslt_1_1DenseMatrix_1a1cee72c413fc6a704706569e9571243d" kindref="member">rows_</ref>(r),<sp/><ref refid="classslt_1_1DenseMatrix_1a8ff8f8302614df9bc21407878384eaf2" kindref="member">cols_</ref>(c)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(<ref refid="classslt_1_1DenseMatrix_1ab63789902cfdc1e5cbf8e0777f5c9fb9" kindref="member">data</ref>.size()<sp/>!=<sp/>r<sp/>*<sp/>c)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal"><sp/>std::invalid_argument(</highlight><highlight class="stringliteral">&quot;Flat<sp/>data<sp/>size<sp/>does<sp/>not<sp/>match<sp/>matrix<sp/>dimensions&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------------<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;std::</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>N&gt;</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1DenseMatrix_1aefb68f3c5f27bd69a67d1e1f7b51831e" kindref="member">DenseMatrix</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::array&lt;T,<sp/>N&gt;&amp;<sp/>arr,<sp/>std::size_t<sp/>r,<sp/>std::size_t<sp/>c)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="classslt_1_1DenseMatrix_1ab63789902cfdc1e5cbf8e0777f5c9fb9" kindref="member">data</ref>(arr.<ref refid="classslt_1_1DenseMatrix_1a5a34208108b9b596d1c98b0e813e17bd" kindref="member">begin</ref>(),<sp/>arr.<ref refid="classslt_1_1DenseMatrix_1a96d2c4d3a2ee12d324b3e8a2a6db88e0" kindref="member">end</ref>()),<sp/><ref refid="classslt_1_1DenseMatrix_1ae860a596275b6746c9c8e4a39a8671f5" kindref="member">init</ref>(N,<sp/>1),<sp/><ref refid="classslt_1_1DenseMatrix_1a1cee72c413fc6a704706569e9571243d" kindref="member">rows_</ref>(r),<sp/><ref refid="classslt_1_1DenseMatrix_1a8ff8f8302614df9bc21407878384eaf2" kindref="member">cols_</ref>(c)<sp/>{</highlight></codeline>
@@ -1280,6 +1311,13 @@
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1SparseCOOMatrix_1ac19d7e9ef6e0089973428a5873546a31" kindref="member">SparseCOOMatrix</ref>(std::size_t<sp/>r,<sp/>std::size_t<sp/>c,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>std::vector&lt;Triplet&lt;T&gt;&gt;&amp;<sp/>triplets)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="classslt_1_1SparseCOOMatrix_1a82dc765141e8635009ff85e9f1c1b1f6" kindref="member">rows_</ref>(r),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1a1d5ba6c9996a3b093529cc4f135079d5" kindref="member">cols_</ref>(c),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>(triplets),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1ab890c296bec63f265a2c1cd167a88eec" kindref="member">fast_set</ref>(false)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::sort(<ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>.begin(),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>.end());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------------<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classslt_1_1SparseCOOMatrix_1ac19d7e9ef6e0089973428a5873546a31" kindref="member">SparseCOOMatrix</ref>(std::size_t<sp/>r,<sp/>std::size_t<sp/>c,<sp/>std::vector&lt;Triplet&lt;T&gt;&gt;&amp;&amp;<sp/>triplets)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>:<sp/><ref refid="classslt_1_1SparseCOOMatrix_1a82dc765141e8635009ff85e9f1c1b1f6" kindref="member">rows_</ref>(r),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1a1d5ba6c9996a3b093529cc4f135079d5" kindref="member">cols_</ref>(c),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>(std::move(triplets)),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1ab890c296bec63f265a2c1cd167a88eec" kindref="member">fast_set</ref>(false)</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::sort(<ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>.begin(),<sp/><ref refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" kindref="member">triplet</ref>.end());</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>}</highlight></codeline>

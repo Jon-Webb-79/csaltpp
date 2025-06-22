@@ -1190,6 +1190,13 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        DenseMatrix(std::vector<T>&& flat_data, std::size_t r, std::size_t c)
+            : data(std::move(flat_data)), init(data.size(), 1), rows_(r), cols_(c) {
+            if (data.size() != r * c)
+                throw std::invalid_argument("Flat data size does not match matrix dimensions");
+        }
+// -------------------------------------------------------------------------------- 
+
         /**
          * @brief Constructs a matrix from a flat std::array with specified dimensions.
          *
@@ -2700,6 +2707,43 @@
          */
         SparseCOOMatrix(std::size_t r, std::size_t c, const std::vector<Triplet<T>>& triplets)
             : rows_(r), cols_(c), triplet(triplets), fast_set(false)
+        {
+            std::sort(triplet.begin(), triplet.end());
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a SparseCOOMatrix from an rvalue vector of Triplet<T> (move).
+         *
+         * Moves the contents of the given vector into the matrix to avoid unnecessary copying.
+         * This is the most efficient way to initialize a large sparse matrix from a temporary
+         * or intermediate vector of triplets. After the move, the input vector will be empty.
+         *
+         * The triplets are automatically sorted in row-major order (row first, then col),
+         * and the matrix is ready for optimized access (`fast_set = false`).
+         *
+         * @param r Number of rows in the matrix.
+         * @param c Number of columns in the matrix.
+         * @param triplets Rvalue reference to a vector of triplet values to move into the matrix.
+         *
+         * @note The original vector passed in will be left empty after construction.
+         *
+         * @example
+         * @code
+         * std::vector<slt::Triplet<float>> triplets = {
+         *     {0, 0, 1.0f},
+         *     {1, 2, 2.5f},
+         *     {4, 4, 3.1f}
+         * };
+         *
+         * // Efficient move construction
+         * slt::SparseCOOMatrix<float> mat(5, 5, std::move(triplets));
+         *
+         * // After this, triplets.size() == 0
+         * @endcode
+         */
+        SparseCOOMatrix(std::size_t r, std::size_t c, std::vector<Triplet<T>>&& triplets)
+            : rows_(r), cols_(c), triplet(std::move(triplets)), fast_set(false)
         {
             std::sort(triplet.begin(), triplet.end());
         }

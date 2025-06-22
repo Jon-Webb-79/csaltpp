@@ -848,8 +848,25 @@
          * // Output: 1 1 1 1 1 1
          * @endcode
          */
-        const T* begin() const { return data.begin(); }
+        auto begin() const { return data.begin(); }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Returns a mutable pointer to the beginning of matrix data.
+         *
+         * This overload allows modification of the matrix contents. It is useful for
+         * optimized operations such as SIMD accelerated copy, assignment, or transformations.
+         *
+         * Example:
+         * @code
+         * slt::DenseMatrix<float> mat(3, 3, 1.0f);
+         * auto* ptr = mat.begin();
+         * ptr[0] = 42.0f;  // modifies element (0,0)
+         * @endcode
+         *
+         * @return Pointer to the first element (float* or double* depending on T)
+         */
+        auto begin() { return data.end(); }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -869,7 +886,24 @@
          * // Output: 2 2 2 2 2 2
          * @endcode
          */
-        const T* end() const { return data.end(); }
+        auto end() const { return data.end(); }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns a mutable pointer to the end of matrix data.
+         *
+         * This overload allows modification of matrix contents in algorithms that operate
+         * over a range (e.g., std::fill, std::copy, SIMD-accelerated loops).
+         *
+         * Example:
+         * @code
+         * slt::DenseMatrix<float> mat(2, 2);
+         * std::fill(mat.begin(), mat.end(), 3.14f);  // fills all elements with 3.14
+         * @endcode
+         *
+         * @return Pointer one-past-the-last element (float* or double* depending on T)
+         */
+        auto end()   { return data.end(); }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -907,6 +941,14 @@
 // -------------------------------------------------------------------------------- 
 
         uint8_t* init_ptr() {return init.data();}
+// -------------------------------------------------------------------------------- 
+
+        // Purpusefully not documenting to protect from bad use of this function used internally 
+        const T* data_ptr() const {return data.data();}
+// -------------------------------------------------------------------------------- 
+
+        // Purpusefully not documenting to protect from bad use of this function used internally
+        T* data_ptr() {return data.data();}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -3390,6 +3432,28 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Returns a mutable iterator to the beginning of the triplet vector.
+         *
+         * This overload allows modification of the stored Triplet<T> objects — for example,
+         * to adjust values in-place, or to apply bulk transformations.
+         *
+         * Example:
+         * @code
+         * slt::SparseCOOMatrix<float> mat(5, 5);
+         * mat.set(0, 0, 2.0f);
+         * mat.finalize();
+         *
+         * for (auto it = mat.begin(); it != mat.end(); ++it) {
+         *     it->value *= 2.0f;  // scale all non-zero values
+         * }
+         * @endcode
+         *
+         * @return Iterator to the first Triplet<T> in the matrix.
+         */
+        auto begin() { return triplet.begin(); }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Returns an iterator to one-past-the-end of the triplet vector.
          *
          * Used for iteration over the matrix using range-based for loops or STL algorithms.
@@ -3410,6 +3474,29 @@
          * @endcode
          */
         auto end() const { return triplet.end(); }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Returns a mutable iterator to the end of the triplet vector.
+         *
+         * This overload allows modification of the stored Triplet<T> objects in algorithms
+         * operating on ranges (e.g., std::for_each, std::transform).
+         *
+         * Example:
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 3);
+         * mat.set(0, 0, 1.0f);
+         * mat.set(1, 2, 2.0f);
+         * mat.finalize();
+         *
+         * std::for_each(mat.begin(), mat.end(), [](auto& t) {
+         *     t.value += 1.0f;  // increment all non-zero values
+         * });
+         * @endcode
+         *
+         * @return Iterator one-past-the-last Triplet<T> in the matrix.
+         */
+        auto end() { return triplet.end(); }
     };
 // // ================================================================================ 
 // // ================================================================================ 
@@ -3472,17 +3559,17 @@
 
         // Copy dense matrix data to result
         if constexpr (simd_traits<T>::supported) {
-            simd_ops<T>::copy(dense.begin(), result.begin(), dense.size());
+            simd_ops<T>::copy(dense.data_ptr(), result.data_ptr(), dense.size());
         } else {
             for (std::size_t i = 0; i < dense.size(); ++i)
-                result.begin()[i] = dense.begin()[i];
+                result.data_ptr()[i] = dense.data_ptr()[i];
         }
 
         // Mark all entries as initialized
         std::fill(result.init_ptr(), result.init_ptr() + result.size(), 1);
 
         // Add sparse values
-        for (const auto& t : sparse.triplet) {
+        for (const auto& t : sparse) {
             std::size_t r = t.row;
             std::size_t c = t.col;
             result.update(r, c, result(r, c) + t.value);

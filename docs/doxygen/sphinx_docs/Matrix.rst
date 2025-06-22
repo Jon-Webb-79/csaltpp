@@ -229,16 +229,22 @@ size()
 .. doxygenfunction:: slt::DenseMatrix::size
    :project: csalt++
 
-begin() 
+begin()
 ~~~~~~~
 
-.. doxygenfunction:: slt::DenseMatrix::begin
+.. doxygenfunction:: slt::DenseMatrix::begin() const
+   :project: csalt++
+
+.. doxygenfunction:: slt::DenseMatrix::begin()
    :project: csalt++
 
 end()
 ~~~~~
 
-.. doxygenfunction:: slt::DenseMatrix::end
+.. doxygenfunction:: slt::DenseMatrix::end() const
+   :project: csalt++
+
+.. doxygenfunction:: slt::DenseMatrix::end()
    :project: csalt++
 
 init_ptr()
@@ -354,13 +360,19 @@ nonzero_count()
 begin() 
 ~~~~~~~
 
-.. doxygenfunction:: slt::SparseCOOMatrix::begin
+.. doxygenfunction:: slt::SparseCOOMatrix::begin()
+   :project: csalt++
+
+.. doxygenfunction:: slt::SparseCOOMatrix::begin() const
    :project: csalt++
 
 end()
 ~~~~~
 
-.. doxygenfunction:: slt::SparseCOOMatrix::end
+.. doxygenfunction:: slt::SparseCOOMatrix::end()
+   :project: csalt++
+
+.. doxygenfunction:: slt::SparseCOOMatrix::end() const
    :project: csalt++
 
 is_initialized()

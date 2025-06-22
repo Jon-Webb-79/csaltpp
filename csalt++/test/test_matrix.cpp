@@ -771,80 +771,117 @@ TEST(DenseMatrixMatMulTest, DimensionMismatchThrows) {
 }
 // -------------------------------------------------------------------------------- 
 
-// TEST(DenseMatrixSparseAdditionTest, BasicAddition) {
-//     slt::DenseMatrix<float> dense({
-//         {1.0f, 2.0f},
-//         {3.0f, 4.0f}
-//     });
-//
-//     slt::SparseCOOMatrix<float> sparse({
-//         {0.0f, 5.0f},
-//         {0.0f, 1.0f}
-//     });
-//
-//     auto result = dense + sparse;
-//
-//     EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
-//     EXPECT_FLOAT_EQ(result(0, 1), 7.0f);
-//     EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
-//     EXPECT_FLOAT_EQ(result(1, 1), 5.0f);
-// }
+TEST(DenseMatrixSparseAdditionTest, BasicAddition) {
+    slt::DenseMatrix<float> dense({
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    });
+
+    std::vector<slt::Triplet<float>> vec;
+    vec.emplace_back(slt::Triplet<float>(0, 0, 0.0f));
+    vec.emplace_back(slt::Triplet<float>(0, 1, 5.0f));
+    vec.emplace_back(slt::Triplet<float>(1, 0, 0.0f));
+    vec.emplace_back(slt::Triplet<float>(1, 1, 1.0f));
+    slt::SparseCOOMatrix<float> sparse(2, 2, vec);
+
+    auto result = dense + sparse;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(result(0, 1), 7.0f);
+    EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
+    EXPECT_FLOAT_EQ(result(1, 1), 5.0f);
+}
 // -------------------------------------------------------------------------------- 
 
-// TEST(DenseMatrixSparseAdditionTest, AllZeroSparseMatrix) {
-//     slt::DenseMatrix<float> dense({
-//         {1.0f, 2.0f},
-//         {3.0f, 4.0f}
-//     });
-//
-//     slt::SparseCOOMatrix<float> sparse({
-//         {0.0f, 0.0f},
-//         {0.0f, 0.0f}
-//     });
-//
-//     auto result = dense + sparse;
-//
-//     EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
-//     EXPECT_FLOAT_EQ(result(0, 1), 2.0f);
-//     EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
-//     EXPECT_FLOAT_EQ(result(1, 1), 4.0f);
-// }
-// // -------------------------------------------------------------------------------- 
-//
-// TEST(DenseMatrixSparseAdditionTest, ThrowsOnSizeMismatch) {
-//     slt::DenseMatrix<float> dense({
-//         {1.0f, 2.0f}
-//     });
-//
-//     slt::SparseCOOMatrix<float> sparse({
-//         {0.0f, 1.0f},
-//         {2.0f, 3.0f}
-//     });
-//
-//     EXPECT_THROW({
-//         auto result = dense + sparse;
-//     }, std::invalid_argument);
-// }
-// // -------------------------------------------------------------------------------- 
-//
-// TEST(DenseMatrixSparseAdditionTest, SparseOnlyAffectsSpecifiedEntries) {
-//     slt::DenseMatrix<float> dense({
-//         {10.0f, 20.0f},
-//         {30.0f, 40.0f}
-//     });
-//
-//     slt::SparseCOOMatrix<float> sparse({
-//         {0.0f, 0.0f},
-//         {0.0f, -40.0f}
-//     });
-//
-//     auto result = dense + sparse;
-//
-//     EXPECT_FLOAT_EQ(result(0, 0), 10.0f);
-//     EXPECT_FLOAT_EQ(result(0, 1), 20.0f);
-//     EXPECT_FLOAT_EQ(result(1, 0), 30.0f);
-//     EXPECT_FLOAT_EQ(result(1, 1), 0.0f);  // 40 - 40
-// }
+TEST(DenseMatrixSparseAdditionTest, AllZeroSparseMatrix) {
+    slt::DenseMatrix<float> dense({
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    });
+
+    std::vector<slt::Triplet<float>> vec = {
+        {0, 0, 0.0f},
+        {0, 1, 0.0f},
+        {1, 0, 0.0f},
+        {1, 1, 0.0f}
+    };
+    slt::SparseCOOMatrix<float> sparse(2, 2, vec);
+
+    auto result = dense + sparse;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(result(0, 1), 2.0f);
+    EXPECT_FLOAT_EQ(result(1, 0), 3.0f);
+    EXPECT_FLOAT_EQ(result(1, 1), 4.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixSparseAdditionTest, ThrowsOnSizeMismatch) {
+    // 1x2 DenseMatrix
+    slt::DenseMatrix<float> dense({
+        {1.0f, 2.0f}
+    });
+
+    // 2x2 SparseCOOMatrix
+    std::array<slt::Triplet<float>, 4> vec {
+        slt::Triplet<float>(0, 0, 0.0f),
+        slt::Triplet<float>(0, 1, 1.0f),
+        slt::Triplet<float>(1, 0, 2.0f),
+        slt::Triplet<float>(1, 1, 3.0f)
+    };
+    
+    slt::SparseCOOMatrix<float> sparse(2, 2, vec);
+
+    EXPECT_THROW({
+        auto result = dense + sparse;
+    }, std::invalid_argument);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixSparseAdditionTest, SparseOnlyAffectsSpecifiedEntries) {
+    slt::DenseMatrix<float> dense({
+        {10.0f, 20.0f},
+        {30.0f, 40.0f}
+    });
+
+    // Use the initializer list constructor
+    slt::SparseCOOMatrix<float> sparse(2, 2, {
+        {0, 0, 0.0f},
+        {0, 1, 0.0f},
+        {1, 0, 0.0f},
+        {1, 1, -40.f},
+    });
+
+    auto result = dense + sparse;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 10.0f);  // 10 + 0
+    EXPECT_FLOAT_EQ(result(0, 1), 20.0f);  // 20 + 0
+    EXPECT_FLOAT_EQ(result(1, 0), 30.0f);  // 30 + 0
+    EXPECT_FLOAT_EQ(result(1, 1), 0.0f);   // 40 + (-40)
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixSparseAdditionTest, SparseAdditionFromCArrayOfTriplets) {
+    slt::DenseMatrix<float> dense({
+        {10.0f, 20.0f},
+        {30.0f, 40.0f}
+    });
+
+    // C-style array of Triplet<T>
+    slt::Triplet<float> triplets[] = {
+        {0, 0, -5.0f},
+        {1, 1, -10.0f}
+    };
+
+    slt::SparseCOOMatrix<float> sparse(2, 2, triplets, 2);
+
+    auto result = dense + sparse;
+
+    EXPECT_FLOAT_EQ(result(0, 0), 5.0f);   // 10 - 5
+    EXPECT_FLOAT_EQ(result(0, 1), 20.0f);  // unchanged
+    EXPECT_FLOAT_EQ(result(1, 0), 30.0f);  // unchanged
+    EXPECT_FLOAT_EQ(result(1, 1), 30.0f);  // 40 - 10
+}
 // ================================================================================ 
 // ================================================================================
 

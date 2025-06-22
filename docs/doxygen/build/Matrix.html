@@ -1025,7 +1025,7 @@ via <code class="docutils literal notranslate"><span class="pre">set()</span></c
 <h4>begin()<a class="headerlink" href="#begin" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt11DenseMatrix5beginEv">
-<span id="_CPPv3NK3slt11DenseMatrix5beginEv"></span><span id="_CPPv2NK3slt11DenseMatrix5beginEv"></span><span id="slt::DenseMatrix::beginC"></span><span class="target" id="classslt_1_1DenseMatrix_1ae33d62d5f0f6f2164b5b16de735c9d19"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt11DenseMatrix5beginEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3NK3slt11DenseMatrix5beginEv"></span><span id="_CPPv2NK3slt11DenseMatrix5beginEv"></span><span id="slt::DenseMatrix::beginC"></span><span class="target" id="classslt_1_1DenseMatrix_1a5a34208108b9b596d1c98b0e813e17bd"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt11DenseMatrix5beginEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Returns an iterator to the beginning of the data array. </p>
 <p>This allows iteration over all elements of the dense matrix in row-major order, using range-based for loops or STL algorithms.</p>
 <p>
@@ -1045,12 +1045,30 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 </dl>
 </dd></dl>
 
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt11DenseMatrix5beginEv">
+<span id="_CPPv3N3slt11DenseMatrix5beginEv"></span><span id="_CPPv2N3slt11DenseMatrix5beginEv"></span><span id="slt::DenseMatrix::begin"></span><span class="target" id="classslt_1_1DenseMatrix_1a6f2335d833630c409e9cf0ea2f6e4a8e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt11DenseMatrix5beginEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a mutable pointer to the beginning of matrix data. </p>
+<p>This overload allows modification of the matrix contents. It is useful for optimized operations such as SIMD accelerated copy, assignment, or transformations.</p>
+<p>Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="k">auto</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span>
+<span class="n">ptr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">42.0f</span><span class="p">;</span><span class="w">  </span><span class="c1">// modifies element (0,0)</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer to the first element (float* or double* depending on T) </p>
+</dd>
+</dl>
+</dd></dl>
+
 </section>
 <section id="end">
 <h4>end()<a class="headerlink" href="#end" title="Link to this heading"></a></h4>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt11DenseMatrix3endEv">
-<span id="_CPPv3NK3slt11DenseMatrix3endEv"></span><span id="_CPPv2NK3slt11DenseMatrix3endEv"></span><span id="slt::DenseMatrix::endC"></span><span class="target" id="classslt_1_1DenseMatrix_1af0945532d1c4c45bae1a0e2a65bc6dac"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt11DenseMatrix3endEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3NK3slt11DenseMatrix3endEv"></span><span id="_CPPv2NK3slt11DenseMatrix3endEv"></span><span id="slt::DenseMatrix::endC"></span><span class="target" id="classslt_1_1DenseMatrix_1a96d2c4d3a2ee12d324b3e8a2a6db88e0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt11DenseMatrix3endEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Returns an iterator to one-past-the-end of the data array. </p>
 <p>Used for iteration over the dense matrix in row-major order using range-based for loops or STL algorithms.</p>
 <p>
@@ -1066,6 +1084,23 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Iterator to one past the last value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt11DenseMatrix3endEv">
+<span id="_CPPv3N3slt11DenseMatrix3endEv"></span><span id="_CPPv2N3slt11DenseMatrix3endEv"></span><span id="slt::DenseMatrix::end"></span><span class="target" id="classslt_1_1DenseMatrix_1a085b8c5a8abfec6aa582ea08467b6bdd"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt11DenseMatrix3endEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a mutable pointer to the end of matrix data. </p>
+<p>This overload allows modification of matrix contents in algorithms that operate over a range (e.g., std::fill, std::copy, SIMD-accelerated loops).</p>
+<p>Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">fill</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="mf">3.14f</span><span class="p">);</span><span class="w">  </span><span class="c1">// fills all elements with 3.14</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Pointer one-past-the-last element (float* or double* depending on T) </p>
 </dd>
 </dl>
 </dd></dl>
@@ -1473,7 +1508,7 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 <li><p>Element-wise arithmetic with other <a class="reference internal" href="#classslt_1_1SparseCOOMatrix"><span class="std std-ref">SparseCOOMatrix</span></a> or <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a></p></li>
 <li><p>Scalar operations (+, -, *)</p></li>
 <li><p>Conversion to <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a></p></li>
-<li><p>Iteration over stored triplets (<code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1a18b33a42b1cfc9f44c22f8093936da75"><span class="std std-ref"><span class="pre">begin()</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1addf50368708419f7a86e00d7591a235a"><span class="std std-ref"><span class="pre">end()</span></span></a></code>)</p></li>
+<li><p>Iteration over stored triplets (<code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1a40f66827dc6598f748825018494bd37b"><span class="std std-ref"><span class="pre">begin()</span></span></a></code>, <code class="docutils literal notranslate"><a class="reference internal" href="#classslt_1_1SparseCOOMatrix_1a1715d2dda083ee4f83f0ffe0fab7005c"><span class="std std-ref"><span class="pre">end()</span></span></a></code>)</p></li>
 </ul>
 </p>
 <p>Template parameter T must be either float or double.</p>
@@ -1545,6 +1580,28 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 <section id="id11">
 <h4>begin()<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
 <dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt15SparseCOOMatrix5beginEv">
+<span id="_CPPv3N3slt15SparseCOOMatrix5beginEv"></span><span id="_CPPv2N3slt15SparseCOOMatrix5beginEv"></span><span id="slt::SparseCOOMatrix::begin"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a40f66827dc6598f748825018494bd37b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt15SparseCOOMatrix5beginEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a mutable iterator to the beginning of the triplet vector. </p>
+<p>This overload allows modification of the stored Triplet&lt;T&gt; objects — for example, to adjust values in-place, or to apply bulk transformations.</p>
+<p>Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">finalize</span><span class="p">();</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">begin</span><span class="p">();</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">end</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">it</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">value</span><span class="w"> </span><span class="o">*=</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">;</span><span class="w">  </span><span class="c1">// scale all non-zero values</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator to the first Triplet&lt;T&gt; in the matrix. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix5beginEv">
 <span id="_CPPv3NK3slt15SparseCOOMatrix5beginEv"></span><span id="_CPPv2NK3slt15SparseCOOMatrix5beginEv"></span><span id="slt::SparseCOOMatrix::beginC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a18b33a42b1cfc9f44c22f8093936da75"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">begin</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix5beginEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Returns an iterator to the beginning of the triplet vector. </p>
@@ -1570,6 +1627,29 @@ Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><spa
 </section>
 <section id="id12">
 <h4>end()<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt15SparseCOOMatrix3endEv">
+<span id="_CPPv3N3slt15SparseCOOMatrix3endEv"></span><span id="_CPPv2N3slt15SparseCOOMatrix3endEv"></span><span id="slt::SparseCOOMatrix::end"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1a1715d2dda083ee4f83f0ffe0fab7005c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt15SparseCOOMatrix3endEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Returns a mutable iterator to the end of the triplet vector. </p>
+<p>This overload allows modification of the stored Triplet&lt;T&gt; objects in algorithms operating on ranges (e.g., std::for_each, std::transform).</p>
+<p>Example: <div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">finalize</span><span class="p">();</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">for_each</span><span class="p">(</span><span class="n">mat</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span><span class="w"> </span><span class="p">[](</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">t</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">t</span><span class="p">.</span><span class="n">value</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">;</span><span class="w">  </span><span class="c1">// increment all non-zero values</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterator one-past-the-last Triplet&lt;T&gt; in the matrix. </p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK3slt15SparseCOOMatrix3endEv">
 <span id="_CPPv3NK3slt15SparseCOOMatrix3endEv"></span><span id="_CPPv2NK3slt15SparseCOOMatrix3endEv"></span><span id="slt::SparseCOOMatrix::endC"></span><span class="target" id="classslt_1_1SparseCOOMatrix_1addf50368708419f7a86e00d7591a235a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">auto</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">end</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK3slt15SparseCOOMatrix3endEv" title="Link to this definition"></a><br /></dt>

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['update_64',['update',['../classslt_1_1DenseMatrix.html#aa051172f51cb694e62d2ac92212e2b42',1,'slt::DenseMatrix::update()'],['../classslt_1_1SparseCOOMatrix.html#a30d1204d80d8b51f20217c5af322a2da',1,'slt::SparseCOOMatrix::update()']]]
+  ['value_65',['value',['../structslt_1_1Triplet.html#aa32038f0c43f5e09bd63be9ae0378169',1,'slt::Triplet']]]
 ];

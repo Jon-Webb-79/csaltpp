@@ -1288,7 +1288,7 @@
          *
          * @throws std::invalid_argument if n is zero.
          */
-        explicit DenseMatrix(std::size_t n) : data(n * n, 0), init(n * n, 0), rows_(n), cols_(n) {
+        explicit DenseMatrix(std::size_t n) : data(n * n, 0), init(n * n, 1), rows_(n), cols_(n) {
             if (n == 0)
                 throw std::invalid_argument("Size of identity matrix must be greater than zero");
 
@@ -1979,45 +1979,6 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Prints the contents of the matrix to the given output stream.
-         *
-         * Displays the matrix in a human-readable 2D format. Each element is printed
-         * with fixed width spacing for readability. The default stream is `std::cout`, 
-         * but any `std::ostream` can be passed (e.g., `std::ostringstream` for testing).
-         *
-         * Only initialized elements are printed. Uninitialized elements accessed through
-         * this method may trigger runtime exceptions if bounds or initialization are violated.
-         *
-         * @param os The output stream to print to (defaults to `std::cout`)
-         *
-         * @code
-         * slt::DenseMatrix<int> mat(2, 3);
-         * mat.set(0, 0, 1);
-         * mat.set(0, 1, 2);
-         * mat.set(0, 2, 3);
-         * mat.set(1, 0, 4);
-         * mat.set(1, 1, 5);
-         * mat.set(1, 2, 6);
-         * mat.print();
-         * @endcode
-         *
-         * Output:
-         * @verbatim
-         *          1          2          3 
-         *          4          5          6 
-         * @endverbatim
-         */
-        void print(std::ostream& os = std::cout) const {
-            for (std::size_t i = 0; i < rows_; ++i) {
-                for (std::size_t j = 0; j < cols_; ++j) {
-                    os << std::setw(10) << operator()(i, j) << " ";
-                }
-                os << '\n';
-            }
-        }
-// -------------------------------------------------------------------------------- 
-
-        /**
          * @brief Checks whether a specific matrix element has been initialized.
          *
          * Returns `true` if the element at the specified row and column has been initialized
@@ -2046,14 +2007,51 @@
     /**
      * @brief Stream output operator for DenseMatrix.
      *
-     * @tparam T Matrix element type.
-     * @param os Output stream.
-     * @param mat Matrix to print.
-     * @return Output stream.
+     * Prints the contents of the DenseMatrix<T> in row-major order.
+     * 
+     * - Initialized values are printed numerically.
+     * - Uninitialized entries are shown as "." to visually indicate unset positions.
+     *
+     * Example output:
+     * ```
+     * 1.0 . .
+     * . . 2.5
+     * ```
+     *
+     * Useful for debugging and inspection.
+     *
+     * @tparam T Element type (float or double).
+     * @param os Output stream (e.g. std::cout)
+     * @param mat DenseMatrix<T> to print
+     * @return Reference to the output stream
+     *
+     * Example usage:
+     * @code
+     * DenseMatrix<float> mat(2, 2);
+     * mat.set(0, 0, 1.0f);
+     * mat.set(1, 1, 2.0f);
+     *
+     * std::cout << mat;
+     * // Output:
+     * // 1.0 .
+     * // .   2.0
+     * @endcode
      */
     template<typename T>
     std::ostream& operator<<(std::ostream& os, const DenseMatrix<T>& mat) {
-        mat.print(os);
+        for (std::size_t r = 0; r < mat.rows(); ++r) {
+            for (std::size_t c = 0; c < mat.cols(); ++c) {
+                if (mat.is_initialized(r, c)) {
+                    os << mat(r, c);
+                } else {
+                    os << ".";
+                }
+
+                if (c != mat.cols() - 1)
+                    os << " ";  // spacing between columns
+            }
+            os << "\n";  // new row
+        }
         return os;
     }
 // -------------------------------------------------------------------------------- 
@@ -3818,7 +3816,37 @@
                 }
             }
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Output stream operator for printing a SparseCOOMatrix.
+         *
+         * Prints the matrix in triplet form:
+         * (row, col) = value
+         *
+         * Example output:
+         * @code
+         * SparseCOOMatrix<float> (3 x 3), nonzeros = 2
+         * (0, 0) = 1.0
+         * (2, 1) = 5.0
+         * @endcode
+         *
+         * @tparam T The matrix element type (float or double)
+         * @param os The output stream (std::ostream)
+         * @param mat The SparseCOOMatrix to print
+         * @return std::ostream& for chaining
+         */
+        friend std::ostream& operator<<(std::ostream& os, const SparseCOOMatrix<T>& mat) {
+            os << "SparseCOOMatrix<" << (std::is_same_v<T, float> ? "float" : "double")
+               << "> (" << mat.rows() << " x " << mat.cols() << "), nonzeros = "
+               << mat.nonzero_count() << "\n";
+
+            for (const auto& t : mat) {
+                os << "(" << t.row << ", " << t.col << ") = " << t.value << "\n";
+            }
+
+            return os;
+        }
     };
 // // ================================================================================ 
 // // ================================================================================ 

@@ -245,6 +245,36 @@ operator/
 .. doxygenfunction:: slt::DenseMatrix::operator/(T scalar) const 
    :project: csalt++
 
+operator<<
+~~~~~~~~~~
+
+.. cpp:function:: template <typename T> std::ostream& operator<<(std::ostream& os, const slt::DenseMatrix<T>& mat)
+
+   Stream output operator for ``DenseMatrix<T>``.
+
+   Prints the contents of the matrix in row-major order:
+
+   - Initialized values are printed numerically.
+   - Uninitialized values are printed as "." (dot).
+
+   :tparam T: Element type (``float`` or ``double``).
+   :param os: Output stream (e.g., ``std::cout``).
+   :param mat: Dense matrix to print.
+   :returns: Reference to the output stream.
+
+   **Example**::
+
+      slt::DenseMatrix<float> mat(2, 2);
+      mat.set(0, 0, 1.0f);
+      mat.set(1, 1, 2.0f);
+
+      std::cout << mat;
+
+      // Output:
+      // 1.0 .
+      // .   2.0
+
+
 Data Access Methods 
 -------------------
 
@@ -345,12 +375,6 @@ clone()
 ~~~~~~~
 
 .. doxygenfunction:: slt::DenseMatrix::clone
-   :project: csalt++
-
-print()
-~~~~~~~
-
-.. doxygenfunction:: slt::DenseMatrix::print
    :project: csalt++
 
 SparseCOOMatrix<T>
@@ -783,6 +807,44 @@ operator=
 
       assert(A.nonzero_count() == 0);  // A is now empty
       assert(B(0, 0) == 1.0f);
+
+operator<<
+~~~~~~~~~~
+
+.. cpp:function:: std::ostream& operator<<(std::ostream& os, const slt::SparseCOOMatrix<T>& mat)
+
+   Outputs the contents of the ``SparseCOOMatrix<T>`` in **triplet format**:
+
+   .. code-block:: text
+
+      SparseCOOMatrix<float> (rows x cols), nonzeros = N
+      (row, col) = value
+      (row, col) = value
+      ...
+
+   Each stored triplet is printed on a separate line.
+
+   - In ``fast_set`` mode, the output order is insertion order.  
+   - In finalized mode, the triplets are sorted by (row, col).
+
+   :param os: The output stream (usually ``std::cout`` or a file stream)
+   :param mat: The sparse COO matrix to print
+   :return: A reference to the output stream (allows chaining)
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> mat(3, 3);
+      mat.set(0, 0, 1.0f);
+      mat.set(2, 1, 5.0f);
+      mat.finalize();
+
+      std::cout << mat << std::endl;
+
+   **Example output**::
+
+      SparseCOOMatrix<float> (3 x 3), nonzeros = 2
+      (0, 0) = 1.0
+      (2, 1) = 5.0
 
 Data Access Methods 
 -------------------

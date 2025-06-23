@@ -1780,7 +1780,6 @@ TEST(SparseCOOMatrixRemoveTest, RemoveNonExistingElementNoThrow) {
 
 TEST(SparseCOOMatrixRemoveTest, ThrowsIfOutOfBounds) {
     slt::SparseCOOMatrix<float> mat(2, 2);
-    mat.set(0, 0, 1.0f);
 
     // Out of range — should throw
     EXPECT_THROW(mat.remove(2, 2), std::out_of_range);

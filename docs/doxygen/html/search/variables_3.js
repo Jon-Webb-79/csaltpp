@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['init_130',['init',['../classslt_1_1DenseMatrix.html#ae860a596275b6746c9c8e4a39a8671f5',1,'slt::DenseMatrix']]]
+  ['init_129',['init',['../classslt_1_1DenseMatrix.html#ae860a596275b6746c9c8e4a39a8671f5',1,'slt::DenseMatrix']]]
 ];

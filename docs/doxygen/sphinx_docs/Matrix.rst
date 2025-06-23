@@ -948,7 +948,7 @@ transpose()
 inverse()
 ~~~~~~~~~
 
-.. cpp:function:: slt::DenseMatrix<T> slt::SparseCOOMatrix<T>::inverse() const
+.. cpp:function:: slt::DenseMatrix slt::SparseCOOMatrix::inverse() const
 
    Computes the matrix inverse of this SparseCOOMatrix as a dense matrix.
 
@@ -974,6 +974,34 @@ inverse()
       });
 
       slt::DenseMatrix<float> A_inv = A.inverse();
+
+remove()
+~~~~~~~~
+
+.. cpp:function:: void slt::SparseCOOMatrix::remove(std::size_t r, std::size_t c)
+
+   Removes an element at the specified ``(row, column)`` position from the sparse matrix.
+
+   If an entry with matching ``(row, col)`` exists, it is erased from the internal triplet vector.  
+   If no such entry exists, the method does nothing — it is safe to call even if the entry is missing.
+
+   In ``fast_set`` mode (unsorted triplet vector), this performs a linear search ``O(n)``.  
+   In finalized mode (``fast_set == false``), this performs a binary search ``O(log n)``.
+
+   :param r: Row index of the element to remove.
+   :param c: Column index of the element to remove.
+   :raises std::out_of_range: If the row or column index is invalid (out of matrix bounds).
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> mat(3, 3);
+      mat.set(1, 2, 5.0f);
+      mat.finalize();
+
+      mat.remove(1, 2);  // (1,2) no longer exists
+
+      EXPECT_THROW(mat.get(1, 2), std::runtime_error);
+
 
 .. _sparsecsr_matrix:
 

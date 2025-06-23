@@ -3763,6 +3763,62 @@
 
             return inv;
         }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Removes an element at the specified (row, column) position from the sparse matrix.
+         *
+         * If an entry with matching (row, col) exists, it is erased from the internal triplet vector.
+         * If no such entry exists, the method does nothing — it is safe to call even if the entry is missing.
+         *
+         * In `fast_set` mode (unsorted triplet vector), this performs a linear search (O(n)).
+         * In finalized mode (`fast_set == false`), this performs a binary search (O(log n)) 
+         * because the triplets are sorted in row-major order.
+         *
+         * This operation preserves the matrix dimensions. It only affects the stored non-zero elements.
+         *
+         * @param r Row index of the element to remove.
+         * @param c Column index of the element to remove.
+         *
+         * @throws std::out_of_range if the provided row or column index is invalid (out of matrix bounds).
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> mat(3, 3);
+         * mat.set(1, 2, 5.0f);
+         * mat.finalize();
+         * 
+         * mat.remove(1, 2);  // Now (1,2) no longer exists
+         * 
+         * EXPECT_THROW(mat.get(1, 2), std::runtime_error);  // Confirm removal
+         * @endcode
+         */ 
+        void remove(std::size_t r, std::size_t c) {
+            if (r >= rows_ || c >= cols_)
+                throw std::out_of_range("Index out of bounds");
+
+            Triplet<T> target(r, c, T{});
+
+            if (fast_set) {
+                // Linear search and erase
+                auto it = std::find_if(triplet.begin(), triplet.end(),
+                    [=](const Triplet<T>& t) {
+                        return t.row == r && t.col == c;
+                    });
+
+                if (it != triplet.end()) {
+                    triplet.erase(it);
+                }
+            } else {
+                // Binary search
+                auto it = std::lower_bound(triplet.begin(), triplet.end(), target);
+
+                if (it != triplet.end() && it->row == r && it->col == c) {
+                    triplet.erase(it);
+                }
+            }
+        }
+
     };
 // // ================================================================================ 
 // // ================================================================================ 

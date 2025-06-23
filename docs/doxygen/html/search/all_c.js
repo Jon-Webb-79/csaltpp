@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['remove_41',['remove',['../classslt_1_1DenseMatrix.html#ae55af06b38c452c75279bbfe4d0abaf4',1,'slt::DenseMatrix']]],
+  ['remove_41',['remove',['../classslt_1_1DenseMatrix.html#ae55af06b38c452c75279bbfe4d0abaf4',1,'slt::DenseMatrix::remove()'],['../classslt_1_1SparseCOOMatrix.html#a66ab63995e76bd2ca098072528106d59',1,'slt::SparseCOOMatrix::remove()']]],
   ['row_42',['row',['../structslt_1_1Triplet.html#a54d51fb159a1d4b02f763e6062ddf9bf',1,'slt::Triplet']]],
   ['rows_43',['rows',['../classslt_1_1MatrixBase.html#af5247088bf3743574e25430da458ff46',1,'slt::MatrixBase::rows()'],['../classslt_1_1DenseMatrix.html#ae6666df109b2705e298cae85028014b6',1,'slt::DenseMatrix::rows()'],['../classslt_1_1SparseCOOMatrix.html#aa8f0e3fdab670152566ce8353a9c42fa',1,'slt::SparseCOOMatrix::rows()']]],
   ['rows_5f_44',['rows_',['../classslt_1_1DenseMatrix.html#a1cee72c413fc6a704706569e9571243d',1,'slt::DenseMatrix::rows_()'],['../classslt_1_1SparseCOOMatrix.html#a82dc765141e8635009ff85e9f1c1b1f6',1,'slt::SparseCOOMatrix::rows_()']]]

@@ -1665,17 +1665,16 @@ TEST(SparseCOOMatrixInverseTest, InverseOfIdentityIsIdentity) {
     slt::SparseCOOMatrix<float> identity(N);
 
     auto inverse = identity.inverse();
-    inverse.print();
     // Check that the result is still identity
-    // for (std::size_t r = 0; r < N; ++r) {
-    //     for (std::size_t c = 0; c < N; ++c) {
-    //         if (r == c) {
-    //             EXPECT_FLOAT_EQ(inverse(r, c), 1.0f);
-    //         } else {
-    //             EXPECT_FLOAT_EQ(inverse(r, c), 0.0f);
-    //         }
-    //     }
-    // }
+    for (std::size_t r = 0; r < N; ++r) {
+        for (std::size_t c = 0; c < N; ++c) {
+            if (r == c) {
+                EXPECT_FLOAT_EQ(inverse(r, c), 1.0f);
+            } else {
+                EXPECT_FLOAT_EQ(inverse(r, c), 0.0f);
+            }
+        }
+    }
 }
 // -------------------------------------------------------------------------------- 
 
@@ -1729,6 +1728,64 @@ TEST(SparseCOOMatrixInverseTest, ThrowsOnSingularMatrix) {
     EXPECT_THROW({
         auto inv = singular.inverse();
     }, std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixRemoveTest, RemoveExistingElementFastSetTrue) {
+    slt::SparseCOOMatrix<float> mat(3, 3);
+    mat.set(0, 0, 1.0f);
+    mat.set(1, 1, 2.0f);
+    mat.set(2, 2, 3.0f);
+
+    // Remove an element while fast_set is still true
+    mat.remove(1, 1);
+
+    // Remaining elements should be accessible
+    EXPECT_FLOAT_EQ(mat.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(mat.get(2, 2), 3.0f);
+
+    // Removed element should throw
+    EXPECT_THROW(mat.get(1, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixRemoveTest, RemoveExistingElementFastSetFalse) {
+    slt::SparseCOOMatrix<float> mat(3, 3);
+    mat.set(0, 0, 1.0f);
+    mat.set(1, 1, 2.0f);
+    mat.set(2, 2, 3.0f);
+
+    mat.finalize();  // Now in fast_set == false (sorted mode)
+
+    mat.remove(1, 1);
+
+    EXPECT_FLOAT_EQ(mat.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(mat.get(2, 2), 3.0f);
+    EXPECT_THROW(mat.get(1, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixRemoveTest, RemoveNonExistingElementNoThrow) {
+    slt::SparseCOOMatrix<float> mat(3, 3);
+    mat.set(0, 0, 1.0f);
+    mat.finalize();
+
+    // Should NOT throw — missing element
+    EXPECT_NO_THROW(mat.remove(2, 2));
+
+    // Confirm original element is intact
+    EXPECT_FLOAT_EQ(mat.get(0, 0), 1.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixRemoveTest, ThrowsIfOutOfBounds) {
+    slt::SparseCOOMatrix<float> mat(2, 2);
+    mat.set(0, 0, 1.0f);
+
+    // Out of range — should throw
+    EXPECT_THROW(mat.remove(2, 2), std::out_of_range);
+    EXPECT_THROW(mat.remove(5, 0), std::out_of_range);
+    EXPECT_THROW(mat.remove(0, 5), std::out_of_range);
 }
 // ================================================================================
 // ================================================================================

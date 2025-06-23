@@ -1739,9 +1739,9 @@ $(function() {
 <div class="line">                <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Inverse is only defined for square matrices&quot;</span>);</div>
 <div class="line"> </div>
 <div class="line">            <span class="comment">// Step 1: Convert to dense</span></div>
-<div class="line">            DenseMatrix&lt;T&gt; dense(<a class="code" href="classslt_1_1SparseCOOMatrix.html#a82dc765141e8635009ff85e9f1c1b1f6">rows_</a>, <a class="code" href="classslt_1_1SparseCOOMatrix.html#a1d5ba6c9996a3b093529cc4f135079d5">cols_</a>);</div>
+<div class="line">            DenseMatrix&lt;T&gt; dense(<a class="code" href="classslt_1_1SparseCOOMatrix.html#a82dc765141e8635009ff85e9f1c1b1f6">rows_</a>, <a class="code" href="classslt_1_1SparseCOOMatrix.html#a1d5ba6c9996a3b093529cc4f135079d5">cols_</a>, 0);</div>
 <div class="line">            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>) {</div>
-<div class="line">                dense.set(t.row, t.col, t.value);</div>
+<div class="line">                dense.update(t.row, t.col, t.value);</div>
 <div class="line">            }</div>
 <div class="line"> </div>
 <div class="line">            <span class="comment">// Step 2: Invert</span></div>
@@ -1749,6 +1749,34 @@ $(function() {
 <div class="line"> </div>
 <div class="line">            <span class="keywordflow">return</span> inv;</div>
 <div class="line">        }</div>
+<div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"> </div>
+<div class="line">        <span class="keywordtype">void</span> <a name="a86"></a><a class="code" href="classslt_1_1SparseCOOMatrix.html#a66ab63995e76bd2ca098072528106d59">remove</a>(std::size_t r, std::size_t c) {</div>
+<div class="line">            <span class="keywordflow">if</span> (r &gt;= <a class="code" href="classslt_1_1SparseCOOMatrix.html#a82dc765141e8635009ff85e9f1c1b1f6">rows_</a> || c &gt;= <a class="code" href="classslt_1_1SparseCOOMatrix.html#a1d5ba6c9996a3b093529cc4f135079d5">cols_</a>)</div>
+<div class="line">                <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Index out of bounds&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">            Triplet&lt;T&gt; target(r, c, T{});</div>
+<div class="line"> </div>
+<div class="line">            <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCOOMatrix.html#ab890c296bec63f265a2c1cd167a88eec">fast_set</a>) {</div>
+<div class="line">                <span class="comment">// Linear search and erase</span></div>
+<div class="line">                <span class="keyword">auto</span> it = std::find_if(<a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.begin(), <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end(),</div>
+<div class="line">                    [=](<span class="keyword">const</span> Triplet&lt;T&gt;&amp; t) {</div>
+<div class="line">                        return t.row == r &amp;&amp; t.col == c;</div>
+<div class="line">                    });</div>
+<div class="line"> </div>
+<div class="line">                <span class="keywordflow">if</span> (it != <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end()) {</div>
+<div class="line">                    <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.erase(it);</div>
+<div class="line">                }</div>
+<div class="line">            } <span class="keywordflow">else</span> {</div>
+<div class="line">                <span class="comment">// Binary search</span></div>
+<div class="line">                <span class="keyword">auto</span> it = std::lower_bound(<a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.begin(), <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end(), target);</div>
+<div class="line"> </div>
+<div class="line">                <span class="keywordflow">if</span> (it != <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end() &amp;&amp; it-&gt;row == r &amp;&amp; it-&gt;col == c) {</div>
+<div class="line">                    <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.erase(it);</div>
+<div class="line">                }</div>
+<div class="line">            }</div>
+<div class="line">        }</div>
+<div class="line"> </div>
 <div class="line">    };</div>
 <div class="line"><span class="comment">// // ================================================================================ </span></div>
 <div class="line"><span class="comment">// // ================================================================================ </span></div>
@@ -1955,6 +1983,7 @@ $(function() {
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a532cedb759d6e7e633c4a3ad84f17c69"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a532cedb759d6e7e633c4a3ad84f17c69">slt::SparseCOOMatrix::clone</a></div><div class="ttdeci">std::unique_ptr&lt; MatrixBase&lt; T &gt; &gt; clone() const override</div><div class="ttdoc">Creates a polymorphic deep copy of this matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3377</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a562d500b4202fbc2afb7123571ac6d60"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a562d500b4202fbc2afb7123571ac6d60">slt::SparseCOOMatrix::operator*</a></div><div class="ttdeci">SparseCOOMatrix operator*(const SparseCOOMatrix &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3196</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a5daf5e8c69cd9f68f468cd41e06cd45e"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a5daf5e8c69cd9f68f468cd41e06cd45e">slt::SparseCOOMatrix::nonzero_count</a></div><div class="ttdeci">std::size_t nonzero_count() const override</div><div class="ttdoc">Returns the number of non-zero elements stored in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2637</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a66ab63995e76bd2ca098072528106d59"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a66ab63995e76bd2ca098072528106d59">slt::SparseCOOMatrix::remove</a></div><div class="ttdeci">void remove(std::size_t r, std::size_t c)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3796</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a67a0f345fd85cdcc87de20a4a20554fd"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a67a0f345fd85cdcc87de20a4a20554fd">slt::SparseCOOMatrix::operator/</a></div><div class="ttdeci">SparseCOOMatrix operator/(T scalar) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3272</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8060856161b5989ab2f30b87d8d5bf71"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71">slt::SparseCOOMatrix::get</a></div><div class="ttdeci">T get(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Retrieves the value at the specified matrix location.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3346</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8066b8bab1b1db44570b043591547447"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8066b8bab1b1db44570b043591547447">slt::SparseCOOMatrix::operator=</a></div><div class="ttdeci">SparseCOOMatrix&lt; T &gt; &amp; operator=(const SparseCOOMatrix&lt; T &gt; &amp;other)</div><div class="ttdoc">Deep copy assignment operator.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2986</div></div>

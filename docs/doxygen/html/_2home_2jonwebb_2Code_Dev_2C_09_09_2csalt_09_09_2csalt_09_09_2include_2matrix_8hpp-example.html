@@ -1719,6 +1719,20 @@ $(function() {
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
 <div class="line">        <span class="keyword">auto</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html#addf50368708419f7a86e00d7591a235a">end</a>() { <span class="keywordflow">return</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end(); }</div>
+<div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"> </div>
+<div class="line">        <span class="keywordtype">void</span> <a name="a84"></a><a class="code" href="classslt_1_1SparseCOOMatrix.html#acf3f30d8c383bf4bd144338dbd6ea974">transpose</a>() {</div>
+<div class="line">            std::swap(<a class="code" href="classslt_1_1SparseCOOMatrix.html#a82dc765141e8635009ff85e9f1c1b1f6">rows_</a>, <a class="code" href="classslt_1_1SparseCOOMatrix.html#a1d5ba6c9996a3b093529cc4f135079d5">cols_</a>);</div>
+<div class="line"> </div>
+<div class="line">            <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; t : <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>) {</div>
+<div class="line">                std::swap(t.row, t.col);</div>
+<div class="line">            }</div>
+<div class="line"> </div>
+<div class="line">            <span class="keywordflow">if</span> (!<a class="code" href="classslt_1_1SparseCOOMatrix.html#ab890c296bec63f265a2c1cd167a88eec">fast_set</a>) {</div>
+<div class="line">                std::sort(<a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.begin(), <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end());</div>
+<div class="line">            }</div>
+<div class="line">        }</div>
+<div class="line"> </div>
 <div class="line">    };</div>
 <div class="line"><span class="comment">// // ================================================================================ </span></div>
 <div class="line"><span class="comment">// // ================================================================================ </span></div>
@@ -1936,6 +1950,7 @@ $(function() {
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_ab948cfcf480803e9469c735807d31d6e"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#ab948cfcf480803e9469c735807d31d6e">slt::SparseCOOMatrix::set</a></div><div class="ttdeci">void set(std::size_t r, std::size_t c, T value) override</div><div class="ttdoc">Sets the value at a specific matrix coordinate.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3415</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_abb078adcd4c95de5d7bddbe438a06316"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#abb078adcd4c95de5d7bddbe438a06316">slt::SparseCOOMatrix::operator()</a></div><div class="ttdeci">T operator()(std::size_t r, std::size_t c) const</div><div class="ttdoc">Accesses a matrix element (read-only).</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2910</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_ac19d7e9ef6e0089973428a5873546a31"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#ac19d7e9ef6e0089973428a5873546a31">slt::SparseCOOMatrix::SparseCOOMatrix</a></div><div class="ttdeci">SparseCOOMatrix(std::size_t r, std::size_t c, std::size_t initial_capacity=16)</div><div class="ttdoc">Constructs an empty sparse COO matrix with specified dimensions.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2682</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_acf3f30d8c383bf4bd144338dbd6ea974"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#acf3f30d8c383bf4bd144338dbd6ea974">slt::SparseCOOMatrix::transpose</a></div><div class="ttdeci">void transpose()</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3702</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_adc0211d7a6ffae48b7e796d5f9dacd15"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#adc0211d7a6ffae48b7e796d5f9dacd15">slt::SparseCOOMatrix::size</a></div><div class="ttdeci">std::size_t size() const override</div><div class="ttdoc">The total size of the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2612</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_addf50368708419f7a86e00d7591a235a"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#addf50368708419f7a86e00d7591a235a">slt::SparseCOOMatrix::end</a></div><div class="ttdeci">auto end() const</div><div class="ttdoc">Returns an iterator to one-past-the-end of the triplet vector.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3657</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_af117588cc2e86c92783eb465bf87a2e9"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">slt::SparseCOOMatrix::triplet</a></div><div class="ttdeci">std::vector&lt; Triplet&lt; T &gt; &gt; triplet</div><div class="ttdoc">A vector of triplet objects.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2602</div></div>

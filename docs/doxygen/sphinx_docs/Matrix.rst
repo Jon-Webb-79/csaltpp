@@ -913,6 +913,38 @@ clone()
 .. doxygenfunction:: slt::SparseCOOMatrix::clone
    :project: csalt++
 
+transpose()
+~~~~~~~~~~~
+
+.. cpp:function:: void slt::SparseCOOMatrix::transpose()
+
+   Transposes the sparse matrix **in place**.
+
+   Swaps the row and column indices of each stored element and updates
+   the matrix dimensions:
+   
+   - New rows = old columns  
+   - New columns = old rows
+
+   If the matrix is in fast-insert mode (``fast_set == true``), the transpose
+   preserves fast-insert mode.
+
+   If the matrix is in retrieval-optimized mode (``fast_set == false``), the
+   triplet vector is re-sorted after the row/column swap.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> mat(2, 3, {
+          {0, 1, 5.0f},
+          {1, 2, 3.0f}
+      });
+
+      mat.transpose();
+
+      // Now mat has shape (3, 2)
+      // and mat.get(1, 0) == 5.0f
+      // and mat.get(2, 1) == 3.0f
+
 .. _sparsecsr_matrix:
 
 SparseCSRMatrix<T>

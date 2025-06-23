@@ -3678,6 +3678,39 @@
          * @return Iterator one-past-the-last Triplet<T> in the matrix.
          */
         auto end() { return triplet.end(); }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Transposes the sparse matrix in-place.
+         *
+         * Swaps the row and column indices of each stored triplet.
+         * After the transpose, the matrix shape becomes (cols, rows).
+         *
+         * If the matrix is finalized (`fast_set == false`), the triplet vector
+         * is re-sorted to maintain row-major order for efficient lookup.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> mat(2, 3, {
+         *     {0, 1, 1.0f},
+         *     {1, 2, 2.0f}
+         * });
+         * mat.transpose();
+         * // Now mat.rows() == 3, mat.cols() == 2
+         * @endcode
+         */
+        void transpose() {
+            std::swap(rows_, cols_);
+
+            for (auto& t : triplet) {
+                std::swap(t.row, t.col);
+            }
+
+            if (!fast_set) {
+                std::sort(triplet.begin(), triplet.end());
+            }
+        }
+
     };
 // // ================================================================================ 
 // // ================================================================================ 

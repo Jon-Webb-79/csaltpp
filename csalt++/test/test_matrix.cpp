@@ -1593,6 +1593,70 @@ TEST(SparseCOOMatrixTest, IdentityConstructor) {
         }
     }
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTransposeTest, BasicTranspose) {
+    // Original matrix (2x3):
+    // [0 5 0]
+    // [3 0 4]
+    slt::SparseCOOMatrix<float> mat(2, 3, {
+        {0, 1, 5.0f},
+        {1, 0, 3.0f},
+        {1, 2, 4.0f}
+    });
+
+    mat.transpose();
+
+    // New shape should be 3x2
+    EXPECT_EQ(mat.rows(), 3);
+    EXPECT_EQ(mat.cols(), 2);
+
+    // Check transposed positions
+    EXPECT_FLOAT_EQ(mat.get(1, 0), 5.0f);  // was (0,1)
+    EXPECT_FLOAT_EQ(mat.get(0, 1), 3.0f);  // was (1,0)
+    EXPECT_FLOAT_EQ(mat.get(2, 1), 4.0f);  // was (1,2)
+
+    // Unset positions throw
+    EXPECT_THROW(mat.get(0, 0), std::runtime_error);
+    EXPECT_THROW(mat.get(1, 1), std::runtime_error);
+    EXPECT_THROW(mat.get(2, 0), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTransposeTest, SquareMatrixTranspose) {
+    // 2x2 matrix:
+    // [1 2]
+    // [3 4]
+    slt::SparseCOOMatrix<float> mat(2, 2, {
+        {0, 0, 1.0f},
+        {0, 1, 2.0f},
+        {1, 0, 3.0f},
+        {1, 1, 4.0f}
+    });
+
+    mat.transpose();
+
+    // Shape unchanged
+    EXPECT_EQ(mat.rows(), 2);
+    EXPECT_EQ(mat.cols(), 2);
+
+    // All elements should now be transposed
+    EXPECT_FLOAT_EQ(mat.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(mat.get(1, 0), 2.0f);  // was (0,1)
+    EXPECT_FLOAT_EQ(mat.get(0, 1), 3.0f);  // was (1,0)
+    EXPECT_FLOAT_EQ(mat.get(1, 1), 4.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixTransposeTest, EmptyMatrixTranspose) {
+    slt::SparseCOOMatrix<float> mat(3, 4);
+
+    mat.transpose();
+
+    EXPECT_EQ(mat.rows(), 4);
+    EXPECT_EQ(mat.cols(), 3);
+    EXPECT_EQ(mat.nonzero_count(), 0);
+}
 // ================================================================================
 // ================================================================================
 // eof

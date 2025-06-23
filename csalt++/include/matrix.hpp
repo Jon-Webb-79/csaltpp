@@ -4256,6 +4256,91 @@
         // Reuse the function above — multiplication is commutative
         return dense * sparse;
     }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Performs sparse matrix multiplication: result = A * B.
+     *
+     * Multiplies two sparse COO matrices `A` and `B`, returning the result
+     * as a dense matrix. Internally, this uses a hash-based lookup to avoid
+     * unnecessary dense conversion, while preserving the sparsity advantage
+     * during computation.
+     *
+     * The algorithm performs:
+     * - For each row `i` in A:
+     *    - For each column `j` in B:
+     *       - Computes dot product of row `i` of A with column `j` of B
+     *       - Stores result in position (i, j)
+     *
+     * Sparse to dense multiplication is chosen for simplicity — the result
+     * is always returned as a full DenseMatrix.
+     *
+     * Memory-friendly: does not allocate temporary dense buffers for A or B.
+     *
+     * @note This implementation is not SIMD accelerated. For future SIMD,
+     * conversion to CSR/CSC would be needed.
+     *
+     * @tparam T Element type (float or double).
+     * @param A Left-hand operand (SparseCOOMatrix).
+     * @param B Right-hand operand (SparseCOOMatrix).
+     * @return DenseMatrix<T> result of A * B.
+     * @throws std::invalid_argument if dimensions are incompatible for multiplication.
+     *
+     * @example
+     * @code
+     * slt::SparseCOOMatrix<float> A(2, 3);
+     * slt::SparseCOOMatrix<float> B(3, 2);
+     * 
+     * A.set(0, 1, 4.0f);
+     * A.set(1, 2, 5.0f);
+     * 
+     * B.set(1, 0, 2.0f);
+     * B.set(2, 1, 3.0f);
+     * 
+     * auto C = mat_mul(A, B);
+     * 
+     * EXPECT_FLOAT_EQ(C(0, 0), 8.0f);  // 4 * 2
+     * EXPECT_FLOAT_EQ(C(1, 1), 15.0f); // 5 * 3
+     * @endcode
+     */
+    template<typename T>
+    DenseMatrix<T> mat_mul(const SparseCOOMatrix<T>& A, const SparseCOOMatrix<T>& B) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "mat_mul only supports float or double types.");
+
+        const std::size_t A_rows = A.rows();
+        const std::size_t A_cols = A.cols();
+        const std::size_t B_rows = B.rows();
+        const std::size_t B_cols = B.cols();
+
+        if (A_cols != B_rows) {
+            throw std::invalid_argument("Matrix dimensions are incompatible for multiplication.");
+        }
+
+        DenseMatrix<T> result(A_rows, B_cols);
+
+        // Build temporary map: for each (k,j) in B, map from k → (j,value)
+        std::unordered_map<std::size_t, std::vector<std::pair<std::size_t, T>>> B_map;
+        for (const auto& tB : B) {
+            B_map[tB.row].emplace_back(tB.col, tB.value);
+        }
+
+        // For each (i,k) in A, multiply against corresponding B[k,:]
+        for (const auto& tA : A) {
+            const std::size_t i = tA.row;
+            const std::size_t k = tA.col;
+            const T value_A = tA.value;
+
+            if (B_map.count(k)) {
+                for (const auto& [j, value_B] : B_map[k]) {
+                    T old_val = result.is_initialized(i, j) ? result(i, j) : T{};
+                    result.set(i, j, old_val + value_A * value_B);
+                }
+            }
+        }
+
+        return result;
+    }
 } // namespace slt
 // ================================================================================ 
 // ================================================================================ 

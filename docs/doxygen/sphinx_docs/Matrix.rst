@@ -1486,6 +1486,47 @@ DenseMatrix * DenseMatrix
       // C(0, 0) == 1*5 + 2*7 == 19
       // C(0, 1) == 1*6 + 2*8 == 22
 
+SparseCOOMatrix * SparseCOOMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template <typename T> DenseMatrix<T> slt::mat_mul(const SparseCOOMatrix<T>& A, const SparseCOOMatrix<T>& B)
+
+   Performs sparse matrix multiplication: result = ``A * B``.
+
+   Multiplies two sparse COO matrices ``A`` and ``B``, returning the result  
+   as a ``DenseMatrix<T>``. The function avoids unnecessary dense conversion  
+   and uses a hash-based lookup internally.
+
+   The algorithm computes the dot product of row ``i`` of ``A`` with column ``j`` of ``B``  
+   for all rows and columns in the result matrix.
+
+   The result is always returned as a full dense matrix, even if the original inputs are sparse.
+
+   .. note::
+      This implementation is not SIMD accelerated. Future optimization could use ``CSR`` or ``CSC``.
+
+   :tparam T: Element type (``float`` or ``double``).
+   :param A: Left-hand operand (SparseCOOMatrix).
+   :param B: Right-hand operand (SparseCOOMatrix).
+   :return: ``DenseMatrix<T>`` result of ``A * B``.
+   :throws std::invalid_argument: If dimensions are incompatible for multiplication.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 3);
+      slt::SparseCOOMatrix<float> B(3, 2);
+
+      A.set(0, 1, 4.0f);
+      A.set(1, 2, 5.0f);
+
+      B.set(1, 0, 2.0f);
+      B.set(2, 1, 3.0f);
+
+      auto C = slt::mat_mul(A, B);
+
+      EXPECT_FLOAT_EQ(C(0, 0), 8.0f);   // 4 * 2
+      EXPECT_FLOAT_EQ(C(1, 1), 15.0f);  // 5 * 3
+
 
 .. _triplet_class:
 

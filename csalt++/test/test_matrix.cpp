@@ -1786,6 +1786,83 @@ TEST(SparseCOOMatrixRemoveTest, ThrowsIfOutOfBounds) {
     EXPECT_THROW(mat.remove(5, 0), std::out_of_range);
     EXPECT_THROW(mat.remove(0, 5), std::out_of_range);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixMatMulTest, MultiplyWithIdentity) {
+    constexpr std::size_t N = 3;
+    slt::SparseCOOMatrix<float> A(N, N);
+    A.set(0, 0, 2.0f);
+    A.set(1, 1, 4.0f);
+    A.set(2, 2, 6.0f);
+
+    slt::SparseCOOMatrix<float> I(N);  // identity matrix constructor
+
+    auto C = slt::mat_mul(A, I);
+
+    for (std::size_t i = 0; i < N; ++i) {
+        for (std::size_t j = 0; j < N; ++j) {
+            if (i == j) {
+                EXPECT_FLOAT_EQ(C(i, j), A.get(i, j));
+            } else {
+                EXPECT_FLOAT_EQ(C(i, j), 0.0f);
+            }
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixMatMulTest, MultiplyRectangularSparseMatrices) {
+    // A: (2 x 3)
+    slt::SparseCOOMatrix<float> A(2, 3);
+    A.set(0, 1, 4.0f);
+    A.set(1, 2, 5.0f);
+
+    // B: (3 x 2)
+    slt::SparseCOOMatrix<float> B(3, 2);
+    B.set(1, 0, 2.0f);
+    B.set(2, 1, 3.0f);
+
+    auto C = slt::mat_mul(A, B);
+
+    ASSERT_EQ(C.rows(), 2);
+    ASSERT_EQ(C.cols(), 2);
+
+    // Expected:
+    // C(0, 0) = 4 * 2 = 8
+    // C(1, 1) = 5 * 3 = 15
+
+    EXPECT_FLOAT_EQ(C(0, 0), 8.0f);
+    EXPECT_FLOAT_EQ(C(0, 1), 0.0f);
+    EXPECT_FLOAT_EQ(C(1, 0), 0.0f);
+    EXPECT_FLOAT_EQ(C(1, 1), 15.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixMatMulTest, MultiplyWithZeroMatrix) {
+    slt::SparseCOOMatrix<float> A(2, 2);
+    A.set(0, 0, 3.0f);
+    A.set(1, 1, 5.0f);
+
+    slt::SparseCOOMatrix<float> Zero(2, 2);  // empty matrix
+
+    auto C = slt::mat_mul(A, Zero);
+
+    for (std::size_t r = 0; r < 2; ++r) {
+        for (std::size_t c = 0; c < 2; ++c) {
+            EXPECT_FLOAT_EQ(C(r, c), 0.0f);
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixMatMulTest, ThrowsOnDimensionMismatch) {
+    slt::SparseCOOMatrix<float> A(2, 3);
+    slt::SparseCOOMatrix<float> B(4, 2);  // incompatible
+
+    EXPECT_THROW({
+        auto C = slt::mat_mul(A, B);
+    }, std::invalid_argument);
+}
 // ================================================================================
 // ================================================================================
 // eof

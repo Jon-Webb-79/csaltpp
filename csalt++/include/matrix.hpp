@@ -3816,41 +3816,42 @@
                 }
             }
         }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Output stream operator for printing a SparseCOOMatrix.
-         *
-         * Prints the matrix in triplet form:
-         * (row, col) = value
-         *
-         * Example output:
-         * @code
-         * SparseCOOMatrix<float> (3 x 3), nonzeros = 2
-         * (0, 0) = 1.0
-         * (2, 1) = 5.0
-         * @endcode
-         *
-         * @tparam T The matrix element type (float or double)
-         * @param os The output stream (std::ostream)
-         * @param mat The SparseCOOMatrix to print
-         * @return std::ostream& for chaining
-         */
-        friend std::ostream& operator<<(std::ostream& os, const SparseCOOMatrix<T>& mat) {
-            os << "SparseCOOMatrix<" << (std::is_same_v<T, float> ? "float" : "double")
-               << "> (" << mat.rows() << " x " << mat.cols() << "), nonzeros = "
-               << mat.nonzero_count() << "\n";
-
-            for (const auto& t : mat) {
-                os << "(" << t.row << ", " << t.col << ") = " << t.value << "\n";
-            }
-
-            return os;
-        }
     };
 // // ================================================================================ 
 // // ================================================================================ 
 // SparseCOOMatrix friend functions 
+
+    /**
+     * @brief Output stream operator for printing a SparseCOOMatrix.
+     *
+     * Prints the matrix in triplet form:
+     * (row, col) = value
+     *
+     * Example output:
+     * @code
+     * SparseCOOMatrix<float> (3 x 3), nonzeros = 2
+     * (0, 0) = 1.0
+     * (2, 1) = 5.0
+     * @endcode
+     *
+     * @tparam T The matrix element type (float or double)
+     * @param os The output stream (std::ostream)
+     * @param mat The SparseCOOMatrix to print
+     * @return std::ostream& for chaining
+     */
+    template<typename T>
+    std::ostream& operator<<(std::ostream& os, const SparseCOOMatrix<T>& mat) {
+        os << "SparseCOOMatrix<" << (std::is_same_v<T, float> ? "float" : "double")
+           << "> (" << mat.rows() << " x " << mat.cols() << "), nonzeros = "
+           << mat.nonzero_count() << "\n";
+
+        for (const auto& t : mat) {
+            os << "(" << t.row << ", " << t.col << ") = " << t.value << "\n";
+        }
+
+        return os;
+    }
+// -------------------------------------------------------------------------------- 
 
     /**
      * @brief Adds a scalar to each non-zero element of a SparseCOOMatrix.

@@ -3710,7 +3710,59 @@
                 std::sort(triplet.begin(), triplet.end());
             }
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Computes the matrix inverse of this SparseCOOMatrix as a dense matrix.
+         *
+         * This method returns a `DenseMatrix<T>` containing the inverse of the sparse matrix.
+         * Internally, the sparse matrix is first converted to a dense format, and then
+         * a standard dense matrix inversion algorithm (such as Gauss-Jordan elimination or LU decomposition)
+         * is applied. The result is always a full dense matrix because in general the inverse
+         * of a sparse matrix is not sparse.
+         *
+         * The current SparseCOOMatrix must represent a square (N x N) matrix and must be invertible
+         * (i.e., full rank, non-singular). If the matrix is not square or is singular, this method
+         * will throw an exception.
+         *
+         * SIMD acceleration (where available) is performed during the dense inversion stage
+         * by the DenseMatrix<T>::inverse() method. No SIMD is used inside SparseCOOMatrix itself.
+         *
+         * @return A `DenseMatrix<T>` representing the inverse of this matrix.
+         * @throws std::invalid_argument if the matrix is not square.
+         * @throws std::runtime_error if the matrix is singular (non-invertible).
+         *
+         * @note The inverse of a sparse matrix is generally dense — expect memory usage to increase.
+         *       If you want to preserve sparsity, use a dedicated sparse solver instead.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> A(2, 2, {
+         *     {0, 0, 4.0f},
+         *     {0, 1, 7.0f},
+         *     {1, 0, 2.0f},
+         *     {1, 1, 6.0f}
+         * });
+         *
+         * slt::DenseMatrix<float> A_inv = A.inverse();
+         * // A_inv now contains the full dense inverse of A
+         * @endcode
+         */ 
+        DenseMatrix<T> inverse() const {
+            if (rows_ != cols_)
+                throw std::invalid_argument("Inverse is only defined for square matrices");
+
+            // Step 1: Convert to dense
+            DenseMatrix<T> dense(rows_, cols_, 0);
+            for (const auto& t : triplet) {
+                dense.update(t.row, t.col, t.value);
+            }
+
+            // Step 2: Invert
+            DenseMatrix<T> inv = dense.inverse();  // You already have a DenseMatrix::inverse()
+
+            return inv;
+        }
     };
 // // ================================================================================ 
 // // ================================================================================ 

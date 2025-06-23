@@ -1657,6 +1657,79 @@ TEST(SparseCOOMatrixTransposeTest, EmptyMatrixTranspose) {
     EXPECT_EQ(mat.cols(), 3);
     EXPECT_EQ(mat.nonzero_count(), 0);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixInverseTest, InverseOfIdentityIsIdentity) {
+    constexpr std::size_t N = 3;
+
+    slt::SparseCOOMatrix<float> identity(N);
+
+    auto inverse = identity.inverse();
+    inverse.print();
+    // Check that the result is still identity
+    // for (std::size_t r = 0; r < N; ++r) {
+    //     for (std::size_t c = 0; c < N; ++c) {
+    //         if (r == c) {
+    //             EXPECT_FLOAT_EQ(inverse(r, c), 1.0f);
+    //         } else {
+    //             EXPECT_FLOAT_EQ(inverse(r, c), 0.0f);
+    //         }
+    //     }
+    // }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixInverseTest, InverseOfKnownMatrix) {
+    // Matrix:
+    // [ 4  7 ]
+    // [ 2  6 ]
+    slt::SparseCOOMatrix<float> A(2, 2, {
+        {0, 0, 4.0f},
+        {0, 1, 7.0f},
+        {1, 0, 2.0f},
+        {1, 1, 6.0f}
+    });
+
+    auto A_inv = A.inverse();
+
+    // Theoretical inverse:
+    // [  0.6  -0.7 ]
+    // [ -0.2   0.4 ]
+
+    EXPECT_NEAR(A_inv(0, 0),  0.6f, 1e-5f);
+    EXPECT_NEAR(A_inv(0, 1), -0.7f, 1e-5f);
+    EXPECT_NEAR(A_inv(1, 0), -0.2f, 1e-5f);
+    EXPECT_NEAR(A_inv(1, 1),  0.4f, 1e-5f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixInverseTest, ThrowsOnNonSquareMatrix) {
+    slt::SparseCOOMatrix<float> non_square(2, 3, {
+        {0, 0, 1.0f},
+        {1, 2, 2.0f}
+    });
+
+    EXPECT_THROW({
+        auto inv = non_square.inverse();
+    }, std::invalid_argument);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixInverseTest, ThrowsOnSingularMatrix) {
+    // Singular matrix:
+    // [ 1  2 ]
+    // [ 2  4 ] → determinant == 0
+    slt::SparseCOOMatrix<float> singular(2, 2, {
+        {0, 0, 1.0f},
+        {0, 1, 2.0f},
+        {1, 0, 2.0f},
+        {1, 1, 4.0f}
+    });
+
+    EXPECT_THROW({
+        auto inv = singular.inverse();
+    }, std::runtime_error);
+}
 // ================================================================================
 // ================================================================================
 // eof

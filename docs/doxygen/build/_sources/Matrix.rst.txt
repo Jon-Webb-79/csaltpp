@@ -945,6 +945,36 @@ transpose()
       // and mat.get(1, 0) == 5.0f
       // and mat.get(2, 1) == 3.0f
 
+inverse()
+~~~~~~~~~
+
+.. cpp:function:: slt::DenseMatrix<T> slt::SparseCOOMatrix<T>::inverse() const
+
+   Computes the matrix inverse of this SparseCOOMatrix as a dense matrix.
+
+   This method returns a ``DenseMatrix<T>`` containing the inverse of the sparse matrix.  
+   Internally, the sparse matrix is first converted to a dense format, and then a dense matrix inversion  
+   algorithm (such as Gauss-Jordan or LU decomposition) is used.
+
+   The result is always dense, because in general, the inverse of a sparse matrix is not sparse.
+
+   :returns: DenseMatrix<T> containing the matrix inverse.
+   :raises: ``std::invalid_argument`` if the matrix is not square.  
+            ``std::runtime_error`` if the matrix is singular (non-invertible).
+
+   .. note:: The inverse of a sparse matrix is generally dense — expect higher memory usage.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 2, {
+          {0, 0, 4.0f},
+          {0, 1, 7.0f},
+          {1, 0, 2.0f},
+          {1, 1, 6.0f}
+      });
+
+      slt::DenseMatrix<float> A_inv = A.inverse();
+
 .. _sparsecsr_matrix:
 
 SparseCSRMatrix<T>

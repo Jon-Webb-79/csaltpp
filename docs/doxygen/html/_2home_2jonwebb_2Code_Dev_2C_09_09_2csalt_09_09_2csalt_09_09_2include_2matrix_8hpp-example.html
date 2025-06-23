@@ -1732,7 +1732,23 @@ $(function() {
 <div class="line">                std::sort(<a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.begin(), <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end());</div>
 <div class="line">            }</div>
 <div class="line">        }</div>
+<div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
+<div class="line">        DenseMatrix&lt;T&gt; <a name="a85"></a><a class="code" href="classslt_1_1SparseCOOMatrix.html#a119d19d588a1a2a60996a1dd959e9b6a">inverse</a>()<span class="keyword"> const </span>{</div>
+<div class="line">            <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCOOMatrix.html#a82dc765141e8635009ff85e9f1c1b1f6">rows_</a> != <a class="code" href="classslt_1_1SparseCOOMatrix.html#a1d5ba6c9996a3b093529cc4f135079d5">cols_</a>)</div>
+<div class="line">                <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Inverse is only defined for square matrices&quot;</span>);</div>
+<div class="line"> </div>
+<div class="line">            <span class="comment">// Step 1: Convert to dense</span></div>
+<div class="line">            DenseMatrix&lt;T&gt; dense(<a class="code" href="classslt_1_1SparseCOOMatrix.html#a82dc765141e8635009ff85e9f1c1b1f6">rows_</a>, <a class="code" href="classslt_1_1SparseCOOMatrix.html#a1d5ba6c9996a3b093529cc4f135079d5">cols_</a>);</div>
+<div class="line">            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>) {</div>
+<div class="line">                dense.set(t.row, t.col, t.value);</div>
+<div class="line">            }</div>
+<div class="line"> </div>
+<div class="line">            <span class="comment">// Step 2: Invert</span></div>
+<div class="line">            DenseMatrix&lt;T&gt; inv = dense.inverse();  <span class="comment">// You already have a DenseMatrix::inverse()</span></div>
+<div class="line"> </div>
+<div class="line">            <span class="keywordflow">return</span> inv;</div>
+<div class="line">        }</div>
 <div class="line">    };</div>
 <div class="line"><span class="comment">// // ================================================================================ </span></div>
 <div class="line"><span class="comment">// // ================================================================================ </span></div>
@@ -1930,6 +1946,7 @@ $(function() {
 <div class="ttc" id="aclassslt_1_1MatrixBase_html_acee40c97e44474a9619b808b63d1868b"><div class="ttname"><a href="classslt_1_1MatrixBase.html#acee40c97e44474a9619b808b63d1868b">slt::MatrixBase::cols</a></div><div class="ttdeci">virtual std::size_t cols() const =0</div><div class="ttdoc">Returns the number of columns in the matrix.</div></div>
 <div class="ttc" id="aclassslt_1_1MatrixBase_html_af5247088bf3743574e25430da458ff46"><div class="ttname"><a href="classslt_1_1MatrixBase.html#af5247088bf3743574e25430da458ff46">slt::MatrixBase::rows</a></div><div class="ttdeci">virtual std::size_t rows() const =0</div><div class="ttdoc">Returns the number of rows in the matrix.</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a0ed0440765b5f86cf842ae4b67b46621"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a0ed0440765b5f86cf842ae4b67b46621">slt::SparseCOOMatrix::set_fast</a></div><div class="ttdeci">bool set_fast() const</div><div class="ttdoc">Returns whether the matrix is in fast insertion mode.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3589</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a119d19d588a1a2a60996a1dd959e9b6a"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a119d19d588a1a2a60996a1dd959e9b6a">slt::SparseCOOMatrix::inverse</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; inverse() const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3751</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a18b33a42b1cfc9f44c22f8093936da75"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a18b33a42b1cfc9f44c22f8093936da75">slt::SparseCOOMatrix::begin</a></div><div class="ttdeci">auto begin() const</div><div class="ttdoc">Returns an iterator to the beginning of the triplet vector.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3612</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a1ccef3397e1eeb5c9a4a1e895ff25866"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a1ccef3397e1eeb5c9a4a1e895ff25866">slt::SparseCOOMatrix::cols</a></div><div class="ttdeci">std::size_t cols() const override</div><div class="ttdoc">Returns the number of columns in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3316</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a1d5ba6c9996a3b093529cc4f135079d5"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a1d5ba6c9996a3b093529cc4f135079d5">slt::SparseCOOMatrix::cols_</a></div><div class="ttdeci">std::size_t cols_</div><div class="ttdoc">Number of Matrix columns.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2601</div></div>

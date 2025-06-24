@@ -91,14 +91,14 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1MatrixBase.html">MatrixBase</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Abstract base class for matrix types.  <a href="classslt_1_1MatrixBase.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse Coordinate (COO) Matrix class.  <a href="classslt_1_1SparseCOOMatrix.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1DenseMatrix.html">DenseMatrix</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A dense matrix implementation supporting float or double values.  <a href="classslt_1_1DenseMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structslt_1_1Triplet.html">Triplet</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents a single non-zero entry in a sparse COO matrix.  <a href="structslt_1_1Triplet.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse Coordinate (COO) Matrix class.  <a href="classslt_1_1SparseCOOMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
@@ -436,26 +436,25 @@ template&lt;typename T , std::size_t N&gt; </div>
 </div><div class="memdoc">
 
 <p>Computes the squared Euclidean norm of an array. </p>
-<p>This internal helper function calculates the sum of squares of all elements in a vector. SIMD acceleration is used via <code><a class="el" href="structslt_1_1simd__ops.html">simd_ops</a>&lt;T&gt;</code> if supported. Typically used inside the <code><a class="el" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90" title="Computes the Euclidean magnitude (L2 norm) of a c-style array.">magnitude()</a></code> function.</p>
+<p>This internal helper function calculates the sum of squares of all elements in the input array. SIMD acceleration is used via <code><a class="el" href="structslt_1_1simd__ops.html">simd_ops</a>&lt;T&gt;</code> if supported. Typically used inside the <code><a class="el" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90" title="Computes the Euclidean magnitude (L2 norm) of a c-style array.">magnitude()</a></code> function.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>The numeric type of the elements (<code>float</code> or <code>double</code> only). </td></tr>
+    <tr><td class="paramname">N</td><td>The size of the array. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">data</td><td>Pointer to the input array. </td></tr>
-    <tr><td class="paramname">size</td><td>Number of elements in the array. </td></tr>
+    <tr><td class="paramname">arr</td><td>The input <code>std::array&lt;T, N&gt;</code> whose magnitude will be computed. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The sum of squared elements (i.e., squared magnitude).</dd></dl>
-<p>Example: </p><div class="fragment"><div class="line"><span class="comment">// Called internally by `magnitude()`, typically not used directly by users.</span></div>
-<div class="line">std::array&lt;float, 3&gt; v = {1.0f, 2.0f, 2.0f};</div>
+<p>Example: </p><div class="fragment"><div class="line">std::array&lt;float, 3&gt; v = {1.0f, 2.0f, 2.0f};</div>
 <div class="line"><span class="keywordtype">float</span> mag = <a class="code" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">magnitude</a>(v);</div>
 <div class="line">std::cout &lt;&lt; <span class="stringliteral">&quot;Squared magnitude: &quot;</span> &lt;&lt; mag &lt;&lt; std::endl;  <span class="comment">// Output: 9.0</span></div>
-<div class="ttc" id="anamespaceslt_html_a115fe8b809ef5875cd05967d33943e90"><div class="ttname"><a href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">slt::magnitude</a></div><div class="ttdeci">T magnitude(const T *data, std::size_t size)</div><div class="ttdoc">Computes the Euclidean magnitude (L2 norm) of a c-style array.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2345</div></div>
+<div class="ttc" id="anamespaceslt_html_a115fe8b809ef5875cd05967d33943e90"><div class="ttname"><a href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">slt::magnitude</a></div><div class="ttdeci">T magnitude(const T *data, std::size_t size)</div><div class="ttdoc">Computes the Euclidean magnitude (L2 norm) of a c-style array.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2351</div></div>
 </div><!-- fragment --> 
 </div>
 </div>
@@ -478,7 +477,7 @@ template&lt;typename T &gt; </div>
 </div><div class="memdoc">
 
 <p>Computes the Euclidean magnitude (L2 norm) of a vector. </p>
-<p>This function calculates the square root of the sum of squares of all elements in a vector. Internally, it uses SIMD acceleration (via <code><a class="el" href="structslt_1_1simd__ops.html">simd_ops</a></code>) when available. Supports <code>float</code> and <code>double</code> types, enforced by <code>static_assert</code>.</p>
+<p>This function calculates the square root of the sum of squares of all elements in the vector. Internally, it uses SIMD acceleration (via <code><a class="el" href="structslt_1_1simd__ops.html">simd_ops</a></code>) when available. Supports <code>float</code> and <code>double</code> types, enforced by <code>static_assert</code>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>The numeric type of the vector elements (<code>float</code> or <code>double</code> only). </td></tr>
@@ -487,14 +486,18 @@ template&lt;typename T &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">data</td><td>Pointer to the start of the array. </td></tr>
-    <tr><td class="paramname">size</td><td>Number of elements in the array. </td></tr>
+    <tr><td class="paramname">vec</td><td>The input <code>std::vector&lt;T&gt;</code> whose magnitude will be computed. </td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The Euclidean magnitude of the vector.</dd></dl>
-<p>int main() { std::vector&lt;double&gt; vec = {1.0, 2.0, 2.0}; double result = magnitude(vec.data()); std::cout &lt;&lt; "Magnitude: " &lt;&lt; result &lt;&lt; std::endl; // Output: 3.0 return 0; }  </p>
-
+<div class="fragment"><div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    std::vector&lt;double&gt; vec = {1.0, 2.0, 2.0};</div>
+<div class="line">    <span class="keywordtype">double</span> result = <a class="code" href="namespaceslt.html#a115fe8b809ef5875cd05967d33943e90">magnitude</a>(vec);</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Magnitude: &quot;</span> &lt;&lt; result &lt;&lt; std::endl;  <span class="comment">// Output: 3.0</span></div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a115fe8b809ef5875cd05967d33943e90"></a>
@@ -615,8 +618,8 @@ template&lt;typename T &gt; </div>
 <div class="line">C.print();  <span class="comment">// Output:</span></div>
 <div class="line">            <span class="comment">//      19      22</span></div>
 <div class="line">            <span class="comment">//      43      50</span></div>
-<div class="ttc" id="aclassslt_1_1DenseMatrix_html"><div class="ttname"><a href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a></div><div class="ttdoc">A dense matrix implementation supporting float or double values.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:814</div></div>
-<div class="ttc" id="anamespaceslt_html_a65e705fbd81f19d98c1fcf81ef098e2c"><div class="ttname"><a href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">slt::mat_mul</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; mat_mul(const DenseMatrix&lt; T &gt; &amp;A, const DenseMatrix&lt; T &gt; &amp;B)</div><div class="ttdoc">Perform standard matrix multiplication (A × B) for dense matrices.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2442</div></div>
+<div class="ttc" id="aclassslt_1_1DenseMatrix_html"><div class="ttname"><a href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a></div><div class="ttdoc">A dense matrix implementation supporting float or double values.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:820</div></div>
+<div class="ttc" id="anamespaceslt_html_a65e705fbd81f19d98c1fcf81ef098e2c"><div class="ttname"><a href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">slt::mat_mul</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; mat_mul(const DenseMatrix&lt; T &gt; &amp;A, const DenseMatrix&lt; T &gt; &amp;B)</div><div class="ttdoc">Perform standard matrix multiplication (A × B) for dense matrices.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2446</div></div>
 </div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a49">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 

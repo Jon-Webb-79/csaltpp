@@ -1961,7 +1961,6 @@ TEST(DenseMatrixFromSparseCOOTest, BasicConversion) {
     sparse.set(2, 2, -2.0f);
 
     slt::DenseMatrix<float> dense(sparse);
-    std::cout << dense << std::endl;
 
     // Check dimensions
     EXPECT_EQ(dense.rows(), 3);
@@ -2004,6 +2003,59 @@ TEST(DenseMatrixFromSparseCOOTest, AssignmentOperator) {
     EXPECT_FALSE(dense.is_initialized(0, 1));
     EXPECT_FALSE(dense.is_initialized(1, 0));
     EXPECT_FALSE(dense.is_initialized(0, 2));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixConversionTest, ConstructFromDenseMatrix) {
+    slt::DenseMatrix<float> dense({
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 0.0f, 0.0f},
+        {3.0f, 4.0f, 0.0f}
+    });
+    slt::SparseCOOMatrix<float> sparse(dense);
+    ASSERT_EQ(sparse.rows(), 3);
+    ASSERT_EQ(sparse.cols(), 3);
+    ASSERT_EQ(sparse.nonzero_count(), 9);
+
+    ASSERT_EQ(sparse(0, 0), 1.0f);
+    ASSERT_EQ(sparse(0, 1), 0.0f);
+    ASSERT_EQ(sparse(0, 2), 2.0f);
+    ASSERT_EQ(sparse(1, 0), 0.0f);
+    ASSERT_EQ(sparse(1, 1), 0.0f);
+    ASSERT_EQ(sparse(1, 2), 0.0f);
+    ASSERT_EQ(sparse(2, 0), 3.0f);
+    ASSERT_EQ(sparse(2, 1), 4.0f);
+    ASSERT_EQ(sparse(2, 2), 0.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixConversionTest, AssignFromDenseMatrix) {
+    slt::DenseMatrix<float> dense({
+        {5.0f, 0.0f},
+        {0.0f, 6.0f}
+    });
+
+    slt::SparseCOOMatrix<float> sparse(2, 2);  // Empty sparse matrix first
+    sparse = dense;
+
+    ASSERT_EQ(sparse.rows(), 2);
+    ASSERT_EQ(sparse.cols(), 2);
+    ASSERT_EQ(sparse.nonzero_count(), 4);
+    ASSERT_EQ(sparse(0, 0), 5.0f);
+    ASSERT_EQ(sparse(0, 1), 0.0f);
+    ASSERT_EQ(sparse(1, 0), 0.0f);
+    ASSERT_EQ(sparse(1, 1), 6.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixConversionTest, EmptyDenseMatrixProducesEmptySparse) {
+    slt::DenseMatrix<float> dense(2, 2);  // Uninitialized (all values = 0 or uninitialized)
+
+    slt::SparseCOOMatrix<float> sparse(dense);
+
+    ASSERT_EQ(sparse.rows(), 2);
+    ASSERT_EQ(sparse.cols(), 2);
+    ASSERT_EQ(sparse.nonzero_count(), 0);
 }
 // ================================================================================
 // ================================================================================

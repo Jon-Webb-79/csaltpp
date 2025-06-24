@@ -463,6 +463,33 @@ SparseCOOMatrix(std::size_t, std::size_t, std::size_t)
 .. doxygenfunction:: slt::SparseCOOMatrix::SparseCOOMatrix(std::size_t, std::size_t, std::size_t)
    :project: csalt++
 
+SparseCOOMatrix(DenseMatrix<T>)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: explicit slt::SparseCOOMatrix<T>::SparseCOOMatrix(const slt::DenseMatrix<T>& dense)
+
+   Constructs a sparse COO matrix from an existing dense matrix.
+
+   All initialized, non-zero elements of the dense matrix are copied into the sparse matrix.  
+   Uninitialized and exact-zero values are skipped. The result is automatically sorted  
+   (``fast_set = false``) for optimized access.
+
+   :param dense: The source DenseMatrix<T> to convert.
+
+   **Example**::
+
+      slt::DenseMatrix<float> dense({
+          {1.0f, 0.0f},
+          {0.0f, 2.5f}
+      });
+
+      slt::SparseCOOMatrix<float> sparse(dense);
+
+      EXPECT_EQ(sparse.nonzero_count(), 2);
+      EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
+      EXPECT_FLOAT_EQ(sparse.get(1, 1), 2.5f);
+
+
 std::vector<slt::Triplet<T>>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -856,6 +883,34 @@ operator=
 
       assert(A.nonzero_count() == 0);  // A is now empty
       assert(B(0, 0) == 1.0f);
+
+.. cpp:function:: slt::SparseCOOMatrix& slt::SparseCOOMatrix::operator=(const slt::DenseMatrix<T>& dense)
+
+   Assignment operator: replaces this ``SparseCOOMatrix<T>`` with the contents of a ``DenseMatrix<T>``.
+
+   All initialized and non-zero elements from the dense matrix are copied into this sparse matrix.
+   Zero and uninitialized values are skipped. Existing sparse data is cleared.
+
+   The sparse matrix will match the shape of the input dense matrix after assignment.
+   Triplets are sorted after assignment, and ``fast_set`` is set to ``false``.
+
+   :param dense: The ``DenseMatrix<T>`` to assign from.
+   :return: Reference to this ``SparseCOOMatrix<T>``.
+
+   **Example**::
+
+      slt::DenseMatrix<float> dense({
+          {1.0f, 0.0f},
+          {0.0f, 3.0f}
+      });
+
+      slt::SparseCOOMatrix<float> sparse(2, 2);
+      sparse = dense;
+
+      EXPECT_EQ(sparse.nonzero_count(), 2);
+      EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
+      EXPECT_FLOAT_EQ(sparse.get(1, 1), 3.0f);
+
 
 operator<<
 ~~~~~~~~~~

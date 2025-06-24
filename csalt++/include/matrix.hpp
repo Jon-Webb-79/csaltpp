@@ -2361,49 +2361,47 @@
      * @brief Computes the Euclidean magnitude (L2 norm) of a vector.
      *
      * This function calculates the square root of the sum of squares of all elements
-     * in a vector. Internally, it uses SIMD acceleration (via `simd_ops`) when available.
+     * in the vector. Internally, it uses SIMD acceleration (via `simd_ops`) when available.
      * Supports `float` and `double` types, enforced by `static_assert`.
      *
      * @tparam T The numeric type of the vector elements (`float` or `double` only).
-     * @param data Pointer to the start of the array.
-     * @param size Number of elements in the array.
+     * @param vec The input `std::vector<T>` whose magnitude will be computed.
      * @return The Euclidean magnitude of the vector.
      *
+     * @code
      * int main() {
      *     std::vector<double> vec = {1.0, 2.0, 2.0};
-     *     double result = magnitude(vec.data());
+     *     double result = magnitude(vec);
      *     std::cout << "Magnitude: " << result << std::endl;  // Output: 3.0
      *     return 0;
      * }
      * @endcode
      */
-
     template<typename T>
     T magnitude(const std::vector<T>& vec) {
         return magnitude(vec.data(), vec.size());
     }
 // -------------------------------------------------------------------------------- 
 
-    /**
-     * @brief Computes the squared Euclidean norm of an array
+       /**
+     * @brief Computes the squared Euclidean norm of an array.
      *
      * This internal helper function calculates the sum of squares of all elements
-     * in a vector. SIMD acceleration is used via `simd_ops<T>` if supported.
+     * in the input array. SIMD acceleration is used via `simd_ops<T>` if supported.
      * Typically used inside the `magnitude()` function.
      *
      * @tparam T The numeric type of the elements (`float` or `double` only).
-     * @param data Pointer to the input array.
-     * @param size Number of elements in the array.
+     * @tparam N The size of the array.
+     * @param arr The input `std::array<T, N>` whose magnitude will be computed.
      * @return The sum of squared elements (i.e., squared magnitude).
      *
      * Example:
      * @code
-     * // Called internally by `magnitude()`, typically not used directly by users.
      * std::array<float, 3> v = {1.0f, 2.0f, 2.0f};
      * float mag = magnitude(v);
      * std::cout << "Squared magnitude: " << mag << std::endl;  // Output: 9.0
      * @endcode
-     */
+     */ 
     template<typename T, std::size_t N>
     T magnitude(const std::array<T, N>& arr) {
         return magnitude(arr.data(), N);
@@ -2760,10 +2758,9 @@
          * }
          * @endcode
          *
-         * Output:
-         * mat(1, 2) = 2.5
-         * @endcode
-         */ 
+         * **Output:**  
+         * ``mat(1, 2) = 2.5``
+         */
         explicit SparseCOOMatrix(std::size_t r, std::size_t c, std::size_t initial_capacity = 16)
             : rows_(r), cols_(c) {
             triplet.reserve(initial_capacity);
@@ -2939,6 +2936,51 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Constructs a SparseCOOMatrix from a DenseMatrix<T>.
+         *
+         * This constructor creates a SparseCOOMatrix by copying all initialized and non-zero
+         * elements from the given DenseMatrix<T>. Elements in the dense matrix that are either
+         * uninitialized or exactly zero are omitted to preserve sparsity.
+         *
+         * The resulting matrix will have the same number of rows and columns as the input dense matrix.
+         * After construction, the internal triplet list is sorted in row-major order and
+         * `fast_set` is set to `false` for efficient retrieval.
+         *
+         * @param dense The input DenseMatrix<T> to convert.
+         *
+         * @example
+         * @code
+         * slt::DenseMatrix<float> dense({
+         *     {1.0f, 0.0f},
+         *     {0.0f, 2.5f}
+         * });
+         *
+         * slt::SparseCOOMatrix<float> sparse(dense);
+         *
+         * EXPECT_EQ(sparse.nonzero_count(), 2);
+         * EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
+         * EXPECT_FLOAT_EQ(sparse.get(1, 1), 2.5f);
+         * @endcode
+         */ 
+        explicit SparseCOOMatrix(const DenseMatrix<T>& dense)
+            : rows_(dense.rows()), cols_(dense.cols()), fast_set(false)
+        {
+            triplet.reserve(dense.size());  // Conservative guess, not all will be used
+
+            for (std::size_t r = 0; r < dense.rows(); ++r) {
+                for (std::size_t c = 0; c < dense.cols(); ++c) {
+                    if (dense.is_initialized(r, c)) {
+                        T value = dense(r, c);
+                        triplet.emplace_back(r, c, value);  // DO NOT SKIP zeros
+                    }
+                }
+            }
+
+            std::sort(triplet.begin(), triplet.end());
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Copy constructor for SparseCOOMatrix.
          *
          * Constructs a new SparseCOOMatrix as a deep copy of the provided matrix.
@@ -3075,6 +3117,58 @@
                 fast_set = other.fast_set;
                 triplet = other.triplet;
             }
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Assignment from DenseMatrix<T> to SparseCOOMatrix<T>.
+         *
+         * This assignment operator replaces the contents of the SparseCOOMatrix with
+         * all initialized and non-zero elements from the given DenseMatrix<T>.
+         *
+         * Previous sparse data is cleared. Elements in the dense matrix that are either
+         * uninitialized or exactly zero are skipped to maintain sparsity.
+         *
+         * The resulting sparse matrix will match the dimensions of the input dense matrix.
+         * The triplets are sorted after assignment and `fast_set` is set to `false`.
+         *
+         * @param dense The DenseMatrix<T> to assign from.
+         * @return Reference to this SparseCOOMatrix<T>.
+         *
+         * @example
+         * @code
+         * slt::DenseMatrix<float> dense({
+         *     {1.0f, 0.0f},
+         *     {0.0f, 3.0f}
+         * });
+         *
+         * slt::SparseCOOMatrix<float> sparse(2, 2);
+         * sparse = dense;
+         *
+         * EXPECT_EQ(sparse.nonzero_count(), 2);
+         * EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
+         * EXPECT_FLOAT_EQ(sparse.get(1, 1), 3.0f);
+         * @endcode
+         */
+        SparseCOOMatrix<T>& operator=(const DenseMatrix<T>& dense) {
+            rows_ = dense.rows();
+            cols_ = dense.cols();
+            fast_set = false;
+
+            triplet.clear();
+            triplet.reserve(dense.size());  // Conservative
+
+            for (std::size_t r = 0; r < dense.rows(); ++r) {
+                for (std::size_t c = 0; c < dense.cols(); ++c) {
+                    if (dense.is_initialized(r, c)) {
+                        T value = dense(r, c);
+                        triplet.emplace_back(r, c, value);
+                    }
+                }
+            }
+
+            std::sort(triplet.begin(), triplet.end());
             return *this;
         }
 // -------------------------------------------------------------------------------- 

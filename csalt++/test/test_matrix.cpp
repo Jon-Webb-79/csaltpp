@@ -1953,6 +1953,58 @@ TEST(DenseSparseMatMulTest, ThrowsOnSizeMismatch) {
         auto result = slt::mat_mul(A, B);
     }, std::invalid_argument);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixFromSparseCOOTest, BasicConversion) {
+    slt::SparseCOOMatrix<float> sparse(3, 3);
+    sparse.set(0, 1, 5.0f);
+    sparse.set(2, 2, -2.0f);
+
+    slt::DenseMatrix<float> dense(sparse);
+    std::cout << dense << std::endl;
+
+    // Check dimensions
+    EXPECT_EQ(dense.rows(), 3);
+    EXPECT_EQ(dense.cols(), 3);
+
+    // Check initialized values
+    EXPECT_TRUE(dense.is_initialized(0, 1));
+    EXPECT_FLOAT_EQ(dense(0, 1), 5.0f);
+
+    EXPECT_TRUE(dense.is_initialized(2, 2));
+    EXPECT_FLOAT_EQ(dense(2, 2), -2.0f);
+
+    // Check uninitialized positions
+    EXPECT_FALSE(dense.is_initialized(0, 0));
+    EXPECT_FALSE(dense.is_initialized(1, 1));
+    EXPECT_FALSE(dense.is_initialized(1, 2));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixFromSparseCOOTest, AssignmentOperator) {
+    slt::SparseCOOMatrix<float> sparse(2, 3);
+    sparse.set(0, 0, 10.0f);
+    sparse.set(1, 2, 7.5f);
+
+    slt::DenseMatrix<float> dense(2, 3);  // Any initial contents are overwritten
+    dense = sparse;
+
+    // Check dimensions
+    EXPECT_EQ(dense.rows(), 2);
+    EXPECT_EQ(dense.cols(), 3);
+
+    // Check initialized values
+    EXPECT_TRUE(dense.is_initialized(0, 0));
+    EXPECT_FLOAT_EQ(dense(0, 0), 10.0f);
+
+    EXPECT_TRUE(dense.is_initialized(1, 2));
+    EXPECT_FLOAT_EQ(dense(1, 2), 7.5f);
+
+    // Check uninitialized positions
+    EXPECT_FALSE(dense.is_initialized(0, 1));
+    EXPECT_FALSE(dense.is_initialized(1, 0));
+    EXPECT_FALSE(dense.is_initialized(0, 2));
+}
 // ================================================================================
 // ================================================================================
 // eof

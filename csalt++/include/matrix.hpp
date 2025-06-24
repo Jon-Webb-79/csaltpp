@@ -800,6 +800,12 @@
     };
 // ================================================================================ 
 // ================================================================================ 
+// FORWARD DECLARATIONS 
+
+    template<typename T>
+    class SparseCOOMatrix;
+// ================================================================================ 
+// ================================================================================ 
     // Dense matrix class
 
     /**
@@ -1228,7 +1234,44 @@
             if (N != r * c)
                 throw std::invalid_argument("Flat array size does not match matrix dimensions");
         }
+// -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Constructs a DenseMatrix from a SparseCOOMatrix.
+         *
+         * Initializes this DenseMatrix by copying all non-zero values from the given sparse matrix.
+         * Only the entries present in the sparse triplet vector are marked initialized.
+         * Remaining entries are set to zero and marked uninitialized.
+         *
+         * This allows accurate use of `is_initialized()` and prevents uninitialized memory access.
+         *
+         * @param sparse The source sparse COO matrix to convert.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> sparse(3, 3);
+         * sparse.set(0, 1, 5.0f);
+         * sparse.set(2, 2, 3.0f);
+         *
+         * slt::DenseMatrix<float> dense(sparse);
+         *
+         * EXPECT_EQ(dense(0, 1), 5.0f);
+         * EXPECT_EQ(dense(2, 2), 3.0f);
+         * EXPECT_FALSE(dense.is_initialized(0, 0));  // Empty entry
+         * @endcode
+         */
+        explicit DenseMatrix(const SparseCOOMatrix<T>& sparse)
+            : data(sparse.rows() * sparse.cols(), T{}),
+              init(sparse.rows() * sparse.cols(), 0),  // All entries initialized
+              rows_(sparse.rows()),
+              cols_(sparse.cols())
+        {
+            for (const auto& t : sparse) {
+                std::size_t idx = t.row * cols_ + t.col;
+                data[idx] = t.value;
+                init[idx] = 1;
+            }
+        }
 // --------------------------------------------------------------------------------
 
         /**
@@ -1391,6 +1434,50 @@
                 rows_ = other.rows_;
                 cols_ = other.cols_;
             }
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Assigns the contents of a SparseCOOMatrix to this DenseMatrix.
+         *
+         * This operator clears the DenseMatrix and copies the non-zero elements from the given sparse matrix.
+         * The `init` flags are updated to reflect only the initialized positions from the sparse source.
+         *
+         * Existing DenseMatrix data is resized to match the sparse matrix shape.
+         *
+         * @param sparse The source SparseCOOMatrix to assign from.
+         * @return Reference to this DenseMatrix.
+         *
+         * @example
+         * @code
+         * slt::SparseCOOMatrix<float> sparse(2, 2);
+         * sparse.set(1, 0, 4.5f);
+         *
+         * slt::DenseMatrix<float> dense(2, 2);
+         * dense = sparse;
+         *
+         * EXPECT_FLOAT_EQ(dense(1, 0), 4.5f);
+         * EXPECT_FALSE(dense.is_initialized(0, 0));
+         * @endcode
+         */
+        DenseMatrix<T>& operator=(const SparseCOOMatrix<T>& sparse) {
+            if (this->rows_ != sparse.rows() || this->cols_ != sparse.cols()) {
+                rows_ = sparse.rows();
+                cols_ = sparse.cols();
+                data.resize(rows_ * cols_, T{});
+                init.resize(rows_ * cols_, 1);  // Mark all initialized
+            } else {
+                std::fill(data.begin(), data.end(), T{});
+                std::fill(init.begin(), init.end(), 0);
+            }
+
+            for (const auto& t : sparse) {
+                std::size_t idx = t.row * cols_ + t.col;
+                data[idx] = t.value;
+                init[idx] = 1;
+            }
+
             return *this;
         }
 // -------------------------------------------------------------------------------- 

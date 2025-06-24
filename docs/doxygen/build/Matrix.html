@@ -95,6 +95,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4I_NSt6size_tEEN3slt11DenseMatrix11DenseMatrixERKNSt5arrayI1T1NEENSt6size_tENSt6size_tE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#densematrix-const-sparsecoomatrix-t-sparse">DenseMatrix(const SparseCOOMatrix&lt;T&gt;&amp; sparse)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#densematrix-copy-constructor">DenseMatrix Copy Constructor</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
 </ul>
@@ -113,6 +117,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#operator">operator=</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrixaSERK11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrixaSERR11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrixaSERKN3slt15SparseCOOMatrixI1TEE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#id1">operator()</a><ul>
@@ -976,6 +981,35 @@ The input vector must contain exactly <code class="docutils literal notranslate"
 </dd></dl>
 
 </section>
+<section id="densematrix-const-sparsecoomatrix-t-sparse">
+<h3>DenseMatrix(const SparseCOOMatrix&lt;T&gt;&amp; sparse)<a class="headerlink" href="#densematrix-const-sparsecoomatrix-t-sparse" title="Link to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE">
+<span id="_CPPv3N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE"></span><span id="_CPPv2N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE"></span><span id="slt::DenseMatrix::DenseMatrix__slt::SparseCOOMatrix:T:CR"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sparse</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code> from a <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code>.</p>
+<p>This initializes only the positions represented in the sparse triplet list as valid.
+Remaining positions are left uninitialized (<code class="docutils literal notranslate"><span class="pre">is_initialized()</span> <span class="pre">==</span> <span class="pre">false</span></code>).</p>
+<p>Useful for converting sparse representations to full dense storage for further numerical operations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sparse</strong> – Source <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code> to convert.</p>
+</dd>
+</dl>
+<p><strong>Example</strong>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparse</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">sparse</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">5.0f</span><span class="p">);</span>
+<span class="n">sparse</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="p">(</span><span class="n">sparse</span><span class="p">);</span>
+
+<span class="n">EXPECT_FLOAT_EQ</span><span class="p">(</span><span class="n">dense</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="mf">5.0f</span><span class="p">);</span>
+<span class="n">EXPECT_FLOAT_EQ</span><span class="p">(</span><span class="n">dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">);</span>
+<span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">dense</span><span class="p">.</span><span class="n">is_initialized</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 <section id="densematrix-copy-constructor">
 <h3>DenseMatrix Copy Constructor<a class="headerlink" href="#densematrix-copy-constructor" title="Link to this heading"></a></h3>
 <dl class="cpp function">
@@ -1097,6 +1131,33 @@ The input vector must contain exactly <code class="docutils literal notranslate"
 <dd class="field-even"><p>Reference to this matrix after move assignment.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt11DenseMatrixaSERKN3slt15SparseCOOMatrixI1TEE">
+<span id="_CPPv3N3slt11DenseMatrixaSERKN3slt15SparseCOOMatrixI1TEE"></span><span id="_CPPv2N3slt11DenseMatrixaSERKN3slt15SparseCOOMatrixI1TEE"></span><span id="slt::DenseMatrix::assign-operator__slt::SparseCOOMatrix:T:CR"></span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sparse</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt11DenseMatrixaSERKN3slt15SparseCOOMatrixI1TEE" title="Link to this definition"></a><br /></dt>
+<dd><p>Assigns a <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code> into an existing <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code>.</p>
+<p>This clears the current DenseMatrix and fills it with values from the sparse matrix.
+Only stored triplet entries are initialized; other positions remain uninitialized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sparse</strong> – Source <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code> to assign from.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Reference to <code class="docutils literal notranslate"><span class="pre">*this</span></code>.</p>
+</dd>
+</dl>
+<p><strong>Example</strong>:</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparse</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">sparse</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">4.5f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">dense</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sparse</span><span class="p">;</span>
+
+<span class="n">EXPECT_FLOAT_EQ</span><span class="p">(</span><span class="n">dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="mf">4.5f</span><span class="p">);</span>
+<span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">dense</span><span class="p">.</span><span class="n">is_initialized</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>

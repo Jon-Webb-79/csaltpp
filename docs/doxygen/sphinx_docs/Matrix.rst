@@ -129,6 +129,33 @@ DenseMatrix(const std::array<T, N>& arr, std::size_t r, std::size_t c)
 .. doxygenfunction:: slt::DenseMatrix::DenseMatrix(const std::array<T, N>&, std::size_t, std::size_t)
    :project: csalt++
 
+DenseMatrix(const SparseCOOMatrix<T>& sparse)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: explicit slt::DenseMatrix::DenseMatrix(const slt::SparseCOOMatrix<T>& sparse)
+
+   Constructs a ``DenseMatrix<T>`` from a ``SparseCOOMatrix<T>``.
+
+   This initializes only the positions represented in the sparse triplet list as valid.  
+   Remaining positions are left uninitialized (``is_initialized() == false``).
+
+   Useful for converting sparse representations to full dense storage for further numerical operations.
+
+   :param sparse: Source ``SparseCOOMatrix<T>`` to convert.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> sparse(3, 3);
+      sparse.set(0, 1, 5.0f);
+      sparse.set(2, 2, 3.0f);
+
+      slt::DenseMatrix<float> dense(sparse);
+
+      EXPECT_FLOAT_EQ(dense(0, 1), 5.0f);
+      EXPECT_FLOAT_EQ(dense(2, 2), 3.0f);
+      EXPECT_FALSE(dense.is_initialized(0, 0));
+
+
 DenseMatrix Copy Constructor 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -158,6 +185,28 @@ operator=
 
 .. doxygenfunction:: slt::DenseMatrix::operator=(DenseMatrix<T>&&) noexcept
    :project: csalt++
+
+.. cpp:function:: slt::DenseMatrix& slt::DenseMatrix::operator=(const slt::SparseCOOMatrix<T>& sparse)
+
+   Assigns a ``SparseCOOMatrix<T>`` into an existing ``DenseMatrix<T>``.
+
+   This clears the current DenseMatrix and fills it with values from the sparse matrix.  
+   Only stored triplet entries are initialized; other positions remain uninitialized.
+
+   :param sparse: Source ``SparseCOOMatrix<T>`` to assign from.
+   :returns: Reference to ``*this``.
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> sparse(2, 2);
+      sparse.set(1, 0, 4.5f);
+
+      slt::DenseMatrix<float> dense(2, 2);
+      dense = sparse;
+
+      EXPECT_FLOAT_EQ(dense(1, 0), 4.5f);
+      EXPECT_FALSE(dense.is_initialized(0, 0));
+
 
 operator()
 ~~~~~~~~~~

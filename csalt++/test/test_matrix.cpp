@@ -1863,6 +1863,96 @@ TEST(SparseCOOMatrixMatMulTest, ThrowsOnDimensionMismatch) {
         auto C = slt::mat_mul(A, B);
     }, std::invalid_argument);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseDenseMatMulTest, BasicMultiply) {
+    // A: 2x3 sparse matrix
+    slt::SparseCOOMatrix<float> A(2, 3);
+    A.set(0, 1, 4.0f);
+    A.set(1, 2, 5.0f);
+
+    // B: 3x2 dense matrix
+    slt::DenseMatrix<float> B({
+        {1.0f, 2.0f},
+        {3.0f, 4.0f},
+        {5.0f, 6.0f}
+    });
+
+    auto C = slt::mat_mul(A, B);
+
+    // C should be 2x2
+    ASSERT_EQ(C.rows(), 2);
+    ASSERT_EQ(C.cols(), 2);
+
+    // Only non-zero entries should be:
+    // C(0,0) = 4 * 3 = 12
+    // C(0,1) = 4 * 4 = 16
+    // C(1,0) = 5 * 5 = 25
+    // C(1,1) = 5 * 6 = 30
+
+    EXPECT_FLOAT_EQ(C(0, 0), 12.0f);
+    EXPECT_FLOAT_EQ(C(0, 1), 16.0f);
+    EXPECT_FLOAT_EQ(C(1, 0), 25.0f);
+    EXPECT_FLOAT_EQ(C(1, 1), 30.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseDenseMatMulTest, ThrowsOnSizeMismatch) {
+    slt::SparseCOOMatrix<float> A(2, 3);
+    A.set(0, 0, 1.0f);
+
+    slt::DenseMatrix<float> B({
+        {1.0f, 2.0f}
+    });  // 1x2 matrix — mismatch
+
+    EXPECT_THROW({
+        auto result = slt::mat_mul(A, B);
+    }, std::invalid_argument);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseSparseMatMulTest, BasicMultiply) {
+    // A: 2x3 dense matrix
+    slt::DenseMatrix<float> A({
+        {1.0f, 2.0f, 0.0f},
+        {0.0f, 3.0f, 4.0f}
+    });
+
+    // B: 3x2 sparse matrix
+    slt::SparseCOOMatrix<float> B(3, 2);
+    B.set(0, 0, 5.0f);
+    B.set(2, 1, 6.0f);
+
+    auto C = slt::mat_mul(A, B);
+
+    // C should be 2x2
+    ASSERT_EQ(C.rows(), 2);
+    ASSERT_EQ(C.cols(), 2);
+
+    // Only expected results:
+    // C(0,0) = 1.0 * 5.0 = 5.0
+    // C(0,1) = 0
+    // C(1,0) = 0
+    // C(1,1) = 4.0 * 6.0 = 24.0
+
+    EXPECT_FLOAT_EQ(C(0, 0), 5.0f);
+    EXPECT_FLOAT_EQ(C(0, 1), 0.0f);
+    EXPECT_FLOAT_EQ(C(1, 0), 0.0f);
+    EXPECT_FLOAT_EQ(C(1, 1), 24.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseSparseMatMulTest, ThrowsOnSizeMismatch) {
+    slt::DenseMatrix<float> A({
+        {1.0f, 2.0f}
+    });
+
+    slt::SparseCOOMatrix<float> B(3, 2);  // mismatch
+
+    EXPECT_THROW({
+        auto result = slt::mat_mul(A, B);
+    }, std::invalid_argument);
+}
 // ================================================================================
 // ================================================================================
 // eof

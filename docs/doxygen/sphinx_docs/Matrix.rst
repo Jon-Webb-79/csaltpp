@@ -1527,6 +1527,77 @@ SparseCOOMatrix * SparseCOOMatrix
       EXPECT_FLOAT_EQ(C(0, 0), 8.0f);   // 4 * 2
       EXPECT_FLOAT_EQ(C(1, 1), 15.0f);  // 5 * 3
 
+SparseCOOMatrix * DenseMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template<typename T> DenseMatrix<T> slt::mat_mul(const SparseCOOMatrix<T>& A, const DenseMatrix<T>& B)
+
+   Multiplies a ``SparseCOOMatrix<T>`` by a ``DenseMatrix<T>`` (A × B), producing a ``DenseMatrix<T>``.
+
+   The result is computed as:
+
+   .. math::
+
+      result(i,j) = \sum_k A(i,k) * B(k,j)
+
+   :param A: The sparse matrix (SparseCOOMatrix<T>), size (m × n).
+   :param B: The dense matrix (DenseMatrix<T>), size (n × p).
+   :return: A dense matrix result (m × p).
+
+   :throws std::invalid_argument: If A.cols() != B.rows().
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> A(2, 3);
+      A.set(0, 1, 4.0f);
+      A.set(1, 2, 5.0f);
+
+      slt::DenseMatrix<float> B({
+          {1.0f, 2.0f},
+          {3.0f, 4.0f},
+          {5.0f, 6.0f}
+      });
+
+      auto C = mat_mul(A, B);
+
+      EXPECT_FLOAT_EQ(C(0, 0), 12.0f);  // 4.0 * 3.0
+      EXPECT_FLOAT_EQ(C(1, 1), 30.0f);  // 5.0 * 6.0
+
+DenseMatrix * SparseCOOMatrix
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: template<typename T> DenseMatrix<T> slt::mat_mul(const DenseMatrix<T>& A, const SparseCOOMatrix<T>& B)
+
+   Multiplies a ``DenseMatrix<T>`` by a ``SparseCOOMatrix<T>`` (A × B), producing a ``DenseMatrix<T>``.
+
+   The result is computed as:
+
+   .. math::
+
+      result(i,j) = \sum_k A(i,k) * B(k,j)
+
+   :param A: The dense matrix (DenseMatrix<T>), size (m × n).
+   :param B: The sparse matrix (SparseCOOMatrix<T>), size (n × p).
+   :return: A dense matrix result (m × p).
+
+   :throws std::invalid_argument: If A.cols() != B.rows().
+
+   **Example**::
+
+      slt::DenseMatrix<float> A({
+          {1.0f, 2.0f},
+          {3.0f, 4.0f}
+      });
+
+      slt::SparseCOOMatrix<float> B(2, 3);
+      B.set(0, 0, 5.0f);
+      B.set(1, 2, 6.0f);
+
+      auto C = mat_mul(A, B);
+
+      EXPECT_FLOAT_EQ(C(0, 0), 5.0f);   // 1.0 * 5.0
+      EXPECT_FLOAT_EQ(C(0, 2), 12.0f);  // 2.0 * 6.0
+
 
 .. _triplet_class:
 

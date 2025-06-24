@@ -4341,6 +4341,156 @@
 
         return result;
     }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Multiplies a SparseCOOMatrix with a DenseMatrix (A × B).
+     *
+     * This function performs matrix multiplication between a sparse COO matrix (A)
+     * and a dense matrix (B), producing a fully dense result matrix.
+     *
+     * The result is computed as:
+     *    result(i,j) = sum_k A(i,k) * B(k,j)
+     *
+     * The result is a DenseMatrix<T> of dimensions (A.rows() × B.cols()).
+     * Zero entries in A do not contribute to the result.
+     *
+     * - This implementation is sparse-friendly: avoids expanding A to a dense matrix.
+     * - The result is always fully initialized.
+     * - The multiplication is not SIMD accelerated.
+     *
+     * @tparam T The element type (float or double).
+     * @param A The sparse matrix operand (SparseCOOMatrix).
+     * @param B The dense matrix operand (DenseMatrix).
+     * @return A DenseMatrix<T> representing A × B.
+     *
+     * @throws std::invalid_argument if A.cols() != B.rows()
+     *
+     * @example
+     * @code
+     * slt::SparseCOOMatrix<float> A(2, 3);
+     * A.set(0, 1, 4.0f);
+     * A.set(1, 2, 5.0f);
+     *
+     * slt::DenseMatrix<float> B({
+     *     {1.0f, 2.0f},
+     *     {3.0f, 4.0f},
+     *     {5.0f, 6.0f}
+     * });
+     *
+     * auto C = mat_mul(A, B);
+     * // C(0,0) = 4.0f * 3.0f = 12.0f
+     * // C(1,1) = 5.0f * 6.0f = 30.0f
+     * @endcode
+     */
+    template<typename T>
+    DenseMatrix<T> mat_mul(const SparseCOOMatrix<T>& A, const DenseMatrix<T>& B) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "mat_mul only supports float or double types.");
+
+        const std::size_t A_rows = A.rows();
+        const std::size_t A_cols = A.cols();
+        const std::size_t B_rows = B.rows();
+        const std::size_t B_cols = B.cols();
+
+        if (A_cols != B_rows) {
+            throw std::invalid_argument("Matrix dimensions are incompatible for multiplication.");
+        }
+
+        DenseMatrix<T> result(A_rows, B_cols);
+
+        // Initialize result with zeros
+        std::fill(result.begin(), result.end(), T{});
+
+        for (const auto& tA : A) {
+            std::size_t i = tA.row;
+            std::size_t k = tA.col;
+            T value_A = tA.value;
+
+            for (std::size_t j = 0; j < B_cols; ++j) {
+                T value_B = B(k, j);
+                T old_val = result.is_initialized(i, j) ? result(i, j) : T{};
+                result.set(i, j, old_val + value_A * value_B);
+            }
+        }
+
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Multiplies a DenseMatrix with a SparseCOOMatrix (A × B).
+     *
+     * Performs matrix multiplication between a dense matrix (A) and a sparse COO matrix (B),
+     * producing a dense matrix result.
+     *
+     * The result is computed as:
+     *    result(i,j) = sum_k A(i,k) * B(k,j)
+     *
+     * The result is a DenseMatrix<T> of dimensions (A.rows() × B.cols()).
+     * Zero entries in B do not contribute to the result.
+     *
+     * - This implementation avoids dense expansion of B.
+     * - The result is fully initialized.
+     * - No SIMD acceleration is used.
+     *
+     * @tparam T The element type (float or double).
+     * @param A The dense matrix operand (DenseMatrix).
+     * @param B The sparse matrix operand (SparseCOOMatrix).
+     * @return A DenseMatrix<T> representing A × B.
+     *
+     * @throws std::invalid_argument if A.cols() != B.rows()
+     *
+     * @example
+     * @code
+     * slt::DenseMatrix<float> A({
+     *     {1.0f, 2.0f},
+     *     {3.0f, 4.0f}
+     * });
+     *
+     * slt::SparseCOOMatrix<float> B(2, 3);
+     * B.set(0, 0, 5.0f);
+     * B.set(1, 2, 6.0f);
+     *
+     * auto C = mat_mul(A, B);
+     *
+     * // C(0, 0) = 1.0 * 5.0 = 5.0
+     * // C(0, 2) = 2.0 * 6.0 = 12.0
+     * @endcode
+     */
+    template<typename T>
+    DenseMatrix<T> mat_mul(const DenseMatrix<T>& A, const SparseCOOMatrix<T>& B) {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "mat_mul only supports float or double types.");
+
+        const std::size_t A_rows = A.rows();
+        const std::size_t A_cols = A.cols();
+        const std::size_t B_rows = B.rows();
+        const std::size_t B_cols = B.cols();
+
+        if (A_cols != B_rows) {
+            throw std::invalid_argument("Matrix dimensions are incompatible for multiplication.");
+        }
+
+        DenseMatrix<T> result(A_rows, B_cols);
+
+        // Initialize result with zeros
+        std::fill(result.begin(), result.end(), T{});
+
+        for (const auto& tB : B) {
+            std::size_t k = tB.row;
+            std::size_t j = tB.col;
+            T value_B = tB.value;
+
+            for (std::size_t i = 0; i < A_rows; ++i) {
+                T value_A = A(i, k);
+                T old_val = result.is_initialized(i, j) ? result(i, j) : T{};
+                result.set(i, j, old_val + value_A * value_B);
+            }
+        }
+
+        return result;
+    }
 } // namespace slt
 // ================================================================================ 
 // ================================================================================ 

@@ -788,7 +788,7 @@
          *
          * @return The number of initialized elements in the matrix
          */
-        virtual std::size_t nonzero_count() const = 0;
+        virtual std::size_t initialized_count() const = 0;
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -974,7 +974,7 @@
          *     slt::DenseMatrix<float> mat(2, 3);
          *     mat.set(0, 0, 3.14f);
          *     mat.set(1, 1, 2.71f);
-         *     std::cout << "Initialized elements: " << mat.nonzero_count() << std::endl;
+         *     std::cout << "Initialized elements: " << mat.initialized_count() << std::endl;
          *     return 0;
          * }
          * @endcode
@@ -984,7 +984,7 @@
          * Initialized elements: 2
          * @endcode
          */
-        std::size_t nonzero_count() const override {
+        std::size_t initialized_count() const override {
             if (init.empty()) return 0;
             return std::count(init.begin(), init.end(), static_cast<uint8_t>(1));
         }
@@ -1048,7 +1048,7 @@
          *         std::cout << ptr[i] << " ";
          *     std::cout << std::endl;
          *
-         *     std::cout << "Initialized count: " << mat.nonzero_count() << std::endl;
+         *     std::cout << "Initialized count: " << mat.initialized_count() << std::endl;
          *     return 0;
          * }
          * @endcode
@@ -2709,7 +2709,7 @@
          * slt::SparseCOOMatrix<float> mat(3, 3);
          * mat.set(0, 0, 1.0f);
          * mat.set(1, 2, 2.5f);
-         * std::cout << "Non-zero count: " << mat.nonzero_count() << std::endl;
+         * std::cout << "Non-zero count: " << mat.initialized_count() << std::endl;
          * @endcode
          *
          * Output:
@@ -2717,7 +2717,7 @@
          * Non-zero count: 2
          * @endcode
          */
-        std::size_t nonzero_count() const override {return triplet.size();} 
+        std::size_t initialized_count() const override {return triplet.size();} 
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -2957,7 +2957,7 @@
          *
          * slt::SparseCOOMatrix<float> sparse(dense);
          *
-         * EXPECT_EQ(sparse.nonzero_count(), 2);
+         * EXPECT_EQ(sparse.initialized_count(), 2);
          * EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
          * EXPECT_FLOAT_EQ(sparse.get(1, 1), 2.5f);
          * @endcode
@@ -3146,7 +3146,7 @@
          * slt::SparseCOOMatrix<float> sparse(2, 2);
          * sparse = dense;
          *
-         * EXPECT_EQ(sparse.nonzero_count(), 2);
+         * EXPECT_EQ(sparse.initialized_count(), 2);
          * EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
          * EXPECT_FLOAT_EQ(sparse.get(1, 1), 3.0f);
          * @endcode
@@ -4024,7 +4024,7 @@
     std::ostream& operator<<(std::ostream& os, const SparseCOOMatrix<T>& mat) {
         os << "SparseCOOMatrix<" << (std::is_same_v<T, float> ? "float" : "double")
            << "> (" << mat.rows() << " x " << mat.cols() << "), nonzeros = "
-           << mat.nonzero_count() << "\n";
+           << mat.initialized_count() << "\n";
 
         for (const auto& t : mat) {
             os << "(" << t.row << ", " << t.col << ") = " << t.value << "\n";
@@ -4191,7 +4191,7 @@
      */
     template<typename T>
     SparseCOOMatrix<T> operator-(T scalar, const SparseCOOMatrix<T>& matrix) {
-        SparseCOOMatrix<T> result(matrix.rows(), matrix.cols(), matrix.nonzero_count());
+        SparseCOOMatrix<T> result(matrix.rows(), matrix.cols(), matrix.initialized_count());
 
         for (const auto& t : matrix) {
             T val = scalar - t.value;
@@ -4387,7 +4387,7 @@
         std::fill(result.begin(), result.begin() + result.size(), 0);
 
         // Only multiply at sparse matrix locations
-        for (std::size_t i = 0; i < sparse.nonzero_count(); ++i) {
+        for (std::size_t i = 0; i < sparse.initialized_count(); ++i) {
             std::size_t r = sparse.row_index(i);
             std::size_t c = sparse.col_index(i);
             T value = dense(r, c) * sparse.value(i);

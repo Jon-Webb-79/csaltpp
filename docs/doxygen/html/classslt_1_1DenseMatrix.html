@@ -123,9 +123,9 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a529848163b44a2168460198adda171f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4cdc9d44da3d03b7941e9eb1eec36340"><td class="memItemLeft" align="right" valign="top">T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1DenseMatrix.html#a4cdc9d44da3d03b7941e9eb1eec36340">data_ptr</a> ()</td></tr>
 <tr class="separator:a4cdc9d44da3d03b7941e9eb1eec36340"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a602633d6637e1f90c63d853fba729b43"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1DenseMatrix.html#a602633d6637e1f90c63d853fba729b43">nonzero_count</a> () const override</td></tr>
-<tr class="memdesc:a602633d6637e1f90c63d853fba729b43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of initialized elements in the matrix.  <a href="classslt_1_1DenseMatrix.html#a602633d6637e1f90c63d853fba729b43">More...</a><br /></td></tr>
-<tr class="separator:a602633d6637e1f90c63d853fba729b43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab367163d23fd68b25d04a54f13c3c0b6"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1DenseMatrix.html#ab367163d23fd68b25d04a54f13c3c0b6">initialized_count</a> () const override</td></tr>
+<tr class="memdesc:ab367163d23fd68b25d04a54f13c3c0b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of initialized elements in the matrix.  <a href="classslt_1_1DenseMatrix.html#ab367163d23fd68b25d04a54f13c3c0b6">More...</a><br /></td></tr>
+<tr class="separator:ab367163d23fd68b25d04a54f13c3c0b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aefb68f3c5f27bd69a67d1e1f7b51831e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1DenseMatrix.html#aefb68f3c5f27bd69a67d1e1f7b51831e">DenseMatrix</a> (std::size_t r, std::size_t c, T value)</td></tr>
 <tr class="memdesc:aefb68f3c5f27bd69a67d1e1f7b51831e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a matrix with given dimensions and fills it with a specified value.  <a href="classslt_1_1DenseMatrix.html#aefb68f3c5f27bd69a67d1e1f7b51831e">More...</a><br /></td></tr>
 <tr class="separator:aefb68f3c5f27bd69a67d1e1f7b51831e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -398,7 +398,7 @@ template&lt;typename T &gt; </div>
 <div class="line">        std::cout &lt;&lt; ptr[i] &lt;&lt; <span class="stringliteral">&quot; &quot;</span>;</div>
 <div class="line">    std::cout &lt;&lt; std::endl;</div>
 <div class="line"> </div>
-<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Initialized count: &quot;</span> &lt;&lt; mat.nonzero_count() &lt;&lt; std::endl;</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Initialized count: &quot;</span> &lt;&lt; mat.initialized_count() &lt;&lt; std::endl;</div>
 <div class="line">    <span class="keywordflow">return</span> 0;</div>
 <div class="line">}</div>
 </div><!-- fragment --><p>Output: </p><div class="fragment"><div class="line">0 42 0 0 0 7</div>
@@ -1333,6 +1333,52 @@ template&lt;typename T &gt; </div>
 
 </div>
 </div>
+<a id="ab367163d23fd68b25d04a54f13c3c0b6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab367163d23fd68b25d04a54f13c3c0b6">&#9670;&nbsp;</a></span>initialized_count()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::size_t <a class="el" href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a>&lt; T &gt;::initialized_count </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns the number of initialized elements in the matrix. </p>
+<p>This function scans the internal <code>init</code> vector and returns the number of elements that have been explicitly initialized. This allows tracking sparse-style usage in a dense matrix implementation.</p>
+<dl class="section return"><dt>Returns</dt><dd>The number of initialized elements in the matrix.</dd></dl>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
+<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="matrix_8hpp.html">matrix.hpp</a>&quot;</span>  <span class="comment">// assuming DenseMatrix is defined here</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> main() {</div>
+<div class="line">    <a class="code" href="classslt_1_1DenseMatrix.html">slt::DenseMatrix&lt;float&gt;</a> mat(2, 3);</div>
+<div class="line">    mat.set(0, 0, 3.14f);</div>
+<div class="line">    mat.set(1, 1, 2.71f);</div>
+<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Initialized elements: &quot;</span> &lt;&lt; mat.initialized_count() &lt;&lt; std::endl;</div>
+<div class="line">    <span class="keywordflow">return</span> 0;</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>Output: </p><div class="fragment"><div class="line">Initialized elements: 2</div>
+</div><!-- fragment --> 
+<p>Implements <a class="el" href="classslt_1_1MatrixBase.html#ab7e0924e77fe089b13f73919cbaa9e60">slt::MatrixBase&lt; T &gt;</a>.</p>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a24">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+</dl>
+
+</div>
+</div>
 <a id="ae7443b52dd5c9229b1e57836c62734e5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae7443b52dd5c9229b1e57836c62734e5">&#9670;&nbsp;</a></span>inverse()</h2>
 
@@ -1441,52 +1487,6 @@ template&lt;typename T &gt; </div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classslt_1_1MatrixBase.html#a069249b28295c9776df81efed6076589">slt::MatrixBase&lt; T &gt;</a>.</p>
 <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a41">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
-</dl>
-
-</div>
-</div>
-<a id="a602633d6637e1f90c63d853fba729b43"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a602633d6637e1f90c63d853fba729b43">&#9670;&nbsp;</a></span>nonzero_count()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::size_t <a class="el" href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a>&lt; T &gt;::nonzero_count </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Returns the number of initialized elements in the matrix. </p>
-<p>This function scans the internal <code>init</code> vector and returns the number of elements that have been explicitly initialized. This allows tracking sparse-style usage in a dense matrix implementation.</p>
-<dl class="section return"><dt>Returns</dt><dd>The number of initialized elements in the matrix.</dd></dl>
-<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;iostream&gt;</span></div>
-<div class="line"><span class="preprocessor">#include &quot;<a class="code" href="matrix_8hpp.html">matrix.hpp</a>&quot;</span>  <span class="comment">// assuming DenseMatrix is defined here</span></div>
-<div class="line"> </div>
-<div class="line"><span class="keywordtype">int</span> main() {</div>
-<div class="line">    <a class="code" href="classslt_1_1DenseMatrix.html">slt::DenseMatrix&lt;float&gt;</a> mat(2, 3);</div>
-<div class="line">    mat.set(0, 0, 3.14f);</div>
-<div class="line">    mat.set(1, 1, 2.71f);</div>
-<div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;Initialized elements: &quot;</span> &lt;&lt; mat.nonzero_count() &lt;&lt; std::endl;</div>
-<div class="line">    <span class="keywordflow">return</span> 0;</div>
-<div class="line">}</div>
-</div><!-- fragment --><p>Output: </p><div class="fragment"><div class="line">Initialized elements: 2</div>
-</div><!-- fragment --> 
-<p>Implements <a class="el" href="classslt_1_1MatrixBase.html#a56cfa6060fc56b9225e26f0206a77519">slt::MatrixBase&lt; T &gt;</a>.</p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a24">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>

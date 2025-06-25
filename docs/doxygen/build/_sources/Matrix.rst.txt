@@ -357,10 +357,10 @@ init_ptr()
 .. doxygenfunction:: slt::DenseMatrix::init_ptr() const
    :project: csalt++
 
-nonzero_count() 
-~~~~~~~~~~~~~~~
+initialized_count() 
+~~~~~~~~~~~~~~~~~~~
 
-.. doxygenfunction:: slt::DenseMatrix::nonzero_count() const
+.. doxygenfunction:: slt::DenseMatrix::initialized_count() const
    :project: csalt++
 
 is_initialized()
@@ -466,7 +466,7 @@ SparseCOOMatrix(std::size_t, std::size_t, std::size_t)
 SparseCOOMatrix(DenseMatrix<T>)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. cpp:function:: explicit slt::SparseCOOMatrix<T>::SparseCOOMatrix(const slt::DenseMatrix<T>& dense)
+.. cpp:function:: explicit slt::SparseCOOMatrix::SparseCOOMatrix(const slt::DenseMatrix<T>& dense)
 
    Constructs a sparse COO matrix from an existing dense matrix.
 
@@ -485,7 +485,7 @@ SparseCOOMatrix(DenseMatrix<T>)
 
       slt::SparseCOOMatrix<float> sparse(dense);
 
-      EXPECT_EQ(sparse.nonzero_count(), 2);
+      EXPECT_EQ(sparse.initialized_count(), 2);
       EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
       EXPECT_FLOAT_EQ(sparse.get(1, 1), 2.5f);
 
@@ -881,7 +881,7 @@ operator=
 
       B = std::move(A);
 
-      assert(A.nonzero_count() == 0);  // A is now empty
+      assert(A.initialized_count() == 0);  // A is now empty
       assert(B(0, 0) == 1.0f);
 
 .. cpp:function:: slt::SparseCOOMatrix& slt::SparseCOOMatrix::operator=(const slt::DenseMatrix<T>& dense)
@@ -907,7 +907,7 @@ operator=
       slt::SparseCOOMatrix<float> sparse(2, 2);
       sparse = dense;
 
-      EXPECT_EQ(sparse.nonzero_count(), 2);
+      EXPECT_EQ(sparse.initialized_count(), 2);
       EXPECT_FLOAT_EQ(sparse.get(0, 0), 1.0f);
       EXPECT_FLOAT_EQ(sparse.get(1, 1), 3.0f);
 
@@ -959,10 +959,10 @@ size()
 .. doxygenfunction:: slt::SparseCOOMatrix::size
    :project: csalt++
 
-nonzero_count()
-~~~~~~~~~~~~~~~
+initialized_count()
+~~~~~~~~~~~~~~~~~~~
 
-.. doxygenfunction:: slt::SparseCOOMatrix::nonzero_count() const
+.. doxygenfunction:: slt::SparseCOOMatrix::initialized_count() const
    :project: csalt++
 
 begin() 

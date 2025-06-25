@@ -946,19 +946,19 @@ TEST(DenseMatrixSizeAndNonzeroCountTest, SizeAndNonzeroCountBehavior) {
 
     // Initially all values should be uninitialized
     EXPECT_EQ(mat.size(), 9);
-    EXPECT_EQ(mat.nonzero_count(), 0);
+    EXPECT_EQ(mat.initialized_count(), 0);
 
     // Set a single element
     mat.set(0, 0, 1.0f);
-    EXPECT_EQ(mat.nonzero_count(), 1);
+    EXPECT_EQ(mat.initialized_count(), 1);
 
     // Update another element
     mat.set(1, 1, 2.0f);
-    EXPECT_EQ(mat.nonzero_count(), 2);
+    EXPECT_EQ(mat.initialized_count(), 2);
 
     // Remove one element
     mat.remove(1, 1);
-    EXPECT_EQ(mat.nonzero_count(), 1);
+    EXPECT_EQ(mat.initialized_count(), 1);
 
     // Fill all elements
     for (std::size_t i = 0; i < 3; ++i) {
@@ -969,7 +969,7 @@ TEST(DenseMatrixSizeAndNonzeroCountTest, SizeAndNonzeroCountBehavior) {
         }
     }
 
-    EXPECT_EQ(mat.nonzero_count(), 9);
+    EXPECT_EQ(mat.initialized_count(), 9);
 }
 // -------------------------------------------------------------------------------- 
 
@@ -981,7 +981,7 @@ TEST(DenseMatrixArrayConstructorTest, ValidArrayInitialization) {
     EXPECT_EQ(mat.rows(), 2);
     EXPECT_EQ(mat.cols(), 3);
     EXPECT_EQ(mat.size(), 6);
-    EXPECT_EQ(mat.nonzero_count(), 6);
+    EXPECT_EQ(mat.initialized_count(), 6);
 
     EXPECT_FLOAT_EQ(mat(0, 0), 1.0f);
     EXPECT_FLOAT_EQ(mat(0, 1), 2.0f);
@@ -1245,7 +1245,7 @@ TEST(SparseScalarAdditionTest, SparsePlusScalar) {
 
     ASSERT_EQ(result.rows(), 2);
     ASSERT_EQ(result.cols(), 2);
-    ASSERT_EQ(result.nonzero_count(), 2);
+    ASSERT_EQ(result.initialized_count(), 2);
 }
 // -------------------------------------------------------------------------------- 
 
@@ -1263,7 +1263,7 @@ TEST(SparseScalarAdditionTest, ScalarPlusSparse) {
 
     ASSERT_EQ(result.rows(), 2);
     ASSERT_EQ(result.cols(), 2);
-    ASSERT_EQ(result.nonzero_count(), 2);
+    ASSERT_EQ(result.initialized_count(), 2);
 }
 // -------------------------------------------------------------------------------- 
 
@@ -1378,7 +1378,7 @@ TEST(SparseCOOMatrixAssignment, MoveAssignmentTransfersResources) {
     // A is in a valid but empty state; we check dimensions and size
     EXPECT_EQ(A.rows(), 0);
     EXPECT_EQ(A.cols(), 0);
-    EXPECT_EQ(A.nonzero_count(), 0);
+    EXPECT_EQ(A.initialized_count(), 0);
 }
 // -------------------------------------------------------------------------------- 
 
@@ -1391,7 +1391,7 @@ TEST(SparseCOOMatrixTest, SubtractScalarFromSparseMatrix) {
 
     EXPECT_EQ(result.rows(), 2);
     EXPECT_EQ(result.cols(), 2);
-    EXPECT_EQ(result.nonzero_count(), 2);
+    EXPECT_EQ(result.initialized_count(), 2);
     EXPECT_FLOAT_EQ(result(0,0), 0.0f);
     EXPECT_FLOAT_EQ(result(1,1), 1.0f);
 }
@@ -1499,7 +1499,7 @@ TEST(SparseCOOMatrixOperators, ElementWiseMultiplyMatchingEntries) {
 
     EXPECT_EQ(result.rows(), 2);
     EXPECT_EQ(result.cols(), 2);
-    EXPECT_EQ(result.nonzero_count(), 1);
+    EXPECT_EQ(result.initialized_count(), 1);
 
     // Only one overlapping non-zero at (1,1): 2.0 * 4.0 = 8.0
     EXPECT_FLOAT_EQ(result.get(1, 1), 8.0f);
@@ -1552,7 +1552,7 @@ TEST(SparseCOOMatrixOperators, ScalarDivision) {
 
     EXPECT_EQ(result.rows(), 2);
     EXPECT_EQ(result.cols(), 2);
-    EXPECT_EQ(result.nonzero_count(), 4);
+    EXPECT_EQ(result.initialized_count(), 4);
 
     EXPECT_FLOAT_EQ(result.get(0, 0), 4.0f);  // 8 / 2
     EXPECT_FLOAT_EQ(result.get(0, 1), 2.0f);  // 4 / 2
@@ -1578,7 +1578,7 @@ TEST(SparseCOOMatrixTest, IdentityConstructor) {
 
     ASSERT_EQ(I.rows(), N);
     ASSERT_EQ(I.cols(), N);
-    ASSERT_EQ(I.nonzero_count(), N);
+    ASSERT_EQ(I.initialized_count(), N);
 
     for (std::size_t i = 0; i < N; ++i) {
         EXPECT_FLOAT_EQ(I.get(i, i), 1.0f);
@@ -1655,7 +1655,7 @@ TEST(SparseCOOMatrixTransposeTest, EmptyMatrixTranspose) {
 
     EXPECT_EQ(mat.rows(), 4);
     EXPECT_EQ(mat.cols(), 3);
-    EXPECT_EQ(mat.nonzero_count(), 0);
+    EXPECT_EQ(mat.initialized_count(), 0);
 }
 // -------------------------------------------------------------------------------- 
 
@@ -2015,7 +2015,7 @@ TEST(SparseCOOMatrixConversionTest, ConstructFromDenseMatrix) {
     slt::SparseCOOMatrix<float> sparse(dense);
     ASSERT_EQ(sparse.rows(), 3);
     ASSERT_EQ(sparse.cols(), 3);
-    ASSERT_EQ(sparse.nonzero_count(), 9);
+    ASSERT_EQ(sparse.initialized_count(), 9);
 
     ASSERT_EQ(sparse(0, 0), 1.0f);
     ASSERT_EQ(sparse(0, 1), 0.0f);
@@ -2040,7 +2040,7 @@ TEST(SparseCOOMatrixConversionTest, AssignFromDenseMatrix) {
 
     ASSERT_EQ(sparse.rows(), 2);
     ASSERT_EQ(sparse.cols(), 2);
-    ASSERT_EQ(sparse.nonzero_count(), 4);
+    ASSERT_EQ(sparse.initialized_count(), 4);
     ASSERT_EQ(sparse(0, 0), 5.0f);
     ASSERT_EQ(sparse(0, 1), 0.0f);
     ASSERT_EQ(sparse(1, 0), 0.0f);
@@ -2055,7 +2055,7 @@ TEST(SparseCOOMatrixConversionTest, EmptyDenseMatrixProducesEmptySparse) {
 
     ASSERT_EQ(sparse.rows(), 2);
     ASSERT_EQ(sparse.cols(), 2);
-    ASSERT_EQ(sparse.nonzero_count(), 0);
+    ASSERT_EQ(sparse.initialized_count(), 0);
 }
 // ================================================================================
 // ================================================================================

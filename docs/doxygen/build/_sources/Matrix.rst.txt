@@ -463,10 +463,10 @@ SparseCOOMatrix(std::size_t, std::size_t, std::size_t)
 .. doxygenfunction:: slt::SparseCOOMatrix::SparseCOOMatrix(std::size_t, std::size_t, std::size_t)
    :project: csalt++
 
-SparseCOOMatrix(DenseMatrix<T>)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+SparseCOOMatrix(DenseMatrix<T>, bool)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. cpp:function:: explicit slt::SparseCOOMatrix::SparseCOOMatrix(const slt::DenseMatrix<T>& dense)
+.. cpp:function:: explicit slt::SparseCOOMatrix::SparseCOOMatrix(const slt::DenseMatrix<T>& dense, bool accept_zeros = true)
 
    Constructs a sparse COO matrix from an existing dense matrix.
 
@@ -475,6 +475,7 @@ SparseCOOMatrix(DenseMatrix<T>)
    (``fast_set = false``) for optimized access.
 
    :param dense: The source DenseMatrix<T> to convert.
+   :param accept_zeros: Accepts 0 if true, rejects them if false.  Defaulted to true
 
    **Example**::
 

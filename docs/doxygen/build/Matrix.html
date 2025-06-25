@@ -231,8 +231,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixENSt6size_tENSt6size_tENSt6size_tE"><code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#sparsecoomatrix-densematrix-t">SparseCOOMatrix(DenseMatrix&lt;T&gt;)</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEE"><code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sparsecoomatrix-densematrix-t-bool">SparseCOOMatrix(DenseMatrix&lt;T&gt;, bool)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEEb"><code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#std-vector-slt-triplet-t">std::vector&lt;slt::Triplet&lt;T&gt;&gt;</a><ul>
@@ -2016,18 +2016,21 @@ Off-diagonal entries are implicitly zero.</p>
 </dd></dl>
 
 </section>
-<section id="sparsecoomatrix-densematrix-t">
-<h3>SparseCOOMatrix(DenseMatrix&lt;T&gt;)<a class="headerlink" href="#sparsecoomatrix-densematrix-t" title="Link to this heading"></a></h3>
+<section id="sparsecoomatrix-densematrix-t-bool">
+<h3>SparseCOOMatrix(DenseMatrix&lt;T&gt;, bool)<a class="headerlink" href="#sparsecoomatrix-densematrix-t-bool" title="Link to this heading"></a></h3>
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEE">
-<span id="_CPPv3N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEE"></span><span id="_CPPv2N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEE"></span><span id="slt::SparseCOOMatrix::SparseCOOMatrix__slt::DenseMatrix:T:CR"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dense</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEE" title="Link to this definition"></a><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEEb">
+<span id="_CPPv3N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEEb"></span><span id="_CPPv2N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEEb"></span><span id="slt::SparseCOOMatrix::SparseCOOMatrix__slt::DenseMatrix:T:CR.b"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dense</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">accept_zeros</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt15SparseCOOMatrix15SparseCOOMatrixERKN3slt11DenseMatrixI1TEEb" title="Link to this definition"></a><br /></dt>
 <dd><p>Constructs a sparse COO matrix from an existing dense matrix.</p>
 <p>All initialized, non-zero elements of the dense matrix are copied into the sparse matrix.
 Uninitialized and exact-zero values are skipped. The result is automatically sorted
 (<code class="docutils literal notranslate"><span class="pre">fast_set</span> <span class="pre">=</span> <span class="pre">false</span></code>) for optimized access.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>dense</strong> – The source DenseMatrix&lt;T&gt; to convert.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dense</strong> – The source DenseMatrix&lt;T&gt; to convert.</p></li>
+<li><p><strong>accept_zeros</strong> – Accepts 0 if true, rejects them if false.  Defaulted to true</p></li>
+</ul>
 </dd>
 </dl>
 <p><strong>Example</strong>:</p>

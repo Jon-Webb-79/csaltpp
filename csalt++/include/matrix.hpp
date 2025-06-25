@@ -1297,6 +1297,9 @@
 
 // -------------------------------------------------------------------------------- 
 
+
+// -------------------------------------------------------------------------------- 
+
         /**
          * @brief Move constructor for DenseMatrix.
          *
@@ -2947,6 +2950,7 @@
          * `fast_set` is set to `false` for efficient retrieval.
          *
          * @param dense The input DenseMatrix<T> to convert.
+         * @param accept_zeros Accepts 0 values if true, rejects them if false.  Defaulted to true
          *
          * @example
          * @code
@@ -2962,7 +2966,7 @@
          * EXPECT_FLOAT_EQ(sparse.get(1, 1), 2.5f);
          * @endcode
          */ 
-        explicit SparseCOOMatrix(const DenseMatrix<T>& dense)
+        explicit SparseCOOMatrix(const DenseMatrix<T>& dense, bool accept_zeros = true)
             : rows_(dense.rows()), cols_(dense.cols()), fast_set(false)
         {
             triplet.reserve(dense.size());  // Conservative guess, not all will be used
@@ -2971,7 +2975,9 @@
                 for (std::size_t c = 0; c < dense.cols(); ++c) {
                     if (dense.is_initialized(r, c)) {
                         T value = dense(r, c);
-                        triplet.emplace_back(r, c, value);  // DO NOT SKIP zeros
+                        if (accept_zeros || value != T{}) {
+                            triplet.emplace_back(r, c, value);
+                        }
                     }
                 }
             }

@@ -756,16 +756,6 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Sets the value at a specific matrix coordinate.
-         *
-         * @param row Zero-based row index.
-         * @param col Zero-based column index.
-         * @param value Value to assign.
-         */
-        virtual void set(std::size_t row, std::size_t col, T value) = 0;
-// -------------------------------------------------------------------------------- 
-
-        /**
          * @brief Creates a polymorphic copy of the matrix object.
          *
          * Useful for cloning objects when only a base class pointer/reference is available.
@@ -1971,7 +1961,7 @@
          * // mat.set(1, 2, 4.3f);  // Throws std::runtime_error
          * @endcode
          */
-        void set(std::size_t row, std::size_t col, T value) override {
+        void set(std::size_t row, std::size_t col, T value) {
             if (row >= rows_ || col >= cols_)
                 throw std::out_of_range("Index out of range");
 
@@ -3597,7 +3587,7 @@
          * float val = mat.get(0, 1);  // Returns 5.0f
          * @endcode
          */
-        void set(std::size_t r, std::size_t c, T value) override {
+        void set(std::size_t r, std::size_t c, T value) {
             if (r >= rows_ || c >= cols_)
                 throw std::out_of_range("Index out of bounds");
 

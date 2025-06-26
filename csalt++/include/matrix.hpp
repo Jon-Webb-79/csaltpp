@@ -722,6 +722,9 @@
      */
     template<typename T>
     class MatrixBase {
+    protected:
+        std::size_t rows_ = 0;
+        std::size_t cols_ = 0;
     public:
         /**
          * @brief Virtual destructor for safe polymorphic deletion.
@@ -734,7 +737,7 @@
          *
          * @return Number of rows.
          */
-        virtual std::size_t rows() const = 0;
+        std::size_t rows() const { return rows_; }
 // -------------------------------------------------------------------------------- 
     
         /**
@@ -742,7 +745,7 @@
          *
          * @return Number of columns.
          */
-        virtual std::size_t cols() const = 0;
+        std::size_t cols() const { return cols_; }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -814,8 +817,6 @@
     private:
         std::vector<T> data; ///< Flat row-major storage of matrix elements. 
         std::vector<uint8_t> init; ///< A vector containin a binary representation of array initialization.
-        std::size_t rows_ = 0; ///< Number of rows 
-        std::size_t cols_ = 0; ///< Number of cols 
     // ================================================================================ 
     public:
         /**
@@ -823,7 +824,7 @@
          *
          * @return The number of rows multiplied by the number of columns, 0 if not initialized
          */
-        std::size_t size() const override {return rows_ * cols_;}
+        std::size_t size() const override {return this->rows_ * this->cols_;}
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1012,7 +1013,10 @@
          * @endcode
          */
         DenseMatrix(std::size_t r, std::size_t c, T value)
-            : data(r * c, value), init(r * c, 1), rows_(r), cols_(c) {}
+            : data(r * c, value), init(r * c, 1) {
+                this->rows_ = r;
+                this->cols_ = c;
+            }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1050,7 +1054,10 @@
          * @endcode
          */
         DenseMatrix(std::size_t r, std::size_t c)
-            : data(r * c, 0), init(r * c, 0), rows_(r), cols_(c) {}
+            : data(r * c, 0), init(r * c, 0) {
+            this->rows_ = r;
+            this->cols_ = c;
+        }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1073,15 +1080,15 @@
          * @endcode
          */
         DenseMatrix(const std::vector<std::vector<T>>& vec) {
-            rows_ = vec.size();
-            cols_ = rows_ ? vec[0].size() : 0;
-            data.resize(rows_ * cols_);
-            init.resize(rows_ * cols_, 1);
-            for (std::size_t i = 0; i < rows_; ++i) {
-                if (vec[i].size() != cols_)
+            this->rows_ = vec.size();
+            this->cols_ = this->rows_ ? vec[0].size() : 0;
+            data.resize(this->rows_ * this->cols_);
+            init.resize(this->rows_ * this->cols_, 1);
+            for (std::size_t i = 0; i < this->rows_; ++i) {
+                if (vec[i].size() != this->cols_)
                     throw std::invalid_argument("All rows must have the same number of columns");
-                for (std::size_t j = 0; j < cols_; ++j)
-                    data[i * cols_ + j] = vec[i][j];
+                for (std::size_t j = 0; j < this->cols_; ++j)
+                    data[i * this->cols_ + j] = vec[i][j];
             }
         }
 // -------------------------------------------------------------------------------- 
@@ -1111,7 +1118,9 @@
          */
         template<std::size_t Rows, std::size_t Cols>
         DenseMatrix(const std::array<std::array<T, Cols>, Rows>& arr)
-            : data(Rows * Cols), init(Rows * Cols, 1), rows_(Rows), cols_(Cols) {
+            : data(Rows * Cols), init(Rows * Cols, 1){
+            this->rows_ = Rows;
+            this->cols_ = Cols;
             for (std::size_t i = 0; i < Rows; ++i)
                 for (std::size_t j = 0; j < Cols; ++j)
                     data[i * Cols + j] = arr[i][j];
@@ -1142,12 +1151,12 @@
          * @endcode
          */
         DenseMatrix(std::initializer_list<std::initializer_list<T>> init_list) {
-            rows_ = init_list.size();
-            cols_ = rows_ ? init_list.begin()->size() : 0;
-            data.reserve(rows_ * cols_);
-            init.reserve(rows_ * cols_);
+            this->rows_ = init_list.size();
+            this->cols_ = this->rows_ ? init_list.begin()->size() : 0;
+            data.reserve(this->rows_ * this->cols_);
+            init.reserve(this->rows_ * this->cols_);
             for (const auto& row : init_list) {
-                if (row.size() != cols_)
+                if (row.size() != this->cols_)
                     throw std::invalid_argument("All rows must have the same number of columns");
                 data.insert(data.end(), row.begin(), row.end());
                 init.insert(init.end(), row.size(), 1);
@@ -1180,14 +1189,18 @@
          * @endcode
          */
         DenseMatrix(const std::vector<T>& flat_data, std::size_t r, std::size_t c)
-            : data(flat_data), init(flat_data.size(), 1), rows_(r), cols_(c) {
+            : data(flat_data), init(flat_data.size(), 1) {
+            this->rows_ = r;
+            this->cols_ = c;
             if (flat_data.size() != r * c)
                 throw std::invalid_argument("Flat data size does not match matrix dimensions");
         }
 // -------------------------------------------------------------------------------- 
 
         DenseMatrix(std::vector<T>&& flat_data, std::size_t r, std::size_t c)
-            : data(std::move(flat_data)), init(data.size(), 1), rows_(r), cols_(c) {
+            : data(std::move(flat_data)), init(data.size(), 1) {
+            this->rows_ = r;
+            this->cols_ = c;
             if (data.size() != r * c)
                 throw std::invalid_argument("Flat data size does not match matrix dimensions");
         }
@@ -1220,7 +1233,9 @@
          */
         template<std::size_t N>
         DenseMatrix(const std::array<T, N>& arr, std::size_t r, std::size_t c)
-            : data(arr.begin(), arr.end()), init(N, 1), rows_(r), cols_(c) {
+            : data(arr.begin(), arr.end()), init(N, 1) {
+            this->rows_ = r;
+            this->cols_ = c;
             if (N != r * c)
                 throw std::invalid_argument("Flat array size does not match matrix dimensions");
         }
@@ -1252,12 +1267,12 @@
          */
         explicit DenseMatrix(const SparseCOOMatrix<T>& sparse)
             : data(sparse.rows() * sparse.cols(), T{}),
-              init(sparse.rows() * sparse.cols(), 0),  // All entries initialized
-              rows_(sparse.rows()),
-              cols_(sparse.cols())
+              init(sparse.rows() * sparse.cols(), 0)  // All entries initialized
         {
+            this->rows_ = sparse.rows();
+            this->cols_ = sparse.cols();
             for (const auto& t : sparse) {
-                std::size_t idx = t.row * cols_ + t.col;
+                std::size_t idx = t.row * this->cols_ + t.col;
                 data[idx] = t.value;
                 init[idx] = 1;
             }
@@ -1281,13 +1296,10 @@
         DenseMatrix(const DenseMatrix<T>& other)
             : MatrixBase<T>(),
               data(other.data),
-              init(other.init),
-              rows_(other.rows_),
-              cols_(other.cols_) {}
-
-// -------------------------------------------------------------------------------- 
-
-
+              init(other.init) {
+            this->rows_ = other.rows_;
+            this->cols_ = other.cols_;
+        }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1309,9 +1321,10 @@
         DenseMatrix(DenseMatrix<T>&& other) noexcept
             : MatrixBase<T>(),
               data(std::move(other.data)),
-              init(std::move(other.init)),
-              rows_(std::exchange(other.rows_, 0)),
-              cols_(std::exchange(other.cols_, 0)) {}
+              init(std::move(other.init)) {
+            this->rows_ = std::exchange(other.rows_, 0);
+            this->cols_ = std::exchange(other.cols_, 0);
+        }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1324,10 +1337,12 @@
          *
          * @throws std::invalid_argument if n is zero.
          */
-        explicit DenseMatrix(std::size_t n) : data(n * n, 0), init(n * n, 1), rows_(n), cols_(n) {
+        explicit DenseMatrix(std::size_t n) : data(n * n, 0), init(n * n, 1) {
             if (n == 0)
                 throw std::invalid_argument("Size of identity matrix must be greater than zero");
 
+            this->rows_ = n;
+            this->cols_ = n;
             for (std::size_t i = 0; i < n; ++i) {
                 std::size_t idx = i * n + i;
                 data[idx] = static_cast<T>(1);
@@ -1357,10 +1372,10 @@
          * @endcode
          */
         T& operator()(std::size_t r, std::size_t c) {
-            if (r >= rows_ || c >= cols_)
+            if (r >= this->rows_ || c >= this->cols_)
                 throw std::out_of_range("Matrix index out of bounds");
 
-            std::size_t idx = r * cols_ + c;
+            std::size_t idx = r * this->cols_ + c;
 
             // If value is not initialized, we assume this is the first assignment
             if (!init[idx])
@@ -1392,10 +1407,10 @@
          * @endcode
          */
         const T& operator()(std::size_t r, std::size_t c) const {
-            if (r >= rows_ || c >= cols_)
+            if (r >= this->rows_ || c >= this->cols_)
                 throw std::out_of_range("Matrix index out of bounds");
 
-            std::size_t idx = r * cols_ + c;
+            std::size_t idx = r * this->cols_ + c;
 
             if (!init[idx])
                 throw std::runtime_error("Attempted to access uninitialized matrix value");
@@ -1424,8 +1439,8 @@
             if (this != &other) {
                 data = other.data;
                 init = other.init;
-                rows_ = other.rows_;
-                cols_ = other.cols_;
+                this->rows_ = other.rows_;
+                this->cols_ = other.cols_;
             }
             return *this;
         }
@@ -1456,17 +1471,17 @@
          */
         DenseMatrix<T>& operator=(const SparseCOOMatrix<T>& sparse) {
             if (this->rows_ != sparse.rows() || this->cols_ != sparse.cols()) {
-                rows_ = sparse.rows();
-                cols_ = sparse.cols();
-                data.resize(rows_ * cols_, T{});
-                init.resize(rows_ * cols_, 1);  // Mark all initialized
+                this->rows_ = sparse.rows();
+                this->cols_ = sparse.cols();
+                data.resize(this->rows_ * this->cols_, T{});
+                init.resize(this->rows_ * this->cols_, 1);  // Mark all initialized
             } else {
                 std::fill(data.begin(), data.end(), T{});
                 std::fill(init.begin(), init.end(), 0);
             }
 
             for (const auto& t : sparse) {
-                std::size_t idx = t.row * cols_ + t.col;
+                std::size_t idx = t.row * this->cols_ + t.col;
                 data[idx] = t.value;
                 init[idx] = 1;
             }
@@ -1511,8 +1526,8 @@
             if (this != &other) {
                 data = std::move(other.data);
                 init = std::move(other.init);
-                rows_ = std::exchange(other.rows_, 0);
-                cols_ = std::exchange(other.cols_, 0);
+                this->rows_ = std::exchange(other.rows_, 0);
+                this->cols_ = std::exchange(other.cols_, 0);
             }
             return *this;
         }
@@ -1539,10 +1554,10 @@
          * @endcode
          */
         DenseMatrix operator+(const DenseMatrix& other) const {
-            if (rows_ != other.rows_ || cols_ != other.cols_)
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for addition");
 
-            DenseMatrix result(rows_, cols_);
+            DenseMatrix result(this->rows_, this->cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::add(data.data(), other.data.data(), result.data.data(), data.size());
                 std::fill(result.init.begin(), result.init.end(), 1);  // ← this line is crucial
@@ -1573,7 +1588,7 @@
          * @endcode
          */
         DenseMatrix operator+(T scalar) const {
-            DenseMatrix result(rows_, cols_);
+            DenseMatrix result(this->rows_, this->cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::add_scalar(data.data(), scalar, result.data.data(), data.size());
                 std::fill(result.init.begin(), result.init.end(), 1);
@@ -1607,10 +1622,10 @@
          * @endcode
          */
         DenseMatrix operator-(const DenseMatrix& other) const {
-            if (rows_ != other.rows_ || cols_ != other.cols_)
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for subtraction");
 
-            DenseMatrix result(rows_, cols_);
+            DenseMatrix result(this->rows_, this->cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::sub(data.data(), other.data.data(), result.data.data(), data.size());
                 std::fill(result.init.begin(), result.init.end(), 1);  // Mark all entries as initialized
@@ -1640,7 +1655,7 @@
          * @endcode
          */
         DenseMatrix operator-(T scalar) const {
-            DenseMatrix result(rows_, cols_);
+            DenseMatrix result(this->rows_, this->cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::sub_scalar(data.data(), scalar, result.data.data(), data.size());
                 std::fill(result.init.begin(), result.init.end(), 1);  // Mark as initialized
@@ -1676,10 +1691,10 @@
          * @endcode
          */
         DenseMatrix operator*(const DenseMatrix& other) const {
-            if (rows_ != other.rows_ || cols_ != other.cols_)
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
 
-            DenseMatrix result(rows_, cols_);
+            DenseMatrix result(this->rows_, this->cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::mul(data.data(), other.data.data(), result.data.data(), data.size());
                 std::fill(result.init.begin(), result.init.end(), 1);
@@ -1709,7 +1724,7 @@
          * @endcode
          */
         DenseMatrix operator*(T scalar) const {
-            DenseMatrix result(rows_, cols_);
+            DenseMatrix result(this->rows_, this->cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::mul_scalar(data.data(), scalar, result.data.data(), data.size());
                 std::fill(result.init.begin(), result.init.end(), 1);
@@ -1744,7 +1759,7 @@
         DenseMatrix operator/(T scalar) const {
             if (scalar == T{}) throw std::invalid_argument("Division by zero");
 
-            DenseMatrix result(rows_, cols_);
+            DenseMatrix result(this->rows_, this->cols_);
             if constexpr (simd_traits<T>::supported) {
                 simd_ops<T>::div_scalar(data.data(), scalar, result.data.data(), data.size());
                 std::fill(result.init.begin(), result.init.end(), 1);
@@ -1780,13 +1795,13 @@
          */
         void transpose() {
             std::vector<T> new_data(data.size());
-            for (std::size_t i = 0; i < rows_; ++i) {
-                for (std::size_t j = 0; j < cols_; ++j) {
-                    new_data[j * rows_ + i] = data[i * cols_ + j];
+            for (std::size_t i = 0; i < this->rows_; ++i) {
+                for (std::size_t j = 0; j < this->cols_; ++j) {
+                    new_data[j * this->rows_ + i] = data[i * this->cols_ + j];
                 }
             }
             data.swap(new_data);
-            std::swap(rows_, cols_);
+            std::swap(this->rows_, this->cols_);
         }
 // -------------------------------------------------------------------------------- 
 
@@ -1815,10 +1830,10 @@
          * @endcode
          */
         DenseMatrix<T> inverse() const {
-            if (rows_ != cols_)
+            if (this->rows_ != this->cols_)
                 throw std::invalid_argument("Only square matrices can be inverted");
 
-            const std::size_t n = rows_;
+            const std::size_t n = this->rows_;
             DenseMatrix<T> A(*this);
             DenseMatrix<T> I(n, n, T{});
             for (std::size_t i = 0; i < n; ++i)
@@ -1878,36 +1893,6 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Returns the number of rows in the matrix.
-         *
-         * This function provides access to the total number of rows stored in the matrix.
-         *
-         * @return Number of rows in the matrix.
-         *
-         * @code
-         * slt::DenseMatrix<float> mat(3, 5);
-         * std::cout << mat.rows();  // Outputs: 3
-         * @endcode
-         */
-        std::size_t rows() const override { return rows_; }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Returns the number of columns in the matrix.
-         *
-         * This function provides access to the total number of columns stored in the matrix.
-         *
-         * @return Number of columns in the matrix.
-         *
-         * @code
-         * slt::DenseMatrix<float> mat(3, 5);
-         * std::cout << mat.cols();  // Outputs: 5
-         * @endcode
-         */
-        std::size_t cols() const override { return cols_; }
-// -------------------------------------------------------------------------------- 
-
-        /**
          * @brief Retrieves a copy of the value at the specified matrix index.
          *
          * This method allows read-only access to an individual matrix element.
@@ -1929,10 +1914,10 @@
          * @endcode
          */
         T get(std::size_t row, std::size_t col) const override {
-            if (row >= rows_ || col >= cols_)
+            if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Index out of range");
             
-            std::size_t idx = row * cols_ + col;
+            std::size_t idx = row * this->cols_ + col;
             if (!init[idx])
                 throw std::runtime_error("Accessing uninitialized matrix element");
             
@@ -1962,10 +1947,10 @@
          * @endcode
          */
         void set(std::size_t row, std::size_t col, T value) {
-            if (row >= rows_ || col >= cols_)
+            if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Index out of range");
 
-            std::size_t idx = row * cols_ + col;
+            std::size_t idx = row * this->cols_ + col;
             if (init[idx])
                 throw std::runtime_error("Cannot set value: element already initialized. Use update instead.");
 
@@ -1995,9 +1980,9 @@
          * @endcode
          */
         void remove(std::size_t row, std::size_t col) {
-            if (row >= rows_ || col >= cols_)
+            if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Index out of range");
-            std::size_t idx = row * cols_ + col;
+            std::size_t idx = row * this->cols_ + col;
             if (!init[idx]) 
                 throw std::runtime_error("Cannot remove value: element not initialized.");
             data[idx] = T{0};      // Reset value
@@ -2027,10 +2012,10 @@
          * @endcode
          */
         void update(std::size_t row, std::size_t col, T value) {
-            if (row >= rows_ || col >= cols_)
+            if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Update failed: index out of bounds");
 
-            std::size_t index = row * cols_ + col;
+            std::size_t index = row * this->cols_ + col;
 
             if (init[index] == 0)
                 throw std::runtime_error("Update failed: value not initialized");
@@ -2077,9 +2062,9 @@
          * @endcode
          */
         bool is_initialized(std::size_t row, std::size_t col) const override {
-            if (row >= rows_ || col >= cols_)
+            if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Index out of range");
-            return init[row * cols_ + col] != 0;
+            return init[row * this->cols_ + col] != 0;
         }
     };
 // ================================================================================ 
@@ -2673,8 +2658,6 @@
         static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                       "DenseMatrix only supports float or double");
     private:
-        std::size_t rows_ = 0; ///< Number of Matrix rows.
-        std::size_t cols_ = 0; ///< Number of Matrix columns.
         std::vector<Triplet<T>> triplet; ///< A vector of triplet objects
         bool fast_set = true;  ///< true if vectors are optimized for insertation, false if optimized for retrieval
 // ================================================================================ 
@@ -2685,7 +2668,7 @@
          *
          * @return The number of rows multiplied by the number of columns, 0 if not initialized
          */
-        std::size_t size() const override {return rows_ * cols_;} 
+        std::size_t size() const override {return this->rows_ * this->cols_;} 
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -2754,8 +2737,9 @@
          * **Output:**  
          * ``mat(1, 2) = 2.5``
          */
-        explicit SparseCOOMatrix(std::size_t r, std::size_t c, std::size_t initial_capacity = 16)
-            : rows_(r), cols_(c) {
+        explicit SparseCOOMatrix(std::size_t r, std::size_t c, std::size_t initial_capacity = 16) {
+            this->rows_ = r;
+            this->cols_ = c;
             triplet.reserve(initial_capacity);
         }
 // -------------------------------------------------------------------------------- 
@@ -2781,8 +2765,10 @@
          * @endcode
          */
         SparseCOOMatrix(std::size_t r, std::size_t c, const std::vector<Triplet<T>>& triplets)
-            : rows_(r), cols_(c), triplet(triplets), fast_set(false)
+            : triplet(triplets), fast_set(false)
         {
+            this->rows_ = r;
+            this->cols_ = c;
             std::sort(triplet.begin(), triplet.end());
         }
 // -------------------------------------------------------------------------------- 
@@ -2818,8 +2804,10 @@
          * @endcode
          */
         SparseCOOMatrix(std::size_t r, std::size_t c, std::vector<Triplet<T>>&& triplets)
-            : rows_(r), cols_(c), triplet(std::move(triplets)), fast_set(false)
+            : triplet(std::move(triplets)), fast_set(false)
         {
+            this->rows_ = r;
+            this->cols_ = c;
             std::sort(triplet.begin(), triplet.end());
         }
 // -------------------------------------------------------------------------------- 
@@ -2844,8 +2832,10 @@
          */
         template<std::size_t N>
         SparseCOOMatrix(std::size_t r, std::size_t c, const std::array<Triplet<T>, N>& triplets)
-            : rows_(r), cols_(c), triplet(triplets.begin(), triplets.end()), fast_set(false)
+            : triplet(triplets.begin(), triplets.end()), fast_set(false)
         {
+            this->rows_ = r;
+            this->cols_ = c;
             std::sort(triplet.begin(), triplet.end());
         }
 // -------------------------------------------------------------------------------- 
@@ -2870,8 +2860,10 @@
          * @endcode
          */
         SparseCOOMatrix(std::size_t r, std::size_t c, const Triplet<T>* triplets, std::size_t count)
-            : rows_(r), cols_(c), triplet(triplets, triplets + count), fast_set(false)
+            : triplet(triplets, triplets + count), fast_set(false)
         {
+            this->rows_ = r;
+            this->cols_ = c;
             std::sort(triplet.begin(), triplet.end());
         }
 // -------------------------------------------------------------------------------- 
@@ -2895,8 +2887,10 @@
          * @endcode
          */
         SparseCOOMatrix(std::size_t r, std::size_t c, std::initializer_list<Triplet<T>> init_list)
-            : rows_(r), cols_(c), triplet(init_list), fast_set(false)
+            : triplet(init_list), fast_set(false)
         {
+            this->rows_ = r;
+            this->cols_ = c;
             std::sort(triplet.begin(), triplet.end());
         }
 // -------------------------------------------------------------------------------- 
@@ -2919,8 +2913,10 @@
          * @endcode
          */
         explicit SparseCOOMatrix(std::size_t n)
-            : rows_(n), cols_(n), fast_set(false)
+            : fast_set(false)
         {
+            this->rows_ = n;
+            this->cols_ = n;
             triplet.reserve(n);
             for (std::size_t i = 0; i < n; ++i) {
                 triplet.emplace_back(i, i, static_cast<T>(1));
@@ -2957,8 +2953,10 @@
          * @endcode
          */ 
         explicit SparseCOOMatrix(const DenseMatrix<T>& dense, bool accept_zeros = true)
-            : rows_(dense.rows()), cols_(dense.cols()), fast_set(false)
+            : fast_set(false)
         {
+            this->cols_ = dense.cols();
+            this->rows_ = dense.rows();
             triplet.reserve(dense.size());  // Conservative guess, not all will be used
 
             for (std::size_t r = 0; r < dense.rows(); ++r) {
@@ -2989,10 +2987,11 @@
          */
         SparseCOOMatrix(const SparseCOOMatrix<T>& other)
             : MatrixBase<T>(),
-            rows_(other.rows_),
-            cols_(other.cols_),
             triplet(other.triplet),
-            fast_set(other.fast_set) {}
+            fast_set(other.fast_set) {
+            this->rows_ = other.rows_;
+            this->cols_ = other.cols_; 
+        }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -3012,10 +3011,11 @@
          */
         SparseCOOMatrix(SparseCOOMatrix<T>&& other) noexcept
             : MatrixBase<T>(),
-              rows_(std::exchange(other.rows_, 0)),
-              cols_(std::exchange(other.cols_, 0)),
               triplet(std::move(other.triplet)),
-              fast_set(std::exchange(other.fast_set, true)) {}
+              fast_set(std::exchange(other.fast_set, true)) {
+            this->rows_ = std::exchange(other.rows_, 0);
+            this->cols_ = std::exchange(other.cols_, 0);
+        }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -3072,7 +3072,7 @@
          * @endcode
          */
         bool operator==(const SparseCOOMatrix<T>& other) const {
-            if (rows_ != other.rows_ || cols_ != other.cols_)
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
                 return false;
 
             if (triplet.size() != other.triplet.size())
@@ -3108,8 +3108,8 @@
          */
         SparseCOOMatrix<T>& operator=(const SparseCOOMatrix<T>& other) {
             if (this != &other) {
-                rows_ = other.rows_;
-                cols_ = other.cols_;
+                this->rows_ = other.rows_;
+                this->cols_ = other.cols_;
                 fast_set = other.fast_set;
                 triplet = other.triplet;
             }
@@ -3148,8 +3148,8 @@
          * @endcode
          */
         SparseCOOMatrix<T>& operator=(const DenseMatrix<T>& dense) {
-            rows_ = dense.rows();
-            cols_ = dense.cols();
+            this->rows_ = dense.rows();
+            this->cols_ = dense.cols();
             fast_set = false;
 
             triplet.clear();
@@ -3180,8 +3180,8 @@
          */
         SparseCOOMatrix<T>& operator=(SparseCOOMatrix<T>&& other) noexcept {
             if (this != &other) {
-                rows_ = std::exchange(other.rows_, 0);
-                cols_ = std::exchange(other.cols_, 0);
+                this->rows_ = std::exchange(other.rows_, 0);
+                this->cols_ = std::exchange(other.cols_, 0);
                 fast_set = std::exchange(other.fast_set, true);
 
                 triplet = std::move(other.triplet);
@@ -3217,10 +3217,10 @@
          * @endcode
          */
         DenseMatrix<T> operator+(const SparseCOOMatrix<T>& other) const {
-            if (rows_ != other.rows_ || cols_ != other.cols_)
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for addition");
 
-            DenseMatrix<T> result(rows_, cols_);
+            DenseMatrix<T> result(this->rows_, this->cols_);
 
             // Add all elements from this sparse matrix
             for (const auto& t : triplet)
@@ -3290,10 +3290,10 @@
          * @endcode
          */
         DenseMatrix<T> operator-(const SparseCOOMatrix<T>& other) const {
-            if (rows_ != other.rows_ || cols_ != other.cols_)
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for subtraction");
 
-            DenseMatrix<T> result(rows_, cols_);
+            DenseMatrix<T> result(this->rows_, this->cols_);
 
             // Add all elements from this sparse matrix
             for (const auto& t : triplet) {
@@ -3369,10 +3369,10 @@
          * @endcode
          */
         SparseCOOMatrix operator*(const SparseCOOMatrix& other) const {
-            if (rows_ != other.rows_ || cols_ != other.cols_)
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
                 throw std::invalid_argument("Matrix dimensions must match for element-wise multiplication");
 
-            SparseCOOMatrix<T> result(rows_, cols_);
+            SparseCOOMatrix<T> result(this->rows_, this->cols_);
 
             for (const auto& t : triplet) {
                 std::size_t r = t.row;
@@ -3411,7 +3411,7 @@
          * @endcode
          */
         SparseCOOMatrix operator*(T scalar) const {
-            SparseCOOMatrix<T> result(rows_, cols_);
+            SparseCOOMatrix<T> result(this->rows_, this->cols_);
 
             for (const auto& t : triplet) {
                 result.set(t.row, t.col, t.value * scalar);
@@ -3449,7 +3449,7 @@
                 throw std::invalid_argument("Division by zero");
             }
 
-            SparseCOOMatrix<T> result(rows_, cols_);
+            SparseCOOMatrix<T> result(this->rows_, this->cols_);
 
             for (const auto& t : triplet) {
                 result.set(t.row, t.col, t.value / scalar);
@@ -3457,38 +3457,6 @@
 
             return result;
         }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Returns the number of rows in the matrix.
-         *
-         * This function provides the total number of rows defined in the matrix,
-         * regardless of how many entries are explicitly stored or initialized.
-         *
-         * @return The total number of rows.
-         *
-         * @code
-         * slt::SparseCOOMatrix<float> mat(3, 4);
-         * std::size_t r = mat.rows();  // Returns 3
-         * @endcode
-         */
-        std::size_t rows() const override { return rows_; }
-// -------------------------------------------------------------------------------- 
-
-        /**
-         * @brief Returns the number of columns in the matrix.
-         *
-         * This function returns the total number of columns allocated for the matrix,
-         * which includes all column indices regardless of whether they contain non-zero entries.
-         *
-         * @return The total number of columns.
-         *
-         * @code
-         * slt::SparseCOOMatrix<float> mat(3, 4);
-         * std::size_t c = mat.cols();  // Returns 4
-         * @endcode
-         */
-        std::size_t cols() const override { return cols_; }
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -3519,7 +3487,7 @@
          * @endcode
          */
         T get(std::size_t r, std::size_t c) const override {
-            if (r >= rows_ || c >= cols_)
+            if (r >= this->rows_ || c >= this->cols_)
                 throw std::out_of_range("Index out of bounds");
 
             Triplet<T> target(r, c, T{});
@@ -3588,7 +3556,7 @@
          * @endcode
          */
         void set(std::size_t r, std::size_t c, T value) {
-            if (r >= rows_ || c >= cols_)
+            if (r >= this->rows_ || c >= this->cols_)
                 throw std::out_of_range("Index out of bounds");
 
             Triplet<T> target(r, c, value);
@@ -3647,7 +3615,7 @@
          * @endcode
          */
         void update(std::size_t r, std::size_t c, T value) {
-            if (r >= rows_ || c >= cols_)
+            if (r >= this->rows_ || c >= this->cols_)
                 throw std::out_of_range("Index out of bounds");
 
             Triplet<T> target(r, c, T{});
@@ -3706,7 +3674,7 @@
          * @endcode
          */
         bool is_initialized(std::size_t r, std::size_t c) const override {
-            if (r >= rows_ || c >= cols_)
+            if (r >= this->rows_ || c >= this->cols_)
                 throw std::out_of_range("Index out of range");
 
             Triplet<T> target(r, c, T{});
@@ -3875,7 +3843,7 @@
          * @endcode
          */
         void transpose() {
-            std::swap(rows_, cols_);
+            std::swap(this->rows_, this->cols_);
 
             for (auto& t : triplet) {
                 std::swap(t.row, t.col);
@@ -3924,11 +3892,11 @@
          * @endcode
          */ 
         DenseMatrix<T> inverse() const {
-            if (rows_ != cols_)
+            if (this->rows_ != this->cols_)
                 throw std::invalid_argument("Inverse is only defined for square matrices");
 
             // Step 1: Convert to dense
-            DenseMatrix<T> dense(rows_, cols_, 0);
+            DenseMatrix<T> dense(this->rows_, this->cols_, 0);
             for (const auto& t : triplet) {
                 dense.update(t.row, t.col, t.value);
             }
@@ -3969,7 +3937,7 @@
          * @endcode
          */ 
         void remove(std::size_t r, std::size_t c) {
-            if (r >= rows_ || c >= cols_)
+            if (r >= this->rows_ || c >= this->cols_)
                 throw std::out_of_range("Index out of bounds");
 
             Triplet<T> target(r, c, T{});

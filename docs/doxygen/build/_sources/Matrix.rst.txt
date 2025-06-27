@@ -371,15 +371,37 @@ is_initialized()
 
 rows()
 ~~~~~~
+.. cpp:function:: std::size_t slt::DenseMatrix::rows() const
 
-.. doxygenfunction:: slt::DenseMatrix::rows
-   :project: csalt++
+   Returns the number of rows in the matrix.
+
+   This function is inherited from the base class ``MatrixBase`` and applies to all matrix types. 
+   It provides the number of rows allocated for the matrix, regardless of whether they are fully or partially initialized.
+
+   :returns: Number of rows in the matrix.
+   :rtype: std::size_t
+
+   **Example**::
+
+      slt::DenseMatrix<float> mat(3, 4);
+      std::cout << "Rows: " << mat.rows();  // Outputs: 3
 
 cols()
 ~~~~~~
+.. cpp:function:: std::size_t slt::DenseMatrix::cols() const
 
-.. doxygenfunction:: slt::DenseMatrix::cols
-   :project: csalt++
+   Returns the number of columns in the matrix.
+
+   This function is inherited from the base class ``MatrixBase`` and applies to all matrix types. 
+   It provides the number of columns allocated for the matrix, regardless of how many elements are initialized.
+
+   :returns: Number of columns in the matrix.
+   :rtype: std::size_t
+
+   **Example**::
+
+      slt::DenseMatrix<float> mat(3, 4);
+      std::cout << "Columns: " << mat.cols();  // Outputs: 4
 
 get()
 ~~~~~
@@ -992,15 +1014,37 @@ is_initialized()
 
 rows()
 ~~~~~~
+.. cpp:function:: std::size_t slt::SparseCOOMatrix::rows() const
 
-.. doxygenfunction:: slt::SparseCOOMatrix::rows() const
-   :project: csalt++
+   Returns the number of rows in the sparse matrix.
+
+   This function reports the total number of allocated rows, regardless of whether all rows contain nonzero entries.  
+   It is inherited from ``MatrixBase`` and available in all matrix types.
+
+   :returns: Number of rows in the matrix.
+   :rtype: std::size_t
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> mat(5, 3);
+      std::cout << "Rows: " << mat.rows();  // Outputs: 5
 
 cols()
 ~~~~~~
+.. cpp:function:: std::size_t slt::SparseCOOMatrix::cols() const
 
-.. doxygenfunction:: slt::SparseCOOMatrix::cols() const
-   :project: csalt++
+   Returns the number of columns in the sparse matrix.
+
+   This function reports the total number of allocated columns, regardless of whether all columns contain data.  
+   It is inherited from ``MatrixBase`` and implemented consistently across all matrix types.
+
+   :returns: Number of columns in the matrix.
+   :rtype: std::size_t
+
+   **Example**::
+
+      slt::SparseCOOMatrix<float> mat(5, 3);
+      std::cout << "Columns: " << mat.cols();  // Outputs: 3
 
 get()
 ~~~~~

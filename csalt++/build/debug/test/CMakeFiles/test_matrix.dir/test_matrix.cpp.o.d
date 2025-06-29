@@ -307,6 +307,15 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h \
  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse2_double.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse3_float.inl \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/pmmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/mwaitintrin.h \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse3_double.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse4_float.inl \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/smmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/tmmintrin.h \
+ /usr/lib/gcc/x86_64-linux-gnu/11/include/popcntintrin.h \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse4_double.inl \
  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx2_float.inl \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/immintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/x86gprintrin.h \
@@ -324,10 +333,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/lzcntintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/lwpintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/movdirintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/mwaitintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/mwaitxintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/pconfigintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/popcntintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/pkuintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/rdseedintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/rtmintrin.h \
@@ -344,9 +351,6 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/xsavesintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/xtestintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/hresetintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/pmmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/tmmintrin.h \
- /usr/lib/gcc/x86_64-linux-gnu/11/include/smmintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/wmmintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/avxintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/avxvnniintrin.h \
@@ -388,4 +392,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/amxbf16intrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/prfchwintrin.h \
  /usr/lib/gcc/x86_64-linux-gnu/11/include/keylockerintrin.h \
- /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx2_double.inl
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx2_double.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx512_float.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx512_double.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_neon_float.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_neon_double.inl

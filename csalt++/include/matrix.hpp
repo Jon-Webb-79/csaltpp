@@ -35,6 +35,10 @@
 #include "simd_sse4_double.inl"
 #include "simd_avx2_float.inl"
 #include "simd_avx2_double.inl"
+#include "simd_avx512_float.inl"
+#include "simd_avx512_double.inl"
+#include "simd_neon_float.inl"
+#include "simd_neon_double.inl"
 
 
 #ifdef __AVX2__
@@ -97,239 +101,294 @@
         template<>
         struct simd_ops<float> {
             static void add(const float* a, const float* b, float* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_add_f32_avx512(a, b, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_add_f32_avx2(a, b, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_add_f32_sse2(a, b, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_add_f32_sse4(a, b, result, size);
             #elif defined(__SSE3__)
                 slt::simd_add_f32_sse3(a, b, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_add_f32_sse4(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_add_f32_sse2(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_add_f32_neon(a, b, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void sub(const float* a, const float* b, float* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_sub_f32_avx512(a, b, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_sub_f32_avx2(a, b, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_sub_f32_sse2(a, b, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_sub_f32_sse4(a, b, result, size);
             #elif defined(__SSE3__)
                 slt::simd_sub_f32_sse3(a, b, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_sub_f32_sse4(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_sub_f32_sse2(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_sub_f32_neon(a, b, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void add_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_add_scalar_f32_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_add_scalar_f32_avx2(a, scalar, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_add_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_add_scalar_f32_sse4(a, scalar, result, size);
             #elif defined(__SSE3__)
                 slt::simd_add_scalar_f32_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_add_scalar_f32_sse4(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_add_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_add_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void sub_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_sub_scalar_f32_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_sub_scalar_f32_avx2(a, scalar, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_sub_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_sub_scalar_f32_sse4(a, scalar, result, size);
             #elif defined(__SSE3__)
                 slt::simd_sub_scalar_f32_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_sub_scalar_f32_sse4(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_sub_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_sub_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void mul(const float* a, const float* b, float* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_mul_f32_avx512(a, b, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_mul_f32_avx2(a, b, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_mul_f32_sse2(a, b, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_mul_f32_sse4(a, b, result, size);
             #elif defined(__SSE3__)
                 slt::simd_mul_f32_sse3(a, b, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_mul_f32_sse4(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_f32_sse2(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_mul_f32_neon(a, b, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void mul_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_mul_scalar_f32_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_mul_scalar_f32_avx2(a, scalar, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_mul_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_mul_scalar_f32_sse4(a, scalar, result, size);
             #elif defined(__SSE3__)
                 slt::simd_mul_scalar_f32_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_mul_scalar_f32_sse4(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_mul_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void div_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_div_scalar_f32_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_div_scalar_f32_avx2(a, scalar, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_div_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_div_scalar_f32_sse4(a, scalar, result, size);
             #elif defined(__SSE3__)
                 slt::simd_div_scalar_f32_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__)
-                slt:simd_div_scalar_f32_sse4(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_div_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_div_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void copy(const float* src, float* dst, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_copy_f32_avx512(src, dst, size);
+            #elif defined(__AVX2__)
                 slt::simd_copy_f32_avx2(src, dst, size);
-            #elif defined(__SSE2__)
-                slt::simd_copy_f32_sse2(src, dst, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_copy_f32_sse4(src, dst, size);
             #elif defined(__SSE3__)
                 slt::simd_copy_f32_sse3(src, dst, size);
-            #elif defined(__SSE4__)
-                slt::simd-copy_f32_sse4(src, dst, size);
+            #elif defined(__SSE2__)
+                slt::simd_copy_f32_sse2(src, dst, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_copy_f32_neon(src, dst, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static float magnitude_squared(const float* data, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                return slt::simd_magnitude_squared_f32_avx512(data, size);
+            #elif defined(__AVX2__)
                 return slt::simd_magnitude_squared_f32_avx2(data, size);
-            #elif defined(__SSE2__)
-                return slt::simd_magnitude_squared_f32_sse2(data, size);
+            #elif defined(__SSE4_1__)
+                return slt::simd_magnitude_squared_f32_sse4(data, size);
             #elif defined(__SSE3__)
                 return slt::simd_magnitude_squared_f32_sse3(data, size);
-            #elif defined(__SSE4__)
-                return slt::simd_magnitude_squared_f32_sse4(data, size);
+            #elif defined(__SSE2__)
+                return slt::simd_magnitude_squared_f32_sse2(data, size);
+            #elif defined(__ARM_NEON)
+                return slt::simd_magnitude_squared_f32_neon(data, size);
             #endif
             }
         };
 // ================================================================================ 
 
-
         template<>
         struct simd_ops<double> {
             static void add(const double* a, const double* b, double* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_add_f64_avx512(a, b, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_add_f64_avx2(a, b, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_add_f64_sse2(a, b, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_add_f64_sse4(a, b, result, size);
             #elif defined(__SSE3__)
                 slt::simd_add_f64_sse3(a, b, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_add_f64_sse4(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_add_f64_sse2(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_add_f64_neon(a, b, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void sub(const double* a, const double* b, double* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_sub_f64_avx512(a, b, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_sub_f64_avx2(a, b, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_sub_f64_sse2(a, b, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_sub_f64_sse4(a, b, result, size);
             #elif defined(__SSE3__)
                 slt::simd_sub_f64_sse3(a, b, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_sub_f64_sse4(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_sub_f64_sse2(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_sub_f64_neon(a, b, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void add_scalar(const double* a, double scalar, double* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_add_scalar_f64_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_add_scalar_f64_avx2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_add_scalar_f64_sse4(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_add_scalar_f64_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_scalar_f64_sse2(a, scalar, result, size);
-            #elif defined(__SSE3__)
-                slt:simd_add_scalar_f64_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__) 
-                slt::simd_add_scalar_f64_sse4(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_add_scalar_f64_neon(a, b, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void sub_scalar(const double* a, double scalar, double* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_sub_scalar_f64_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_sub_scalar_f64_avx2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_sub_scalar_f64_sse4(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_sub_scalar_f64_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_scalar_f64_sse2(a, scalar, result, size);
-            #elif defined(__SSE3__)
-                slt::simd_sub_scalar_f64_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_sub_scalar_f64_sse3(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_sub_scalar_f64_neon(a, scalar, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void mul(const double* a, const double* b, double* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_mul_f64_avx512(a, b, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_mul_f64_avx2(a, b, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_mul_f64_sse2(a, b, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_mul_f64_sse4(a, b, result, size);
             #elif defined(__SSE3__)
                 slt::simd_mul_f64_sse3(a, b, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_mul_f64_sse4(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_f64_sse2(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_mul_f64_neon(a, b, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void mul_scalar(const double* a, double scalar, double* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_mul_scalar_f64_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_mul_scalar_f64_avx2(a, scalar, result, size);
-            #elif defined(__SSE2__)
-                slt::simd_mul_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_mul_scalar_f64_sse4(a, scalar, result, size);
             #elif defined(__SSE3__)
                 slt::simd_mul_scalar_f64_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_mul_scalar_f64_sse4(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_mul_scalar_f64_neon(a, scalar, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void div_scalar(const double* a, double scalar, double* result, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_div_scalar_f64_avx512(a, scalar, result, size);
+            #elif defined(__AVX2__)
                 slt::simd_div_scalar_f64_avx2(a, scalar, result, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_div_scalar_f64_sse4(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_div_scalar_f64_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_div_scalar_f64_sse2(a, scalar, result, size);
-            #elif defined(__SSE3__)
-                slt::simd_div_scalar_f64_sse3(a, scalar, result, size);
-            #elif defined(__SSE4__)
-                slt::simd_div_scalar_f64_sse3(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_div_scalar_f64_neon(a, scalar, result, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static void copy(const double* src, double* dst, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                slt::simd_copy_f64_avx512(src, dst, size);
+            #elif defined(__AVX2__)
                 slt::simd_copy_f64_avx2(src, dst, size);
-            #elif defined(__SSE2__)
-                slt::simd_copy_f64_sse2(src, dst, size);
+            #elif defined(__SSE4_1__)
+                slt::simd_copy_f64_sse4(src, dst, size);
             #elif defined(__SSE3__)
                 slt::simd_copy_f64_sse3(src, dst, size);
-            #elif defined(__SSE4__)
-                slt::simd_copy_f64_sse4(src, dst, size);
+            #elif defined(__SSE2__)
+                slt::simd_copy_f64_sse2(src, dst, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_copy_f64_neon(src, dst, size);
             #endif
             }
-// -------------------------------------------------------------------------------- 
 
             static double magnitude_squared(const double* data, std::size_t size) {
-            #if defined(__AVX2__)
+            #if defined(__AVX512F__)
+                return slt::simd_magnitude_squared_f64_avx512(data, size);
+            #elif defined(__AVX2__)
                 return slt::simd_magnitude_squared_f64_avx2(data, size);
-            #elif defined(__SSE2__)
-                return slt::simd_magnitude_squared_f64_sse2(data, size);
+            #elif defined(__SSE4_1__)
+                return slt::simd_magnitude_squared_f64_sse4(data, size);
             #elif defined(__SSE3__)
                 return slt::simd_magnitude_squared_f64_sse3(data, size);
-            #elif defined(__SSE4__)
-                return slt::simd_magnitude_squared_f64_sse4(data, size);
+            #elif defined(__SSE2__)
+                return slt::simd_magnitude_squared_f64_sse2(data, size);
+            #elif defined(__ARM_NEON)
+                return slt::simd_magnitude_squared_f64_neon(data,size);
             #endif
             }
         };

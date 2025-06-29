@@ -12,7 +12,10 @@ templates, operator overloading, and runtime format adaptation.
 
 This library targets performance-critical applications such as scientific 
 simulations, engineering solvers, and adaptive mesh computations where matrix 
-structure can vary dramatically.
+structure can vary dramatically.  
+
+This library provides SIMD-accelerated numerical operations with support for x86 
+instruction sets (AVX2, AVX-512, SSE2, SSE3, SSE4.1) and ARM architectures (NEON, SVE, SVE2).
 
 Why CSalt++
 ###########

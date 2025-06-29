@@ -27,6 +27,11 @@
 #include <cmath>
 #include <type_traits>
 
+#include "simd_sse2_float.inl"
+#include "simd_sse2_double.inl"
+#include "simd_avx2_float.inl"
+#include "simd_avx2_double.inl"
+
 
 #ifdef __AVX2__
         #include <immintrin.h>
@@ -83,630 +88,209 @@
         // SIMD operations
         template<typename T> struct simd_ops;
 
-// -------------------------------------------------------------------------------- 
-       
-        /**
-         * @brief SIMD-accelerated operations for float arrays.
-         *
-         * This specialization of simd_ops provides AVX, SSE, or fallback implementations
-         * of basic arithmetic operations for `float` arrays. Used to accelerate matrix operations.
-         */
+// ================================================================================ 
+
         template<>
         struct simd_ops<float> {
-            /**
-             * @brief Adds two float arrays element-wise.
-             *
-             * Performs `result[i] = a[i] + b[i]` for all elements. Uses AVX or SSE where available.
-             *
-             * @param a Pointer to the first input array.
-             * @param b Pointer to the second input array.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the arrays.
-             */
             static void add(const float* a, const float* b, float* result, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 va = _mm256_loadu_ps(&a[i]);
-                    __m256 vb = _mm256_loadu_ps(&b[i]);
-                    __m256 vr = _mm256_add_ps(va, vb);
-                    _mm256_storeu_ps(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 va = _mm_loadu_ps(&a[i]);
-                    __m128 vb = _mm_loadu_ps(&b[i]);
-                    __m128 vr = _mm_add_ps(va, vb);
-                    _mm_storeu_ps(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] + b[i];
+            #if defined(__AVX2__)
+                slt::simd_add_f32_avx2(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_add_f32_sse2(a, b, result, size);
+            #else
+                slt::simd_add_f32_scalar(a, b, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Subtracts two float arrays element-wise.
-             *
-             * Performs `result[i] = a[i] - b[i]` for all elements. Uses AVX or SSE where available.
-             *
-             * @param a Pointer to the first input array.
-             * @param b Pointer to the second input array.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the arrays.
-             */
             static void sub(const float* a, const float* b, float* result, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 va = _mm256_loadu_ps(&a[i]);
-                    __m256 vb = _mm256_loadu_ps(&b[i]);
-                    __m256 vr = _mm256_sub_ps(va, vb);
-                    _mm256_storeu_ps(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 va = _mm_loadu_ps(&a[i]);
-                    __m128 vb = _mm_loadu_ps(&b[i]);
-                    __m128 vr = _mm_sub_ps(va, vb);
-                    _mm_storeu_ps(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] - b[i];
+            #if defined(__AVX2__)
+                slt::simd_sub_f32_avx2(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_sub_f32_sse2(a, b, result, size);
+            #else
+                slt::simd_sub_f32_scalar(a, b, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Adds a scalar to each element of a float array.
-             *
-             * Performs `result[i] = a[i] + scalar` for all elements. SIMD-accelerated where available.
-             *
-             * @param a Pointer to the input array.
-             * @param scalar Scalar value to add.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the array.
-             */
             static void add_scalar(const float* a, float scalar, float* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256 vscalar = _mm256_set1_ps(scalar);
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 va = _mm256_loadu_ps(&a[i]);
-                    __m256 vr = _mm256_add_ps(va, vscalar);
-                    _mm256_storeu_ps(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128 vscalar = _mm_set1_ps(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 va = _mm_loadu_ps(&a[i]);
-                    __m128 vr = _mm_add_ps(va, vscalar);
-                    _mm_storeu_ps(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] + scalar;
+            #if defined(__AVX2__)
+                slt::simd_add_scalar_f32_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_add_scalar_f32_sse2(a, scalar, result, size);
+            #else
+                slt::simd_add_scalar_f32_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Subtracts a scalar from each element of a float array.
-             *
-             * Performs `result[i] = a[i] - scalar` for all elements. SIMD-accelerated where available.
-             *
-             * @param a Pointer to the input array.
-             * @param scalar Scalar value to subtract.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the array.
-             */
             static void sub_scalar(const float* a, float scalar, float* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256 vscalar = _mm256_set1_ps(scalar);
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 va = _mm256_loadu_ps(&a[i]);
-                    __m256 vr = _mm256_sub_ps(va, vscalar);
-                    _mm256_storeu_ps(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128 vscalar = _mm_set1_ps(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 va = _mm_loadu_ps(&a[i]);
-                    __m128 vr = _mm_sub_ps(va, vscalar);
-                    _mm_storeu_ps(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] - scalar;
+            #if defined(__AVX2__)
+                slt::simd_sub_scalar_f32_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_sub_scalar_f32_sse2(a, scalar, result, size);
+            #else
+                slt::simd_sub_scalar_f32_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Performs SIMD-accelerated element-wise multiplication of two float arrays.
-             *
-             * Multiplies each corresponding element of arrays `a` and `b`, storing the result in `result`.
-             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
-             *
-             * @param a       Pointer to the first input array.
-             * @param b       Pointer to the second input array.
-             * @param result  Pointer to the output array.
-             * @param size    Number of elements to process.
-             */
             static void mul(const float* a, const float* b, float* result, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 va = _mm256_loadu_ps(&a[i]);
-                    __m256 vb = _mm256_loadu_ps(&b[i]);
-                    __m256 vr = _mm256_mul_ps(va, vb);
-                    _mm256_storeu_ps(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 va = _mm_loadu_ps(&a[i]);
-                    __m128 vb = _mm_loadu_ps(&b[i]);
-                    __m128 vr = _mm_mul_ps(va, vb);
-                    _mm_storeu_ps(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] * b[i];
+            #if defined(__AVX2__)
+                slt::simd_mul_f32_avx2(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_f32_sse2(a, b, result, size);
+            #else
+                slt::simd_mul_f32_scalar(a, b, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Performs SIMD-accelerated scalar multiplication on a float array.
-             *
-             * Multiplies each element in array `a` by the scalar `scalar`, storing the result in `result`.
-             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
-             *
-             * @param a       Pointer to the input array.
-             * @param scalar  Scalar value to multiply each element by.
-             * @param result  Pointer to the output array.
-             * @param size    Number of elements to process.
-             */
             static void mul_scalar(const float* a, float scalar, float* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256 vscalar = _mm256_set1_ps(scalar);
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 va = _mm256_loadu_ps(&a[i]);
-                    __m256 vr = _mm256_mul_ps(va, vscalar);
-                    _mm256_storeu_ps(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128 vscalar = _mm_set1_ps(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 va = _mm_loadu_ps(&a[i]);
-                    __m128 vr = _mm_mul_ps(va, vscalar);
-                    _mm_storeu_ps(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] * scalar;
+            #if defined(__AVX2__)
+                slt::simd_mul_scalar_f32_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_scalar_f32_sse2(a, scalar, result, size);
+            #else
+                slt::simd_mul_scalar_f32_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Divides each element of a float array by a scalar.
-             *
-             * Performs `result[i] = a[i] / scalar` for all elements. Utilizes AVX or SSE
-             * SIMD instructions for hardware-accelerated performance where available.
-             *
-             * @param a Pointer to the input float array.
-             * @param scalar The float scalar divisor.
-             * @param result Pointer to the output float array.
-             * @param size Number of elements in the array.
-             *
-             * @note Division by zero is undefined and may result in NaN or Inf.
-             */
             static void div_scalar(const float* a, float scalar, float* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256 vscalar = _mm256_set1_ps(scalar);
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 va = _mm256_loadu_ps(&a[i]);
-                    __m256 vr = _mm256_div_ps(va, vscalar);
-                    _mm256_storeu_ps(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128 vscalar = _mm_set1_ps(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 va = _mm_loadu_ps(&a[i]);
-                    __m128 vr = _mm_div_ps(va, vscalar);
-                    _mm_storeu_ps(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] / scalar;
+            #if defined(__AVX2__)
+                slt::simd_div_scalar_f32_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_div_scalar_f32_sse2(a, scalar, result, size);
+            #else
+                slt::simd_div_scalar_f32_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
             static void copy(const float* src, float* dst, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 8 * 8;
-                for (std::size_t i = 0; i < end; i += 8) {
-                    __m256 v = _mm256_loadu_ps(&src[i]);
-                    _mm256_storeu_ps(&dst[i], v);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m128 v = _mm_loadu_ps(&src[i]);
-                    _mm_storeu_ps(&dst[i], v);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    dst[i] = src[i];
+            #if defined(__AVX2__)
+                slt::simd_copy_f32_avx2(src, dst, size);
+            #elif defined(__SSE2__)
+                slt::simd_copy_f32_sse2(src, dst, size);
+            #else
+                slt::simd_copy_f32_scalar(src, dst, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
             static float magnitude_squared(const float* data, std::size_t size) {
-#if defined(__AVX2__)
-                __m256 vsum = _mm256_setzero_ps();
-                std::size_t i = 0;
-                for (; i + 8 <= size; i += 8) {
-                    __m256 v = _mm256_loadu_ps(&data[i]);
-                    vsum = _mm256_add_ps(vsum, _mm256_mul_ps(v, v));
-                }
-                float buffer[8];
-                _mm256_storeu_ps(buffer, vsum);
-                T total = buffer[0] + buffer[1] + buffer[2] + buffer[3] +
-                          buffer[4] + buffer[5] + buffer[6] + buffer[7];
-#elif defined(__SSE2__)
-                __m128 vsum = _mm_setzero_ps();
-                std::size_t i = 0;
-                for (; i + 4 <= size; i += 4) {
-                    __m128 v = _mm_loadu_ps(&data[i]);
-                    vsum = _mm_add_ps(vsum, _mm_mul_ps(v, v));
-                }
-                float buffer[4];
-                _mm_storeu_ps(buffer, vsum);
-                float total = buffer[0] + buffer[1] + buffer[2] + buffer[3];
-#else
-                std::size_t i = 0;
-                T total = 0;
-#endif
-                for (; i < size; ++i)
-                    total += data[i] * data[i];
-
-                return total;
+            #if defined(__AVX2__)
+                return slt::simd_magnitude_squared_f32_avx2(data, size);
+            #elif defined(__SSE2__)
+                return slt::simd_magnitude_squared_f32_sse2(data, size);
+            #else
+                return slt::simd_magnitude_squared_f32_scalar(data, size);
+            #endif
             }
         };
-// -------------------------------------------------------------------------------- 
+// ================================================================================ 
 
-        /**
-         * @brief SIMD-accelerated operations for double arrays.
-         *
-         * This specialization of simd_ops provides AVX, SSE2, or fallback implementations
-         * of basic arithmetic operations for `double` arrays. Used to accelerate matrix operations.
-         */
+
         template<>
         struct simd_ops<double> {
-
-            /**
-             * @brief Adds two double arrays element-wise.
-             *
-             * Performs `result[i] = a[i] + b[i]` for all elements. Uses AVX or SSE2 where available.
-             *
-             * @param a Pointer to the first input array.
-             * @param b Pointer to the second input array.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the arrays.
-             */
             static void add(const double* a, const double* b, double* result, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d va = _mm256_loadu_pd(&a[i]);
-                    __m256d vb = _mm256_loadu_pd(&b[i]);
-                    __m256d vr = _mm256_add_pd(va, vb);
-                    _mm256_storeu_pd(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d va = _mm_loadu_pd(&a[i]);
-                    __m128d vb = _mm_loadu_pd(&b[i]);
-                    __m128d vr = _mm_add_pd(va, vb);
-                    _mm_storeu_pd(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] + b[i];
+            #if defined(__AVX2__)
+                slt::simd_add_f64_avx2(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_add_f64_sse2(a, b, result, size);
+            #else
+                slt::simd_add_f64_scalar(a, b, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Subtracts two double arrays element-wise.
-             *
-             * Performs `result[i] = a[i] - b[i]` for all elements. Uses AVX or SSE2 where available.
-             *
-             * @param a Pointer to the first input array.
-             * @param b Pointer to the second input array.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the arrays.
-             */ 
             static void sub(const double* a, const double* b, double* result, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d va = _mm256_loadu_pd(&a[i]);
-                    __m256d vb = _mm256_loadu_pd(&b[i]);
-                    __m256d vr = _mm256_sub_pd(va, vb);
-                    _mm256_storeu_pd(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d va = _mm_loadu_pd(&a[i]);
-                    __m128d vb = _mm_loadu_pd(&b[i]);
-                    __m128d vr = _mm_sub_pd(va, vb);
-                    _mm_storeu_pd(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] - b[i];
+            #if defined(__AVX2__)
+                slt::simd_sub_f64_avx2(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_sub_f64_sse2(a, b, result, size);
+            #else
+                slt::simd_sub_f64_scalar(a, b, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Adds a scalar to each element of a double array.
-             *
-             * Performs `result[i] = a[i] + scalar` for all elements. SIMD-accelerated where available.
-             *
-             * @param a Pointer to the input array.
-             * @param scalar Scalar value to add.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the array.
-             */
             static void add_scalar(const double* a, double scalar, double* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256d vscalar = _mm256_set1_pd(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d va = _mm256_loadu_pd(&a[i]);
-                    __m256d vr = _mm256_add_pd(va, vscalar);
-                    _mm256_storeu_pd(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128d vscalar = _mm_set1_pd(scalar);
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d va = _mm_loadu_pd(&a[i]);
-                    __m128d vr = _mm_add_pd(va, vscalar);
-                    _mm_storeu_pd(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] + scalar;
+            #if defined(__AVX2__)
+                slt::simd_add_scalar_f64_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_add_scalar_f64_sse2(a, scalar, result, size);
+            #else
+                slt::simd_add_scalar_f64_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Subtracts a scalar from each element of a double array.
-             *
-             * Performs `result[i] = a[i] - scalar` for all elements. SIMD-accelerated where available.
-             *
-             * @param a Pointer to the input array.
-             * @param scalar Scalar value to subtract.
-             * @param result Pointer to the output array.
-             * @param size Number of elements in the array.
-             */
             static void sub_scalar(const double* a, double scalar, double* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256d vscalar = _mm256_set1_pd(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d va = _mm256_loadu_pd(&a[i]);
-                    __m256d vr = _mm256_sub_pd(va, vscalar);
-                    _mm256_storeu_pd(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128d vscalar = _mm_set1_pd(scalar);
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d va = _mm_loadu_pd(&a[i]);
-                    __m128d vr = _mm_sub_pd(va, vscalar);
-                    _mm_storeu_pd(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] - scalar;
+            #if defined(__AVX2__)
+                slt::simd_sub_scalar_f64_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_sub_scalar_f64_sse2(a, scalar, result, size);
+            #else
+                slt::simd_sub_scalar_f64_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Performs SIMD-accelerated element-wise multiplication of two double arrays.
-             *
-             * Multiplies each corresponding element of arrays `a` and `b`, storing the result in `result`.
-             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
-             *
-             * @param a       Pointer to the first input array.
-             * @param b       Pointer to the second input array.
-             * @param result  Pointer to the output array.
-             * @param size    Number of elements to process.
-             */
             static void mul(const double* a, const double* b, double* result, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d va = _mm256_loadu_pd(&a[i]);
-                    __m256d vb = _mm256_loadu_pd(&b[i]);
-                    __m256d vr = _mm256_mul_pd(va, vb);
-                    _mm256_storeu_pd(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d va = _mm_loadu_pd(&a[i]);
-                    __m128d vb = _mm_loadu_pd(&b[i]);
-                    __m128d vr = _mm_mul_pd(va, vb);
-                    _mm_storeu_pd(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] * b[i];
+            #if defined(__AVX2__)
+                slt::simd_mul_f64_avx2(a, b, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_f64_sse2(a, b, result, size);
+            #else
+                slt::simd_mul_f64_scalar(a, b, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Performs SIMD-accelerated scalar multiplication on a double array.
-             *
-             * Multiplies each element in array `a` by the scalar `scalar`, storing the result in `result`.
-             * Uses AVX or SSE where available, and falls back to scalar processing otherwise.
-             *
-             * @param a       Pointer to the input array.
-             * @param scalar  Scalar value to multiply each element by.
-             * @param result  Pointer to the output array.
-             * @param size    Number of elements to process.
-             */
             static void mul_scalar(const double* a, double scalar, double* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256d vscalar = _mm256_set1_pd(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d va = _mm256_loadu_pd(&a[i]);
-                    __m256d vr = _mm256_mul_pd(va, vscalar);
-                    _mm256_storeu_pd(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128d vscalar = _mm_set1_pd(scalar);
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d va = _mm_loadu_pd(&a[i]);
-                    __m128d vr = _mm_mul_pd(va, vscalar);
-                    _mm_storeu_pd(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] * scalar;
+            #if defined(__AVX2__)
+                slt::simd_mul_scalar_f64_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_mul_scalar_f64_sse2(a, scalar, result, size);
+            #else
+                slt::simd_mul_scalar_f64_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
-            /**
-             * @brief Divides each element of a double array by a scalar.
-             *
-             * Performs `result[i] = a[i] / scalar` for all elements. Utilizes AVX or SSE
-             * SIMD instructions for hardware-accelerated performance where available.
-             *
-             * @param a Pointer to the input double array.
-             * @param scalar The double scalar divisor.
-             * @param result Pointer to the output double array.
-             * @param size Number of elements in the array.
-             *
-             * @note Division by zero is undefined and may result in NaN or Inf.
-             */
             static void div_scalar(const double* a, double scalar, double* result, std::size_t size) {
-#if defined(__AVX2__)
-                __m256d vscalar = _mm256_set1_pd(scalar);
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d va = _mm256_loadu_pd(&a[i]);
-                    __m256d vr = _mm256_div_pd(va, vscalar);
-                    _mm256_storeu_pd(&result[i], vr);
-                }
-#elif defined(__SSE2__)
-                __m128d vscalar = _mm_set1_pd(scalar);
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d va = _mm_loadu_pd(&a[i]);
-                    __m128d vr = _mm_div_pd(va, vscalar);
-                    _mm_storeu_pd(&result[i], vr);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    result[i] = a[i] / scalar;
+            #if defined(__AVX2__)
+                slt::simd_div_scalar_f64_avx2(a, scalar, result, size);
+            #elif defined(__SSE2__)
+                slt::simd_div_scalar_f64_sse2(a, scalar, result, size);
+            #else
+                slt::simd_div_scalar_f64_scalar(a, scalar, result, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
             static void copy(const double* src, double* dst, std::size_t size) {
-#if defined(__AVX2__)
-                std::size_t end = size / 4 * 4;
-                for (std::size_t i = 0; i < end; i += 4) {
-                    __m256d v = _mm256_loadu_pd(&src[i]);
-                    _mm256_storeu_pd(&dst[i], v);
-                }
-#elif defined(__SSE2__)
-                std::size_t end = size / 2 * 2;
-                for (std::size_t i = 0; i < end; i += 2) {
-                    __m128d v = _mm_loadu_pd(&src[i]);
-                    _mm_storeu_pd(&dst[i], v);
-                }
-#else
-                std::size_t end = 0;
-#endif
-                for (std::size_t i = end; i < size; ++i)
-                    dst[i] = src[i];
+            #if defined(__AVX2__)
+                slt::simd_copy_f64_avx2(src, dst, size);
+            #elif defined(__SSE2__)
+                slt::simd_copy_f64_sse2(src, dst, size);
+            #else
+                slt::simd_copy_f64_scalar(src, dst, size);
+            #endif
             }
 // -------------------------------------------------------------------------------- 
 
             static double magnitude_squared(const double* data, std::size_t size) {
-#if defined(__AVX2__)
-                __m256d vsum = _mm256_setzero_pd();
-                std::size_t i = 0;
-                for (; i + 4 <= size; i += 4) {
-                    __m256d v = _mm256_loadu_pd(&data[i]);
-                    vsum = _mm256_add_pd(vsum, _mm256_mul_pd(v, v));
-                }
-                double buffer[4];
-                _mm256_storeu_pd(buffer, vsum);
-                double total = buffer[0] + buffer[1] + buffer[2] + buffer[3];
-#elif defined(__SSE2__)
-                __m128d vsum = _mm_setzero_pd();
-                std::size_t i = 0;
-                for (; i + 2 <= size; i += 2) {
-                    __m128d v = _mm_loadu_pd(&data[i]);
-                    vsum = _mm_add_pd(vsum, _mm_mul_pd(v, v));
-                }
-                double buffer[2];
-                _mm_storeu_pd(buffer, vsum);
-                double total = buffer[0] + buffer[1];
-#else
-                std::size_t i = 0;
-                double total = 0.0;
-#endif
-                for (; i < size; ++i)
-                    total += data[i] * data[i];
-
-                return total;
+            #if defined(__AVX2__)
+                return slt::simd_magnitude_squared_f64_avx2(data, size);
+            #elif defined(__SSE2__)
+                return slt::simd_magnitude_squared_f64_sse2(data, size);
+            #else
+                return slt::simd_magnitude_squared_f64_scalar(data, size);
+            #endif
             }
         };
 // ================================================================================ 

@@ -24,6 +24,10 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
   _deps/googletest-src/googletest/include/gtest/internal/gtest-string.h \
   _deps/googletest-src/googletest/include/gtest/internal/gtest-type-util.h \
   /home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp \
+  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx2_double.inl \
+  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx2_float.inl \
+  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse2_double.inl \
+  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse2_float.inl \
   /usr/include/alloca.h \
   /usr/include/asm-generic/bitsperlong.h \
   /usr/include/asm-generic/errno-base.h \
@@ -365,21 +369,191 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
   /usr/include/x86_64-linux-gnu/sys/types.h \
   /usr/include/x86_64-linux-gnu/sys/ucontext.h \
   /usr/include/x86_64-linux-gnu/sys/wait.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/adxintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/amxbf16intrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/amxint8intrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/amxtileintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx2intrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx5124fmapsintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx5124vnniwintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bf16intrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bf16vlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bitalgintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bwintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512cdintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512dqintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512erintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512fintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512ifmaintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512ifmavlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512pfintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmi2intrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmi2vlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmiintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmivlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vlbwintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vldqintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vnniintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vnnivlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vp2intersectintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vp2intersectvlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vpopcntdqintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vpopcntdqvlintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avxintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/avxvnniintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/bmi2intrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/bmiintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/cetintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/cldemoteintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/clflushoptintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/clwbintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/clzerointrin.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/enqcmdintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/f16cintrin.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/fmaintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/fxsrintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/gfniintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/hresetintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/ia32intrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/immintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/keylockerintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/lwpintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/lzcntintrin.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/movdirintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/mwaitintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/mwaitxintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/pconfigintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/pkuintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/pmmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/popcntintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/prfchwintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/rdseedintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/rtmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/serializeintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/sgxintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/shaintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/smmintrin.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdarg.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stddef.h \
   /usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h \
-  /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/tbmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/tmmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/tsxldtrkintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/uintrintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/vaesintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/vpclmulqdqintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/waitpkgintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/wbnoinvdintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/wmmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/x86gprintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/xsavecintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/xsaveintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/xsaveoptintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/xsavesintrin.h \
+  /usr/lib/gcc/x86_64-linux-gnu/11/include/xtestintrin.h
 
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/xsaveintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/xsavecintrin.h:
 
 /usr/lib/gcc/x86_64-linux-gnu/11/include/xmmintrin.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/waitpkgintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/vaesintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/tsxldtrkintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/tbmintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/shaintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/sgxintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/serializeintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/rtmintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/pkuintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/mwaitintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/movdirintrin.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/11/include/mmintrin.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/lzcntintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/lwpintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/ia32intrin.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/11/include/float.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/f16cintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/enqcmdintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/clzerointrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/cldemoteintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/bmi2intrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avxintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vpopcntdqintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vp2intersectvlintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vp2intersectintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vnniintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vlintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vldqintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmivlintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmiintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmi2vlintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/wbnoinvdintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512pfintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512ifmaintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512fintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512erintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512dqintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512cdintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bitalgintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bf16vlintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx5124vnniwintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx5124fmapsintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/amxtileintrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/amxbf16intrin.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/wmmintrin.h:
 
 /usr/include/x86_64-linux-gnu/sys/ucontext.h:
 
@@ -393,7 +567,11 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/gthr.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vlbwintrin.h:
+
 /usr/include/x86_64-linux-gnu/c++/11/bits/gthr-default.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/rdseedintrin.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/cxxabi_tweaks.h:
 
@@ -421,6 +599,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/x86_64-linux-gnu/bits/types/time_t.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/vpclmulqdqintrin.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct_timeval.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_statx.h:
@@ -432,6 +612,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 /usr/include/x86_64-linux-gnu/bits/types/sigval_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/uintrintrin.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/mbstate_t.h:
 
@@ -450,6 +632,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 /usr/include/x86_64-linux-gnu/bits/types/__fpos64_t.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/FILE.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/bmiintrin.h:
 
 /usr/include/x86_64-linux-gnu/bits/types.h:
 
@@ -493,6 +677,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/x86_64-linux-gnu/bits/sigcontext.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/hresetintrin.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/11/include/emmintrin.h:
 
 /usr/include/x86_64-linux-gnu/bits/sigaction.h:
@@ -511,19 +697,23 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/x86_64-linux-gnu/bits/math-vector.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/amxint8intrin.h:
+
 /usr/include/x86_64-linux-gnu/bits/long-double.h:
 
-/usr/include/c++/11/bits/cxxabi_init_exception.h:
+/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:
 
-/usr/include/wchar.h:
+/usr/include/x86_64-linux-gnu/bits/iscanonical.h:
 
-/usr/include/c++/11/bits/stringfwd.h:
+/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
 
 /usr/include/c++/11/bits/streambuf_iterator.h:
 
 /usr/include/c++/11/bits/atomic_lockfree_defines.h:
 
 /usr/include/c++/11/tr1/bessel_function.tcc:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/popcntintrin.h:
 
 /usr/include/x86_64-linux-gnu/bits/struct_stat.h:
 
@@ -539,7 +729,11 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/c++/11/bits/stl_uninitialized.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/keylockerintrin.h:
+
 /usr/include/c++/11/bits/stl_numeric.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bf16intrin.h:
 
 /usr/include/c++/11/backward/auto_ptr.h:
 
@@ -553,10 +747,6 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 
 /usr/include/c++/11/ext/atomicity.h:
 
-/usr/include/c++/11/bits/memoryfwd.h:
-
-/usr/include/c++/11/bits/stl_function.h:
-
 /usr/include/c++/11/tr1/exp_integral.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/signum-generic.h:
@@ -568,6 +758,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: /home/jonwebb/Code_Dev/C++/cs
 /usr/include/math.h:
 
 /usr/include/c++/11/bits/string_view.tcc:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/clflushoptintrin.h:
 
 /usr/include/c++/11/bits/parse_numbers.h:
 
@@ -583,8 +775,6 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-death-test-internal
 
 /usr/include/c++/11/bits/nested_exception.h:
 
-/usr/include/c++/11/ostream:
-
 /usr/include/c++/11/bits/stl_relops.h:
 
 /usr/include/c++/11/bits/hash_bytes.h:
@@ -592,6 +782,14 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-death-test-internal
 /usr/include/c++/11/bits/move.h:
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/prfchwintrin.h:
+
+/usr/include/c++/11/bits/stl_function.h:
+
+/usr/include/c++/11/bits/memoryfwd.h:
+
+/usr/include/c++/11/bits/stringfwd.h:
 
 /usr/include/c++/11/bits/localefwd.h:
 
@@ -602,6 +800,8 @@ _deps/googletest-src/googletest/include/gtest/gtest-typed-test.h:
 /usr/include/x86_64-linux-gnu/bits/types/struct_tm.h:
 
 /usr/include/c++/11/bits/locale_facets.tcc:
+
+/home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse2_double.inl:
 
 /usr/include/c++/11/tr1/poly_hermite.tcc:
 
@@ -620,6 +820,8 @@ _deps/googletest-src/googletest/include/gtest/gtest-typed-test.h:
 /usr/include/c++/11/bits/ios_base.h:
 
 /usr/include/c++/11/set:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vbmi2intrin.h:
 
 /usr/include/x86_64-linux-gnu/bits/fp-logb.h:
 
@@ -645,13 +847,27 @@ _deps/googletest-src/googletest/include/gtest/gtest-typed-test.h:
 
 /usr/include/c++/11/bits/stl_multiset.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/adxintrin.h:
+
 /usr/include/c++/11/atomic:
 
-/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
+/usr/include/c++/11/map:
 
-/usr/include/asm-generic/errno.h:
+/usr/include/c++/11/bits/istream.tcc:
 
-/usr/include/c++/11/tr1/ell_integral.tcc:
+/usr/include/c++/11/bits/locale_facets.h:
+
+/usr/include/c++/11/bits/exception.h:
+
+/usr/include/x86_64-linux-gnu/bits/locale.h:
+
+/usr/include/c++/11/pstl/glue_numeric_defs.h:
+
+/usr/include/c++/11/bits/cxxabi_init_exception.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512bwintrin.h:
+
+/usr/include/wchar.h:
 
 /usr/include/c++/11/bits/stl_construct.h:
 
@@ -659,7 +875,13 @@ _deps/googletest-src/googletest/include/gtest/gtest-typed-test.h:
 
 /usr/include/x86_64-linux-gnu/bits/byteswap.h:
 
+/usr/include/c++/11/cstddef:
+
+/usr/include/c++/11/bits/stl_vector.h:
+
 /usr/lib/gcc/x86_64-linux-gnu/11/include/mm_malloc.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/cetintrin.h:
 
 /usr/include/c++/11/system_error:
 
@@ -669,15 +891,25 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-string.h:
 
 _deps/googletest-src/googletest/include/gtest/gtest-matchers.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512ifmavlintrin.h:
+
 /usr/include/alloca.h:
 
 /usr/include/c++/11/bits/uniform_int_dist.h:
 
 /usr/include/c++/11/bits/basic_ios.h:
 
+/usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
+
+_deps/googletest-src/googletest/include/gtest/gtest-param-test.h:
+
+/home/jonwebb/Code_Dev/C++/csalt++/csalt++/test/test_matrix.cpp:
+
 /usr/include/x86_64-linux-gnu/bits/sigstack.h:
 
 /usr/include/c++/11/clocale:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/pmmintrin.h:
 
 _deps/googletest-src/googletest/include/gtest/internal/gtest-param-util.h:
 
@@ -690,6 +922,8 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-param-util.h:
 /usr/include/c++/11/pstl/pstl_config.h:
 
 /usr/include/c++/11/algorithm:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/gfniintrin.h:
 
 _deps/googletest-src/googletest/include/gtest/internal/custom/gtest-printers.h:
 
@@ -719,9 +953,21 @@ _deps/googletest-src/googletest/include/gtest/gtest_prod.h:
 
 _deps/googletest-src/googletest/include/gtest/gtest-test-part.h:
 
-/usr/include/c++/11/tr1/beta_function.tcc:
+/home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sse2_float.inl:
 
-/usr/include/c++/11/array:
+/usr/include/x86_64-linux-gnu/bits/setjmp.h:
+
+/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
+
+/usr/include/time.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/fxsrintrin.h:
+
+/usr/include/c++/11/bits/cxxabi_forced.h:
+
+/usr/include/x86_64-linux-gnu/bits/sched.h:
+
+/usr/include/c++/11/ext/alloc_traits.h:
 
 /usr/include/c++/11/new:
 
@@ -739,37 +985,11 @@ _deps/googletest-src/googletest/include/gtest/gtest-death-test.h:
 
 /usr/include/c++/11/bits/std_abs.h:
 
+/home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx2_float.inl:
+
 _deps/googletest-src/googletest/include/gtest/internal/gtest-internal.h:
 
 /usr/include/c++/11/bits/invoke.h:
-
-/usr/include/asm-generic/int-ll64.h:
-
-/usr/include/c++/11/bits/stl_algo.h:
-
-/usr/include/c++/11/cassert:
-
-/usr/include/c++/11/bits/locale_classes.tcc:
-
-/usr/include/c++/11/iostream:
-
-/usr/include/c++/11/bits/node_handle.h:
-
-/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
-
-/home/jonwebb/Code_Dev/C++/csalt++/csalt++/test/test_matrix.cpp:
-
-/usr/include/x86_64-linux-gnu/bits/uintn-identity.h:
-
-_deps/googletest-src/googletest/include/gtest/gtest-param-test.h:
-
-/usr/include/asm-generic/posix_types.h:
-
-_deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
-
-/usr/include/c++/11/condition_variable:
-
-/usr/include/c++/11/ratio:
 
 /usr/include/c++/11/bits/char_traits.h:
 
@@ -781,11 +1001,13 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
 
 _deps/googletest-src/googletest/include/gtest/gtest-message.h:
 
-_deps/googletest-src/googletest/include/gtest/gtest-printers.h:
-
 _deps/googletest-src/googletest/include/gtest/gtest-assertion-result.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/tmmintrin.h:
+
 /usr/include/c++/11/bits/unordered_map.h:
+
+_deps/googletest-src/googletest/include/gtest/internal/custom/gtest-port.h:
 
 /usr/include/c++/11/bits/specfun.h:
 
@@ -793,21 +1015,47 @@ _deps/googletest-src/googletest/include/gtest/gtest-assertion-result.h:
 
 _deps/googletest-src/googletest/include/gtest/gtest_pred_impl.h:
 
+/usr/include/x86_64-linux-gnu/bits/types/struct_sched_param.h:
+
+/usr/include/asm-generic/errno.h:
+
+/usr/include/c++/11/tr1/ell_integral.tcc:
+
+_deps/googletest-src/googletest/include/gtest/gtest-printers.h:
+
 /usr/include/x86_64-linux-gnu/bits/types/struct___jmp_buf_tag.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/clockid_t.h:
 
 /usr/include/c++/11/bits/stl_bvector.h:
 
-_deps/googletest-src/googletest/include/gtest/internal/custom/gtest-port.h:
+/usr/include/asm-generic/int-ll64.h:
+
+/usr/include/c++/11/bits/stl_algo.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/pconfigintrin.h:
+
+/usr/include/c++/11/cassert:
+
+/usr/include/c++/11/bits/locale_classes.tcc:
+
+/usr/include/c++/11/iostream:
+
+/usr/include/c++/11/bits/node_handle.h:
+
+/usr/include/x86_64-linux-gnu/bits/fp-fast.h:
+
+/usr/include/asm-generic/posix_types.h:
+
+_deps/googletest-src/googletest/include/gtest/internal/gtest-filepath.h:
+
+/usr/include/c++/11/condition_variable:
+
+/usr/include/c++/11/ratio:
 
 _deps/googletest-src/googletest/include/gtest/internal/gtest-port.h:
 
 /usr/include/c++/11/mutex:
-
-/usr/include/c++/11/bits/unique_ptr.h:
-
-/usr/include/c++/11/any:
 
 /usr/include/c++/11/bits/ostream.tcc:
 
@@ -825,11 +1073,11 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/vector:
 
-/usr/include/x86_64-linux-gnu/bits/getopt_core.h:
-
 /usr/include/c++/11/bits/stl_tree.h:
 
 /usr/include/c++/11/tuple:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/mwaitxintrin.h:
 
 /usr/include/x86_64-linux-gnu/sys/single_threaded.h:
 
@@ -857,9 +1105,9 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/bits/basic_string.tcc:
 
-/usr/include/c++/11/bits/basic_ios.tcc:
-
 /usr/include/c++/11/bits/enable_special_members.h:
+
+/usr/include/c++/11/bits/basic_ios.tcc:
 
 /usr/include/c++/11/bits/codecvt.h:
 
@@ -879,39 +1127,27 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/bits/stl_map.h:
 
-/usr/include/x86_64-linux-gnu/bits/iscanonical.h:
-
 /usr/include/c++/11/bits/stl_iterator_base_funcs.h:
 
 /usr/include/c++/11/bits/cpp_type_traits.h:
 
 /usr/include/pthread.h:
 
-/usr/include/c++/11/bits/cxxabi_forced.h:
+/usr/include/c++/11/array:
 
-/usr/include/x86_64-linux-gnu/bits/sched.h:
+/usr/include/c++/11/tr1/beta_function.tcc:
 
-/usr/include/c++/11/ext/alloc_traits.h:
+/usr/include/c++/11/any:
 
-/usr/include/c++/11/bits/stl_vector.h:
+/usr/include/c++/11/bits/unique_ptr.h:
 
-/usr/include/c++/11/cstddef:
-
-/usr/include/c++/11/map:
-
-/usr/include/c++/11/bits/istream.tcc:
-
-/usr/include/c++/11/bits/locale_facets.h:
-
-/usr/include/c++/11/bits/exception.h:
-
-/usr/include/x86_64-linux-gnu/bits/locale.h:
-
-/usr/include/c++/11/pstl/glue_numeric_defs.h:
+/usr/include/c++/11/ostream:
 
 /usr/include/c++/11/bits/unique_lock.h:
 
 /usr/include/c++/11/bits/uses_allocator.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/xsaveoptintrin.h:
 
 /usr/include/c++/11/bits/vector.tcc:
 
@@ -933,6 +1169,8 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/cmath:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/xtestintrin.h:
+
 /usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
 /usr/include/c++/11/cstdint:
@@ -942,6 +1180,8 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 /usr/include/c++/11/cwctype:
 
 /usr/include/x86_64-linux-gnu/asm/types.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/immintrin.h:
 
 /usr/include/x86_64-linux-gnu/c++/11/bits/messages_members.h:
 
@@ -953,6 +1193,8 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/linux/close_range.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vpopcntdqvlintrin.h:
+
 /usr/include/c++/11/exception:
 
 /usr/include/x86_64-linux-gnu/sys/types.h:
@@ -963,13 +1205,19 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/ext/new_allocator.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avxvnniintrin.h:
+
 /usr/include/c++/11/cctype:
 
 /usr/include/c++/11/iomanip:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx512vnnivlintrin.h:
+
 /usr/include/c++/11/ext/type_traits.h:
 
 /usr/include/c++/11/pstl/glue_memory_defs.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/smmintrin.h:
 
 /usr/include/c++/11/initializer_list:
 
@@ -989,6 +1237,8 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 
 /usr/include/c++/11/memory:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/xsavesintrin.h:
+
 /usr/include/c++/11/bits/algorithmfwd.h:
 
 /usr/include/c++/11/pstl/execution_defs.h:
@@ -1000,6 +1250,8 @@ _deps/googletest-src/googletest/include/gtest/internal/gtest-port-arch.h:
 _deps/googletest-src/googletest/include/gtest/gtest.h:
 
 /usr/include/c++/11/stdexcept:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/clwbintrin.h:
 
 /usr/include/c++/11/string:
 
@@ -1015,6 +1267,8 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/x86gprintrin.h:
+
 /usr/include/c++/11/tr1/riemann_zeta.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/types/__mbstate_t.h:
@@ -1026,6 +1280,8 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 /usr/include/c++/11/ios:
 
 /usr/include/c++/11/utility:
+
+/home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx2_double.inl:
 
 /usr/include/errno.h:
 
@@ -1056,6 +1312,8 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 /usr/include/strings.h:
 
 /usr/include/signal.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/11/include/avx2intrin.h:
 
 /usr/include/c++/11/bits/ptr_traits.h:
 
@@ -1091,6 +1349,8 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 
 /usr/include/x86_64-linux-gnu/asm/posix_types.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/11/include/fmaintrin.h:
+
 /usr/include/x86_64-linux-gnu/bits/confname.h:
 
 /usr/include/x86_64-linux-gnu/asm/posix_types_64.h:
@@ -1105,16 +1365,8 @@ _deps/googletest-src/googletest/include/gtest/gtest.h:
 
 /usr/include/x86_64-linux-gnu/bits/floatn-common.h:
 
-/usr/include/c++/11/iterator:
-
 /usr/include/c++/11/bits/range_access.h:
 
+/usr/include/c++/11/iterator:
+
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
-
-/usr/include/x86_64-linux-gnu/bits/setjmp.h:
-
-/usr/include/time.h:
-
-/usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
-
-/usr/include/x86_64-linux-gnu/bits/libc-header-start.h:

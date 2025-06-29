@@ -97,6 +97,8 @@
                 slt::simd_add_f32_avx2(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_f32_sse2(a, b, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_add_f32_sse3(a, b, result, size);
             #else
                 slt::simd_add_f32_scalar(a, b, result, size);
             #endif
@@ -108,6 +110,8 @@
                 slt::simd_sub_f32_avx2(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_f32_sse2(a, b, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_sub_f32_sse3(a, b, result, size);
             #else
                 slt::simd_sub_f32_scalar(a, b, result, size);
             #endif
@@ -119,6 +123,8 @@
                 slt::simd_add_scalar_f32_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_add_sclar_f32_sse3(a, scalar, result, size);
             #else
                 slt::simd_add_scalar_f32_scalar(a, scalar, result, size);
             #endif
@@ -130,6 +136,8 @@
                 slt::simd_sub_scalar_f32_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_sub_scalar_f32_sse3(a, scalar, result, size);
             #else
                 slt::simd_sub_scalar_f32_scalar(a, scalar, result, size);
             #endif
@@ -141,6 +149,8 @@
                 slt::simd_mul_f32_avx2(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_f32_sse2(a, b, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_mul_f32_sse3(a, b, result, size);
             #else
                 slt::simd_mul_f32_scalar(a, b, result, size);
             #endif
@@ -152,6 +162,8 @@
                 slt::simd_mul_scalar_f32_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_mul_scalar_f32_sse3(a, scalar, result, size);
             #else
                 slt::simd_mul_scalar_f32_scalar(a, scalar, result, size);
             #endif
@@ -163,6 +175,8 @@
                 slt::simd_div_scalar_f32_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_div_scalar_f32_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_div_scalar_f32_sse3(a, scalar, result, size);
             #else
                 slt::simd_div_scalar_f32_scalar(a, scalar, result, size);
             #endif
@@ -174,6 +188,8 @@
                 slt::simd_copy_f32_avx2(src, dst, size);
             #elif defined(__SSE2__)
                 slt::simd_copy_f32_sse2(src, dst, size);
+            #elif defined(__SSE3__)
+                slt::simd_copy_f32_sse3(src, dst, size);
             #else
                 slt::simd_copy_f32_scalar(src, dst, size);
             #endif
@@ -185,6 +201,8 @@
                 return slt::simd_magnitude_squared_f32_avx2(data, size);
             #elif defined(__SSE2__)
                 return slt::simd_magnitude_squared_f32_sse2(data, size);
+            #elif defined(__SSE3__)
+                return slt::simd_magnitude_squared_f32_sse3(data, size);
             #else
                 return slt::simd_magnitude_squared_f32_scalar(data, size);
             #endif
@@ -200,6 +218,8 @@
                 slt::simd_add_f64_avx2(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_f64_sse2(a, b, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_add_f64_sse3(a, b, result, size);
             #else
                 slt::simd_add_f64_scalar(a, b, result, size);
             #endif
@@ -211,6 +231,8 @@
                 slt::simd_sub_f64_avx2(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_f64_sse2(a, b, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_sub_f64_sse3(a, b, result, size);
             #else
                 slt::simd_sub_f64_scalar(a, b, result, size);
             #endif
@@ -222,6 +244,8 @@
                 slt::simd_add_scalar_f64_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt:simd_add_scalar_f64_sse3(a, scalar, result, size);
             #else
                 slt::simd_add_scalar_f64_scalar(a, scalar, result, size);
             #endif
@@ -233,6 +257,8 @@
                 slt::simd_sub_scalar_f64_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_sub_scalar_f64_sse3(a, scalar, result, size);
             #else
                 slt::simd_sub_scalar_f64_scalar(a, scalar, result, size);
             #endif
@@ -244,6 +270,8 @@
                 slt::simd_mul_f64_avx2(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_f64_sse2(a, b, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_mul_f64_sse3(a, b, result, size);
             #else
                 slt::simd_mul_f64_scalar(a, b, result, size);
             #endif
@@ -255,6 +283,8 @@
                 slt::simd_mul_scalar_f64_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_mul_scalar_f64_sse3(a, scalar, result, size);
             #else
                 slt::simd_mul_scalar_f64_scalar(a, scalar, result, size);
             #endif
@@ -266,6 +296,8 @@
                 slt::simd_div_scalar_f64_avx2(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_div_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__SSE3__)
+                slt::simd_div_scalar_f64_sse3(a, scalar, result, size);
             #else
                 slt::simd_div_scalar_f64_scalar(a, scalar, result, size);
             #endif
@@ -277,6 +309,8 @@
                 slt::simd_copy_f64_avx2(src, dst, size);
             #elif defined(__SSE2__)
                 slt::simd_copy_f64_sse2(src, dst, size);
+            #elif defined(__SSE3__)
+                slt::simd_copy_f64_sse3(src, dst, size);
             #else
                 slt::simd_copy_f64_scalar(src, dst, size);
             #endif
@@ -287,6 +321,8 @@
             #if defined(__AVX2__)
                 return slt::simd_magnitude_squared_f64_avx2(data, size);
             #elif defined(__SSE2__)
+                return slt::simd_magnitude_squared_f64_sse2(data, size);
+            #elif defined(__SSE3__)
                 return slt::simd_magnitude_squared_f64_sse2(data, size);
             #else
                 return slt::simd_magnitude_squared_f64_scalar(data, size);

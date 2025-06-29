@@ -39,20 +39,59 @@
 #include "simd_avx512_double.inl"
 #include "simd_neon_float.inl"
 #include "simd_neon_double.inl"
+#include "simd_sve_float.inl"
+#include "simd_sve_double.inl"
+#include "simd_sve2_float.inl"
+#include "simd_sve2_double.inl"
 
 
-#ifdef __AVX2__
-        #include <immintrin.h>
-        #define SIMD_WIDTH_FLOAT 8
-        #define SIMD_WIDTH_DOUBLE 4
+
+#if defined(__AVX512F__)
+    #include <immintrin.h>
+    #define SIMD_WIDTH_FLOAT 16
+    #define SIMD_WIDTH_DOUBLE 8
+
+#elif defined(__AVX2__)
+    #include <immintrin.h>
+    #define SIMD_WIDTH_FLOAT 8
+    #define SIMD_WIDTH_DOUBLE 4
+
+#elif defined(__SSE4_1__)
+    #include <smmintrin.h>
+    #define SIMD_WIDTH_FLOAT 4
+    #define SIMD_WIDTH_DOUBLE 2
+
+#elif defined(__SSE3__)
+    #include <pmmintrin.h>
+    #define SIMD_WIDTH_FLOAT 4
+    #define SIMD_WIDTH_DOUBLE 2
+
 #elif defined(__SSE2__)
-        #include <emmintrin.h>
-        #define SIMD_WIDTH_FLOAT 4
-        #define SIMD_WIDTH_DOUBLE 2
+    #include <emmintrin.h>
+    #define SIMD_WIDTH_FLOAT 4
+    #define SIMD_WIDTH_DOUBLE 2
+
+#elif defined(__ARM_FEATURE_SVE2)
+    #include <arm_sve.h>
+    // Width is determined at runtime for SVE/SVE2; use 1 to disable static SIMD
+    #define SIMD_WIDTH_FLOAT 1
+    #define SIMD_WIDTH_DOUBLE 1
+
+#elif defined(__ARM_FEATURE_SVE)
+    #include <arm_sve.h>
+    #define SIMD_WIDTH_FLOAT 1
+    #define SIMD_WIDTH_DOUBLE 1
+
+#elif defined(__ARM_NEON)
+    #include <arm_neon.h>
+    #define SIMD_WIDTH_FLOAT 4
+    #define SIMD_WIDTH_DOUBLE 2  // Note: NEON has limited native double support
+
 #else
-        #define SIMD_WIDTH_FLOAT 1
-        #define SIMD_WIDTH_DOUBLE 1
+    #define SIMD_WIDTH_FLOAT 1
+    #define SIMD_WIDTH_DOUBLE 1
 #endif
+
 // ================================================================================ 
 // ================================================================================ 
 
@@ -98,10 +137,52 @@
 
 // ================================================================================ 
 
+        /**
+         * @brief SIMD-accelerated operations for arrays of float values.
+         *
+         * This specialization of `simd_ops` provides high-performance operations
+         * using SIMD instruction sets such as AVX-512, AVX2, SSE (2–4.1), NEON, SVE, and SVE2
+         * when available on the target architecture.
+         *
+         * Each method performs a vectorized computation on arrays of 32-bit float values,
+         * falling back to scalar logic if no SIMD backend is available (handled in the calling code).
+         *
+         * Supported operations include:
+         * - Element-wise addition, subtraction, multiplication
+         * - Scalar addition, subtraction, multiplication, division
+         * - Memory copy
+         * - Magnitude squared computation
+         *
+         * This struct is intended to be used via compile-time dispatch through `simd_traits<T>::supported`
+         * to ensure compatibility across platforms.
+         *
+         * @note Instruction set support must be enabled at compile time using compiler flags
+         * such as `-mavx2`, `-msse4.1`, `-march=armv8-a+simd`, etc.
+         *
+         * Example usage:
+         * @code
+         * if constexpr (simd_traits<float>::supported) {
+         *     simd_ops<float>::add(a, b, result, size);
+         * }
+         * @endcode
+         */
         template<>
         struct simd_ops<float> {
+            /**
+             * @brief Add two float arrays element-wise.
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in each array.
+             */
             static void add(const float* a, const float* b, float* result, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_add_f32_sve2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_add_f32_sve(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_add_f32_neon(a, b, result, size);
+            #elif defined(__AVX512F__)
                 slt::simd_add_f32_avx512(a, b, result, size);
             #elif defined(__AVX2__)
                 slt::simd_add_f32_avx2(a, b, result, size);
@@ -111,13 +192,25 @@
                 slt::simd_add_f32_sse3(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_f32_sse2(a, b, result, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_add_f32_neon(a, b, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtract two float arrays element-wise.
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in each array.
+             */
             static void sub(const float* a, const float* b, float* result, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_sub_f32_sve2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_sub_f32_sve(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_sub_f32_neon(a, b, result, size);
+            #elif defined(__AVX512F__)
                 slt::simd_sub_f32_avx512(a, b, result, size);
             #elif defined(__AVX2__)
                 slt::simd_sub_f32_avx2(a, b, result, size);
@@ -127,13 +220,25 @@
                 slt::simd_sub_f32_sse3(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_f32_sse2(a, b, result, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_sub_f32_neon(a, b, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Add a scalar value to each element of a float array.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to add.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void add_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_add_scalar_f32_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_add_scalar_f32_sve(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_add_scalar_f32_neon(a, scalar, result, size);
+            #elif defined(__AVX512F__)
                 slt::simd_add_scalar_f32_avx512(a, scalar, result, size);
             #elif defined(__AVX2__)
                 slt::simd_add_scalar_f32_avx2(a, scalar, result, size);
@@ -143,13 +248,25 @@
                 slt::simd_add_scalar_f32_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_scalar_f32_sse2(a, scalar, result, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_add_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtract a scalar value from each element of a float array.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to subtract.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void sub_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_sub_scalar_f32_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_sub_scalar_f32_sve(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_sub_scalar_f32_neon(a, scalar, result, size);
+            #elif defined(__AVX512F__)
                 slt::simd_sub_scalar_f32_avx512(a, scalar, result, size);
             #elif defined(__AVX2__)
                 slt::simd_sub_scalar_f32_avx2(a, scalar, result, size);
@@ -159,13 +276,25 @@
                 slt::simd_sub_scalar_f32_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_scalar_f32_sse2(a, scalar, result, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_sub_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Multiply two float arrays element-wise.
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in each array.
+             */
             static void mul(const float* a, const float* b, float* result, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_mul_f32_sve2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_mul_f32_sve(a, b, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_mul_f32_neon(a, b, result, size);
+            #elif defined(__AVX512F__)
                 slt::simd_mul_f32_avx512(a, b, result, size);
             #elif defined(__AVX2__)
                 slt::simd_mul_f32_avx2(a, b, result, size);
@@ -175,13 +304,25 @@
                 slt::simd_mul_f32_sse3(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_f32_sse2(a, b, result, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_mul_f32_neon(a, b, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Multiply each element of a float array by a scalar.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar multiplier.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void mul_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_mul_scalar_f32_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_mul_scalar_f32_sve(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_mul_scalar_f32_neon(a, scalar, result, size);
+            #elif defined(__AVX512F__)
                 slt::simd_mul_scalar_f32_avx512(a, scalar, result, size);
             #elif defined(__AVX2__)
                 slt::simd_mul_scalar_f32_avx2(a, scalar, result, size);
@@ -191,13 +332,25 @@
                 slt::simd_mul_scalar_f32_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_scalar_f32_sse2(a, scalar, result, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_mul_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Divide each element of a float array by a scalar.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar divisor.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void div_scalar(const float* a, float scalar, float* result, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_div_scalar_f32_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_div_scalar_f32_sve(a, scalar, result, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_div_scalar_f32_neon(a, scalar, result, size);
+            #elif defined(__AVX512F__)
                 slt::simd_div_scalar_f32_avx512(a, scalar, result, size);
             #elif defined(__AVX2__)
                 slt::simd_div_scalar_f32_avx2(a, scalar, result, size);
@@ -207,13 +360,24 @@
                 slt::simd_div_scalar_f32_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_div_scalar_f32_sse2(a, scalar, result, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_div_scalar_f32_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Copy the contents of a float array to another array.
+             * @param src Pointer to the source array.
+             * @param dst Pointer to the destination array.
+             * @param size Number of elements to copy.
+             */
             static void copy(const float* src, float* dst, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                slt::simd_copy_f32_sve2(src, dst, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_copy_f32_sve(src, dst, size);
+            #elif defined(__ARM_NEON)
+                slt::simd_copy_f32_neon(src, dst, size);
+            #elif defined(__AVX512F__)
                 slt::simd_copy_f32_avx512(src, dst, size);
             #elif defined(__AVX2__)
                 slt::simd_copy_f32_avx2(src, dst, size);
@@ -223,13 +387,24 @@
                 slt::simd_copy_f32_sse3(src, dst, size);
             #elif defined(__SSE2__)
                 slt::simd_copy_f32_sse2(src, dst, size);
-            #elif defined(__ARM_NEON)
-                slt::simd_copy_f32_neon(src, dst, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Compute the squared magnitude (sum of squares) of a float array.
+             * @param data Pointer to the input array.
+             * @param size Number of elements in the array.
+             * @return The sum of squares of all elements.
+             */
             static float magnitude_squared(const float* data, std::size_t size) {
-            #if defined(__AVX512F__)
+            #if defined(__ARM_FEATURE_SVE2)
+                return slt::simd_magnitude_squared_f32_sve2(data, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                return slt::simd_magnitude_squared_f32_sve(data, size);
+            #elif defined(__ARM_NEON)
+                return slt::simd_magnitude_squared_f32_neon(data, size);
+            #elif defined(__AVX512F__)
                 return slt::simd_magnitude_squared_f32_avx512(data, size);
             #elif defined(__AVX2__)
                 return slt::simd_magnitude_squared_f32_avx2(data, size);
@@ -239,15 +414,49 @@
                 return slt::simd_magnitude_squared_f32_sse3(data, size);
             #elif defined(__SSE2__)
                 return slt::simd_magnitude_squared_f32_sse2(data, size);
-            #elif defined(__ARM_NEON)
-                return slt::simd_magnitude_squared_f32_neon(data, size);
             #endif
             }
         };
 // ================================================================================ 
 
+        /**
+         * @brief SIMD-accelerated operations for arrays of double values.
+         *
+         * This specialization of `simd_ops` provides vectorized operations for
+         * 64-bit floating-point data using SIMD extensions such as AVX-512, AVX2, SSE (2–4.1),
+         * NEON (AArch64), SVE, and SVE2, when available.
+         *
+         * Each method applies a SIMD-optimized version of a common numerical operation
+         * on double-precision floating-point arrays. Scalar fallback behavior is managed externally.
+         *
+         * Supported operations include:
+         * - Element-wise arithmetic (add, subtract, multiply)
+         * - Scalar arithmetic (add, subtract, multiply, divide)
+         * - Data copy
+         * - Magnitude squared computation
+         *
+         * These methods are dispatched at compile time using architecture-specific flags,
+         * ensuring optimal performance where supported.
+         *
+         * @note SIMD instruction sets for double precision may require specific compile-time
+         * flags (e.g., `-mavx2`, `-msse2`, `-march=armv8-a+sve`, etc.).
+         *
+         * Example usage:
+         * @code
+         * if constexpr (simd_traits<double>::supported) {
+         *     simd_ops<double>::mul(a, b, result, size);
+         * }
+         * @endcode
+         */
         template<>
         struct simd_ops<double> {
+            /**
+             * @brief Add two double arrays element-wise.
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in each array.
+             */
             static void add(const double* a, const double* b, double* result, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_add_f64_avx512(a, b, result, size);
@@ -259,11 +468,23 @@
                 slt::simd_add_f64_sse3(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_f64_sse2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_add_f64_sve2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_add_f64_sve(a, b, result, size);
             #elif defined(__ARM_NEON)
                 slt::simd_add_f64_neon(a, b, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtract two double arrays element-wise.
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in each array.
+             */
             static void sub(const double* a, const double* b, double* result, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_sub_f64_avx512(a, b, result, size);
@@ -275,11 +496,23 @@
                 slt::simd_sub_f64_sse3(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_f64_sse2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_sub_f64_sve2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_sub_f64_sve(a, b, result, size);
             #elif defined(__ARM_NEON)
                 slt::simd_sub_f64_neon(a, b, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Add a scalar value to each element of a double array.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to add.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void add_scalar(const double* a, double scalar, double* result, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_add_scalar_f64_avx512(a, scalar, result, size);
@@ -291,11 +524,23 @@
                 slt::simd_add_scalar_f64_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_add_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_add_scalar_f64_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_add_scalar_f64_sve(a, scalar, result, size);
             #elif defined(__ARM_NEON)
-                slt::simd_add_scalar_f64_neon(a, b, result, size);
+                slt::simd_add_scalar_f64_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Subtract a scalar value from each element of a double array.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar value to subtract.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void sub_scalar(const double* a, double scalar, double* result, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_sub_scalar_f64_avx512(a, scalar, result, size);
@@ -307,11 +552,23 @@
                 slt::simd_sub_scalar_f64_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_sub_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_sub_scalar_f64_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_sub_scalar_f64_sve(a, scalar, result, size);
             #elif defined(__ARM_NEON)
                 slt::simd_sub_scalar_f64_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Multiply two double arrays element-wise.
+             * @param a Pointer to the first input array.
+             * @param b Pointer to the second input array.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in each array.
+             */
             static void mul(const double* a, const double* b, double* result, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_mul_f64_avx512(a, b, result, size);
@@ -323,11 +580,23 @@
                 slt::simd_mul_f64_sse3(a, b, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_f64_sse2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_mul_f64_sve2(a, b, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_mul_f64_sve(a, b, result, size);
             #elif defined(__ARM_NEON)
                 slt::simd_mul_f64_neon(a, b, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Multiply each element of a double array by a scalar.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar multiplier.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void mul_scalar(const double* a, double scalar, double* result, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_mul_scalar_f64_avx512(a, scalar, result, size);
@@ -339,11 +608,23 @@
                 slt::simd_mul_scalar_f64_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_mul_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_mul_scalar_f64_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_mul_scalar_f64_sve(a, scalar, result, size);
             #elif defined(__ARM_NEON)
                 slt::simd_mul_scalar_f64_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Divide each element of a double array by a scalar.
+             * @param a Pointer to the input array.
+             * @param scalar Scalar divisor.
+             * @param result Pointer to the output array.
+             * @param size Number of elements in the array.
+             */
             static void div_scalar(const double* a, double scalar, double* result, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_div_scalar_f64_avx512(a, scalar, result, size);
@@ -355,11 +636,22 @@
                 slt::simd_div_scalar_f64_sse3(a, scalar, result, size);
             #elif defined(__SSE2__)
                 slt::simd_div_scalar_f64_sse2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_div_scalar_f64_sve2(a, scalar, result, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_div_scalar_f64_sve(a, scalar, result, size);
             #elif defined(__ARM_NEON)
                 slt::simd_div_scalar_f64_neon(a, scalar, result, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Copy the contents of a double array to another array.
+             * @param src Pointer to the source array.
+             * @param dst Pointer to the destination array.
+             * @param size Number of elements to copy.
+             */
             static void copy(const double* src, double* dst, std::size_t size) {
             #if defined(__AVX512F__)
                 slt::simd_copy_f64_avx512(src, dst, size);
@@ -371,11 +663,22 @@
                 slt::simd_copy_f64_sse3(src, dst, size);
             #elif defined(__SSE2__)
                 slt::simd_copy_f64_sse2(src, dst, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                slt::simd_copy_f64_sve2(src, dst, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                slt::simd_copy_f64_sve(src, dst, size);
             #elif defined(__ARM_NEON)
                 slt::simd_copy_f64_neon(src, dst, size);
             #endif
             }
+// -------------------------------------------------------------------------------- 
 
+            /**
+             * @brief Compute the squared magnitude (sum of squares) of a double array.
+             * @param data Pointer to the input array.
+             * @param size Number of elements in the array.
+             * @return The sum of squares of all elements.
+             */
             static double magnitude_squared(const double* data, std::size_t size) {
             #if defined(__AVX512F__)
                 return slt::simd_magnitude_squared_f64_avx512(data, size);
@@ -387,8 +690,17 @@
                 return slt::simd_magnitude_squared_f64_sse3(data, size);
             #elif defined(__SSE2__)
                 return slt::simd_magnitude_squared_f64_sse2(data, size);
+            #elif defined(__ARM_FEATURE_SVE2)
+                return slt::simd_magnitude_squared_f64_sve2(data, size);
+            #elif defined(__ARM_FEATURE_SVE)
+                return slt::simd_magnitude_squared_f64_sve(data, size);
             #elif defined(__ARM_NEON)
-                return slt::simd_magnitude_squared_f64_neon(data,size);
+                return slt::simd_magnitude_squared_f64_neon(data, size);
+            #else
+                double total = 0.0;
+                for (std::size_t i = 0; i < size; ++i)
+                    total += data[i] * data[i];
+                return total;
             #endif
             }
         };

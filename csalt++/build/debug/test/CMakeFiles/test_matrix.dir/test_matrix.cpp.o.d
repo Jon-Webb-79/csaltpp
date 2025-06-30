@@ -396,4 +396,8 @@ test/CMakeFiles/test_matrix.dir/test_matrix.cpp.o: \
  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx512_float.inl \
  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_avx512_double.inl \
  /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_neon_float.inl \
- /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_neon_double.inl
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_neon_double.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sve_float.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sve_double.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sve2_float.inl \
+ /home/jonwebb/Code_Dev/C++/csalt++/csalt++/simd/simd_sve2_double.inl

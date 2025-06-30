@@ -129,8 +129,12 @@ DenseMatrix(const std::array<T, N>& arr, std::size_t r, std::size_t c)
 .. doxygenfunction:: slt::DenseMatrix::DenseMatrix(const std::array<T, N>&, std::size_t, std::size_t)
    :project: csalt++
 
-DenseMatrix(const SparseCOOMatrix<T>& sparse)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+DenseMatrix Copy Constructor 
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. doxygenfunction:: slt::DenseMatrix::DenseMatrix(const DenseMatrix<T>&)
+   :project: csalt++
 
 .. cpp:function:: explicit slt::DenseMatrix::DenseMatrix(const slt::SparseCOOMatrix<T>& sparse)
 
@@ -155,18 +159,45 @@ DenseMatrix(const SparseCOOMatrix<T>& sparse)
       EXPECT_FLOAT_EQ(dense(2, 2), 3.0f);
       EXPECT_FALSE(dense.is_initialized(0, 0));
 
-
-DenseMatrix Copy Constructor 
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. doxygenfunction:: slt::DenseMatrix::DenseMatrix(const DenseMatrix<T>&)
-   :project: csalt++
-
 DenseMatrix Move Constructor 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. doxygenfunction:: slt::DenseMatrix::DenseMatrix(DenseMatrix<T>&&)
    :project: csalt++
+
+.. cpp:function:: explicit DenseMatrix(SparseCOOMatrix<T>&& sparse)
+
+   Constructs a dense matrix by moving the contents of a sparse matrix
+   in Coordinate List (COO) format.
+
+   This constructor transfers all non-zero entries from the sparse matrix into
+   their corresponding positions in the dense matrix. All remaining entries are
+   set to zero. After the conversion, the sparse matrix is cleared.
+
+   :param sparse: A sparse matrix (in COO format) whose contents will be moved into the dense matrix.
+   :type sparse: SparseCOOMatrix<T>&&
+   :raises std::out_of_range: If any row or column index is outside matrix bounds.
+
+   .. note::
+
+      This constructor assumes that ``SparseCOOMatrix<T>`` supports iteration
+      using range-based for loops, and that each element yields ``row``, ``col``,
+      and ``value`` members.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      SparseCOOMatrix<double> sparse(3, 3);
+      sparse.insert(0, 1, 4.5);
+      sparse.insert(2, 0, -1.2);
+
+      DenseMatrix<double> dense(std::move(sparse));
+
+      std::cout << dense.get(0, 1);  // Prints 4.5
+      std::cout << dense.get(2, 0);  // Prints -1.2
+      // dense.get(1, 1); would throw if uninitialized access is disallowed
+
 
 DenseMatrix Identify Constructor 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1215,6 +1246,38 @@ remove()
 
 
 .. _sparsecsr_matrix:
+
+SparseCOOMatrix::clear
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: void clear()
+
+   Clears all entries from the COO matrix and resets its shape to zero rows and columns.
+
+   This method removes all stored triplets and sets the internal row and column
+   dimensions to zero. It is considered a destructive operation that completely
+   resets the matrix.
+
+   :raises: None
+
+   .. warning::
+
+      After calling this method, the matrix is uninitialized and must be resized
+      or reconstructed before reuse.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::SparseCOOMatrix<float> coo(3, 3);
+      coo.set(0, 0, 1.0f);
+      coo.set(1, 2, -2.5f);
+
+      coo.clear();  // All data and shape are reset
+
+      EXPECT_EQ(coo.rows(), 0);
+      EXPECT_EQ(coo.cols(), 0);
+
 
 SparseCSRMatrix<T>
 ==================

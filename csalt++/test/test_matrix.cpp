@@ -2057,6 +2057,42 @@ TEST(SparseCOOMatrixConversionTest, EmptyDenseMatrixProducesEmptySparse) {
     ASSERT_EQ(sparse.cols(), 2);
     ASSERT_EQ(sparse.initialized_count(), 0);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixFromCOOMoveTest, ConvertsNonZeroElementsCorrectly) {
+    slt::SparseCOOMatrix<double> coo(3, 3);
+    coo.set(0, 1, 1.5);
+    coo.set(2, 2, -3.0);
+
+    slt::DenseMatrix<double> dense(std::move(coo));
+
+    EXPECT_DOUBLE_EQ(dense.get(0, 1), 1.5);
+    EXPECT_DOUBLE_EQ(dense.get(2, 2), -3.0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixFromCOOMoveTest, UninitializedElementsAreZero) {
+    slt::SparseCOOMatrix<float> coo(2, 2);
+    coo.set(0, 0, 2.0f);
+
+    slt::DenseMatrix<float> dense(std::move(coo));
+
+    EXPECT_FLOAT_EQ(dense.get(0, 0), 2.0f);
+    EXPECT_THROW(dense.get(0, 1), std::runtime_error);  // If uninitialized get throws
+    EXPECT_THROW(dense.get(1, 0), std::runtime_error);
+    EXPECT_THROW(dense.get(1, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixFromCOOMoveTest, ClearsSourceMatrixAfterMove) {
+    slt::SparseCOOMatrix<float> coo(2, 2);
+    coo.set(0, 0, 3.0f);
+    coo.set(1, 1, 4.0f);
+
+    slt::DenseMatrix<float> dense(std::move(coo));
+
+    EXPECT_EQ(coo.size(), 0);  // coo should be cleared
+}
 // ================================================================================
 // ================================================================================
 // eof

@@ -99,6 +99,9 @@ Collaboration diagram for slt::SparseCOOMatrix&lt; T &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a5fe5ef134724c0180c0c0c16d6917bc0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCOOMatrix.html#a5fe5ef134724c0180c0c0c16d6917bc0">clear</a> ()</td></tr>
+<tr class="memdesc:a5fe5ef134724c0180c0c0c16d6917bc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the sparse COO matrix, including all values and its shape.  <a href="classslt_1_1SparseCOOMatrix.html#a5fe5ef134724c0180c0c0c16d6917bc0">More...</a><br /></td></tr>
+<tr class="separator:a5fe5ef134724c0180c0c0c16d6917bc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc0211d7a6ffae48b7e796d5f9dacd15"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCOOMatrix.html#adc0211d7a6ffae48b7e796d5f9dacd15">size</a> () const override</td></tr>
 <tr class="memdesc:adc0211d7a6ffae48b7e796d5f9dacd15"><td class="mdescLeft">&#160;</td><td class="mdescRight">The total size of the matrix.  <a href="classslt_1_1SparseCOOMatrix.html#adc0211d7a6ffae48b7e796d5f9dacd15">More...</a><br /></td></tr>
 <tr class="separator:adc0211d7a6ffae48b7e796d5f9dacd15"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -249,7 +252,7 @@ class slt::SparseCOOMatrix&lt; T &gt;</h3>
 <div class="line">mat.set(2, 3, 5.5f);</div>
 <div class="line">mat.finalize();</div>
 <div class="line"><span class="keywordtype">float</span> val = mat.get(2, 3);  <span class="comment">// returns 5.5f</span></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html">slt::SparseCOOMatrix</a></div><div class="ttdoc">Sparse Coordinate (COO) Matrix class.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2652</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html">slt::SparseCOOMatrix</a></div><div class="ttdoc">Sparse Coordinate (COO) Matrix class.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2686</div></div>
 </div><!-- fragment --><dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>The type of the matrix elements (float or double). </td></tr>
@@ -335,7 +338,7 @@ template&lt;typename T &gt; </div>
 <div class="line">}</div>
 </div><!-- fragment --><p><b>Output:</b> <br  />
  <code>mat(1, 2) = 2.5</code> </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a59">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a60">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -510,7 +513,7 @@ template&lt;std::size_t N&gt; </div>
 <div class="line">    <a class="code" href="structslt_1_1Triplet.html">slt::Triplet&lt;double&gt;</a>(2, 2, 2.71)</div>
 <div class="line">};</div>
 <div class="line"><a class="code" href="classslt_1_1SparseCOOMatrix.html">slt::SparseCOOMatrix&lt;double&gt;</a> mat(3, 3, triplets);</div>
-<div class="ttc" id="astructslt_1_1Triplet_html"><div class="ttname"><a href="structslt_1_1Triplet.html">slt::Triplet</a></div><div class="ttdoc">Represents a single non-zero entry in a sparse COO matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2461</div></div>
+<div class="ttc" id="astructslt_1_1Triplet_html"><div class="ttname"><a href="structslt_1_1Triplet.html">slt::Triplet</a></div><div class="ttdoc">Represents a single non-zero entry in a sparse COO matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2495</div></div>
 </div><!-- fragment --> 
 </div>
 </div>
@@ -858,7 +861,40 @@ template&lt;typename T &gt; </div>
 <div class="line"><span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : mat) {</div>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; t.row &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; t.col &lt;&lt; <span class="stringliteral">&quot;) = &quot;</span> &lt;&lt; t.value &lt;&lt; std::endl;</div>
 <div class="line">}</div>
-</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a74">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a75">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+</dl>
+
+</div>
+</div>
+<a id="a5fe5ef134724c0180c0c0c16d6917bc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fe5ef134724c0180c0c0c16d6917bc0">&#9670;&nbsp;</a></span>clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classslt_1_1SparseCOOMatrix.html">slt::SparseCOOMatrix</a>&lt; T &gt;::clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Clears the sparse COO matrix, including all values and its shape. </p>
+<p>This method clears all stored triplets and resets the matrix dimensions (rows and columns) to zero. After calling this method, the matrix is considered uninitialized and must be reconstructed before further use.</p>
+<p>This is a destructive operation and should only be used when the matrix contents and dimensions are no longer needed. </p>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a57">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -892,7 +928,7 @@ template&lt;typename T &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Unique pointer to the copied matrix. </dd></dl>
 
 <p>Implements <a class="el" href="classslt_1_1MatrixBase.html#a10ca9a5de506b53de715596507c77321">slt::MatrixBase&lt; T &gt;</a>.</p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a68">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a69">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -973,7 +1009,7 @@ template&lt;typename T &gt; </div>
 <div class="line">    std::cout &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; it-&gt;row &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; it-&gt;col &lt;&lt; <span class="stringliteral">&quot;) = &quot;</span> &lt;&lt; it-&gt;value &lt;&lt; std::endl;</div>
 <div class="line">    ++it;</div>
 <div class="line">}</div>
-</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a75">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a76">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1006,7 +1042,7 @@ template&lt;typename T &gt; </div>
 <p>Finalizes the internal COO representation for querying. </p>
 <p>This method is required after using fast insertion mode (<code>fast_set = true</code>) to sort the (row, column, value) triplets into lexicographic order. Once finalized, efficient binary search and reliable get/update/is_initialized operations are enabled.</p>
 <p>This method performs a stable sort and disables fast insertion mode. </p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a72">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a73">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1071,10 +1107,10 @@ template&lt;typename T &gt; </div>
 <div class="line">});</div>
 <div class="line"><span class="keywordtype">float</span> val = mat.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71">get</a>(1, 1);  <span class="comment">// Returns 3.0f</span></div>
 <div class="line"><span class="keywordtype">float</span> missing = mat.get(0, 1);  <span class="comment">// Throws runtime_error</span></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8060856161b5989ab2f30b87d8d5bf71"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71">slt::SparseCOOMatrix::get</a></div><div class="ttdeci">T get(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Retrieves the value at the specified matrix location.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3484</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8060856161b5989ab2f30b87d8d5bf71"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71">slt::SparseCOOMatrix::get</a></div><div class="ttdeci">T get(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Retrieves the value at the specified matrix location.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3536</div></div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classslt_1_1MatrixBase.html#a5fe460dc2d97ee440c32635d5f3192fc">slt::MatrixBase&lt; T &gt;</a>.</p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a61">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a62">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1114,7 +1150,7 @@ template&lt;typename T &gt; </div>
 </div><!-- fragment --><p>Output: </p><div class="fragment"><div class="line">Non-zero count: 2</div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classslt_1_1MatrixBase.html#ab7e0924e77fe089b13f73919cbaa9e60">slt::MatrixBase&lt; T &gt;</a>.</p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a58">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a59">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1143,7 +1179,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a77">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a78">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1212,10 +1248,10 @@ template&lt;typename T &gt; </div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">bool</span> found = mat.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a889f1c98e467ceb29a74a1fa3efa6d44">is_initialized</a>(1, 1);  <span class="comment">// Returns true</span></div>
 <div class="line"><span class="keywordtype">bool</span> empty = mat.is_initialized(0, 1);  <span class="comment">// Returns false</span></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a889f1c98e467ceb29a74a1fa3efa6d44"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a889f1c98e467ceb29a74a1fa3efa6d44">slt::SparseCOOMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Checks if the element at the specified row and column is initialized (non-zero).</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3671</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a889f1c98e467ceb29a74a1fa3efa6d44"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a889f1c98e467ceb29a74a1fa3efa6d44">slt::SparseCOOMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Checks if the element at the specified row and column is initialized (non-zero).</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3723</div></div>
 </div><!-- fragment --> 
 <p>Implements <a class="el" href="classslt_1_1MatrixBase.html#a069249b28295c9776df81efed6076589">slt::MatrixBase&lt; T &gt;</a>.</p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a71">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a72">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1273,7 +1309,7 @@ template&lt;typename T &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a60">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a61">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1303,7 +1339,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a66">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a67">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1361,7 +1397,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a64">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a65">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1419,7 +1455,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a65">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a66">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1477,7 +1513,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a67">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a68">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1545,7 +1581,7 @@ template&lt;typename T &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Reference to this matrix. </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a63">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a64">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1613,7 +1649,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a62">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a63">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1653,7 +1689,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a78">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a79">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1699,7 +1735,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a69">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a70">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1732,7 +1768,7 @@ template&lt;typename T &gt; </div>
 <p>Returns whether the matrix is in fast insertion mode. </p>
 <p>This method reports the current status of the <code>fast_set</code> flag. When true, the matrix is in fast insertion mode—entries can be appended quickly without maintaining order or checking for duplicates. When false, the matrix is in finalized mode and supports efficient retrieval operations (e.g., via binary search).</p>
 <dl class="section return"><dt>Returns</dt><dd>True if the matrix is in fast insertion mode; false if finalized. </dd></dl>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a73">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a74">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1766,7 +1802,7 @@ template&lt;typename T &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>The number of rows multiplied by the number of columns, 0 if not initialized </dd></dl>
 
 <p>Implements <a class="el" href="classslt_1_1MatrixBase.html#a9240f5b4144ddf0e284e44b61b10fa49">slt::MatrixBase&lt; T &gt;</a>.</p>
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a57">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a58">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1795,7 +1831,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a76">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a77">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -1841,7 +1877,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a70">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a71">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>

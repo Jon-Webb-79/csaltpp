@@ -1272,6 +1272,40 @@
                 init[idx] = 1;
             }
         }
+// -------------------------------------------------------------------------------- 
+
+        /**  
+         * @brief Constructs a DenseMatrix from a moved SparseCOOMatrix.
+         *
+         * This constructor converts a sparse matrix in Coordinate List (COO) format
+         * into a fully populated DenseMatrix. Each non-zero entry in the sparse matrix
+         * is inserted into the dense matrix at its corresponding position. All other
+         * entries are initialized to zero.
+         *
+         * The sparse matrix is passed as an rvalue reference and is cleared after
+         * conversion to prevent redundant data retention.
+         *
+         * @param sparse The SparseCOOMatrix to be converted. Must be an rvalue.
+         * @throws std::out_of_range if any entry in the sparse matrix is out of bounds.
+         *
+         * @tparam T The numeric type of the matrix, must be float or double.
+         */
+        explicit DenseMatrix(SparseCOOMatrix<T>&& sparse)
+            : data(sparse.rows() * sparse.cols(), T{}),
+              init(sparse.rows() * sparse.cols(), 0) {
+            
+            this->rows_ = sparse.rows();
+            this->cols_ = sparse.cols();
+
+            for (const auto& t : sparse) {
+                std::size_t idx = t.row * this->cols_ + t.col;
+                data[idx] = t.value;
+                init[idx] = 1;
+            }
+
+            // Clear the sparse source to avoid residual state
+            sparse.clear();
+        }
 // --------------------------------------------------------------------------------
 
         /**
@@ -2658,6 +2692,24 @@
 // ================================================================================ 
 
     public:
+
+        /**
+         * @brief Clears the sparse COO matrix, including all values and its shape.
+         *
+         * This method clears all stored triplets and resets the matrix dimensions
+         * (rows and columns) to zero. After calling this method, the matrix is considered
+         * uninitialized and must be reconstructed before further use.
+         *
+         * This is a destructive operation and should only be used when the matrix
+         * contents and dimensions are no longer needed.
+         */
+        void clear() {
+            triplet.clear();
+            this->rows_ = 0;
+            this->cols_ = 0;
+        }
+// -------------------------------------------------------------------------------- 
+
         /**
          * @brief The total size of the matrix 
          *
@@ -3955,6 +4007,155 @@
                     triplet.erase(it);
                 }
             }
+        }
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+
+    template<typename T>
+    class SparseCSRMatrix : public MatrixBase<T> {
+        static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                      "DenseMatrix only supports float or double");
+    private:
+        std::vector<T> data;
+        std::vector<std::size_t> col_indices;
+        std::vector<std::size_t> row_ptr;
+// ================================================================================ 
+
+    public:
+        
+        explicit SparseCSRMatrix(const DenseMatrix<T>& dense) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCSRMatrix only supports float or double types");
+
+            std::size_t r = dense.rows();
+            std::size_t c = dense.cols();
+
+            this->rows_ = r;
+            this->cols_ = c;
+            row_ptr.resize(r + 1, 0);
+
+            for (std::size_t i = 0; i < r; ++i) {
+                for (std::size_t j = 0; j < c; ++j) {
+                    T val = dense.get(i, j);
+
+                    bool is_nonzero;
+                    if constexpr (simd_traits<T>::supported) {
+                        is_nonzero = !simd_ops<T>::is_zero(val);
+                    } else {
+                        is_nonzero = val != static_cast<T>(0);
+                    }
+
+                    if (is_nonzero) {
+                        data.push_back(val);
+                        col_indices.push_back(j);
+                        ++row_ptr[i + 1];
+                    }
+                }
+            }
+
+            for (std::size_t i = 1; i <= r; ++i)
+                row_ptr[i] += row_ptr[i - 1];
+        }
+// -------------------------------------------------------------------------------- 
+
+        explicit SparseCSRMatrix(const SparseCOOMatrix<T>& coo) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCSRMatrix only supports float or double types");
+
+            std::size_t r = coo.rows();
+            std::size_t nnz = coo.values.size();
+
+            this->rows_ = r;
+            this->cols_ = coo.cols();
+
+            data.resize(nnz);
+            col_indices.resize(nnz);
+            row_ptr.assign(r + 1, 0);
+
+            for (std::size_t i = 0; i < nnz; ++i)
+                ++row_ptr[coo.row_indices[i] + 1];
+
+            for (std::size_t i = 1; i <= r; ++i)
+                row_ptr[i] += row_ptr[i - 1];
+
+            std::vector<std::size_t> next(row_ptr.begin(), row_ptr.end());
+
+            for (std::size_t i = 0; i < nnz; ++i) {
+                std::size_t row = coo.row_indices[i];
+                std::size_t dest = next[row]++;
+                col_indices[dest] = coo.col_indices[i];
+                data[dest] = coo.values[i];
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        SparseCSRMatrix(const SparseCSRMatrix& other)
+            : data(other.data),
+              col_indices(other.col_indices),
+              row_ptr(other.row_ptr) {
+            this->rows_ = other.rows_;
+            this->cols_ = other.cols_;
+        }
+// -------------------------------------------------------------------------------- 
+
+        SparseCSRMatrix(SparseCSRMatrix&& other) noexcept
+            : data(std::move(other.data)),
+              col_indices(std::move(other.col_indices)),
+              row_ptr(std::move(other.row_ptr)) {
+            this->rows_ = other.rows_;
+            this->cols_ = other.cols_;
+            other.rows_ = 0;
+            other.cols_ = 0;
+        }
+// -------------------------------------------------------------------------------- 
+
+        bool is_initialized(std::size_t row, std::size_t col) const {
+            if (row >= this->rows_ || col >= this->cols_)
+                throw std::out_of_range("Row or column index out of range");
+
+            std::size_t start = row_ptr[row];
+            std::size_t end = row_ptr[row + 1];
+
+            for (std::size_t idx = start; idx < end; ++idx) {
+                if (col_indices[idx] == col)
+                    return true;
+            }
+
+            return false;
+        }
+// -------------------------------------------------------------------------------- 
+
+        std::size_t count() const {
+            return this->cols_ * this->rows_;
+        }
+// -------------------------------------------------------------------------------- 
+
+        std::size_t initialized_count() const noexcept {
+            return data.size();
+        }
+// -------------------------------------------------------------------------------- 
+
+        T get(std::size_t row, std::size_t col) const {
+            if (row >= this->rows_ || col >= this->cols_)
+                throw std::out_of_range("Row or column index out of bounds");
+
+            std::size_t start = row_ptr[row];
+            std::size_t end = row_ptr[row + 1];
+
+            for (std::size_t idx = start; idx < end; ++idx) {
+                if (col_indices[idx] == col) {
+                    return data[idx];
+                }
+            }
+
+            throw std::runtime_error("Accessing uninitialized matrix element");
+        }
+// -------------------------------------------------------------------------------- 
+
+        std::unique_ptr<MatrixBase<T>> clone() const override {
+            return std::make_unique<SparseCSRMatrix<T>>(*this);
         }
     };
 // // ================================================================================ 

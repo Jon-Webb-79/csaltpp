@@ -94,16 +94,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4I_NSt6size_tEEN3slt11DenseMatrix11DenseMatrixERKNSt5arrayI1T1NEENSt6size_tENSt6size_tE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="#densematrix-const-sparsecoomatrix-t-sparse">DenseMatrix(const SparseCOOMatrix&lt;T&gt;&amp; sparse)</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l3"><a class="reference internal" href="#densematrix-copy-constructor">DenseMatrix Copy Constructor</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#densematrix-move-constructor">DenseMatrix Move Constructor</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERR11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv411DenseMatrixRR15SparseCOOMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">DenseMatrix()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#densematrix-identify-constructor">DenseMatrix Identify Constructor</a><ul>
@@ -363,6 +361,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt15SparseCOOMatrix6removeENSt6size_tENSt6size_tE"><code class="docutils literal notranslate"><span class="pre">remove()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#sparsecoomatrix-clear">SparseCOOMatrix::clear</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv45clearv"><code class="docutils literal notranslate"><span class="pre">clear()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -562,7 +564,7 @@ developers to write high-level algorithms without binding to a specific storage 
 <h1>MatrixBase&lt;T&gt;<a class="headerlink" href="#matrixbase-t" title="Link to this heading"></a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">MatrixBase&lt;T&gt;</span></code> class is a template class that can be applied to any data
 type. This is an abstract base class providing the contract for the
-<a class="reference internal" href="#dense-matrix"><span class="std std-ref">DenseMatrix&lt;T&gt;</span></a>, <a class="reference internal" href="#sparsecoo-matrix"><span class="std std-ref">set()</span></a>, and <a class="reference internal" href="#sparsecsr-matrix"><span class="std std-ref">SparseCSRMatrix&lt;T&gt;</span></a> classes.
+<a class="reference internal" href="#dense-matrix"><span class="std std-ref">DenseMatrix&lt;T&gt;</span></a>, <a class="reference internal" href="#sparsecoo-matrix"><span class="std std-ref">set()</span></a>, and <a class="reference internal" href="#sparsecsr-matrix"><span class="std std-ref">SparseCOOMatrix::clear</span></a> classes.
 While not generally intended for public use, it can be extended by users who wish
 to implement custom matrix formats.</p>
 <dl class="cpp class">
@@ -575,7 +577,7 @@ to implement custom matrix formats.</p>
 <dd class="field-odd"><p><strong>T</strong> – The numeric type of the matrix elements (e.g., float, double). </p>
 </dd>
 </dl>
-<p>Subclassed by <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">slt::DenseMatrix&lt; T &gt;</span></a>, <a class="reference internal" href="#classslt_1_1SparseCOOMatrix"><span class="std std-ref">slt::SparseCOOMatrix&lt; T &gt;</span></a></p>
+<p>Subclassed by <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">slt::DenseMatrix&lt; T &gt;</span></a>, <a class="reference internal" href="#classslt_1_1SparseCOOMatrix"><span class="std std-ref">slt::SparseCOOMatrix&lt; T &gt;</span></a>, slt::SparseCSRMatrix&lt; T &gt;</p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
@@ -970,8 +972,26 @@ The input vector must contain exactly <code class="docutils literal notranslate"
 </dd></dl>
 
 </section>
-<section id="densematrix-const-sparsecoomatrix-t-sparse">
-<h3>DenseMatrix(const SparseCOOMatrix&lt;T&gt;&amp; sparse)<a class="headerlink" href="#densematrix-const-sparsecoomatrix-t-sparse" title="Link to this heading"></a></h3>
+<section id="densematrix-copy-constructor">
+<h3>DenseMatrix Copy Constructor<a class="headerlink" href="#densematrix-copy-constructor" title="Link to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE">
+<span id="_CPPv3N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE"></span><span id="_CPPv2N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE"></span><span id="slt::DenseMatrix::DenseMatrix__DenseMatrix:T:CR"></span><span class="target" id="classslt_1_1DenseMatrix_1ac64fec350273642bd69b2500001c63be"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE" title="slt::DenseMatrix::DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Copy constructor for <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a>. </p>
+<p>Creates a deep copy of another <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a>, duplicating its internal data and initialization state. The resulting matrix is independent of the original.</p>
+<p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">B</span><span class="p">(</span><span class="n">A</span><span class="p">);</span><span class="w">  </span><span class="c1">// B is a deep copy of A</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">B</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">        </span><span class="c1">// Output: 1.0</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a> instance to copy.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE">
 <span id="_CPPv3N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE"></span><span id="_CPPv2N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE"></span><span id="slt::DenseMatrix::DenseMatrix__slt::SparseCOOMatrix:T:CR"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sparse</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERKN3slt15SparseCOOMatrixI1TEE" title="Link to this definition"></a><br /></dt>
@@ -999,27 +1019,6 @@ Remaining positions are left uninitialized (<code class="docutils literal notran
 </dd></dl>
 
 </section>
-<section id="densematrix-copy-constructor">
-<h3>DenseMatrix Copy Constructor<a class="headerlink" href="#densematrix-copy-constructor" title="Link to this heading"></a></h3>
-<dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE">
-<span id="_CPPv3N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE"></span><span id="_CPPv2N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE"></span><span id="slt::DenseMatrix::DenseMatrix__DenseMatrix:T:CR"></span><span class="target" id="classslt_1_1DenseMatrix_1ac64fec350273642bd69b2500001c63be"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE" title="slt::DenseMatrix::DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N3slt11DenseMatrix11DenseMatrixERK11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
-<dd><p>Copy constructor for <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a>. </p>
-<p>Creates a deep copy of another <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a>, duplicating its internal data and initialization state. The resulting matrix is independent of the original.</p>
-<p><div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">A</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">);</span>
-<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">B</span><span class="p">(</span><span class="n">A</span><span class="p">);</span><span class="w">  </span><span class="c1">// B is a deep copy of A</span>
-<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">B</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">        </span><span class="c1">// Output: 1.0</span>
-</pre></div>
-</div>
- </p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>other</strong> – The <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a> instance to copy.</p>
-</dd>
-</dl>
-</dd></dl>
-
-</section>
 <section id="densematrix-move-constructor">
 <h3>DenseMatrix Move Constructor<a class="headerlink" href="#densematrix-move-constructor" title="Link to this heading"></a></h3>
 <dl class="cpp function">
@@ -1039,6 +1038,45 @@ Remaining positions are left uninitialized (<code class="docutils literal notran
 <dd class="field-odd"><p><strong>other</strong> – The <a class="reference internal" href="#classslt_1_1DenseMatrix"><span class="std std-ref">DenseMatrix</span></a> to move from. It will be reset to a zero-sized state.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixRR15SparseCOOMatrixI1TE">
+<span id="_CPPv311DenseMatrixRR15SparseCOOMatrixI1TE"></span><span id="_CPPv211DenseMatrixRR15SparseCOOMatrixI1TE"></span><span id="DenseMatrix__SparseCOOMatrix:T:RR"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sparse</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixRR15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a dense matrix by moving the contents of a sparse matrix
+in Coordinate List (COO) format.</p>
+<p>This constructor transfers all non-zero entries from the sparse matrix into
+their corresponding positions in the dense matrix. All remaining entries are
+set to zero. After the conversion, the sparse matrix is cleared.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sparse</strong> – A sparse matrix (in COO format) whose contents will be moved into the dense matrix.</p>
+</dd>
+<dt class="field-even">Type sparse<span class="colon">:</span></dt>
+<dd class="field-even"><p>SparseCOOMatrix&lt;T&gt;&amp;&amp;</p>
+</dd>
+<dt class="field-odd">Raises std::out_of_range<span class="colon">:</span></dt>
+<dd class="field-odd"><p>If any row or column index is outside matrix bounds.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This constructor assumes that <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix&lt;T&gt;</span></code> supports iteration
+using range-based for loops, and that each element yields <code class="docutils literal notranslate"><span class="pre">row</span></code>, <code class="docutils literal notranslate"><span class="pre">col</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">value</span></code> members.</p>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sparse</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">sparse</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">4.5</span><span class="p">);</span>
+<span class="n">sparse</span><span class="p">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">-1.2</span><span class="p">);</span>
+
+<span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">sparse</span><span class="p">));</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">dense</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Prints 4.5</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">dense</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">  </span><span class="c1">// Prints -1.2</span>
+<span class="c1">// dense.get(1, 1); would throw if uninitialized access is disallowed</span>
+</pre></div>
+</div>
 </dd></dl>
 
 </section>
@@ -1154,7 +1192,7 @@ Only stored triplet entries are initialized; other positions remain uninitialize
 <h3>operator()<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N11DenseMatrixclENSt6size_tENSt6size_tE">
-<span id="_CPPv3N11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="_CPPv2N11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="DenseMatrix::call-operator__std::s.std::s"></span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11DenseMatrixclENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="_CPPv2N11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="DenseMatrix::call-operator__std::s.std::s"></span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-prename descclassname"><a class="reference internal" href="#_CPPv411DenseMatrixRR15SparseCOOMatrixI1TE" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N11DenseMatrixclENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
 <dd><p>Access or assign a value at the specified matrix index <code class="docutils literal notranslate"><span class="pre">(r,</span> <span class="pre">c)</span></code>.</p>
 <p>This non-const overload allows users to assign a value to an element. If the
 element has not been previously initialized (tracked via the internal <code class="docutils literal notranslate"><span class="pre">init</span></code> vector),
@@ -1185,7 +1223,7 @@ it will be marked as initialized. If already initialized, it acts as a regular u
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK11DenseMatrixclENSt6size_tENSt6size_tE">
-<span id="_CPPv3NK11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="_CPPv2NK11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="DenseMatrix::call-operator__std::s.std::sC"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-prename descclassname"><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11DenseMatrixclENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3NK11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="_CPPv2NK11DenseMatrixclENSt6size_tENSt6size_tE"></span><span id="DenseMatrix::call-operator__std::s.std::sC"></span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-prename descclassname"><a class="reference internal" href="#_CPPv411DenseMatrixRR15SparseCOOMatrixI1TE" title="DenseMatrix"><span class="n"><span class="pre">DenseMatrix</span></span></a><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">()</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">r</span></span>, <span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">c</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK11DenseMatrixclENSt6size_tENSt6size_tE" title="Link to this definition"></a><br /></dt>
 <dd><p>Read-only access to a matrix element at <code class="docutils literal notranslate"><span class="pre">(r,</span> <span class="pre">c)</span></code>.</p>
 <p>This const overload allows read-only access to a matrix element.
 Throws a <code class="docutils literal notranslate"><span class="pre">std::runtime_error</span></code> if the element has not been initialized
@@ -3086,10 +3124,43 @@ In finalized mode (<code class="docutils literal notranslate"><span class="pre">
 </dd></dl>
 
 </section>
+<section id="sparsecoomatrix-clear">
+<span id="sparsecsr-matrix"></span><h3>SparseCOOMatrix::clear<a class="headerlink" href="#sparsecoomatrix-clear" title="Link to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv45clearv">
+<span id="_CPPv35clearv"></span><span id="_CPPv25clearv"></span><span id="clear"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv45clearv" title="Link to this definition"></a><br /></dt>
+<dd><p>Clears all entries from the COO matrix and resets its shape to zero rows and columns.</p>
+<p>This method removes all stored triplets and sets the internal row and column
+dimensions to zero. It is considered a destructive operation that completely
+resets the matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>After calling this method, the matrix is uninitialized and must be resized
+or reconstructed before reuse.</p>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">coo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">-2.5f</span><span class="p">);</span>
+
+<span class="n">coo</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span><span class="w">  </span><span class="c1">// All data and shape are reset</span>
+
+<span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">coo</span><span class="p">.</span><span class="n">rows</span><span class="p">(),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">coo</span><span class="p">.</span><span class="n">cols</span><span class="p">(),</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 </section>
 </section>
 <section id="sparsecsrmatrix-t">
-<span id="sparsecsr-matrix"></span><h1>SparseCSRMatrix&lt;T&gt;<a class="headerlink" href="#sparsecsrmatrix-t" title="Link to this heading"></a></h1>
+<h1>SparseCSRMatrix&lt;T&gt;<a class="headerlink" href="#sparsecsrmatrix-t" title="Link to this heading"></a></h1>
 <section id="id31">
 <h2>Constructors<a class="headerlink" href="#id31" title="Link to this heading"></a></h2>
 </section>

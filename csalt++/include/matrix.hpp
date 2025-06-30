@@ -3270,6 +3270,43 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Move assignment operator from a DenseMatrix.
+         *
+         * Converts a dense matrix into a sparse COO representation by extracting all
+         * initialized values and storing them as triplets. Each initialized entry in
+         * the dense matrix becomes a corresponding (row, col, value) triplet. The
+         * dense matrix is cleared after the conversion.
+         *
+         * All explicitly initialized values are included, including zero values.
+         * Triplets are sorted by row-major order after construction.
+         *
+         * @param dense An rvalue reference to a DenseMatrix to convert from.
+         * @return Reference to this SparseCOOMatrix after assignment.
+         *
+         * @tparam T The numeric type of the matrix, must be float or double.
+         */
+        SparseCOOMatrix<T>& operator=(DenseMatrix<T>&& dense) {
+            this->rows_ = dense.rows();
+            this->cols_ = dense.cols();
+            triplet.clear();
+            triplet.reserve(dense.size());  // Conservative guess
+
+            for (std::size_t r = 0; r < this->rows_; ++r) {
+                for (std::size_t c = 0; c < this->cols_; ++c) {
+                    if (dense.is_initialized(r, c)) {
+                        T value = dense.get(r, c);
+                        triplet.emplace_back(r, c, std::move(value));
+                    }
+                }
+            }
+
+            std::sort(triplet.begin(), triplet.end());
+            dense.clear();
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Assignment from DenseMatrix<T> to SparseCOOMatrix<T>.
          *
          * This assignment operator replaces the contents of the SparseCOOMatrix with

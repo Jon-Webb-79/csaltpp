@@ -293,6 +293,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt15SparseCOOMatrixaSERK15SparseCOOMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt15SparseCOOMatrixaSERR15SparseCOOMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt15SparseCOOMatrixaSERKN3slt11DenseMatrixI1TEE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4aSRR11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#id15">operator&lt;&lt;</a><ul>
@@ -2720,6 +2721,49 @@ Triplets are sorted after assignment, and <code class="docutils literal notransl
 <span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">sparse</span><span class="p">.</span><span class="n">initialized_count</span><span class="p">(),</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
 <span class="n">EXPECT_FLOAT_EQ</span><span class="p">(</span><span class="n">sparse</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
 <span class="n">EXPECT_FLOAT_EQ</span><span class="p">(</span><span class="n">sparse</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4aSRR11DenseMatrixI1TE">
+<span id="_CPPv3aSRR11DenseMatrixI1TE"></span><span id="_CPPv2aSRR11DenseMatrixI1TE"></span><span id="assign-operator__DenseMatrix:T:RR"></span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dense</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4aSRR11DenseMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Move-assigns a dense matrix to this sparse COO matrix.</p>
+<p>This operation converts a dense matrix into a sparse matrix by transferring
+all explicitly initialized values into the COO triplet format. The dense matrix
+is cleared after the conversion to avoid data duplication. Zero values are
+included if they were initialized in the source matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dense</strong> – The dense matrix to move and convert.</p>
+</dd>
+<dt class="field-even">Type dense<span class="colon">:</span></dt>
+<dd class="field-even"><p>DenseMatrix&lt;T&gt;&amp;&amp;</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the updated SparseCOOMatrix</p>
+</dd>
+<dt class="field-even">Rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>SparseCOOMatrix&lt;T&gt;&amp;</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All values marked as initialized in the dense matrix are transferred.
+This includes explicitly set zero values.</p>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">);</span><span class="w">  </span><span class="c1">// Explicit zero</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">coo</span><span class="p">;</span>
+<span class="n">coo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">mat</span><span class="p">);</span>
+
+<span class="n">EXPECT_EQ</span><span class="p">(</span><span class="n">coo</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span><span class="w">  </span><span class="c1">// Includes explicit zero</span>
 </pre></div>
 </div>
 </dd></dl>

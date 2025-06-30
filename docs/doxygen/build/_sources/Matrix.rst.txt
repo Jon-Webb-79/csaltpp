@@ -1064,6 +1064,40 @@ operator=
       EXPECT_FLOAT_EQ(sparse.get(1, 1), 3.0f);
 
 
+.. cpp:function:: SparseCOOMatrix<T>& operator=(DenseMatrix<T>&& dense)
+
+   Move-assigns a dense matrix to this sparse COO matrix.
+
+   This operation converts a dense matrix into a sparse matrix by transferring
+   all explicitly initialized values into the COO triplet format. The dense matrix
+   is cleared after the conversion to avoid data duplication. Zero values are
+   included if they were initialized in the source matrix.
+
+   :param dense: The dense matrix to move and convert.
+   :type dense: DenseMatrix<T>&&
+   :returns: Reference to the updated SparseCOOMatrix
+   :rtype: SparseCOOMatrix<T>&
+   :raises: None
+
+   .. note::
+
+      All values marked as initialized in the dense matrix are transferred.
+      This includes explicitly set zero values.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> mat(2, 2);
+      mat.set(0, 0, 1.0f);
+      mat.set(1, 1, 0.0f);  // Explicit zero
+
+      slt::SparseCOOMatrix<float> coo;
+      coo = std::move(mat);
+
+      EXPECT_EQ(coo.size(), 2);  // Includes explicit zero
+
+
 operator<<
 ~~~~~~~~~~
 

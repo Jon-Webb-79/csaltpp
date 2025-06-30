@@ -514,6 +514,38 @@ clone()
 .. doxygenfunction:: slt::DenseMatrix::clone
    :project: csalt++
 
+clear()
+~~~~~~~
+
+.. cpp:function:: void slt::DenseMatrix::clear()
+
+   Clears all contents of the dense matrix and resets its dimensions to zero.
+
+   This method removes all data values and resets the matrix's internal shape
+   (row and column count) to zero. The matrix becomes uninitialized after this
+   call and must be redefined before it can be safely accessed.
+
+   :raises: None
+
+   .. warning::
+
+      After calling this method, any further access to matrix elements will result
+      in undefined behavior or runtime errors unless the matrix is properly rebuilt.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> mat(3, 3);
+      mat.set(0, 0, 1.0f);
+      mat.set(1, 1, 2.0f);
+      
+      mat.clear();  // All data and dimensions are reset
+
+      EXPECT_EQ(mat.rows(), 0);
+      EXPECT_EQ(mat.cols(), 0);
+
+
 SparseCOOMatrix<T>
 ==================
 
@@ -750,6 +782,37 @@ Move constructor
       });
 
       slt::SparseCOOMatrix<float> new_mat(std::move(mat)); // Moves contents of mat to new_mat
+
+.. cpp:function:: SparseCOOMatrix(DenseMatrix<T>&& dense, bool accept_zeros = true)
+
+   Constructs a sparse COO matrix by moving data from a dense matrix.
+
+   All initialized values in the dense matrix are transferred as triplets into the
+   sparse COO matrix. If ``accept_zeros`` is set to ``false``, any explicitly
+   initialized zeros are excluded from the resulting sparse matrix. The input
+   dense matrix is cleared after the conversion.
+
+   :param dense: The dense matrix to convert from.
+   :type dense: DenseMatrix<T>&&
+   :param accept_zeros: Whether to include explicitly zero-valued entries.
+   :type accept_zeros: bool, default = true
+   :raises: None
+
+   .. warning::
+
+      After construction, the dense matrix is cleared and should not be reused.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> mat(2, 2);
+      mat.set(0, 0, 1.0f);
+      mat.set(1, 1, 0.0f);  // Initialized to zero
+
+      slt::SparseCOOMatrix<float> coo(std::move(mat), false);
+
+      // Only one triplet will exist since accept_zeros = false
 
 Operator Overloads 
 ------------------
@@ -1282,10 +1345,10 @@ remove()
 
 .. _sparsecsr_matrix:
 
-SparseCOOMatrix::clear
-~~~~~~~~~~~~~~~~~~~~~~
+clear()
+~~~~~~~
 
-.. cpp:function:: void clear()
+.. cpp:function:: slt::SparseCOOMatrix::clear()
 
    Clears all entries from the COO matrix and resets its shape to zero rows and columns.
 

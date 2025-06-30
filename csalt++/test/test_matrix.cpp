@@ -2141,9 +2141,44 @@ TEST(DenseMatrixMoveAssignFromCOO, ClearsSourceMatrix) {
     coo.set(1, 1, 4.0f);
 
     slt::DenseMatrix<float> mat = std::move(coo);
-    std::cout << coo.size() << std::endl;
-    EXPECT_EQ(coo.rows(), 2);
-    EXPECT_EQ(coo.cols(), 2);
+    EXPECT_EQ(coo.rows(), 0);
+    EXPECT_EQ(coo.cols(), 0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixFromDenseMove, ConvertsAllInitializedValues) {
+    slt::DenseMatrix<float> mat(2, 2);
+    mat.set(0, 0, 3.0f);
+    mat.set(0, 1, 0.0f);  // explicitly zero
+    mat.set(1, 1, -2.5f);
+
+    slt::SparseCOOMatrix<float> coo(std::move(mat));  // default accept_zeros = true
+
+    ASSERT_EQ(coo.initialized_count(), 3);  // all values including explicit 0
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixFromDenseMove, OmitsExplicitZerosWhenDisabled) {
+    slt::DenseMatrix<float> mat(2, 2);
+    mat.set(0, 0, 3.0f);
+    mat.set(0, 1, 0.0f);  // explicitly zero
+    mat.set(1, 1, -2.5f);
+
+    slt::SparseCOOMatrix<float> coo(std::move(mat), false);  // reject zero values
+
+    ASSERT_EQ(coo.initialized_count(), 2);  // zero was filtered
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixFromDenseMove, DenseMatrixIsClearedAfterMove) {
+    slt::DenseMatrix<float> mat(2, 2);
+    mat.set(0, 0, 1.0f);
+    mat.set(1, 1, 1.0f);
+
+    slt::SparseCOOMatrix<float> coo(std::move(mat));
+
+    EXPECT_EQ(mat.rows(), 0);
+    EXPECT_EQ(mat.cols(), 0);
 }
 // ================================================================================
 // ================================================================================

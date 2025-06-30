@@ -814,6 +814,26 @@
         std::vector<uint8_t> init; ///< A vector containin a binary representation of array initialization.
     // ================================================================================ 
     public:
+
+        /**
+         * @brief Clears all contents of the dense matrix and resets its shape.
+         *
+         * This method clears the internal data and initialization vectors, and sets
+         * the matrix dimensions (rows and columns) to zero. After calling this method,
+         * the matrix is considered uninitialized and must be resized or reconstructed
+         * before use.
+         *
+         * This operation is destructive and should be used when the entire contents
+         * and structure of the matrix are no longer needed.
+         */
+        void clear() {
+            data.clear();
+            init.clear();
+            this->cols_ = 0;
+            this->rows_ = 0;
+        }
+// -------------------------------------------------------------------------------- 
+
         /**
          * @brief The total size of the matrix 
          *
@@ -3065,6 +3085,44 @@
             }
 
             std::sort(triplet.begin(), triplet.end());
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a SparseCOOMatrix from a moved DenseMatrix.
+         *
+         * This constructor moves the contents of a DenseMatrix into a SparseCOOMatrix,
+         * converting all initialized elements into triplets. By default, both zero and
+         * non-zero values are retained. If `accept_zeros` is false, explicitly zero-valued
+         * entries are discarded.
+         *
+         * After construction, the DenseMatrix is cleared to avoid data duplication.
+         *
+         * @param dense An rvalue reference to a DenseMatrix to be converted.
+         * @param accept_zeros If false, initialized zero values are excluded from the result.
+         *
+         * @tparam T The numeric type, which must be float or double.
+         */
+        SparseCOOMatrix(DenseMatrix<T>&& dense, bool accept_zeros = true)
+            : fast_set(false)
+        {
+            this->cols_ = dense.cols();
+            this->rows_ = dense.rows();
+            triplet.reserve(dense.size());  // Conservative guess, not all will be used
+
+            for (std::size_t r = 0; r < dense.rows(); ++r) {
+                for (std::size_t c = 0; c < dense.cols(); ++c) {
+                    if (dense.is_initialized(r, c)) {
+                        T value = dense(r, c);
+                        if (accept_zeros || value != T{}) {
+                            triplet.emplace_back(r, c, value);
+                        }
+                    }
+                }
+            }
+
+            std::sort(triplet.begin(), triplet.end());
+            dense.clear();
         }
 // -------------------------------------------------------------------------------- 
 

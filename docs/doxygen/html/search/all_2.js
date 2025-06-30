@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['clear_3',['clear',['../classslt_1_1SparseCOOMatrix.html#a5fe5ef134724c0180c0c0c16d6917bc0',1,'slt::SparseCOOMatrix']]],
+  ['clear_3',['clear',['../classslt_1_1DenseMatrix.html#a84f53b0804eface47c26e379bf1671b5',1,'slt::DenseMatrix::clear()'],['../classslt_1_1SparseCOOMatrix.html#a5fe5ef134724c0180c0c0c16d6917bc0',1,'slt::SparseCOOMatrix::clear()']]],
   ['clone_4',['clone',['../classslt_1_1MatrixBase.html#a10ca9a5de506b53de715596507c77321',1,'slt::MatrixBase::clone()'],['../classslt_1_1DenseMatrix.html#a66bf4b77281db6ded265fc44f8b3a309',1,'slt::DenseMatrix::clone()'],['../classslt_1_1SparseCOOMatrix.html#a532cedb759d6e7e633c4a3ad84f17c69',1,'slt::SparseCOOMatrix::clone()'],['../classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e',1,'slt::SparseCSRMatrix::clone()']]],
   ['col_5',['col',['../structslt_1_1Triplet.html#a5f247a3fc9d05a70a47b60e7a10d7e05',1,'slt::Triplet']]],
   ['col_5findices_6',['col_indices',['../classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602',1,'slt::SparseCSRMatrix']]],

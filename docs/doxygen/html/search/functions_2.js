@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['clear_89',['clear',['../classslt_1_1SparseCOOMatrix.html#a5fe5ef134724c0180c0c0c16d6917bc0',1,'slt::SparseCOOMatrix']]],
+  ['clear_89',['clear',['../classslt_1_1DenseMatrix.html#a84f53b0804eface47c26e379bf1671b5',1,'slt::DenseMatrix::clear()'],['../classslt_1_1SparseCOOMatrix.html#a5fe5ef134724c0180c0c0c16d6917bc0',1,'slt::SparseCOOMatrix::clear()']]],
   ['clone_90',['clone',['../classslt_1_1MatrixBase.html#a10ca9a5de506b53de715596507c77321',1,'slt::MatrixBase::clone()'],['../classslt_1_1DenseMatrix.html#a66bf4b77281db6ded265fc44f8b3a309',1,'slt::DenseMatrix::clone()'],['../classslt_1_1SparseCOOMatrix.html#a532cedb759d6e7e633c4a3ad84f17c69',1,'slt::SparseCOOMatrix::clone()'],['../classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e',1,'slt::SparseCSRMatrix::clone()']]],
   ['cols_91',['cols',['../classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06',1,'slt::MatrixBase']]],
   ['copy_92',['copy',['../structslt_1_1simd__ops_3_01float_01_4.html#a359ae10ad7832341f00ac67dc66d60c2',1,'slt::simd_ops&lt; float &gt;::copy()'],['../structslt_1_1simd__ops_3_01double_01_4.html#aefc3b0ab36d4df193e863d75ec83f054',1,'slt::simd_ops&lt; double &gt;::copy()']]],

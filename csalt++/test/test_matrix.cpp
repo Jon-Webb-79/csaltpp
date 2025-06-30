@@ -2093,6 +2093,58 @@ TEST(DenseMatrixFromCOOMoveTest, ClearsSourceMatrixAfterMove) {
 
     EXPECT_EQ(coo.size(), 0);  // coo should be cleared
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMoveAssignFromCOO, CopiesNonZeroValuesCorrectly) {
+    slt::SparseCOOMatrix<double> coo(2, 3);
+    coo.set(0, 1, 3.14);
+    coo.set(1, 2, -2.5);
+
+    slt::DenseMatrix<double> mat(2, 3);
+    mat = std::move(coo);
+
+    EXPECT_DOUBLE_EQ(mat.get(0, 1), 3.14);
+    EXPECT_DOUBLE_EQ(mat.get(1, 2), -2.5);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMoveAssignFromCOO, InitializesRemainingEntries) {
+    slt::SparseCOOMatrix<float> coo(2, 2);
+    coo.set(0, 0, 1.0f);
+
+    slt::DenseMatrix<float> mat(2, 2);
+    mat = std::move(coo);
+
+    EXPECT_FLOAT_EQ(mat.get(0, 0), 1.0f);
+    EXPECT_THROW(mat.get(0, 1), std::runtime_error);
+    EXPECT_THROW(mat.get(1, 0), std::runtime_error);
+    EXPECT_THROW(mat.get(1, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMoveAssignFromCOO, ResizesIfShapeDiffers) {
+    slt::SparseCOOMatrix<double> coo(3, 4);
+    coo.set(1, 1, 7.0);
+
+    slt::DenseMatrix<double> mat(1, 1);  // initially different shape
+    mat = std::move(coo);
+
+    EXPECT_EQ(mat.rows(), 3);
+    EXPECT_EQ(mat.cols(), 4);
+    EXPECT_DOUBLE_EQ(mat.get(1, 1), 7.0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMoveAssignFromCOO, ClearsSourceMatrix) {
+    slt::SparseCOOMatrix<float> coo(2, 2);
+    coo.set(0, 0, 2.0f);
+    coo.set(1, 1, 4.0f);
+
+    slt::DenseMatrix<float> mat = std::move(coo);
+    std::cout << coo.size() << std::endl;
+    EXPECT_EQ(coo.rows(), 2);
+    EXPECT_EQ(coo.cols(), 2);
+}
 // ================================================================================
 // ================================================================================
 // eof

@@ -1290,7 +1290,7 @@
          *
          * @tparam T The numeric type of the matrix, must be float or double.
          */
-        explicit DenseMatrix(SparseCOOMatrix<T>&& sparse)
+        DenseMatrix(SparseCOOMatrix<T>&& sparse)
             : data(sparse.rows() * sparse.cols(), T{}),
               init(sparse.rows() * sparse.cols(), 0) {
             
@@ -1515,6 +1515,53 @@
                 init[idx] = 1;
             }
 
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Move assignment operator from a SparseCOOMatrix.
+         *
+         * Converts a sparse matrix in Coordinate List (COO) format into a fully
+         * populated DenseMatrix. All non-zero entries in the sparse matrix are
+         * transferred to the dense matrix using move semantics. All other elements
+         * are initialized to zero.
+         *
+         * If the dimensions of the dense matrix differ from the sparse matrix, the
+         * internal buffers are resized. If the dimensions match, existing values are
+         * cleared and reused.
+         *
+         * After the assignment, the sparse matrix is cleared and left in an empty state.
+         *
+         * @param sparse An rvalue reference to the SparseCOOMatrix to be moved from.
+         * @return Reference to the current DenseMatrix after assignment.
+         *
+         * @throws std::out_of_range If any triplet in the sparse matrix refers to
+         *         an invalid row or column index.
+         *
+         * @tparam T The element type, must be float or double.
+         */
+        DenseMatrix<T>& operator=(SparseCOOMatrix<T>&& sparse) {
+            if (reinterpret_cast<const void*>(this) == reinterpret_cast<const void*>(&sparse)) {
+                    return *this;
+            }
+            if (this->rows_ != sparse.rows() || this->cols_ != sparse.cols()) {
+                this->rows_ = sparse.rows();
+                this->cols_ = sparse.cols();
+                data.resize(this->rows_ * this->cols_, T{});
+                init.resize(this->rows_ * this->cols_, 1);  // Mark all initialized
+            } else {
+                std::fill(data.begin(), data.end(), T{});
+                std::fill(init.begin(), init.end(), 0);
+            }
+
+            for (const auto& t : sparse) {
+                std::size_t idx = t.row * this->cols_ + t.col;
+                data[idx] = t.value;
+                init[idx] = 1;
+            }
+
+            sparse.clear();
             return *this;
         }
 // -------------------------------------------------------------------------------- 

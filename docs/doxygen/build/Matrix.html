@@ -115,6 +115,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrixaSERK11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrixaSERR11DenseMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N3slt11DenseMatrixaSERKN3slt15SparseCOOMatrixI1TEE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4aSRR15SparseCOOMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">operator=()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#id1">operator()</a><ul>
@@ -1183,6 +1184,50 @@ Only stored triplet entries are initialized; other positions remain uninitialize
 
 <span class="n">EXPECT_FLOAT_EQ</span><span class="p">(</span><span class="n">dense</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="mf">4.5f</span><span class="p">);</span>
 <span class="n">EXPECT_FALSE</span><span class="p">(</span><span class="n">dense</span><span class="p">.</span><span class="n">is_initialized</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4aSRR15SparseCOOMatrixI1TE">
+<span id="_CPPv3aSRR15SparseCOOMatrixI1TE"></span><span id="_CPPv2aSRR15SparseCOOMatrixI1TE"></span><span id="assign-operator__SparseCOOMatrix:T:RR"></span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">=</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">sparse</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4aSRR15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Move-assigns a sparse COO matrix to a dense matrix by converting its non-zero
+entries into the dense layout. All values in the sparse matrix are transferred
+using move semantics, and the sparse matrix is cleared after assignment.</p>
+<p>If the dimensions of the sparse matrix differ from the target matrix,
+the dense matrix is resized. Otherwise, its internal contents are cleared
+and reused.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>sparse</strong> – A COO-format sparse matrix to be moved into this dense matrix.</p>
+</dd>
+<dt class="field-even">Type sparse<span class="colon">:</span></dt>
+<dd class="field-even"><p>SparseCOOMatrix&lt;T&gt;&amp;&amp;</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Reference to the updated DenseMatrix object</p>
+</dd>
+<dt class="field-even">Rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>DenseMatrix&lt;T&gt;&amp;</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p>std::out_of_range if any row or column index is outside matrix bounds</p>
+</dd>
+</dl>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This operation clears the input sparse matrix and leaves it in an
+uninitialized state.</p>
+</div>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">coo</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">3.14</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">-2.0</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="w"> </span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">mat</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">coo</span><span class="p">);</span><span class="w">  </span><span class="c1">// Transfer and convert</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">mat</span><span class="p">.</span><span class="n">get</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">  </span><span class="c1">// Prints 3.14</span>
 </pre></div>
 </div>
 </dd></dl>

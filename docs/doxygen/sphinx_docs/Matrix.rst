@@ -238,6 +238,41 @@ operator=
       EXPECT_FLOAT_EQ(dense(1, 0), 4.5f);
       EXPECT_FALSE(dense.is_initialized(0, 0));
 
+.. cpp:function:: DenseMatrix<T>& operator=(SparseCOOMatrix<T>&& sparse)
+
+   Move-assigns a sparse COO matrix to a dense matrix by converting its non-zero
+   entries into the dense layout. All values in the sparse matrix are transferred
+   using move semantics, and the sparse matrix is cleared after assignment.
+
+   If the dimensions of the sparse matrix differ from the target matrix,
+   the dense matrix is resized. Otherwise, its internal contents are cleared
+   and reused.
+
+   :param sparse: A COO-format sparse matrix to be moved into this dense matrix.
+   :type sparse: SparseCOOMatrix<T>&&
+   :returns: Reference to the updated DenseMatrix object
+   :rtype: DenseMatrix<T>&
+   :raises: std::out_of_range if any row or column index is outside matrix bounds
+
+   .. warning::
+
+      This operation clears the input sparse matrix and leaves it in an
+      uninitialized state.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::SparseCOOMatrix<double> coo(2, 2);
+      coo.set(0, 1, 3.14);
+      coo.set(1, 0, -2.0);
+
+      slt::DenseMatrix<double> mat(2, 2);
+      mat = std::move(coo);  // Transfer and convert
+
+      std::cout << mat.get(0, 1);  // Prints 3.14
+
+
 
 operator()
 ~~~~~~~~~~

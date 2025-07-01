@@ -1417,6 +1417,63 @@ SparseCSRMatrix<T>
 Constructors
 ------------
 
+Build from DenseMatrix<T>
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: explicit SparseCSRMatrix(const DenseMatrix<T>& dense, bool accept_zeros = true)
+
+   Constructs a ``SparseCSRMatrix`` from a given dense matrix by retaining initialized values,
+   and optionally skipping explicit zeros.
+
+   :tparam T: Data type of the matrix entries (must be ``float`` or ``double``).
+   :param dense: Source dense matrix to convert.
+   :param accept_zeros: If true (default), stores explicitly initialized zero values.
+                        If false, skips values equal to ``T{}``.
+
+   Only values that have been initialized in the dense matrix are included.
+   The matrix structure (rows and columns) is preserved during conversion.
+
+   Example:
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> dense = {
+          {1.0f, 0.0f},
+          {0.0f, 2.0f}
+      };
+
+      // Accept zeros
+      slt::SparseCSRMatrix<float> csr1(dense);
+
+      // Skip zeros
+      slt::SparseCSRMatrix<float> csr2(dense, false);
+
+Build from SparseCOOMatrix<T>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: explicit SparseCSRMatrix(const SparseCOOMatrix<T>& coo)
+
+   Constructs a ``SparseCSRMatrix`` from a ``SparseCOOMatrix`` by converting
+   the triplet-based representation (row, col, value) into compressed row storage.
+
+   :param coo: The source matrix in COO format
+   :type coo: SparseCOOMatrix<T>
+
+   All non-zero elements are preserved, and row compression is applied to
+   build the CSR structure.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCOOMatrix<float> coo(3, 3);
+      coo.set(0, 0, 1.0f);
+      coo.set(1, 2, 2.5f);
+      coo.set(2, 1, 3.0f);
+
+      slt::SparseCSRMatrix<float> csr(coo);
+
+
 Operator Overloads 
 ------------------
 

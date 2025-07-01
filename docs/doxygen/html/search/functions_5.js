@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['finalize_101',['finalize',['../classslt_1_1SparseCOOMatrix.html#af2dd10fb10528bb4abee019204d3fc64',1,'slt::SparseCOOMatrix']]]
+  ['finalize_98',['finalize',['../classslt_1_1SparseCOOMatrix.html#af2dd10fb10528bb4abee019204d3fc64',1,'slt::SparseCOOMatrix']]]
 ];

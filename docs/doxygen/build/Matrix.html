@@ -377,7 +377,17 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="#sparsecsrmatrix-t">SparseCSRMatrix&lt;T&gt;</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#id32">Constructors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id32">Constructors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#build-from-densematrix-t">Build from DenseMatrix&lt;T&gt;</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb"><code class="docutils literal notranslate"><span class="pre">SparseCSRMatrix()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#build-from-sparsecoomatrix-t">Build from SparseCOOMatrix&lt;T&gt;</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv415SparseCSRMatrixRK15SparseCOOMatrixI1TE"><code class="docutils literal notranslate"><span class="pre">SparseCSRMatrix()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#id33">Operator Overloads</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id34">Data Access Methods</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#id35">Operations</a></li>
@@ -3331,6 +3341,72 @@ or reconstructed before reuse.</p>
 <h1>SparseCSRMatrix&lt;T&gt;<a class="headerlink" href="#sparsecsrmatrix-t" title="Link to this heading"></a></h1>
 <section id="id32">
 <h2>Constructors<a class="headerlink" href="#id32" title="Link to this heading"></a></h2>
+<section id="build-from-densematrix-t">
+<h3>Build from DenseMatrix&lt;T&gt;<a class="headerlink" href="#build-from-densematrix-t" title="Link to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb">
+<span id="_CPPv315SparseCSRMatrixRK11DenseMatrixI1TEb"></span><span id="_CPPv215SparseCSRMatrixRK11DenseMatrixI1TEb"></span><span id="SparseCSRMatrix__DenseMatrix:T:CR.b"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SparseCSRMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dense</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">accept_zeros</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a <code class="docutils literal notranslate"><span class="pre">SparseCSRMatrix</span></code> from a given dense matrix by retaining initialized values,
+and optionally skipping explicit zeros.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – Data type of the matrix entries (must be <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">double</span></code>).</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dense</strong> – Source dense matrix to convert.</p></li>
+<li><p><strong>accept_zeros</strong> – If true (default), stores explicitly initialized zero values.
+If false, skips values equal to <code class="docutils literal notranslate"><span class="pre">T{}</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+<p>Only values that have been initialized in the dense matrix are included.
+The matrix structure (rows and columns) is preserved during conversion.</p>
+<p>Example:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Accept zeros</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr1</span><span class="p">(</span><span class="n">dense</span><span class="p">);</span>
+
+<span class="c1">// Skip zeros</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr2</span><span class="p">(</span><span class="n">dense</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
+<section id="build-from-sparsecoomatrix-t">
+<h3>Build from SparseCOOMatrix&lt;T&gt;<a class="headerlink" href="#build-from-sparsecoomatrix-t" title="Link to this heading"></a></h3>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCSRMatrixRK15SparseCOOMatrixI1TE">
+<span id="_CPPv315SparseCSRMatrixRK15SparseCOOMatrixI1TE"></span><span id="_CPPv215SparseCSRMatrixRK15SparseCOOMatrixI1TE"></span><span id="SparseCSRMatrix__SparseCOOMatrix:T:CR"></span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SparseCSRMatrix</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">coo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCSRMatrixRK15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a <code class="docutils literal notranslate"><span class="pre">SparseCSRMatrix</span></code> from a <code class="docutils literal notranslate"><span class="pre">SparseCOOMatrix</span></code> by converting
+the triplet-based representation (row, col, value) into compressed row storage.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coo</strong> – The source matrix in COO format</p>
+</dd>
+<dt class="field-even">Type coo<span class="colon">:</span></dt>
+<dd class="field-even"><p>SparseCOOMatrix&lt;T&gt;</p>
+</dd>
+</dl>
+<p>All non-zero elements are preserved, and row compression is applied to
+build the CSR structure.</p>
+<p><strong>Example:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">coo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr</span><span class="p">(</span><span class="n">coo</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</section>
 </section>
 <section id="id33">
 <h2>Operator Overloads<a class="headerlink" href="#id33" title="Link to this heading"></a></h2>

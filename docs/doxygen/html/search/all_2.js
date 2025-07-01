@@ -7,6 +7,5 @@ var searchData=
   ['cols_7',['cols',['../classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06',1,'slt::MatrixBase']]],
   ['cols_5f_8',['cols_',['../classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6',1,'slt::MatrixBase']]],
   ['copy_9',['copy',['../structslt_1_1simd__ops_3_01float_01_4.html#a359ae10ad7832341f00ac67dc66d60c2',1,'slt::simd_ops&lt; float &gt;::copy()'],['../structslt_1_1simd__ops_3_01double_01_4.html#aefc3b0ab36d4df193e863d75ec83f054',1,'slt::simd_ops&lt; double &gt;::copy()']]],
-  ['count_10',['count',['../classslt_1_1SparseCSRMatrix.html#a64c2654523b5e8aae1393e9bf4e69158',1,'slt::SparseCSRMatrix']]],
-  ['cross_11',['cross',['../namespaceslt.html#a4a91f90ca1405d694326b5ec7e8d3be7',1,'slt::cross(const T *a, const T *b, T *result)'],['../namespaceslt.html#ae7ff72be7d69132d3448cd441bca0926',1,'slt::cross(const std::array&lt; T, 3 &gt; &amp;a, const std::array&lt; T, 3 &gt; &amp;b)'],['../namespaceslt.html#af8ce1187a032f89a2bda89146b18de61',1,'slt::cross(const std::vector&lt; T &gt; &amp;a, const std::vector&lt; T &gt; &amp;b)']]]
+  ['cross_10',['cross',['../namespaceslt.html#a4a91f90ca1405d694326b5ec7e8d3be7',1,'slt::cross(const T *a, const T *b, T *result)'],['../namespaceslt.html#ae7ff72be7d69132d3448cd441bca0926',1,'slt::cross(const std::array&lt; T, 3 &gt; &amp;a, const std::array&lt; T, 3 &gt; &amp;b)'],['../namespaceslt.html#af8ce1187a032f89a2bda89146b18de61',1,'slt::cross(const std::vector&lt; T &gt; &amp;a, const std::vector&lt; T &gt; &amp;b)']]]
 ];

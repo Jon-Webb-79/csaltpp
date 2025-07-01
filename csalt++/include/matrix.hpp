@@ -1343,7 +1343,7 @@
          * @endcode
          */
         DenseMatrix(const DenseMatrix<T>& other)
-            : MatrixBase<T>(),
+            : MatrixBase<T>(other),
               data(other.data),
               init(other.init) {
             this->rows_ = other.rows_;
@@ -1368,7 +1368,7 @@
          * @endcode
          */
         DenseMatrix(DenseMatrix<T>&& other) noexcept
-            : MatrixBase<T>(),
+            : MatrixBase<T>(other),
               data(std::move(other.data)),
               init(std::move(other.init)) {
             this->rows_ = std::exchange(other.rows_, 0);
@@ -4154,7 +4154,29 @@
 // ================================================================================ 
 // ================================================================================ 
 
-
+    /**
+     * @brief Compressed Sparse Row (CSR) matrix representation.
+     *
+     * The SparseCSRMatrix class implements a memory-efficient sparse matrix format
+     * using the Compressed Sparse Row (CSR) representation. It stores only non-zero
+     * elements, along with their corresponding column indices and row boundaries,
+     * to optimize memory usage and computation for large, sparse matrices.
+     *
+     * This format is ideal for fast row-wise traversal and operations such as
+     * matrix-vector multiplication. It is a finalized, read-optimized structure—
+     * not intended for frequent modification.
+     *
+     * The matrix only supports element types `float` or `double`.
+     *
+     * @tparam T Numeric type of the matrix values (must be float or double).
+     *
+     * Internal storage:
+     * - `data` holds non-zero values in row-major order.
+     * - `col_indices` stores the column index for each non-zero element.
+     * - `row_ptr` stores the starting index in `data` and `col_indices` for each row.
+     *   Its length is `(rows + 1)`; `row_ptr[i + 1] - row_ptr[i]` gives the number of
+     *   non-zero elements in row `i`.
+     */
     template<typename T>
     class SparseCSRMatrix : public MatrixBase<T> {
         static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
@@ -4162,12 +4184,12 @@
     private:
         std::vector<T> data;
         std::vector<std::size_t> col_indices;
-        std::vector<std::size_t> row_ptr;
+        std::vector<std::size_t> row_indices;
 // ================================================================================ 
 
     public:
         
-        explicit SparseCSRMatrix(const DenseMatrix<T>& dense) {
+        explicit SparseCSRMatrix(const DenseMatrix<T>& dense, bool accept_zeros = true) {
             static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                           "SparseCSRMatrix only supports float or double types");
 
@@ -4176,59 +4198,86 @@
 
             this->rows_ = r;
             this->cols_ = c;
-            row_ptr.resize(r + 1, 0);
+            row_indices.resize(r + 1, 0);  // ← updated name
 
             for (std::size_t i = 0; i < r; ++i) {
                 for (std::size_t j = 0; j < c; ++j) {
+                    if (!dense.is_initialized(i, j)) {
+                        continue;
+                    }
+
                     T val = dense.get(i, j);
 
-                    bool is_nonzero;
-                    if constexpr (simd_traits<T>::supported) {
-                        is_nonzero = !simd_ops<T>::is_zero(val);
-                    } else {
-                        is_nonzero = val != static_cast<T>(0);
+                    if (!accept_zeros && val == T{}) {
+                        continue;
                     }
 
-                    if (is_nonzero) {
-                        data.push_back(val);
-                        col_indices.push_back(j);
-                        ++row_ptr[i + 1];
-                    }
+                    data.push_back(val);
+                    col_indices.push_back(j);
+                    ++row_indices[i + 1];  // ← updated name
                 }
             }
 
-            for (std::size_t i = 1; i <= r; ++i)
-                row_ptr[i] += row_ptr[i - 1];
+            for (std::size_t i = 1; i <= r; ++i) {
+                row_indices[i] += row_indices[i - 1];  // ← updated name
+            }
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Constructs a SparseCSRMatrix from a SparseCOOMatrix.
+         *
+         * This constructor transforms a COO (Coordinate List) representation into 
+         * the equivalent CSR (Compressed Sparse Row) format. It preserves all 
+         * non-zero elements and their ordering by row.
+         *
+         * @param coo A reference to the source SparseCOOMatrix to convert.
+         *
+         * @throws std::bad_alloc if memory allocation fails.
+         * 
+         * @note The COO matrix is not modified.
+         * 
+         * Example:
+         * @code
+         * slt::SparseCOOMatrix<float> coo(3, 3);
+         * coo.set(0, 0, 1.0f);
+         * coo.set(1, 2, 2.5f);
+         * coo.set(2, 1, 3.0f);
+         *
+         * slt::SparseCSRMatrix<float> csr(coo);
+         * @endcode
+         */
         explicit SparseCSRMatrix(const SparseCOOMatrix<T>& coo) {
             static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                           "SparseCSRMatrix only supports float or double types");
 
             std::size_t r = coo.rows();
-            std::size_t nnz = coo.values.size();
+            std::size_t c = coo.cols();
 
             this->rows_ = r;
-            this->cols_ = coo.cols();
+            this->cols_ = c;
 
-            data.resize(nnz);
-            col_indices.resize(nnz);
-            row_ptr.assign(r + 1, 0);
+            std::vector<std::vector<std::pair<std::size_t, T>>> row_entries(r);
 
-            for (std::size_t i = 0; i < nnz; ++i)
-                ++row_ptr[coo.row_indices[i] + 1];
+            for (const auto& triplet : coo) {
+                row_entries[triplet.row].emplace_back(triplet.col, triplet.value);
+            }
 
-            for (std::size_t i = 1; i <= r; ++i)
-                row_ptr[i] += row_ptr[i - 1];
+            // Reserve memory conservatively
+            std::size_t nnz = 0;
+            for (const auto& row : row_entries)
+                nnz += row.size();
 
-            std::vector<std::size_t> next(row_ptr.begin(), row_ptr.end());
+            data.reserve(nnz);
+            col_indices.reserve(nnz);
+            row_indices.resize(r + 1, 0);
 
-            for (std::size_t i = 0; i < nnz; ++i) {
-                std::size_t row = coo.row_indices[i];
-                std::size_t dest = next[row]++;
-                col_indices[dest] = coo.col_indices[i];
-                data[dest] = coo.values[i];
+            for (std::size_t i = 0; i < r; ++i) {
+                row_indices[i + 1] = row_indices[i] + row_entries[i].size();
+                for (const auto& [col, value] : row_entries[i]) {
+                    col_indices.push_back(col);
+                    data.push_back(value);
+                }
             }
         }
 // -------------------------------------------------------------------------------- 
@@ -4236,7 +4285,7 @@
         SparseCSRMatrix(const SparseCSRMatrix& other)
             : data(other.data),
               col_indices(other.col_indices),
-              row_ptr(other.row_ptr) {
+              row_indices(other.row_indices) {
             this->rows_ = other.rows_;
             this->cols_ = other.cols_;
         }
@@ -4245,7 +4294,7 @@
         SparseCSRMatrix(SparseCSRMatrix&& other) noexcept
             : data(std::move(other.data)),
               col_indices(std::move(other.col_indices)),
-              row_ptr(std::move(other.row_ptr)) {
+              row_indices(std::move(other.row_indices)) {
             this->rows_ = other.rows_;
             this->cols_ = other.cols_;
             other.rows_ = 0;
@@ -4257,8 +4306,8 @@
             if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Row or column index out of range");
 
-            std::size_t start = row_ptr[row];
-            std::size_t end = row_ptr[row + 1];
+            std::size_t start = row_indices[row];
+            std::size_t end = row_indices[row + 1];
 
             for (std::size_t idx = start; idx < end; ++idx) {
                 if (col_indices[idx] == col)
@@ -4269,7 +4318,7 @@
         }
 // -------------------------------------------------------------------------------- 
 
-        std::size_t count() const {
+        std::size_t size() const {
             return this->cols_ * this->rows_;
         }
 // -------------------------------------------------------------------------------- 
@@ -4283,8 +4332,8 @@
             if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Row or column index out of bounds");
 
-            std::size_t start = row_ptr[row];
-            std::size_t end = row_ptr[row + 1];
+            std::size_t start = row_indices[row];
+            std::size_t end = row_indices[row + 1];
 
             for (std::size_t idx = start; idx < end; ++idx) {
                 if (col_indices[idx] == col) {
@@ -4300,8 +4349,8 @@
             return std::make_unique<SparseCSRMatrix<T>>(*this);
         }
     };
-// // ================================================================================ 
-// // ================================================================================ 
+// ================================================================================ 
+// ================================================================================ 
 // SparseCOOMatrix friend functions 
 
     /**

@@ -806,7 +806,7 @@ $(function() {
 <div class="line"><span class="comment">// --------------------------------------------------------------------------------</span></div>
 <div class="line"> </div>
 <div class="line">        <a class="code" href="classslt_1_1DenseMatrix.html#aefb68f3c5f27bd69a67d1e1f7b51831e">DenseMatrix</a>(<span class="keyword">const</span> DenseMatrix&lt;T&gt;&amp; other)</div>
-<div class="line">            : MatrixBase&lt;T&gt;(),</div>
+<div class="line">            : MatrixBase&lt;T&gt;(other),</div>
 <div class="line">              <a class="code" href="classslt_1_1DenseMatrix.html#ab63789902cfdc1e5cbf8e0777f5c9fb9">data</a>(other.data),</div>
 <div class="line">              <a class="code" href="classslt_1_1DenseMatrix.html#ae860a596275b6746c9c8e4a39a8671f5">init</a>(other.init) {</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = other.rows_;</div>
@@ -815,7 +815,7 @@ $(function() {
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
 <div class="line">        <a class="code" href="classslt_1_1DenseMatrix.html#aefb68f3c5f27bd69a67d1e1f7b51831e">DenseMatrix</a>(DenseMatrix&lt;T&gt;&amp;&amp; other) noexcept</div>
-<div class="line">            : MatrixBase&lt;T&gt;(),</div>
+<div class="line">            : MatrixBase&lt;T&gt;(other),</div>
 <div class="line">              <a class="code" href="classslt_1_1DenseMatrix.html#ab63789902cfdc1e5cbf8e0777f5c9fb9">data</a>(std::move(other.data)),</div>
 <div class="line">              <a class="code" href="classslt_1_1DenseMatrix.html#ae860a596275b6746c9c8e4a39a8671f5">init</a>(std::move(other.init)) {</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = std::exchange(other.rows_, 0);</div>
@@ -1598,6 +1598,27 @@ $(function() {
 <div class="line">        }</div>
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
+<div class="line">        SparseCOOMatrix&lt;T&gt;&amp; <a class="code" href="classslt_1_1SparseCOOMatrix.html#a8066b8bab1b1db44570b043591547447">operator=</a>(DenseMatrix&lt;T&gt;&amp;&amp; dense) {</div>
+<div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = dense.rows();</div>
+<div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = dense.cols();</div>
+<div class="line">            <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.clear();</div>
+<div class="line">            <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.reserve(dense.size());  <span class="comment">// Conservative guess</span></div>
+<div class="line"> </div>
+<div class="line">            <span class="keywordflow">for</span> (std::size_t r = 0; r &lt; this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a>; ++r) {</div>
+<div class="line">                <span class="keywordflow">for</span> (std::size_t c = 0; c &lt; this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>; ++c) {</div>
+<div class="line">                    <span class="keywordflow">if</span> (dense.is_initialized(r, c)) {</div>
+<div class="line">                        T value = dense.get(r, c);</div>
+<div class="line">                        <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.emplace_back(r, c, std::move(value));</div>
+<div class="line">                    }</div>
+<div class="line">                }</div>
+<div class="line">            }</div>
+<div class="line"> </div>
+<div class="line">            std::sort(<a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.begin(), <a class="code" href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">triplet</a>.end());</div>
+<div class="line">            dense.clear();</div>
+<div class="line">            <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line">        }</div>
+<div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"> </div>
 <div class="line">        SparseCOOMatrix&lt;T&gt;&amp; <a class="code" href="classslt_1_1SparseCOOMatrix.html#a8066b8bab1b1db44570b043591547447">operator=</a>(<span class="keyword">const</span> DenseMatrix&lt;T&gt;&amp; dense) {</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = dense.rows();</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = dense.cols();</div>
@@ -1939,7 +1960,6 @@ $(function() {
 <div class="line"><span class="comment">// ================================================================================ </span></div>
 <div class="line"><span class="comment">// ================================================================================ </span></div>
 <div class="line"> </div>
-<div class="line"> </div>
 <div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
 <div class="line">    <span class="keyword">class </span>SparseCSRMatrix : <span class="keyword">public</span> MatrixBase&lt;T&gt; {</div>
 <div class="line">        static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
@@ -1947,12 +1967,12 @@ $(function() {
 <div class="line">    <span class="keyword">private</span>:</div>
 <div class="line">        std::vector&lt;T&gt; <a name="a81"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>;</div>
 <div class="line">        std::vector&lt;std::size_t&gt; <a name="a82"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>;</div>
-<div class="line">        std::vector&lt;std::size_t&gt; <a name="a83"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>;</div>
+<div class="line">        std::vector&lt;std::size_t&gt; <a name="a83"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>;</div>
 <div class="line"><span class="comment">// ================================================================================ </span></div>
 <div class="line"> </div>
 <div class="line">    <span class="keyword">public</span>:</div>
 <div class="line">        </div>
-<div class="line">        <span class="keyword">explicit</span> <a name="a84"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#aa2b4abe930006681c848da3c16409810">SparseCSRMatrix</a>(<span class="keyword">const</span> DenseMatrix&lt;T&gt;&amp; dense) {</div>
+<div class="line">        <span class="keyword">explicit</span> <a name="a84"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>(<span class="keyword">const</span> DenseMatrix&lt;T&gt;&amp; dense, <span class="keywordtype">bool</span> accept_zeros = <span class="keyword">true</span>) {</div>
 <div class="line">            static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
 <div class="line">                          <span class="stringliteral">&quot;SparseCSRMatrix only supports float or double types&quot;</span>);</div>
 <div class="line"> </div>
@@ -1961,33 +1981,33 @@ $(function() {
 <div class="line"> </div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = r;</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = c;</div>
-<div class="line">            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>.resize(r + 1, 0);</div>
+<div class="line">            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.resize(r + 1, 0);  <span class="comment">// ← updated name</span></div>
 <div class="line"> </div>
 <div class="line">            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; r; ++i) {</div>
 <div class="line">                <span class="keywordflow">for</span> (std::size_t j = 0; j &lt; c; ++j) {</div>
+<div class="line">                    <span class="keywordflow">if</span> (!dense.is_initialized(i, j)) {</div>
+<div class="line">                        <span class="keywordflow">continue</span>;</div>
+<div class="line">                    }</div>
+<div class="line"> </div>
 <div class="line">                    T val = dense.get(i, j);</div>
 <div class="line"> </div>
-<div class="line">                    <span class="keywordtype">bool</span> is_nonzero;</div>
-<div class="line">                    <span class="keywordflow">if</span> constexpr (<a class="code" href="structslt_1_1simd__traits.html#a4250fe797cbbc73a64195b10f199f277">simd_traits&lt;T&gt;::supported</a>) {</div>
-<div class="line">                        is_nonzero = !simd_ops&lt;T&gt;::is_zero(val);</div>
-<div class="line">                    } <span class="keywordflow">else</span> {</div>
-<div class="line">                        is_nonzero = val != <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0);</div>
+<div class="line">                    <span class="keywordflow">if</span> (!accept_zeros &amp;&amp; val == T{}) {</div>
+<div class="line">                        <span class="keywordflow">continue</span>;</div>
 <div class="line">                    }</div>
 <div class="line"> </div>
-<div class="line">                    <span class="keywordflow">if</span> (is_nonzero) {</div>
-<div class="line">                        <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.push_back(val);</div>
-<div class="line">                        <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.push_back(j);</div>
-<div class="line">                        ++<a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[i + 1];</div>
-<div class="line">                    }</div>
+<div class="line">                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.push_back(val);</div>
+<div class="line">                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.push_back(j);</div>
+<div class="line">                    ++<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i + 1];  <span class="comment">// ← updated name</span></div>
 <div class="line">                }</div>
 <div class="line">            }</div>
 <div class="line"> </div>
-<div class="line">            <span class="keywordflow">for</span> (std::size_t i = 1; i &lt;= r; ++i)</div>
-<div class="line">                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[i] += <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[i - 1];</div>
+<div class="line">            <span class="keywordflow">for</span> (std::size_t i = 1; i &lt;= r; ++i) {</div>
+<div class="line">                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i] += <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i - 1];  <span class="comment">// ← updated name</span></div>
+<div class="line">            }</div>
 <div class="line">        }</div>
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
-<div class="line">        <span class="keyword">explicit</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#aa2b4abe930006681c848da3c16409810">SparseCSRMatrix</a>(<span class="keyword">const</span> SparseCOOMatrix&lt;T&gt;&amp; coo) {</div>
+<div class="line">        <span class="keyword">explicit</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>(<span class="keyword">const</span> SparseCOOMatrix&lt;T&gt;&amp; coo) {</div>
 <div class="line">            static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
 <div class="line">                          <span class="stringliteral">&quot;SparseCSRMatrix only supports float or double types&quot;</span>);</div>
 <div class="line"> </div>
@@ -1999,15 +2019,15 @@ $(function() {
 <div class="line"> </div>
 <div class="line">            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.resize(nnz);</div>
 <div class="line">            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.resize(nnz);</div>
-<div class="line">            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>.assign(r + 1, 0);</div>
+<div class="line">            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.assign(r + 1, 0);</div>
 <div class="line"> </div>
 <div class="line">            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; nnz; ++i)</div>
-<div class="line">                ++<a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[coo.row_indices[i] + 1];</div>
+<div class="line">                ++<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[coo.row_indices[i] + 1];</div>
 <div class="line"> </div>
 <div class="line">            for (std::size_t i = 1; i &lt;= r; ++i)</div>
-<div class="line">                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[i] += <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[i - 1];</div>
+<div class="line">                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i] += <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i - 1];</div>
 <div class="line"> </div>
-<div class="line">            std::vector&lt;std::size_t&gt; next(<a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>.begin(), <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>.end());</div>
+<div class="line">            std::vector&lt;std::size_t&gt; next(<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.begin(), <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.end());</div>
 <div class="line"> </div>
 <div class="line">            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; nnz; ++i) {</div>
 <div class="line">                std::size_t row = coo.row_indices[i];</div>
@@ -2018,19 +2038,19 @@ $(function() {
 <div class="line">        }</div>
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
-<div class="line">        <a class="code" href="classslt_1_1SparseCSRMatrix.html#aa2b4abe930006681c848da3c16409810">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#aa2b4abe930006681c848da3c16409810">SparseCSRMatrix</a>&amp; other)</div>
+<div class="line">        <a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>&amp; other)</div>
 <div class="line">            : <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>(other.data),</div>
 <div class="line">              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>(other.col_indices),</div>
-<div class="line">              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>(other.row_ptr) {</div>
+<div class="line">              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>(other.row_indices) {</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = other.rows_;</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = other.cols_;</div>
 <div class="line">        }</div>
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
-<div class="line">        <a class="code" href="classslt_1_1SparseCSRMatrix.html#aa2b4abe930006681c848da3c16409810">SparseCSRMatrix</a>(<a class="code" href="classslt_1_1SparseCSRMatrix.html#aa2b4abe930006681c848da3c16409810">SparseCSRMatrix</a>&amp;&amp; other) noexcept</div>
+<div class="line">        <a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>(<a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>&amp;&amp; other) noexcept</div>
 <div class="line">            : <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>(std::move(other.data)),</div>
 <div class="line">              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>(std::move(other.col_indices)),</div>
-<div class="line">              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>(std::move(other.row_ptr)) {</div>
+<div class="line">              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>(std::move(other.row_indices)) {</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = other.rows_;</div>
 <div class="line">            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = other.cols_;</div>
 <div class="line">            other.rows_ = 0;</div>
@@ -2042,8 +2062,8 @@ $(function() {
 <div class="line">            <span class="keywordflow">if</span> (row &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> || col &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>)</div>
 <div class="line">                <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Row or column index out of range&quot;</span>);</div>
 <div class="line"> </div>
-<div class="line">            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[row];</div>
-<div class="line">            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[row + 1];</div>
+<div class="line">            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row];</div>
+<div class="line">            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row + 1];</div>
 <div class="line"> </div>
 <div class="line">            <span class="keywordflow">for</span> (std::size_t idx = start; idx &lt; end; ++idx) {</div>
 <div class="line">                <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>[idx] == col)</div>
@@ -2054,7 +2074,7 @@ $(function() {
 <div class="line">        }</div>
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"> </div>
-<div class="line">        std::size_t <a name="a86"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#a64c2654523b5e8aae1393e9bf4e69158">count</a>()<span class="keyword"> const </span>{</div>
+<div class="line">        std::size_t <a name="a86"></a><a class="code" href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1">size</a>()<span class="keyword"> const </span>{</div>
 <div class="line">            <span class="keywordflow">return</span> this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> * this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a>;</div>
 <div class="line">        }</div>
 <div class="line"><span class="comment">// -------------------------------------------------------------------------------- </span></div>
@@ -2068,8 +2088,8 @@ $(function() {
 <div class="line">            <span class="keywordflow">if</span> (row &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> || col &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>)</div>
 <div class="line">                <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Row or column index out of bounds&quot;</span>);</div>
 <div class="line"> </div>
-<div class="line">            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[row];</div>
-<div class="line">            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">row_ptr</a>[row + 1];</div>
+<div class="line">            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row];</div>
+<div class="line">            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row + 1];</div>
 <div class="line"> </div>
 <div class="line">            <span class="keywordflow">for</span> (std::size_t idx = start; idx &lt; end; ++idx) {</div>
 <div class="line">                <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>[idx] == col) {</div>
@@ -2085,8 +2105,8 @@ $(function() {
 <div class="line">            <span class="keywordflow">return</span> std::make_unique&lt;SparseCSRMatrix&lt;T&gt;&gt;(*this);</div>
 <div class="line">        }</div>
 <div class="line">    };</div>
-<div class="line"><span class="comment">// // ================================================================================ </span></div>
-<div class="line"><span class="comment">// // ================================================================================ </span></div>
+<div class="line"><span class="comment">// ================================================================================ </span></div>
+<div class="line"><span class="comment">// ================================================================================ </span></div>
 <div class="line"><span class="comment">// SparseCOOMatrix friend functions </span></div>
 <div class="line"> </div>
 <div class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
@@ -2400,40 +2420,40 @@ $(function() {
 <div class="ttc" id="aclassslt_1_1MatrixBase_html_ab2193ba0b50e6342859efa9624f36a06"><div class="ttname"><a href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">slt::MatrixBase::cols</a></div><div class="ttdeci">std::size_t cols() const</div><div class="ttdoc">Returns the number of columns in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:743</div></div>
 <div class="ttc" id="aclassslt_1_1MatrixBase_html_ab7e0924e77fe089b13f73919cbaa9e60"><div class="ttname"><a href="classslt_1_1MatrixBase.html#ab7e0924e77fe089b13f73919cbaa9e60">slt::MatrixBase::initialized_count</a></div><div class="ttdeci">virtual std::size_t initialized_count() const =0</div><div class="ttdoc">Returns the number of initialized elements in the matrix.</div></div>
 <div class="ttc" id="aclassslt_1_1MatrixBase_html_ab84af87cc081ed919609dd3d734861d6"><div class="ttname"><a href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">slt::MatrixBase::cols_</a></div><div class="ttdeci">std::size_t cols_</div><div class="ttdef"><b>Definition:</b> matrix.hpp:722</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a0ed0440765b5f86cf842ae4b67b46621"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a0ed0440765b5f86cf842ae4b67b46621">slt::SparseCOOMatrix::set_fast</a></div><div class="ttdeci">bool set_fast() const</div><div class="ttdoc">Returns whether the matrix is in fast insertion mode.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3884</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a119d19d588a1a2a60996a1dd959e9b6a"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a119d19d588a1a2a60996a1dd959e9b6a">slt::SparseCOOMatrix::inverse</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; inverse() const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4046</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a124ffa2d3de4c59810806ee6c21838d6"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a124ffa2d3de4c59810806ee6c21838d6">slt::SparseCOOMatrix::set</a></div><div class="ttdeci">void set(std::size_t r, std::size_t c, T value)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3710</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a18b33a42b1cfc9f44c22f8093936da75"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a18b33a42b1cfc9f44c22f8093936da75">slt::SparseCOOMatrix::begin</a></div><div class="ttdeci">auto begin() const</div><div class="ttdoc">Returns an iterator to the beginning of the triplet vector.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3907</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a0ed0440765b5f86cf842ae4b67b46621"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a0ed0440765b5f86cf842ae4b67b46621">slt::SparseCOOMatrix::set_fast</a></div><div class="ttdeci">bool set_fast() const</div><div class="ttdoc">Returns whether the matrix is in fast insertion mode.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3921</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a119d19d588a1a2a60996a1dd959e9b6a"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a119d19d588a1a2a60996a1dd959e9b6a">slt::SparseCOOMatrix::inverse</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; inverse() const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4083</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a124ffa2d3de4c59810806ee6c21838d6"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a124ffa2d3de4c59810806ee6c21838d6">slt::SparseCOOMatrix::set</a></div><div class="ttdeci">void set(std::size_t r, std::size_t c, T value)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3747</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a18b33a42b1cfc9f44c22f8093936da75"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a18b33a42b1cfc9f44c22f8093936da75">slt::SparseCOOMatrix::begin</a></div><div class="ttdeci">auto begin() const</div><div class="ttdoc">Returns an iterator to the beginning of the triplet vector.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3944</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a1dc02d00cac074d3771223b358de6152"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a1dc02d00cac074d3771223b358de6152">slt::SparseCOOMatrix::operator==</a></div><div class="ttdeci">bool operator==(const SparseCOOMatrix&lt; T &gt; &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3226</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a30d1204d80d8b51f20217c5af322a2da"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a30d1204d80d8b51f20217c5af322a2da">slt::SparseCOOMatrix::update</a></div><div class="ttdeci">void update(std::size_t r, std::size_t c, T value)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3769</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a532cedb759d6e7e633c4a3ad84f17c69"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a532cedb759d6e7e633c4a3ad84f17c69">slt::SparseCOOMatrix::clone</a></div><div class="ttdeci">std::unique_ptr&lt; MatrixBase&lt; T &gt; &gt; clone() const override</div><div class="ttdoc">Creates a polymorphic deep copy of this matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3672</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a562d500b4202fbc2afb7123571ac6d60"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a562d500b4202fbc2afb7123571ac6d60">slt::SparseCOOMatrix::operator*</a></div><div class="ttdeci">SparseCOOMatrix operator*(const SparseCOOMatrix &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3523</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a30d1204d80d8b51f20217c5af322a2da"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a30d1204d80d8b51f20217c5af322a2da">slt::SparseCOOMatrix::update</a></div><div class="ttdeci">void update(std::size_t r, std::size_t c, T value)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3806</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a532cedb759d6e7e633c4a3ad84f17c69"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a532cedb759d6e7e633c4a3ad84f17c69">slt::SparseCOOMatrix::clone</a></div><div class="ttdeci">std::unique_ptr&lt; MatrixBase&lt; T &gt; &gt; clone() const override</div><div class="ttdoc">Creates a polymorphic deep copy of this matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3709</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a562d500b4202fbc2afb7123571ac6d60"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a562d500b4202fbc2afb7123571ac6d60">slt::SparseCOOMatrix::operator*</a></div><div class="ttdeci">SparseCOOMatrix operator*(const SparseCOOMatrix &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3560</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a5fe5ef134724c0180c0c0c16d6917bc0"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a5fe5ef134724c0180c0c0c16d6917bc0">slt::SparseCOOMatrix::clear</a></div><div class="ttdeci">void clear()</div><div class="ttdoc">Clears the sparse COO matrix, including all values and its shape.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2773</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a66ab63995e76bd2ca098072528106d59"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a66ab63995e76bd2ca098072528106d59">slt::SparseCOOMatrix::remove</a></div><div class="ttdeci">void remove(std::size_t r, std::size_t c)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4091</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a67a0f345fd85cdcc87de20a4a20554fd"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a67a0f345fd85cdcc87de20a4a20554fd">slt::SparseCOOMatrix::operator/</a></div><div class="ttdeci">SparseCOOMatrix operator/(T scalar) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3599</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8060856161b5989ab2f30b87d8d5bf71"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71">slt::SparseCOOMatrix::get</a></div><div class="ttdeci">T get(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Retrieves the value at the specified matrix location.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3641</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a66ab63995e76bd2ca098072528106d59"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a66ab63995e76bd2ca098072528106d59">slt::SparseCOOMatrix::remove</a></div><div class="ttdeci">void remove(std::size_t r, std::size_t c)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4128</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a67a0f345fd85cdcc87de20a4a20554fd"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a67a0f345fd85cdcc87de20a4a20554fd">slt::SparseCOOMatrix::operator/</a></div><div class="ttdeci">SparseCOOMatrix operator/(T scalar) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3636</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8060856161b5989ab2f30b87d8d5bf71"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8060856161b5989ab2f30b87d8d5bf71">slt::SparseCOOMatrix::get</a></div><div class="ttdeci">T get(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Retrieves the value at the specified matrix location.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3678</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8066b8bab1b1db44570b043591547447"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8066b8bab1b1db44570b043591547447">slt::SparseCOOMatrix::operator=</a></div><div class="ttdeci">SparseCOOMatrix&lt; T &gt; &amp; operator=(const SparseCOOMatrix&lt; T &gt; &amp;other)</div><div class="ttdoc">Deep copy assignment operator.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3261</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a869a28d52e8cf7658dc8cc87a9bfcc6d"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a869a28d52e8cf7658dc8cc87a9bfcc6d">slt::SparseCOOMatrix::operator-</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; operator-(const SparseCOOMatrix&lt; T &gt; &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3444</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a889f1c98e467ceb29a74a1fa3efa6d44"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a889f1c98e467ceb29a74a1fa3efa6d44">slt::SparseCOOMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Checks if the element at the specified row and column is initialized (non-zero).</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3828</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a869a28d52e8cf7658dc8cc87a9bfcc6d"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a869a28d52e8cf7658dc8cc87a9bfcc6d">slt::SparseCOOMatrix::operator-</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; operator-(const SparseCOOMatrix&lt; T &gt; &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3481</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a889f1c98e467ceb29a74a1fa3efa6d44"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a889f1c98e467ceb29a74a1fa3efa6d44">slt::SparseCOOMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t r, std::size_t c) const override</div><div class="ttdoc">Checks if the element at the specified row and column is initialized (non-zero).</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3865</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a8d72d157729bc5e2b3273091ba5ded9b"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a8d72d157729bc5e2b3273091ba5ded9b">slt::SparseCOOMatrix::initialized_count</a></div><div class="ttdeci">std::size_t initialized_count() const override</div><div class="ttdoc">Returns the number of non-zero elements stored in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2810</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a92b8c482627448d29d112af92da1afb8"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a92b8c482627448d29d112af92da1afb8">slt::SparseCOOMatrix::operator+</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; operator+(const SparseCOOMatrix&lt; T &gt; &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3371</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_a92b8c482627448d29d112af92da1afb8"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#a92b8c482627448d29d112af92da1afb8">slt::SparseCOOMatrix::operator+</a></div><div class="ttdeci">DenseMatrix&lt; T &gt; operator+(const SparseCOOMatrix&lt; T &gt; &amp;other) const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3408</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_ab890c296bec63f265a2c1cd167a88eec"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#ab890c296bec63f265a2c1cd167a88eec">slt::SparseCOOMatrix::fast_set</a></div><div class="ttdeci">bool fast_set</div><div class="ttdoc">true if vectors are optimized for insertation, false if optimized for retrieval</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2758</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_abb078adcd4c95de5d7bddbe438a06316"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#abb078adcd4c95de5d7bddbe438a06316">slt::SparseCOOMatrix::operator()</a></div><div class="ttdeci">T operator()(std::size_t r, std::size_t c) const</div><div class="ttdoc">Accesses a matrix element (read-only).</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3185</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_ac19d7e9ef6e0089973428a5873546a31"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#ac19d7e9ef6e0089973428a5873546a31">slt::SparseCOOMatrix::SparseCOOMatrix</a></div><div class="ttdeci">SparseCOOMatrix(std::size_t r, std::size_t c, std::size_t initial_capacity=16)</div><div class="ttdoc">Constructs an empty sparse COO matrix with specified dimensions.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2854</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_acf3f30d8c383bf4bd144338dbd6ea974"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#acf3f30d8c383bf4bd144338dbd6ea974">slt::SparseCOOMatrix::transpose</a></div><div class="ttdeci">void transpose()</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3997</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_acf3f30d8c383bf4bd144338dbd6ea974"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#acf3f30d8c383bf4bd144338dbd6ea974">slt::SparseCOOMatrix::transpose</a></div><div class="ttdeci">void transpose()</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4034</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_adc0211d7a6ffae48b7e796d5f9dacd15"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#adc0211d7a6ffae48b7e796d5f9dacd15">slt::SparseCOOMatrix::size</a></div><div class="ttdeci">std::size_t size() const override</div><div class="ttdoc">The total size of the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2785</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_addf50368708419f7a86e00d7591a235a"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#addf50368708419f7a86e00d7591a235a">slt::SparseCOOMatrix::end</a></div><div class="ttdeci">auto end() const</div><div class="ttdoc">Returns an iterator to one-past-the-end of the triplet vector.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3952</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_addf50368708419f7a86e00d7591a235a"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#addf50368708419f7a86e00d7591a235a">slt::SparseCOOMatrix::end</a></div><div class="ttdeci">auto end() const</div><div class="ttdoc">Returns an iterator to one-past-the-end of the triplet vector.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3989</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_af117588cc2e86c92783eb465bf87a2e9"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#af117588cc2e86c92783eb465bf87a2e9">slt::SparseCOOMatrix::triplet</a></div><div class="ttdeci">std::vector&lt; Triplet&lt; T &gt; &gt; triplet</div><div class="ttdoc">A vector of triplet objects.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2755</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_af2dd10fb10528bb4abee019204d3fc64"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#af2dd10fb10528bb4abee019204d3fc64">slt::SparseCOOMatrix::finalize</a></div><div class="ttdeci">void finalize()</div><div class="ttdoc">Finalizes the internal COO representation for querying.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3864</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a05430121400cca7c945f5dd7a54b8b8c"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c">slt::SparseCSRMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t row, std::size_t col) const</div><div class="ttdoc">Determines if a row column pair is initialized.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4219</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a3ff1d653de2a0ca923a64437bd38c602"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">slt::SparseCSRMatrix::col_indices</a></div><div class="ttdeci">std::vector&lt; std::size_t &gt; col_indices</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4127</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a4916aed4e374f2434d84d776d33bc98e"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e">slt::SparseCSRMatrix::clone</a></div><div class="ttdeci">std::unique_ptr&lt; MatrixBase&lt; T &gt; &gt; clone() const override</div><div class="ttdoc">Creates a polymorphic copy of the matrix object.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4262</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a52b98ed9564dce36cd9cb53d1d1d787b"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">slt::SparseCSRMatrix::data</a></div><div class="ttdeci">std::vector&lt; T &gt; data</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4124</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a61142de2d78f45158000e0cd82d4681a"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a61142de2d78f45158000e0cd82d4681a">slt::SparseCSRMatrix::row_ptr</a></div><div class="ttdeci">std::vector&lt; std::size_t &gt; row_ptr</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4128</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a64c2654523b5e8aae1393e9bf4e69158"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a64c2654523b5e8aae1393e9bf4e69158">slt::SparseCSRMatrix::count</a></div><div class="ttdeci">std::size_t count() const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4235</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_aa2b4abe930006681c848da3c16409810"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#aa2b4abe930006681c848da3c16409810">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const DenseMatrix&lt; T &gt; &amp;dense)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4133</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ad93cd70252dd6a59edb0b438157a23a3"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3">slt::SparseCSRMatrix::get</a></div><div class="ttdeci">T get(std::size_t row, std::size_t col) const</div><div class="ttdoc">Retrieves the value at a specific matrix coordinate.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4245</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ae6c8ae431051b0791e9f213d3a411505"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505">slt::SparseCSRMatrix::initialized_count</a></div><div class="ttdeci">std::size_t initialized_count() const noexcept</div><div class="ttdoc">Returns the number of initialized elements in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4240</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_af2dd10fb10528bb4abee019204d3fc64"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#af2dd10fb10528bb4abee019204d3fc64">slt::SparseCOOMatrix::finalize</a></div><div class="ttdeci">void finalize()</div><div class="ttdoc">Finalizes the internal COO representation for querying.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3901</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a05430121400cca7c945f5dd7a54b8b8c"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c">slt::SparseCSRMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t row, std::size_t col) const</div><div class="ttdoc">Determines if a row column pair is initialized.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4278</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a3ff1d653de2a0ca923a64437bd38c602"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">slt::SparseCSRMatrix::col_indices</a></div><div class="ttdeci">std::vector&lt; std::size_t &gt; col_indices</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4186</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a4916aed4e374f2434d84d776d33bc98e"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e">slt::SparseCSRMatrix::clone</a></div><div class="ttdeci">std::unique_ptr&lt; MatrixBase&lt; T &gt; &gt; clone() const override</div><div class="ttdoc">Creates a polymorphic copy of the matrix object.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4321</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a52b98ed9564dce36cd9cb53d1d1d787b"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">slt::SparseCSRMatrix::data</a></div><div class="ttdeci">std::vector&lt; T &gt; data</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4183</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a5b6b7280cbd7d57613d701ea332f4a85"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const DenseMatrix&lt; T &gt; &amp;dense, bool accept_zeros=true)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4192</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a6897bc14189abb697312155e7f03c128"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">slt::SparseCSRMatrix::row_indices</a></div><div class="ttdeci">std::vector&lt; std::size_t &gt; row_indices</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4187</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_abd0d5d75ba4ef854b1e8de8403f745d1"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1">slt::SparseCSRMatrix::size</a></div><div class="ttdeci">std::size_t size() const</div><div class="ttdoc">The total size of the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4294</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ad93cd70252dd6a59edb0b438157a23a3"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3">slt::SparseCSRMatrix::get</a></div><div class="ttdeci">T get(std::size_t row, std::size_t col) const</div><div class="ttdoc">Retrieves the value at a specific matrix coordinate.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4304</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ae6c8ae431051b0791e9f213d3a411505"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505">slt::SparseCSRMatrix::initialized_count</a></div><div class="ttdeci">std::size_t initialized_count() const noexcept</div><div class="ttdoc">Returns the number of initialized elements in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4299</div></div>
 <div class="ttc" id="amatrix_8hpp_html_ac5a637320d99ebb9eaa016046afb1462"><div class="ttname"><a href="matrix_8hpp.html#ac5a637320d99ebb9eaa016046afb1462">SIMD_WIDTH_FLOAT</a></div><div class="ttdeci">#define SIMD_WIDTH_FLOAT</div><div class="ttdef"><b>Definition:</b> matrix.hpp:91</div></div>
 <div class="ttc" id="amatrix_8hpp_html_aeda68842866e63a7a2cbcd69ac99a1ba"><div class="ttname"><a href="matrix_8hpp.html#aeda68842866e63a7a2cbcd69ac99a1ba">SIMD_WIDTH_DOUBLE</a></div><div class="ttdeci">#define SIMD_WIDTH_DOUBLE</div><div class="ttdef"><b>Definition:</b> matrix.hpp:92</div></div>
 <div class="ttc" id="anamespaceslt_html"><div class="ttname"><a href="namespaceslt.html">slt</a></div><div class="ttdef"><b>Definition:</b> matrix.hpp:98</div></div>

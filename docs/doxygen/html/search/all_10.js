@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7ematrixbase_72',['~MatrixBase',['../classslt_1_1MatrixBase.html#a3bbb4cd026c2c1da1ba0881c918630b1',1,'slt::MatrixBase']]]
+  ['_7ematrixbase_70',['~MatrixBase',['../classslt_1_1MatrixBase.html#a3bbb4cd026c2c1da1ba0881c918630b1',1,'slt::MatrixBase']]]
 ];

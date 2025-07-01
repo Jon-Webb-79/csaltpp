@@ -2218,6 +2218,92 @@ TEST(SparseCOOMatrixMoveAssignFromDense, SourceMatrixIsCleared) {
     EXPECT_EQ(mat.rows(), 0);
     EXPECT_EQ(mat.cols(), 0);
 }
+// ================================================================================ 
+// ================================================================================ 
+
+TEST(SparseCSRConstructorTests, ConvertsNonZeroElements) {
+    slt::DenseMatrix<float> dense(3, 3);
+    dense.set(0, 1, 1.0f);
+    dense.set(2, 0, 2.5f);
+    dense.set(2, 2, -3.0f);
+
+    slt::SparseCSRMatrix<float> csr(dense);
+
+    ASSERT_EQ(csr.initialized_count(), 3);
+
+    EXPECT_TRUE(csr.is_initialized(0, 1));
+    EXPECT_TRUE(csr.is_initialized(2, 0));
+    EXPECT_TRUE(csr.is_initialized(2, 2));
+    EXPECT_THROW(csr.get(1, 1), std::runtime_error);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, RowPointerStructureIsCorrect) {
+    slt::DenseMatrix<double> dense(3, 3);
+    dense.set(0, 0, 1.0);
+    dense.set(0, 2, 2.0);
+    dense.set(1, 1, 3.0);
+    dense.set(2, 2, 4.0);
+
+    slt::SparseCSRMatrix<double> csr(dense);
+
+    EXPECT_EQ(csr.initialized_count(), 4);
+    EXPECT_TRUE(csr.is_initialized(0, 0));
+    EXPECT_TRUE(csr.is_initialized(0, 2));
+    EXPECT_TRUE(csr.is_initialized(1, 1));
+    EXPECT_TRUE(csr.is_initialized(2, 2));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, HandlesExplicitZeroValues) {
+    slt::DenseMatrix<float> dense(2, 2);
+    dense.set(0, 0, 0.0f);  // explicitly initialized zero
+    dense.set(1, 1, 1.0f);
+
+    slt::SparseCSRMatrix<float> csr(dense);
+
+    EXPECT_TRUE(csr.is_initialized(0, 0));
+    EXPECT_TRUE(csr.is_initialized(1, 1));
+    EXPECT_FLOAT_EQ(csr.get(0, 0), 0.0f);
+    EXPECT_FLOAT_EQ(csr.get(1, 1), 1.0f);
+}
+// -------------------------------------------------------------------------------- 
+// Converts a basic 3x3 SparseCOOMatrix to SparseCSRMatrix
+
+TEST(SparseCSRConstructorTests, ConvertsBasicCOOToCSR) {
+    slt::SparseCOOMatrix<float> coo(3, 3);
+    coo.set(0, 0, 1.0f);
+    coo.set(1, 2, 2.5f);
+    coo.set(2, 1, 3.0f);
+
+    slt::SparseCSRMatrix<float> csr(coo);
+
+    EXPECT_EQ(csr.rows(), 3);
+    EXPECT_EQ(csr.cols(), 3);
+}
+// -------------------------------------------------------------------------------- 
+// Handles empty SparseCOOMatrix conversion
+
+TEST(SparseCSRConstructorTests, ConvertsEmptyCOOToCSR) {
+    slt::SparseCOOMatrix<float> coo(2, 2);
+    slt::SparseCSRMatrix<float> csr(coo);
+
+    EXPECT_EQ(csr.rows(), 2);
+    EXPECT_EQ(csr.cols(), 2);
+}
+// -------------------------------------------------------------------------------- 
+// Handles multiple entries per row
+
+TEST(SparseCSRConstructorTests, ConvertsMultipleEntriesPerRow) {
+    slt::SparseCOOMatrix<float> coo(3, 3);
+    coo.set(0, 0, 1.0f);
+    coo.set(0, 1, 2.0f);
+    coo.set(1, 2, 3.0f);
+    coo.set(2, 0, 4.0f);
+    coo.set(2, 2, 5.0f);
+
+    slt::SparseCSRMatrix<float> csr(coo);
+}
 // ================================================================================
 // ================================================================================
 // eof

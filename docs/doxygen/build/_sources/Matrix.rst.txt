@@ -1473,6 +1473,29 @@ Build from SparseCOOMatrix<T>
 
       slt::SparseCSRMatrix<float> csr(coo);
 
+Build from SparseCSRMatrix<T>
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCSRMatrix(const SparseCSRMatrix<T>& other)
+
+   Constructs a new :cpp:class:`SparseCSRMatrix` as a deep copy of another.
+
+   This copy constructor duplicates all internal data members, including
+   the non-zero values, column indices, and row pointers. It ensures
+   the resulting matrix is a distinct object with no shared memory.
+
+   :param other: The sparse matrix to copy from.
+   :type other: const SparseCSRMatrix<T>&
+   :tparam T: Must be either ``float`` or ``double``.
+
+   :note: Modifications to the copied matrix do not affect the original.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> csr1 = ...;
+      slt::SparseCSRMatrix<float> csr2(csr1);  // Deep copy
 
 Operator Overloads 
 ------------------

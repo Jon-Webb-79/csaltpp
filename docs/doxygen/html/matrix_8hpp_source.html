@@ -1956,421 +1956,425 @@ $(function() {
 <div class="line"><a name="l04188"></a><span class="lineno"> 4188</span>&#160;<span class="comment">// ================================================================================ </span></div>
 <div class="line"><a name="l04189"></a><span class="lineno"> 4189</span>&#160; </div>
 <div class="line"><a name="l04190"></a><span class="lineno"> 4190</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l04191"></a><span class="lineno"> 4191</span>&#160;        </div>
-<div class="line"><a name="l04192"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85"> 4192</a></span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keywordtype">bool</span> accept_zeros = <span class="keyword">true</span>) {</div>
-<div class="line"><a name="l04193"></a><span class="lineno"> 4193</span>&#160;            static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
-<div class="line"><a name="l04194"></a><span class="lineno"> 4194</span>&#160;                          <span class="stringliteral">&quot;SparseCSRMatrix only supports float or double types&quot;</span>);</div>
-<div class="line"><a name="l04195"></a><span class="lineno"> 4195</span>&#160; </div>
-<div class="line"><a name="l04196"></a><span class="lineno"> 4196</span>&#160;            std::size_t r = dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04197"></a><span class="lineno"> 4197</span>&#160;            std::size_t c = dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
-<div class="line"><a name="l04198"></a><span class="lineno"> 4198</span>&#160; </div>
-<div class="line"><a name="l04199"></a><span class="lineno"> 4199</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = r;</div>
-<div class="line"><a name="l04200"></a><span class="lineno"> 4200</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = c;</div>
-<div class="line"><a name="l04201"></a><span class="lineno"> 4201</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.resize(r + 1, 0);  <span class="comment">// ← updated name</span></div>
-<div class="line"><a name="l04202"></a><span class="lineno"> 4202</span>&#160; </div>
-<div class="line"><a name="l04203"></a><span class="lineno"> 4203</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; r; ++i) {</div>
-<div class="line"><a name="l04204"></a><span class="lineno"> 4204</span>&#160;                <span class="keywordflow">for</span> (std::size_t j = 0; j &lt; c; ++j) {</div>
-<div class="line"><a name="l04205"></a><span class="lineno"> 4205</span>&#160;                    <span class="keywordflow">if</span> (!dense.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j)) {</div>
-<div class="line"><a name="l04206"></a><span class="lineno"> 4206</span>&#160;                        <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l04207"></a><span class="lineno"> 4207</span>&#160;                    }</div>
-<div class="line"><a name="l04208"></a><span class="lineno"> 4208</span>&#160; </div>
-<div class="line"><a name="l04209"></a><span class="lineno"> 4209</span>&#160;                    T val = dense.<a class="code" href="classslt_1_1DenseMatrix.html#a64113fe72d74abc3e8f957e5f0bbee9e">get</a>(i, j);</div>
-<div class="line"><a name="l04210"></a><span class="lineno"> 4210</span>&#160; </div>
-<div class="line"><a name="l04211"></a><span class="lineno"> 4211</span>&#160;                    <span class="keywordflow">if</span> (!accept_zeros &amp;&amp; val == T{}) {</div>
-<div class="line"><a name="l04212"></a><span class="lineno"> 4212</span>&#160;                        <span class="keywordflow">continue</span>;</div>
-<div class="line"><a name="l04213"></a><span class="lineno"> 4213</span>&#160;                    }</div>
-<div class="line"><a name="l04214"></a><span class="lineno"> 4214</span>&#160; </div>
-<div class="line"><a name="l04215"></a><span class="lineno"> 4215</span>&#160;                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.push_back(val);</div>
-<div class="line"><a name="l04216"></a><span class="lineno"> 4216</span>&#160;                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.push_back(j);</div>
-<div class="line"><a name="l04217"></a><span class="lineno"> 4217</span>&#160;                    ++<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i + 1];  <span class="comment">// ← updated name</span></div>
-<div class="line"><a name="l04218"></a><span class="lineno"> 4218</span>&#160;                }</div>
-<div class="line"><a name="l04219"></a><span class="lineno"> 4219</span>&#160;            }</div>
-<div class="line"><a name="l04220"></a><span class="lineno"> 4220</span>&#160; </div>
-<div class="line"><a name="l04221"></a><span class="lineno"> 4221</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 1; i &lt;= r; ++i) {</div>
-<div class="line"><a name="l04222"></a><span class="lineno"> 4222</span>&#160;                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i] += <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i - 1];  <span class="comment">// ← updated name</span></div>
-<div class="line"><a name="l04223"></a><span class="lineno"> 4223</span>&#160;            }</div>
-<div class="line"><a name="l04224"></a><span class="lineno"> 4224</span>&#160;        }</div>
-<div class="line"><a name="l04225"></a><span class="lineno"> 4225</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04226"></a><span class="lineno"> 4226</span>&#160; </div>
-<div class="line"><a name="l04227"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef"> 4227</a></span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; coo) {</div>
-<div class="line"><a name="l04228"></a><span class="lineno"> 4228</span>&#160;            static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
-<div class="line"><a name="l04229"></a><span class="lineno"> 4229</span>&#160;                          <span class="stringliteral">&quot;SparseCSRMatrix only supports float or double types&quot;</span>);</div>
-<div class="line"><a name="l04230"></a><span class="lineno"> 4230</span>&#160; </div>
-<div class="line"><a name="l04231"></a><span class="lineno"> 4231</span>&#160;            std::size_t r = coo.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04232"></a><span class="lineno"> 4232</span>&#160;            std::size_t nnz = coo.values.<a class="code" href="classslt_1_1SparseCOOMatrix.html#adc0211d7a6ffae48b7e796d5f9dacd15">size</a>();</div>
-<div class="line"><a name="l04233"></a><span class="lineno"> 4233</span>&#160; </div>
-<div class="line"><a name="l04234"></a><span class="lineno"> 4234</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = r;</div>
-<div class="line"><a name="l04235"></a><span class="lineno"> 4235</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = coo.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
-<div class="line"><a name="l04236"></a><span class="lineno"> 4236</span>&#160; </div>
-<div class="line"><a name="l04237"></a><span class="lineno"> 4237</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.resize(nnz);</div>
-<div class="line"><a name="l04238"></a><span class="lineno"> 4238</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.resize(nnz);</div>
-<div class="line"><a name="l04239"></a><span class="lineno"> 4239</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.assign(r + 1, 0);</div>
-<div class="line"><a name="l04240"></a><span class="lineno"> 4240</span>&#160; </div>
-<div class="line"><a name="l04241"></a><span class="lineno"> 4241</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; nnz; ++i)</div>
-<div class="line"><a name="l04242"></a><span class="lineno"> 4242</span>&#160;                ++<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[coo.row_indices[i] + 1];</div>
-<div class="line"><a name="l04243"></a><span class="lineno"> 4243</span>&#160; </div>
-<div class="line"><a name="l04244"></a><span class="lineno"> 4244</span>&#160;            for (std::size_t i = 1; i &lt;= r; ++i)</div>
-<div class="line"><a name="l04245"></a><span class="lineno"> 4245</span>&#160;                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i] += <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i - 1];</div>
-<div class="line"><a name="l04246"></a><span class="lineno"> 4246</span>&#160; </div>
-<div class="line"><a name="l04247"></a><span class="lineno"> 4247</span>&#160;            std::vector&lt;std::size_t&gt; next(<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.begin(), <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.end());</div>
-<div class="line"><a name="l04248"></a><span class="lineno"> 4248</span>&#160; </div>
-<div class="line"><a name="l04249"></a><span class="lineno"> 4249</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; nnz; ++i) {</div>
-<div class="line"><a name="l04250"></a><span class="lineno"> 4250</span>&#160;                std::size_t row = coo.row_indices[i];</div>
-<div class="line"><a name="l04251"></a><span class="lineno"> 4251</span>&#160;                std::size_t dest = next[row]++;</div>
-<div class="line"><a name="l04252"></a><span class="lineno"> 4252</span>&#160;                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>[dest] = coo.col_indices[i];</div>
-<div class="line"><a name="l04253"></a><span class="lineno"> 4253</span>&#160;                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>[dest] = coo.values[i];</div>
-<div class="line"><a name="l04254"></a><span class="lineno"> 4254</span>&#160;            }</div>
-<div class="line"><a name="l04255"></a><span class="lineno"> 4255</span>&#160;        }</div>
-<div class="line"><a name="l04256"></a><span class="lineno"> 4256</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04257"></a><span class="lineno"> 4257</span>&#160; </div>
-<div class="line"><a name="l04258"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148"> 4258</a></span>&#160;        <a class="code" href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html">SparseCSRMatrix</a>&amp; other)</div>
-<div class="line"><a name="l04259"></a><span class="lineno"> 4259</span>&#160;            : <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>(other.<a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>),</div>
-<div class="line"><a name="l04260"></a><span class="lineno"> 4260</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>(other.<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>),</div>
-<div class="line"><a name="l04261"></a><span class="lineno"> 4261</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>(other.<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>) {</div>
-<div class="line"><a name="l04262"></a><span class="lineno"> 4262</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = other.<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a>;</div>
-<div class="line"><a name="l04263"></a><span class="lineno"> 4263</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = other.<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>;</div>
-<div class="line"><a name="l04264"></a><span class="lineno"> 4264</span>&#160;        }</div>
-<div class="line"><a name="l04265"></a><span class="lineno"> 4265</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04266"></a><span class="lineno"> 4266</span>&#160; </div>
-<div class="line"><a name="l04267"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a298aa3b43f90c9bad070e5d31c75f7f6"> 4267</a></span>&#160;        <a class="code" href="classslt_1_1SparseCSRMatrix.html#a298aa3b43f90c9bad070e5d31c75f7f6">SparseCSRMatrix</a>(<a class="code" href="classslt_1_1SparseCSRMatrix.html">SparseCSRMatrix</a>&amp;&amp; other) noexcept</div>
-<div class="line"><a name="l04268"></a><span class="lineno"> 4268</span>&#160;            : <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>(std::move(other.data)),</div>
-<div class="line"><a name="l04269"></a><span class="lineno"> 4269</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>(std::move(other.col_indices)),</div>
-<div class="line"><a name="l04270"></a><span class="lineno"> 4270</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>(std::move(other.row_indices)) {</div>
-<div class="line"><a name="l04271"></a><span class="lineno"> 4271</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = other.rows_;</div>
-<div class="line"><a name="l04272"></a><span class="lineno"> 4272</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = other.cols_;</div>
-<div class="line"><a name="l04273"></a><span class="lineno"> 4273</span>&#160;            other.rows_ = 0;</div>
-<div class="line"><a name="l04274"></a><span class="lineno"> 4274</span>&#160;            other.cols_ = 0;</div>
-<div class="line"><a name="l04275"></a><span class="lineno"> 4275</span>&#160;        }</div>
-<div class="line"><a name="l04276"></a><span class="lineno"> 4276</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04277"></a><span class="lineno"> 4277</span>&#160; </div>
-<div class="line"><a name="l04278"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c"> 4278</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c">is_initialized</a>(std::size_t row, std::size_t col)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l04279"></a><span class="lineno"> 4279</span>&#160;            <span class="keywordflow">if</span> (row &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> || col &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>)</div>
-<div class="line"><a name="l04280"></a><span class="lineno"> 4280</span>&#160;                <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Row or column index out of range&quot;</span>);</div>
-<div class="line"><a name="l04281"></a><span class="lineno"> 4281</span>&#160; </div>
-<div class="line"><a name="l04282"></a><span class="lineno"> 4282</span>&#160;            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row];</div>
-<div class="line"><a name="l04283"></a><span class="lineno"> 4283</span>&#160;            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row + 1];</div>
-<div class="line"><a name="l04284"></a><span class="lineno"> 4284</span>&#160; </div>
-<div class="line"><a name="l04285"></a><span class="lineno"> 4285</span>&#160;            <span class="keywordflow">for</span> (std::size_t idx = start; idx &lt; end; ++idx) {</div>
-<div class="line"><a name="l04286"></a><span class="lineno"> 4286</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>[idx] == col)</div>
-<div class="line"><a name="l04287"></a><span class="lineno"> 4287</span>&#160;                    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
-<div class="line"><a name="l04288"></a><span class="lineno"> 4288</span>&#160;            }</div>
-<div class="line"><a name="l04289"></a><span class="lineno"> 4289</span>&#160; </div>
-<div class="line"><a name="l04290"></a><span class="lineno"> 4290</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
-<div class="line"><a name="l04291"></a><span class="lineno"> 4291</span>&#160;        }</div>
-<div class="line"><a name="l04292"></a><span class="lineno"> 4292</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04293"></a><span class="lineno"> 4293</span>&#160; </div>
-<div class="line"><a name="l04294"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1"> 4294</a></span>&#160;        std::size_t <a class="code" href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1">size</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l04295"></a><span class="lineno"> 4295</span>&#160;            <span class="keywordflow">return</span> this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> * this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a>;</div>
-<div class="line"><a name="l04296"></a><span class="lineno"> 4296</span>&#160;        }</div>
-<div class="line"><a name="l04297"></a><span class="lineno"> 4297</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04298"></a><span class="lineno"> 4298</span>&#160; </div>
-<div class="line"><a name="l04299"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505"> 4299</a></span>&#160;        std::size_t <a class="code" href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505">initialized_count</a>() const noexcept {</div>
-<div class="line"><a name="l04300"></a><span class="lineno"> 4300</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.size();</div>
-<div class="line"><a name="l04301"></a><span class="lineno"> 4301</span>&#160;        }</div>
-<div class="line"><a name="l04302"></a><span class="lineno"> 4302</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04303"></a><span class="lineno"> 4303</span>&#160; </div>
-<div class="line"><a name="l04304"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3"> 4304</a></span>&#160;        T <a class="code" href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3">get</a>(std::size_t row, std::size_t col)<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l04305"></a><span class="lineno"> 4305</span>&#160;            <span class="keywordflow">if</span> (row &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> || col &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>)</div>
-<div class="line"><a name="l04306"></a><span class="lineno"> 4306</span>&#160;                <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Row or column index out of bounds&quot;</span>);</div>
-<div class="line"><a name="l04307"></a><span class="lineno"> 4307</span>&#160; </div>
-<div class="line"><a name="l04308"></a><span class="lineno"> 4308</span>&#160;            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row];</div>
-<div class="line"><a name="l04309"></a><span class="lineno"> 4309</span>&#160;            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row + 1];</div>
-<div class="line"><a name="l04310"></a><span class="lineno"> 4310</span>&#160; </div>
-<div class="line"><a name="l04311"></a><span class="lineno"> 4311</span>&#160;            <span class="keywordflow">for</span> (std::size_t idx = start; idx &lt; end; ++idx) {</div>
-<div class="line"><a name="l04312"></a><span class="lineno"> 4312</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>[idx] == col) {</div>
-<div class="line"><a name="l04313"></a><span class="lineno"> 4313</span>&#160;                    <span class="keywordflow">return</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>[idx];</div>
-<div class="line"><a name="l04314"></a><span class="lineno"> 4314</span>&#160;                }</div>
-<div class="line"><a name="l04315"></a><span class="lineno"> 4315</span>&#160;            }</div>
-<div class="line"><a name="l04316"></a><span class="lineno"> 4316</span>&#160; </div>
-<div class="line"><a name="l04317"></a><span class="lineno"> 4317</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Accessing uninitialized matrix element&quot;</span>);</div>
-<div class="line"><a name="l04318"></a><span class="lineno"> 4318</span>&#160;        }</div>
-<div class="line"><a name="l04319"></a><span class="lineno"> 4319</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04320"></a><span class="lineno"> 4320</span>&#160; </div>
-<div class="line"><a name="l04321"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e"> 4321</a></span>&#160;        std::unique_ptr&lt;MatrixBase&lt;T&gt;&gt; <a class="code" href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e">clone</a>()<span class="keyword"> const override </span>{</div>
-<div class="line"><a name="l04322"></a><span class="lineno"> 4322</span>&#160;            <span class="keywordflow">return</span> std::make_unique&lt;SparseCSRMatrix&lt;T&gt;&gt;(*this);</div>
-<div class="line"><a name="l04323"></a><span class="lineno"> 4323</span>&#160;        }</div>
-<div class="line"><a name="l04324"></a><span class="lineno"> 4324</span>&#160;    };</div>
-<div class="line"><a name="l04325"></a><span class="lineno"> 4325</span>&#160;<span class="comment">// ================================================================================ </span></div>
-<div class="line"><a name="l04326"></a><span class="lineno"> 4326</span>&#160;<span class="comment">// ================================================================================ </span></div>
-<div class="line"><a name="l04327"></a><span class="lineno"> 4327</span>&#160;<span class="comment">// SparseCOOMatrix friend functions </span></div>
-<div class="line"><a name="l04328"></a><span class="lineno"> 4328</span>&#160; </div>
-<div class="line"><a name="l04347"></a><span class="lineno"> 4347</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04348"></a><span class="lineno"><a class="line" href="namespaceslt.html#a19cd4b5b8eed440abcc440d1f801924e"> 4348</a></span>&#160;    std::ostream&amp; <a class="code" href="namespaceslt.html#adbc6a9912aba420a4fe67ba6abd729a9">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; mat) {</div>
-<div class="line"><a name="l04349"></a><span class="lineno"> 4349</span>&#160;        os &lt;&lt; <span class="stringliteral">&quot;SparseCOOMatrix&lt;&quot;</span> &lt;&lt; (std::is_same_v&lt;T, float&gt; ? <span class="stringliteral">&quot;float&quot;</span> : <span class="stringliteral">&quot;double&quot;</span>)</div>
-<div class="line"><a name="l04350"></a><span class="lineno"> 4350</span>&#160;           &lt;&lt; <span class="stringliteral">&quot;&gt; (&quot;</span> &lt;&lt; mat.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() &lt;&lt; <span class="stringliteral">&quot; x &quot;</span> &lt;&lt; mat.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() &lt;&lt; <span class="stringliteral">&quot;), nonzeros = &quot;</span></div>
-<div class="line"><a name="l04351"></a><span class="lineno"> 4351</span>&#160;           &lt;&lt; mat.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a8d72d157729bc5e2b3273091ba5ded9b">initialized_count</a>() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l04352"></a><span class="lineno"> 4352</span>&#160; </div>
-<div class="line"><a name="l04353"></a><span class="lineno"> 4353</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : mat) {</div>
-<div class="line"><a name="l04354"></a><span class="lineno"> 4354</span>&#160;            os &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; t.row &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; t.col &lt;&lt; <span class="stringliteral">&quot;) = &quot;</span> &lt;&lt; t.value &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
-<div class="line"><a name="l04355"></a><span class="lineno"> 4355</span>&#160;        }</div>
-<div class="line"><a name="l04356"></a><span class="lineno"> 4356</span>&#160; </div>
-<div class="line"><a name="l04357"></a><span class="lineno"> 4357</span>&#160;        <span class="keywordflow">return</span> os;</div>
-<div class="line"><a name="l04358"></a><span class="lineno"> 4358</span>&#160;    }</div>
-<div class="line"><a name="l04359"></a><span class="lineno"> 4359</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04360"></a><span class="lineno"> 4360</span>&#160; </div>
-<div class="line"><a name="l04388"></a><span class="lineno"> 4388</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04389"></a><span class="lineno"><a class="line" href="namespaceslt.html#aba3b949337f86cced07f922710ac5484"> 4389</a></span>&#160;    <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ae726d568aa0e281c4bd86d71f337b8c4">operator+</a>(T scalar, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; matrix) {</div>
-<div class="line"><a name="l04390"></a><span class="lineno"> 4390</span>&#160;        <span class="keywordflow">return</span> matrix + scalar;  <span class="comment">// Reuse member operator+</span></div>
-<div class="line"><a name="l04391"></a><span class="lineno"> 4391</span>&#160;    }</div>
-<div class="line"><a name="l04392"></a><span class="lineno"> 4392</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04393"></a><span class="lineno"> 4393</span>&#160; </div>
-<div class="line"><a name="l04424"></a><span class="lineno"> 4424</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04425"></a><span class="lineno"><a class="line" href="namespaceslt.html#ab74ab4d078bb5d1815d13e64e4ad6298"> 4425</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ae726d568aa0e281c4bd86d71f337b8c4">operator+</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse) {</div>
-<div class="line"><a name="l04426"></a><span class="lineno"> 4426</span>&#160;        <span class="keywordflow">if</span> (dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>()) {</div>
-<div class="line"><a name="l04427"></a><span class="lineno"> 4427</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for addition&quot;</span>);</div>
-<div class="line"><a name="l04428"></a><span class="lineno"> 4428</span>&#160;        }</div>
-<div class="line"><a name="l04429"></a><span class="lineno"> 4429</span>&#160; </div>
-<div class="line"><a name="l04430"></a><span class="lineno"> 4430</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
-<div class="line"><a name="l04431"></a><span class="lineno"> 4431</span>&#160; </div>
-<div class="line"><a name="l04432"></a><span class="lineno"> 4432</span>&#160;        <span class="comment">// Copy dense matrix data to result</span></div>
-<div class="line"><a name="l04433"></a><span class="lineno"> 4433</span>&#160;        <span class="keywordflow">if</span> constexpr (<a class="code" href="structslt_1_1simd__traits.html">simd_traits&lt;T&gt;::supported</a>) {</div>
-<div class="line"><a name="l04434"></a><span class="lineno"> 4434</span>&#160;            <a class="code" href="structslt_1_1simd__ops.html">simd_ops&lt;T&gt;::copy</a>(dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>());</div>
-<div class="line"><a name="l04435"></a><span class="lineno"> 4435</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l04436"></a><span class="lineno"> 4436</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(); ++i)</div>
-<div class="line"><a name="l04437"></a><span class="lineno"> 4437</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i] = dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i];</div>
-<div class="line"><a name="l04438"></a><span class="lineno"> 4438</span>&#160;        }</div>
-<div class="line"><a name="l04439"></a><span class="lineno"> 4439</span>&#160; </div>
-<div class="line"><a name="l04440"></a><span class="lineno"> 4440</span>&#160;        <span class="comment">// Mark all entries as initialized</span></div>
-<div class="line"><a name="l04441"></a><span class="lineno"> 4441</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 1);</div>
-<div class="line"><a name="l04442"></a><span class="lineno"> 4442</span>&#160; </div>
-<div class="line"><a name="l04443"></a><span class="lineno"> 4443</span>&#160;        <span class="comment">// Add sparse values</span></div>
-<div class="line"><a name="l04444"></a><span class="lineno"> 4444</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : sparse) {</div>
-<div class="line"><a name="l04445"></a><span class="lineno"> 4445</span>&#160;            std::size_t r = t.row;</div>
-<div class="line"><a name="l04446"></a><span class="lineno"> 4446</span>&#160;            std::size_t c = t.col;</div>
-<div class="line"><a name="l04447"></a><span class="lineno"> 4447</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#aa051172f51cb694e62d2ac92212e2b42">update</a>(r, c, result(r, c) + t.value);</div>
-<div class="line"><a name="l04448"></a><span class="lineno"> 4448</span>&#160;        }</div>
-<div class="line"><a name="l04449"></a><span class="lineno"> 4449</span>&#160; </div>
-<div class="line"><a name="l04450"></a><span class="lineno"> 4450</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04451"></a><span class="lineno"> 4451</span>&#160;    }</div>
-<div class="line"><a name="l04452"></a><span class="lineno"> 4452</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04453"></a><span class="lineno"> 4453</span>&#160; </div>
-<div class="line"><a name="l04484"></a><span class="lineno"> 4484</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04485"></a><span class="lineno"><a class="line" href="namespaceslt.html#aba45a823392432d473bf3ee30c48958a"> 4485</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ae726d568aa0e281c4bd86d71f337b8c4">operator+</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense) {</div>
-<div class="line"><a name="l04486"></a><span class="lineno"> 4486</span>&#160;        <span class="comment">// Simply call the existing operator+ where DenseMatrix is the first argument</span></div>
-<div class="line"><a name="l04487"></a><span class="lineno"> 4487</span>&#160;        <span class="keywordflow">return</span> dense + sparse;</div>
-<div class="line"><a name="l04488"></a><span class="lineno"> 4488</span>&#160;    }</div>
-<div class="line"><a name="l04489"></a><span class="lineno"> 4489</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04490"></a><span class="lineno"> 4490</span>&#160; </div>
-<div class="line"><a name="l04516"></a><span class="lineno"> 4516</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04517"></a><span class="lineno"><a class="line" href="namespaceslt.html#a3840e0b3524470b354e960022f48bcd9"> 4517</a></span>&#160;    <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ab7a55d8c976eb591ad233a83bffc43ce">operator-</a>(T scalar, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; matrix) {</div>
-<div class="line"><a name="l04518"></a><span class="lineno"> 4518</span>&#160;        <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> result(matrix.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), matrix.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>(), matrix.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a8d72d157729bc5e2b3273091ba5ded9b">initialized_count</a>());</div>
-<div class="line"><a name="l04519"></a><span class="lineno"> 4519</span>&#160; </div>
-<div class="line"><a name="l04520"></a><span class="lineno"> 4520</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : matrix) {</div>
-<div class="line"><a name="l04521"></a><span class="lineno"> 4521</span>&#160;            T val = scalar - t.value;</div>
-<div class="line"><a name="l04522"></a><span class="lineno"> 4522</span>&#160;            result.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a124ffa2d3de4c59810806ee6c21838d6">set</a>(t.row, t.col, val);</div>
-<div class="line"><a name="l04523"></a><span class="lineno"> 4523</span>&#160;        }</div>
-<div class="line"><a name="l04524"></a><span class="lineno"> 4524</span>&#160; </div>
-<div class="line"><a name="l04525"></a><span class="lineno"> 4525</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04526"></a><span class="lineno"> 4526</span>&#160;    }</div>
-<div class="line"><a name="l04527"></a><span class="lineno"> 4527</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04528"></a><span class="lineno"> 4528</span>&#160; </div>
-<div class="line"><a name="l04553"></a><span class="lineno"> 4553</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04554"></a><span class="lineno"><a class="line" href="namespaceslt.html#a24443a933fbac935cc2f22733147f920"> 4554</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ab7a55d8c976eb591ad233a83bffc43ce">operator-</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense) {</div>
-<div class="line"><a name="l04555"></a><span class="lineno"> 4555</span>&#160;        <span class="keywordflow">if</span> (sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>())</div>
-<div class="line"><a name="l04556"></a><span class="lineno"> 4556</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for subtraction&quot;</span>);</div>
-<div class="line"><a name="l04557"></a><span class="lineno"> 4557</span>&#160; </div>
-<div class="line"><a name="l04558"></a><span class="lineno"> 4558</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
-<div class="line"><a name="l04559"></a><span class="lineno"> 4559</span>&#160; </div>
-<div class="line"><a name="l04560"></a><span class="lineno"> 4560</span>&#160;        <span class="comment">// Negate dense matrix and store in result</span></div>
-<div class="line"><a name="l04561"></a><span class="lineno"> 4561</span>&#160;        <span class="keywordflow">if</span> constexpr (<a class="code" href="structslt_1_1simd__traits.html">simd_traits&lt;T&gt;::supported</a>) {</div>
-<div class="line"><a name="l04562"></a><span class="lineno"> 4562</span>&#160;            <a class="code" href="structslt_1_1simd__ops.html">simd_ops&lt;T&gt;::mul_scalar</a>(dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(-1), result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>());</div>
-<div class="line"><a name="l04563"></a><span class="lineno"> 4563</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l04564"></a><span class="lineno"> 4564</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(); ++i)</div>
-<div class="line"><a name="l04565"></a><span class="lineno"> 4565</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i] = -dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i];</div>
-<div class="line"><a name="l04566"></a><span class="lineno"> 4566</span>&#160;        }</div>
-<div class="line"><a name="l04567"></a><span class="lineno"> 4567</span>&#160; </div>
-<div class="line"><a name="l04568"></a><span class="lineno"> 4568</span>&#160;        <span class="comment">// Mark all entries as initialized</span></div>
-<div class="line"><a name="l04569"></a><span class="lineno"> 4569</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 1);</div>
-<div class="line"><a name="l04570"></a><span class="lineno"> 4570</span>&#160; </div>
-<div class="line"><a name="l04571"></a><span class="lineno"> 4571</span>&#160;        <span class="comment">// Add sparse matrix values to result</span></div>
-<div class="line"><a name="l04572"></a><span class="lineno"> 4572</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : sparse) {</div>
-<div class="line"><a name="l04573"></a><span class="lineno"> 4573</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#aa051172f51cb694e62d2ac92212e2b42">update</a>(t.row, t.col, result(t.row, t.col) + t.value);</div>
-<div class="line"><a name="l04574"></a><span class="lineno"> 4574</span>&#160;        }</div>
-<div class="line"><a name="l04575"></a><span class="lineno"> 4575</span>&#160; </div>
-<div class="line"><a name="l04576"></a><span class="lineno"> 4576</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04577"></a><span class="lineno"> 4577</span>&#160;    }</div>
-<div class="line"><a name="l04578"></a><span class="lineno"> 4578</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04579"></a><span class="lineno"> 4579</span>&#160; </div>
-<div class="line"><a name="l04604"></a><span class="lineno"> 4604</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04605"></a><span class="lineno"><a class="line" href="namespaceslt.html#a9269d76bcc65736bfc566ff3c609405e"> 4605</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ab7a55d8c976eb591ad233a83bffc43ce">operator-</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse) {</div>
-<div class="line"><a name="l04606"></a><span class="lineno"> 4606</span>&#160;        <span class="keywordflow">if</span> (sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>()) {</div>
-<div class="line"><a name="l04607"></a><span class="lineno"> 4607</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for subtraction&quot;</span>);</div>
-<div class="line"><a name="l04608"></a><span class="lineno"> 4608</span>&#160;        }</div>
-<div class="line"><a name="l04609"></a><span class="lineno"> 4609</span>&#160; </div>
-<div class="line"><a name="l04610"></a><span class="lineno"> 4610</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
-<div class="line"><a name="l04611"></a><span class="lineno"> 4611</span>&#160; </div>
-<div class="line"><a name="l04612"></a><span class="lineno"> 4612</span>&#160;        <span class="comment">// Copy dense values to result</span></div>
-<div class="line"><a name="l04613"></a><span class="lineno"> 4613</span>&#160;        <span class="keywordflow">if</span> constexpr (<a class="code" href="structslt_1_1simd__traits.html">simd_traits&lt;T&gt;::supported</a>) {</div>
-<div class="line"><a name="l04614"></a><span class="lineno"> 4614</span>&#160;            <a class="code" href="structslt_1_1simd__ops.html">simd_ops&lt;T&gt;::copy</a>(dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>());</div>
-<div class="line"><a name="l04615"></a><span class="lineno"> 4615</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l04616"></a><span class="lineno"> 4616</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(); ++i) {</div>
-<div class="line"><a name="l04617"></a><span class="lineno"> 4617</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i] = dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i];</div>
-<div class="line"><a name="l04618"></a><span class="lineno"> 4618</span>&#160;            }</div>
-<div class="line"><a name="l04619"></a><span class="lineno"> 4619</span>&#160;        }</div>
-<div class="line"><a name="l04620"></a><span class="lineno"> 4620</span>&#160; </div>
-<div class="line"><a name="l04621"></a><span class="lineno"> 4621</span>&#160;        <span class="comment">// Mark all entries as initialized</span></div>
-<div class="line"><a name="l04622"></a><span class="lineno"> 4622</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 1);</div>
-<div class="line"><a name="l04623"></a><span class="lineno"> 4623</span>&#160; </div>
-<div class="line"><a name="l04624"></a><span class="lineno"> 4624</span>&#160;        <span class="comment">// Subtract sparse values</span></div>
-<div class="line"><a name="l04625"></a><span class="lineno"> 4625</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : sparse) {</div>
-<div class="line"><a name="l04626"></a><span class="lineno"> 4626</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#aa051172f51cb694e62d2ac92212e2b42">update</a>(t.row, t.col, result(t.row, t.col) - t.value);</div>
-<div class="line"><a name="l04627"></a><span class="lineno"> 4627</span>&#160;        }</div>
-<div class="line"><a name="l04628"></a><span class="lineno"> 4628</span>&#160; </div>
-<div class="line"><a name="l04629"></a><span class="lineno"> 4629</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04630"></a><span class="lineno"> 4630</span>&#160;    }</div>
-<div class="line"><a name="l04631"></a><span class="lineno"> 4631</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04632"></a><span class="lineno"> 4632</span>&#160; </div>
-<div class="line"><a name="l04657"></a><span class="lineno"> 4657</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04658"></a><span class="lineno"><a class="line" href="namespaceslt.html#a7663d27521f7415939780673f7e25fd9"> 4658</a></span>&#160;    <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a7a4f1a42d7dfbc00af75ce9cb1ec6d8b">operator*</a>(T scalar, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; matrix) {</div>
-<div class="line"><a name="l04659"></a><span class="lineno"> 4659</span>&#160;        <span class="keywordflow">return</span> matrix * scalar;  <span class="comment">// Leverage existing member function</span></div>
-<div class="line"><a name="l04660"></a><span class="lineno"> 4660</span>&#160;    }</div>
-<div class="line"><a name="l04661"></a><span class="lineno"> 4661</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04662"></a><span class="lineno"> 4662</span>&#160; </div>
-<div class="line"><a name="l04702"></a><span class="lineno"> 4702</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04703"></a><span class="lineno"><a class="line" href="namespaceslt.html#a331753e541d531634092a47322a81e9a"> 4703</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a7a4f1a42d7dfbc00af75ce9cb1ec6d8b">operator*</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse) {</div>
-<div class="line"><a name="l04704"></a><span class="lineno"> 4704</span>&#160;        <span class="keywordflow">if</span> (dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>())</div>
-<div class="line"><a name="l04705"></a><span class="lineno"> 4705</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for element-wise multiplication&quot;</span>);</div>
+<div class="line"><a name="l04191"></a><span class="lineno"> 4191</span>&#160; </div>
+<div class="line"><a name="l04219"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85"> 4219</a></span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keywordtype">bool</span> accept_zeros = <span class="keyword">true</span>) {</div>
+<div class="line"><a name="l04220"></a><span class="lineno"> 4220</span>&#160;            static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
+<div class="line"><a name="l04221"></a><span class="lineno"> 4221</span>&#160;                          <span class="stringliteral">&quot;SparseCSRMatrix only supports float or double types&quot;</span>);</div>
+<div class="line"><a name="l04222"></a><span class="lineno"> 4222</span>&#160; </div>
+<div class="line"><a name="l04223"></a><span class="lineno"> 4223</span>&#160;            std::size_t r = dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l04224"></a><span class="lineno"> 4224</span>&#160;            std::size_t c = dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l04225"></a><span class="lineno"> 4225</span>&#160; </div>
+<div class="line"><a name="l04226"></a><span class="lineno"> 4226</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = r;</div>
+<div class="line"><a name="l04227"></a><span class="lineno"> 4227</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = c;</div>
+<div class="line"><a name="l04228"></a><span class="lineno"> 4228</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.resize(r + 1, 0);  <span class="comment">// ← updated name</span></div>
+<div class="line"><a name="l04229"></a><span class="lineno"> 4229</span>&#160; </div>
+<div class="line"><a name="l04230"></a><span class="lineno"> 4230</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; r; ++i) {</div>
+<div class="line"><a name="l04231"></a><span class="lineno"> 4231</span>&#160;                <span class="keywordflow">for</span> (std::size_t j = 0; j &lt; c; ++j) {</div>
+<div class="line"><a name="l04232"></a><span class="lineno"> 4232</span>&#160;                    <span class="keywordflow">if</span> (!dense.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j)) {</div>
+<div class="line"><a name="l04233"></a><span class="lineno"> 4233</span>&#160;                        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l04234"></a><span class="lineno"> 4234</span>&#160;                    }</div>
+<div class="line"><a name="l04235"></a><span class="lineno"> 4235</span>&#160; </div>
+<div class="line"><a name="l04236"></a><span class="lineno"> 4236</span>&#160;                    T val = dense.<a class="code" href="classslt_1_1DenseMatrix.html#a64113fe72d74abc3e8f957e5f0bbee9e">get</a>(i, j);</div>
+<div class="line"><a name="l04237"></a><span class="lineno"> 4237</span>&#160; </div>
+<div class="line"><a name="l04238"></a><span class="lineno"> 4238</span>&#160;                    <span class="keywordflow">if</span> (!accept_zeros &amp;&amp; val == T{}) {</div>
+<div class="line"><a name="l04239"></a><span class="lineno"> 4239</span>&#160;                        <span class="keywordflow">continue</span>;</div>
+<div class="line"><a name="l04240"></a><span class="lineno"> 4240</span>&#160;                    }</div>
+<div class="line"><a name="l04241"></a><span class="lineno"> 4241</span>&#160; </div>
+<div class="line"><a name="l04242"></a><span class="lineno"> 4242</span>&#160;                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.push_back(val);</div>
+<div class="line"><a name="l04243"></a><span class="lineno"> 4243</span>&#160;                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.push_back(j);</div>
+<div class="line"><a name="l04244"></a><span class="lineno"> 4244</span>&#160;                    ++<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i + 1];  <span class="comment">// ← updated name</span></div>
+<div class="line"><a name="l04245"></a><span class="lineno"> 4245</span>&#160;                }</div>
+<div class="line"><a name="l04246"></a><span class="lineno"> 4246</span>&#160;            }</div>
+<div class="line"><a name="l04247"></a><span class="lineno"> 4247</span>&#160; </div>
+<div class="line"><a name="l04248"></a><span class="lineno"> 4248</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 1; i &lt;= r; ++i) {</div>
+<div class="line"><a name="l04249"></a><span class="lineno"> 4249</span>&#160;                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i] += <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i - 1];  <span class="comment">// ← updated name</span></div>
+<div class="line"><a name="l04250"></a><span class="lineno"> 4250</span>&#160;            }</div>
+<div class="line"><a name="l04251"></a><span class="lineno"> 4251</span>&#160;        }</div>
+<div class="line"><a name="l04252"></a><span class="lineno"> 4252</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04253"></a><span class="lineno"> 4253</span>&#160; </div>
+<div class="line"><a name="l04277"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef"> 4277</a></span>&#160;        <span class="keyword">explicit</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; coo) {</div>
+<div class="line"><a name="l04278"></a><span class="lineno"> 4278</span>&#160;            static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
+<div class="line"><a name="l04279"></a><span class="lineno"> 4279</span>&#160;                          <span class="stringliteral">&quot;SparseCSRMatrix only supports float or double types&quot;</span>);</div>
+<div class="line"><a name="l04280"></a><span class="lineno"> 4280</span>&#160; </div>
+<div class="line"><a name="l04281"></a><span class="lineno"> 4281</span>&#160;            std::size_t r = coo.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l04282"></a><span class="lineno"> 4282</span>&#160;            std::size_t c = coo.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l04283"></a><span class="lineno"> 4283</span>&#160; </div>
+<div class="line"><a name="l04284"></a><span class="lineno"> 4284</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = r;</div>
+<div class="line"><a name="l04285"></a><span class="lineno"> 4285</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = c;</div>
+<div class="line"><a name="l04286"></a><span class="lineno"> 4286</span>&#160; </div>
+<div class="line"><a name="l04287"></a><span class="lineno"> 4287</span>&#160;            std::vector&lt;std::vector&lt;std::pair&lt;std::size_t, T&gt;&gt;&gt; row_entries(r);</div>
+<div class="line"><a name="l04288"></a><span class="lineno"> 4288</span>&#160; </div>
+<div class="line"><a name="l04289"></a><span class="lineno"> 4289</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; triplet : coo) {</div>
+<div class="line"><a name="l04290"></a><span class="lineno"> 4290</span>&#160;                row_entries[triplet.row].emplace_back(triplet.col, triplet.value);</div>
+<div class="line"><a name="l04291"></a><span class="lineno"> 4291</span>&#160;            }</div>
+<div class="line"><a name="l04292"></a><span class="lineno"> 4292</span>&#160; </div>
+<div class="line"><a name="l04293"></a><span class="lineno"> 4293</span>&#160;            <span class="comment">// Reserve memory conservatively</span></div>
+<div class="line"><a name="l04294"></a><span class="lineno"> 4294</span>&#160;            std::size_t nnz = 0;</div>
+<div class="line"><a name="l04295"></a><span class="lineno"> 4295</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; row : row_entries)</div>
+<div class="line"><a name="l04296"></a><span class="lineno"> 4296</span>&#160;                nnz += row.size();</div>
+<div class="line"><a name="l04297"></a><span class="lineno"> 4297</span>&#160; </div>
+<div class="line"><a name="l04298"></a><span class="lineno"> 4298</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.reserve(nnz);</div>
+<div class="line"><a name="l04299"></a><span class="lineno"> 4299</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.reserve(nnz);</div>
+<div class="line"><a name="l04300"></a><span class="lineno"> 4300</span>&#160;            <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>.resize(r + 1, 0);</div>
+<div class="line"><a name="l04301"></a><span class="lineno"> 4301</span>&#160; </div>
+<div class="line"><a name="l04302"></a><span class="lineno"> 4302</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; r; ++i) {</div>
+<div class="line"><a name="l04303"></a><span class="lineno"> 4303</span>&#160;                <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i + 1] = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[i] + row_entries[i].size();</div>
+<div class="line"><a name="l04304"></a><span class="lineno"> 4304</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [col, value] : row_entries[i]) {</div>
+<div class="line"><a name="l04305"></a><span class="lineno"> 4305</span>&#160;                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>.push_back(col);</div>
+<div class="line"><a name="l04306"></a><span class="lineno"> 4306</span>&#160;                    <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.push_back(value);</div>
+<div class="line"><a name="l04307"></a><span class="lineno"> 4307</span>&#160;                }</div>
+<div class="line"><a name="l04308"></a><span class="lineno"> 4308</span>&#160;            }</div>
+<div class="line"><a name="l04309"></a><span class="lineno"> 4309</span>&#160;        }</div>
+<div class="line"><a name="l04310"></a><span class="lineno"> 4310</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04311"></a><span class="lineno"> 4311</span>&#160; </div>
+<div class="line"><a name="l04332"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148"> 4332</a></span>&#160;        <a class="code" href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148">SparseCSRMatrix</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html">SparseCSRMatrix</a>&amp; other)</div>
+<div class="line"><a name="l04333"></a><span class="lineno"> 4333</span>&#160;            : <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>(other.<a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>),</div>
+<div class="line"><a name="l04334"></a><span class="lineno"> 4334</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>(other.<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>),</div>
+<div class="line"><a name="l04335"></a><span class="lineno"> 4335</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>(other.<a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>) {</div>
+<div class="line"><a name="l04336"></a><span class="lineno"> 4336</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = other.<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a>;</div>
+<div class="line"><a name="l04337"></a><span class="lineno"> 4337</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = other.<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>;</div>
+<div class="line"><a name="l04338"></a><span class="lineno"> 4338</span>&#160;        }</div>
+<div class="line"><a name="l04339"></a><span class="lineno"> 4339</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04340"></a><span class="lineno"> 4340</span>&#160; </div>
+<div class="line"><a name="l04341"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a298aa3b43f90c9bad070e5d31c75f7f6"> 4341</a></span>&#160;        <a class="code" href="classslt_1_1SparseCSRMatrix.html#a298aa3b43f90c9bad070e5d31c75f7f6">SparseCSRMatrix</a>(<a class="code" href="classslt_1_1SparseCSRMatrix.html">SparseCSRMatrix</a>&amp;&amp; other) noexcept</div>
+<div class="line"><a name="l04342"></a><span class="lineno"> 4342</span>&#160;            : <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>(std::move(other.data)),</div>
+<div class="line"><a name="l04343"></a><span class="lineno"> 4343</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>(std::move(other.col_indices)),</div>
+<div class="line"><a name="l04344"></a><span class="lineno"> 4344</span>&#160;              <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>(std::move(other.row_indices)) {</div>
+<div class="line"><a name="l04345"></a><span class="lineno"> 4345</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> = other.rows_;</div>
+<div class="line"><a name="l04346"></a><span class="lineno"> 4346</span>&#160;            this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> = other.cols_;</div>
+<div class="line"><a name="l04347"></a><span class="lineno"> 4347</span>&#160;            other.rows_ = 0;</div>
+<div class="line"><a name="l04348"></a><span class="lineno"> 4348</span>&#160;            other.cols_ = 0;</div>
+<div class="line"><a name="l04349"></a><span class="lineno"> 4349</span>&#160;        }</div>
+<div class="line"><a name="l04350"></a><span class="lineno"> 4350</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04351"></a><span class="lineno"> 4351</span>&#160; </div>
+<div class="line"><a name="l04352"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c"> 4352</a></span>&#160;        <span class="keywordtype">bool</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c">is_initialized</a>(std::size_t row, std::size_t col)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l04353"></a><span class="lineno"> 4353</span>&#160;            <span class="keywordflow">if</span> (row &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> || col &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>)</div>
+<div class="line"><a name="l04354"></a><span class="lineno"> 4354</span>&#160;                <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Row or column index out of range&quot;</span>);</div>
+<div class="line"><a name="l04355"></a><span class="lineno"> 4355</span>&#160; </div>
+<div class="line"><a name="l04356"></a><span class="lineno"> 4356</span>&#160;            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row];</div>
+<div class="line"><a name="l04357"></a><span class="lineno"> 4357</span>&#160;            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row + 1];</div>
+<div class="line"><a name="l04358"></a><span class="lineno"> 4358</span>&#160; </div>
+<div class="line"><a name="l04359"></a><span class="lineno"> 4359</span>&#160;            <span class="keywordflow">for</span> (std::size_t idx = start; idx &lt; end; ++idx) {</div>
+<div class="line"><a name="l04360"></a><span class="lineno"> 4360</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>[idx] == col)</div>
+<div class="line"><a name="l04361"></a><span class="lineno"> 4361</span>&#160;                    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l04362"></a><span class="lineno"> 4362</span>&#160;            }</div>
+<div class="line"><a name="l04363"></a><span class="lineno"> 4363</span>&#160; </div>
+<div class="line"><a name="l04364"></a><span class="lineno"> 4364</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l04365"></a><span class="lineno"> 4365</span>&#160;        }</div>
+<div class="line"><a name="l04366"></a><span class="lineno"> 4366</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04367"></a><span class="lineno"> 4367</span>&#160; </div>
+<div class="line"><a name="l04368"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1"> 4368</a></span>&#160;        std::size_t <a class="code" href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1">size</a>()<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l04369"></a><span class="lineno"> 4369</span>&#160;            <span class="keywordflow">return</span> this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a> * this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a>;</div>
+<div class="line"><a name="l04370"></a><span class="lineno"> 4370</span>&#160;        }</div>
+<div class="line"><a name="l04371"></a><span class="lineno"> 4371</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04372"></a><span class="lineno"> 4372</span>&#160; </div>
+<div class="line"><a name="l04373"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505"> 4373</a></span>&#160;        std::size_t <a class="code" href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505">initialized_count</a>() const noexcept {</div>
+<div class="line"><a name="l04374"></a><span class="lineno"> 4374</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>.size();</div>
+<div class="line"><a name="l04375"></a><span class="lineno"> 4375</span>&#160;        }</div>
+<div class="line"><a name="l04376"></a><span class="lineno"> 4376</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04377"></a><span class="lineno"> 4377</span>&#160; </div>
+<div class="line"><a name="l04378"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3"> 4378</a></span>&#160;        T <a class="code" href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3">get</a>(std::size_t row, std::size_t col)<span class="keyword"> const </span>{</div>
+<div class="line"><a name="l04379"></a><span class="lineno"> 4379</span>&#160;            <span class="keywordflow">if</span> (row &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#a685b2ff5ffb79c5bc79f4fe5a932efd2">rows_</a> || col &gt;= this-&gt;<a class="code" href="classslt_1_1MatrixBase.html#ab84af87cc081ed919609dd3d734861d6">cols_</a>)</div>
+<div class="line"><a name="l04380"></a><span class="lineno"> 4380</span>&#160;                <span class="keywordflow">throw</span> std::out_of_range(<span class="stringliteral">&quot;Row or column index out of bounds&quot;</span>);</div>
+<div class="line"><a name="l04381"></a><span class="lineno"> 4381</span>&#160; </div>
+<div class="line"><a name="l04382"></a><span class="lineno"> 4382</span>&#160;            std::size_t start = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row];</div>
+<div class="line"><a name="l04383"></a><span class="lineno"> 4383</span>&#160;            std::size_t end = <a class="code" href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">row_indices</a>[row + 1];</div>
+<div class="line"><a name="l04384"></a><span class="lineno"> 4384</span>&#160; </div>
+<div class="line"><a name="l04385"></a><span class="lineno"> 4385</span>&#160;            <span class="keywordflow">for</span> (std::size_t idx = start; idx &lt; end; ++idx) {</div>
+<div class="line"><a name="l04386"></a><span class="lineno"> 4386</span>&#160;                <span class="keywordflow">if</span> (<a class="code" href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">col_indices</a>[idx] == col) {</div>
+<div class="line"><a name="l04387"></a><span class="lineno"> 4387</span>&#160;                    <span class="keywordflow">return</span> <a class="code" href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">data</a>[idx];</div>
+<div class="line"><a name="l04388"></a><span class="lineno"> 4388</span>&#160;                }</div>
+<div class="line"><a name="l04389"></a><span class="lineno"> 4389</span>&#160;            }</div>
+<div class="line"><a name="l04390"></a><span class="lineno"> 4390</span>&#160; </div>
+<div class="line"><a name="l04391"></a><span class="lineno"> 4391</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Accessing uninitialized matrix element&quot;</span>);</div>
+<div class="line"><a name="l04392"></a><span class="lineno"> 4392</span>&#160;        }</div>
+<div class="line"><a name="l04393"></a><span class="lineno"> 4393</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04394"></a><span class="lineno"> 4394</span>&#160; </div>
+<div class="line"><a name="l04395"></a><span class="lineno"><a class="line" href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e"> 4395</a></span>&#160;        std::unique_ptr&lt;MatrixBase&lt;T&gt;&gt; <a class="code" href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e">clone</a>()<span class="keyword"> const override </span>{</div>
+<div class="line"><a name="l04396"></a><span class="lineno"> 4396</span>&#160;            <span class="keywordflow">return</span> std::make_unique&lt;SparseCSRMatrix&lt;T&gt;&gt;(*this);</div>
+<div class="line"><a name="l04397"></a><span class="lineno"> 4397</span>&#160;        }</div>
+<div class="line"><a name="l04398"></a><span class="lineno"> 4398</span>&#160;    };</div>
+<div class="line"><a name="l04399"></a><span class="lineno"> 4399</span>&#160;<span class="comment">// ================================================================================ </span></div>
+<div class="line"><a name="l04400"></a><span class="lineno"> 4400</span>&#160;<span class="comment">// ================================================================================ </span></div>
+<div class="line"><a name="l04401"></a><span class="lineno"> 4401</span>&#160;<span class="comment">// SparseCOOMatrix friend functions </span></div>
+<div class="line"><a name="l04402"></a><span class="lineno"> 4402</span>&#160; </div>
+<div class="line"><a name="l04421"></a><span class="lineno"> 4421</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04422"></a><span class="lineno"><a class="line" href="namespaceslt.html#a19cd4b5b8eed440abcc440d1f801924e"> 4422</a></span>&#160;    std::ostream&amp; <a class="code" href="namespaceslt.html#adbc6a9912aba420a4fe67ba6abd729a9">operator&lt;&lt;</a>(std::ostream&amp; os, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; mat) {</div>
+<div class="line"><a name="l04423"></a><span class="lineno"> 4423</span>&#160;        os &lt;&lt; <span class="stringliteral">&quot;SparseCOOMatrix&lt;&quot;</span> &lt;&lt; (std::is_same_v&lt;T, float&gt; ? <span class="stringliteral">&quot;float&quot;</span> : <span class="stringliteral">&quot;double&quot;</span>)</div>
+<div class="line"><a name="l04424"></a><span class="lineno"> 4424</span>&#160;           &lt;&lt; <span class="stringliteral">&quot;&gt; (&quot;</span> &lt;&lt; mat.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() &lt;&lt; <span class="stringliteral">&quot; x &quot;</span> &lt;&lt; mat.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() &lt;&lt; <span class="stringliteral">&quot;), nonzeros = &quot;</span></div>
+<div class="line"><a name="l04425"></a><span class="lineno"> 4425</span>&#160;           &lt;&lt; mat.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a8d72d157729bc5e2b3273091ba5ded9b">initialized_count</a>() &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l04426"></a><span class="lineno"> 4426</span>&#160; </div>
+<div class="line"><a name="l04427"></a><span class="lineno"> 4427</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : mat) {</div>
+<div class="line"><a name="l04428"></a><span class="lineno"> 4428</span>&#160;            os &lt;&lt; <span class="stringliteral">&quot;(&quot;</span> &lt;&lt; t.row &lt;&lt; <span class="stringliteral">&quot;, &quot;</span> &lt;&lt; t.col &lt;&lt; <span class="stringliteral">&quot;) = &quot;</span> &lt;&lt; t.value &lt;&lt; <span class="stringliteral">&quot;\n&quot;</span>;</div>
+<div class="line"><a name="l04429"></a><span class="lineno"> 4429</span>&#160;        }</div>
+<div class="line"><a name="l04430"></a><span class="lineno"> 4430</span>&#160; </div>
+<div class="line"><a name="l04431"></a><span class="lineno"> 4431</span>&#160;        <span class="keywordflow">return</span> os;</div>
+<div class="line"><a name="l04432"></a><span class="lineno"> 4432</span>&#160;    }</div>
+<div class="line"><a name="l04433"></a><span class="lineno"> 4433</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04434"></a><span class="lineno"> 4434</span>&#160; </div>
+<div class="line"><a name="l04462"></a><span class="lineno"> 4462</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04463"></a><span class="lineno"><a class="line" href="namespaceslt.html#aba3b949337f86cced07f922710ac5484"> 4463</a></span>&#160;    <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ae726d568aa0e281c4bd86d71f337b8c4">operator+</a>(T scalar, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; matrix) {</div>
+<div class="line"><a name="l04464"></a><span class="lineno"> 4464</span>&#160;        <span class="keywordflow">return</span> matrix + scalar;  <span class="comment">// Reuse member operator+</span></div>
+<div class="line"><a name="l04465"></a><span class="lineno"> 4465</span>&#160;    }</div>
+<div class="line"><a name="l04466"></a><span class="lineno"> 4466</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04467"></a><span class="lineno"> 4467</span>&#160; </div>
+<div class="line"><a name="l04498"></a><span class="lineno"> 4498</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04499"></a><span class="lineno"><a class="line" href="namespaceslt.html#ab74ab4d078bb5d1815d13e64e4ad6298"> 4499</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ae726d568aa0e281c4bd86d71f337b8c4">operator+</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse) {</div>
+<div class="line"><a name="l04500"></a><span class="lineno"> 4500</span>&#160;        <span class="keywordflow">if</span> (dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>()) {</div>
+<div class="line"><a name="l04501"></a><span class="lineno"> 4501</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for addition&quot;</span>);</div>
+<div class="line"><a name="l04502"></a><span class="lineno"> 4502</span>&#160;        }</div>
+<div class="line"><a name="l04503"></a><span class="lineno"> 4503</span>&#160; </div>
+<div class="line"><a name="l04504"></a><span class="lineno"> 4504</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
+<div class="line"><a name="l04505"></a><span class="lineno"> 4505</span>&#160; </div>
+<div class="line"><a name="l04506"></a><span class="lineno"> 4506</span>&#160;        <span class="comment">// Copy dense matrix data to result</span></div>
+<div class="line"><a name="l04507"></a><span class="lineno"> 4507</span>&#160;        <span class="keywordflow">if</span> constexpr (<a class="code" href="structslt_1_1simd__traits.html">simd_traits&lt;T&gt;::supported</a>) {</div>
+<div class="line"><a name="l04508"></a><span class="lineno"> 4508</span>&#160;            <a class="code" href="structslt_1_1simd__ops.html">simd_ops&lt;T&gt;::copy</a>(dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>());</div>
+<div class="line"><a name="l04509"></a><span class="lineno"> 4509</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l04510"></a><span class="lineno"> 4510</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(); ++i)</div>
+<div class="line"><a name="l04511"></a><span class="lineno"> 4511</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i] = dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i];</div>
+<div class="line"><a name="l04512"></a><span class="lineno"> 4512</span>&#160;        }</div>
+<div class="line"><a name="l04513"></a><span class="lineno"> 4513</span>&#160; </div>
+<div class="line"><a name="l04514"></a><span class="lineno"> 4514</span>&#160;        <span class="comment">// Mark all entries as initialized</span></div>
+<div class="line"><a name="l04515"></a><span class="lineno"> 4515</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 1);</div>
+<div class="line"><a name="l04516"></a><span class="lineno"> 4516</span>&#160; </div>
+<div class="line"><a name="l04517"></a><span class="lineno"> 4517</span>&#160;        <span class="comment">// Add sparse values</span></div>
+<div class="line"><a name="l04518"></a><span class="lineno"> 4518</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : sparse) {</div>
+<div class="line"><a name="l04519"></a><span class="lineno"> 4519</span>&#160;            std::size_t r = t.row;</div>
+<div class="line"><a name="l04520"></a><span class="lineno"> 4520</span>&#160;            std::size_t c = t.col;</div>
+<div class="line"><a name="l04521"></a><span class="lineno"> 4521</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#aa051172f51cb694e62d2ac92212e2b42">update</a>(r, c, result(r, c) + t.value);</div>
+<div class="line"><a name="l04522"></a><span class="lineno"> 4522</span>&#160;        }</div>
+<div class="line"><a name="l04523"></a><span class="lineno"> 4523</span>&#160; </div>
+<div class="line"><a name="l04524"></a><span class="lineno"> 4524</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l04525"></a><span class="lineno"> 4525</span>&#160;    }</div>
+<div class="line"><a name="l04526"></a><span class="lineno"> 4526</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04527"></a><span class="lineno"> 4527</span>&#160; </div>
+<div class="line"><a name="l04558"></a><span class="lineno"> 4558</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04559"></a><span class="lineno"><a class="line" href="namespaceslt.html#aba45a823392432d473bf3ee30c48958a"> 4559</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ae726d568aa0e281c4bd86d71f337b8c4">operator+</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense) {</div>
+<div class="line"><a name="l04560"></a><span class="lineno"> 4560</span>&#160;        <span class="comment">// Simply call the existing operator+ where DenseMatrix is the first argument</span></div>
+<div class="line"><a name="l04561"></a><span class="lineno"> 4561</span>&#160;        <span class="keywordflow">return</span> dense + sparse;</div>
+<div class="line"><a name="l04562"></a><span class="lineno"> 4562</span>&#160;    }</div>
+<div class="line"><a name="l04563"></a><span class="lineno"> 4563</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04564"></a><span class="lineno"> 4564</span>&#160; </div>
+<div class="line"><a name="l04590"></a><span class="lineno"> 4590</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04591"></a><span class="lineno"><a class="line" href="namespaceslt.html#a3840e0b3524470b354e960022f48bcd9"> 4591</a></span>&#160;    <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ab7a55d8c976eb591ad233a83bffc43ce">operator-</a>(T scalar, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; matrix) {</div>
+<div class="line"><a name="l04592"></a><span class="lineno"> 4592</span>&#160;        <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> result(matrix.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), matrix.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>(), matrix.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a8d72d157729bc5e2b3273091ba5ded9b">initialized_count</a>());</div>
+<div class="line"><a name="l04593"></a><span class="lineno"> 4593</span>&#160; </div>
+<div class="line"><a name="l04594"></a><span class="lineno"> 4594</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : matrix) {</div>
+<div class="line"><a name="l04595"></a><span class="lineno"> 4595</span>&#160;            T val = scalar - t.value;</div>
+<div class="line"><a name="l04596"></a><span class="lineno"> 4596</span>&#160;            result.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a124ffa2d3de4c59810806ee6c21838d6">set</a>(t.row, t.col, val);</div>
+<div class="line"><a name="l04597"></a><span class="lineno"> 4597</span>&#160;        }</div>
+<div class="line"><a name="l04598"></a><span class="lineno"> 4598</span>&#160; </div>
+<div class="line"><a name="l04599"></a><span class="lineno"> 4599</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l04600"></a><span class="lineno"> 4600</span>&#160;    }</div>
+<div class="line"><a name="l04601"></a><span class="lineno"> 4601</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04602"></a><span class="lineno"> 4602</span>&#160; </div>
+<div class="line"><a name="l04627"></a><span class="lineno"> 4627</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04628"></a><span class="lineno"><a class="line" href="namespaceslt.html#a24443a933fbac935cc2f22733147f920"> 4628</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ab7a55d8c976eb591ad233a83bffc43ce">operator-</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense) {</div>
+<div class="line"><a name="l04629"></a><span class="lineno"> 4629</span>&#160;        <span class="keywordflow">if</span> (sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>())</div>
+<div class="line"><a name="l04630"></a><span class="lineno"> 4630</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for subtraction&quot;</span>);</div>
+<div class="line"><a name="l04631"></a><span class="lineno"> 4631</span>&#160; </div>
+<div class="line"><a name="l04632"></a><span class="lineno"> 4632</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
+<div class="line"><a name="l04633"></a><span class="lineno"> 4633</span>&#160; </div>
+<div class="line"><a name="l04634"></a><span class="lineno"> 4634</span>&#160;        <span class="comment">// Negate dense matrix and store in result</span></div>
+<div class="line"><a name="l04635"></a><span class="lineno"> 4635</span>&#160;        <span class="keywordflow">if</span> constexpr (<a class="code" href="structslt_1_1simd__traits.html">simd_traits&lt;T&gt;::supported</a>) {</div>
+<div class="line"><a name="l04636"></a><span class="lineno"> 4636</span>&#160;            <a class="code" href="structslt_1_1simd__ops.html">simd_ops&lt;T&gt;::mul_scalar</a>(dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(-1), result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>());</div>
+<div class="line"><a name="l04637"></a><span class="lineno"> 4637</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l04638"></a><span class="lineno"> 4638</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(); ++i)</div>
+<div class="line"><a name="l04639"></a><span class="lineno"> 4639</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i] = -dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i];</div>
+<div class="line"><a name="l04640"></a><span class="lineno"> 4640</span>&#160;        }</div>
+<div class="line"><a name="l04641"></a><span class="lineno"> 4641</span>&#160; </div>
+<div class="line"><a name="l04642"></a><span class="lineno"> 4642</span>&#160;        <span class="comment">// Mark all entries as initialized</span></div>
+<div class="line"><a name="l04643"></a><span class="lineno"> 4643</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 1);</div>
+<div class="line"><a name="l04644"></a><span class="lineno"> 4644</span>&#160; </div>
+<div class="line"><a name="l04645"></a><span class="lineno"> 4645</span>&#160;        <span class="comment">// Add sparse matrix values to result</span></div>
+<div class="line"><a name="l04646"></a><span class="lineno"> 4646</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : sparse) {</div>
+<div class="line"><a name="l04647"></a><span class="lineno"> 4647</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#aa051172f51cb694e62d2ac92212e2b42">update</a>(t.row, t.col, result(t.row, t.col) + t.value);</div>
+<div class="line"><a name="l04648"></a><span class="lineno"> 4648</span>&#160;        }</div>
+<div class="line"><a name="l04649"></a><span class="lineno"> 4649</span>&#160; </div>
+<div class="line"><a name="l04650"></a><span class="lineno"> 4650</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l04651"></a><span class="lineno"> 4651</span>&#160;    }</div>
+<div class="line"><a name="l04652"></a><span class="lineno"> 4652</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04653"></a><span class="lineno"> 4653</span>&#160; </div>
+<div class="line"><a name="l04678"></a><span class="lineno"> 4678</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04679"></a><span class="lineno"><a class="line" href="namespaceslt.html#a9269d76bcc65736bfc566ff3c609405e"> 4679</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#ab7a55d8c976eb591ad233a83bffc43ce">operator-</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse) {</div>
+<div class="line"><a name="l04680"></a><span class="lineno"> 4680</span>&#160;        <span class="keywordflow">if</span> (sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>()) {</div>
+<div class="line"><a name="l04681"></a><span class="lineno"> 4681</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for subtraction&quot;</span>);</div>
+<div class="line"><a name="l04682"></a><span class="lineno"> 4682</span>&#160;        }</div>
+<div class="line"><a name="l04683"></a><span class="lineno"> 4683</span>&#160; </div>
+<div class="line"><a name="l04684"></a><span class="lineno"> 4684</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
+<div class="line"><a name="l04685"></a><span class="lineno"> 4685</span>&#160; </div>
+<div class="line"><a name="l04686"></a><span class="lineno"> 4686</span>&#160;        <span class="comment">// Copy dense values to result</span></div>
+<div class="line"><a name="l04687"></a><span class="lineno"> 4687</span>&#160;        <span class="keywordflow">if</span> constexpr (<a class="code" href="structslt_1_1simd__traits.html">simd_traits&lt;T&gt;::supported</a>) {</div>
+<div class="line"><a name="l04688"></a><span class="lineno"> 4688</span>&#160;            <a class="code" href="structslt_1_1simd__ops.html">simd_ops&lt;T&gt;::copy</a>(dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>(), dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>());</div>
+<div class="line"><a name="l04689"></a><span class="lineno"> 4689</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l04690"></a><span class="lineno"> 4690</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; dense.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(); ++i) {</div>
+<div class="line"><a name="l04691"></a><span class="lineno"> 4691</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i] = dense.<a class="code" href="classslt_1_1DenseMatrix.html#a529848163b44a2168460198adda171f7">data_ptr</a>()[i];</div>
+<div class="line"><a name="l04692"></a><span class="lineno"> 4692</span>&#160;            }</div>
+<div class="line"><a name="l04693"></a><span class="lineno"> 4693</span>&#160;        }</div>
+<div class="line"><a name="l04694"></a><span class="lineno"> 4694</span>&#160; </div>
+<div class="line"><a name="l04695"></a><span class="lineno"> 4695</span>&#160;        <span class="comment">// Mark all entries as initialized</span></div>
+<div class="line"><a name="l04696"></a><span class="lineno"> 4696</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a631142d8a7cbb38a6e8210569e8605d4">init_ptr</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 1);</div>
+<div class="line"><a name="l04697"></a><span class="lineno"> 4697</span>&#160; </div>
+<div class="line"><a name="l04698"></a><span class="lineno"> 4698</span>&#160;        <span class="comment">// Subtract sparse values</span></div>
+<div class="line"><a name="l04699"></a><span class="lineno"> 4699</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; t : sparse) {</div>
+<div class="line"><a name="l04700"></a><span class="lineno"> 4700</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#aa051172f51cb694e62d2ac92212e2b42">update</a>(t.row, t.col, result(t.row, t.col) - t.value);</div>
+<div class="line"><a name="l04701"></a><span class="lineno"> 4701</span>&#160;        }</div>
+<div class="line"><a name="l04702"></a><span class="lineno"> 4702</span>&#160; </div>
+<div class="line"><a name="l04703"></a><span class="lineno"> 4703</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l04704"></a><span class="lineno"> 4704</span>&#160;    }</div>
+<div class="line"><a name="l04705"></a><span class="lineno"> 4705</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
 <div class="line"><a name="l04706"></a><span class="lineno"> 4706</span>&#160; </div>
-<div class="line"><a name="l04707"></a><span class="lineno"> 4707</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
-<div class="line"><a name="l04708"></a><span class="lineno"> 4708</span>&#160; </div>
-<div class="line"><a name="l04709"></a><span class="lineno"> 4709</span>&#160;        <span class="comment">// Initialize result with zeros</span></div>
-<div class="line"><a name="l04710"></a><span class="lineno"> 4710</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), T{});</div>
-<div class="line"><a name="l04711"></a><span class="lineno"> 4711</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 0);</div>
-<div class="line"><a name="l04712"></a><span class="lineno"> 4712</span>&#160; </div>
-<div class="line"><a name="l04713"></a><span class="lineno"> 4713</span>&#160;        <span class="comment">// Only multiply at sparse matrix locations</span></div>
-<div class="line"><a name="l04714"></a><span class="lineno"> 4714</span>&#160;        <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; sparse.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a8d72d157729bc5e2b3273091ba5ded9b">initialized_count</a>(); ++i) {</div>
-<div class="line"><a name="l04715"></a><span class="lineno"> 4715</span>&#160;            std::size_t r = sparse.row_index(i);</div>
-<div class="line"><a name="l04716"></a><span class="lineno"> 4716</span>&#160;            std::size_t c = sparse.col_index(i);</div>
-<div class="line"><a name="l04717"></a><span class="lineno"> 4717</span>&#160;            T value = dense(r, c) * sparse.value(i);</div>
-<div class="line"><a name="l04718"></a><span class="lineno"> 4718</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(r, c, value);</div>
-<div class="line"><a name="l04719"></a><span class="lineno"> 4719</span>&#160;        }</div>
-<div class="line"><a name="l04720"></a><span class="lineno"> 4720</span>&#160; </div>
-<div class="line"><a name="l04721"></a><span class="lineno"> 4721</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04722"></a><span class="lineno"> 4722</span>&#160;    }</div>
-<div class="line"><a name="l04723"></a><span class="lineno"> 4723</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04724"></a><span class="lineno"> 4724</span>&#160; </div>
-<div class="line"><a name="l04759"></a><span class="lineno"> 4759</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04760"></a><span class="lineno"><a class="line" href="namespaceslt.html#a1aa2a4ffb3f47aff6f90ca903b458c6f"> 4760</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a7a4f1a42d7dfbc00af75ce9cb1ec6d8b">operator*</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense) {</div>
-<div class="line"><a name="l04761"></a><span class="lineno"> 4761</span>&#160;        <span class="comment">// Reuse the function above — multiplication is commutative</span></div>
-<div class="line"><a name="l04762"></a><span class="lineno"> 4762</span>&#160;        <span class="keywordflow">return</span> dense * sparse;</div>
-<div class="line"><a name="l04763"></a><span class="lineno"> 4763</span>&#160;    }</div>
-<div class="line"><a name="l04764"></a><span class="lineno"> 4764</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04765"></a><span class="lineno"> 4765</span>&#160; </div>
-<div class="line"><a name="l04811"></a><span class="lineno"> 4811</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04812"></a><span class="lineno"><a class="line" href="namespaceslt.html#aed3b325cd81a15ee8961f2e3ca6fdce5"> 4812</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">mat_mul</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; A, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; B) {</div>
-<div class="line"><a name="l04813"></a><span class="lineno"> 4813</span>&#160;        static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
-<div class="line"><a name="l04814"></a><span class="lineno"> 4814</span>&#160;                      <span class="stringliteral">&quot;mat_mul only supports float or double types.&quot;</span>);</div>
-<div class="line"><a name="l04815"></a><span class="lineno"> 4815</span>&#160; </div>
-<div class="line"><a name="l04816"></a><span class="lineno"> 4816</span>&#160;        <span class="keyword">const</span> std::size_t A_rows = A.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04817"></a><span class="lineno"> 4817</span>&#160;        <span class="keyword">const</span> std::size_t A_cols = A.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
-<div class="line"><a name="l04818"></a><span class="lineno"> 4818</span>&#160;        <span class="keyword">const</span> std::size_t B_rows = B.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04819"></a><span class="lineno"> 4819</span>&#160;        <span class="keyword">const</span> std::size_t B_cols = B.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
-<div class="line"><a name="l04820"></a><span class="lineno"> 4820</span>&#160; </div>
-<div class="line"><a name="l04821"></a><span class="lineno"> 4821</span>&#160;        <span class="keywordflow">if</span> (A_cols != B_rows) {</div>
-<div class="line"><a name="l04822"></a><span class="lineno"> 4822</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions are incompatible for multiplication.&quot;</span>);</div>
-<div class="line"><a name="l04823"></a><span class="lineno"> 4823</span>&#160;        }</div>
-<div class="line"><a name="l04824"></a><span class="lineno"> 4824</span>&#160; </div>
-<div class="line"><a name="l04825"></a><span class="lineno"> 4825</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(A_rows, B_cols);</div>
-<div class="line"><a name="l04826"></a><span class="lineno"> 4826</span>&#160; </div>
-<div class="line"><a name="l04827"></a><span class="lineno"> 4827</span>&#160;        <span class="comment">// Build temporary map: for each (k,j) in B, map from k → (j,value)</span></div>
-<div class="line"><a name="l04828"></a><span class="lineno"> 4828</span>&#160;        std::unordered_map&lt;std::size_t, std::vector&lt;std::pair&lt;std::size_t, T&gt;&gt;&gt; B_map;</div>
-<div class="line"><a name="l04829"></a><span class="lineno"> 4829</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tB : B) {</div>
-<div class="line"><a name="l04830"></a><span class="lineno"> 4830</span>&#160;            B_map[tB.row].emplace_back(tB.col, tB.value);</div>
-<div class="line"><a name="l04831"></a><span class="lineno"> 4831</span>&#160;        }</div>
-<div class="line"><a name="l04832"></a><span class="lineno"> 4832</span>&#160; </div>
-<div class="line"><a name="l04833"></a><span class="lineno"> 4833</span>&#160;        <span class="comment">// For each (i,k) in A, multiply against corresponding B[k,:]</span></div>
-<div class="line"><a name="l04834"></a><span class="lineno"> 4834</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tA : A) {</div>
-<div class="line"><a name="l04835"></a><span class="lineno"> 4835</span>&#160;            <span class="keyword">const</span> std::size_t i = tA.row;</div>
-<div class="line"><a name="l04836"></a><span class="lineno"> 4836</span>&#160;            <span class="keyword">const</span> std::size_t k = tA.col;</div>
-<div class="line"><a name="l04837"></a><span class="lineno"> 4837</span>&#160;            <span class="keyword">const</span> T value_A = tA.value;</div>
-<div class="line"><a name="l04838"></a><span class="lineno"> 4838</span>&#160; </div>
-<div class="line"><a name="l04839"></a><span class="lineno"> 4839</span>&#160;            <span class="keywordflow">if</span> (B_map.count(k)) {</div>
-<div class="line"><a name="l04840"></a><span class="lineno"> 4840</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [j, value_B] : B_map[k]) {</div>
-<div class="line"><a name="l04841"></a><span class="lineno"> 4841</span>&#160;                    T old_val = result.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j) ? result(i, j) : T{};</div>
-<div class="line"><a name="l04842"></a><span class="lineno"> 4842</span>&#160;                    result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(i, j, old_val + value_A * value_B);</div>
-<div class="line"><a name="l04843"></a><span class="lineno"> 4843</span>&#160;                }</div>
-<div class="line"><a name="l04844"></a><span class="lineno"> 4844</span>&#160;            }</div>
-<div class="line"><a name="l04845"></a><span class="lineno"> 4845</span>&#160;        }</div>
-<div class="line"><a name="l04846"></a><span class="lineno"> 4846</span>&#160; </div>
-<div class="line"><a name="l04847"></a><span class="lineno"> 4847</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04848"></a><span class="lineno"> 4848</span>&#160;    }</div>
-<div class="line"><a name="l04849"></a><span class="lineno"> 4849</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04850"></a><span class="lineno"> 4850</span>&#160; </div>
-<div class="line"><a name="l04891"></a><span class="lineno"> 4891</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04892"></a><span class="lineno"><a class="line" href="namespaceslt.html#a34eb720f09d70d762cfb724905e9c95f"> 4892</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">mat_mul</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; A, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; B) {</div>
-<div class="line"><a name="l04893"></a><span class="lineno"> 4893</span>&#160;        static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
-<div class="line"><a name="l04894"></a><span class="lineno"> 4894</span>&#160;                      <span class="stringliteral">&quot;mat_mul only supports float or double types.&quot;</span>);</div>
-<div class="line"><a name="l04895"></a><span class="lineno"> 4895</span>&#160; </div>
-<div class="line"><a name="l04896"></a><span class="lineno"> 4896</span>&#160;        <span class="keyword">const</span> std::size_t A_rows = A.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04897"></a><span class="lineno"> 4897</span>&#160;        <span class="keyword">const</span> std::size_t A_cols = A.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
-<div class="line"><a name="l04898"></a><span class="lineno"> 4898</span>&#160;        <span class="keyword">const</span> std::size_t B_rows = B.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04899"></a><span class="lineno"> 4899</span>&#160;        <span class="keyword">const</span> std::size_t B_cols = B.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l04731"></a><span class="lineno"> 4731</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04732"></a><span class="lineno"><a class="line" href="namespaceslt.html#a7663d27521f7415939780673f7e25fd9"> 4732</a></span>&#160;    <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a7a4f1a42d7dfbc00af75ce9cb1ec6d8b">operator*</a>(T scalar, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; matrix) {</div>
+<div class="line"><a name="l04733"></a><span class="lineno"> 4733</span>&#160;        <span class="keywordflow">return</span> matrix * scalar;  <span class="comment">// Leverage existing member function</span></div>
+<div class="line"><a name="l04734"></a><span class="lineno"> 4734</span>&#160;    }</div>
+<div class="line"><a name="l04735"></a><span class="lineno"> 4735</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04736"></a><span class="lineno"> 4736</span>&#160; </div>
+<div class="line"><a name="l04776"></a><span class="lineno"> 4776</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04777"></a><span class="lineno"><a class="line" href="namespaceslt.html#a331753e541d531634092a47322a81e9a"> 4777</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a7a4f1a42d7dfbc00af75ce9cb1ec6d8b">operator*</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse) {</div>
+<div class="line"><a name="l04778"></a><span class="lineno"> 4778</span>&#160;        <span class="keywordflow">if</span> (dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>() || dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>() != sparse.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>())</div>
+<div class="line"><a name="l04779"></a><span class="lineno"> 4779</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions must match for element-wise multiplication&quot;</span>);</div>
+<div class="line"><a name="l04780"></a><span class="lineno"> 4780</span>&#160; </div>
+<div class="line"><a name="l04781"></a><span class="lineno"> 4781</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(dense.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>(), dense.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>());</div>
+<div class="line"><a name="l04782"></a><span class="lineno"> 4782</span>&#160; </div>
+<div class="line"><a name="l04783"></a><span class="lineno"> 4783</span>&#160;        <span class="comment">// Initialize result with zeros</span></div>
+<div class="line"><a name="l04784"></a><span class="lineno"> 4784</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), T{});</div>
+<div class="line"><a name="l04785"></a><span class="lineno"> 4785</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>() + result.<a class="code" href="classslt_1_1DenseMatrix.html#a39a9fb8ff6233685c347386728cf7ef7">size</a>(), 0);</div>
+<div class="line"><a name="l04786"></a><span class="lineno"> 4786</span>&#160; </div>
+<div class="line"><a name="l04787"></a><span class="lineno"> 4787</span>&#160;        <span class="comment">// Only multiply at sparse matrix locations</span></div>
+<div class="line"><a name="l04788"></a><span class="lineno"> 4788</span>&#160;        <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; sparse.<a class="code" href="classslt_1_1SparseCOOMatrix.html#a8d72d157729bc5e2b3273091ba5ded9b">initialized_count</a>(); ++i) {</div>
+<div class="line"><a name="l04789"></a><span class="lineno"> 4789</span>&#160;            std::size_t r = sparse.row_index(i);</div>
+<div class="line"><a name="l04790"></a><span class="lineno"> 4790</span>&#160;            std::size_t c = sparse.col_index(i);</div>
+<div class="line"><a name="l04791"></a><span class="lineno"> 4791</span>&#160;            T value = dense(r, c) * sparse.value(i);</div>
+<div class="line"><a name="l04792"></a><span class="lineno"> 4792</span>&#160;            result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(r, c, value);</div>
+<div class="line"><a name="l04793"></a><span class="lineno"> 4793</span>&#160;        }</div>
+<div class="line"><a name="l04794"></a><span class="lineno"> 4794</span>&#160; </div>
+<div class="line"><a name="l04795"></a><span class="lineno"> 4795</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l04796"></a><span class="lineno"> 4796</span>&#160;    }</div>
+<div class="line"><a name="l04797"></a><span class="lineno"> 4797</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04798"></a><span class="lineno"> 4798</span>&#160; </div>
+<div class="line"><a name="l04833"></a><span class="lineno"> 4833</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04834"></a><span class="lineno"><a class="line" href="namespaceslt.html#a1aa2a4ffb3f47aff6f90ca903b458c6f"> 4834</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a7a4f1a42d7dfbc00af75ce9cb1ec6d8b">operator*</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; sparse, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; dense) {</div>
+<div class="line"><a name="l04835"></a><span class="lineno"> 4835</span>&#160;        <span class="comment">// Reuse the function above — multiplication is commutative</span></div>
+<div class="line"><a name="l04836"></a><span class="lineno"> 4836</span>&#160;        <span class="keywordflow">return</span> dense * sparse;</div>
+<div class="line"><a name="l04837"></a><span class="lineno"> 4837</span>&#160;    }</div>
+<div class="line"><a name="l04838"></a><span class="lineno"> 4838</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04839"></a><span class="lineno"> 4839</span>&#160; </div>
+<div class="line"><a name="l04885"></a><span class="lineno"> 4885</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04886"></a><span class="lineno"><a class="line" href="namespaceslt.html#aed3b325cd81a15ee8961f2e3ca6fdce5"> 4886</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">mat_mul</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; A, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; B) {</div>
+<div class="line"><a name="l04887"></a><span class="lineno"> 4887</span>&#160;        static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
+<div class="line"><a name="l04888"></a><span class="lineno"> 4888</span>&#160;                      <span class="stringliteral">&quot;mat_mul only supports float or double types.&quot;</span>);</div>
+<div class="line"><a name="l04889"></a><span class="lineno"> 4889</span>&#160; </div>
+<div class="line"><a name="l04890"></a><span class="lineno"> 4890</span>&#160;        <span class="keyword">const</span> std::size_t A_rows = A.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l04891"></a><span class="lineno"> 4891</span>&#160;        <span class="keyword">const</span> std::size_t A_cols = A.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l04892"></a><span class="lineno"> 4892</span>&#160;        <span class="keyword">const</span> std::size_t B_rows = B.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l04893"></a><span class="lineno"> 4893</span>&#160;        <span class="keyword">const</span> std::size_t B_cols = B.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l04894"></a><span class="lineno"> 4894</span>&#160; </div>
+<div class="line"><a name="l04895"></a><span class="lineno"> 4895</span>&#160;        <span class="keywordflow">if</span> (A_cols != B_rows) {</div>
+<div class="line"><a name="l04896"></a><span class="lineno"> 4896</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions are incompatible for multiplication.&quot;</span>);</div>
+<div class="line"><a name="l04897"></a><span class="lineno"> 4897</span>&#160;        }</div>
+<div class="line"><a name="l04898"></a><span class="lineno"> 4898</span>&#160; </div>
+<div class="line"><a name="l04899"></a><span class="lineno"> 4899</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(A_rows, B_cols);</div>
 <div class="line"><a name="l04900"></a><span class="lineno"> 4900</span>&#160; </div>
-<div class="line"><a name="l04901"></a><span class="lineno"> 4901</span>&#160;        <span class="keywordflow">if</span> (A_cols != B_rows) {</div>
-<div class="line"><a name="l04902"></a><span class="lineno"> 4902</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions are incompatible for multiplication.&quot;</span>);</div>
-<div class="line"><a name="l04903"></a><span class="lineno"> 4903</span>&#160;        }</div>
-<div class="line"><a name="l04904"></a><span class="lineno"> 4904</span>&#160; </div>
-<div class="line"><a name="l04905"></a><span class="lineno"> 4905</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(A_rows, B_cols);</div>
+<div class="line"><a name="l04901"></a><span class="lineno"> 4901</span>&#160;        <span class="comment">// Build temporary map: for each (k,j) in B, map from k → (j,value)</span></div>
+<div class="line"><a name="l04902"></a><span class="lineno"> 4902</span>&#160;        std::unordered_map&lt;std::size_t, std::vector&lt;std::pair&lt;std::size_t, T&gt;&gt;&gt; B_map;</div>
+<div class="line"><a name="l04903"></a><span class="lineno"> 4903</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tB : B) {</div>
+<div class="line"><a name="l04904"></a><span class="lineno"> 4904</span>&#160;            B_map[tB.row].emplace_back(tB.col, tB.value);</div>
+<div class="line"><a name="l04905"></a><span class="lineno"> 4905</span>&#160;        }</div>
 <div class="line"><a name="l04906"></a><span class="lineno"> 4906</span>&#160; </div>
-<div class="line"><a name="l04907"></a><span class="lineno"> 4907</span>&#160;        <span class="comment">// Initialize result with zeros</span></div>
-<div class="line"><a name="l04908"></a><span class="lineno"> 4908</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a96d2c4d3a2ee12d324b3e8a2a6db88e0">end</a>(), T{});</div>
-<div class="line"><a name="l04909"></a><span class="lineno"> 4909</span>&#160; </div>
-<div class="line"><a name="l04910"></a><span class="lineno"> 4910</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tA : A) {</div>
-<div class="line"><a name="l04911"></a><span class="lineno"> 4911</span>&#160;            std::size_t i = tA.row;</div>
-<div class="line"><a name="l04912"></a><span class="lineno"> 4912</span>&#160;            std::size_t k = tA.col;</div>
-<div class="line"><a name="l04913"></a><span class="lineno"> 4913</span>&#160;            T value_A = tA.value;</div>
-<div class="line"><a name="l04914"></a><span class="lineno"> 4914</span>&#160; </div>
-<div class="line"><a name="l04915"></a><span class="lineno"> 4915</span>&#160;            <span class="keywordflow">for</span> (std::size_t j = 0; j &lt; B_cols; ++j) {</div>
-<div class="line"><a name="l04916"></a><span class="lineno"> 4916</span>&#160;                T value_B = B(k, j);</div>
-<div class="line"><a name="l04917"></a><span class="lineno"> 4917</span>&#160;                T old_val = result.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j) ? result(i, j) : T{};</div>
-<div class="line"><a name="l04918"></a><span class="lineno"> 4918</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(i, j, old_val + value_A * value_B);</div>
-<div class="line"><a name="l04919"></a><span class="lineno"> 4919</span>&#160;            }</div>
-<div class="line"><a name="l04920"></a><span class="lineno"> 4920</span>&#160;        }</div>
-<div class="line"><a name="l04921"></a><span class="lineno"> 4921</span>&#160; </div>
-<div class="line"><a name="l04922"></a><span class="lineno"> 4922</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04923"></a><span class="lineno"> 4923</span>&#160;    }</div>
-<div class="line"><a name="l04924"></a><span class="lineno"> 4924</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
-<div class="line"><a name="l04925"></a><span class="lineno"> 4925</span>&#160; </div>
-<div class="line"><a name="l04966"></a><span class="lineno"> 4966</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l04967"></a><span class="lineno"><a class="line" href="namespaceslt.html#a2b592f5fd166df5de98e0a019b3fc5a8"> 4967</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">mat_mul</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; A, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; B) {</div>
-<div class="line"><a name="l04968"></a><span class="lineno"> 4968</span>&#160;        static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
-<div class="line"><a name="l04969"></a><span class="lineno"> 4969</span>&#160;                      <span class="stringliteral">&quot;mat_mul only supports float or double types.&quot;</span>);</div>
-<div class="line"><a name="l04970"></a><span class="lineno"> 4970</span>&#160; </div>
-<div class="line"><a name="l04971"></a><span class="lineno"> 4971</span>&#160;        <span class="keyword">const</span> std::size_t A_rows = A.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04972"></a><span class="lineno"> 4972</span>&#160;        <span class="keyword">const</span> std::size_t A_cols = A.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
-<div class="line"><a name="l04973"></a><span class="lineno"> 4973</span>&#160;        <span class="keyword">const</span> std::size_t B_rows = B.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
-<div class="line"><a name="l04974"></a><span class="lineno"> 4974</span>&#160;        <span class="keyword">const</span> std::size_t B_cols = B.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
-<div class="line"><a name="l04975"></a><span class="lineno"> 4975</span>&#160; </div>
-<div class="line"><a name="l04976"></a><span class="lineno"> 4976</span>&#160;        <span class="keywordflow">if</span> (A_cols != B_rows) {</div>
-<div class="line"><a name="l04977"></a><span class="lineno"> 4977</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions are incompatible for multiplication.&quot;</span>);</div>
-<div class="line"><a name="l04978"></a><span class="lineno"> 4978</span>&#160;        }</div>
-<div class="line"><a name="l04979"></a><span class="lineno"> 4979</span>&#160; </div>
-<div class="line"><a name="l04980"></a><span class="lineno"> 4980</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(A_rows, B_cols);</div>
-<div class="line"><a name="l04981"></a><span class="lineno"> 4981</span>&#160; </div>
-<div class="line"><a name="l04982"></a><span class="lineno"> 4982</span>&#160;        <span class="comment">// Initialize result with zeros</span></div>
-<div class="line"><a name="l04983"></a><span class="lineno"> 4983</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a96d2c4d3a2ee12d324b3e8a2a6db88e0">end</a>(), T{});</div>
-<div class="line"><a name="l04984"></a><span class="lineno"> 4984</span>&#160; </div>
-<div class="line"><a name="l04985"></a><span class="lineno"> 4985</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tB : B) {</div>
-<div class="line"><a name="l04986"></a><span class="lineno"> 4986</span>&#160;            std::size_t k = tB.row;</div>
-<div class="line"><a name="l04987"></a><span class="lineno"> 4987</span>&#160;            std::size_t j = tB.col;</div>
-<div class="line"><a name="l04988"></a><span class="lineno"> 4988</span>&#160;            T value_B = tB.value;</div>
-<div class="line"><a name="l04989"></a><span class="lineno"> 4989</span>&#160; </div>
-<div class="line"><a name="l04990"></a><span class="lineno"> 4990</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; A_rows; ++i) {</div>
-<div class="line"><a name="l04991"></a><span class="lineno"> 4991</span>&#160;                T value_A = A(i, k);</div>
-<div class="line"><a name="l04992"></a><span class="lineno"> 4992</span>&#160;                T old_val = result.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j) ? result(i, j) : T{};</div>
-<div class="line"><a name="l04993"></a><span class="lineno"> 4993</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(i, j, old_val + value_A * value_B);</div>
-<div class="line"><a name="l04994"></a><span class="lineno"> 4994</span>&#160;            }</div>
-<div class="line"><a name="l04995"></a><span class="lineno"> 4995</span>&#160;        }</div>
-<div class="line"><a name="l04996"></a><span class="lineno"> 4996</span>&#160; </div>
-<div class="line"><a name="l04997"></a><span class="lineno"> 4997</span>&#160;        <span class="keywordflow">return</span> result;</div>
-<div class="line"><a name="l04998"></a><span class="lineno"> 4998</span>&#160;    }</div>
-<div class="line"><a name="l04999"></a><span class="lineno"> 4999</span>&#160;} <span class="comment">// namespace slt</span></div>
-<div class="line"><a name="l05000"></a><span class="lineno"> 5000</span>&#160;<span class="comment">// ================================================================================ </span></div>
-<div class="line"><a name="l05001"></a><span class="lineno"> 5001</span>&#160;<span class="comment">// ================================================================================ </span></div>
-<div class="line"><a name="l05002"></a><span class="lineno"> 5002</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* MATRIX_HPP */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l05003"></a><span class="lineno"> 5003</span>&#160;<span class="comment">// ================================================================================</span></div>
-<div class="line"><a name="l05004"></a><span class="lineno"> 5004</span>&#160;<span class="comment">// ================================================================================</span></div>
-<div class="line"><a name="l05005"></a><span class="lineno"> 5005</span>&#160;<span class="comment">// eof</span></div>
+<div class="line"><a name="l04907"></a><span class="lineno"> 4907</span>&#160;        <span class="comment">// For each (i,k) in A, multiply against corresponding B[k,:]</span></div>
+<div class="line"><a name="l04908"></a><span class="lineno"> 4908</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tA : A) {</div>
+<div class="line"><a name="l04909"></a><span class="lineno"> 4909</span>&#160;            <span class="keyword">const</span> std::size_t i = tA.row;</div>
+<div class="line"><a name="l04910"></a><span class="lineno"> 4910</span>&#160;            <span class="keyword">const</span> std::size_t k = tA.col;</div>
+<div class="line"><a name="l04911"></a><span class="lineno"> 4911</span>&#160;            <span class="keyword">const</span> T value_A = tA.value;</div>
+<div class="line"><a name="l04912"></a><span class="lineno"> 4912</span>&#160; </div>
+<div class="line"><a name="l04913"></a><span class="lineno"> 4913</span>&#160;            <span class="keywordflow">if</span> (B_map.count(k)) {</div>
+<div class="line"><a name="l04914"></a><span class="lineno"> 4914</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; [j, value_B] : B_map[k]) {</div>
+<div class="line"><a name="l04915"></a><span class="lineno"> 4915</span>&#160;                    T old_val = result.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j) ? result(i, j) : T{};</div>
+<div class="line"><a name="l04916"></a><span class="lineno"> 4916</span>&#160;                    result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(i, j, old_val + value_A * value_B);</div>
+<div class="line"><a name="l04917"></a><span class="lineno"> 4917</span>&#160;                }</div>
+<div class="line"><a name="l04918"></a><span class="lineno"> 4918</span>&#160;            }</div>
+<div class="line"><a name="l04919"></a><span class="lineno"> 4919</span>&#160;        }</div>
+<div class="line"><a name="l04920"></a><span class="lineno"> 4920</span>&#160; </div>
+<div class="line"><a name="l04921"></a><span class="lineno"> 4921</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l04922"></a><span class="lineno"> 4922</span>&#160;    }</div>
+<div class="line"><a name="l04923"></a><span class="lineno"> 4923</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04924"></a><span class="lineno"> 4924</span>&#160; </div>
+<div class="line"><a name="l04965"></a><span class="lineno"> 4965</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l04966"></a><span class="lineno"><a class="line" href="namespaceslt.html#a34eb720f09d70d762cfb724905e9c95f"> 4966</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">mat_mul</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; A, <span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; B) {</div>
+<div class="line"><a name="l04967"></a><span class="lineno"> 4967</span>&#160;        static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
+<div class="line"><a name="l04968"></a><span class="lineno"> 4968</span>&#160;                      <span class="stringliteral">&quot;mat_mul only supports float or double types.&quot;</span>);</div>
+<div class="line"><a name="l04969"></a><span class="lineno"> 4969</span>&#160; </div>
+<div class="line"><a name="l04970"></a><span class="lineno"> 4970</span>&#160;        <span class="keyword">const</span> std::size_t A_rows = A.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l04971"></a><span class="lineno"> 4971</span>&#160;        <span class="keyword">const</span> std::size_t A_cols = A.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l04972"></a><span class="lineno"> 4972</span>&#160;        <span class="keyword">const</span> std::size_t B_rows = B.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l04973"></a><span class="lineno"> 4973</span>&#160;        <span class="keyword">const</span> std::size_t B_cols = B.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l04974"></a><span class="lineno"> 4974</span>&#160; </div>
+<div class="line"><a name="l04975"></a><span class="lineno"> 4975</span>&#160;        <span class="keywordflow">if</span> (A_cols != B_rows) {</div>
+<div class="line"><a name="l04976"></a><span class="lineno"> 4976</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions are incompatible for multiplication.&quot;</span>);</div>
+<div class="line"><a name="l04977"></a><span class="lineno"> 4977</span>&#160;        }</div>
+<div class="line"><a name="l04978"></a><span class="lineno"> 4978</span>&#160; </div>
+<div class="line"><a name="l04979"></a><span class="lineno"> 4979</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(A_rows, B_cols);</div>
+<div class="line"><a name="l04980"></a><span class="lineno"> 4980</span>&#160; </div>
+<div class="line"><a name="l04981"></a><span class="lineno"> 4981</span>&#160;        <span class="comment">// Initialize result with zeros</span></div>
+<div class="line"><a name="l04982"></a><span class="lineno"> 4982</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a96d2c4d3a2ee12d324b3e8a2a6db88e0">end</a>(), T{});</div>
+<div class="line"><a name="l04983"></a><span class="lineno"> 4983</span>&#160; </div>
+<div class="line"><a name="l04984"></a><span class="lineno"> 4984</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tA : A) {</div>
+<div class="line"><a name="l04985"></a><span class="lineno"> 4985</span>&#160;            std::size_t i = tA.row;</div>
+<div class="line"><a name="l04986"></a><span class="lineno"> 4986</span>&#160;            std::size_t k = tA.col;</div>
+<div class="line"><a name="l04987"></a><span class="lineno"> 4987</span>&#160;            T value_A = tA.value;</div>
+<div class="line"><a name="l04988"></a><span class="lineno"> 4988</span>&#160; </div>
+<div class="line"><a name="l04989"></a><span class="lineno"> 4989</span>&#160;            <span class="keywordflow">for</span> (std::size_t j = 0; j &lt; B_cols; ++j) {</div>
+<div class="line"><a name="l04990"></a><span class="lineno"> 4990</span>&#160;                T value_B = B(k, j);</div>
+<div class="line"><a name="l04991"></a><span class="lineno"> 4991</span>&#160;                T old_val = result.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j) ? result(i, j) : T{};</div>
+<div class="line"><a name="l04992"></a><span class="lineno"> 4992</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(i, j, old_val + value_A * value_B);</div>
+<div class="line"><a name="l04993"></a><span class="lineno"> 4993</span>&#160;            }</div>
+<div class="line"><a name="l04994"></a><span class="lineno"> 4994</span>&#160;        }</div>
+<div class="line"><a name="l04995"></a><span class="lineno"> 4995</span>&#160; </div>
+<div class="line"><a name="l04996"></a><span class="lineno"> 4996</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l04997"></a><span class="lineno"> 4997</span>&#160;    }</div>
+<div class="line"><a name="l04998"></a><span class="lineno"> 4998</span>&#160;<span class="comment">// -------------------------------------------------------------------------------- </span></div>
+<div class="line"><a name="l04999"></a><span class="lineno"> 4999</span>&#160; </div>
+<div class="line"><a name="l05040"></a><span class="lineno"> 5040</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l05041"></a><span class="lineno"><a class="line" href="namespaceslt.html#a2b592f5fd166df5de98e0a019b3fc5a8"> 5041</a></span>&#160;    <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> <a class="code" href="namespaceslt.html#a65e705fbd81f19d98c1fcf81ef098e2c">mat_mul</a>(<span class="keyword">const</span> <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a>&amp; A, <span class="keyword">const</span> <a class="code" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix&lt;T&gt;</a>&amp; B) {</div>
+<div class="line"><a name="l05042"></a><span class="lineno"> 5042</span>&#160;        static_assert(std::is_same_v&lt;T, float&gt; || std::is_same_v&lt;T, double&gt;,</div>
+<div class="line"><a name="l05043"></a><span class="lineno"> 5043</span>&#160;                      <span class="stringliteral">&quot;mat_mul only supports float or double types.&quot;</span>);</div>
+<div class="line"><a name="l05044"></a><span class="lineno"> 5044</span>&#160; </div>
+<div class="line"><a name="l05045"></a><span class="lineno"> 5045</span>&#160;        <span class="keyword">const</span> std::size_t A_rows = A.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l05046"></a><span class="lineno"> 5046</span>&#160;        <span class="keyword">const</span> std::size_t A_cols = A.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l05047"></a><span class="lineno"> 5047</span>&#160;        <span class="keyword">const</span> std::size_t B_rows = B.<a class="code" href="classslt_1_1MatrixBase.html#a614ed98dfb69c490ad6658990679f81c">rows</a>();</div>
+<div class="line"><a name="l05048"></a><span class="lineno"> 5048</span>&#160;        <span class="keyword">const</span> std::size_t B_cols = B.<a class="code" href="classslt_1_1MatrixBase.html#ab2193ba0b50e6342859efa9624f36a06">cols</a>();</div>
+<div class="line"><a name="l05049"></a><span class="lineno"> 5049</span>&#160; </div>
+<div class="line"><a name="l05050"></a><span class="lineno"> 5050</span>&#160;        <span class="keywordflow">if</span> (A_cols != B_rows) {</div>
+<div class="line"><a name="l05051"></a><span class="lineno"> 5051</span>&#160;            <span class="keywordflow">throw</span> std::invalid_argument(<span class="stringliteral">&quot;Matrix dimensions are incompatible for multiplication.&quot;</span>);</div>
+<div class="line"><a name="l05052"></a><span class="lineno"> 5052</span>&#160;        }</div>
+<div class="line"><a name="l05053"></a><span class="lineno"> 5053</span>&#160; </div>
+<div class="line"><a name="l05054"></a><span class="lineno"> 5054</span>&#160;        <a class="code" href="classslt_1_1DenseMatrix.html">DenseMatrix&lt;T&gt;</a> result(A_rows, B_cols);</div>
+<div class="line"><a name="l05055"></a><span class="lineno"> 5055</span>&#160; </div>
+<div class="line"><a name="l05056"></a><span class="lineno"> 5056</span>&#160;        <span class="comment">// Initialize result with zeros</span></div>
+<div class="line"><a name="l05057"></a><span class="lineno"> 5057</span>&#160;        std::fill(result.<a class="code" href="classslt_1_1DenseMatrix.html#a5a34208108b9b596d1c98b0e813e17bd">begin</a>(), result.<a class="code" href="classslt_1_1DenseMatrix.html#a96d2c4d3a2ee12d324b3e8a2a6db88e0">end</a>(), T{});</div>
+<div class="line"><a name="l05058"></a><span class="lineno"> 5058</span>&#160; </div>
+<div class="line"><a name="l05059"></a><span class="lineno"> 5059</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; tB : B) {</div>
+<div class="line"><a name="l05060"></a><span class="lineno"> 5060</span>&#160;            std::size_t k = tB.row;</div>
+<div class="line"><a name="l05061"></a><span class="lineno"> 5061</span>&#160;            std::size_t j = tB.col;</div>
+<div class="line"><a name="l05062"></a><span class="lineno"> 5062</span>&#160;            T value_B = tB.value;</div>
+<div class="line"><a name="l05063"></a><span class="lineno"> 5063</span>&#160; </div>
+<div class="line"><a name="l05064"></a><span class="lineno"> 5064</span>&#160;            <span class="keywordflow">for</span> (std::size_t i = 0; i &lt; A_rows; ++i) {</div>
+<div class="line"><a name="l05065"></a><span class="lineno"> 5065</span>&#160;                T value_A = A(i, k);</div>
+<div class="line"><a name="l05066"></a><span class="lineno"> 5066</span>&#160;                T old_val = result.<a class="code" href="classslt_1_1DenseMatrix.html#aecc5061bed3861b391292058e43ae1b2">is_initialized</a>(i, j) ? result(i, j) : T{};</div>
+<div class="line"><a name="l05067"></a><span class="lineno"> 5067</span>&#160;                result.<a class="code" href="classslt_1_1DenseMatrix.html#a1b5a3336117a16b234405816efac62d4">set</a>(i, j, old_val + value_A * value_B);</div>
+<div class="line"><a name="l05068"></a><span class="lineno"> 5068</span>&#160;            }</div>
+<div class="line"><a name="l05069"></a><span class="lineno"> 5069</span>&#160;        }</div>
+<div class="line"><a name="l05070"></a><span class="lineno"> 5070</span>&#160; </div>
+<div class="line"><a name="l05071"></a><span class="lineno"> 5071</span>&#160;        <span class="keywordflow">return</span> result;</div>
+<div class="line"><a name="l05072"></a><span class="lineno"> 5072</span>&#160;    }</div>
+<div class="line"><a name="l05073"></a><span class="lineno"> 5073</span>&#160;} <span class="comment">// namespace slt</span></div>
+<div class="line"><a name="l05074"></a><span class="lineno"> 5074</span>&#160;<span class="comment">// ================================================================================ </span></div>
+<div class="line"><a name="l05075"></a><span class="lineno"> 5075</span>&#160;<span class="comment">// ================================================================================ </span></div>
+<div class="line"><a name="l05076"></a><span class="lineno"> 5076</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* MATRIX_HPP */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l05077"></a><span class="lineno"> 5077</span>&#160;<span class="comment">// ================================================================================</span></div>
+<div class="line"><a name="l05078"></a><span class="lineno"> 5078</span>&#160;<span class="comment">// ================================================================================</span></div>
+<div class="line"><a name="l05079"></a><span class="lineno"> 5079</span>&#160;<span class="comment">// eof</span></div>
 <div class="ttc" id="aclassslt_1_1DenseMatrix_html"><div class="ttname"><a href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a></div><div class="ttdoc">A dense matrix implementation supporting float or double values.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:808</div></div>
 <div class="ttc" id="aclassslt_1_1DenseMatrix_html_a01bfb57f1f4c7f11110926bd3625834a"><div class="ttname"><a href="classslt_1_1DenseMatrix.html#a01bfb57f1f4c7f11110926bd3625834a">slt::DenseMatrix::operator+</a></div><div class="ttdeci">DenseMatrix operator+(const DenseMatrix &amp;other) const</div><div class="ttdoc">Adds two DenseMatrix objects element-wise.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:1652</div></div>
 <div class="ttc" id="aclassslt_1_1DenseMatrix_html_a031fc322b994002ef9c2c10540a99603"><div class="ttname"><a href="classslt_1_1DenseMatrix.html#a031fc322b994002ef9c2c10540a99603">slt::DenseMatrix::operator()</a></div><div class="ttdeci">const T &amp; operator()(std::size_t r, std::size_t c) const</div><div class="ttdoc">Read-only access to a matrix element at (r, c).</div><div class="ttdef"><b>Definition:</b> matrix.hpp:1458</div></div>
@@ -2475,18 +2479,18 @@ $(function() {
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_af2dd10fb10528bb4abee019204d3fc64"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#af2dd10fb10528bb4abee019204d3fc64">slt::SparseCOOMatrix::finalize</a></div><div class="ttdeci">void finalize()</div><div class="ttdoc">Finalizes the internal COO representation for querying.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:3901</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html_afbbd341c0b43c83e4adefc5ace49a0f0"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html#afbbd341c0b43c83e4adefc5ace49a0f0">slt::SparseCOOMatrix::SparseCOOMatrix</a></div><div class="ttdeci">SparseCOOMatrix(std::size_t r, std::size_t c, const Triplet&lt; T &gt; *triplets, std::size_t count)</div><div class="ttdoc">Constructs a SparseCOOMatrix from a C-style array of Triplet&lt;T&gt;.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2976</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html">slt::SparseCSRMatrix</a></div><div class="ttdoc">Compressed Sparse Row (CSR) matrix representation.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4181</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a05430121400cca7c945f5dd7a54b8b8c"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c">slt::SparseCSRMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t row, std::size_t col) const</div><div class="ttdoc">Determines if a row column pair is initialized.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4278</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a298aa3b43f90c9bad070e5d31c75f7f6"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a298aa3b43f90c9bad070e5d31c75f7f6">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(SparseCSRMatrix &amp;&amp;other) noexcept</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4267</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a05430121400cca7c945f5dd7a54b8b8c"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a05430121400cca7c945f5dd7a54b8b8c">slt::SparseCSRMatrix::is_initialized</a></div><div class="ttdeci">bool is_initialized(std::size_t row, std::size_t col) const</div><div class="ttdoc">Determines if a row column pair is initialized.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4352</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a298aa3b43f90c9bad070e5d31c75f7f6"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a298aa3b43f90c9bad070e5d31c75f7f6">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(SparseCSRMatrix &amp;&amp;other) noexcept</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4341</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a3ff1d653de2a0ca923a64437bd38c602"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a3ff1d653de2a0ca923a64437bd38c602">slt::SparseCSRMatrix::col_indices</a></div><div class="ttdeci">std::vector&lt; std::size_t &gt; col_indices</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4186</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a4916aed4e374f2434d84d776d33bc98e"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e">slt::SparseCSRMatrix::clone</a></div><div class="ttdeci">std::unique_ptr&lt; MatrixBase&lt; T &gt; &gt; clone() const override</div><div class="ttdoc">Creates a polymorphic copy of the matrix object.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4321</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a4916aed4e374f2434d84d776d33bc98e"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a4916aed4e374f2434d84d776d33bc98e">slt::SparseCSRMatrix::clone</a></div><div class="ttdeci">std::unique_ptr&lt; MatrixBase&lt; T &gt; &gt; clone() const override</div><div class="ttdoc">Creates a polymorphic copy of the matrix object.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4395</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a52b98ed9564dce36cd9cb53d1d1d787b"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a52b98ed9564dce36cd9cb53d1d1d787b">slt::SparseCSRMatrix::data</a></div><div class="ttdeci">std::vector&lt; T &gt; data</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4183</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a5b6b7280cbd7d57613d701ea332f4a85"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const DenseMatrix&lt; T &gt; &amp;dense, bool accept_zeros=true)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4192</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a5b6b7280cbd7d57613d701ea332f4a85"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const DenseMatrix&lt; T &gt; &amp;dense, bool accept_zeros=true)</div><div class="ttdoc">Constructs a SparseCSRMatrix from a DenseMatrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4219</div></div>
 <div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a6897bc14189abb697312155e7f03c128"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a6897bc14189abb697312155e7f03c128">slt::SparseCSRMatrix::row_indices</a></div><div class="ttdeci">std::vector&lt; std::size_t &gt; row_indices</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4187</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a9b5c5a88d71cde0a3f681b3a72a0d5ef"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const SparseCOOMatrix&lt; T &gt; &amp;coo)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4227</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_abd0d5d75ba4ef854b1e8de8403f745d1"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1">slt::SparseCSRMatrix::size</a></div><div class="ttdeci">std::size_t size() const</div><div class="ttdoc">The total size of the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4294</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ad93cd70252dd6a59edb0b438157a23a3"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3">slt::SparseCSRMatrix::get</a></div><div class="ttdeci">T get(std::size_t row, std::size_t col) const</div><div class="ttdoc">Retrieves the value at a specific matrix coordinate.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4304</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ae6c8ae431051b0791e9f213d3a411505"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505">slt::SparseCSRMatrix::initialized_count</a></div><div class="ttdeci">std::size_t initialized_count() const noexcept</div><div class="ttdoc">Returns the number of initialized elements in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4299</div></div>
-<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_aee6eb4bcc57ffa422f0ef67092b21148"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const SparseCSRMatrix &amp;other)</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4258</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_a9b5c5a88d71cde0a3f681b3a72a0d5ef"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const SparseCOOMatrix&lt; T &gt; &amp;coo)</div><div class="ttdoc">Constructs a SparseCSRMatrix from a SparseCOOMatrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4277</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_abd0d5d75ba4ef854b1e8de8403f745d1"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#abd0d5d75ba4ef854b1e8de8403f745d1">slt::SparseCSRMatrix::size</a></div><div class="ttdeci">std::size_t size() const</div><div class="ttdoc">The total size of the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4368</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ad93cd70252dd6a59edb0b438157a23a3"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ad93cd70252dd6a59edb0b438157a23a3">slt::SparseCSRMatrix::get</a></div><div class="ttdeci">T get(std::size_t row, std::size_t col) const</div><div class="ttdoc">Retrieves the value at a specific matrix coordinate.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4378</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_ae6c8ae431051b0791e9f213d3a411505"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#ae6c8ae431051b0791e9f213d3a411505">slt::SparseCSRMatrix::initialized_count</a></div><div class="ttdeci">std::size_t initialized_count() const noexcept</div><div class="ttdoc">Returns the number of initialized elements in the matrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4373</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html_aee6eb4bcc57ffa422f0ef67092b21148"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148">slt::SparseCSRMatrix::SparseCSRMatrix</a></div><div class="ttdeci">SparseCSRMatrix(const SparseCSRMatrix &amp;other)</div><div class="ttdoc">Copy constructor for SparseCSRMatrix.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4332</div></div>
 <div class="ttc" id="amatrix_8hpp_html_ac5a637320d99ebb9eaa016046afb1462"><div class="ttname"><a href="matrix_8hpp.html#ac5a637320d99ebb9eaa016046afb1462">SIMD_WIDTH_FLOAT</a></div><div class="ttdeci">#define SIMD_WIDTH_FLOAT</div><div class="ttdef"><b>Definition:</b> matrix.hpp:91</div></div>
 <div class="ttc" id="amatrix_8hpp_html_aeda68842866e63a7a2cbcd69ac99a1ba"><div class="ttname"><a href="matrix_8hpp.html#aeda68842866e63a7a2cbcd69ac99a1ba">SIMD_WIDTH_DOUBLE</a></div><div class="ttdeci">#define SIMD_WIDTH_DOUBLE</div><div class="ttdef"><b>Definition:</b> matrix.hpp:92</div></div>
 <div class="ttc" id="anamespaceslt_html"><div class="ttname"><a href="namespaceslt.html">slt</a></div><div class="ttdef"><b>Definition:</b> matrix.hpp:98</div></div>

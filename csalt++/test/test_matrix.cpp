@@ -2304,6 +2304,67 @@ TEST(SparseCSRConstructorTests, ConvertsMultipleEntriesPerRow) {
 
     slt::SparseCSRMatrix<float> csr(coo);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, CopyPreservesStructureAndData) {
+    slt::SparseCOOMatrix<float> original(3, 3);
+    original.set(0, 0, 1.0f);
+    original.set(1, 2, 2.0f);
+    original.set(2, 1, 3.0f);
+
+    slt::SparseCSRMatrix<float> middle(original);
+    slt::SparseCSRMatrix<float> copy(middle);
+
+    // Dimensions preserved
+    EXPECT_EQ(copy.rows(), 3);
+    EXPECT_EQ(copy.cols(), 3);
+
+    // Values preserved
+    EXPECT_FLOAT_EQ(copy.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(copy.get(1, 2), 2.0f);
+    EXPECT_FLOAT_EQ(copy.get(2, 1), 3.0f);
+
+    // Ensure deep copy: modifying original shouldn't affect copy
+    original.update(0, 0, 5.0f);
+    EXPECT_FLOAT_EQ(copy.get(0, 0), 1.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, CopyEmptyMatrix) {
+    slt::SparseCOOMatrix<float> empty(2, 2);
+    slt::SparseCSRMatrix<float> copy(empty);
+
+    EXPECT_EQ(copy.rows(), 2);
+    EXPECT_EQ(copy.cols(), 2);
+    EXPECT_EQ(copy.initialized_count(), 0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, CopySingleEntryMatrix) {
+    slt::SparseCOOMatrix<float> mat(1, 1);
+    mat.set(0, 0, 42.0f);
+
+    slt::SparseCSRMatrix<float> middle(mat);
+    slt::SparseCSRMatrix<float> copy(middle);
+    EXPECT_EQ(copy.rows(), 1);
+    EXPECT_EQ(copy.cols(), 1);
+    EXPECT_FLOAT_EQ(copy.get(0, 0), 42.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, CopyLargeMatrix) {
+    const std::size_t size = 100;
+    slt::SparseCOOMatrix<float> mat(size, size);
+
+    for (std::size_t i = 0; i < size; ++i)
+        mat.set(i, i, static_cast<float>(i));
+
+    slt::SparseCSRMatrix<float> middle(mat);
+    slt::SparseCSRMatrix<float> copy(middle);
+
+    for (std::size_t i = 0; i < size; ++i)
+        EXPECT_FLOAT_EQ(copy.get(i, i), static_cast<float>(i));
+}
 // ================================================================================
 // ================================================================================
 // eof

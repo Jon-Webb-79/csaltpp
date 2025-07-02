@@ -4188,7 +4188,34 @@
 // ================================================================================ 
 
     public:
-        
+
+        /**
+         * @brief Constructs a SparseCSRMatrix from a DenseMatrix.
+         *
+         * This constructor converts a DenseMatrix into a compressed sparse row (CSR)
+         * representation. It traverses the dense matrix and captures all initialized
+         * elements, optionally filtering out zero-valued entries. The resulting matrix
+         * uses three vectors: `data` for non-zero values, `col_indices` for column
+         * indices of those values, and `row_indices` to mark the beginning of each row.
+         *
+         * @param dense The input DenseMatrix to convert from.
+         * @param accept_zeros A boolean flag indicating whether to include zero-valued
+         *        initialized entries. If set to false, zero-valued elements will be excluded.
+         *
+         * @note Only entries marked as initialized in the dense matrix are considered.
+         *       Uninitialized entries are always skipped, regardless of their value.
+         *
+         * @throws std::bad_alloc if memory allocation fails.
+         *
+         * Example:
+         * @code
+         * slt::DenseMatrix<float> dense(3, 3);
+         * dense.set(0, 1, 4.0f);
+         * dense.set(1, 2, 7.0f);
+         *
+         * slt::SparseCSRMatrix<float> csr(dense, false);
+         * @endcode
+         */ 
         explicit SparseCSRMatrix(const DenseMatrix<T>& dense, bool accept_zeros = true) {
             static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                           "SparseCSRMatrix only supports float or double types");
@@ -4282,6 +4309,26 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Copy constructor for SparseCSRMatrix.
+         *
+         * Creates a deep copy of another SparseCSRMatrix, duplicating all
+         * internal data structures including the non-zero values, column indices,
+         * and row pointers.
+         *
+         * This constructor ensures the resulting matrix is independent of the original,
+         * allowing modifications without affecting the source matrix.
+         *
+         * @param other The SparseCSRMatrix to copy.
+         *
+         * @note This performs a deep copy; changes to the new matrix do not affect the original.
+         *
+         * Example:
+         * @code
+         * slt::SparseCSRMatrix<float> original = ...;
+         * slt::SparseCSRMatrix<float> copy(original);
+         * @endcode
+         */
         SparseCSRMatrix(const SparseCSRMatrix& other)
             : data(other.data),
               col_indices(other.col_indices),

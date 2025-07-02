@@ -66,12 +66,48 @@
           <defval>true</defval>
         </param>
         <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> from a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
         </briefdescription>
         <detaileddescription>
+<para>This constructor converts a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> into a compressed sparse row (CSR) representation. It traverses the dense matrix and captures all initialized elements, optionally filtering out zero-valued entries. The resulting matrix uses three vectors: <computeroutput>data</computeroutput> for non-zero values, <computeroutput>col_indices</computeroutput> for column indices of those values, and <computeroutput>row_indices</computeroutput> to mark the beginning of each row.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dense</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The input <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> to convert from. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>accept_zeros</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A boolean flag indicating whether to include zero-valued initialized entries. If set to false, zero-valued elements will be excluded.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>Only entries marked as initialized in the dense matrix are considered. Uninitialized entries are always skipped, regardless of their value.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::bad_alloc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if memory allocation fails.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Example: <programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>dense(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">dense.set(0,<sp/>1,<sp/>4.0f);</highlight></codeline>
+<codeline><highlight class="normal">dense.set(1,<sp/>2,<sp/>7.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">slt::SparseCSRMatrix&lt;float&gt;<sp/>csr(dense,<sp/>false);</highlight></codeline>
+</programlisting> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4192" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4192" bodyend="4224"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4219" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4219" bodyend="4251"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1a9b5c5a88d71cde0a3f681b3a72a0d5ef" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
         <type></type>
@@ -83,12 +119,41 @@
           <declname>coo</declname>
         </param>
         <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> from a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>. </para>
         </briefdescription>
         <detaileddescription>
+<para>This constructor transforms a COO (Coordinate List) representation into the equivalent CSR (Compressed Sparse Row) format. It preserves all non-zero elements and their ordering by row.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>coo</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to the source <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> to convert.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::bad_alloc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if memory allocation fails.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The COO matrix is not modified.</para>
+</simplesect>
+Example: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>coo(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">coo.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">coo.set(1,<sp/>2,<sp/>2.5f);</highlight></codeline>
+<codeline><highlight class="normal">coo.set(2,<sp/>1,<sp/>3.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">slt::SparseCSRMatrix&lt;float&gt;<sp/>csr(coo);</highlight></codeline>
+</programlisting> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4227" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4227" bodyend="4255"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4277" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4277" bodyend="4309"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1aee6eb4bcc57ffa422f0ef67092b21148" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type></type>
@@ -100,12 +165,29 @@
           <declname>other</declname>
         </param>
         <briefdescription>
+<para>Copy constructor for <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>. </para>
         </briefdescription>
         <detaileddescription>
+<para>Creates a deep copy of another <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>, duplicating all internal data structures including the non-zero values, column indices, and row pointers.</para>
+<para>This constructor ensures the resulting matrix is independent of the original, allowing modifications without affecting the source matrix.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> to copy.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This performs a deep copy; changes to the new matrix do not affect the original.</para>
+</simplesect>
+Example: <programlisting><codeline><highlight class="normal">slt::SparseCSRMatrix&lt;float&gt;<sp/>original<sp/>=<sp/>...;</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCSRMatrix&lt;float&gt;<sp/>copy(original);</highlight></codeline>
+</programlisting> </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4258" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4258" bodyend="4264"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4332" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4332" bodyend="4338"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1a298aa3b43f90c9bad070e5d31c75f7f6" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
         <type></type>
@@ -122,7 +204,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4267" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4267" bodyend="4275"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4341" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4341" bodyend="4349"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1a05430121400cca7c945f5dd7a54b8b8c" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>bool</type>
@@ -148,7 +230,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4278" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4278" bodyend="4291"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4352" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4352" bodyend="4365"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1abd0d5d75ba4ef854b1e8de8403f745d1" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>std::size_t</type>
@@ -166,7 +248,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4294" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4294" bodyend="4296"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4368" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4368" bodyend="4370"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1ae6c8ae431051b0791e9f213d3a411505" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="virtual">
         <type>std::size_t</type>
@@ -184,7 +266,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4299" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4299" bodyend="4301"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4373" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4373" bodyend="4375"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1ad93cd70252dd6a59edb0b438157a23a3" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>T</type>
@@ -227,7 +309,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4304" column="11" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4304" bodyend="4318"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4378" column="11" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4378" bodyend="4392"/>
       </memberdef>
       <memberdef kind="function" id="classslt_1_1SparseCSRMatrix_1a4916aed4e374f2434d84d776d33bc98e" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
         <type>std::unique_ptr&lt; <ref refid="classslt_1_1MatrixBase" kindref="compound">MatrixBase</ref>&lt; T &gt; &gt;</type>
@@ -246,7 +328,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4321" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4321" bodyend="4323"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4395" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4395" bodyend="4397"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -296,7 +378,7 @@ Internal storage:<itemizedlist>
         </childnode>
       </node>
     </collaborationgraph>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4181" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4181" bodyend="4324"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4181" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4181" bodyend="4398"/>
     <listofallmembers>
       <member refid="classslt_1_1SparseCSRMatrix_1a4916aed4e374f2434d84d776d33bc98e" prot="public" virt="virtual"><scope>slt::SparseCSRMatrix</scope><name>clone</name></member>
       <member refid="classslt_1_1SparseCSRMatrix_1a3ff1d653de2a0ca923a64437bd38c602" prot="private" virt="non-virtual"><scope>slt::SparseCSRMatrix</scope><name>col_indices</name></member>

@@ -100,10 +100,13 @@ Collaboration diagram for slt::SparseCSRMatrix&lt; T &gt;:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a5b6b7280cbd7d57613d701ea332f4a85"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">SparseCSRMatrix</a> (const <a class="el" href="classslt_1_1DenseMatrix.html">DenseMatrix</a>&lt; T &gt; &amp;dense, bool accept_zeros=true)</td></tr>
+<tr class="memdesc:a5b6b7280cbd7d57613d701ea332f4a85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a> from a <a class="el" href="classslt_1_1DenseMatrix.html" title="A dense matrix implementation supporting float or double values.">DenseMatrix</a>.  <a href="classslt_1_1SparseCSRMatrix.html#a5b6b7280cbd7d57613d701ea332f4a85">More...</a><br /></td></tr>
 <tr class="separator:a5b6b7280cbd7d57613d701ea332f4a85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9b5c5a88d71cde0a3f681b3a72a0d5ef"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef">SparseCSRMatrix</a> (const <a class="el" href="classslt_1_1SparseCOOMatrix.html">SparseCOOMatrix</a>&lt; T &gt; &amp;coo)</td></tr>
+<tr class="memdesc:a9b5c5a88d71cde0a3f681b3a72a0d5ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a> from a <a class="el" href="classslt_1_1SparseCOOMatrix.html" title="Sparse Coordinate (COO) Matrix class.">SparseCOOMatrix</a>.  <a href="classslt_1_1SparseCSRMatrix.html#a9b5c5a88d71cde0a3f681b3a72a0d5ef">More...</a><br /></td></tr>
 <tr class="separator:a9b5c5a88d71cde0a3f681b3a72a0d5ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee6eb4bcc57ffa422f0ef67092b21148"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148">SparseCSRMatrix</a> (const <a class="el" href="classslt_1_1SparseCSRMatrix.html">SparseCSRMatrix</a> &amp;other)</td></tr>
+<tr class="memdesc:aee6eb4bcc57ffa422f0ef67092b21148"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy constructor for <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a>.  <a href="classslt_1_1SparseCSRMatrix.html#aee6eb4bcc57ffa422f0ef67092b21148">More...</a><br /></td></tr>
 <tr class="separator:aee6eb4bcc57ffa422f0ef67092b21148"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a298aa3b43f90c9bad070e5d31c75f7f6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classslt_1_1SparseCSRMatrix.html#a298aa3b43f90c9bad070e5d31c75f7f6">SparseCSRMatrix</a> (<a class="el" href="classslt_1_1SparseCSRMatrix.html">SparseCSRMatrix</a> &amp;&amp;other) noexcept</td></tr>
 <tr class="separator:a298aa3b43f90c9bad070e5d31c75f7f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -205,7 +208,31 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a84">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
+
+<p>Constructs a <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a> from a <a class="el" href="classslt_1_1DenseMatrix.html" title="A dense matrix implementation supporting float or double values.">DenseMatrix</a>. </p>
+<p>This constructor converts a <a class="el" href="classslt_1_1DenseMatrix.html" title="A dense matrix implementation supporting float or double values.">DenseMatrix</a> into a compressed sparse row (CSR) representation. It traverses the dense matrix and captures all initialized elements, optionally filtering out zero-valued entries. The resulting matrix uses three vectors: <code>data</code> for non-zero values, <code>col_indices</code> for column indices of those values, and <code>row_indices</code> to mark the beginning of each row.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dense</td><td>The input <a class="el" href="classslt_1_1DenseMatrix.html" title="A dense matrix implementation supporting float or double values.">DenseMatrix</a> to convert from. </td></tr>
+    <tr><td class="paramname">accept_zeros</td><td>A boolean flag indicating whether to include zero-valued initialized entries. If set to false, zero-valued elements will be excluded.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>Only entries marked as initialized in the dense matrix are considered. Uninitialized entries are always skipped, regardless of their value.</dd></dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::bad_alloc</td><td>if memory allocation fails.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Example: </p><div class="fragment"><div class="line"><a class="code" href="classslt_1_1DenseMatrix.html">slt::DenseMatrix&lt;float&gt;</a> dense(3, 3);</div>
+<div class="line">dense.set(0, 1, 4.0f);</div>
+<div class="line">dense.set(1, 2, 7.0f);</div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="classslt_1_1SparseCSRMatrix.html">slt::SparseCSRMatrix&lt;float&gt;</a> csr(dense, <span class="keyword">false</span>);</div>
+<div class="ttc" id="aclassslt_1_1DenseMatrix_html"><div class="ttname"><a href="classslt_1_1DenseMatrix.html">slt::DenseMatrix</a></div><div class="ttdoc">A dense matrix implementation supporting float or double values.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:808</div></div>
+<div class="ttc" id="aclassslt_1_1SparseCSRMatrix_html"><div class="ttname"><a href="classslt_1_1SparseCSRMatrix.html">slt::SparseCSRMatrix</a></div><div class="ttdoc">Compressed Sparse Row (CSR) matrix representation.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:4181</div></div>
+</div><!-- fragment --> <dl class="section examples"><dt>Examples</dt><dd><a class="el" href="_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example.html#a84">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp</a>.</dd>
 </dl>
 
 </div>
@@ -236,6 +263,29 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Constructs a <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a> from a <a class="el" href="classslt_1_1SparseCOOMatrix.html" title="Sparse Coordinate (COO) Matrix class.">SparseCOOMatrix</a>. </p>
+<p>This constructor transforms a COO (Coordinate List) representation into the equivalent CSR (Compressed Sparse Row) format. It preserves all non-zero elements and their ordering by row.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">coo</td><td>A reference to the source <a class="el" href="classslt_1_1SparseCOOMatrix.html" title="Sparse Coordinate (COO) Matrix class.">SparseCOOMatrix</a> to convert.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="exception"><dt>Exceptions</dt><dd>
+  <table class="exception">
+    <tr><td class="paramname">std::bad_alloc</td><td>if memory allocation fails.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>The COO matrix is not modified.</dd></dl>
+<p>Example: </p><div class="fragment"><div class="line"><a class="code" href="classslt_1_1SparseCOOMatrix.html">slt::SparseCOOMatrix&lt;float&gt;</a> coo(3, 3);</div>
+<div class="line">coo.set(0, 0, 1.0f);</div>
+<div class="line">coo.set(1, 2, 2.5f);</div>
+<div class="line">coo.set(2, 1, 3.0f);</div>
+<div class="line"> </div>
+<div class="line"><a class="code" href="classslt_1_1SparseCSRMatrix.html">slt::SparseCSRMatrix&lt;float&gt;</a> csr(coo);</div>
+<div class="ttc" id="aclassslt_1_1SparseCOOMatrix_html"><div class="ttname"><a href="classslt_1_1SparseCOOMatrix.html">slt::SparseCOOMatrix</a></div><div class="ttdoc">Sparse Coordinate (COO) Matrix class.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:2753</div></div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="aee6eb4bcc57ffa422f0ef67092b21148"></a>
@@ -264,6 +314,19 @@ template&lt;typename T &gt; </div>
 </table>
 </div><div class="memdoc">
 
+<p>Copy constructor for <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a>. </p>
+<p>Creates a deep copy of another <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a>, duplicating all internal data structures including the non-zero values, column indices, and row pointers.</p>
+<p>This constructor ensures the resulting matrix is independent of the original, allowing modifications without affecting the source matrix.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">other</td><td>The <a class="el" href="classslt_1_1SparseCSRMatrix.html" title="Compressed Sparse Row (CSR) matrix representation.">SparseCSRMatrix</a> to copy.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd>This performs a deep copy; changes to the new matrix do not affect the original.</dd></dl>
+<p>Example: </p><div class="fragment"><div class="line"><a class="code" href="classslt_1_1SparseCSRMatrix.html">slt::SparseCSRMatrix&lt;float&gt;</a> original = ...;</div>
+<div class="line"><a class="code" href="classslt_1_1SparseCSRMatrix.html">slt::SparseCSRMatrix&lt;float&gt;</a> copy(original);</div>
+</div><!-- fragment --> 
 </div>
 </div>
 <a id="a298aa3b43f90c9bad070e5d31c75f7f6"></a>

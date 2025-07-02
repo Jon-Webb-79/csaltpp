@@ -2365,6 +2365,51 @@ TEST(SparseCSRConstructorTests, CopyLargeMatrix) {
     for (std::size_t i = 0; i < size; ++i)
         EXPECT_FLOAT_EQ(copy.get(i, i), static_cast<float>(i));
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, MoveConstructorTransfersDataCorrectly) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 0.0f},
+        {0.0f, 0.0f, 2.5f},
+        {0.0f, 3.0f, 0.0f}
+    };
+
+    slt::SparseCSRMatrix<float> original(dense, /*accept_zeros=*/false);
+    const std::size_t nnz = original.initialized_count();
+
+    // Move to a new object
+    slt::SparseCSRMatrix<float> moved(std::move(original));
+
+    // Check that the moved matrix has retained the correct shape and data
+    EXPECT_EQ(moved.rows(), 3);
+    EXPECT_EQ(moved.cols(), 3);
+    EXPECT_EQ(moved.initialized_count(), nnz);
+    EXPECT_FLOAT_EQ(moved.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(moved.get(1, 2), 2.5f);
+    EXPECT_FLOAT_EQ(moved.get(2, 1), 3.0f);
+
+    // Original object should now be in a valid but empty state
+    EXPECT_EQ(original.rows(), 0);
+    EXPECT_EQ(original.cols(), 0);
+    EXPECT_EQ(original.initialized_count(), 0u);
+}
+
+// --------------------------------------------------------------------------------
+
+TEST(SparseCSRConstructorTests, MoveConstructorHandlesEmptyMatrix) {
+    slt::DenseMatrix<float> dense(2, 2);  // Empty matrix
+    slt::SparseCSRMatrix<float> original(dense, /*accept_zeros=*/false);
+
+    slt::SparseCSRMatrix<float> moved(std::move(original));
+
+    EXPECT_EQ(moved.rows(), 2);
+    EXPECT_EQ(moved.cols(), 2);
+    EXPECT_EQ(moved.initialized_count(), 0u);
+
+    EXPECT_EQ(original.rows(), 0);
+    EXPECT_EQ(original.cols(), 0);
+    EXPECT_EQ(original.initialized_count(), 0u);
+}
 // ================================================================================
 // ================================================================================
 // eof

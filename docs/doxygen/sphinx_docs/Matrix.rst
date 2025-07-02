@@ -1,4 +1,4 @@
-**************
+***************
 Matrix Overview
 ***************
 
@@ -1496,6 +1496,28 @@ Build from SparseCSRMatrix<T>
 
       slt::SparseCSRMatrix<float> csr1 = ...;
       slt::SparseCSRMatrix<float> csr2(csr1);  // Deep copy
+
+.. cpp:function:: SparseCSRMatrix(SparseCSRMatrix<T>** other)
+
+      Move constructor for :cpp:class:`SparseCSRMatrix`.
+
+      Transfers ownership of all internal resources (data, column indices, and row indices)
+      from the source matrix into a new matrix instance. This constructor avoids deep copying
+      and is especially useful for handling temporary objects or optimizing container operations.
+
+      After the move, the source matrix (`other`) is left in a valid but empty state:
+      its number of rows and columns is reset to zero.
+
+      :param other: Matrix to move from.
+
+      **Example**::
+
+         slt::SparseCSRMatrix<float> mat1(5, 5);
+         mat1.set(0, 0, 3.14f);
+
+         // Transfer data from mat1 to mat2
+         slt::SparseCSRMatrix<float> mat2(std::move(mat1));
+
 
 Operator Overloads 
 ------------------

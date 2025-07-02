@@ -4338,6 +4338,27 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Move constructor for SparseCSRMatrix.
+         *
+         * Constructs a new SparseCSRMatrix by transferring ownership of the data from
+         * another matrix. This operation avoids deep copying and is useful for performance
+         * in temporary or intermediate objects.
+         *
+         * After the move, the `other` matrix is left in a valid but unspecified state,
+         * with its dimensions reset to zero.
+         *
+         * @param other The SparseCSRMatrix to move from.
+         *
+         * @note This constructor is marked noexcept to support optimal performance in STL containers.
+         *
+         * Example:
+         * @code
+         * slt::SparseCSRMatrix<float> a(10, 10);
+         * a.set(3, 4, 1.0f);
+         * slt::SparseCSRMatrix<float> b(std::move(a));  // a is now empty, b owns the data
+         * @endcode
+         */
         SparseCSRMatrix(SparseCSRMatrix&& other) noexcept
             : data(std::move(other.data)),
               col_indices(std::move(other.col_indices)),

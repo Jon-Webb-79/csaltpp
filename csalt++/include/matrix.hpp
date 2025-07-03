@@ -4370,6 +4370,73 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        explicit SparseCSRMatrix(DenseMatrix<T>&& dense, bool accept_zeros = true) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCSRMatrix only supports float or double types");
+
+            std::size_t r = dense.rows();
+            std::size_t c = dense.cols();
+
+            this->rows_ = r;
+            this->cols_ = c;
+            row_indices.resize(r + 1, 0);
+
+            for (std::size_t i = 0; i < r; ++i) {
+                for (std::size_t j = 0; j < c; ++j) {
+                    if (!dense.is_initialized(i, j)) {
+                        continue;
+                    }
+
+                    T val = dense.get(i, j);
+                    if (!accept_zeros && val == T{}) {
+                        continue;
+                    }
+
+                    data.push_back(std::move(val));
+                    col_indices.push_back(j);
+                    ++row_indices[i + 1];
+                }
+            }
+
+            for (std::size_t i = 1; i <= r; ++i) {
+                row_indices[i] += row_indices[i - 1];
+            }
+
+            // Clear the moved-from matrix
+            dense.clear();
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a SparseCSRMatrix by moving from a DenseMatrix.
+         *
+         * This constructor transfers the contents of a DenseMatrix into the CSR (Compressed Sparse Row)
+         * sparse format. Only initialized entries in the dense matrix are considered. If `accept_zeros`
+         * is set to `false`, any initialized entries with a value of `T{}` (i.e., zero) are excluded.
+         *
+         * The resulting CSR matrix stores each row's non-zero elements contiguously, with associated
+         * column indices and a row pointer array marking the start of each row.
+         *
+         * After the move, the input DenseMatrix is cleared and left in a valid but empty state.
+         *
+         * @tparam T A numeric type, restricted to float or double.
+         * @param dense Rvalue reference to the DenseMatrix to move from.
+         * @param accept_zeros Whether to include explicitly zero-valued entries (default: true).
+         *
+         * @throws std::bad_alloc If memory allocation for the CSR components fails.
+         *
+         * @note This is not a direct memory move (as formats differ), but a format conversion
+         *       that avoids copying the DenseMatrix unnecessarily.
+         *
+         * @example
+         * @code
+         * slt::DenseMatrix<float> dense = {
+         *     {1.0f, 0.0f},
+         *     {0.0f, 2.0f}
+         * };
+         * slt::SparseCSRMatrix<float> csr(std::move(dense), false);
+         * @endcode
+         */
         bool is_initialized(std::size_t row, std::size_t col) const {
             if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Row or column index out of range");

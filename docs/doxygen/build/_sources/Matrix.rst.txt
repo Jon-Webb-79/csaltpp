@@ -1448,6 +1448,32 @@ Build from DenseMatrix<T>
       // Skip zeros
       slt::SparseCSRMatrix<float> csr2(dense, false);
 
+.. cpp:function:: SparseCSRMatrix(DenseMatrix<T>&& dense, bool accept_zeros = true)
+
+   Constructs a SparseCSRMatrix by moving from a DenseMatrix and converting it into CSR format.
+
+   :tparam T: Must be ``float`` or ``double``.
+   :param dense: Rvalue reference to a ``DenseMatrix<T>`` that holds the source data.
+   :param accept_zeros: If ``true`` (default), explicitly zero-valued entries are included.
+                        If ``false``, zero-valued but initialized entries are ignored.
+   :throws: ``std::bad_alloc`` if memory allocation fails during construction.
+
+   This constructor inspects each initialized entry in the input DenseMatrix and inserts valid
+   elements into the internal CSR structure: ``data``, ``col_indices``, and ``row_indices``.
+   After construction, the input matrix is left in a valid but cleared state.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> dense = {
+          {1.0f, 0.0f},
+          {0.0f, 2.0f}
+      };
+
+      // Convert to sparse format, ignoring zeros
+      slt::SparseCSRMatrix<float> csr(std::move(dense), false);
+
 Build from SparseCOOMatrix<T>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

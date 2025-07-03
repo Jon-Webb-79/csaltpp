@@ -3087,6 +3087,40 @@ The matrix structure (rows and columns) is preserved during conversion.</p>
 </div>
 </dd></dl>
 
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCSRMatrixRR11DenseMatrixI1TEb">
+<span id="_CPPv315SparseCSRMatrixRR11DenseMatrixI1TEb"></span><span id="_CPPv215SparseCSRMatrixRR11DenseMatrixI1TEb"></span><span id="SparseCSRMatrix__DenseMatrix:T:RR.b"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCSRMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">dense</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">accept_zeros</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCSRMatrixRR11DenseMatrixI1TEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a SparseCSRMatrix by moving from a DenseMatrix and converting it into CSR format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – Must be <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">double</span></code>.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>dense</strong> – Rvalue reference to a <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code> that holds the source data.</p></li>
+<li><p><strong>accept_zeros</strong> – If <code class="docutils literal notranslate"><span class="pre">true</span></code> (default), explicitly zero-valued entries are included.
+If <code class="docutils literal notranslate"><span class="pre">false</span></code>, zero-valued but initialized entries are ignored.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">std::bad_alloc</span></code> if memory allocation fails during construction.</p>
+</dd>
+</dl>
+<p>This constructor inspects each initialized entry in the input DenseMatrix and inserts valid
+elements into the internal CSR structure: <code class="docutils literal notranslate"><span class="pre">data</span></code>, <code class="docutils literal notranslate"><span class="pre">col_indices</span></code>, and <code class="docutils literal notranslate"><span class="pre">row_indices</span></code>.
+After construction, the input matrix is left in a valid but cleared state.</p>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// Convert to sparse format, ignoring zeros</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">dense</span><span class="p">),</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 <section id="build-from-sparsecoomatrix-t">
 <h4>Build from SparseCOOMatrix&lt;T&gt;<a class="headerlink" href="#build-from-sparsecoomatrix-t" title="Link to this heading"></a></h4>

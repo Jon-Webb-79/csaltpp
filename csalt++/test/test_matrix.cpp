@@ -2410,6 +2410,61 @@ TEST(SparseCSRConstructorTests, MoveConstructorHandlesEmptyMatrix) {
     EXPECT_EQ(original.cols(), 0);
     EXPECT_EQ(original.initialized_count(), 0u);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, MoveConstructsFromDenseWithoutZeros) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f},
+        {0.0f, 2.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(std::move(dense), false);
+
+    EXPECT_EQ(csr.rows(), 2);
+    EXPECT_EQ(csr.cols(), 2);
+    EXPECT_EQ(csr.initialized_count(), 2);
+    EXPECT_NO_THROW(EXPECT_FLOAT_EQ(csr.get(0, 0), 1.0f));
+    EXPECT_NO_THROW(EXPECT_FLOAT_EQ(csr.get(1, 1), 2.0f));
+    EXPECT_THROW(csr.get(0, 1), std::runtime_error);
+}
+
+// -----------------------------------------------------------------------------
+
+TEST(SparseCSRConstructorTests, MoveConstructsFromDenseWithZerosAccepted) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f},
+        {0.0f, 2.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(std::move(dense), true);
+
+    EXPECT_EQ(csr.rows(), 2);
+    EXPECT_EQ(csr.cols(), 2);
+    EXPECT_EQ(csr.initialized_count(), 4);
+    EXPECT_NO_THROW(EXPECT_FLOAT_EQ(csr.get(0, 0), 1.0f));
+    EXPECT_NO_THROW(EXPECT_FLOAT_EQ(csr.get(0, 1), 0.0f));
+    EXPECT_NO_THROW(EXPECT_FLOAT_EQ(csr.get(1, 0), 0.0f));
+    EXPECT_NO_THROW(EXPECT_FLOAT_EQ(csr.get(1, 1), 2.0f));
+}
+
+// -----------------------------------------------------------------------------
+// Test: Source dense matrix is cleared after move
+TEST(SparseCSRConstructorTests, DenseMatrixClearedAfterMove) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(std::move(dense));
+
+    // Ensure new matrix contains data
+    EXPECT_EQ(csr.initialized_count(), 4);
+
+    // Confirm source matrix was cleared
+    EXPECT_EQ(dense.rows(), 0);
+    EXPECT_EQ(dense.cols(), 0);
+    EXPECT_EQ(dense.size(), 0);
+}
 // ================================================================================
 // ================================================================================
 // eof

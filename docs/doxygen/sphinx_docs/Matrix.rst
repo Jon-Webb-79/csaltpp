@@ -1499,6 +1499,29 @@ Build from SparseCOOMatrix<T>
 
       slt::SparseCSRMatrix<float> csr(coo);
 
+.. cpp:function:: SparseCSRMatrix(SparseCOOMatrix<T>&& coo)
+
+   Constructs a SparseCSRMatrix by moving data from a SparseCOOMatrix.
+
+   This constructor converts a COO-formatted sparse matrix to a CSR representation
+   by transferring ownership of its data and reformatting it internally.
+
+   :param coo: Rvalue reference to the source SparseCOOMatrix.
+   :throws: ``std::bad_alloc`` if memory allocation fails.
+   :note: After the move, the source matrix is cleared and left in a valid but empty state.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::SparseCOOMatrix<float> coo(3, 3);
+      coo.set(0, 0, 1.0f);
+      coo.set(1, 2, 2.5f);
+      coo.set(2, 1, 3.0f);
+
+      slt::SparseCSRMatrix<float> csr(std::move(coo));
+
+
 Build from SparseCSRMatrix<T>
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

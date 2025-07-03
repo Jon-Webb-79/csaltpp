@@ -3150,6 +3150,34 @@ build the CSR structure.</p>
 </div>
 </dd></dl>
 
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCSRMatrixRR15SparseCOOMatrixI1TE">
+<span id="_CPPv315SparseCSRMatrixRR15SparseCOOMatrixI1TE"></span><span id="_CPPv215SparseCSRMatrixRR15SparseCOOMatrixI1TE"></span><span id="SparseCSRMatrix__SparseCOOMatrix:T:RR"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCSRMatrix</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">SparseCOOMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">coo</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCSRMatrixRR15SparseCOOMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Constructs a SparseCSRMatrix by moving data from a SparseCOOMatrix.</p>
+<p>This constructor converts a COO-formatted sparse matrix to a CSR representation
+by transferring ownership of its data and reformatting it internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>coo</strong> – Rvalue reference to the source SparseCOOMatrix.</p>
+</dd>
+<dt class="field-even">Throws<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">std::bad_alloc</span></code> if memory allocation fails.</p>
+</dd>
+<dt class="field-odd">Note<span class="colon">:</span></dt>
+<dd class="field-odd"><p>After the move, the source matrix is cleared and left in a valid but empty state.</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">coo</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="p">);</span>
+<span class="n">coo</span><span class="p">.</span><span class="n">set</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mf">3.0f</span><span class="p">);</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">coo</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 <section id="build-from-sparsecsrmatrix-t">
 <h4>Build from SparseCSRMatrix&lt;T&gt;<a class="headerlink" href="#build-from-sparsecsrmatrix-t" title="Link to this heading"></a></h4>

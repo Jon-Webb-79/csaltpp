@@ -4370,7 +4370,7 @@
         }
 // -------------------------------------------------------------------------------- 
 
-        explicit SparseCSRMatrix(DenseMatrix<T>&& dense, bool accept_zeros = true) {
+        SparseCSRMatrix(DenseMatrix<T>&& dense, bool accept_zeros = true) {
             static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                           "SparseCSRMatrix only supports float or double types");
 
@@ -4408,35 +4408,53 @@
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Constructs a SparseCSRMatrix by moving from a DenseMatrix.
+         * @brief Constructs a SparseCSRMatrix by moving from a SparseCOOMatrix.
          *
-         * This constructor transfers the contents of a DenseMatrix into the CSR (Compressed Sparse Row)
-         * sparse format. Only initialized entries in the dense matrix are considered. If `accept_zeros`
-         * is set to `false`, any initialized entries with a value of `T{}` (i.e., zero) are excluded.
+         * This move constructor efficiently transfers data ownership from a COO format
+         * to a CSR format by reorganizing internal structures without copying data.
          *
-         * The resulting CSR matrix stores each row's non-zero elements contiguously, with associated
-         * column indices and a row pointer array marking the start of each row.
+         * @param coo A rvalue reference to the source SparseCOOMatrix.
          *
-         * After the move, the input DenseMatrix is cleared and left in a valid but empty state.
+         * @throws std::bad_alloc If memory allocation fails.
          *
-         * @tparam T A numeric type, restricted to float or double.
-         * @param dense Rvalue reference to the DenseMatrix to move from.
-         * @param accept_zeros Whether to include explicitly zero-valued entries (default: true).
-         *
-         * @throws std::bad_alloc If memory allocation for the CSR components fails.
-         *
-         * @note This is not a direct memory move (as formats differ), but a format conversion
-         *       that avoids copying the DenseMatrix unnecessarily.
-         *
-         * @example
-         * @code
-         * slt::DenseMatrix<float> dense = {
-         *     {1.0f, 0.0f},
-         *     {0.0f, 2.0f}
-         * };
-         * slt::SparseCSRMatrix<float> csr(std::move(dense), false);
-         * @endcode
+         * @note After this operation, the source COO matrix is left in a valid but empty state.
          */
+        SparseCSRMatrix(SparseCOOMatrix<T>&& coo) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCSRMatrix only supports float or double types");
+
+            this->rows_ = coo.rows();
+            this->cols_ = coo.cols();
+
+            // Organize entries by row
+            std::vector<std::vector<std::pair<std::size_t, T>>> row_entries(this->rows_);
+
+            for (const auto& triplet : coo) {
+                row_entries[triplet.row].emplace_back(triplet.col, triplet.value);
+            }
+
+            // Count total number of non-zero entries
+            std::size_t nnz = 0;
+            for (const auto& row : row_entries)
+                nnz += row.size();
+
+            data.reserve(nnz);
+            col_indices.reserve(nnz);
+            row_indices.resize(this->rows_ + 1, 0);
+
+            for (std::size_t i = 0; i < this->rows_; ++i) {
+                row_indices[i + 1] = row_indices[i] + row_entries[i].size();
+                for (const auto& [col, val] : row_entries[i]) {
+                    col_indices.push_back(col);
+                    data.push_back(val);
+                }
+            }
+
+            // Clear COO matrix
+            coo.clear();  // Assuming this method resets the COO matrix to empty state
+        }
+// -------------------------------------------------------------------------------- 
+
         bool is_initialized(std::size_t row, std::size_t col) const {
             if (row >= this->rows_ || col >= this->cols_)
                 throw std::out_of_range("Row or column index out of range");

@@ -2465,6 +2465,65 @@ TEST(SparseCSRConstructorTests, DenseMatrixClearedAfterMove) {
     EXPECT_EQ(dense.cols(), 0);
     EXPECT_EQ(dense.size(), 0);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, MoveConstructsFromBasicCOO) {
+    slt::SparseCOOMatrix<float> coo(3, 3);
+    coo.set(0, 0, 1.0f);
+    coo.set(1, 2, 2.5f);
+    coo.set(2, 1, 3.0f);
+
+    slt::SparseCSRMatrix<float> csr(std::move(coo));
+
+    EXPECT_EQ(csr.rows(), 3);
+    EXPECT_EQ(csr.cols(), 3);
+    EXPECT_EQ(csr.initialized_count(), 3);
+    EXPECT_TRUE(csr.is_initialized(0, 0));
+    EXPECT_TRUE(csr.is_initialized(1, 2));
+    EXPECT_TRUE(csr.is_initialized(2, 1));
+    EXPECT_FLOAT_EQ(csr.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(csr.get(1, 2), 2.5f);
+    EXPECT_FLOAT_EQ(csr.get(2, 1), 3.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, MoveConstructsFromEmptyCOO) {
+    slt::SparseCOOMatrix<float> coo(2, 2);
+
+    slt::SparseCSRMatrix<float> csr(std::move(coo));
+
+    EXPECT_EQ(csr.rows(), 2);
+    EXPECT_EQ(csr.cols(), 2);
+    EXPECT_EQ(csr.initialized_count(), 0);
+    EXPECT_FALSE(csr.is_initialized(0, 0));
+    EXPECT_FALSE(csr.is_initialized(1, 1));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRConstructorTests, MoveConstructsMultipleEntriesPerRow) {
+    slt::SparseCOOMatrix<float> coo(3, 3);
+    coo.set(0, 0, 1.0f);
+    coo.set(0, 1, 2.0f);
+    coo.set(1, 2, 3.0f);
+    coo.set(2, 0, 4.0f);
+    coo.set(2, 2, 5.0f);
+
+    slt::SparseCSRMatrix<float> csr(std::move(coo));
+
+    EXPECT_EQ(csr.rows(), 3);
+    EXPECT_EQ(csr.cols(), 3);
+    EXPECT_EQ(csr.initialized_count(), 5);
+    EXPECT_TRUE(csr.is_initialized(0, 0));
+    EXPECT_TRUE(csr.is_initialized(0, 1));
+    EXPECT_TRUE(csr.is_initialized(1, 2));
+    EXPECT_TRUE(csr.is_initialized(2, 0));
+    EXPECT_TRUE(csr.is_initialized(2, 2));
+    EXPECT_FLOAT_EQ(csr.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(csr.get(0, 1), 2.0f);
+    EXPECT_FLOAT_EQ(csr.get(1, 2), 3.0f);
+    EXPECT_FLOAT_EQ(csr.get(2, 0), 4.0f);
+    EXPECT_FLOAT_EQ(csr.get(2, 2), 5.0f);
+}
 // ================================================================================
 // ================================================================================
 // eof

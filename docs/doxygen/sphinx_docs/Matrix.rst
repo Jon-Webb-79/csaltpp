@@ -159,6 +159,48 @@ DenseMatrix Copy Constructor
       EXPECT_FLOAT_EQ(dense(2, 2), 3.0f);
       EXPECT_FALSE(dense.is_initialized(0, 0));
 
+.. cpp:function:: slt::DenseMatrix::DenseMatrix(const slt::SparseCSRMatrix<T>& csr)
+
+   Constructs a dense matrix from a compressed sparse row (CSR) matrix.
+
+   This constructor creates a new :cpp:class:`DenseMatrix<T>` object by copying
+   all explicitly initialized (non-zero) elements from a
+   :cpp:class:`SparseCSRMatrix<T>` input. Internally, it populates a dense
+   row-major storage layout, initializing each non-zero element to its value from
+   the CSR matrix, and marking the corresponding position as initialized.
+
+   Uninitialized entries (i.e., those not explicitly stored in the CSR matrix)
+   are set to ``T{}`` and marked as uninitialized. The total matrix dimensions
+   are preserved.
+
+   **Requirements:**
+
+   - The template parameter ``T`` must be either ``float`` or ``double``.
+   - The input matrix must have valid CSR indexing (monotonic, non-overlapping).
+
+   :param csr: A reference to the input :cpp:class:`SparseCSRMatrix<T>` object.
+   :type csr: const SparseCSRMatrix<T>&
+
+   :raises std::bad_alloc: If memory allocation fails during construction.
+   :raises std::out_of_range: If invalid CSR indexing leads to an invalid access.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> csr(3, 3);
+      // Assume csr is populated with valid values...
+
+      slt::DenseMatrix<float> dense(csr);
+
+      assert(dense.get(0, 1) == 1.5f);  // Example value
+      assert(!dense.is_initialized(2, 2));  // Uninitialized position
+
+   :note:
+      The resulting dense matrix uses row-major layout with separate
+      initialization tracking via a parallel ``std::vector<uint8_t>``.
+
+
 DenseMatrix Move Constructor 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

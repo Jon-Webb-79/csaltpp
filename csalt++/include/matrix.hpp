@@ -792,6 +792,9 @@
 
     template<typename T>
     class SparseCOOMatrix;
+
+    template<typename T>
+    class SparseCSRMatrix;
 // ================================================================================ 
 // ================================================================================ 
     // Dense matrix class
@@ -1396,6 +1399,55 @@
                 std::size_t idx = i * n + i;
                 data[idx] = static_cast<T>(1);
                 init[idx] = 1;
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Constructs a DenseMatrix from a SparseCSRMatrix.
+         *
+         * Converts a compressed sparse row (CSR) matrix into a dense representation,
+         * preserving all explicitly stored non-zero values. Uninitialized entries
+         * in the CSR matrix are marked as uninitialized and set to the default value `T{}`.
+         *
+         * @param csr The input SparseCSRMatrix<T> to copy from.
+         *
+         * @throws std::out_of_range if CSR matrix has invalid indexing.
+         * @throws std::bad_alloc if memory allocation fails.
+         *
+         * Example:
+         * @code
+         * slt::SparseCSRMatrix<float> csr = ...;
+         * slt::DenseMatrix<float> dense(csr);
+         * @endcode
+         */
+        DenseMatrix(const SparseCSRMatrix<T>& csr)
+            : MatrixBase<T>() {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "DenseMatrix only supports float or double types");
+
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+            std::size_t total = this->rows_ * this->cols_;
+
+            data.resize(total, T{});
+            init.resize(total, 0);
+
+            const auto& row_indices = csr.row_indices_view();
+            const auto& col_indices = csr.col_indices_view();
+            const auto& values = csr.values();
+
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_indices[row];
+                std::size_t end = row_indices[row + 1];
+
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    std::size_t col = col_indices[idx];
+                    std::size_t flat_idx = row * this->cols_ + col;
+
+                    data[flat_idx] = values[idx];
+                    init[flat_idx] = 1;
+                }
             }
         }
 // -------------------------------------------------------------------------------- 
@@ -4370,6 +4422,36 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Constructs a SparseCSRMatrix by moving from a DenseMatrix.
+         *
+         * This constructor transfers the contents of a DenseMatrix into the CSR (Compressed Sparse Row)
+         * sparse format. Only initialized entries in the dense matrix are considered. If `accept_zeros`
+         * is set to `false`, any initialized entries with a value of `T{}` (i.e., zero) are excluded.
+         *
+         * The resulting CSR matrix stores each row's non-zero elements contiguously, with associated
+         * column indices and a row pointer array marking the start of each row.
+         *
+         * After the move, the input DenseMatrix is cleared and left in a valid but empty state.
+         *
+         * @tparam T A numeric type, restricted to float or double.
+         * @param dense Rvalue reference to the DenseMatrix to move from.
+         * @param accept_zeros Whether to include explicitly zero-valued entries (default: true).
+         *
+         * @throws std::bad_alloc If memory allocation for the CSR components fails.
+         *
+         * @note This is not a direct memory move (as formats differ), but a format conversion
+         *       that avoids copying the DenseMatrix unnecessarily.
+         *
+         * @example
+         * @code
+         * slt::DenseMatrix<float> dense = {
+         *     {1.0f, 0.0f},
+         *     {0.0f, 2.0f}
+         * };
+         * slt::SparseCSRMatrix<float> csr(std::move(dense), false);
+         * @endcode
+         */
         SparseCSRMatrix(DenseMatrix<T>&& dense, bool accept_zeros = true) {
             static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
                           "SparseCSRMatrix only supports float or double types");
@@ -4453,6 +4535,21 @@
             // Clear COO matrix
             coo.clear();  // Assuming this method resets the COO matrix to empty state
         }
+// -------------------------------------------------------------------------------- 
+
+    const std::vector<T>& values() const noexcept {
+        return data;
+    }
+// -------------------------------------------------------------------------------- 
+
+    const std::vector<std::size_t>& col_indices_view() const noexcept {
+        return col_indices;
+    }
+// -------------------------------------------------------------------------------- 
+
+    const std::vector<std::size_t>& row_indices_view() const noexcept {
+        return row_indices;
+    }
 // -------------------------------------------------------------------------------- 
 
         bool is_initialized(std::size_t row, std::size_t col) const {

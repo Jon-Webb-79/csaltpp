@@ -999,6 +999,69 @@ TEST(DenseMatrixArrayConstructorTest, MismatchedDimensionsThrows) {
         slt::DenseMatrix<float> bad_mat(bad_values, 2, 3);  // 2x3 = 6 expected
     }, std::invalid_argument);
 }
+// ------------------------------------------------------------------
+
+TEST(DenseFromCSRConstructorTest, PopulatesFromSimpleCSR) {
+    slt::DenseMatrix<float> oldDense(3, 3);
+    oldDense.set(0, 0, 1.0f);
+    oldDense.set(1, 2, 2.0f);
+    oldDense.set(2, 1, 3.0f);
+
+    slt::SparseCSRMatrix<float> csr = std::move(oldDense);
+
+    slt::DenseMatrix<float> dense(csr);
+
+    EXPECT_EQ(dense.rows(), 3);
+    EXPECT_EQ(dense.cols(), 3);
+    EXPECT_TRUE(dense.is_initialized(0, 0));
+    EXPECT_TRUE(dense.is_initialized(1, 2));
+    EXPECT_TRUE(dense.is_initialized(2, 1));
+    EXPECT_EQ(dense.get(0, 0), 1.0f);
+    EXPECT_EQ(dense.get(1, 2), 2.0f);
+    EXPECT_EQ(dense.get(2, 1), 3.0f);
+
+    EXPECT_FALSE(dense.is_initialized(0, 1));
+    EXPECT_FALSE(dense.is_initialized(2, 2));
+}
+// ------------------------------------------------------------------
+
+TEST(DenseFromCSRConstructorTest, AllEntriesSetCorrectly) {
+    slt::DenseMatrix<float> oldDense(2, 2);
+    oldDense.set(0, 0, 1.1f);
+    oldDense.set(0, 1, 2.2f);
+    oldDense.set(1, 0, 3.3f);
+    oldDense.set(1, 1, 4.4f);
+
+    slt::SparseCSRMatrix<float> csr = std::move(oldDense);
+
+    slt::DenseMatrix<float> dense(csr);
+
+    EXPECT_TRUE(dense.is_initialized(0, 0));
+    EXPECT_TRUE(dense.is_initialized(0, 1));
+    EXPECT_TRUE(dense.is_initialized(1, 0));
+    EXPECT_TRUE(dense.is_initialized(1, 1));
+
+    EXPECT_FLOAT_EQ(dense.get(0, 0), 1.1f);
+    EXPECT_FLOAT_EQ(dense.get(0, 1), 2.2f);
+    EXPECT_FLOAT_EQ(dense.get(1, 0), 3.3f);
+    EXPECT_FLOAT_EQ(dense.get(1, 1), 4.4f);
+}
+// ------------------------------------------------------------------
+
+TEST(DenseFromCSRConstructorTest, HandlesEmptyRows) {
+    slt::DenseMatrix<float> oldDense(3, 3);
+    oldDense.set(0, 2, 9.9f);  // Row 1 is empty
+    oldDense.set(2, 1, 4.2f);
+
+    slt::SparseCSRMatrix<float> csr = std::move(oldDense);
+    slt::DenseMatrix<float> dense(csr);
+
+    EXPECT_TRUE(dense.is_initialized(0, 2));
+    EXPECT_TRUE(dense.is_initialized(2, 1));
+    EXPECT_FALSE(dense.is_initialized(1, 0));
+    EXPECT_FALSE(dense.is_initialized(1, 1));
+    EXPECT_FALSE(dense.is_initialized(1, 2));
+}
 // ================================================================================ 
 // ================================================================================ 
 // TEST TRIPLET CLASS 
@@ -2507,8 +2570,7 @@ TEST(SparseCSRConstructorTests, MoveConstructsMultipleEntriesPerRow) {
     coo.set(1, 2, 3.0f);
     coo.set(2, 0, 4.0f);
     coo.set(2, 2, 5.0f);
-
-    slt::SparseCSRMatrix<float> csr(std::move(coo));
+    slt::SparseCSRMatrix<float> csr = std::move(coo);
 
     EXPECT_EQ(csr.rows(), 3);
     EXPECT_EQ(csr.cols(), 3);

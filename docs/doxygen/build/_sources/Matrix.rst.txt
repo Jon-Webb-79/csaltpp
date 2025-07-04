@@ -801,6 +801,21 @@ Copy constructor
 
       slt::SparseCOOMatrix<float> new_mat(mat); // Copies mat to new_mat
 
+.. cpp:function:: SparseCOOMatrix(const SparseCSRMatrix<T>& csr)
+
+  Constructs a coordinate list (COO) sparse matrix from a CSR-format matrix.
+  This conversion expands the compressed row storage into explicit triplets
+  (row, column, value) for each non-zero element.
+
+  :param csr: A constant reference to the source CSR matrix.
+  :throws: std::bad_alloc if memory allocation fails.
+
+  **Example**::
+
+     slt::SparseCSRMatrix<float> csr = ...;
+     slt::SparseCOOMatrix<float> coo(csr);
+
+
 Move constructor
 ~~~~~~~~~~~~~~~~
 

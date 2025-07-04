@@ -3223,6 +3223,47 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Constructs a SparseCOOMatrix from a SparseCSRMatrix.
+         *
+         * Converts the internal CSR format into the equivalent COO format by 
+         * expanding the row pointer data into individual row indices for each 
+         * non-zero element. The order of insertion is preserved per row.
+         *
+         * @param csr A reference to the source SparseCSRMatrix object.
+         *
+         * @throws std::bad_alloc If memory allocation fails during construction.
+         *
+         * Example:
+         * @code
+         * slt::SparseCSRMatrix<float> csr = ...;
+         * slt::SparseCOOMatrix<float> coo(csr);
+         * @endcode
+         */
+        SparseCOOMatrix(const SparseCSRMatrix<T>& csr) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCOOMatrix only supports float or double types");
+
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+
+            const auto& values = csr.values();
+            const auto& cols = csr.col_indices_view();
+            const auto& row_ptrs = csr.row_indices_view();
+
+            std::size_t nnz = values.size();
+            triplet.reserve(nnz);
+
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_ptrs[row];
+                std::size_t end = row_ptrs[row + 1];
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    triplet.emplace_back(row, cols[idx], values[idx]);
+                }
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Accesses a matrix element (read-only).
          *
          * Retrieves the value at the specified row and column.

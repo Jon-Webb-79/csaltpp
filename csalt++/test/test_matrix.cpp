@@ -2281,6 +2281,40 @@ TEST(SparseCOOMatrixMoveAssignFromDense, SourceMatrixIsCleared) {
     EXPECT_EQ(mat.rows(), 0);
     EXPECT_EQ(mat.cols(), 0);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOConstructorTests, ConvertsBasicCSRToCOO) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 0.0f, 3.0f},
+        {4.0f, 5.0f, 0.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(dense, /*accept_zeros=*/false);
+    slt::SparseCOOMatrix<float> coo(csr);
+
+    EXPECT_EQ(coo.rows(), 3);
+    EXPECT_EQ(coo.cols(), 3);
+    EXPECT_EQ(coo.initialized_count(), 5);
+
+    EXPECT_FLOAT_EQ(coo.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(coo.get(0, 2), 2.0f);
+    EXPECT_FLOAT_EQ(coo.get(1, 2), 3.0f);
+    EXPECT_FLOAT_EQ(coo.get(2, 0), 4.0f);
+    EXPECT_FLOAT_EQ(coo.get(2, 1), 5.0f);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOConstructorTests, ConvertsEmptyCSRToCOO) {
+    slt::DenseMatrix<float> dense(2, 2);  // Uninitialized by default
+
+    slt::SparseCSRMatrix<float> csr(dense, /*accept_zeros=*/false);
+    slt::SparseCOOMatrix<float> coo(csr);
+
+    EXPECT_EQ(coo.rows(), 2);
+    EXPECT_EQ(coo.cols(), 2);
+    EXPECT_EQ(coo.initialized_count(), 0);
+}
 // ================================================================================ 
 // ================================================================================ 
 

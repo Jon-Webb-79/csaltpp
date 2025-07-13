@@ -3682,6 +3682,48 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Move assignment operator to convert a SparseCSRMatrix to a SparseCOOMatrix.
+         *
+         * This operator moves data from a CSR matrix into a COO matrix by converting
+         * the internal compressed representation into triplets. After the move,
+         * the source CSR matrix is cleared to avoid dangling state.
+         *
+         * @param csr Rvalue reference to a SparseCSRMatrix
+         * @return Reference to the updated SparseCOOMatrix
+         *
+         * @note This is a destructive move: the input CSR matrix is emptied.
+         */
+        SparseCOOMatrix<T>& operator=(SparseCSRMatrix<T>&& csr) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCOOMatrix only supports float or double types");
+
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+
+            const auto& values = csr.values();
+            const auto& cols = csr.col_indices_view();
+            const auto& row_ptrs = csr.row_indices_view();
+
+            triplet.clear();
+            triplet.reserve(values.size());
+
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_ptrs[row];
+                std::size_t end = row_ptrs[row + 1];
+
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    triplet.push_back({row, cols[idx], std::move(values[idx])});
+                }
+            }
+
+            // Reset source CSR matrix
+            csr.clear();
+
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Adds two sparse matrices element-wise and returns the result as a dense matrix.
          *
          * Performs element-wise addition of two matrices in sparse COO format. The result is returned

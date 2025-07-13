@@ -1286,6 +1286,48 @@ TEST(TripletTest, EqualsMethod) {
 // ================================================================================ 
 // ================================================================================ 
 
+TEST(SparseCOOMatrixMoveAssignTests, BasicMoveAssignFromCSR) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(dense);
+    slt::SparseCOOMatrix<float> coo = std::move(csr);
+
+    std::vector<std::tuple<std::size_t, std::size_t, float>> expected = {
+        {0, 0, 1.0f}, {0, 2, 2.0f},
+        {1, 1, 3.0f},
+        {2, 0, 4.0f}, {2, 2, 5.0f}
+    };
+
+    EXPECT_EQ(coo.rows(), 3);
+    EXPECT_EQ(coo.cols(), 3);
+    EXPECT_EQ(coo.initialized_count(), 9);
+
+    for (const auto& [r, c, v] : expected) {
+        EXPECT_TRUE(coo.is_initialized(r, c));
+        EXPECT_FLOAT_EQ(coo.get(r, c), v);
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixMoveAssignTests, CSRStateClearedAfterMove) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f},
+        {0.0f, 2.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(dense);
+    slt::SparseCOOMatrix<float> coo = std::move(csr);
+
+    EXPECT_EQ(csr.rows(), 0);
+    EXPECT_EQ(csr.cols(), 0);
+    EXPECT_EQ(csr.initialized_count(), 0);
+}
+
+// -------------------------------------------------------------------------------- 
 template <typename T>
 bool contains_triplet(const slt::SparseCOOMatrix<T>& coo, std::size_t row, std::size_t col, T value) {
     for (const auto& t : coo) {

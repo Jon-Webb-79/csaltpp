@@ -3674,6 +3674,48 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Assigns a SparseCOOMatrix from a SparseCSRMatrix.
+         *
+         * Converts the compressed sparse row (CSR) format matrix into coordinate (COO)
+         * format by iterating over initialized entries and storing them as triplets.
+         *
+         * @param csr The source SparseCSRMatrix to convert from.
+         * @return Reference to this SparseCOOMatrix.
+         *
+         * @throws std::bad_alloc if memory allocation for triplets fails.
+         *
+         * Example:
+         * @code
+         * slt::SparseCSRMatrix<float> csr = create_csr_matrix();
+         * slt::SparseCOOMatrix<float> coo;
+         * coo = csr;
+         * @endcode
+         */
+        SparseCOOMatrix<T>& operator=(const SparseCSRMatrix<T>& csr) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCOOMatrix only supports float or double types");
+
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+
+            triplet.clear();
+            const auto& values = csr.values();
+            const auto& cols = csr.col_indices_view();
+            const auto& row_ptrs = csr.row_indices_view();
+
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_ptrs[row];
+                std::size_t end = row_ptrs[row + 1];
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    triplet.push_back({row, cols[idx], values[idx]});
+                }
+            }
+
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Adds a scalar to each non-zero element of the sparse matrix.
          *
          * Each stored value in the COO matrix has the scalar added to it. This preserves

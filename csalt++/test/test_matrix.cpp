@@ -1244,6 +1244,69 @@ TEST(TripletTest, EqualsMethod) {
 }
 // ================================================================================ 
 // ================================================================================ 
+
+template <typename T>
+bool contains_triplet(const slt::SparseCOOMatrix<T>& coo, std::size_t row, std::size_t col, T value) {
+    for (const auto& t : coo) {
+        if (t.row == row && t.col == col && t.value == value)
+            return true;
+    }
+    return false;
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixAssignmentTests, AssignFromCSRBasic) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+    slt::SparseCSRMatrix<float> csr(dense);
+    slt::SparseCOOMatrix<float> coo = csr;
+
+    EXPECT_EQ(coo.rows(), 3);
+    EXPECT_EQ(coo.cols(), 3);
+    EXPECT_EQ(coo.initialized_count(), 9);
+    EXPECT_TRUE(contains_triplet(coo, 0, 0, 1.0f));
+    EXPECT_TRUE(contains_triplet(coo, 0, 2, 2.0f));
+    EXPECT_TRUE(contains_triplet(coo, 1, 1, 3.0f));
+    EXPECT_TRUE(contains_triplet(coo, 2, 0, 4.0f));
+    EXPECT_TRUE(contains_triplet(coo, 2, 2, 5.0f));
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixAssignmentTests, AssignFromEmptyCSR) {
+    slt::DenseMatrix<double> dense(2, 2); // All zeros
+    slt::SparseCSRMatrix<double> csr(dense);
+    slt::SparseCOOMatrix<double> coo = csr;
+
+    EXPECT_EQ(coo.rows(), 2);
+    EXPECT_EQ(coo.cols(), 2);
+    EXPECT_EQ(coo.initialized_count(), 0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixAssignmentTests, AssignFromCSRWithMultipleEntries) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 2.0f, 3.0f},
+        {4.0f, 5.0f, 6.0f}
+    };
+    slt::SparseCSRMatrix<float> csr(dense);
+    slt::SparseCOOMatrix<float> coo = csr;
+
+    EXPECT_EQ(coo.rows(), 2);
+    EXPECT_EQ(coo.cols(), 3);
+    EXPECT_EQ(coo.initialized_count(), 6);
+
+    EXPECT_TRUE(contains_triplet(coo, 0, 0, 1.0f));
+    EXPECT_TRUE(contains_triplet(coo, 0, 1, 2.0f));
+    EXPECT_TRUE(contains_triplet(coo, 0, 2, 3.0f));
+    EXPECT_TRUE(contains_triplet(coo, 1, 0, 4.0f));
+    EXPECT_TRUE(contains_triplet(coo, 1, 1, 5.0f));
+    EXPECT_TRUE(contains_triplet(coo, 1, 2, 6.0f));
+}
+// -------------------------------------------------------------------------------- 
+
 TEST(SparseCOOMatrixTest, ConstructorInitializesDimensionsCorrectly) {
     slt::SparseCOOMatrix<float> mat(5, 7);
     EXPECT_EQ(mat.rows(), 5);

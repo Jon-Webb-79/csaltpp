@@ -1224,6 +1224,27 @@ operator=
 
       EXPECT_EQ(coo.size(), 2);  // Includes explicit zero
 
+.. cpp:function:: SparseCOOMatrix<T>& operator=(const SparseCSRMatrix<T>& csr)
+
+   Assignment operator that converts a ``SparseCSRMatrix<T>`` to a
+   ``SparseCOOMatrix<T>``.
+
+   This operator extracts all initialized elements from the CSR matrix and
+   populates the COO matrix as a list of triplets. Any previous data in the
+   COO matrix is discarded.
+
+   :param csr: A reference to the CSR matrix to assign from.
+   :type csr: ``SparseCSRMatrix<T> const &``
+   :returns: Reference to the modified ``SparseCOOMatrix<T>``
+   :throws: ``std::bad_alloc`` if memory allocation for triplets fails.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<double> dense(2, 2);
+      slt::SparseCSRMatrix<double> csr(dense);
+      slt::SparseCOOMatrix<double> coo = csr;
 
 operator<<
 ~~~~~~~~~~

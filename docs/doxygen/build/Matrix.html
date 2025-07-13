@@ -2236,6 +2236,40 @@ dense matrix is cleared after the conversion.</p>
 </div>
 </dd></dl>
 
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv415SparseCOOMatrixRR15SparseCSRMatrixI1TE">
+<span id="_CPPv315SparseCOOMatrixRR15SparseCSRMatrixI1TE"></span><span id="_CPPv215SparseCOOMatrixRR15SparseCSRMatrixI1TE"></span><span id="SparseCOOMatrix__SparseCSRMatrix:T:RR"></span><span class="sig-name descname"><span class="n"><span class="pre">SparseCOOMatrix</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb" title="SparseCSRMatrix"><span class="n"><span class="pre">SparseCSRMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">csr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv415SparseCOOMatrixRR15SparseCSRMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Move constructor that converts a <a class="reference internal" href="#_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb" title="SparseCSRMatrix"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">SparseCSRMatrix</span></code></a> into a <a class="reference internal" href="#_CPPv415SparseCOOMatrixRR15SparseCSRMatrixI1TE" title="SparseCOOMatrix"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">SparseCOOMatrix</span></code></a>.</p>
+<p>This constructor transfers ownership of all initialized entries in the CSR matrix
+and re-expresses them in COO format using a vector of triplets. The resulting COO matrix
+preserves the row-wise ordering from the CSR layout.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>csr</strong> – A sparse matrix in CSR format (rvalue reference).</p>
+</dd>
+<dt class="field-even">Type csr<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="cpp-expr sig sig-inline cpp"><a class="reference internal" href="#_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb" title="SparseCSRMatrix"><span class="n">SparseCSRMatrix</span></a><span class="p">&lt;</span><span class="n">T</span><span class="p">&gt;</span><span class="p">&amp;</span><span class="p">&amp;</span></span></p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">std::bad_alloc</span></code> if memory allocation fails during triplet construction.</p>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>After the move, the source CSR matrix is left in a logically empty state
+(i.e., rows and cols are set to 0 and internal storage is cleared).</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr</span><span class="p">(</span><span class="n">dense</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCOOMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">coo</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">csr</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 </section>
 <section id="id8">

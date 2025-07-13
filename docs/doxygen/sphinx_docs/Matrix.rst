@@ -890,6 +890,35 @@ Move constructor
 
       // Only one triplet will exist since accept_zeros = false
 
+.. cpp:function:: SparseCOOMatrix(SparseCSRMatrix<T>&& csr)
+
+   Move constructor that converts a :cpp:class:`SparseCSRMatrix` into a :cpp:class:`SparseCOOMatrix`.
+
+   This constructor transfers ownership of all initialized entries in the CSR matrix
+   and re-expresses them in COO format using a vector of triplets. The resulting COO matrix
+   preserves the row-wise ordering from the CSR layout.
+
+   :param csr: A sparse matrix in CSR format (rvalue reference).
+   :type csr: :cpp:expr:`SparseCSRMatrix<T>&&`
+
+   :throws: ``std::bad_alloc`` if memory allocation fails during triplet construction.
+
+   :note: After the move, the source CSR matrix is left in a logically empty state
+          (i.e., rows and cols are set to 0 and internal storage is cleared).
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> dense = {
+          {1.0f, 0.0f},
+          {0.0f, 2.0f}
+      };
+
+      slt::SparseCSRMatrix<float> csr(dense);
+      slt::SparseCOOMatrix<float> coo(std::move(csr));
+
+
 Operator Overloads 
 ------------------
 

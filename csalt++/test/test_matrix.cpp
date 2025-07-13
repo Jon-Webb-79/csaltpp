@@ -2356,6 +2356,42 @@ TEST(SparseCOOConstructorTests, ConvertsEmptyCSRToCOO) {
     EXPECT_EQ(coo.cols(), 2);
     EXPECT_EQ(coo.initialized_count(), 0);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCOOMatrixMoveConstructorTests, ConvertsBasicCSRToCOO) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(dense);
+    slt::SparseCOOMatrix<float> coo(std::move(csr));
+
+    EXPECT_EQ(coo.get(0, 0), 1.0f);
+    EXPECT_EQ(coo.get(0, 1), 0.0f);
+    EXPECT_EQ(coo.get(0, 2), 2.0f);
+    EXPECT_EQ(coo.get(1, 0), 0.0f);
+    EXPECT_EQ(coo.get(1, 1), 3.0f);
+    EXPECT_EQ(coo.get(1, 2), 0.0f);
+    EXPECT_EQ(coo.get(2, 0), 4.0f);
+    EXPECT_EQ(coo.get(2, 1), 0.0f);
+    EXPECT_EQ(coo.get(2, 2), 5.0f);
+    EXPECT_EQ(coo.rows(), 3);
+    EXPECT_EQ(coo.cols(), 3);
+    EXPECT_EQ(csr.rows(), 0);
+    EXPECT_EQ(csr.cols(), 0);
+}
+// --------------------------------------------------------------------------------
+
+TEST(SparseCOOMatrixMoveConstructorTests, ConvertsEmptyCSRToCOO) {
+    slt::DenseMatrix<float> dense(3, 3);  // All zeros
+    slt::SparseCSRMatrix<float> csr(dense);
+    slt::SparseCOOMatrix<float> coo(std::move(csr));
+
+    EXPECT_EQ(coo.rows(), 3);
+    EXPECT_EQ(coo.cols(), 3);
+}
 // ================================================================================ 
 // ================================================================================ 
 

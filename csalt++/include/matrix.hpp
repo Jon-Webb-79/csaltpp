@@ -3319,6 +3319,55 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Move constructor that converts a SparseCSRMatrix into a SparseCOOMatrix.
+         *
+         * Transfers ownership of the data from a compressed sparse row (CSR) formatted matrix
+         * and reconstructs a coordinate list (COO) representation. The CSR matrix is left in a
+         * logically empty state after the operation (i.e., zero rows, zero columns, and cleared storage).
+         *
+         * @param csr A rvalue reference to a SparseCSRMatrix (must be float or double).
+         *
+         * @throws std::bad_alloc if memory allocation fails.
+         * @note The conversion preserves the ordering of entries by row.
+         *
+         * Example:
+         * @code
+         * slt::DenseMatrix<float> dense = {
+         *     {1.0f, 0.0f, 2.0f},
+         *     {0.0f, 3.0f, 0.0f}
+         * };
+         * slt::SparseCSRMatrix<float> csr(dense);
+         * slt::SparseCOOMatrix<float> coo(std::move(csr));
+         * @endcode
+         */
+        SparseCOOMatrix(SparseCSRMatrix<T>&& csr) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCOOMatrix only supports float or double types");
+
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+
+            const auto& values = csr.values();
+            const auto& cols = csr.col_indices_view();
+            const auto& row_ptrs = csr.row_indices_view();
+
+            std::size_t nnz = values.size();
+            triplet.reserve(nnz);
+
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_ptrs[row];
+                std::size_t end = row_ptrs[row + 1];
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    triplet.emplace_back(row, cols[idx], std::move(values[idx]));
+                }
+            }
+
+            // Logically clear the source CSR matrix
+            csr.clear();
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Accesses a matrix element (read-only).
          *
          * Retrieves the value at the specified row and column.

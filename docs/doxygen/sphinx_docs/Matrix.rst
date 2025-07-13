@@ -199,6 +199,28 @@ DenseMatrix Copy Constructor
       The resulting dense matrix uses row-major layout with separate
       initialization tracking via a parallel ``std::vector<uint8_t>``.
 
+.. cpp:function:: DenseMatrix<T>& DenseMatrix::operator=(const SparseCSRMatrix<T>& csr)
+
+   Assignment operator that fills a :cpp:class:`DenseMatrix` using values from a
+   :cpp:class:`SparseCSRMatrix`.
+
+   This overload copies the contents of the sparse matrix into a full 2D dense
+   array layout. Entries in the CSR matrix are directly mapped into their row/column
+   positions, and all remaining entries are initialized to zero.
+
+   :param csr: Input matrix in CSR format.
+   :type csr: const SparseCSRMatrix<T>&
+   :returns: A reference to the updated DenseMatrix.
+   :rtype: DenseMatrix<T>&
+   :throws: ``std::out_of_range`` if invalid indexing occurs internally.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> dense = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+      slt::SparseCSRMatrix<float> csr = dense;
+      slt::DenseMatrix<float> newDense = csr;
 
 DenseMatrix Move Constructor 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1696,6 +1718,49 @@ Identiy Matrix
 
 Operator Overloads 
 ------------------
+
+operator=
+~~~~~~~~~
+
+.. cpp:function:: SparseCSRMatrix<T>& operator=(const SparseCSRMatrix<T>& other)
+
+   Copy assignment operator for :cpp:class:`SparseCSRMatrix`.
+
+   Performs a deep copy of all contents, including non-zero values, column indices,
+   and row pointers. The dimensions of the target matrix are updated to match those
+   of the source matrix.
+
+   :param other: The matrix to copy from.
+   :type other: const :cpp:class:`SparseCSRMatrix<T>` &
+   :return: Reference to the updated :cpp:class:`SparseCSRMatrix` instance.
+   :rtype: :cpp:class:`SparseCSRMatrix<T>` &
+
+   :throws: ``std::bad_alloc`` if memory allocation fails.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> matA(5);
+      slt::SparseCSRMatrix<float> matB = matA;
+
+operator()
+~~~~~~~~~~
+
+operator+
+~~~~~~~~~
+
+operator-
+~~~~~~~~~
+
+operator*
+~~~~~~~~~
+
+operator/
+~~~~~~~~~
+
+operator<<
+~~~~~~~~~~
 
 Data Access Methods 
 -------------------

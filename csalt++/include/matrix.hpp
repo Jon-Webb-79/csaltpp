@@ -1,16 +1,16 @@
-// ================================================================================
-// ================================================================================
-// - File:    matrix.hpp
-// - Purpose: Describe the file purpose here
-//
-// Source Metadata
-// - Author:  Jonathan A. Webb
-// - Date:    May 31, 2025
-// - Version: 1.0
-// - Copyright: Copyright 2022, Jon Webb Inc.
-// ================================================================================
-// ================================================================================
-// Include modules here
+    // ================================================================================
+    // ================================================================================
+    // - File:    matrix.hpp
+    // - Purpose: Describe the file purpose here
+    //
+    // Source Metadata
+    // - Author:  Jonathan A. Webb
+    // - Date:    May 31, 2025
+    // - Version: 1.0
+    // - Copyright: Copyright 2022, Jon Webb Inc.
+    // ================================================================================
+    // ================================================================================
+    // Include modules here
 
 #ifndef DENSE_MATRIX_HPP
 #define DENSE_MATRIX_HPP
@@ -1689,6 +1689,55 @@
             }
 
             sparse.clear();
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Assignment operator to populate this DenseMatrix from a SparseCSRMatrix.
+         *
+         * Converts a matrix from CSR (Compressed Sparse Row) format into a dense representation.
+         * Non-zero entries from the sparse matrix are copied into the corresponding dense slots.
+         * All other entries are zero-initialized.
+         *
+         * @param csr The input SparseCSRMatrix to convert.
+         * @return Reference to this DenseMatrix after assignment.
+         *
+         * @throws std::out_of_range if index bounds are violated internally.
+         *
+         * Example:
+         * @code
+         * slt::SparseCSRMatrix<float> csr = build_sparse_matrix();
+         * slt::DenseMatrix<float> dense;
+         * dense = csr;
+         * @endcode
+         */
+        DenseMatrix<T>& operator=(const SparseCSRMatrix<T>& csr) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "DenseMatrix only supports float or double types");
+
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+            std::size_t size = this->rows_ * this->cols_;
+
+            data.assign(size, T{});
+            init.assign(size, 0);
+
+            const auto& values = csr.values();
+            const auto& cols = csr.col_indices_view();
+            const auto& row_ptrs = csr.row_indices_view();
+
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_ptrs[row];
+                std::size_t end = row_ptrs[row + 1];
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    std::size_t col = cols[idx];
+                    std::size_t dense_idx = row * this->cols_ + col;
+                    data[dense_idx] = values[idx];
+                    init[dense_idx] = 1;
+                }
+            }
+
             return *this;
         }
 // -------------------------------------------------------------------------------- 
@@ -4715,6 +4764,41 @@
 
             // Clear COO matrix
             coo.clear();  // Assuming this method resets the COO matrix to empty state
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Copy assignment operator for SparseCSRMatrix.
+         *
+         * This operator performs a deep copy of the contents from another
+         * SparseCSRMatrix. All internal data structures, including the non-zero values,
+         * column indices, and row pointer array, are duplicated into the target object.
+         *
+         * Self-assignment is safely handled with a check to avoid unnecessary operations.
+         *
+         * @param other A const reference to another SparseCSRMatrix to copy from.
+         * @return Reference to the updated SparseCSRMatrix object.
+         *
+         * @note Only available when T is float or double.
+         * 
+         * @throws std::bad_alloc If memory allocation fails during the copy.
+         *
+         * Example usage:
+         * @code
+         * slt::SparseCSRMatrix<float> A = create_matrix();
+         * slt::SparseCSRMatrix<float> B;
+         * B = A;  // B now contains a deep copy of A
+         * @endcode
+         */
+        SparseCSRMatrix& operator=(const SparseCSRMatrix& other) {
+            if (this != &other) {
+                this->rows_ = other.rows_;
+                this->cols_ = other.cols_;
+                data = other.data;
+                col_indices = other.col_indices;
+                row_indices = other.row_indices;
+            }
+            return *this;
         }
 // -------------------------------------------------------------------------------- 
 

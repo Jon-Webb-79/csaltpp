@@ -1697,6 +1697,50 @@ Identiy Matrix
 Operator Overloads 
 ------------------
 
+operator=
+~~~~~~~~~
+
+.. cpp:function:: SparseCSRMatrix<T>& operator=(const SparseCSRMatrix<T>& other)
+
+   Copy assignment operator for :cpp:class:`SparseCSRMatrix`.
+
+   Performs a deep copy of all contents, including non-zero values, column indices,
+   and row pointers. The dimensions of the target matrix are updated to match those
+   of the source matrix.
+
+   :param other: The matrix to copy from.
+   :type other: const :cpp:class:`SparseCSRMatrix<T>` &
+   :return: Reference to the updated :cpp:class:`SparseCSRMatrix` instance.
+   :rtype: :cpp:class:`SparseCSRMatrix<T>` &
+
+   :throws: ``std::bad_alloc`` if memory allocation fails.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> matA = generate_sparse();
+      slt::SparseCSRMatrix<float> matB;
+      matB = matA;  // Deep copy of A into B
+
+operator()
+~~~~~~~~~~
+
+operator+
+~~~~~~~~~
+
+operator-
+~~~~~~~~~
+
+operator*
+~~~~~~~~~
+
+operator/
+~~~~~~~~~
+
+operator<<
+~~~~~~~~~~
+
 Data Access Methods 
 -------------------
 

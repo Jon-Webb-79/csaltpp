@@ -1103,6 +1103,63 @@ TEST(DenseFromCSRConstructorTest, HandlesEmptyRows) {
     EXPECT_FALSE(dense.is_initialized(1, 1));
     EXPECT_FALSE(dense.is_initialized(1, 2));
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixAssignmentTests, AssignmentBasicCSRToDense) {
+    slt::DenseMatrix<float> dense_input = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(dense_input);
+    slt::DenseMatrix<float> result = csr;
+
+    EXPECT_EQ(result.rows(), 3);
+    EXPECT_EQ(result.cols(), 3);
+
+    for (std::size_t i = 0; i < result.rows(); ++i) {
+        for (std::size_t j = 0; j < result.cols(); ++j) {
+            EXPECT_FLOAT_EQ(result(i, j), dense_input(i, j));
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixAssignmentTests, AssignmentEmptyCSRToDense) {
+    slt::DenseMatrix<float> dense_input(2, 2);  // All values default initialized (uninitialized)
+    slt::SparseCSRMatrix<float> csr(dense_input);
+    slt::DenseMatrix<float> result = csr;
+
+    EXPECT_EQ(result.rows(), 2);
+    EXPECT_EQ(result.cols(), 2);
+
+    for (std::size_t i = 0; i < 2; ++i) {
+        for (std::size_t j = 0; j < 2; ++j) {
+            EXPECT_FALSE(result.is_initialized(i, j));
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixAssignmentTests, AssignmentSingleValueCSRToDense) {
+    slt::DenseMatrix<float> dense_input(3, 3);
+    dense_input.set(1, 1, 9.9f);
+
+    slt::SparseCSRMatrix<float> csr(dense_input);
+    slt::DenseMatrix<float> result = csr;
+
+    for (std::size_t i = 0; i < 3; ++i) {
+        for (std::size_t j = 0; j < 3; ++j) {
+            if (i == 1 && j == 1) {
+                EXPECT_TRUE(result.is_initialized(i, j));
+                EXPECT_FLOAT_EQ(result(i, j), 9.9f);
+            } else {
+                EXPECT_FALSE(result.is_initialized(i, j));
+            }
+        }
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 // TEST TRIPLET CLASS 
@@ -2731,6 +2788,54 @@ TEST(SparseCSRMatrixConstructorTests, ConstructsIdentityMatrix) {
             }
         }
     }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixCopyAssignmentTests, CopiesNonEmptyMatrix) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr1(dense);
+    slt::SparseCSRMatrix<float> csr2 = csr1;
+
+    EXPECT_EQ(csr2.rows(), csr1.rows());
+    EXPECT_EQ(csr2.cols(), csr1.cols());
+    EXPECT_EQ(csr2.values(), csr1.values());
+    EXPECT_EQ(csr2.col_indices_view(), csr1.col_indices_view());
+    EXPECT_EQ(csr2.row_indices_view(), csr1.row_indices_view());
+}
+
+// -----------------------------------------------------------------------------
+
+TEST(SparseCSRMatrixCopyAssignmentTests, HandlesEmptyMatrix) {
+    slt::DenseMatrix<float> dense(2, 2);
+    slt::SparseCSRMatrix<float> csr1(dense);
+    slt::SparseCSRMatrix<float> csr2 = csr1;
+
+    EXPECT_EQ(csr2.rows(), 2);
+    EXPECT_EQ(csr2.cols(), 2);
+    EXPECT_TRUE(csr2.values().empty());
+}
+
+// -----------------------------------------------------------------------------
+
+TEST(SparseCSRMatrixCopyAssignmentTests, SelfAssignmentIsSafe) {
+    slt::DenseMatrix<float> dense = {
+        {0.0f, 1.0f},
+        {2.0f, 0.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(dense);
+    csr = csr;  // Self-assignment
+
+    EXPECT_EQ(csr.rows(), 2);
+    EXPECT_EQ(csr.cols(), 2);
+    EXPECT_EQ(csr.initialized_count(), 4);
+    EXPECT_FLOAT_EQ(csr.get(0, 1), 1.0f);
+    EXPECT_FLOAT_EQ(csr.get(1, 0), 2.0f);
 }
 // ================================================================================
 // ================================================================================

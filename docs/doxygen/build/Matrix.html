@@ -855,6 +855,35 @@ and <code class="docutils literal notranslate"><span class="pre">value</span></c
 </div>
 </dd></dl>
 
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv411DenseMatrixRR15SparseCSRMatrixI1TE">
+<span id="_CPPv311DenseMatrixRR15SparseCSRMatrixI1TE"></span><span id="_CPPv211DenseMatrixRR15SparseCSRMatrixI1TE"></span><span id="DenseMatrix__SparseCSRMatrix:T:RR"></span><span class="sig-name descname"><span class="n"><span class="pre">DenseMatrix</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb" title="SparseCSRMatrix"><span class="n"><span class="pre">SparseCSRMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">csr</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv411DenseMatrixRR15SparseCSRMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Move constructor that converts a <code class="docutils literal notranslate"><span class="pre">SparseCSRMatrix&lt;T&gt;</span></code> to a <code class="docutils literal notranslate"><span class="pre">DenseMatrix&lt;T&gt;</span></code>.</p>
+<p>This constructor takes ownership of a sparse matrix and creates a dense
+matrix representation with the same dimensions. All initialized elements in
+the CSR matrix are transferred to their corresponding locations in the dense
+matrix. Any uninitialized entries remain zeroed in the dense output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>csr</strong> – A sparse matrix in CSR format to be converted to dense form.</p>
+</dd>
+<dt class="field-even">Type csr<span class="colon">:</span></dt>
+<dd class="field-even"><p>SparseCSRMatrix&lt;T&gt;&amp;&amp;</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">std::out_of_range</span></code> if index bounds are violated internally.</p>
+</dd>
+<dt class="field-even">Note<span class="colon">:</span></dt>
+<dd class="field-even"><p>The CSR matrix is left in a logically empty state (rows and cols set to 0).</p>
+</dd>
+</dl>
+<p><strong>Example:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">create_sparse_matrix</span><span class="p">();</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">csr</span><span class="p">));</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 <section id="densematrix-identify-constructor">
 <h4>DenseMatrix Identify Constructor<a class="headerlink" href="#densematrix-identify-constructor" title="Link to this heading"></a></h4>

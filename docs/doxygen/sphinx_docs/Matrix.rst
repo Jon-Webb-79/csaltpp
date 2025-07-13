@@ -129,7 +129,6 @@ DenseMatrix(const std::array<T, N>& arr, std::size_t r, std::size_t c)
 .. doxygenfunction:: slt::DenseMatrix::DenseMatrix(const std::array<T, N>&, std::size_t, std::size_t)
    :project: csalt++
 
-
 DenseMatrix Copy Constructor 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -240,6 +239,26 @@ DenseMatrix Move Constructor
       std::cout << dense.get(2, 0);  // Prints -1.2
       // dense.get(1, 1); would throw if uninitialized access is disallowed
 
+.. cpp:function:: DenseMatrix(SparseCSRMatrix<T>&& csr)
+
+   Move constructor that converts a ``SparseCSRMatrix<T>`` to a ``DenseMatrix<T>``.
+
+   This constructor takes ownership of a sparse matrix and creates a dense
+   matrix representation with the same dimensions. All initialized elements in
+   the CSR matrix are transferred to their corresponding locations in the dense
+   matrix. Any uninitialized entries remain zeroed in the dense output.
+
+   :param csr: A sparse matrix in CSR format to be converted to dense form.
+   :type csr: SparseCSRMatrix<T>&&
+   :throws: ``std::out_of_range`` if index bounds are violated internally.
+   :note: The CSR matrix is left in a logically empty state (rows and cols set to 0).
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> csr = create_sparse_matrix();
+      slt::DenseMatrix<float> dense(std::move(csr));
 
 DenseMatrix Identify Constructor 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

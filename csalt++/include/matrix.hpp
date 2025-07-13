@@ -1380,6 +1380,61 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Move constructor: Initializes a DenseMatrix from a SparseCSRMatrix.
+         *
+         * This constructor moves the contents of a SparseCSRMatrix into a DenseMatrix.
+         * The resulting DenseMatrix is a fully initialized matrix with all non-zero
+         * elements from the sparse matrix placed at their corresponding row-column
+         * indices. Zero-valued or uninitialized entries in the sparse matrix remain
+         * unset in the dense representation.
+         *
+         * This constructor does not transfer ownership of internal storage from the
+         * SparseCSRMatrix but instead copies the sparse contents into a new dense
+         * storage layout and marks the original matrix as logically empty by setting
+         * its row and column counts to zero.
+         *
+         * @tparam T The numerical type of the matrix (must be float or double).
+         * @param csr An rvalue reference to a SparseCSRMatrix instance.
+         *
+         * @throws std::out_of_range if indices in the source matrix are invalid.
+         * @note The source SparseCSRMatrix is marked as logically empty after this operation.
+         *
+         * Example:
+         * @code
+         * slt::SparseCSRMatrix<float> sparse = ...;
+         * slt::DenseMatrix<float> dense(std::move(sparse));
+         * @endcode
+         */
+        DenseMatrix(SparseCSRMatrix<T>&& csr) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "DenseMatrix only supports float or double types");
+
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+            std::size_t size = this->rows_ * this->cols_;
+
+            data.resize(size, T{});
+            init.resize(size, 0);
+
+            const auto& values = csr.values();
+            const auto& cols = csr.col_indices_view();
+            const auto& row_ptrs = csr.row_indices_view();
+
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_ptrs[row];
+                std::size_t end = row_ptrs[row + 1];
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    std::size_t col = cols[idx];
+                    std::size_t dense_idx = row * this->cols_ + col;
+                    data[dense_idx] = std::move(values[idx]);
+                    init[dense_idx] = 1;
+                }
+            }
+            csr.clear();
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Constructs a square identity matrix of size n x n.
          *
          * This constructor initializes a square matrix with 1s on the main diagonal and
@@ -4281,6 +4336,15 @@
 // ================================================================================ 
 
     public:
+
+        void clear() {
+            data.clear();
+            col_indices.clear();
+            row_indices.clear();
+            this->rows_ = 0;
+            this->cols_ = 0;
+        }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Constructs a SparseCSRMatrix from a DenseMatrix.

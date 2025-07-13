@@ -882,6 +882,47 @@ TEST(DenseMatrixSparseAdditionTest, SparseAdditionFromCArrayOfTriplets) {
     EXPECT_FLOAT_EQ(result(1, 0), 30.0f);  // unchanged
     EXPECT_FLOAT_EQ(result(1, 1), 30.0f);  // 40 - 10
 }
+// ----------------------------------------------------------------------------
+
+TEST(DenseMatrixMoveConstructorCSR, ConvertsCSRToDenseCorrectly) {
+    slt::DenseMatrix<float> original_dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 0.0f, 3.0f},
+        {4.0f, 5.0f, 0.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(original_dense);  // Copy constructor
+    slt::DenseMatrix<float> dense(std::move(csr));    // Move constructor
+
+    EXPECT_EQ(dense.rows(), 3);
+    EXPECT_EQ(dense.cols(), 3);
+
+    EXPECT_FLOAT_EQ(dense.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(dense.get(0, 1), 0.0f);
+    EXPECT_FLOAT_EQ(dense.get(0, 2), 2.0f);
+    EXPECT_FLOAT_EQ(dense.get(1, 0), 0.0f);
+    EXPECT_FLOAT_EQ(dense.get(1, 1), 0.0f);
+    EXPECT_FLOAT_EQ(dense.get(1, 2), 3.0f);
+    EXPECT_FLOAT_EQ(dense.get(2, 0), 4.0f);
+    EXPECT_FLOAT_EQ(dense.get(2, 1), 5.0f);
+    EXPECT_FLOAT_EQ(dense.get(2, 2), 0.0f);
+}
+
+// -----------------------------------------------------------------------------
+// Verifies CSR matrix is logically cleared after move
+TEST(DenseMatrixMoveConstructorCSR, CSRMatrixClearedAfterMove) {
+    slt::DenseMatrix<float> original_dense = {
+        {0.0f, 1.5f},
+        {2.5f, 0.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(original_dense);
+    slt::DenseMatrix<float> dense(std::move(csr));
+
+    EXPECT_EQ(csr.rows(), 0);
+    EXPECT_EQ(csr.cols(), 0);
+    EXPECT_EQ(csr.initialized_count(), 0);
+}
 // ================================================================================ 
 // ================================================================================
 

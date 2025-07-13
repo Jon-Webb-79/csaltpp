@@ -4516,6 +4516,33 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Constructs an identity matrix in SparseCSR format.
+         *
+         * Creates a square matrix of the given size with 1.0 on the diagonal and 0 elsewhere.
+         *
+         * @param size The number of rows and columns in the identity matrix.
+         * @throws std::bad_alloc if memory allocation fails.
+         */
+        explicit SparseCSRMatrix(std::size_t size) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "SparseCSRMatrix only supports float or double types");
+
+            this->rows_ = size;
+            this->cols_ = size;
+
+            data.resize(size, T{1});
+            col_indices.reserve(size);
+            row_indices.resize(size + 1);
+
+            for (std::size_t i = 0; i < size; ++i) {
+                col_indices.push_back(i);
+                row_indices[i] = i;
+            }
+            row_indices[size] = size;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Copy constructor for SparseCSRMatrix.
          *
          * Creates a deep copy of another SparseCSRMatrix, duplicating all

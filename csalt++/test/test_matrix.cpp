@@ -2697,6 +2697,41 @@ TEST(SparseCSRConstructorTests, MoveConstructsMultipleEntriesPerRow) {
     EXPECT_FLOAT_EQ(csr.get(2, 0), 4.0f);
     EXPECT_FLOAT_EQ(csr.get(2, 2), 5.0f);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixConstructorTests, ConstructsIdentityMatrix) {
+    const std::size_t size = 5;
+    slt::SparseCSRMatrix<float> identity(size);
+
+    // Check dimensions
+    EXPECT_EQ(identity.rows(), size);
+    EXPECT_EQ(identity.cols(), size);
+    EXPECT_EQ(identity.initialized_count(), size);
+
+    // Check row_indices: should be {0, 1, 2, 3, 4, 5}
+    std::vector<std::size_t> expected_row_indices(size + 1);
+    std::iota(expected_row_indices.begin(), expected_row_indices.end(), 0);
+    EXPECT_EQ(identity.row_indices_view(), expected_row_indices);
+
+    // Check col_indices: should be {0, 1, 2, 3, 4}
+    std::vector<std::size_t> expected_col_indices(size);
+    std::iota(expected_col_indices.begin(), expected_col_indices.end(), 0);
+    EXPECT_EQ(identity.col_indices_view(), expected_col_indices);
+
+    // Check data: should be all 1.0
+    std::vector<float> expected_data(size, 1.0f);
+    EXPECT_EQ(identity.values(), expected_data);
+
+    // Check get(i, j): should be 1.0 if i == j, otherwise throw
+    for (std::size_t i = 0; i < size; ++i) {
+        EXPECT_EQ(identity.get(i, i), 1.0f);
+        for (std::size_t j = 0; j < size; ++j) {
+            if (i != j) {
+                EXPECT_THROW(identity.get(i, j), std::runtime_error);
+            }
+        }
+    }
+}
 // ================================================================================
 // ================================================================================
 // eof

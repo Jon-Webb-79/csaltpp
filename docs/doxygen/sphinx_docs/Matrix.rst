@@ -1672,6 +1672,27 @@ Build from SparseCSRMatrix<T>
          // Transfer data from mat1 to mat2
          slt::SparseCSRMatrix<float> mat2(std::move(mat1));
 
+Identiy Matrix 
+~~~~~~~~~~~~~~
+
+.. cpp:function:: SparseCSRMatrix(std::size_t size)
+
+   Constructs an identity matrix in :cpp:class:`SparseCSRMatrix` format.
+
+   This creates a square matrix of dimension ``size x size`` with 1.0 on the diagonal
+   and zero elsewhere. The matrix is stored in CSR format for efficient row-wise access.
+
+   :param size: Number of rows and columns (i.e., the size of the square identity matrix).
+   :type size: std::size_t
+   :throws: ``std::bad_alloc`` if memory allocation fails.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> identity(4);
+      // Identity matrix of size 4x4 with float precision
+
 
 Operator Overloads 
 ------------------

@@ -2900,6 +2900,52 @@ TEST(SparseCSRMatrixCopyAssignmentTests, SelfAssignmentIsSafe) {
     EXPECT_FLOAT_EQ(csr.get(0, 1), 1.0f);
     EXPECT_FLOAT_EQ(csr.get(1, 0), 2.0f);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixMoveAssignmentTests, MovesPopulatedMatrix) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+
+    slt::SparseCSRMatrix<float> source(dense);
+    slt::SparseCSRMatrix<float> target = std::move(source);
+
+    EXPECT_EQ(target.rows(), 3);
+    EXPECT_EQ(target.cols(), 3);
+    EXPECT_EQ(target.initialized_count(), 9);
+
+    // Verify expected content
+    EXPECT_FLOAT_EQ(target.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(target.get(0, 2), 2.0f);
+    EXPECT_FLOAT_EQ(target.get(1, 1), 3.0f);
+    EXPECT_FLOAT_EQ(target.get(2, 0), 4.0f);
+    EXPECT_FLOAT_EQ(target.get(2, 2), 5.0f);
+
+    // Source should be in a valid but empty state
+    EXPECT_EQ(source.rows(), 0);
+    EXPECT_EQ(source.cols(), 0);
+    EXPECT_EQ(source.initialized_count(), 0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixMoveAssignmentTests, HandlesSelfMoveGracefully) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    };
+
+    slt::SparseCSRMatrix<float> matrix(dense);
+    slt::SparseCSRMatrix<float>* ptr = &matrix;
+    *ptr = std::move(*ptr);  // Self-move
+
+    // Matrix should remain valid and unchanged
+    EXPECT_EQ(matrix.rows(), 2);
+    EXPECT_EQ(matrix.cols(), 2);
+    EXPECT_EQ(matrix.initialized_count(), 4);
+    EXPECT_FLOAT_EQ(matrix.get(1, 1), 4.0f);
+}
 // ================================================================================
 // ================================================================================
 // eof

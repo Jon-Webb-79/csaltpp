@@ -4844,6 +4844,34 @@
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Move assignment operator.
+         *
+         * Transfers ownership of all data from the source SparseCSRMatrix to this matrix.
+         * After the move, the source matrix is left in a valid but empty state.
+         *
+         * @param other The source SparseCSRMatrix to move from.
+         * @return Reference to this matrix after assignment.
+         *
+         * @note This function is noexcept and performs no allocations.
+         * @note The source matrix's `rows_` and `cols_` are reset to 0.
+         */
+        SparseCSRMatrix& operator=(SparseCSRMatrix&& other) noexcept {
+            if (this != &other) {
+                this->rows_ = other.rows_;
+                this->cols_ = other.cols_;
+                data = std::move(other.data);
+                col_indices = std::move(other.col_indices);
+                row_indices = std::move(other.row_indices);
+
+                // Reset source object
+                other.rows_ = 0;
+                other.cols_ = 0;
+            }
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
     const std::vector<T>& values() const noexcept {
         return data;
     }

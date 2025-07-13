@@ -1765,6 +1765,26 @@ operator=
       slt::SparseCSRMatrix<float> matA(5);
       slt::SparseCSRMatrix<float> matB = matA;
 
+.. cpp:function:: SparseCSRMatrix &operator=(SparseCSRMatrix &&other) noexcept
+
+   Move assignment operator.
+
+   Transfers ownership of all internal data structures from the given
+   :cpp:class:`SparseCSRMatrix` to this matrix. After the operation, the source matrix
+   is left in a cleared state with `rows_` and `cols_` set to zero.
+
+   :param other: The matrix to move from.
+   :type other: ``SparseCSRMatrix&&``
+   :return: Reference to this matrix.
+   :rtype: ``SparseCSRMatrix&``
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> A = build_matrix();
+      slt::SparseCSRMatrix<float> B = std::move(A);
+
 operator()
 ~~~~~~~~~~
 

@@ -1246,6 +1246,30 @@ operator=
       slt::SparseCSRMatrix<double> csr(dense);
       slt::SparseCOOMatrix<double> coo = csr;
 
+.. cpp:function:: DenseMatrix<T>& DenseMatrix::operator=(SparseCSRMatrix<T>&& csr)
+
+   **Move-assignment operator** that consumes a *rvalue* :cpp:`SparseCSRMatrix`
+   and rewrites this matrix into dense form.
+
+   :param csr: Sparse matrix in CSR format (rvalue reference).
+   :type  csr: ``SparseCSRMatrix<T>&&``
+   :returns: Reference to *this* dense matrix.
+   :rtype: ``DenseMatrix<T>&``
+   :throws std::bad_alloc: If internal buffers must grow and allocation fails.
+
+   Internally the operator allocates a contiguous row-major buffer, then
+   scatters every initialized entry of *csr* into its `(row,col)` slot.  
+   After transfer, the source CSR matrix is reset to an empty (but valid) state.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<double> csr = build_sparse();
+      slt::DenseMatrix<double>     A;       // empty
+      A = std::move(csr);                   // csr cleared; A now dense
+
+
 operator<<
 ~~~~~~~~~~
 

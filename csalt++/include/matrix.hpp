@@ -1743,6 +1743,62 @@
 // -------------------------------------------------------------------------------- 
 
         /**
+         * @brief Move-assignment: convert and transfer a SparseCSRMatrix into this DenseMatrix.
+         *
+         * All initialized values of the *rvalue* CSR matrix are copied into the dense
+         * storage of *this* matrix; un-initialized positions remain the default value
+         * `T{}`.  After the transfer the source CSR matrix is put into a logically
+         * empty state (`rows_ = cols_ = 0`, vectors cleared).
+         *
+         * @param csr  An rvalue reference to the CSR matrix to consume.
+         * @return     Reference to this DenseMatrix.
+         *
+         * @throws std::bad_alloc  If re-allocation of the dense buffers fails.
+         *
+         * @note  The operation is `noexcept` except for allocation.
+         *
+         * Example
+         * -------
+         * ```cpp
+         * slt::SparseCSRMatrix<float> csr = build_csr();
+         * slt::DenseMatrix<float>      A(0,0);   // empty
+         * A = std::move(csr);                    // csr now empty, A dense-filled
+         * ```
+         */
+        DenseMatrix& operator=(SparseCSRMatrix<T>&& csr) {
+            static_assert(std::is_same_v<T, float> || std::is_same_v<T, double>,
+                          "DenseMatrix only supports float or double types");
+
+            /* resize buffers */
+            this->rows_ = csr.rows();
+            this->cols_ = csr.cols();
+            std::size_t total = this->rows_ * this->cols_;
+            data.assign(total, T{});
+            init.assign(total, 0);
+
+            /* pull references to CSR internals */
+            const auto& vals = csr.values();
+            const auto& cols = csr.col_indices_view();
+            const auto& rowp = csr.row_indices_view();
+
+            /* scatter CSR entries into dense layout */
+            for (std::size_t r = 0; r < this->rows_; ++r) {
+                for (std::size_t k = rowp[r]; k < rowp[r + 1]; ++k) {
+                    std::size_t c  = cols[k];
+                    std::size_t ix = r * this->cols_ + c;
+                    data[ix]       = std::move(vals[k]);
+                    init[ix]       = 1;
+                }
+            }
+
+            /* logically clear source */
+            csr.clear();         // or rows_=cols_=0 + vector::clear()
+
+            return *this;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
          * @brief Move assignment operator for DenseMatrix.
          *
          * Transfers ownership of the resources from another matrix to this one.

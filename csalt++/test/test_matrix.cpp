@@ -1160,6 +1160,47 @@ TEST(DenseMatrixAssignmentTests, AssignmentSingleValueCSRToDense) {
         }
     }
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(DenseMatrixMoveAssignmentTests, MoveAssignFromDenseBackedCSR) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+    slt::SparseCSRMatrix<float> csr(dense);
+
+    slt::DenseMatrix<float> result = std::move(csr);
+
+    EXPECT_EQ(result.rows(), 3);
+    EXPECT_EQ(result.cols(), 3);
+    EXPECT_FLOAT_EQ(result.get(0, 0), 1.0f);
+    EXPECT_FLOAT_EQ(result.get(0, 2), 2.0f);
+    EXPECT_FLOAT_EQ(result.get(1, 1), 3.0f);
+    EXPECT_FLOAT_EQ(result.get(2, 0), 4.0f);
+    EXPECT_FLOAT_EQ(result.get(2, 2), 5.0f);
+
+    // Check that csr has been cleared
+    EXPECT_EQ(csr.rows(), 0);
+    EXPECT_EQ(csr.cols(), 0);
+    EXPECT_EQ(csr.initialized_count(), 0);
+}
+// --------------------------------------------------------------------------------
+TEST(DenseMatrixMoveAssignmentTests, MoveAssignFromEmptyCSR) {
+    slt::DenseMatrix<float> dense(3, 3);
+    slt::SparseCSRMatrix<float> csr(std::move(dense));
+    slt::DenseMatrix<float> result = std::move(csr);
+    
+
+    EXPECT_EQ(result.rows(), 3);
+    EXPECT_EQ(result.cols(), 3);
+    EXPECT_EQ(result.initialized_count(), 0);
+
+    // Check that csr has been cleared
+    EXPECT_EQ(csr.rows(), 0);
+    EXPECT_EQ(csr.cols(), 0);
+    EXPECT_EQ(csr.initialized_count(), 0);
+}
 // ================================================================================ 
 // ================================================================================ 
 // TEST TRIPLET CLASS 

@@ -4970,19 +4970,119 @@
         }
 // -------------------------------------------------------------------------------- 
 
-    const std::vector<T>& values() const noexcept {
-        return data;
-    }
+        /**
+         * @brief Element-wise addition of two SparseCSRMatrix objects.
+         *
+         * Returns a full dense matrix containing the sum of *this and *other.  
+         * All non-zero entries from both operands are scattered into a
+         * `DenseMatrix<T>` result; where both matrices contain a value in the same
+         * position the values are summed, otherwise the single non-zero is copied.
+         *
+         * @param other  The right-hand-side CSR matrix.
+         * @return       A `DenseMatrix<T>` holding the element-wise sum.
+         *
+         * @throws std::invalid_argument  If the two matrices have different shapes.
+         */
+        DenseMatrix<T> operator+(const SparseCSRMatrix<T>& other) const
+        {
+            if (this->rows_ != other.rows_ || this->cols_ != other.cols_)
+                throw std::invalid_argument("Matrix dimensions must match for addition");
+
+            DenseMatrix<T> result(this->rows_, this->cols_);
+
+            /* lambda to scatter one CSR matrix into the dense result */
+            auto scatter_csr_into_dense =
+                [&result](const std::vector<T>& vals,
+                          const std::vector<std::size_t>& cols,
+                          const std::vector<std::size_t>& row_ptr,
+                          std::size_t nrows, std::size_t ncols)
+            {
+                for (std::size_t r = 0; r < nrows; ++r)
+                {
+                    std::size_t begin = row_ptr[r];
+                    std::size_t end   = row_ptr[r + 1];
+
+                    for (std::size_t k = begin; k < end; ++k)
+                    {
+                        std::size_t c = cols[k];
+                        T v           = vals[k];
+
+                        if (result.is_initialized(r, c))
+                            result.update(r, c, result(r, c) + v);
+                        else
+                            result.set(r, c, v);
+                    }
+                }
+            };
+
+            /* add *this then other */
+            scatter_csr_into_dense(data,        col_indices, row_indices, this->rows_, this->cols_);
+            scatter_csr_into_dense(other.data,  other.col_indices, other.row_indices,
+                                   other.rows_, other.cols_);
+
+            return result;
+        }
 // -------------------------------------------------------------------------------- 
 
-    const std::vector<std::size_t>& col_indices_view() const noexcept {
-        return col_indices;
-    }
+        /**
+         * @brief Adds a scalar value to all elements of the matrix.
+         *
+         * This operator creates a new dense matrix where each entry is initialized to
+         * the provided scalar value, and then overlays the non-zero values from the
+         * sparse matrix. For each non-zero entry (i, j) in the CSR matrix, the result
+         * at (i, j) becomes:
+         *
+         *     result(i, j) = scalar + data[i,j]
+         *
+         * All other entries in the resulting dense matrix will simply contain the scalar.
+         *
+         * @tparam T Type of matrix values (must be float or double).
+         * @param scalar The scalar value to add to each element.
+         * @return A DenseMatrix<T> containing the scalar addition result.
+         *
+         * @note This function does not modify the original sparse matrix.
+         * @note This operation is not SIMD accelerated since it targets scattered entries.
+         * @warning If the sparse matrix was constructed with `accept_zeros = true`,
+         *          explicit zero entries may affect the final values at those positions.
+         *
+         * @example
+         * @code
+         * slt::SparseCSRMatrix<float> csr = build_sparse_matrix();
+         * slt::DenseMatrix<float> result = csr + 1.0f;
+         * @endcode
+         */
+        DenseMatrix<T> operator+(T scalar) const {
+            // Create a dense matrix filled with the scalar value
+            DenseMatrix<T> result(this->rows_, this->cols_, scalar);
+
+            // Overlay CSR non-zero values on top of the scalar-filled dense matrix
+            for (std::size_t row = 0; row < this->rows_; ++row) {
+                std::size_t start = row_indices[row];
+                std::size_t end = row_indices[row + 1];
+
+                for (std::size_t idx = start; idx < end; ++idx) {
+                    std::size_t col = col_indices[idx];
+                    result.update(row, col, result(row, col) + data[idx]);
+                }
+            }
+
+            return result;
+        }
 // -------------------------------------------------------------------------------- 
 
-    const std::vector<std::size_t>& row_indices_view() const noexcept {
-        return row_indices;
-    }
+        const std::vector<T>& values() const noexcept {
+            return data;
+        }
+// -------------------------------------------------------------------------------- 
+
+        const std::vector<std::size_t>& col_indices_view() const noexcept {
+            return col_indices;
+        }
+// -------------------------------------------------------------------------------- 
+
+        const std::vector<std::size_t>& row_indices_view() const noexcept {
+            return row_indices;
+        }
 // -------------------------------------------------------------------------------- 
 
         bool is_initialized(std::size_t row, std::size_t col) const {

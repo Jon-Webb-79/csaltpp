@@ -3602,6 +3602,80 @@ is left in a cleared state with <cite>rows_</cite> and <cite>cols_</cite> set to
 </section>
 <section id="id38">
 <h4>operator+<a class="headerlink" href="#id38" title="Link to this heading"></a></h4>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENKplE11DenseMatrixI1TERK15SparseCSRMatrixI1TE">
+<span id="_CPPv3I0ENKplERK15SparseCSRMatrixI1TE"></span><span id="_CPPv2I0ENKplERK15SparseCSRMatrixI1TE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0ENKplE11DenseMatrixI1TERK15SparseCSRMatrixI1TE" title="operator+::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv415SparseCSRMatrixRK11DenseMatrixI1TEb" title="SparseCSRMatrix"><span class="n"><span class="pre">SparseCSRMatrix</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0ENKplE11DenseMatrixI1TERK15SparseCSRMatrixI1TE" title="operator+::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4I0ENKplE11DenseMatrixI1TERK15SparseCSRMatrixI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Performs element-wise addition between two sparse matrices in CSR (Compressed Sparse Row) format, returning the result as a dense matrix.</p>
+<p>This member function adds the non-zero entries from both <cite>*this</cite> and <cite>other</cite> and stores the result in a new <a class="reference internal" href="#_CPPv411DenseMatrixRR15SparseCOOMatrixI1TE" title="DenseMatrix"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">DenseMatrix</span></code></a>. The result has the same dimensions as the input matrices. If a non-zero element exists in the same position in both matrices, their values are summed. If only one matrix contains a non-zero at a given location, that value is propagated to the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – The right-hand-side matrix to add. Must have the same dimensions as the current matrix.</p>
+</dd>
+<dt class="field-even">Type other<span class="colon">:</span></dt>
+<dd class="field-even"><p>const SparseCSRMatrix&lt;T&gt;&amp;</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A DenseMatrix&lt;T&gt; containing the element-wise sum of the two matrices.</p>
+</dd>
+<dt class="field-even">Rtype<span class="colon">:</span></dt>
+<dd class="field-even"><p>DenseMatrix&lt;T&gt;</p>
+</dd>
+<dt class="field-odd">Throws<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span><span class="cpp-expr sig sig-inline cpp"><span class="n">std</span><span class="p">::</span><span class="n">invalid_argument</span></span></span> – If the dimensions of the two matrices do not match.</p>
+</dd>
+</dl>
+<p><strong>Example</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;::</span><span class="n">identity</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">B</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">},</span>
+<span class="w">    </span><span class="p">{</span><span class="mf">3.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">0.0f</span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">C</span><span class="p">(</span><span class="n">B</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">A</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">C</span><span class="p">;</span>
+
+<span class="c1">// result:</span>
+<span class="c1">// [1.0, 1.0, 0.0]</span>
+<span class="c1">// [0.0, 1.0, 2.0]</span>
+<span class="c1">// [3.0, 0.0, 1.0]</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK3slt15SparseCSRMatrixplE11DenseMatrixI1TE1T">
+<span id="_CPPv3I0ENK3slt15SparseCSRMatrixplE1T"></span><span id="_CPPv2I0ENK3slt15SparseCSRMatrixplE1T"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="n"><span class="pre">DenseMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-prename descclassname"><span class="n"><span class="pre">slt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">SparseCSRMatrix</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">::</span></span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">+</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">T</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">scalar</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4I0ENK3slt15SparseCSRMatrixplE11DenseMatrixI1TE1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Adds a scalar value to all elements of the sparse matrix and returns a dense matrix.</p>
+<p>This overload constructs a new <code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">DenseMatrix</span></code> of the same shape as
+the sparse matrix. All elements in the result are initialized to the given scalar.
+Non-zero values from the sparse matrix are then added to the corresponding locations
+in the dense output.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – Type of elements (must be <code class="docutils literal notranslate"><span class="pre">float</span></code> or <code class="docutils literal notranslate"><span class="pre">double</span></code>)</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>scalar</strong> – The scalar to add to all matrix entries</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A dense matrix containing the result of <code class="docutils literal notranslate"><span class="pre">sparse</span> <span class="pre">+</span> <span class="pre">scalar</span></code></p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The resulting matrix is fully initialized. This function does not
+modify the original sparse matrix. Zero-valued entries in the CSR matrix
+are not skipped if <cite>accept_zeros</cite> was enabled at construction.</p>
+</div>
+<p><strong>Example:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dense</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{{</span><span class="mf">1.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.0f</span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="mf">3.0f</span><span class="p">,</span><span class="w"> </span><span class="mf">4.0f</span><span class="p">}};</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">SparseCSRMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">csr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">dense</span><span class="p">);</span>
+<span class="n">slt</span><span class="o">::</span><span class="n">DenseMatrix</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">csr</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mf">5.0f</span><span class="p">;</span>
+</pre></div>
+</div>
+</dd></dl>
+
 </section>
 <section id="id39">
 <h4>operator-<a class="headerlink" href="#id39" title="Link to this heading"></a></h4>

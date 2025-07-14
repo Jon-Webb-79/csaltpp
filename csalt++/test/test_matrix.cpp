@@ -3029,6 +3029,98 @@ TEST(SparseCSRMatrixMoveAssignmentTests, HandlesSelfMoveGracefully) {
     EXPECT_EQ(matrix.initialized_count(), 4);
     EXPECT_FLOAT_EQ(matrix.get(1, 1), 4.0f);
 }
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixAdditionTests, AddsIdentityAndSparseMatrix) {
+    slt::SparseCSRMatrix<float> identity(3);
+
+    slt::DenseMatrix<float> dense = {
+        {0.0f, 1.0f, 0.0f},
+        {0.0f, 0.0f, 2.0f},
+        {3.0f, 0.0f, 0.0f}
+    };
+
+    slt::SparseCSRMatrix<float> sparse(dense);
+
+    slt::DenseMatrix<float> result = identity + sparse;
+
+    std::vector<std::vector<float>> expected = {
+        {1.0f, 1.0f, 0.0f},
+        {0.0f, 1.0f, 2.0f},
+        {3.0f, 0.0f, 1.0f}
+    };
+
+    for (std::size_t i = 0; i < 3; ++i) {
+        for (std::size_t j = 0; j < 3; ++j) {
+            EXPECT_FLOAT_EQ(result(i, j), expected[i][j]);
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixAdditionTests, ThrowsOnDimensionMismatch) {
+    slt::SparseCSRMatrix<float> a(3);
+    slt::DenseMatrix<float> b = {
+        {1.0f, 2.0f},
+        {3.0f, 4.0f}
+    };
+    slt::SparseCSRMatrix<float> b_sparse(b);
+
+    EXPECT_THROW({
+        auto result = a + b_sparse;
+    }, std::invalid_argument);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixAdditionTests, AddsEmptyMatrixCorrectly) {
+    slt::SparseCSRMatrix<float> a(2);
+    slt::DenseMatrix<float> zero_dense = {
+        {0.0f, 0.0f},
+        {0.0f, 0.0f}
+    };
+    slt::SparseCSRMatrix<float> b(zero_dense);
+
+    auto result = a + b;
+
+    std::vector<std::vector<float>> expected = {
+        {1.0f, 0.0f},
+        {0.0f, 1.0f}
+    };
+
+    for (std::size_t i = 0; i < 2; ++i) {
+        for (std::size_t j = 0; j < 2; ++j) {
+            EXPECT_FLOAT_EQ(result(i, j), expected[i][j]);
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+TEST(SparseCSRMatrixOperatorTests, AddScalarReturnsCorrectDenseMatrix) {
+    slt::DenseMatrix<float> dense = {
+        {1.0f, 0.0f, 2.0f},
+        {0.0f, 3.0f, 0.0f},
+        {4.0f, 0.0f, 5.0f}
+    };
+
+    slt::SparseCSRMatrix<float> csr(dense);
+    float scalar = 1.0f;
+    slt::DenseMatrix<float> result = csr + scalar;
+
+    slt::DenseMatrix<float> expected = {
+        {2.0f, 1.0f, 3.0f},
+        {1.0f, 4.0f, 1.0f},
+        {5.0f, 1.0f, 6.0f}
+    };
+
+    ASSERT_EQ(result.rows(), expected.rows());
+    ASSERT_EQ(result.cols(), expected.cols());
+
+    for (std::size_t i = 0; i < result.rows(); ++i) {
+        for (std::size_t j = 0; j < result.cols(); ++j) {
+            EXPECT_FLOAT_EQ(result(i, j), expected(i, j)) << "Mismatch at (" << i << "," << j << ")";
+        }
+    }
+}
 // ================================================================================
 // ================================================================================
 // eof

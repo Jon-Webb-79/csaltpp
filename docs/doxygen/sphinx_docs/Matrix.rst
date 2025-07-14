@@ -1835,6 +1835,63 @@ operator()
 operator+
 ~~~~~~~~~
 
+.. cpp:function:: template<typename T> DenseMatrix<T> operator+(const SparseCSRMatrix<T>& other) const
+
+   Performs element-wise addition between two sparse matrices in CSR (Compressed Sparse Row) format, returning the result as a dense matrix.
+
+   This member function adds the non-zero entries from both `*this` and `other` and stores the result in a new :cpp:class:`DenseMatrix`. The result has the same dimensions as the input matrices. If a non-zero element exists in the same position in both matrices, their values are summed. If only one matrix contains a non-zero at a given location, that value is propagated to the result.
+
+   :param other: The right-hand-side matrix to add. Must have the same dimensions as the current matrix.
+   :type other: const SparseCSRMatrix<T>&
+   :returns: A DenseMatrix<T> containing the element-wise sum of the two matrices.
+   :rtype: DenseMatrix<T>
+   :throws std::invalid_argument: If the dimensions of the two matrices do not match.
+
+   **Example**
+
+   .. code-block:: cpp
+
+      slt::SparseCSRMatrix<float> A = slt::SparseCSRMatrix<float>::identity(3);
+      slt::DenseMatrix<float> B = {
+          {0.0f, 1.0f, 0.0f},
+          {0.0f, 0.0f, 2.0f},
+          {3.0f, 0.0f, 0.0f}
+      };
+
+      slt::SparseCSRMatrix<float> C(B);
+      slt::DenseMatrix<float> result = A + C;
+
+      // result:
+      // [1.0, 1.0, 0.0]
+      // [0.0, 1.0, 2.0]
+      // [3.0, 0.0, 1.0]
+
+.. cpp:function:: template<typename T> DenseMatrix<T> slt::SparseCSRMatrix<T>::operator+(T scalar) const
+
+   Adds a scalar value to all elements of the sparse matrix and returns a dense matrix.
+
+   This overload constructs a new :cpp:class:`DenseMatrix` of the same shape as
+   the sparse matrix. All elements in the result are initialized to the given scalar.
+   Non-zero values from the sparse matrix are then added to the corresponding locations
+   in the dense output.
+
+   :tparam T: Type of elements (must be ``float`` or ``double``)
+   :param scalar: The scalar to add to all matrix entries
+   :returns: A dense matrix containing the result of ``sparse + scalar``
+
+   .. note::
+      The resulting matrix is fully initialized. This function does not
+      modify the original sparse matrix. Zero-valued entries in the CSR matrix
+      are not skipped if `accept_zeros` was enabled at construction.
+
+   **Example:**
+
+   .. code-block:: cpp
+
+      slt::DenseMatrix<float> dense = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+      slt::SparseCSRMatrix<float> csr = std::move(dense);
+      slt::DenseMatrix<float> result = csr + 5.0f;
+
 operator-
 ~~~~~~~~~
 

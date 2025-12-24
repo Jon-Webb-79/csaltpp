@@ -1,24 +1,32 @@
 include(FetchContent)
 
-# Fetch GoogleTest if not already present
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/refs/heads/main.zip
+  URL https://github.com/google/googletest/archive/refs/tags/v1.15.2.zip
 )
+
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-# Define test executable
-add_executable(test_matrix test_matrix.cpp)
-
-# Link with GoogleTest
-target_link_libraries(test_matrix PRIVATE gtest_main)
-
-# Make sure the headers are available
-target_include_directories(test_matrix PRIVATE
-    ${CMAKE_SOURCE_DIR}/csalt++/include
+add_executable(unit_tests
+  test_error.cpp
+  #  test_matrix.cpp
 )
 
-# Auto-register with CTest
+target_link_libraries(unit_tests
+  PRIVATE
+    csaltpp::csaltpp
+    GTest::gtest
+    GTest::gtest_main
+)
+
+# Optional: warnings for test TU
+if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+  target_compile_options(unit_tests PRIVATE -Wall -Wextra -Wpedantic)
+elseif (MSVC)
+  target_compile_options(unit_tests PRIVATE /W4)
+endif()
+
 include(GoogleTest)
-gtest_discover_tests(test_matrix)
+gtest_discover_tests(unit_tests)
 

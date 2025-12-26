@@ -706,6 +706,1343 @@ namespace cslt {
          */
         IllegalStateError(const char* msg);
     };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Memory allocation failure error.
+     * 
+     * BadAllocError represents an error when malloc, calloc, or new fails
+     * to allocate memory.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw BadAllocError();  // "Memory allocation failed"
+     * throw BadAllocError("Failed to allocate 1024 bytes for buffer");
+     * @endcode
+     */
+    class BadAllocError : public MemoryError {
+    public:
+        /**
+         * @brief Constructs a BadAllocError with the default message.
+         */
+        BadAllocError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a BadAllocError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        BadAllocError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Memory reallocation failure error.
+     * 
+     * ReallocFailError represents an error when realloc fails to resize
+     * a memory block (the original buffer remains unchanged).
+     * 
+     * @par Example Usage:
+     * @code
+     * throw ReallocFailError();  // "Memory reallocation failed"
+     * throw ReallocFailError("Failed to expand buffer from 512 to 1024 bytes");
+     * @endcode
+     */
+    class ReallocFailError : public MemoryError {
+    public:
+        /**
+         * @brief Constructs a ReallocFailError with the default message.
+         */
+        ReallocFailError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a ReallocFailError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        ReallocFailError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief System out of memory error.
+     * 
+     * OutOfMemoryError represents an error when the system is completely
+     * out of memory or an allocator has reached its limit.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw OutOfMemoryError();  // "Out of memory"
+     * throw OutOfMemoryError("System memory exhausted");
+     * @endcode
+     */
+    class OutOfMemoryError : public MemoryError {
+    public:
+        /**
+         * @brief Constructs an OutOfMemoryError with the default message.
+         */
+        OutOfMemoryError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an OutOfMemoryError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        OutOfMemoryError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Length or size arithmetic overflow error.
+     * 
+     * LengthOverflowError represents an error when size or length calculations
+     * result in arithmetic overflow.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw LengthOverflowError();  // "Length/size arithmetic overflow"
+     * throw LengthOverflowError("Size calculation overflowed: SIZE_MAX exceeded");
+     * @endcode
+     */
+    class LengthOverflowError : public MemoryError {
+    public:
+        /**
+         * @brief Constructs a LengthOverflowError with the default message.
+         */
+        LengthOverflowError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a LengthOverflowError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        LengthOverflowError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Capacity limit exceeded error.
+     * 
+     * CapacityOverflowError represents an error when a capacity policy or
+     * representable limit is exceeded.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw CapacityOverflowError();  // "Capacity limit exceeded"
+     * throw CapacityOverflowError("Container capacity cannot exceed 65535 elements");
+     * @endcode
+     */
+    class CapacityOverflowError : public MemoryError {
+    public:
+        /**
+         * @brief Constructs a CapacityOverflowError with the default message.
+         */
+        CapacityOverflowError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a CapacityOverflowError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        CapacityOverflowError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Memory alignment requirement error.
+     * 
+     * AlignmentError represents an error when required memory alignment
+     * is not satisfied.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw AlignmentError();  // "Required alignment not satisfied"
+     * throw AlignmentError("Pointer must be 16-byte aligned for SIMD operations");
+     * @endcode
+     */
+    class AlignmentError : public MemoryError {
+    public:
+        /**
+         * @brief Constructs an AlignmentError with the default message.
+         */
+        AlignmentError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an AlignmentError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        AlignmentError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Internal state corruption error.
+     * 
+     * StateCorruptError represents an error when internal invariants are
+     * violated or data corruption is detected.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw StateCorruptError();  // "Internal state corrupt"
+     * throw StateCorruptError("Checksum mismatch: data corruption detected");
+     * @endcode
+     */
+    class StateCorruptError : public StateError {
+    public:
+        /**
+         * @brief Constructs a StateCorruptError with the default message.
+         */
+        StateCorruptError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a StateCorruptError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        StateCorruptError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Already initialized error.
+     * 
+     * AlreadyInitializedError represents an error when attempting to initialize
+     * an object that has already been initialized (double-initialization).
+     * 
+     * @par Example Usage:
+     * @code
+     * throw AlreadyInitializedError();  // "Already initialized"
+     * throw AlreadyInitializedError("Cannot reinitialize active connection");
+     * @endcode
+     */
+    class AlreadyInitializedError : public StateError {
+    public:
+        /**
+         * @brief Constructs an AlreadyInitializedError with the default message.
+         */
+        AlreadyInitializedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an AlreadyInitializedError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        AlreadyInitializedError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Item or key not found error.
+     * 
+     * NotFoundError represents an error when a requested item or key
+     * does not exist in a collection.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw NotFoundError();  // "Item not found"
+     * throw NotFoundError("Key 'username' not found in dictionary");
+     * @endcode
+     */
+    class NotFoundError : public StateError {
+    public:
+        /**
+         * @brief Constructs a NotFoundError with the default message.
+         */
+        NotFoundError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a NotFoundError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        NotFoundError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Container empty error.
+     * 
+     * EmptyError represents an error when attempting to access or remove
+     * elements from an empty container.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw EmptyError();  // "Container is empty"
+     * throw EmptyError("Cannot pop from empty stack");
+     * @endcode
+     */
+    class EmptyError : public StateError {
+    public:
+        /**
+         * @brief Constructs an EmptyError with the default message.
+         */
+        EmptyError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an EmptyError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        EmptyError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Concurrent modification detected error.
+     * 
+     * ConcurrentModificationError represents an error when a container is
+     * modified during iteration (fail-fast behavior).
+     * 
+     * @par Example Usage:
+     * @code
+     * throw ConcurrentModificationError();  // "Concurrent modification detected"
+     * throw ConcurrentModificationError("Container modified during iteration");
+     * @endcode
+     */
+    class ConcurrentModificationError : public StateError {
+    public:
+        /**
+         * @brief Constructs a ConcurrentModificationError with the default message.
+         */
+        ConcurrentModificationError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a ConcurrentModificationError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        ConcurrentModificationError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Division by zero error.
+     * 
+     * DivByZeroError represents an error when attempting to divide by zero.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw DivByZeroError();  // "Division by zero"
+     * throw DivByZeroError("Cannot divide 10 by 0");
+     * @endcode
+     */
+    class DivByZeroError : public MathError {
+    public:
+        /**
+         * @brief Constructs a DivByZeroError with the default message.
+         */
+        DivByZeroError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a DivByZeroError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        DivByZeroError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Singular or non-invertible matrix error.
+     * 
+     * SingularMatrixError represents an error when attempting operations
+     * that require a non-singular matrix (e.g., matrix inversion, solving
+     * linear systems) but the matrix is singular.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw SingularMatrixError();  // "Singular/non-invertible matrix"
+     * throw SingularMatrixError("Matrix determinant is zero, cannot invert");
+     * @endcode
+     */
+    class SingularMatrixError : public MathError {
+    public:
+        /**
+         * @brief Constructs a SingularMatrixError with the default message.
+         */
+        SingularMatrixError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a SingularMatrixError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        SingularMatrixError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Numeric overflow or underflow error.
+     * 
+     * NumericOverflowError represents an error when a numeric computation
+     * results in overflow (exceeds maximum) or underflow (below minimum
+     * representable value).
+     * 
+     * @par Example Usage:
+     * @code
+     * throw NumericOverflowError();  // "Numeric overflow/underflow"
+     * throw NumericOverflowError("Result exceeds maximum double value");
+     * @endcode
+     */
+    class NumericOverflowError : public MathError {
+    public:
+        /**
+         * @brief Constructs a NumericOverflowError with the default message.
+         */
+        NumericOverflowError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a NumericOverflowError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        NumericOverflowError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Mathematical domain error.
+     * 
+     * DomainError represents an error when an input value is outside the
+     * valid domain for a mathematical function (e.g., negative input to
+     * square root, log of negative number).
+     * 
+     * @par Example Usage:
+     * @code
+     * throw DomainError();  // "Math domain error"
+     * throw DomainError("Cannot compute sqrt of negative number: -4");
+     * @endcode
+     */
+    class DomainError : public MathError {
+    public:
+        /**
+         * @brief Constructs a DomainError with the default message.
+         */
+        DomainError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a DomainError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        DomainError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Loss of numeric precision error.
+     * 
+     * LossOfPrecisionError represents an error when a computation results
+     * in excessive loss of precision or numerical instability.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw LossOfPrecisionError();  // "Loss of numeric precision"
+     * throw LossOfPrecisionError("Ill-conditioned matrix: condition number > 1e15");
+     * @endcode
+     */
+    class LossOfPrecisionError : public MathError {
+    public:
+        /**
+         * @brief Constructs a LossOfPrecisionError with the default message.
+         */
+        LossOfPrecisionError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a LossOfPrecisionError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        LossOfPrecisionError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief File or handle open failure error.
+     * 
+     * FileOpenError represents an error when attempting to open a file
+     * or handle fails.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw FileOpenError();  // "Failed to open file/handle"
+     * throw FileOpenError("Cannot open config.txt: file does not exist");
+     * @endcode
+     */
+    class FileOpenError : public IOError {
+    public:
+        /**
+         * @brief Constructs a FileOpenError with the default message.
+         */
+        FileOpenError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a FileOpenError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        FileOpenError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief File or handle read error.
+     * 
+     * FileReadError represents an error when reading from a file or
+     * handle fails.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw FileReadError();  // "Error reading from file/handle"
+     * throw FileReadError("Read operation failed after 512 bytes");
+     * @endcode
+     */
+    class FileReadError : public IOError {
+    public:
+        /**
+         * @brief Constructs a FileReadError with the default message.
+         */
+        FileReadError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a FileReadError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        FileReadError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief File or handle write error.
+     * 
+     * FileWriteError represents an error when writing to a file or
+     * handle fails.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw FileWriteError();  // "Error writing to file/handle"
+     * throw FileWriteError("Disk full: cannot write data");
+     * @endcode
+     */
+    class FileWriteError : public IOError {
+    public:
+        /**
+         * @brief Constructs a FileWriteError with the default message.
+         */
+        FileWriteError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a FileWriteError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        FileWriteError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Permission denied error.
+     * 
+     * PermissionDeniedError represents an error when access control or
+     * permission restrictions prevent an operation.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw PermissionDeniedError();  // "Permission denied"
+     * throw PermissionDeniedError("No write access to /etc/config");
+     * @endcode
+     */
+    class PermissionDeniedError : public IOError {
+    public:
+        /**
+         * @brief Constructs a PermissionDeniedError with the default message.
+         */
+        PermissionDeniedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a PermissionDeniedError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        PermissionDeniedError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief I/O operation interrupted error.
+     * 
+     * IOInterruptedError represents an error when an I/O operation is
+     * interrupted (e.g., by a signal like EINTR).
+     * 
+     * @par Example Usage:
+     * @code
+     * throw IOInterruptedError();  // "I/O interrupted"
+     * throw IOInterruptedError("Read interrupted by signal");
+     * @endcode
+     */
+    class IOInterruptedError : public IOError {
+    public:
+        /**
+         * @brief Constructs an IOInterruptedError with the default message.
+         */
+        IOInterruptedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an IOInterruptedError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        IOInterruptedError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief I/O operation timeout error.
+     * 
+     * IOTimeoutError represents an error when an I/O operation exceeds
+     * its timeout period.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw IOTimeoutError();  // "I/O timed out"
+     * throw IOTimeoutError("Network read timed out after 30 seconds");
+     * @endcode
+     */
+    class IOTimeoutError : public IOError {
+    public:
+        /**
+         * @brief Constructs an IOTimeoutError with the default message.
+         */
+        IOTimeoutError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an IOTimeoutError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        IOTimeoutError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Operation on closed stream or descriptor error.
+     * 
+     * IOClosedError represents an error when attempting an operation on
+     * a closed file descriptor or stream.
+     * 
+     * @par Example Usage:
+     * @code
+     * throw IOClosedError();  // "Operation on closed stream/descriptor"
+     * throw IOClosedError("Cannot read from closed socket");
+     * @endcode
+     */
+    class IOClosedError : public IOError {
+    public:
+        /**
+         * @brief Constructs an IOClosedError with the default message.
+         */
+        IOClosedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an IOClosedError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        IOClosedError(const char* msg);
+    };
+
+// ================================================================================
+    /**
+     * @brief Non-blocking operation would block error.
+     * 
+     * IOWouldBlockError represents an error when a non-blocking I/O
+     * operation would block (EWOULDBLOCK/EAGAIN).
+     * 
+     * @par Example Usage:
+     * @code
+     * throw IOWouldBlockError();  // "Operation would block"
+     * throw IOWouldBlockError("Socket read would block in non-blocking mode");
+     * @endcode
+     */
+    class IOWouldBlockError : public IOError {
+    public:
+        /**
+         * @brief Constructs an IOWouldBlockError with the default message.
+         */
+        IOWouldBlockError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an IOWouldBlockError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        IOWouldBlockError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Type mismatch error.
+     *
+     * TypeMismatchError represents an error where a value or object does not
+     * match the expected type.
+     *
+     * @par Example Usage:
+     * @code
+     * throw TypeMismatchError();  
+     * throw TypeMismatchError("Expected integer but received string");
+     * @endcode
+     */
+    class TypeMismatchError : public FormatError {
+    public:
+        /**
+         * @brief Constructs a TypeMismatchError with the default message.
+         */
+        TypeMismatchError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a TypeMismatchError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        TypeMismatchError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Invalid format error.
+     *
+     * FormatInvalidError represents an error where data does not conform
+     * to the expected format or structure.
+     *
+     * @par Example Usage:
+     * @code
+     * throw FormatInvalidError();
+     * throw FormatInvalidError("Malformed header detected");
+     * @endcode
+     */
+    class FormatInvalidError : public FormatError {
+    public:
+        /**
+         * @brief Constructs a FormatInvalidError with the default message.
+         */
+        FormatInvalidError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a FormatInvalidError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        FormatInvalidError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Invalid encoding error.
+     *
+     * EncodingInvalidError represents an error where text or binary data
+     * is not encoded using a supported or expected encoding.
+     *
+     * @par Example Usage:
+     * @code
+     * throw EncodingInvalidError();
+     * throw EncodingInvalidError("UTF-8 decoding failed");
+     * @endcode
+     */
+    class EncodingInvalidError : public FormatError {
+    public:
+        /**
+         * @brief Constructs an EncodingInvalidError with the default message.
+         */
+        EncodingInvalidError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an EncodingInvalidError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        EncodingInvalidError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Parsing failure error.
+     *
+     * ParsingFailedError represents an error that occurs when structured
+     * input cannot be successfully parsed.
+     *
+     * @par Example Usage:
+     * @code
+     * throw ParsingFailedError();
+     * throw ParsingFailedError("JSON parsing failed at line 12");
+     * @endcode
+     */
+    class ParsingFailedError : public FormatError {
+    public:
+        /**
+         * @brief Constructs a ParsingFailedError with the default message.
+         */
+        ParsingFailedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a ParsingFailedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        ParsingFailedError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Validation failure error.
+     *
+     * ValidationFailedError represents an error where data is syntactically
+     * correct but fails semantic or rule-based validation.
+     *
+     * @par Example Usage:
+     * @code
+     * throw ValidationFailedError();
+     * throw ValidationFailedError("Checksum validation failed");
+     * @endcode
+     */
+    class ValidationFailedError : public FormatError {
+    public:
+        /**
+         * @brief Constructs a ValidationFailedError with the default message.
+         */
+        ValidationFailedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a ValidationFailedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        ValidationFailedError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Lock operation failure error.
+     *
+     * LockFailedError represents an error where a mutex, spinlock,
+     * or other synchronization primitive fails to acquire or release.
+     *
+     * @par Example Usage:
+     * @code
+     * throw LockFailedError();
+     * throw LockFailedError("Failed to acquire mutex");
+     * @endcode
+     */
+    class LockFailedError : public ConcurrencyError {
+    public:
+        /**
+         * @brief Constructs a LockFailedError with the default message.
+         */
+        LockFailedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a LockFailedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        LockFailedError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Deadlock detection error.
+     *
+     * DeadlockDetectedError represents an error where a deadlock
+     * condition has been detected between concurrent execution contexts.
+     *
+     * @par Example Usage:
+     * @code
+     * throw DeadlockDetectedError();
+     * throw DeadlockDetectedError("Deadlock detected between worker threads");
+     * @endcode
+     */
+    class DeadlockDetectedError : public ConcurrencyError {
+    public:
+        /**
+         * @brief Constructs a DeadlockDetectedError with the default message.
+         */
+        DeadlockDetectedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a DeadlockDetectedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        DeadlockDetectedError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Thread operation failure error.
+     *
+     * ThreadFailError represents an error where a thread could not be
+     * created, joined, or otherwise managed correctly.
+     *
+     * @par Example Usage:
+     * @code
+     * throw ThreadFailError();
+     * throw ThreadFailError("Thread creation failed");
+     * @endcode
+     */
+    class ThreadFailError : public ConcurrencyError {
+    public:
+        /**
+         * @brief Constructs a ThreadFailError with the default message.
+         */
+        ThreadFailError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a ThreadFailError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        ThreadFailError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Operation cancelled error.
+     *
+     * CancelledError represents an error where an operation was
+     * intentionally cancelled before completion.
+     *
+     * @par Example Usage:
+     * @code
+     * throw CancelledError();
+     * throw CancelledError("Operation cancelled by user request");
+     * @endcode
+     */
+    class CancelledError : public ConcurrencyError {
+    public:
+        /**
+         * @brief Constructs a CancelledError with the default message.
+         */
+        CancelledError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a CancelledError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        CancelledError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Data race detection error.
+     *
+     * RaceDetectedError represents an error where a data race
+     * has been detected during concurrent execution.
+     *
+     * @par Example Usage:
+     * @code
+     * throw RaceDetectedError();
+     * throw RaceDetectedError("Concurrent write detected on shared buffer");
+     * @endcode
+     */
+    class RaceDetectedError : public ConcurrencyError {
+    public:
+        /**
+         * @brief Constructs a RaceDetectedError with the default message.
+         */
+        RaceDetectedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a RaceDetectedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        RaceDetectedError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Invalid configuration error.
+     *
+     * ConfigInvalidError represents an error where a configuration
+     * is malformed, incomplete, or otherwise invalid.
+     *
+     * @par Example Usage:
+     * @code
+     * throw ConfigInvalidError();
+     * throw ConfigInvalidError("Missing required configuration key");
+     * @endcode
+     */
+    class ConfigInvalidError : public ConfigError {
+    public:
+        /**
+         * @brief Constructs a ConfigInvalidError with the default message.
+         */
+        ConfigInvalidError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a ConfigInvalidError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        ConfigInvalidError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Unsupported feature or platform error.
+     *
+     * UnsupportedError represents an error where a requested feature
+     * or platform is not supported by the current build or environment.
+     *
+     * @par Example Usage:
+     * @code
+     * throw UnsupportedError();
+     * throw UnsupportedError("ARM platform not supported");
+     * @endcode
+     */
+    class UnsupportedError : public ConfigError {
+    public:
+        /**
+         * @brief Constructs an UnsupportedError with the default message.
+         */
+        UnsupportedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an UnsupportedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        UnsupportedError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Feature disabled error.
+     *
+     * FeatureDisabledError represents an error where a feature is
+     * explicitly disabled by build configuration or policy.
+     *
+     * @par Example Usage:
+     * @code
+     * throw FeatureDisabledError();
+     * throw FeatureDisabledError("Feature disabled by security policy");
+     * @endcode
+     */
+    class FeatureDisabledError : public ConfigError {
+    public:
+        /**
+         * @brief Constructs a FeatureDisabledError with the default message.
+         */
+        FeatureDisabledError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a FeatureDisabledError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        FeatureDisabledError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Version or ABI mismatch error.
+     *
+     * VersionMismatchError represents an error where incompatible
+     * versions or ABIs are detected between components.
+     *
+     * @par Example Usage:
+     * @code
+     * throw VersionMismatchError();
+     * throw VersionMismatchError("Library ABI version mismatch");
+     * @endcode
+     */
+    class VersionMismatchError : public ConfigError {
+    public:
+        /**
+         * @brief Constructs a VersionMismatchError with the default message.
+         */
+        VersionMismatchError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a VersionMismatchError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        VersionMismatchError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Resource exhaustion error.
+     *
+     * ResourceExhaustedError represents an error where required
+     * system or application resources have been exhausted.
+     *
+     * @par Example Usage:
+     * @code
+     * throw ResourceExhaustedError();
+     * throw ResourceExhaustedError("Out of file descriptors");
+     * @endcode
+     */
+    class ResourceExhaustedError : public ConfigError {
+    public:
+        /**
+         * @brief Constructs a ResourceExhaustedError with the default message.
+         */
+        ResourceExhaustedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a ResourceExhaustedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        ResourceExhaustedError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Not implemented error.
+     *
+     * NotImplementedError represents an error where a requested
+     * operation or feature has not yet been implemented.
+     *
+     * @par Example Usage:
+     * @code
+     * throw NotImplementedError();
+     * throw NotImplementedError("Serialization not yet implemented");
+     * @endcode
+     */
+    class NotImplementedError : public GenericError {
+    public:
+        /**
+         * @brief Constructs a NotImplementedError with the default message.
+         */
+        NotImplementedError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs a NotImplementedError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        NotImplementedError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Operation unavailable error.
+     *
+     * OperationUnavailableError represents an error where an operation
+     * cannot be performed due to current system or application state.
+     *
+     * @par Example Usage:
+     * @code
+     * throw OperationUnavailableError();
+     * throw OperationUnavailableError("Service unavailable during shutdown");
+     * @endcode
+     */
+    class OperationUnavailableError : public GenericError {
+    public:
+        /**
+         * @brief Constructs an OperationUnavailableError with the default message.
+         */
+        OperationUnavailableError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an OperationUnavailableError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        OperationUnavailableError(const char* msg);
+    };
+// ================================================================================
+
+    /**
+     * @brief Unknown error.
+     *
+     * UnknownError represents an error where the underlying cause
+     * is unknown or could not be classified.
+     *
+     * @par Example Usage:
+     * @code
+     * throw UnknownError();
+     * throw UnknownError("Unexpected failure occurred");
+     * @endcode
+     */
+    class UnknownError : public GenericError {
+    public:
+        /**
+         * @brief Constructs an UnknownError with the default message.
+         */
+        UnknownError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an UnknownError with a custom message.
+         *
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        UnknownError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief A type that represents either a value of type T or an Error.
+     * 
+     * Expected<T> stores both the value and error in a fixed-size structure.
+     * No dynamic allocation is used - all storage is static.
+     * 
+     * @tparam T The type of the expected value
+     * 
+     * @par Example Usage:
+     * @code
+     * Expected<int> divide(int a, int b) {
+     *     Expected<int> result;
+     *     if (b == 0) {
+     *         result.setError(DivByZeroError());
+     *         return result;
+     *     }
+     *     result.setValue(a / b);
+     *     return result;
+     * }
+     * 
+     * Expected<int> result = divide(10, 2);
+     * if (result.hasValue()) {
+     *     printf("Result: %d\n", result.value());
+     * } else {
+     *     printf("Error: %s\n", result.error().what());
+     * }
+     * @endcode
+     */
+    template<typename T>
+    class Expected {
+    private:
+        bool has_value_;
+        T value_;
+        Error error_;
+
+    public:
+        /**
+         * @brief Default constructor - initializes with no value and generic error.
+         */
+        Expected() : has_value_(false), value_(), error_("No value") {}
+        
+        /**
+         * @brief Sets the value and marks this as containing a value.
+         * 
+         * @param val The value to store
+         */
+        void setValue(const T& val) {
+            value_ = val;
+            has_value_ = true;
+        }
+        
+        /**
+         * @brief Sets the error and marks this as containing an error.
+         * 
+         * @param err The error to store
+         */
+        void setError(const Error& err) {
+            error_ = err;
+            has_value_ = false;
+        }
+        
+        /**
+         * @brief Checks if the Expected contains a value.
+         * 
+         * @return true if contains a value, false if contains an error
+         */
+        bool hasValue() const {
+            return has_value_;
+        }
+        
+        /**
+         * @brief Checks if the Expected contains an error.
+         * 
+         * @return true if contains an error, false if contains a value
+         */
+        bool hasError() const {
+            return !has_value_;
+        }
+        
+        /**
+         * @brief Gets the contained value.
+         * 
+         * Behavior is undefined if the Expected contains an error.
+         * Use hasValue() to check before calling this method.
+         * 
+         * @return Reference to the contained value
+         */
+        T& value() {
+            return value_;
+        }
+        
+        /**
+         * @brief Gets the contained value (const version).
+         * 
+         * Behavior is undefined if the Expected contains an error.
+         * Use hasValue() to check before calling this method.
+         * 
+         * @return Const reference to the contained value
+         */
+        const T& value() const {
+            return value_;
+        }
+        
+        /**
+         * @brief Gets the contained error.
+         * 
+         * Behavior is undefined if the Expected contains a value.
+         * Use hasError() to check before calling this method.
+         * 
+         * @return Reference to the contained error
+         */
+        Error& error() {
+            return error_;
+        }
+        
+        /**
+         * @brief Gets the contained error (const version).
+         * 
+         * Behavior is undefined if the Expected contains a value.
+         * Use hasError() to check before calling this method.
+         * 
+         * @return Const reference to the contained error
+         */
+        const Error& error() const {
+            return error_;
+        }
+        
+        /**
+         * @brief Gets the value or a default if error.
+         * 
+         * @param default_val The default value to return if this contains an error
+         * @return The contained value if present, otherwise default_val
+         */
+        T valueOr(const T& default_val) const {
+            return has_value_ ? value_ : default_val;
+        }
+        
+        /**
+         * @brief Conversion to bool (checks if has value).
+         * 
+         * @return true if contains a value, false if contains an error
+         */
+        explicit operator bool() const {
+            return has_value_;
+        }
+    };
+// ================================================================================
+// ================================================================================ 
 } // namespace cslt
 // ================================================================================ 
 // ================================================================================ 

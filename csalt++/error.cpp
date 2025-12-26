@@ -148,10 +148,88 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+    BadAllocError::BadAllocError() : MemoryError("Memory allocation failed") {}
+// -------------------------------------------------------------------------------- 
+
+    BadAllocError::BadAllocError(const char* msg) : MemoryError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    ReallocFailError::ReallocFailError() : MemoryError("Memory reallocation failed") {}
+// -------------------------------------------------------------------------------- 
+
+    ReallocFailError::ReallocFailError(const char* msg) : MemoryError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    OutOfMemoryError::OutOfMemoryError() : MemoryError("Out of memory") {}
+// -------------------------------------------------------------------------------- 
+
+    OutOfMemoryError::OutOfMemoryError(const char* msg) : MemoryError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    LengthOverflowError::LengthOverflowError() : MemoryError("Length/size arithmetic overflow") {}
+// -------------------------------------------------------------------------------- 
+
+    LengthOverflowError::LengthOverflowError(const char* msg) : MemoryError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    CapacityOverflowError::CapacityOverflowError() : MemoryError("Capacity limit exceeded") {}
+// -------------------------------------------------------------------------------- 
+
+    CapacityOverflowError::CapacityOverflowError(const char* msg) : MemoryError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    AlignmentError::AlignmentError() : MemoryError("Required alignment not satisfied") {}
+// -------------------------------------------------------------------------------- 
+
+    AlignmentError::AlignmentError(const char* msg) : MemoryError(msg) {}
+
+// ================================================================================ 
+// ================================================================================ 
+
     StateError::StateError() : Error("Invalid state") {}
 // -------------------------------------------------------------------------------- 
 
     StateError::StateError(const char* msg) : Error(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    StateCorruptError::StateCorruptError() : StateError("Internal state corrupt") {}
+// -------------------------------------------------------------------------------- 
+
+    StateCorruptError::StateCorruptError(const char* msg) : StateError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    AlreadyInitializedError::AlreadyInitializedError() : StateError("Already initialized") {}
+// -------------------------------------------------------------------------------- 
+
+    AlreadyInitializedError::AlreadyInitializedError(const char* msg) : StateError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    NotFoundError::NotFoundError() : StateError("Item not found") {}
+// -------------------------------------------------------------------------------- 
+
+    NotFoundError::NotFoundError(const char* msg) : StateError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    EmptyError::EmptyError() : StateError("Container is empty") {}
+// -------------------------------------------------------------------------------- 
+
+    EmptyError::EmptyError(const char* msg) : StateError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    ConcurrentModificationError::ConcurrentModificationError() : StateError("Concurrent modification detected") {}
+// -------------------------------------------------------------------------------- 
+
+    ConcurrentModificationError::ConcurrentModificationError(const char* msg) : StateError(msg) {}
 // ================================================================================ 
 // ================================================================================ 
 
@@ -162,10 +240,102 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+    DivByZeroError::DivByZeroError() : MathError("Division by zero") {}
+// -------------------------------------------------------------------------------- 
+
+    DivByZeroError::DivByZeroError(const char* msg) : MathError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    SingularMatrixError::SingularMatrixError() : MathError("Singular/non-invertible matrix") {}
+// -------------------------------------------------------------------------------- 
+
+    SingularMatrixError::SingularMatrixError(const char* msg) : MathError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    NumericOverflowError::NumericOverflowError() : MathError("Numeric overflow/underflow") {}
+// -------------------------------------------------------------------------------- 
+
+    NumericOverflowError::NumericOverflowError(const char* msg) : MathError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    DomainError::DomainError() : MathError("Math domain error") {}
+// -------------------------------------------------------------------------------- 
+
+    DomainError::DomainError(const char* msg) : MathError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    LossOfPrecisionError::LossOfPrecisionError() : MathError("Loss of numeric precision") {}
+// -------------------------------------------------------------------------------- 
+
+    LossOfPrecisionError::LossOfPrecisionError(const char* msg) : MathError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
     IOError::IOError() : Error("I/O operation failed") {}
 // -------------------------------------------------------------------------------- 
 
     IOError::IOError(const char* msg) : Error(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    FileOpenError::FileOpenError() : IOError("Failed to open file/handle") {}
+// -------------------------------------------------------------------------------- 
+
+    FileOpenError::FileOpenError(const char* msg) : IOError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    FileReadError::FileReadError() : IOError("Error reading from file/handle") {}
+// -------------------------------------------------------------------------------- 
+
+    FileReadError::FileReadError(const char* msg) : IOError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    FileWriteError::FileWriteError() : IOError("Error writing to file/handle") {}
+// -------------------------------------------------------------------------------- 
+
+    FileWriteError::FileWriteError(const char* msg) : IOError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    PermissionDeniedError::PermissionDeniedError() : IOError("Permission denied") {}
+// -------------------------------------------------------------------------------- 
+
+    PermissionDeniedError::PermissionDeniedError(const char* msg) : IOError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    IOInterruptedError::IOInterruptedError() : IOError("I/O interrupted") {}
+// -------------------------------------------------------------------------------- 
+
+    IOInterruptedError::IOInterruptedError(const char* msg) : IOError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    IOTimeoutError::IOTimeoutError() : IOError("I/O timed out") {}
+// -------------------------------------------------------------------------------- 
+
+    IOTimeoutError::IOTimeoutError(const char* msg) : IOError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    IOClosedError::IOClosedError() : IOError("Operation on closed stream/descriptor") {}
+// -------------------------------------------------------------------------------- 
+
+    IOClosedError::IOClosedError(const char* msg) : IOError(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    IOWouldBlockError::IOWouldBlockError() : IOError("Operation would block") {}
+// -------------------------------------------------------------------------------- 
+
+    IOWouldBlockError::IOWouldBlockError(const char* msg) : IOError(msg) {}
+
 // ================================================================================ 
 // ================================================================================ 
 
@@ -176,10 +346,92 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+    TypeMismatchError::TypeMismatchError()
+        : FormatError("Type mismatch") {}
+// --------------------------------------------------------------------------------
+
+    TypeMismatchError::TypeMismatchError(const char* msg)
+        : FormatError(msg) {}
+// ================================================================================
+
+    FormatInvalidError::FormatInvalidError()
+        : FormatError("Invalid data format") {}
+// --------------------------------------------------------------------------------
+
+    FormatInvalidError::FormatInvalidError(const char* msg)
+        : FormatError(msg) {}
+// ================================================================================
+
+    EncodingInvalidError::EncodingInvalidError()
+        : FormatError("Invalid text encoding") {}
+// --------------------------------------------------------------------------------
+
+    EncodingInvalidError::EncodingInvalidError(const char* msg)
+        : FormatError(msg) {}
+// ================================================================================
+
+    ParsingFailedError::ParsingFailedError()
+        : FormatError("Parsing failed") {}
+// --------------------------------------------------------------------------------
+
+    ParsingFailedError::ParsingFailedError(const char* msg)
+        : FormatError(msg) {}
+// ================================================================================
+
+    ValidationFailedError::ValidationFailedError()
+        : FormatError("Validation failed") {}
+// --------------------------------------------------------------------------------
+
+    ValidationFailedError::ValidationFailedError(const char* msg)
+        : FormatError(msg) {}
+// ================================================================================
+// ================================================================================
+
     ConcurrencyError::ConcurrencyError() : Error("Concurrency error") {}
 // -------------------------------------------------------------------------------- 
 
     ConcurrencyError::ConcurrencyError(const char* msg) : Error(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    LockFailedError::LockFailedError()
+        : ConcurrencyError("Lock operation failed") {}
+// --------------------------------------------------------------------------------
+
+    LockFailedError::LockFailedError(const char* msg)
+        : ConcurrencyError(msg) {}
+// ================================================================================
+
+    DeadlockDetectedError::DeadlockDetectedError()
+        : ConcurrencyError("Deadlock detected") {}
+// --------------------------------------------------------------------------------
+
+    DeadlockDetectedError::DeadlockDetectedError(const char* msg)
+        : ConcurrencyError(msg) {}
+// ================================================================================
+
+    ThreadFailError::ThreadFailError()
+        : ConcurrencyError("Thread operation failed") {}
+// --------------------------------------------------------------------------------
+
+    ThreadFailError::ThreadFailError(const char* msg)
+        : ConcurrencyError(msg) {}
+// ================================================================================
+
+    CancelledError::CancelledError()
+        : ConcurrencyError("Operation cancelled") {}
+// --------------------------------------------------------------------------------
+
+    CancelledError::CancelledError(const char* msg)
+        : ConcurrencyError(msg) {}
+// ================================================================================
+
+    RaceDetectedError::RaceDetectedError()
+        : ConcurrencyError("Data race detected") {}
+// --------------------------------------------------------------------------------
+
+    RaceDetectedError::RaceDetectedError(const char* msg)
+        : ConcurrencyError(msg) {}
 // ================================================================================ 
 // ================================================================================ 
 
@@ -190,10 +442,80 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+    ConfigInvalidError::ConfigInvalidError()
+        : ConfigError("Invalid configuration") {}
+// --------------------------------------------------------------------------------
+
+    ConfigInvalidError::ConfigInvalidError(const char* msg)
+        : ConfigError(msg) {}
+// ================================================================================
+
+    UnsupportedError::UnsupportedError()
+        : ConfigError("Unsupported feature/platform") {}
+// --------------------------------------------------------------------------------
+
+    UnsupportedError::UnsupportedError(const char* msg)
+        : ConfigError(msg) {}
+// ================================================================================
+
+    FeatureDisabledError::FeatureDisabledError()
+        : ConfigError("Feature disabled by policy/build") {}
+// --------------------------------------------------------------------------------
+
+    FeatureDisabledError::FeatureDisabledError(const char* msg)
+        : ConfigError(msg) {}
+// ================================================================================
+
+    VersionMismatchError::VersionMismatchError()
+        : ConfigError("Version/ABI mismatch") {}
+// --------------------------------------------------------------------------------
+
+    VersionMismatchError::VersionMismatchError(const char* msg)
+        : ConfigError(msg) {}
+// ================================================================================
+
+    ResourceExhaustedError::ResourceExhaustedError()
+        : ConfigError("Resource exhausted") {}
+// --------------------------------------------------------------------------------
+
+    ResourceExhaustedError::ResourceExhaustedError(const char* msg)
+        : ConfigError(msg) {}
+
+// ================================================================================ 
+// ================================================================================ 
+
     GenericError::GenericError() : Error("An error occurred") {}
 // -------------------------------------------------------------------------------- 
 
     GenericError::GenericError(const char* msg) : Error(msg) {}
+// ================================================================================ 
+// ================================================================================ 
+
+    NotImplementedError::NotImplementedError()
+        : GenericError("Not implemented") {}
+// --------------------------------------------------------------------------------
+
+    NotImplementedError::NotImplementedError(const char* msg)
+        : GenericError(msg) {}
+// ================================================================================
+
+    OperationUnavailableError::OperationUnavailableError()
+        : GenericError("Operation unavailable") {}
+// --------------------------------------------------------------------------------
+
+    OperationUnavailableError::OperationUnavailableError(const char* msg)
+        : GenericError(msg) {}
+// ================================================================================
+
+    UnknownError::UnknownError()
+        : GenericError("Unknown error") {}
+// --------------------------------------------------------------------------------
+
+    UnknownError::UnknownError(const char* msg)
+        : GenericError(msg) {}
+// ================================================================================
+// ================================================================================
+
 } // namespace cslt
 // ================================================================================
 // ================================================================================

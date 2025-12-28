@@ -1,0 +1,752 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classcslt_1_1Error" kind="class" language="C++" prot="public">
+    <compoundname>cslt::Error</compoundname>
+    <derivedcompoundref refid="classcslt_1_1ArgumentError" prot="public" virt="non-virtual">cslt::ArgumentError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1ConcurrencyError" prot="public" virt="non-virtual">cslt::ConcurrencyError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1ConfigError" prot="public" virt="non-virtual">cslt::ConfigError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1FormatError" prot="public" virt="non-virtual">cslt::FormatError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1GenericError" prot="public" virt="non-virtual">cslt::GenericError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1IOError" prot="public" virt="non-virtual">cslt::IOError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1MathError" prot="public" virt="non-virtual">cslt::MathError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1MemoryError" prot="public" virt="non-virtual">cslt::MemoryError</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1StateError" prot="public" virt="non-virtual">cslt::StateError</derivedcompoundref>
+    <includes refid="error_8hpp" local="no">error.hpp</includes>
+      <sectiondef kind="protected-static-attrib">
+      <memberdef kind="variable" id="classcslt_1_1Error_1a9e409bf5902ed3e24eecb0cddb15c946" prot="protected" static="yes" constexpr="yes" mutable="no">
+        <type>constexpr size_t</type>
+        <definition>constexpr size_t cslt::Error::MAX_MESSAGE_LEN</definition>
+        <argsstring></argsstring>
+        <name>MAX_MESSAGE_LEN</name>
+        <initializer>= 256</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="54" column="33" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" bodystart="54" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-attrib">
+      <memberdef kind="variable" id="classcslt_1_1Error_1a1cdf9c7ce47140ec2e2b3419a5f8b68b" prot="protected" static="no" mutable="no">
+        <type>char</type>
+        <definition>char cslt::Error::message[MAX_MESSAGE_LEN]</definition>
+        <argsstring>[MAX_MESSAGE_LEN]</argsstring>
+        <name>message</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="55" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" bodystart="55" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="protected-static-func">
+      <memberdef kind="function" id="classcslt_1_1Error_1ab67a6f8e43272edda147edfd4a7481ae" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Error::safeCopy</definition>
+        <argsstring>(char *dest, const char *src, size_t maxLen)</argsstring>
+        <name>safeCopy</name>
+        <param>
+          <type>char *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>maxLen</declname>
+        </param>
+        <briefdescription>
+<para>Safely copies a null-terminated string to a destination buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Copies characters from src to dest up to maxLen-1 characters, ensuring the destination is always null-terminated. If src is longer than maxLen-1, the string is truncated.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dest</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Destination buffer to copy into </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Source null-terminated string to copy from </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxLen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum length of destination buffer including null terminator </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="68" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="38" bodyend="45"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Error_1a8e6554e2c9dbb54d94b7c7c4f1b5913d" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Error::append</definition>
+        <argsstring>(char *dest, const char *suffix, size_t maxLen)</argsstring>
+        <name>append</name>
+        <param>
+          <type>char *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>suffix</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>maxLen</declname>
+        </param>
+        <briefdescription>
+<para>Appends a string to the end of an existing null-terminated string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Appends suffix to the end of dest, respecting the maxLen buffer size. If the combined length would exceed maxLen-1, the result is truncated. The destination buffer is always null-terminated.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dest</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Destination buffer containing existing string to append to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>suffix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated string to append </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxLen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum length of destination buffer including null terminator </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="81" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="47" bodyend="56"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Error_1a1ca956ff98baa856fdce4f19dfadb6de" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Error::prepend</definition>
+        <argsstring>(char *dest, const char *prefix, size_t maxLen)</argsstring>
+        <name>prepend</name>
+        <param>
+          <type>char *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>prefix</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>maxLen</declname>
+        </param>
+        <briefdescription>
+<para>Prepends a string to the beginning of an existing null-terminated string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Inserts prefix before the existing content in dest, respecting the maxLen buffer size. If the combined length would exceed maxLen-1, the result is truncated. The destination buffer is always null-terminated.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dest</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Destination buffer containing existing string to prepend to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated string to insert at the beginning </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxLen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum length of destination buffer including null terminator </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="94" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="59" bodyend="64"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Error_1a2f1bdefb2155158720a1bdd78f7ca6b1" prot="protected" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Error::compose</definition>
+        <argsstring>(char *dest, const char *prefix, const char *suffix, size_t maxLen)</argsstring>
+        <name>compose</name>
+        <param>
+          <type>char *</type>
+          <declname>dest</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>prefix</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>suffix</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>maxLen</declname>
+        </param>
+        <briefdescription>
+<para>Composes a new string by concatenating prefix and suffix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Copies prefix into dest, then appends suffix. If the combined length would exceed maxLen-1, the result is truncated. The destination buffer is always null-terminated. Any existing content in dest is overwritten.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dest</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Destination buffer to write composed string into </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>prefix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated string to write first </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>suffix</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated string to append after prefix </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>maxLen</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Maximum length of destination buffer including null terminator </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="108" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="67" bodyend="70"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1Error_1abd433330bf88a49022dd02d93968abac" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Error::Error</definition>
+        <argsstring>()</argsstring>
+        <name>Error</name>
+        <briefdescription>
+<para>Constructs an <ref refid="classcslt_1_1Error" kindref="compound">Error</ref> with the default message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates an error object with the predefined message &quot;An error occurred&quot;. Use this constructor when a generic error indication is sufficient. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="117" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="22" bodyend="24"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Error_1aa357c7b8b770486b17711f59fcff9d23" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Error::Error</definition>
+        <argsstring>(const char *msg)</argsstring>
+        <name>Error</name>
+        <param>
+          <type>const char *</type>
+          <declname>msg</declname>
+        </param>
+        <briefdescription>
+<para>Constructs an <ref refid="classcslt_1_1Error" kindref="compound">Error</ref> with a custom message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Creates an error object with the specified error message. If msg exceeds MAX_MESSAGE_LEN-1 characters, it will be truncated to fit.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>msg</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated custom error message string (max 255 characters) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="127" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="27" bodyend="29"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Error_1a88f638273b754048de50b22b029a077b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>const char *</type>
+        <definition>const char * cslt::Error::what</definition>
+        <argsstring>() const</argsstring>
+        <name>what</name>
+        <briefdescription>
+<para>Returns the error message. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Pointer to null-terminated error message string </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="134" column="28" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="32" bodyend="34"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Error_1a787088bd86fa441e336437b42b7da5aa" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type></type>
+        <definition>cslt::Error::~Error</definition>
+        <argsstring>()</argsstring>
+        <name>~Error</name>
+        <briefdescription>
+<para>Virtual destructor for proper cleanup of derived classes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="139" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp" bodystart="36" bodyend="36"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Base class for all cslt library exceptions with fixed-size error messages. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>The <ref refid="classcslt_1_1Error" kindref="compound">Error</ref> class provides a lightweight, STL-independent exception mechanism with predictable memory usage. <ref refid="classcslt_1_1Error" kindref="compound">Error</ref> messages are stored in a fixed-size buffer to avoid heap allocations, making it suitable for embedded systems and real-time applications.</para>
+<para>All error messages are capped at MAX_MESSAGE_LEN (256 characters). Messages exceeding this length are silently truncated.</para>
+<para><simplesect kind="par"><title>Example Usage:</title><para><programlisting><codeline><highlight class="normal">//<sp/>Using<sp/>default<sp/>error<sp/>message</highlight></codeline>
+<codeline><highlight class="normal">try<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>throw<sp/>cslt::Error();</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>catch<sp/>(const<sp/>cslt::Error&amp;<sp/>e)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(&quot;Error:<sp/>%s\n&quot;,<sp/>e.what());<sp/><sp/>//<sp/>&quot;An<sp/>error<sp/>occurred&quot;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Using<sp/>custom<sp/>error<sp/>message</highlight></codeline>
+<codeline><highlight class="normal">try<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>throw<sp/>cslt::Error(&quot;Failed<sp/>to<sp/>process<sp/>data&quot;);</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>catch<sp/>(const<sp/>cslt::Error&amp;<sp/>e)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(&quot;Error:<sp/>%s\n&quot;,<sp/>e.what());<sp/><sp/>//<sp/>&quot;Failed<sp/>to<sp/>process<sp/>data&quot;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="51">
+        <label>cslt::BadAllocError</label>
+        <link refid="classcslt_1_1BadAllocError"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="31">
+        <label>cslt::NotImplementedError</label>
+        <link refid="classcslt_1_1NotImplementedError"/>
+        <childnode refid="30" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="46">
+        <label>cslt::LossOfPrecisionError</label>
+        <link refid="classcslt_1_1LossOfPrecisionError"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="17">
+        <label>cslt::ThreadFailError</label>
+        <link refid="classcslt_1_1ThreadFailError"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="44">
+        <label>cslt::DivByZeroError</label>
+        <link refid="classcslt_1_1DivByZeroError"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="13">
+        <label>cslt::CancelledError</label>
+        <link refid="classcslt_1_1CancelledError"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="56">
+        <label>cslt::StateError</label>
+        <link refid="classcslt_1_1StateError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="59">
+        <label>cslt::EmptyError</label>
+        <link refid="classcslt_1_1EmptyError"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="43">
+        <label>cslt::MathError</label>
+        <link refid="classcslt_1_1MathError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="28">
+        <label>cslt::TypeMismatchError</label>
+        <link refid="classcslt_1_1TypeMismatchError"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="53">
+        <label>cslt::LengthOverflowError</label>
+        <link refid="classcslt_1_1LengthOverflowError"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="1">
+        <label>cslt::Error</label>
+        <link refid="classcslt_1_1Error"/>
+      </node>
+      <node id="41">
+        <label>cslt::IOWouldBlockError</label>
+        <link refid="classcslt_1_1IOWouldBlockError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="54">
+        <label>cslt::OutOfMemoryError</label>
+        <link refid="classcslt_1_1OutOfMemoryError"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="61">
+        <label>cslt::StateCorruptError</label>
+        <link refid="classcslt_1_1StateCorruptError"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="50">
+        <label>cslt::AlignmentError</label>
+        <link refid="classcslt_1_1AlignmentError"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="39">
+        <label>cslt::IOInterruptedError</label>
+        <link refid="classcslt_1_1IOInterruptedError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="21">
+        <label>cslt::ResourceExhaustedError</label>
+        <link refid="classcslt_1_1ResourceExhaustedError"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="45">
+        <label>cslt::DomainError</label>
+        <link refid="classcslt_1_1DomainError"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="18">
+        <label>cslt::ConfigError</label>
+        <link refid="classcslt_1_1ConfigError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="60">
+        <label>cslt::NotFoundError</label>
+        <link refid="classcslt_1_1NotFoundError"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="30">
+        <label>cslt::GenericError</label>
+        <link refid="classcslt_1_1GenericError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cslt::ArgumentError</label>
+        <link refid="classcslt_1_1ArgumentError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="49">
+        <label>cslt::MemoryError</label>
+        <link refid="classcslt_1_1MemoryError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="5">
+        <label>cslt::IteratorInvalidError</label>
+        <link refid="classcslt_1_1IteratorInvalidError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="29">
+        <label>cslt::ValidationFailedError</label>
+        <link refid="classcslt_1_1ValidationFailedError"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="26">
+        <label>cslt::FormatInvalidError</label>
+        <link refid="classcslt_1_1FormatInvalidError"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="3">
+        <label>cslt::IllegalStateError</label>
+        <link refid="classcslt_1_1IllegalStateError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="34">
+        <label>cslt::IOError</label>
+        <link refid="classcslt_1_1IOError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="55">
+        <label>cslt::ReallocFailError</label>
+        <link refid="classcslt_1_1ReallocFailError"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="57">
+        <label>cslt::AlreadyInitializedError</label>
+        <link refid="classcslt_1_1AlreadyInitializedError"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="48">
+        <label>cslt::SingularMatrixError</label>
+        <link refid="classcslt_1_1SingularMatrixError"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="10">
+        <label>cslt::SizeMismatchError</label>
+        <link refid="classcslt_1_1SizeMismatchError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="47">
+        <label>cslt::NumericOverflowError</label>
+        <link refid="classcslt_1_1NumericOverflowError"/>
+        <childnode refid="43" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="52">
+        <label>cslt::CapacityOverflowError</label>
+        <link refid="classcslt_1_1CapacityOverflowError"/>
+        <childnode refid="49" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="11">
+        <label>cslt::UninitializedError</label>
+        <link refid="classcslt_1_1UninitializedError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="8">
+        <label>cslt::PostconditionFailError</label>
+        <link refid="classcslt_1_1PostconditionFailError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="15">
+        <label>cslt::LockFailedError</label>
+        <link refid="classcslt_1_1LockFailedError"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="38">
+        <label>cslt::IOClosedError</label>
+        <link refid="classcslt_1_1IOClosedError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="12">
+        <label>cslt::ConcurrencyError</label>
+        <link refid="classcslt_1_1ConcurrencyError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="7">
+        <label>cslt::OutOfBoundsError</label>
+        <link refid="classcslt_1_1OutOfBoundsError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="25">
+        <label>cslt::EncodingInvalidError</label>
+        <link refid="classcslt_1_1EncodingInvalidError"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="6">
+        <label>cslt::NullPointerError</label>
+        <link refid="classcslt_1_1NullPointerError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="37">
+        <label>cslt::FileWriteError</label>
+        <link refid="classcslt_1_1FileWriteError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
+        <label>cslt::InvalidArgError</label>
+        <link refid="classcslt_1_1InvalidArgError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="35">
+        <label>cslt::FileOpenError</label>
+        <link refid="classcslt_1_1FileOpenError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="16">
+        <label>cslt::RaceDetectedError</label>
+        <link refid="classcslt_1_1RaceDetectedError"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="22">
+        <label>cslt::UnsupportedError</label>
+        <link refid="classcslt_1_1UnsupportedError"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="20">
+        <label>cslt::FeatureDisabledError</label>
+        <link refid="classcslt_1_1FeatureDisabledError"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="19">
+        <label>cslt::ConfigInvalidError</label>
+        <link refid="classcslt_1_1ConfigInvalidError"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="33">
+        <label>cslt::UnknownError</label>
+        <link refid="classcslt_1_1UnknownError"/>
+        <childnode refid="30" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="27">
+        <label>cslt::ParsingFailedError</label>
+        <link refid="classcslt_1_1ParsingFailedError"/>
+        <childnode refid="24" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="9">
+        <label>cslt::PreconditionFailError</label>
+        <link refid="classcslt_1_1PreconditionFailError"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="32">
+        <label>cslt::OperationUnavailableError</label>
+        <link refid="classcslt_1_1OperationUnavailableError"/>
+        <childnode refid="30" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="23">
+        <label>cslt::VersionMismatchError</label>
+        <link refid="classcslt_1_1VersionMismatchError"/>
+        <childnode refid="18" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="24">
+        <label>cslt::FormatError</label>
+        <link refid="classcslt_1_1FormatError"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="36">
+        <label>cslt::FileReadError</label>
+        <link refid="classcslt_1_1FileReadError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="40">
+        <label>cslt::IOTimeoutError</label>
+        <link refid="classcslt_1_1IOTimeoutError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="42">
+        <label>cslt::PermissionDeniedError</label>
+        <link refid="classcslt_1_1PermissionDeniedError"/>
+        <childnode refid="34" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="14">
+        <label>cslt::DeadlockDetectedError</label>
+        <link refid="classcslt_1_1DeadlockDetectedError"/>
+        <childnode refid="12" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="58">
+        <label>cslt::ConcurrentModificationError</label>
+        <link refid="classcslt_1_1ConcurrentModificationError"/>
+        <childnode refid="56" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="52" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" bodystart="52" bodyend="140"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1Error_1a8e6554e2c9dbb54d94b7c7c4f1b5913d" prot="protected" virt="non-virtual"><scope>cslt::Error</scope><name>append</name></member>
+      <member refid="classcslt_1_1Error_1a2f1bdefb2155158720a1bdd78f7ca6b1" prot="protected" virt="non-virtual"><scope>cslt::Error</scope><name>compose</name></member>
+      <member refid="classcslt_1_1Error_1abd433330bf88a49022dd02d93968abac" prot="public" virt="non-virtual"><scope>cslt::Error</scope><name>Error</name></member>
+      <member refid="classcslt_1_1Error_1aa357c7b8b770486b17711f59fcff9d23" prot="public" virt="non-virtual"><scope>cslt::Error</scope><name>Error</name></member>
+      <member refid="classcslt_1_1Error_1a9e409bf5902ed3e24eecb0cddb15c946" prot="protected" virt="non-virtual"><scope>cslt::Error</scope><name>MAX_MESSAGE_LEN</name></member>
+      <member refid="classcslt_1_1Error_1a1cdf9c7ce47140ec2e2b3419a5f8b68b" prot="protected" virt="non-virtual"><scope>cslt::Error</scope><name>message</name></member>
+      <member refid="classcslt_1_1Error_1a1ca956ff98baa856fdce4f19dfadb6de" prot="protected" virt="non-virtual"><scope>cslt::Error</scope><name>prepend</name></member>
+      <member refid="classcslt_1_1Error_1ab67a6f8e43272edda147edfd4a7481ae" prot="protected" virt="non-virtual"><scope>cslt::Error</scope><name>safeCopy</name></member>
+      <member refid="classcslt_1_1Error_1a88f638273b754048de50b22b029a077b" prot="public" virt="virtual"><scope>cslt::Error</scope><name>what</name></member>
+      <member refid="classcslt_1_1Error_1a787088bd86fa441e336437b42b7da5aa" prot="public" virt="virtual"><scope>cslt::Error</scope><name>~Error</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

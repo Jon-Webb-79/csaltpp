@@ -5,17 +5,23 @@
 
 Welcome to CSalt++ documentation!
 =================================
-The `csalt++` project is a modern C++ library designed to support flexible, 
-efficient, and safe numerical computing with matrices and vectors. It builds 
-upon the ideas developed in the original C version of CSalt, enhancing them with 
-templates, operator overloading, and runtime format adaptation.
+The `csalt++` project is a modern C++ library designed for safety-critical and 
+high-performance applications requiring MISRA C++ compliance. It provides 
+comprehensive error handling and efficient numerical computing with matrices and 
+vectors, with optional compile-time exclusion of dynamic allocation for embedded 
+and safety-critical systems.
 
-This library targets performance-critical applications such as scientific 
-simulations, engineering solvers, and adaptive mesh computations where matrix 
-structure can vary dramatically.  
+This library builds upon the ideas developed in the original C version of CSalt, 
+enhancing them with templates, operator overloading, and runtime format adaptation, 
+while maintaining compliance with MISRA C++ guidelines through careful design 
+choices including optional static-only compilation, fixed-size buffers, and 
+predictable behavior.
 
-This library provides SIMD-accelerated numerical operations with support for x86 
-instruction sets (AVX2, AVX-512, SSE2, SSE3, SSE4.1) and ARM architectures (NEON, SVE, SVE2).
+CSalt++ targets performance-critical applications such as automotive systems, 
+aerospace software, medical devices, scientific simulations, and engineering solvers 
+where both safety and performance are paramount. It provides SIMD-accelerated 
+numerical operations with support for x86 instruction sets (AVX2, AVX-512, SSE2, 
+SSE3, SSE4.1) and ARM architectures (NEON, SVE, SVE2).
 
 Why CSalt++
 ###########
@@ -23,67 +29,58 @@ Why CSalt++
 C++ offers many improvements over C, but working with numerical data still 
 involves challenges:
 
-* Dynamic matrix manipulation is verbose and error-prone with raw arrays
-* Standard containers lack built-in numerical semantics (e.g., transposition, inversion)
-* No adaptive matrix types that convert formats based on sparsity or structure
-* SIMD acceleration is not automatic
-* Type safety and dimensionality checking must be implemented manually
+* On the fly dynamic memory allocation which drives time complexity
+* Standard exception handling violates MISRA C++ rules (dynamic allocation, non-deterministic behavior)
+* Most C++ libraries cannot disable dynamic allocation for safety-critical use
 
 CSalt++ addresses these issues by offering:
 
-* Strongly typed dense matrices with optional SIMD support for float/double
-* Planned sparse formats (COO, CSR) with runtime format switching
-* Format-agnostic interface via `Matrix<T>` manager class
-* Safe access and modification with uninitialized memory tracking
-* Operator overloading for scalar and element-wise arithmetic
-* Support for inversion, transposition, and numerical manipulation
+* Custom allocators for dynamic memory management
+* MISRA C++ compliant error hierarchy with zero dynamic allocation
+* `Expected<T>` for deterministic, exception-free error handling
+* `STATIC_ONLY` flag to exclude all dynamic allocation at compile time
+* Dual-mode design: full features with dynamic allocation OR static-only for certification
+* Predictable, auditable behavior suitable for certification
 
 Core Features 
 #############
 
-Dense Matrix
-------------
-* Template-based for `float` or `double`
-* Row-major layout
-* Internal tracking of initialized elements to prevent invalid reads
-* SIMD-accelerated operations if compiled with `-march=native`, `-mavx`, or `-msse`
-* Operator overloading for:
+Error Classes 
+-------------
+* **STL-independent exception hierarchy** - Alternative to standard library exceptions with no dynamic allocation
+* **Three-level taxonomy** - Base Error → 9 categories → 40+ specific types (e.g., Error → ArgumentError → NullPointerError)
+* **Fixed-size messages** - All errors use 256-byte stack buffers, ensuring predictable memory usage
+* **Default messages** - Each error type has a predefined message that can be overridden via constructor
+* **Message composition** - Helper methods for prepending/appending context to standard messages
+* **Dual-use design** - Works with traditional ``throw``/``catch`` or modern ``Expected<T>`` pattern
+* **MISRA compliant** - Available in both standard and ``STATIC_ONLY`` modes
+* **Type-safe handling** - Catch specific errors (``DivByZeroError``), categories (``MathError``), or base (``Error``)
 
-  - `+`, `-`, `*`, `/` with scalars
-  - `+`, `-`, `*` element-wise with other matrices
-  - Matrix transposition
-  - Matrix inversion (for square matrices)
-
-Sparse Formats (Planned)
--------------------------
-* **COO** (Coordinate List)
-* **CSR** (Compressed Sparse Row)
-* Seamless conversion between formats based on runtime sparsity thresholds
-* Efficient memory layout for high-performance iterative solvers
-* Format-agnostic API
-
-Matrix Manager (Planned)
--------------------------
-* Single front-end type `Matrix<T>` that wraps `DenseMatrix<T>`, `COOMatrix<T>`, or `CSRMatrix<T>`
-* Chooses best format at runtime
-* Allows automatic promotion/demotion of types as sparsity changes
-* Dispatches operations to correct internal type safely
+Expected Class 
+--------------
+* **Errors as values** - Type-safe representation of computations that may succeed (``T``) or fail (``Error``)
+* **Explicit error handling** - Forces callers to check for errors before accessing values, preventing forgotten checks
+* **Zero overhead** - No exception unwinding, no dynamic allocation, deterministic performance
+* **Stack-based storage** - ``sizeof(Expected<T>) = sizeof(bool) + sizeof(T) + sizeof(Error)``
+* **Simple API** - ``setValue()``/``setError()`` to construct, ``hasValue()``/``hasError()`` to query, ``value()``/``error()`` to access
+* **Safe defaults** - ``valueOr()`` method provides fallback values without checking
+* **Bool conversion** - Use in conditionals: ``if (result) { /* success */ }``
+* **MISRA compliant** - Fully compliant in both standard and ``STATIC_ONLY`` modes
+* **Recommended pattern** - Preferred over exceptions for safety-critical and real-time code
 
 Typical Use Cases
 #################
 
+* Embedded software
 * Engineering calculations (FEM, CFD, PDEs)
 * Adaptive data structures for large numerical grids
 * Real-time simulation or optimization
-* Any scenario where matrix sparsity evolves during computation
 
 .. toctree::
    :maxdepth: 1
    :caption: Modules:
 
-    Vector <Vector>
-    Matrix <Matrix>
-    SIMD <Simd>
+    Error <Error>
     
 Indices and tables
 ==================

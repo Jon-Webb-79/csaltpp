@@ -1,0 +1,258 @@
+\hypertarget{classslt_1_1MatrixBase}{}\doxysection{slt\+::Matrix\+Base$<$ T $>$ Class Template Reference}
+\label{classslt_1_1MatrixBase}\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+
+
+Abstract base class for matrix types.  
+
+
+
+
+{\ttfamily \#include $<$matrix.\+hpp$>$}
+
+
+
+Inheritance diagram for slt\+::Matrix\+Base$<$ T $>$\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{classslt_1_1MatrixBase__inherit__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+virtual \mbox{\hyperlink{classslt_1_1MatrixBase_a3bbb4cd026c2c1da1ba0881c918630b1}{$\sim$\+Matrix\+Base}} ()=default
+\begin{DoxyCompactList}\small\item\em Virtual destructor for safe polymorphic deletion. \end{DoxyCompactList}\item 
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase_a614ed98dfb69c490ad6658990679f81c}{rows}} () const
+\begin{DoxyCompactList}\small\item\em Returns the number of rows in the matrix. \end{DoxyCompactList}\item 
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase_ab2193ba0b50e6342859efa9624f36a06}{cols}} () const
+\begin{DoxyCompactList}\small\item\em Returns the number of columns in the matrix. \end{DoxyCompactList}\item 
+virtual T \mbox{\hyperlink{classslt_1_1MatrixBase_a5fe460dc2d97ee440c32635d5f3192fc}{get}} (std\+::size\+\_\+t row, std\+::size\+\_\+t col) const =0
+\begin{DoxyCompactList}\small\item\em Retrieves the value at a specific matrix coordinate. \end{DoxyCompactList}\item 
+virtual std\+::unique\+\_\+ptr$<$ \mbox{\hyperlink{classslt_1_1MatrixBase}{Matrix\+Base}}$<$ T $>$ $>$ \mbox{\hyperlink{classslt_1_1MatrixBase_a10ca9a5de506b53de715596507c77321}{clone}} () const =0
+\begin{DoxyCompactList}\small\item\em Creates a polymorphic copy of the matrix object. \end{DoxyCompactList}\item 
+virtual bool \mbox{\hyperlink{classslt_1_1MatrixBase_a069249b28295c9776df81efed6076589}{is\+\_\+initialized}} (std\+::size\+\_\+t row, std\+::size\+\_\+t col) const =0
+\begin{DoxyCompactList}\small\item\em Determines if a row column pair is initialized. \end{DoxyCompactList}\item 
+virtual std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase_ab7e0924e77fe089b13f73919cbaa9e60}{initialized\+\_\+count}} () const =0
+\begin{DoxyCompactList}\small\item\em Returns the number of initialized elements in the matrix. \end{DoxyCompactList}\item 
+virtual std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase_a9240f5b4144ddf0e284e44b61b10fa49}{size}} () const =0
+\begin{DoxyCompactList}\small\item\em The total size of the matrix. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase_a685b2ff5ffb79c5bc79f4fe5a932efd2}{rows\+\_\+}} = 0
+\item 
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase_ab84af87cc081ed919609dd3d734861d6}{cols\+\_\+}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class slt\+::\+Matrix\+Base$<$ T $>$}
+
+Abstract base class for matrix types. 
+
+Provides a uniform interface for different matrix implementations (e.\+g., dense, sparse), supporting essential matrix operations such as element access, mutation, and cloning.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & The numeric type of the matrix elements (e.\+g., float, double). \\
+\hline
+\end{DoxyTemplParams}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_a3bbb4cd026c2c1da1ba0881c918630b1}\label{classslt_1_1MatrixBase_a3bbb4cd026c2c1da1ba0881c918630b1}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!````~MatrixBase@{$\sim$MatrixBase}}
+\index{````~MatrixBase@{$\sim$MatrixBase}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{$\sim$MatrixBase()}{~MatrixBase()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+virtual \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::$\sim$\mbox{\hyperlink{classslt_1_1MatrixBase}{Matrix\+Base}} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [default]}}
+
+
+
+Virtual destructor for safe polymorphic deletion. 
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_a10ca9a5de506b53de715596507c77321}\label{classslt_1_1MatrixBase_a10ca9a5de506b53de715596507c77321}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!clone@{clone}}
+\index{clone@{clone}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{clone()}{clone()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+virtual std\+::unique\+\_\+ptr$<$\mbox{\hyperlink{classslt_1_1MatrixBase}{Matrix\+Base}}$<$T$>$ $>$ \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::clone (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Creates a polymorphic copy of the matrix object. 
+
+Useful for cloning objects when only a base class pointer/reference is available.
+
+\begin{DoxyReturn}{Returns}
+A std\+::unique\+\_\+ptr to a new Matrix\+Base-\/derived object with the same contents. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classslt_1_1SparseCSRMatrix_a4916aed4e374f2434d84d776d33bc98e}{slt\+::\+Sparse\+CSRMatrix$<$ T $>$}}, \mbox{\hyperlink{classslt_1_1SparseCOOMatrix_a532cedb759d6e7e633c4a3ad84f17c69}{slt\+::\+Sparse\+COOMatrix$<$ T $>$}}, and \mbox{\hyperlink{classslt_1_1DenseMatrix_a66bf4b77281db6ded265fc44f8b3a309}{slt\+::\+Dense\+Matrix$<$ T $>$}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_ab2193ba0b50e6342859efa9624f36a06}\label{classslt_1_1MatrixBase_ab2193ba0b50e6342859efa9624f36a06}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!cols@{cols}}
+\index{cols@{cols}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{cols()}{cols()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::cols (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the number of columns in the matrix. 
+
+\begin{DoxyReturn}{Returns}
+Number of columns. 
+\end{DoxyReturn}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_a5fe460dc2d97ee440c32635d5f3192fc}\label{classslt_1_1MatrixBase_a5fe460dc2d97ee440c32635d5f3192fc}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!get@{get}}
+\index{get@{get}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+virtual T \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::get (\begin{DoxyParamCaption}\item[{std\+::size\+\_\+t}]{row,  }\item[{std\+::size\+\_\+t}]{col }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Retrieves the value at a specific matrix coordinate. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em row} & Zero-\/based row index. \\
+\hline
+{\em col} & Zero-\/based column index. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Value at the specified location. 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classslt_1_1DenseMatrix_a64113fe72d74abc3e8f957e5f0bbee9e}{slt\+::\+Dense\+Matrix$<$ T $>$}}, \mbox{\hyperlink{classslt_1_1SparseCSRMatrix_ad93cd70252dd6a59edb0b438157a23a3}{slt\+::\+Sparse\+CSRMatrix$<$ T $>$}}, and \mbox{\hyperlink{classslt_1_1SparseCOOMatrix_a8060856161b5989ab2f30b87d8d5bf71}{slt\+::\+Sparse\+COOMatrix$<$ T $>$}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_ab7e0924e77fe089b13f73919cbaa9e60}\label{classslt_1_1MatrixBase_ab7e0924e77fe089b13f73919cbaa9e60}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!initialized\_count@{initialized\_count}}
+\index{initialized\_count@{initialized\_count}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{initialized\_count()}{initialized\_count()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+virtual std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::initialized\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Returns the number of initialized elements in the matrix. 
+
+\begin{DoxyReturn}{Returns}
+The number of initialized elements in the matrix 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classslt_1_1SparseCOOMatrix_a8d72d157729bc5e2b3273091ba5ded9b}{slt\+::\+Sparse\+COOMatrix$<$ T $>$}}, \mbox{\hyperlink{classslt_1_1DenseMatrix_ab367163d23fd68b25d04a54f13c3c0b6}{slt\+::\+Dense\+Matrix$<$ T $>$}}, and \mbox{\hyperlink{classslt_1_1SparseCSRMatrix_ae6c8ae431051b0791e9f213d3a411505}{slt\+::\+Sparse\+CSRMatrix$<$ T $>$}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_a069249b28295c9776df81efed6076589}\label{classslt_1_1MatrixBase_a069249b28295c9776df81efed6076589}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!is\_initialized@{is\_initialized}}
+\index{is\_initialized@{is\_initialized}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{is\_initialized()}{is\_initialized()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+virtual bool \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::is\+\_\+initialized (\begin{DoxyParamCaption}\item[{std\+::size\+\_\+t}]{row,  }\item[{std\+::size\+\_\+t}]{col }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+Determines if a row column pair is initialized. 
+
+\begin{DoxyReturn}{Returns}
+true if initialized false otherwise 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classslt_1_1DenseMatrix_aecc5061bed3861b391292058e43ae1b2}{slt\+::\+Dense\+Matrix$<$ T $>$}}, \mbox{\hyperlink{classslt_1_1SparseCSRMatrix_a05430121400cca7c945f5dd7a54b8b8c}{slt\+::\+Sparse\+CSRMatrix$<$ T $>$}}, and \mbox{\hyperlink{classslt_1_1SparseCOOMatrix_a889f1c98e467ceb29a74a1fa3efa6d44}{slt\+::\+Sparse\+COOMatrix$<$ T $>$}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_a614ed98dfb69c490ad6658990679f81c}\label{classslt_1_1MatrixBase_a614ed98dfb69c490ad6658990679f81c}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!rows@{rows}}
+\index{rows@{rows}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{rows()}{rows()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::rows (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Returns the number of rows in the matrix. 
+
+\begin{DoxyReturn}{Returns}
+Number of rows. 
+\end{DoxyReturn}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_a9240f5b4144ddf0e284e44b61b10fa49}\label{classslt_1_1MatrixBase_a9240f5b4144ddf0e284e44b61b10fa49}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!size@{size}}
+\index{size@{size}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+virtual std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [pure virtual]}}
+
+
+
+The total size of the matrix. 
+
+\begin{DoxyReturn}{Returns}
+The number of columns multiplied by the number of rows 
+\end{DoxyReturn}
+
+
+Implemented in \mbox{\hyperlink{classslt_1_1SparseCOOMatrix_adc0211d7a6ffae48b7e796d5f9dacd15}{slt\+::\+Sparse\+COOMatrix$<$ T $>$}}, \mbox{\hyperlink{classslt_1_1DenseMatrix_a39a9fb8ff6233685c347386728cf7ef7}{slt\+::\+Dense\+Matrix$<$ T $>$}}, and \mbox{\hyperlink{classslt_1_1SparseCSRMatrix_abd0d5d75ba4ef854b1e8de8403f745d1}{slt\+::\+Sparse\+CSRMatrix$<$ T $>$}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+
+
+\doxysubsection{Field Documentation}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_ab84af87cc081ed919609dd3d734861d6}\label{classslt_1_1MatrixBase_ab84af87cc081ed919609dd3d734861d6}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!cols\_@{cols\_}}
+\index{cols\_@{cols\_}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{cols\_}{cols\_}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::cols\+\_\+ = 0\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classslt_1_1MatrixBase_a685b2ff5ffb79c5bc79f4fe5a932efd2}\label{classslt_1_1MatrixBase_a685b2ff5ffb79c5bc79f4fe5a932efd2}} 
+\index{slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}!rows\_@{rows\_}}
+\index{rows\_@{rows\_}!slt::MatrixBase$<$ T $>$@{slt::MatrixBase$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{rows\_}{rows\_}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+std\+::size\+\_\+t \mbox{\hyperlink{classslt_1_1MatrixBase}{slt\+::\+Matrix\+Base}}$<$ T $>$\+::rows\+\_\+ = 0\hspace{0.3cm}{\ttfamily [protected]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2matrix_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/matrix.\+hpp}}.\end{Desc}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{matrix_8hpp}{matrix.\+hpp}}\end{DoxyCompactItemize}

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to CSalt++ documentation! &mdash; csalt++ 0.0.1 documentation</title>
+  <title>Welcome to CSalt++ documentation! &mdash; csalt++-lib 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -16,11 +16,10 @@
       <script src="_static/documentation_options.js?v=d45e8c67"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Vector Operations" href="Vector.html" /> 
+    <link rel="next" title="Error Handling Overview" href="Error.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -32,7 +31,7 @@
           
           
           <a href="#" class="icon icon-home">
-            csalt++
+            csalt++-lib
           </a>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -44,9 +43,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Vector.html"> Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Matrix.html"> Matrix</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Simd.html"> SIMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html"> Error</a></li>
 </ul>
 
         </div>
@@ -55,7 +52,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">csalt++</a>
+          <a href="#">csalt++-lib</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -75,89 +72,82 @@
              
   <section id="welcome-to-csalt-documentation">
 <h1>Welcome to CSalt++ documentation!<a class="headerlink" href="#welcome-to-csalt-documentation" title="Link to this heading"></a></h1>
-<p>The <cite>csalt++</cite> project is a modern C++ library designed to support flexible,
-efficient, and safe numerical computing with matrices and vectors. It builds
-upon the ideas developed in the original C version of CSalt, enhancing them with
-templates, operator overloading, and runtime format adaptation.</p>
-<p>This library targets performance-critical applications such as scientific
-simulations, engineering solvers, and adaptive mesh computations where matrix
-structure can vary dramatically.</p>
-<p>This library provides SIMD-accelerated numerical operations with support for x86
-instruction sets (AVX2, AVX-512, SSE2, SSE3, SSE4.1) and ARM architectures (NEON, SVE, SVE2).</p>
+<p>The <cite>csalt++</cite> project is a modern C++ library designed for safety-critical and
+high-performance applications requiring MISRA C++ compliance. It provides
+comprehensive error handling and efficient numerical computing with matrices and
+vectors, with optional compile-time exclusion of dynamic allocation for embedded
+and safety-critical systems.</p>
+<p>This library builds upon the ideas developed in the original C version of CSalt,
+enhancing them with templates, operator overloading, and runtime format adaptation,
+while maintaining compliance with MISRA C++ guidelines through careful design
+choices including optional static-only compilation, fixed-size buffers, and
+predictable behavior.</p>
+<p>CSalt++ targets performance-critical applications such as automotive systems,
+aerospace software, medical devices, scientific simulations, and engineering solvers
+where both safety and performance are paramount. It provides SIMD-accelerated
+numerical operations with support for x86 instruction sets (AVX2, AVX-512, SSE2,
+SSE3, SSE4.1) and ARM architectures (NEON, SVE, SVE2).</p>
 <section id="why-csalt">
 <h2>Why CSalt++<a class="headerlink" href="#why-csalt" title="Link to this heading"></a></h2>
 <p>C++ offers many improvements over C, but working with numerical data still
 involves challenges:</p>
 <ul class="simple">
-<li><p>Dynamic matrix manipulation is verbose and error-prone with raw arrays</p></li>
-<li><p>Standard containers lack built-in numerical semantics (e.g., transposition, inversion)</p></li>
-<li><p>No adaptive matrix types that convert formats based on sparsity or structure</p></li>
-<li><p>SIMD acceleration is not automatic</p></li>
-<li><p>Type safety and dimensionality checking must be implemented manually</p></li>
+<li><p>On the fly dynamic memory allocation which drives time complexity</p></li>
+<li><p>Standard exception handling violates MISRA C++ rules (dynamic allocation, non-deterministic behavior)</p></li>
+<li><p>Most C++ libraries cannot disable dynamic allocation for safety-critical use</p></li>
 </ul>
 <p>CSalt++ addresses these issues by offering:</p>
 <ul class="simple">
-<li><p>Strongly typed dense matrices with optional SIMD support for float/double</p></li>
-<li><p>Planned sparse formats (COO, CSR) with runtime format switching</p></li>
-<li><p>Format-agnostic interface via <cite>Matrix&lt;T&gt;</cite> manager class</p></li>
-<li><p>Safe access and modification with uninitialized memory tracking</p></li>
-<li><p>Operator overloading for scalar and element-wise arithmetic</p></li>
-<li><p>Support for inversion, transposition, and numerical manipulation</p></li>
+<li><p>Custom allocators for dynamic memory management</p></li>
+<li><p>MISRA C++ compliant error hierarchy with zero dynamic allocation</p></li>
+<li><p><cite>Expected&lt;T&gt;</cite> for deterministic, exception-free error handling</p></li>
+<li><p><cite>STATIC_ONLY</cite> flag to exclude all dynamic allocation at compile time</p></li>
+<li><p>Dual-mode design: full features with dynamic allocation OR static-only for certification</p></li>
+<li><p>Predictable, auditable behavior suitable for certification</p></li>
 </ul>
 </section>
 <section id="core-features">
 <h2>Core Features<a class="headerlink" href="#core-features" title="Link to this heading"></a></h2>
-<section id="dense-matrix">
-<h3>Dense Matrix<a class="headerlink" href="#dense-matrix" title="Link to this heading"></a></h3>
+<section id="error-classes">
+<h3>Error Classes<a class="headerlink" href="#error-classes" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p>Template-based for <cite>float</cite> or <cite>double</cite></p></li>
-<li><p>Row-major layout</p></li>
-<li><p>Internal tracking of initialized elements to prevent invalid reads</p></li>
-<li><p>SIMD-accelerated operations if compiled with <cite>-march=native</cite>, <cite>-mavx</cite>, or <cite>-msse</cite></p></li>
-<li><p>Operator overloading for:</p>
-<ul>
-<li><p><cite>+</cite>, <cite>-</cite>, <cite>*</cite>, <cite>/</cite> with scalars</p></li>
-<li><p><cite>+</cite>, <cite>-</cite>, <cite>*</cite> element-wise with other matrices</p></li>
-<li><p>Matrix transposition</p></li>
-<li><p>Matrix inversion (for square matrices)</p></li>
-</ul>
-</li>
+<li><p><strong>STL-independent exception hierarchy</strong> - Alternative to standard library exceptions with no dynamic allocation</p></li>
+<li><p><strong>Three-level taxonomy</strong> - Base Error → 9 categories → 40+ specific types (e.g., Error → ArgumentError → NullPointerError)</p></li>
+<li><p><strong>Fixed-size messages</strong> - All errors use 256-byte stack buffers, ensuring predictable memory usage</p></li>
+<li><p><strong>Default messages</strong> - Each error type has a predefined message that can be overridden via constructor</p></li>
+<li><p><strong>Message composition</strong> - Helper methods for prepending/appending context to standard messages</p></li>
+<li><p><strong>Dual-use design</strong> - Works with traditional <code class="docutils literal notranslate"><span class="pre">throw</span></code>/<code class="docutils literal notranslate"><span class="pre">catch</span></code> or modern <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code> pattern</p></li>
+<li><p><strong>MISRA compliant</strong> - Available in both standard and <code class="docutils literal notranslate"><span class="pre">STATIC_ONLY</span></code> modes</p></li>
+<li><p><strong>Type-safe handling</strong> - Catch specific errors (<code class="docutils literal notranslate"><span class="pre">DivByZeroError</span></code>), categories (<code class="docutils literal notranslate"><span class="pre">MathError</span></code>), or base (<code class="docutils literal notranslate"><span class="pre">Error</span></code>)</p></li>
 </ul>
 </section>
-<section id="sparse-formats-planned">
-<h3>Sparse Formats (Planned)<a class="headerlink" href="#sparse-formats-planned" title="Link to this heading"></a></h3>
+<section id="expected-class">
+<h3>Expected Class<a class="headerlink" href="#expected-class" title="Link to this heading"></a></h3>
 <ul class="simple">
-<li><p><strong>COO</strong> (Coordinate List)</p></li>
-<li><p><strong>CSR</strong> (Compressed Sparse Row)</p></li>
-<li><p>Seamless conversion between formats based on runtime sparsity thresholds</p></li>
-<li><p>Efficient memory layout for high-performance iterative solvers</p></li>
-<li><p>Format-agnostic API</p></li>
-</ul>
-</section>
-<section id="matrix-manager-planned">
-<h3>Matrix Manager (Planned)<a class="headerlink" href="#matrix-manager-planned" title="Link to this heading"></a></h3>
-<ul class="simple">
-<li><p>Single front-end type <cite>Matrix&lt;T&gt;</cite> that wraps <cite>DenseMatrix&lt;T&gt;</cite>, <cite>COOMatrix&lt;T&gt;</cite>, or <cite>CSRMatrix&lt;T&gt;</cite></p></li>
-<li><p>Chooses best format at runtime</p></li>
-<li><p>Allows automatic promotion/demotion of types as sparsity changes</p></li>
-<li><p>Dispatches operations to correct internal type safely</p></li>
+<li><p><strong>Errors as values</strong> - Type-safe representation of computations that may succeed (<code class="docutils literal notranslate"><span class="pre">T</span></code>) or fail (<code class="docutils literal notranslate"><span class="pre">Error</span></code>)</p></li>
+<li><p><strong>Explicit error handling</strong> - Forces callers to check for errors before accessing values, preventing forgotten checks</p></li>
+<li><p><strong>Zero overhead</strong> - No exception unwinding, no dynamic allocation, deterministic performance</p></li>
+<li><p><strong>Stack-based storage</strong> - <code class="docutils literal notranslate"><span class="pre">sizeof(Expected&lt;T&gt;)</span> <span class="pre">=</span> <span class="pre">sizeof(bool)</span> <span class="pre">+</span> <span class="pre">sizeof(T)</span> <span class="pre">+</span> <span class="pre">sizeof(Error)</span></code></p></li>
+<li><p><strong>Simple API</strong> - <code class="docutils literal notranslate"><span class="pre">setValue()</span></code>/<code class="docutils literal notranslate"><span class="pre">setError()</span></code> to construct, <code class="docutils literal notranslate"><span class="pre">hasValue()</span></code>/<code class="docutils literal notranslate"><span class="pre">hasError()</span></code> to query, <code class="docutils literal notranslate"><span class="pre">value()</span></code>/<code class="docutils literal notranslate"><span class="pre">error()</span></code> to access</p></li>
+<li><p><strong>Safe defaults</strong> - <code class="docutils literal notranslate"><span class="pre">valueOr()</span></code> method provides fallback values without checking</p></li>
+<li><p><strong>Bool conversion</strong> - Use in conditionals: <code class="docutils literal notranslate"><span class="pre">if</span> <span class="pre">(result)</span> <span class="pre">{</span> <span class="pre">/*</span> <span class="pre">success</span> <span class="pre">*/</span> <span class="pre">}</span></code></p></li>
+<li><p><strong>MISRA compliant</strong> - Fully compliant in both standard and <code class="docutils literal notranslate"><span class="pre">STATIC_ONLY</span></code> modes</p></li>
+<li><p><strong>Recommended pattern</strong> - Preferred over exceptions for safety-critical and real-time code</p></li>
 </ul>
 </section>
 </section>
 <section id="typical-use-cases">
 <h2>Typical Use Cases<a class="headerlink" href="#typical-use-cases" title="Link to this heading"></a></h2>
 <ul class="simple">
+<li><p>Embedded software</p></li>
 <li><p>Engineering calculations (FEM, CFD, PDEs)</p></li>
 <li><p>Adaptive data structures for large numerical grids</p></li>
 <li><p>Real-time simulation or optimization</p></li>
-<li><p>Any scenario where matrix sparsity evolves during computation</p></li>
 </ul>
 <div class="toctree-wrapper compound">
 <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Vector.html"> Vector</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Matrix.html"> Matrix</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Simd.html"> SIMD</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html"> Error</a></li>
 </ul>
 </div>
 </section>
@@ -254,7 +244,7 @@ make<span class="w"> </span>html
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Vector.html" class="btn btn-neutral float-right" title="Vector Operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Error.html" class="btn btn-neutral float-right" title="Error Handling Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

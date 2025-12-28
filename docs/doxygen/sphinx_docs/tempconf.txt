@@ -1,0 +1,126 @@
+
+# Configuration file for the Sphinx documentation builder.
+#
+# This file only contains a selection of the most common options. For a full
+# list see the documentation:
+# https://www.sphinx-doc.org/en/master/usage/configuration.html
+
+# -- Path setup --------------------------------------------------------------
+
+# If extensions (or modules to document with autodoc) are in another directory,
+# add these directories to sys.path here. If the directory is relative to the
+# documentation root, use os.path.abspath to make it absolute, like shown here.
+#
+#import os
+#import sys
+#sys.path.insert(0, os.path.abspath('../../../src'))
+
+# -- Project information -----------------------------------------------------
+
+# Configuration file for the Sphinx documentation builder
+
+# -- Project information -----------------------------------------------------
+project = 'csalt++'
+copyright = '2025, Jonathan A. Webb'
+author = 'Jonathan A. Webb'
+release = '0.0.1'
+
+# -- General configuration ---------------------------------------------------
+extensions = [
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+    "sphinx.ext.viewcode",
+    "sphinx.ext.todo",
+    "sphinx.ext.githubpages",
+    "sphinx.ext.intersphinx",      # ADD: Link to external docs
+    "breathe",
+]
+
+# Breathe configuration
+from pathlib import Path
+HERE = Path(__file__).parent.resolve()
+DOXYGEN_XML_DIR = HERE.parent / "build" / "xml"   # docs/_build/doxygen/xml
+
+breathe_default_project = "csalt"
+breathe_domain_by_extension = {"h": "cpp", "cpp": "cpp", "hpp": "cpp"}
+breathe_projects = {"csalt": str(DOXYGEN_XML_DIR)}
+
+# Optional sanity check: prints a hint during Sphinx build if XML is missing
+if not DOXYGEN_XML_DIR.exists():
+    print(f"[conf.py] WARNING: Doxygen XML not found at {DOXYGEN_XML_DIR}. "
+          f"Run 'doxygen Doxyfile' before building Sphinx.")
+
+# Auto-documentation settings
+autodoc_member_order = "groupwise"
+autosummary_generate = True
+
+# Breathe configuration
+breathe_projects = {
+    "csalt++": "../xml"  # Path to Doxygen XML output
+}
+breathe_default_project = "csalt++"
+
+# ADD: Configure what members to show by default
+breathe_default_members = ('members', 'protected-members', 'undoc-members')
+
+# ADD: Show function implementation details
+breathe_implementation_filename_extensions = ['.cpp', '.c', '.cc']
+
+# ADD: Better handling of templates and namespaces
+breathe_show_enumvalue_initializer = True
+breathe_show_include = True
+
+# Source file parsers and default language
+highlight_language = "c++"
+primary_domain = "cpp"
+
+# ADD: Pygments style for code highlighting
+pygments_style = 'sphinx'
+
+# Templates and exclusions
+templates_path = ["_templates"]
+exclude_patterns = []
+
+# -- Options for HTML output -------------------------------------------------
+html_theme = "sphinx_rtd_theme"
+html_static_path = ["_static"]
+
+# ADD: Theme options for better C++ documentation
+html_theme_options = {
+    'navigation_depth': 4,
+    'collapse_navigation': False,
+    'sticky_navigation': True,
+    'includehidden': True,
+    'titles_only': False,
+    'display_version': True,
+}
+
+# ADD: Sidebar customization
+html_sidebars = {
+    '**': [
+        'globaltoc.html',
+        'relations.html',
+        'sourcelink.html',
+        'searchbox.html',
+    ]
+}
+
+# -- ToDo extension ----------------------------------------------------------
+todo_include_todos = True
+
+# ADD: Intersphinx mapping (for linking to C++ standard library docs)
+intersphinx_mapping = {
+    'python': ('https://docs.python.org/3', None),
+    'cppreference': ('https://en.cppreference.com/w/', None),
+}
+
+# ADD: Better handling of warnings
+suppress_warnings = ['breathe.duplicate_declaration']
+
+# ADD: C++ specific settings
+cpp_index_common_prefix = ['cslt::']
+cpp_id_attributes = ['__attribute__']
+
+# ADD: Show source code links
+html_show_sourcelink = True
+html_copy_source = True

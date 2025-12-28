@@ -1,0 +1,1605 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classslt_1_1SparseCOOMatrix" kind="class" language="C++" prot="public">
+    <compoundname>slt::SparseCOOMatrix</compoundname>
+    <basecompoundref refid="classslt_1_1MatrixBase" prot="public" virt="non-virtual">slt::MatrixBase&lt; T &gt;</basecompoundref>
+    <includes refid="matrix_8hpp" local="no">matrix.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" prot="private" static="no" mutable="no">
+        <type>std::vector&lt; <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref>&lt; T &gt; &gt;</type>
+        <definition>std::vector&lt;Triplet&lt;T&gt; &gt; slt::SparseCOOMatrix&lt; T &gt;::triplet</definition>
+        <argsstring></argsstring>
+        <name>triplet</name>
+        <briefdescription>
+<para>A vector of triplet objects. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2969" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2967" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classslt_1_1SparseCOOMatrix_1ab890c296bec63f265a2c1cd167a88eec" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool slt::SparseCOOMatrix&lt; T &gt;::fast_set</definition>
+        <argsstring></argsstring>
+        <name>fast_set</name>
+        <initializer>= true</initializer>
+        <briefdescription>
+<para>true if vectors are optimized for insertation, false if optimized for retrieval </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2970" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2970" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a5fe5ef134724c0180c0c0c16d6917bc0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::SparseCOOMatrix&lt; T &gt;::clear</definition>
+        <argsstring>()</argsstring>
+        <name>clear</name>
+        <briefdescription>
+<para>Clears the sparse COO matrix, including all values and its shape. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method clears all stored triplets and resets the matrix dimensions (rows and columns) to zero. After calling this method, the matrix is considered uninitialized and must be reconstructed before further use.</para>
+<para>This is a destructive operation and should only be used when the matrix contents and dimensions are no longer needed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2985" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2985" bodyend="2989"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1adc0211d7a6ffae48b7e796d5f9dacd15" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::SparseCOOMatrix&lt; T &gt;::size</definition>
+        <argsstring>() const override</argsstring>
+        <name>size</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a9240f5b4144ddf0e284e44b61b10fa49">size</reimplements>
+        <briefdescription>
+<para>The total size of the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>The number of rows multiplied by the number of columns, 0 if not initialized </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2997" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2997" bodyend="2997"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a8d72d157729bc5e2b3273091ba5ded9b" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::size_t</type>
+        <definition>std::size_t slt::SparseCOOMatrix&lt; T &gt;::initialized_count</definition>
+        <argsstring>() const override</argsstring>
+        <name>initialized_count</name>
+        <reimplements refid="classslt_1_1MatrixBase_1ab7e0924e77fe089b13f73919cbaa9e60">initialized_count</reimplements>
+        <briefdescription>
+<para>Returns the number of non-zero elements stored in the matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function returns the number of elements currently stored in the internal <computeroutput>triplet</computeroutput> vector, which corresponds to the number of explicitly initialized non-zero entries in the sparse matrix.</para>
+<para><simplesect kind="return"><para>The number of non-zero elements.</para>
+</simplesect>
+Example: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>2,<sp/>2.5f);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/>&quot;Non-zero<sp/>count:<sp/>&quot;<sp/>&lt;&lt;<sp/>mat.initialized_count()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+</programlisting></para>
+<para>Output: <programlisting><codeline><highlight class="normal">Non-zero<sp/>count:<sp/>2</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3022" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3022" bodyend="3022"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1ac19d7e9ef6e0089973428a5873546a31" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c, std::size_t initial_capacity=16)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>initial_capacity</declname>
+          <defval>16</defval>
+        </param>
+        <briefdescription>
+<para>Constructs an empty sparse COO matrix with specified dimensions. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This constructor initializes a matrix of size <computeroutput>r</computeroutput> x <computeroutput>c</computeroutput> in fast insertion mode. Entries can be added efficiently using <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a124ffa2d3de4c59810806ee6c21838d6" kindref="member">set()</ref></computeroutput>. To enable optimized access through methods like <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71" kindref="member">get()</ref></computeroutput> or <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a889f1c98e467ceb29a74a1fa3efa6d44" kindref="member">is_initialized()</ref></computeroutput>, the user must call <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1af2dd10fb10528bb4abee019204d3fc64" kindref="member">finalize()</ref></computeroutput> after all insertions are complete.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>initial_capacity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional initial reservation size for internal storage vectors (default: 16), which can reduce reallocations during insertion.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">#include<sp/>&quot;sparse_coo_matrix.hpp&quot;</highlight></codeline>
+<codeline><highlight class="normal">#include<sp/>&lt;iostream&gt;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">int<sp/>main()<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Create<sp/>a<sp/>3x3<sp/>sparse<sp/>matrix</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Insert<sp/>values<sp/>(in<sp/>fast<sp/>insertion<sp/>mode)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(1,<sp/>2,<sp/>2.5f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.set(2,<sp/>1,<sp/>-3.2f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Finalize<sp/>before<sp/>using<sp/>get()<sp/>or<sp/>is_initialized()</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>mat.finalize();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Access<sp/>and<sp/>print<sp/>a<sp/>value</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>if<sp/>(mat.is_initialized(1,<sp/>2))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;mat(1,<sp/>2)<sp/>=<sp/>&quot;<sp/>&lt;&lt;<sp/>mat.get(1,<sp/>2)<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>return<sp/>0;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><bold>Output:</bold> <linebreak/>
+ <computeroutput>mat(1, 2) = 2.5</computeroutput> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3066" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3066" bodyend="3070"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a47a73bb8366d3c41f5e35e8640dd616f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c, const std::vector&lt; Triplet&lt; T &gt;&gt; &amp;triplets)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const std::vector&lt; <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref>&lt; T &gt;&gt; &amp;</type>
+          <declname>triplets</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> from a vector of Triplet&lt;T&gt;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The resulting matrix is initialized with the provided triplets. The internal storage is automatically sorted in row-major order (row, then col), and the matrix is ready for optimized access (fast_set = false).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>triplets</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Vector of triplet values to insert.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">std::vector&lt;slt::Triplet&lt;float&gt;&gt;<sp/>triplets<sp/>=<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{0,<sp/>0,<sp/>1.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1,<sp/>2,<sp/>2.5f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{4,<sp/>4,<sp/>3.1f}</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(5,<sp/>5,<sp/>triplets);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3093" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3093" bodyend="3099"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a5399d21587449ccf0542d18f424b4366" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c, std::vector&lt; Triplet&lt; T &gt;&gt; &amp;&amp;triplets)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>std::vector&lt; <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref>&lt; T &gt;&gt; &amp;&amp;</type>
+          <declname>triplets</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3132" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3132" bodyend="3138"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a26f0f9f36313d865ebf2a87c0e9f724f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>std::size_t</type>
+            <declname>N</declname>
+            <defname>N</defname>
+          </param>
+        </templateparamlist>
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c, const std::array&lt; Triplet&lt; T &gt;, N &gt; &amp;triplets)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const std::array&lt; <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref>&lt; T &gt;, N &gt; &amp;</type>
+          <declname>triplets</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> from a fixed-size std::array of Triplet&lt;T&gt;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The matrix is initialized with the given triplets and automatically sorted.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>N</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of triplets. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>triplets</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Array of triplet values to insert.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">std::array&lt;slt::Triplet&lt;double&gt;,<sp/>2&gt;<sp/>triplets<sp/>=<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::Triplet&lt;double&gt;(0,<sp/>1,<sp/>3.14),</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>slt::Triplet&lt;double&gt;(2,<sp/>2,<sp/>2.71)</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;double&gt;<sp/>mat(3,<sp/>3,<sp/>triplets);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3160" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3160" bodyend="3166"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1afbbd341c0b43c83e4adefc5ace49a0f0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c, const Triplet&lt; T &gt; *triplets, std::size_t count)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>const <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref>&lt; T &gt; *</type>
+          <declname>triplets</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>count</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> from a C-style array of Triplet&lt;T&gt;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Useful for integrating with legacy code or simple fixed data. The matrix is sorted automatically after construction.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>triplets</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to an array of Triplet&lt;T&gt;. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>count</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of triplets in the array.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::Triplet&lt;float&gt;<sp/>triplets[]<sp/>=<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{0,<sp/>0,<sp/>1.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{2,<sp/>3,<sp/>4.5f}</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(4,<sp/>4,<sp/>triplets,<sp/>2);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3188" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3188" bodyend="3194"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1ae07fa1705408230d57039e643e8a2774" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(std::size_t r, std::size_t c, std::initializer_list&lt; Triplet&lt; T &gt;&gt; init_list)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>std::initializer_list&lt; <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref>&lt; T &gt;&gt;</type>
+          <declname>init_list</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> from an initializer list of Triplet&lt;T&gt;. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Allows convenient inline initialization using brace-enclosed lists. The matrix is sorted automatically after construction.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of rows in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of columns in the matrix. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>init_list</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>List of triplets to insert.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(4,<sp/>4,<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{0,<sp/>1,<sp/>1.5f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{2,<sp/>0,<sp/>3.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{3,<sp/>3,<sp/>2.0f}</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3215" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3215" bodyend="3221"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1ae3ed7763cb89eb8123fc379a7904e7e3" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(std::size_t n)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3241" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3241" bodyend="3250"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a98d85015b9988f550cf381ca1ba06200" prot="public" static="no" const="no" explicit="yes" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(const DenseMatrix&lt; T &gt; &amp;dense, bool accept_zeros=true)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>dense</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>accept_zeros</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3281" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3281" bodyend="3300"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a7a3545117f90249160799e47687015fb" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(DenseMatrix&lt; T &gt; &amp;&amp;dense, bool accept_zeros=true)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>dense</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>accept_zeros</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> from a moved <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This constructor moves the contents of a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> into a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>, converting all initialized elements into triplets. By default, both zero and non-zero values are retained. If <computeroutput>accept_zeros</computeroutput> is false, explicitly zero-valued entries are discarded.</para>
+<para>After construction, the <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> is cleared to avoid data duplication.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dense</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An rvalue reference to a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> to be converted. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>accept_zeros</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If false, initialized zero values are excluded from the result.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The numeric type, which must be float or double. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3318" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3318" bodyend="3338"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1aca17fa945fb3d058e784e9c448f257f0" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(const SparseCOOMatrix&lt; T &gt; &amp;other)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Copy constructor for <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> as a deep copy of the provided matrix. All internal data structures (values, row/column indices, flags) are duplicated, preserving the state of the original matrix while ensuring full independence.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> instance to copy.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This performs a deep copy. Changes to the new matrix will not affect the original. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3352" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3352" bodyend="3358"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a6c524c58afeb267a0e3cd0bddc2b9be3" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(SparseCOOMatrix&lt; T &gt; &amp;&amp;other) noexcept</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor for <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs a new sparse matrix by transferring ownership of data from another matrix. This constructor performs a shallow move of internal vectors and resets the source matrix to a default, empty state.</para>
+<para>This is more efficient than the copy constructor, as it avoids deep copying of data and instead reuses existing memory buffers. After the move, the source matrix is left in a valid but unspecified state (typically empty).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The matrix to move from. After the operation, <computeroutput>other</computeroutput> is empty.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The <computeroutput>fast_set</computeroutput> flag is also transferred and reset in the source. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3376" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3376" bodyend="3382"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1aa469ef3d3e5fdecef3cff4d126782455" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(const SparseCSRMatrix&lt; T &gt; &amp;csr)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>csr</declname>
+        </param>
+        <briefdescription>
+<para>Constructs a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> from a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the internal CSR format into the equivalent COO format by expanding the row pointer data into individual row indices for each non-zero element. The order of insertion is preserved per row.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>csr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A reference to the source <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> object.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::bad_alloc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If memory allocation fails during construction.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Example: <programlisting><codeline><highlight class="normal">slt::SparseCSRMatrix&lt;float&gt;<sp/>csr<sp/>=<sp/>...;</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>coo(csr);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3402" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3402" bodyend="3423"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a0d26f381a2088dc9a3387ab67bf80071" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>slt::SparseCOOMatrix&lt; T &gt;::SparseCOOMatrix</definition>
+        <argsstring>(SparseCSRMatrix&lt; T &gt; &amp;&amp;csr)</argsstring>
+        <name>SparseCOOMatrix</name>
+        <param>
+          <type><ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>csr</declname>
+        </param>
+        <briefdescription>
+<para>Move constructor that converts a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> into a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Transfers ownership of the data from a compressed sparse row (CSR) formatted matrix and reconstructs a coordinate list (COO) representation. The CSR matrix is left in a logically empty state after the operation (i.e., zero rows, zero columns, and cleared storage).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>csr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>A rvalue reference to a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> (must be float or double).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::bad_alloc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if memory allocation fails. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>The conversion preserves the ordering of entries by row.</para>
+</simplesect>
+Example: <programlisting><codeline><highlight class="normal">slt::DenseMatrix&lt;float&gt;<sp/>dense<sp/>=<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1.0f,<sp/>0.0f,<sp/>2.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{0.0f,<sp/>3.0f,<sp/>0.0f}</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCSRMatrix&lt;float&gt;<sp/>csr(dense);</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>coo(std::move(csr));</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3448" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3448" bodyend="3472"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1abb078adcd4c95de5d7bddbe438a06316" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>T</type>
+        <definition>T slt::SparseCOOMatrix&lt; T &gt;::operator()</definition>
+        <argsstring>(std::size_t r, std::size_t c) const</argsstring>
+        <name>operator()</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Accesses a matrix element (read-only). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Retrieves the value at the specified row and column. If the element has not been set, throws an exception.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index (zero-based). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index (zero-based). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value at the given position. </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if indices are out of bounds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the element is uninitialized. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3487" column="11" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3487" bodyend="3489"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a1dc02d00cac074d3771223b358de6152" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool slt::SparseCOOMatrix&lt; T &gt;::operator==</definition>
+        <argsstring>(const SparseCOOMatrix&lt; T &gt; &amp;other) const</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3528" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3528" bodyend="3551"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a8066b8bab1b1db44570b043591547447" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>SparseCOOMatrix&lt;T&gt;&amp; slt::SparseCOOMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(const SparseCOOMatrix&lt; T &gt; &amp;other)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Deep copy assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Copies all metadata and contents (rows, cols, data, etc.) from another <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>. The two matrices become fully independent.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Source matrix to copy from. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to this matrix. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3563" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3563" bodyend="3571"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a2fc258a86363e2396acc6c827edf2a06" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>SparseCOOMatrix&lt;T&gt;&amp; slt::SparseCOOMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(DenseMatrix&lt; T &gt; &amp;&amp;dense)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>dense</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator from a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts a dense matrix into a sparse COO representation by extracting all initialized values and storing them as triplets. Each initialized entry in the dense matrix becomes a corresponding (row, col, value) triplet. The dense matrix is cleared after the conversion.</para>
+<para>All explicitly initialized values are included, including zero values. Triplets are sorted by row-major order after construction.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>dense</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>An rvalue reference to a <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref> to convert from. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to this <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> after assignment.</para>
+</simplesect>
+<parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The numeric type of the matrix, must be float or double. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3590" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3590" bodyend="3608"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a7807c8c92b9b1d678cd5dc0252cfd1d2" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>SparseCOOMatrix&lt;T&gt;&amp; slt::SparseCOOMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(const DenseMatrix&lt; T &gt; &amp;dense)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>dense</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3641" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3641" bodyend="3660"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1ad7851db1ffece701e976625710f88aaf" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>SparseCOOMatrix&lt;T&gt;&amp; slt::SparseCOOMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(SparseCOOMatrix&lt; T &gt; &amp;&amp;other) noexcept</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Transfers resources from another <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>, leaving the source in a valid but empty state. Enables efficient transfer of large matrices.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Source matrix to move from. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to this matrix. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3672" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3672" bodyend="3681"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a89000f4b232a07e2cb8f8c04f757651d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>SparseCOOMatrix&lt;T&gt;&amp; slt::SparseCOOMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(SparseCSRMatrix&lt; T &gt; &amp;&amp;csr)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>csr</declname>
+        </param>
+        <briefdescription>
+<para>Move assignment operator to convert a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> to a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This operator moves data from a CSR matrix into a COO matrix by converting the internal compressed representation into triplets. After the move, the source CSR matrix is cleared to avoid dangling state.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>csr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Rvalue reference to a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to the updated <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref></para>
+</simplesect>
+<simplesect kind="note"><para>This is a destructive move: the input CSR matrix is emptied. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3696" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3696" bodyend="3723"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a92b8c482627448d29d112af92da1afb8" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::SparseCOOMatrix&lt; T &gt;::operator+</definition>
+        <argsstring>(const SparseCOOMatrix&lt; T &gt; &amp;other) const</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3752" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3752" bodyend="3771"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a2a92002c5de09e5d512aae3821daf8e7" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+        <definition>SparseCOOMatrix&lt;T&gt;&amp; slt::SparseCOOMatrix&lt; T &gt;::operator=</definition>
+        <argsstring>(const SparseCSRMatrix&lt; T &gt; &amp;csr)</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>csr</declname>
+        </param>
+        <briefdescription>
+<para>Assigns a <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> from a <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Converts the compressed sparse row (CSR) format matrix into coordinate (COO) format by iterating over initialized entries and storing them as triplets.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>csr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The source <ref refid="classslt_1_1SparseCSRMatrix" kindref="compound">SparseCSRMatrix</ref> to convert from. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to this <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::bad_alloc</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if memory allocation for triplets fails.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Example: <programlisting><codeline><highlight class="normal">slt::SparseCSRMatrix&lt;float&gt;<sp/>csr<sp/>=<sp/>create_csr_matrix();</highlight></codeline>
+<codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>coo;</highlight></codeline>
+<codeline><highlight class="normal">coo<sp/>=<sp/>csr;</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3792" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3792" bodyend="3813"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1add1bd1320cb996c904f3f56d6897c9cf" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref></type>
+        <definition>SparseCOOMatrix slt::SparseCOOMatrix&lt; T &gt;::operator+</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator+</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3832" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3832" bodyend="3838"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a869a28d52e8cf7658dc8cc87a9bfcc6d" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::SparseCOOMatrix&lt; T &gt;::operator-</definition>
+        <argsstring>(const SparseCOOMatrix&lt; T &gt; &amp;other) const</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3867" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3867" bodyend="3887"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a1db595de4e0815f91d5aba9765b942de" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref></type>
+        <definition>SparseCOOMatrix slt::SparseCOOMatrix&lt; T &gt;::operator-</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator-</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3906" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3906" bodyend="3912"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a562d500b4202fbc2afb7123571ac6d60" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref></type>
+        <definition>SparseCOOMatrix slt::SparseCOOMatrix&lt; T &gt;::operator*</definition>
+        <argsstring>(const SparseCOOMatrix &amp;other) const</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>const <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3946" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3946" bodyend="3963"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1ab2abf36f4715b3a56231c74da9924a39" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref></type>
+        <definition>SparseCOOMatrix slt::SparseCOOMatrix&lt; T &gt;::operator*</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator*</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="3988" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="3988" bodyend="3996"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a67a0f345fd85cdcc87de20a4a20554fd" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref></type>
+        <definition>SparseCOOMatrix slt::SparseCOOMatrix&lt; T &gt;::operator/</definition>
+        <argsstring>(T scalar) const</argsstring>
+        <name>operator/</name>
+        <param>
+          <type>T</type>
+          <declname>scalar</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4022" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4022" bodyend="4034"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>T</type>
+        <definition>T slt::SparseCOOMatrix&lt; T &gt;::get</definition>
+        <argsstring>(std::size_t r, std::size_t c) const override</argsstring>
+        <name>get</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a5fe460dc2d97ee440c32635d5f3192fc">get</reimplements>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Retrieves the value at the specified matrix location. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Returns the value stored at the given row and column index in the sparse matrix. If the element has not been explicitly initialized (i.e., not stored in the COO format), the function throws a runtime exception.</para>
+<para>The function uses a linear search if the matrix was constructed with <computeroutput>fast_set == true</computeroutput>, and a binary search if the entries are sorted (<computeroutput>fast_set == false</computeroutput>), allowing efficient retrieval in both cases depending on construction strategy.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index of the target element. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index of the target element. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>The value at the specified matrix location.</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the provided row or column index is outside the matrix bounds. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>std::runtime_error</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If the specified element is uninitialized and thus not stored.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1.0f,<sp/>0.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{0.0f,<sp/>3.0f}</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+<codeline><highlight class="normal">float<sp/>val<sp/>=<sp/>mat.get(1,<sp/>1);<sp/><sp/>//<sp/>Returns<sp/>3.0f</highlight></codeline>
+<codeline><highlight class="normal">float<sp/>missing<sp/>=<sp/>mat.get(0,<sp/>1);<sp/><sp/>//<sp/>Throws<sp/>runtime_error</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4064" column="11" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4064" bodyend="4087"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a532cedb759d6e7e633c4a3ad84f17c69" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>std::unique_ptr&lt; <ref refid="classslt_1_1MatrixBase" kindref="compound">MatrixBase</ref>&lt; T &gt; &gt;</type>
+        <definition>std::unique_ptr&lt;MatrixBase&lt;T&gt; &gt; slt::SparseCOOMatrix&lt; T &gt;::clone</definition>
+        <argsstring>() const override</argsstring>
+        <name>clone</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a10ca9a5de506b53de715596507c77321">clone</reimplements>
+        <briefdescription>
+<para>Creates a polymorphic deep copy of this matrix. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Unique pointer to the copied matrix. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4095" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4095" bodyend="4097"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a124ffa2d3de4c59810806ee6c21838d6" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::SparseCOOMatrix&lt; T &gt;::set</definition>
+        <argsstring>(std::size_t r, std::size_t c, T value)</argsstring>
+        <name>set</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4133" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4133" bodyend="4154"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a30d1204d80d8b51f20217c5af322a2da" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::SparseCOOMatrix&lt; T &gt;::update</definition>
+        <argsstring>(std::size_t r, std::size_t c, T value)</argsstring>
+        <name>update</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>T</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4192" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4192" bodyend="4221"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a889f1c98e467ceb29a74a1fa3efa6d44" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="virtual">
+        <type>bool</type>
+        <definition>bool slt::SparseCOOMatrix&lt; T &gt;::is_initialized</definition>
+        <argsstring>(std::size_t r, std::size_t c) const override</argsstring>
+        <name>is_initialized</name>
+        <reimplements refid="classslt_1_1MatrixBase_1a069249b28295c9776df81efed6076589">is_initialized</reimplements>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+<para>Checks if the element at the specified row and column is initialized (non-zero). </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function determines whether a value has been explicitly assigned to the given row and column in the sparse matrix. It supports two modes:</para>
+<para><itemizedlist>
+<listitem><para>**Fast set mode (<computeroutput>fast_set = true</computeroutput>)**: Performs a linear search through the unsorted COO entries.</para>
+</listitem><listitem><para>**Sorted mode (<computeroutput>fast_set = false</computeroutput>)**: Performs a binary search assuming the entries are sorted by row-major order (i.e., row first, then column).</para>
+</listitem></itemizedlist>
+</para>
+<para>This is useful for determining if a matrix entry is actively stored (i.e., not a structural zero).</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>r</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Row index of the element. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>c</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Column index of the element. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><computeroutput>true</computeroutput> if the element is explicitly initialized (non-zero); otherwise <computeroutput>false</computeroutput>. </para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>std::out_of_range</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if the given row or column index is outside the matrix bounds.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat({</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{1.0f,<sp/>0.0f},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>{0.0f,<sp/>2.0f}</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">bool<sp/>found<sp/>=<sp/>mat.is_initialized(1,<sp/>1);<sp/><sp/>//<sp/>Returns<sp/>true</highlight></codeline>
+<codeline><highlight class="normal">bool<sp/>empty<sp/>=<sp/>mat.is_initialized(0,<sp/>1);<sp/><sp/>//<sp/>Returns<sp/>false</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4251" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4251" bodyend="4274"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1af2dd10fb10528bb4abee019204d3fc64" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::SparseCOOMatrix&lt; T &gt;::finalize</definition>
+        <argsstring>()</argsstring>
+        <name>finalize</name>
+        <briefdescription>
+<para>Finalizes the internal COO representation for querying. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method is required after using fast insertion mode (<computeroutput>fast_set = true</computeroutput>) to sort the (row, column, value) triplets into lexicographic order. Once finalized, efficient binary search and reliable get/update/is_initialized operations are enabled.</para>
+<para>This method performs a stable sort and disables fast insertion mode. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4287" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4287" bodyend="4293"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a0ed0440765b5f86cf842ae4b67b46621" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool slt::SparseCOOMatrix&lt; T &gt;::set_fast</definition>
+        <argsstring>() const</argsstring>
+        <name>set_fast</name>
+        <briefdescription>
+<para>Returns whether the matrix is in fast insertion mode. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This method reports the current status of the <computeroutput>fast_set</computeroutput> flag. When true, the matrix is in fast insertion mode—entries can be appended quickly without maintaining order or checking for duplicates. When false, the matrix is in finalized mode and supports efficient retrieval operations (e.g., via binary search).</para>
+<para><simplesect kind="return"><para>True if the matrix is in fast insertion mode; false if finalized. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4307" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4307" bodyend="4309"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a18b33a42b1cfc9f44c22f8093936da75" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto slt::SparseCOOMatrix&lt; T &gt;::begin</definition>
+        <argsstring>() const</argsstring>
+        <name>begin</name>
+        <briefdescription>
+<para>Returns an iterator to the beginning of the triplet vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This allows iteration over all non-zero entries of the sparse matrix using range-based for loops or STL algorithms.</para>
+<para><simplesect kind="return"><para>Iterator to the first <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref> in the matrix.</para>
+</simplesect>
+Example: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>1,<sp/>2.5f);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(2,<sp/>0,<sp/>4.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">for<sp/>(const<sp/>auto&amp;<sp/>t<sp/>:<sp/>mat)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;(&quot;<sp/>&lt;&lt;<sp/>t.row<sp/>&lt;&lt;<sp/>&quot;,<sp/>&quot;<sp/>&lt;&lt;<sp/>t.col<sp/>&lt;&lt;<sp/>&quot;)<sp/>=<sp/>&quot;<sp/>&lt;&lt;<sp/>t.value<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4330" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4330" bodyend="4330"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a40f66827dc6598f748825018494bd37b" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto slt::SparseCOOMatrix&lt; T &gt;::begin</definition>
+        <argsstring>()</argsstring>
+        <name>begin</name>
+        <briefdescription>
+<para>Returns a mutable iterator to the beginning of the triplet vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This overload allows modification of the stored Triplet&lt;T&gt; objects — for example, to adjust values in-place, or to apply bulk transformations.</para>
+<para>Example: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(5,<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>0,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal">mat.finalize();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">for<sp/>(auto<sp/>it<sp/>=<sp/>mat.begin();<sp/>it<sp/>!=<sp/>mat.end();<sp/>++it)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>it-&gt;value<sp/>*=<sp/>2.0f;<sp/><sp/>//<sp/>scale<sp/>all<sp/>non-zero<sp/>values</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="return"><para>Iterator to the first Triplet&lt;T&gt; in the matrix. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4352" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4352" bodyend="4352"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1addf50368708419f7a86e00d7591a235a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto slt::SparseCOOMatrix&lt; T &gt;::end</definition>
+        <argsstring>() const</argsstring>
+        <name>end</name>
+        <briefdescription>
+<para>Returns an iterator to one-past-the-end of the triplet vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Used for iteration over the matrix using range-based for loops or STL algorithms.</para>
+<para><simplesect kind="return"><para>Iterator to one past the last <ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref>.</para>
+</simplesect>
+Example: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>1,<sp/>2.5f);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(2,<sp/>0,<sp/>4.0f);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>it<sp/>=<sp/>mat.begin();</highlight></codeline>
+<codeline><highlight class="normal">while<sp/>(it<sp/>!=<sp/>mat.end())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>&quot;(&quot;<sp/>&lt;&lt;<sp/>it-&gt;row<sp/>&lt;&lt;<sp/>&quot;,<sp/>&quot;<sp/>&lt;&lt;<sp/>it-&gt;col<sp/>&lt;&lt;<sp/>&quot;)<sp/>=<sp/>&quot;<sp/>&lt;&lt;<sp/>it-&gt;value<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>++it;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4375" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4375" bodyend="4375"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a1715d2dda083ee4f83f0ffe0fab7005c" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>auto</type>
+        <definition>auto slt::SparseCOOMatrix&lt; T &gt;::end</definition>
+        <argsstring>()</argsstring>
+        <name>end</name>
+        <briefdescription>
+<para>Returns a mutable iterator to the end of the triplet vector. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This overload allows modification of the stored Triplet&lt;T&gt; objects in algorithms operating on ranges (e.g., std::for_each, std::transform).</para>
+<para>Example: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(3,<sp/>3);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(1,<sp/>2,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal">mat.finalize();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">std::for_each(mat.begin(),<sp/>mat.end(),<sp/>[](auto&amp;<sp/>t)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>t.value<sp/>+=<sp/>1.0f;<sp/><sp/>//<sp/>increment<sp/>all<sp/>non-zero<sp/>values</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="return"><para>Iterator one-past-the-last Triplet&lt;T&gt; in the matrix. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4398" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4398" bodyend="4398"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1acf3f30d8c383bf4bd144338dbd6ea974" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::SparseCOOMatrix&lt; T &gt;::transpose</definition>
+        <argsstring>()</argsstring>
+        <name>transpose</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4420" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4420" bodyend="4430"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a119d19d588a1a2a60996a1dd959e9b6a" prot="public" static="no" const="yes" explicit="no" inline="yes" virt="non-virtual">
+        <type><ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref>&lt; T &gt;</type>
+        <definition>DenseMatrix&lt;T&gt; slt::SparseCOOMatrix&lt; T &gt;::inverse</definition>
+        <argsstring>() const</argsstring>
+        <name>inverse</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4469" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4469" bodyend="4483"/>
+      </memberdef>
+      <memberdef kind="function" id="classslt_1_1SparseCOOMatrix_1a66ab63995e76bd2ca098072528106d59" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void slt::SparseCOOMatrix&lt; T &gt;::remove</definition>
+        <argsstring>(std::size_t r, std::size_t c)</argsstring>
+        <name>remove</name>
+        <param>
+          <type>std::size_t</type>
+          <declname>r</declname>
+        </param>
+        <param>
+          <type>std::size_t</type>
+          <declname>c</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="4514" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="4514" bodyend="4538"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Sparse Coordinate (COO) Matrix class. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This class represents a sparse matrix using the Coordinate List (COO) format. Each non-zero element of the matrix is stored as a <computeroutput><ref refid="structslt_1_1Triplet" kindref="compound">Triplet</ref></computeroutput> object, containing (row, column, value).</para>
+<para>The matrix supports two internal insertion modes:<itemizedlist>
+<listitem><para>**Fast insert mode (<computeroutput>fast_set == true</computeroutput>)**: Triplets are appended to the internal vector in O(1) time. This allows very efficient construction of the matrix, but requires the user to call <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1af2dd10fb10528bb4abee019204d3fc64" kindref="member">finalize()</ref></computeroutput> before performing retrievals such as <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71" kindref="member">get()</ref></computeroutput> or binary searches.</para>
+</listitem><listitem><para>**Sorted mode (<computeroutput>fast_set == false</computeroutput>)**: Triplets are kept sorted by (row, column), allowing efficient retrieval using binary search, at the cost of slower insertions.</para>
+</listitem></itemizedlist>
+</para>
+<para>Supported operations:<itemizedlist>
+<listitem><para>Insertion of new elements (<computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a124ffa2d3de4c59810806ee6c21838d6" kindref="member">set()</ref></computeroutput>)</para>
+</listitem><listitem><para>Updating existing elements (<computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a30d1204d80d8b51f20217c5af322a2da" kindref="member">update()</ref></computeroutput>)</para>
+</listitem><listitem><para>Element-wise arithmetic with other <ref refid="classslt_1_1SparseCOOMatrix" kindref="compound">SparseCOOMatrix</ref> or <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></para>
+</listitem><listitem><para>Scalar operations (+, -, *)</para>
+</listitem><listitem><para>Conversion to <ref refid="classslt_1_1DenseMatrix" kindref="compound">DenseMatrix</ref></para>
+</listitem><listitem><para>Iteration over stored triplets (<computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a40f66827dc6598f748825018494bd37b" kindref="member">begin()</ref></computeroutput>, <computeroutput><ref refid="classslt_1_1SparseCOOMatrix_1a1715d2dda083ee4f83f0ffe0fab7005c" kindref="member">end()</ref></computeroutput>)</para>
+</listitem></itemizedlist>
+</para>
+<para>Template parameter T must be either float or double.</para>
+<para>Example usage: <programlisting><codeline><highlight class="normal">slt::SparseCOOMatrix&lt;float&gt;<sp/>mat(5,<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(0,<sp/>0,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">mat.set(2,<sp/>3,<sp/>5.5f);</highlight></codeline>
+<codeline><highlight class="normal">mat.finalize();</highlight></codeline>
+<codeline><highlight class="normal">float<sp/>val<sp/>=<sp/>mat.get(2,<sp/>3);<sp/><sp/>//<sp/>returns<sp/>5.5f</highlight></codeline>
+</programlisting></para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The type of the matrix elements (float or double). </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="2">
+        <label>slt::MatrixBase&lt; T &gt;</label>
+        <link refid="classslt_1_1MatrixBase"/>
+      </node>
+      <node id="1">
+        <label>slt::SparseCOOMatrix&lt; T &gt;</label>
+        <link refid="classslt_1_1SparseCOOMatrix"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="2">
+        <label>slt::MatrixBase&lt; T &gt;</label>
+        <link refid="classslt_1_1MatrixBase"/>
+      </node>
+      <node id="1">
+        <label>slt::SparseCOOMatrix&lt; T &gt;</label>
+        <link refid="classslt_1_1SparseCOOMatrix"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+    </collaborationgraph>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" line="2965" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/matrix.hpp" bodystart="2965" bodyend="4539"/>
+    <listofallmembers>
+      <member refid="classslt_1_1SparseCOOMatrix_1a18b33a42b1cfc9f44c22f8093936da75" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>begin</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a40f66827dc6598f748825018494bd37b" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>begin</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a5fe5ef134724c0180c0c0c16d6917bc0" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>clear</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a532cedb759d6e7e633c4a3ad84f17c69" prot="public" virt="virtual"><scope>slt::SparseCOOMatrix</scope><name>clone</name></member>
+      <member refid="classslt_1_1MatrixBase_1ab2193ba0b50e6342859efa9624f36a06" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>cols</name></member>
+      <member refid="classslt_1_1MatrixBase_1ab84af87cc081ed919609dd3d734861d6" prot="protected" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>cols_</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1addf50368708419f7a86e00d7591a235a" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>end</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a1715d2dda083ee4f83f0ffe0fab7005c" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>end</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1ab890c296bec63f265a2c1cd167a88eec" prot="private" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>fast_set</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1af2dd10fb10528bb4abee019204d3fc64" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>finalize</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a8060856161b5989ab2f30b87d8d5bf71" prot="public" virt="virtual"><scope>slt::SparseCOOMatrix</scope><name>get</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a8d72d157729bc5e2b3273091ba5ded9b" prot="public" virt="virtual"><scope>slt::SparseCOOMatrix</scope><name>initialized_count</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a119d19d588a1a2a60996a1dd959e9b6a" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>inverse</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a889f1c98e467ceb29a74a1fa3efa6d44" prot="public" virt="virtual"><scope>slt::SparseCOOMatrix</scope><name>is_initialized</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1abb078adcd4c95de5d7bddbe438a06316" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator()</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a562d500b4202fbc2afb7123571ac6d60" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator*</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1ab2abf36f4715b3a56231c74da9924a39" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator*</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a92b8c482627448d29d112af92da1afb8" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator+</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1add1bd1320cb996c904f3f56d6897c9cf" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator+</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a869a28d52e8cf7658dc8cc87a9bfcc6d" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator-</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a1db595de4e0815f91d5aba9765b942de" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator-</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a67a0f345fd85cdcc87de20a4a20554fd" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator/</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a8066b8bab1b1db44570b043591547447" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a2fc258a86363e2396acc6c827edf2a06" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a7807c8c92b9b1d678cd5dc0252cfd1d2" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1ad7851db1ffece701e976625710f88aaf" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a89000f4b232a07e2cb8f8c04f757651d" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a2a92002c5de09e5d512aae3821daf8e7" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator=</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a1dc02d00cac074d3771223b358de6152" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>operator==</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a66ab63995e76bd2ca098072528106d59" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>remove</name></member>
+      <member refid="classslt_1_1MatrixBase_1a614ed98dfb69c490ad6658990679f81c" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>rows</name></member>
+      <member refid="classslt_1_1MatrixBase_1a685b2ff5ffb79c5bc79f4fe5a932efd2" prot="protected" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>rows_</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a124ffa2d3de4c59810806ee6c21838d6" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>set</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a0ed0440765b5f86cf842ae4b67b46621" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>set_fast</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1adc0211d7a6ffae48b7e796d5f9dacd15" prot="public" virt="virtual"><scope>slt::SparseCOOMatrix</scope><name>size</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1ac19d7e9ef6e0089973428a5873546a31" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a47a73bb8366d3c41f5e35e8640dd616f" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a5399d21587449ccf0542d18f424b4366" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a26f0f9f36313d865ebf2a87c0e9f724f" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1afbbd341c0b43c83e4adefc5ace49a0f0" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1ae07fa1705408230d57039e643e8a2774" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1ae3ed7763cb89eb8123fc379a7904e7e3" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a98d85015b9988f550cf381ca1ba06200" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a7a3545117f90249160799e47687015fb" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1aca17fa945fb3d058e784e9c448f257f0" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a6c524c58afeb267a0e3cd0bddc2b9be3" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1aa469ef3d3e5fdecef3cff4d126782455" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a0d26f381a2088dc9a3387ab67bf80071" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>SparseCOOMatrix</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1acf3f30d8c383bf4bd144338dbd6ea974" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>transpose</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1af117588cc2e86c92783eb465bf87a2e9" prot="private" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>triplet</name></member>
+      <member refid="classslt_1_1SparseCOOMatrix_1a30d1204d80d8b51f20217c5af322a2da" prot="public" virt="non-virtual"><scope>slt::SparseCOOMatrix</scope><name>update</name></member>
+      <member refid="classslt_1_1MatrixBase_1a3bbb4cd026c2c1da1ba0881c918630b1" prot="public" virt="virtual"><scope>slt::SparseCOOMatrix</scope><name>~MatrixBase</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

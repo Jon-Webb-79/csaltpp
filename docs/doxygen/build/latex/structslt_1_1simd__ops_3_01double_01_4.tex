@@ -1,0 +1,255 @@
+\hypertarget{structslt_1_1simd__ops_3_01double_01_4}{}\doxysection{slt\+::simd\+\_\+ops$<$ double $>$ Struct Reference}
+\label{structslt_1_1simd__ops_3_01double_01_4}\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+
+
+SIMD-\/accelerated operations for arrays of double values.  
+
+
+
+
+{\ttfamily \#include $<$matrix.\+hpp$>$}
+
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_a85e9fbbe61eb45ed87396cd008e4c6e9}{add}} (const double $\ast$a, const double $\ast$b, double $\ast$result, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Add two double arrays element-\/wise. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_af6a73beccbd3b9c1f211115ba9221b81}{sub}} (const double $\ast$a, const double $\ast$b, double $\ast$result, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Subtract two double arrays element-\/wise. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_a55bfd15862ac15532e8b6e4d30cc4e34}{add\+\_\+scalar}} (const double $\ast$a, double scalar, double $\ast$result, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Add a scalar value to each element of a double array. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_a39da9d8f58ffa9f5a8adec5ee3598fdf}{sub\+\_\+scalar}} (const double $\ast$a, double scalar, double $\ast$result, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Subtract a scalar value from each element of a double array. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_a90395fccc7a84b13a53137da522c0ff7}{mul}} (const double $\ast$a, const double $\ast$b, double $\ast$result, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Multiply two double arrays element-\/wise. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_a0eaaa48792cdca282ffd674945f7402f}{mul\+\_\+scalar}} (const double $\ast$a, double scalar, double $\ast$result, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Multiply each element of a double array by a scalar. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_ab5920939f0334286d497d22f7af1b4c2}{div\+\_\+scalar}} (const double $\ast$a, double scalar, double $\ast$result, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Divide each element of a double array by a scalar. \end{DoxyCompactList}\item 
+static void \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_aefc3b0ab36d4df193e863d75ec83f054}{copy}} (const double $\ast$src, double $\ast$dst, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Copy the contents of a double array to another array. \end{DoxyCompactList}\item 
+static double \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_ae897420f7084d0d58be55a87304d62b3}{magnitude\+\_\+squared}} (const double $\ast$data, std\+::size\+\_\+t size)
+\begin{DoxyCompactList}\small\item\em Compute the squared magnitude (sum of squares) of a double array. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+SIMD-\/accelerated operations for arrays of double values. 
+
+This specialization of {\ttfamily \mbox{\hyperlink{structslt_1_1simd__ops}{simd\+\_\+ops}}} provides vectorized operations for 64-\/bit floating-\/point data using SIMD extensions such as AVX-\/512, AVX2, SSE (2–4.1), NEON (AArch64), SVE, and SVE2, when available.
+
+Each method applies a SIMD-\/optimized version of a common numerical operation on double-\/precision floating-\/point arrays. Scalar fallback behavior is managed externally.
+
+Supported operations include\+:
+\begin{DoxyItemize}
+\item Element-\/wise arithmetic (add, subtract, multiply)
+\item Scalar arithmetic (add, subtract, multiply, divide)
+\item Data copy
+\item Magnitude squared computation
+\end{DoxyItemize}
+
+These methods are dispatched at compile time using architecture-\/specific flags, ensuring optimal performance where supported.
+
+\begin{DoxyNote}{Note}
+SIMD instruction sets for double precision may require specific compile-\/time flags (e.\+g., {\ttfamily -\/mavx2}, {\ttfamily -\/msse2}, {\ttfamily -\/march=armv8-\/a+sve}, etc.).
+\end{DoxyNote}
+Example usage\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{if} constexpr (\mbox{\hyperlink{structslt_1_1simd__traits_3_01double_01_4_a75f74bc34f655f384bde66b16b7d037b}{simd\_traits<double>::supported}}) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{structslt_1_1simd__ops_3_01double_01_4_a90395fccc7a84b13a53137da522c0ff7}{simd\_ops<double>::mul}}(a, b, result, size);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_a85e9fbbe61eb45ed87396cd008e4c6e9}\label{structslt_1_1simd__ops_3_01double_01_4_a85e9fbbe61eb45ed87396cd008e4c6e9}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!add@{add}}
+\index{add@{add}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{add()}{add()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::add (\begin{DoxyParamCaption}\item[{const double $\ast$}]{a,  }\item[{const double $\ast$}]{b,  }\item[{double $\ast$}]{result,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Add two double arrays element-\/wise. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to the first input array. \\
+\hline
+{\em b} & Pointer to the second input array. \\
+\hline
+{\em result} & Pointer to the output array. \\
+\hline
+{\em size} & Number of elements in each array. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_a55bfd15862ac15532e8b6e4d30cc4e34}\label{structslt_1_1simd__ops_3_01double_01_4_a55bfd15862ac15532e8b6e4d30cc4e34}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!add\_scalar@{add\_scalar}}
+\index{add\_scalar@{add\_scalar}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{add\_scalar()}{add\_scalar()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::add\+\_\+scalar (\begin{DoxyParamCaption}\item[{const double $\ast$}]{a,  }\item[{double}]{scalar,  }\item[{double $\ast$}]{result,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Add a scalar value to each element of a double array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to the input array. \\
+\hline
+{\em scalar} & Scalar value to add. \\
+\hline
+{\em result} & Pointer to the output array. \\
+\hline
+{\em size} & Number of elements in the array. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_aefc3b0ab36d4df193e863d75ec83f054}\label{structslt_1_1simd__ops_3_01double_01_4_aefc3b0ab36d4df193e863d75ec83f054}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!copy@{copy}}
+\index{copy@{copy}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{copy()}{copy()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::copy (\begin{DoxyParamCaption}\item[{const double $\ast$}]{src,  }\item[{double $\ast$}]{dst,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Copy the contents of a double array to another array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & Pointer to the source array. \\
+\hline
+{\em dst} & Pointer to the destination array. \\
+\hline
+{\em size} & Number of elements to copy. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_ab5920939f0334286d497d22f7af1b4c2}\label{structslt_1_1simd__ops_3_01double_01_4_ab5920939f0334286d497d22f7af1b4c2}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!div\_scalar@{div\_scalar}}
+\index{div\_scalar@{div\_scalar}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{div\_scalar()}{div\_scalar()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::div\+\_\+scalar (\begin{DoxyParamCaption}\item[{const double $\ast$}]{a,  }\item[{double}]{scalar,  }\item[{double $\ast$}]{result,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Divide each element of a double array by a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to the input array. \\
+\hline
+{\em scalar} & Scalar divisor. \\
+\hline
+{\em result} & Pointer to the output array. \\
+\hline
+{\em size} & Number of elements in the array. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_ae897420f7084d0d58be55a87304d62b3}\label{structslt_1_1simd__ops_3_01double_01_4_ae897420f7084d0d58be55a87304d62b3}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!magnitude\_squared@{magnitude\_squared}}
+\index{magnitude\_squared@{magnitude\_squared}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{magnitude\_squared()}{magnitude\_squared()}}
+{\footnotesize\ttfamily static double \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::magnitude\+\_\+squared (\begin{DoxyParamCaption}\item[{const double $\ast$}]{data,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Compute the squared magnitude (sum of squares) of a double array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em data} & Pointer to the input array. \\
+\hline
+{\em size} & Number of elements in the array. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The sum of squares of all elements. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_a90395fccc7a84b13a53137da522c0ff7}\label{structslt_1_1simd__ops_3_01double_01_4_a90395fccc7a84b13a53137da522c0ff7}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!mul@{mul}}
+\index{mul@{mul}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{mul()}{mul()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::mul (\begin{DoxyParamCaption}\item[{const double $\ast$}]{a,  }\item[{const double $\ast$}]{b,  }\item[{double $\ast$}]{result,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Multiply two double arrays element-\/wise. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to the first input array. \\
+\hline
+{\em b} & Pointer to the second input array. \\
+\hline
+{\em result} & Pointer to the output array. \\
+\hline
+{\em size} & Number of elements in each array. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_a0eaaa48792cdca282ffd674945f7402f}\label{structslt_1_1simd__ops_3_01double_01_4_a0eaaa48792cdca282ffd674945f7402f}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!mul\_scalar@{mul\_scalar}}
+\index{mul\_scalar@{mul\_scalar}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{mul\_scalar()}{mul\_scalar()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::mul\+\_\+scalar (\begin{DoxyParamCaption}\item[{const double $\ast$}]{a,  }\item[{double}]{scalar,  }\item[{double $\ast$}]{result,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Multiply each element of a double array by a scalar. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to the input array. \\
+\hline
+{\em scalar} & Scalar multiplier. \\
+\hline
+{\em result} & Pointer to the output array. \\
+\hline
+{\em size} & Number of elements in the array. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_af6a73beccbd3b9c1f211115ba9221b81}\label{structslt_1_1simd__ops_3_01double_01_4_af6a73beccbd3b9c1f211115ba9221b81}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!sub@{sub}}
+\index{sub@{sub}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{sub()}{sub()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::sub (\begin{DoxyParamCaption}\item[{const double $\ast$}]{a,  }\item[{const double $\ast$}]{b,  }\item[{double $\ast$}]{result,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Subtract two double arrays element-\/wise. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to the first input array. \\
+\hline
+{\em b} & Pointer to the second input array. \\
+\hline
+{\em result} & Pointer to the output array. \\
+\hline
+{\em size} & Number of elements in each array. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{structslt_1_1simd__ops_3_01double_01_4_a39da9d8f58ffa9f5a8adec5ee3598fdf}\label{structslt_1_1simd__ops_3_01double_01_4_a39da9d8f58ffa9f5a8adec5ee3598fdf}} 
+\index{slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}!sub\_scalar@{sub\_scalar}}
+\index{sub\_scalar@{sub\_scalar}!slt::simd\_ops$<$ double $>$@{slt::simd\_ops$<$ double $>$}}
+\doxysubsubsection{\texorpdfstring{sub\_scalar()}{sub\_scalar()}}
+{\footnotesize\ttfamily static void \mbox{\hyperlink{structslt_1_1simd__ops}{slt\+::simd\+\_\+ops}}$<$ double $>$\+::sub\+\_\+scalar (\begin{DoxyParamCaption}\item[{const double $\ast$}]{a,  }\item[{double}]{scalar,  }\item[{double $\ast$}]{result,  }\item[{std\+::size\+\_\+t}]{size }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+Subtract a scalar value from each element of a double array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & Pointer to the input array. \\
+\hline
+{\em scalar} & Scalar value to subtract. \\
+\hline
+{\em result} & Pointer to the output array. \\
+\hline
+{\em size} & Number of elements in the array. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{matrix_8hpp}{matrix.\+hpp}}\end{DoxyCompactItemize}

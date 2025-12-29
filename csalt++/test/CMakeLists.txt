@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(googletest)
 
 add_executable(unit_tests
   test_error.cpp
+  test_allocator.cpp
   #  test_matrix.cpp
 )
 

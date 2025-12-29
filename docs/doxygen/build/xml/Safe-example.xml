@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Safe-example" kind="example">
+    <compoundname>Safe</compoundname>
+    <briefdescription>
+<para>nullptr handling </para>
+    </briefdescription>
+    <detaileddescription>
+<para>nullptr handling <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>nullptr;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Safe<sp/>-<sp/>does<sp/>nothing</highlight></codeline>
+<codeline><highlight class="normal">allocator.return_element(ptr,<sp/>0,<sp/>0);</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="warning"><para>Always use the same alignment value that was used during allocation. Mismatched alignment can cause undefined behavior or crashes.</para>
+</simplesect>
+<simplesect kind="warning"><para>Do not call return_element twice on the same pointer (double-free).</para>
+</simplesect>
+<simplesect kind="note"><para>The bytes parameter is required by the interface but is not used by HeapAllocator since operator delete/free don&apos;t require size. <programlisting filename="Safe"></programlisting> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

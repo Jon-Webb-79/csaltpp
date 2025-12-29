@@ -1,0 +1,27 @@
+\hypertarget{Polymorphic-example}{}\doxysection{Polymorphic}
+usage pattern 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} process\_data(\mbox{\hyperlink{classcslt_1_1Allocator}{cslt::Allocator}}\& allocator) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1Allocator_adb93a70659ab65af421bf3f8043418e3}{alloc}}(256, \textcolor{keyword}{true});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{        \textcolor{comment}{// Process data...}}
+\DoxyCodeLine{        allocator.\mbox{\hyperlink{classcslt_1_1Allocator_af485658fdffd558a73ce7a8c0d18339c}{return\_element}}(result.value(), 256, }
+\DoxyCodeLine{                                allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} heap\_alloc;}
+\DoxyCodeLine{cslt::ArenaAllocator arena\_alloc(4096);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Same function works with different allocators}}
+\DoxyCodeLine{process\_data(heap\_alloc);   \textcolor{comment}{// Uses system heap}}
+\DoxyCodeLine{process\_data(arena\_alloc);  \textcolor{comment}{// Uses arena}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

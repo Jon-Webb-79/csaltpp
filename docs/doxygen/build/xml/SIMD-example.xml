@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="SIMD-example" kind="example">
+    <compoundname>SIMD</compoundname>
+    <briefdescription>
+<para>alignment (256-bit AVX) </para>
+    </briefdescription>
+    <detaileddescription>
+<para>alignment (256-bit AVX) <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Allocate<sp/>aligned<sp/>for<sp/>AVX<sp/>operations</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>allocator.alloc_aligned(1024,<sp/>32,<sp/>true);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>float*<sp/>data<sp/>=<sp/>static_cast&lt;float*&gt;(result.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Can<sp/>safely<sp/>use<sp/>AVX<sp/>instructions</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(data,<sp/>1024,<sp/>32);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="warning"><para>The alignment parameter to return_element() must match the alignment used for allocation.</para>
+</simplesect>
+<simplesect kind="see"><para>alloc() For standard alignment </para>
+</simplesect>
+<simplesect kind="see"><para>return_element() To free aligned memory <programlisting filename="SIMD"></programlisting> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

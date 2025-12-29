@@ -1,7 +1,8 @@
 // ================================================================================
 // ================================================================================
 // - File:    error.cpp
-// - Purpose: Describe the file purpose here
+// - Purpose: This file contains the implementation of error handling classes as 
+//            part of the cslt namespace
 //
 // Source Metadata
 // - Author:  Jonathan A. Webb

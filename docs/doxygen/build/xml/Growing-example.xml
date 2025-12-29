@@ -1,0 +1,108 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Growing-example" kind="example">
+    <compoundname>Growing</compoundname>
+    <briefdescription>
+<para>Reallocate memory from system heap. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Reallocate memory from system heap<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to existing allocation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>old_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of existing allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired new size in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize new bytes when growing (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to reallocated memory or error</para>
+</simplesect>
+Resizes an existing allocation. The existing data is preserved up to min(old_bytes, new_bytes). The old pointer is automatically freed. The returned pointer may differ from the input pointer.</para>
+<para>When growing (new_bytes &gt; old_bytes) and zeroed is true, the additional bytes beyond old_bytes are zero-initialized.</para>
+<para>Implementation: Allocates new memory, copies old data, frees old memory.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>Never</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>throws</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with new pointer on success </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with NullPointerError if ptr is null </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with InvalidArgError if new_bytes is 0 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with ReallocFailError if new allocation fails</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+allocation <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>result1<sp/>=<sp/>allocator.alloc(256,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
+<codeline><highlight class="normal">memset(ptr,<sp/>0xAA,<sp/>256);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Grow<sp/>to<sp/>512<sp/>bytes,<sp/>zero<sp/>the<sp/>new<sp/>space</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result2<sp/>=<sp/>allocator.realloc(ptr,<sp/>256,<sp/>512,<sp/>true);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>unsigned<sp/>char*<sp/>data<sp/>=<sp/>static_cast&lt;unsigned<sp/>char*&gt;(result2.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Bytes<sp/>0-255<sp/>still<sp/>contain<sp/>0xAA</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Bytes<sp/>256-511<sp/>are<sp/>zeroed</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(data,<sp/>512,<sp/>allocator.default_alignment());</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Note:<sp/>Original<sp/>ptr<sp/>is<sp/>already<sp/>freed,<sp/>don&apos;t<sp/>use<sp/>it</highlight></codeline>
+</programlisting> <programlisting filename="Growing"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

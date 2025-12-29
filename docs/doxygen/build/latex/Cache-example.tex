@@ -1,0 +1,58 @@
+\hypertarget{Cache-example}{}\doxysection{Cache}
+Allocate aligned memory from system heap
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Number of bytes to allocate \\
+\hline
+{\em alignment} & Required alignment in bytes (must be power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory (default\+: false) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$void$\ast$$>$ containing pointer to aligned memory or error
+\end{DoxyReturn}
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default\+\_\+alignment\+\_\+.
+
+Implementation strategy\+:
+\begin{DoxyItemize}
+\item If alignment $<$= max\+\_\+align\+\_\+t\+: uses operator new
+\item If alignment $>$ max\+\_\+align\+\_\+t\+: uses posix\+\_\+memalign (POSIX) or \+\_\+aligned\+\_\+malloc (Windows)
+\end{DoxyItemize}
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Never} & throws (uses nothrow allocation)\\
+\hline
+\end{DoxyExceptions}
+
+\begin{DoxyRetVals}{Return values}
+{\em Expected} & with pointer on success (aligned to specified boundary) \\
+\hline
+{\em Expected} & with Invalid\+Arg\+Error if bytes is 0 \\
+\hline
+{\em Expected} & with Bad\+Alloc\+Error if allocation fails\\
+\hline
+\end{DoxyRetVals}
+line alignment 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate aligned to 64-\/byte cache line}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(4096, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Verify alignment}}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 64 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(ptr, 4096, 64);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

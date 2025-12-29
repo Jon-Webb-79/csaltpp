@@ -1,0 +1,25 @@
+\hypertarget{Safe-example}{}\doxysection{Safe}
+nullptr handling 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe -\/ does nothing}}
+\DoxyCodeLine{allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(ptr, 0, 0);}
+
+\end{DoxyCode}
+
+
+\begin{DoxyWarning}{Warning}
+Always use the same alignment value that was used during allocation. Mismatched alignment can cause undefined behavior or crashes.
+
+Do not call return\+\_\+element twice on the same pointer (double-\/free).
+\end{DoxyWarning}
+\begin{DoxyNote}{Note}
+The bytes parameter is required by the interface but is not used by Heap\+Allocator since operator delete/free don\textquotesingle{}t require size.
+\end{DoxyNote}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

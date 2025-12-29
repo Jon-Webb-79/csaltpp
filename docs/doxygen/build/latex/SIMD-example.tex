@@ -1,0 +1,29 @@
+\hypertarget{SIMD-example}{}\doxysection{SIMD}
+alignment (256-\/bit AVX) 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate aligned for AVX operations}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(1024, 32, \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{float}* data = \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}*\textcolor{keyword}{>}(result.value());}
+\DoxyCodeLine{    \textcolor{comment}{// Can safely use AVX instructions}}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(data, 1024, 32);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyWarning}{Warning}
+The alignment parameter to return\+\_\+element() must match the alignment used for allocation.
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+alloc() For standard alignment 
+
+return\+\_\+element() To free aligned memory
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

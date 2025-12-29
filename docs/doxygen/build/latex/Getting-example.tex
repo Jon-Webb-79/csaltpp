@@ -1,0 +1,75 @@
+\hypertarget{Getting-example}{}\doxysection{Getting}
+statistics 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ \{.c++\}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator(32);  \textcolor{comment}{// 32-\/byte default alignment}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[512];}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (allocator.stats(buffer, \textcolor{keyword}{sizeof}(buffer))) \{}
+\DoxyCodeLine{    printf(\textcolor{stringliteral}{"{}\%s\(\backslash\)n"{}}, buffer);}
+\DoxyCodeLine{    \textcolor{comment}{// Outputs allocator type, alignment, and capabilities}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{allocator.hpp_autotoc_md0}{}\doxyparagraph{Always match allocation and deallocation\+:}\label{allocator.hpp_autotoc_md0}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// CORRECT}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = allocator.alloc\_aligned(512, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{allocator.return\_element(r.value(), 512, 64);  \textcolor{comment}{// Same alignment!}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// INCORRECT -\/ mismatched alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = allocator.alloc\_aligned(512, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{allocator.return\_element(r.value(), 512, 16);  \textcolor{comment}{// Wrong! Undefined behavior!}}
+
+\end{DoxyCode}
+\hypertarget{allocator.hpp_autotoc_md1}{}\doxyparagraph{Check return values\+:}\label{allocator.hpp_autotoc_md1}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.alloc(1024, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Safe to use result.value()}}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    \textcolor{comment}{// Handle allocation failure}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+\hypertarget{allocator.hpp_autotoc_md2}{}\doxyparagraph{Clean up before destruction\+:}\label{allocator.hpp_autotoc_md2}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{    \textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(1024, \textcolor{keyword}{false});}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// ... use memory ...}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// MUST free before allocator is destroyed}}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(result.value(), 1024, }
+\DoxyCodeLine{                            allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\} \textcolor{comment}{// Safe -\/ all memory freed}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+This class is only available when ARENA\+\_\+\+ENABLE\+\_\+\+DYNAMIC is enabled. Define STATIC\+\_\+\+ONLY to disable dynamic allocation for MISRA compliance.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Heap\+Allocator does not track memory usage. Methods like size(), remaining(), and is\+\_\+ptr() will return default values (0/false).
+
+After calling realloc() or realloc\+\_\+aligned(), the original pointer is invalid and must not be used. Always use the newly returned pointer.
+
+Always use the same alignment value for return\+\_\+element() that was used during allocation. Mismatched alignment causes undefined behavior.
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+Allocator Base class interface with full method documentation 
+
+Arena\+Allocator For memory tracking and fixed capacity allocations 
+
+Pool\+Allocator For fixed-\/size object allocation
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

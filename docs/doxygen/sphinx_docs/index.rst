@@ -81,6 +81,7 @@ Typical Use Cases
    :caption: Modules:
 
     Error <Error>
+    Allocator <Allocator>
     
 Indices and tables
 ==================

@@ -1,0 +1,1152 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C Allocator Overview &mdash; csalt++-lib 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Error Handling Overview" href="Error.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            csalt++-lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Error.html"> Error</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Allocator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#enums-and-data-structures">Enums and Data Structures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#allocator-overview">Allocator Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N4cslt9AllocatorE"><code class="docutils literal notranslate"><span class="pre">cslt::Allocator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator9AllocatorE6size_t6size_t7MemTypeb"><code class="docutils literal notranslate"><span class="pre">Allocator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9AllocatorD0Ev"><code class="docutils literal notranslate"><span class="pre">~Allocator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator17default_alignmentEv"><code class="docutils literal notranslate"><span class="pre">default_alignment()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator5allocE6size_tb"><code class="docutils literal notranslate"><span class="pre">alloc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator13alloc_alignedE6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">alloc_aligned()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator7reallocEPv6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">realloc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator15realloc_alignedEPv6size_t6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">realloc_aligned()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator14return_elementEPv6size_t6size_t"><code class="docutils literal notranslate"><span class="pre">return_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator11memory_typeEv"><code class="docutils literal notranslate"><span class="pre">memory_type()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator5statsEPc6size_t"><code class="docutils literal notranslate"><span class="pre">stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator11owns_memoryEv"><code class="docutils literal notranslate"><span class="pre">owns_memory()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator4sizeEv"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator9remainingEv"><code class="docutils literal notranslate"><span class="pre">remaining()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator9allocatedEv"><code class="docutils literal notranslate"><span class="pre">allocated()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator11total_allocEv"><code class="docutils literal notranslate"><span class="pre">total_alloc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator6is_ptrEPv"><code class="docutils literal notranslate"><span class="pre">is_ptr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator12is_ptr_sizedEPv6size_t"><code class="docutils literal notranslate"><span class="pre">is_ptr_sized()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9Allocator4saveEv"><code class="docutils literal notranslate"><span class="pre">save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator7restoreEPv"><code class="docutils literal notranslate"><span class="pre">restore()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator5resetEv"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator18default_alignment_E"><code class="docutils literal notranslate"><span class="pre">default_alignment_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator5size_E"><code class="docutils literal notranslate"><span class="pre">size_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator6alloc_E"><code class="docutils literal notranslate"><span class="pre">alloc_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator12total_alloc_E"><code class="docutils literal notranslate"><span class="pre">total_alloc_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator9mem_type_E"><code class="docutils literal notranslate"><span class="pre">mem_type_</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9Allocator12owns_memory_E"><code class="docutils literal notranslate"><span class="pre">owns_memory_</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#heap-overview">Heap Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocatorE"><code class="docutils literal notranslate"><span class="pre">cslt::HeapAllocator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocator13HeapAllocatorE6size_t"><code class="docutils literal notranslate"><span class="pre">HeapAllocator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocatorD0Ev"><code class="docutils literal notranslate"><span class="pre">~HeapAllocator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocator5allocE6size_tb"><code class="docutils literal notranslate"><span class="pre">alloc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocator13alloc_alignedE6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">alloc_aligned()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocator7reallocEPv6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">realloc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocator15realloc_alignedEPv6size_t6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">realloc_aligned()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13HeapAllocator14return_elementEPv6size_t6size_t"><code class="docutils literal notranslate"><span class="pre">return_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13HeapAllocator5statsEPc6size_t"><code class="docutils literal notranslate"><span class="pre">stats()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#arena-overview">Arena Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pool-overview">Pool Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#free-list-overview">Free List Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#buddy-overview">Buddy Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slab-overview">Slab Overview</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">csalt++-lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">C Allocator Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Allocator.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-allocator-overview">
+<span id="allocator-file"></span><h1>C Allocator Overview<a class="headerlink" href="#c-allocator-overview" title="Link to this heading"></a></h1>
+<p>Memory allocation in C++ typically involves direct use of the <code class="docutils literal notranslate"><span class="pre">new</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">free</span></code> operators. While flexible, these can incur performance
+overhead, lead to fragmentation, and increase the risk of memory leaks or
+dangling pointers in large applications.</p>
+<p>The <em>Allocator module</em> in this library provides lightweight and efficient
+allocation utilities implemented in pure C and declared in
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>.  The only dpendency this module has within the CSalt
+library is the <code class="docutils literal notranslate"><span class="pre">error.hpp</span></code> file, making it suitable ifor integration
+into larger systems.</p>
+<p>Build-time configuration flags modify behavior depending on needs:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">STATIC_ONLY</span></code> — Disables all heap allocation. Only stack or static
+memory supplied by the application is permitted.</p></li>
+</ul>
+<p>These features make the allocator suitable for environments requiring strict
+determinism and safety analysis, such as embedded and real-time systems or projects
+that require compliance to MISRA C++ standards.</p>
+<section id="enums-and-data-structures">
+<span id="memory-type-enum"></span><h2>Enums and Data Structures<a class="headerlink" href="#enums-and-data-structures" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">csalt++</span></code> library uses the following enum to help
+indicate if the allocator is utilyzing statically allocated memory from
+the stack or dynamically allocated memory from the heap.</p>
+<div class="highlight-c++ notranslate"><div class="highlight"><pre><span></span><span class="k">enum</span><span class="w"> </span><span class="nc">MemType</span><span class="w"> </span><span class="p">{</span>
+<span class="w">   </span><span class="n">ALLOC_INVALID</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">   </span><span class="n">STATIC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">   </span><span class="n">DYNAMIC</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="allocator-overview">
+<span id="id1"></span><h2>Allocator Overview<a class="headerlink" href="#allocator-overview" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9AllocatorE">
+<span id="_CPPv3N4cslt9AllocatorE"></span><span id="_CPPv2N4cslt9AllocatorE"></span><span id="cslt::Allocator"></span><span class="target" id="classcslt_1_1Allocator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Allocator</span></span></span><a class="headerlink" href="#_CPPv4N4cslt9AllocatorE" title="Link to this definition"></a><br /></dt>
+<dd><p>Abstract base class for custom memory allocators. </p>
+<p>This class defines the interface for all custom allocators in the cslt namespace. It provides core allocation/deallocation methods along with optional tracking and management capabilities. Derived classes implement specific allocation strategies (heap, arena, pool, etc.).</p>
+<p>The class supports:<ul class="simple">
+<li><p>Basic allocation and deallocation with optional zeroing</p></li>
+<li><p>Aligned memory allocation</p></li>
+<li><p>Reallocation with preservation of existing data</p></li>
+<li><p>Memory tracking (size, capacity, utilization)</p></li>
+<li><p>Optional save/restore checkpointing</p></li>
+<li><p>Statistical reporting</p></li>
+</ul>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Using a derived class (HeapAllocator)</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Allocate memory</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span><span class="w"> </span><span class="c1">// 1KB zeroed</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Use memory...</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="p">}</span>
+
+<span class="c1">// Query allocator properties</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">owns_memory</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">used</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">available</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">remaining</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is an abstract class and cannot be instantiated directly. Use derived classes like <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>, ArenaAllocator, etc. </p>
+</div>
+<p>Subclassed by <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">cslt::HeapAllocator</span></a></p>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator9AllocatorE6size_t6size_t7MemTypeb">
+<span id="_CPPv3N4cslt9Allocator9AllocatorE6size_t6size_t7MemTypeb"></span><span id="_CPPv2N4cslt9Allocator9AllocatorE6size_t6size_t7MemTypeb"></span><span id="cslt::Allocator::Allocator__s.s.MemType.b"></span><span class="target" id="classcslt_1_1Allocator_1aa4603a4a1a33e3519c6e30dbc3223ec6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Allocator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">alignof</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_align_t</span></span><span class="p"><span class="pre">)</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">total_alloc</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span>, <span class="n"><span class="pre">MemType</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">type</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="n"><span class="pre">ALLOC_INVALID</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">owns_mem</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator9AllocatorE6size_t6size_t7MemTypeb" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct an <a class="reference internal" href="#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a>. </p>
+<p>
+Initializes the allocator with the specified parameters. The total_alloc parameter represents the complete memory budget. Derived classes should calculate alloc_ by subtracting their overhead from total_alloc_.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Derived class example:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ArenaAllocator</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="k">public</span><span class="w"> </span><span class="n">Allocator</span><span class="w"> </span><span class="p">{</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">ArenaAllocator</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">total_bytes</span><span class="p">)</span><span class="w"> </span>
+<span class="w">        </span><span class="o">:</span><span class="w"> </span><span class="n">Allocator</span><span class="p">(</span><span class="k">alignof</span><span class="p">(</span><span class="n">max_align_t</span><span class="p">),</span><span class="w"> </span><span class="n">total_bytes</span><span class="p">,</span><span class="w"> </span><span class="n">STATIC</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">)</span><span class="w"> </span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">size_t</span><span class="w"> </span><span class="n">overhead</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">Header</span><span class="p">);</span>
+<span class="w">        </span><span class="n">alloc_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total_alloc_</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">overhead</span><span class="p">;</span><span class="w"> </span><span class="c1">// Calculate usable space</span>
+<span class="w">        </span><span class="n">buffer_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc</span><span class="p">(</span><span class="n">total_alloc_</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alignment</strong> – Default alignment for allocations (default: alignof(max_align_t)) </p></li>
+<li><p><strong>total_alloc</strong> – Total memory budget in bytes (default: 0) </p></li>
+<li><p><strong>type</strong> – Memory type - STATIC or DYNAMIC (default: ALLOC_INVALID) </p></li>
+<li><p><strong>owns_mem</strong> – Whether this allocator owns its memory (default: false)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9AllocatorD0Ev">
+<span id="_CPPv3N4cslt9AllocatorD0Ev"></span><span id="_CPPv2N4cslt9AllocatorD0Ev"></span><span id="cslt::Allocator::~Allocator"></span><span class="target" id="classcslt_1_1Allocator_1afaec0741935d3b33af37c535565ce719"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">~Allocator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N4cslt9AllocatorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Virtual destructor. </p>
+<p>Ensures proper cleanup of derived classes </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator17default_alignmentEv">
+<span id="_CPPv3NK4cslt9Allocator17default_alignmentEv"></span><span id="_CPPv2NK4cslt9Allocator17default_alignmentEv"></span><span id="cslt::Allocator::default_alignmentC"></span><span class="target" id="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">default_alignment</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator17default_alignmentEv" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator5allocE6size_tb">
+<span id="_CPPv3N4cslt9Allocator5allocE6size_tb"></span><span id="_CPPv2N4cslt9Allocator5allocE6size_tb"></span><span id="cslt::Allocator::alloc__s.b"></span><span class="target" id="classcslt_1_1Allocator_1adb93a70659ab65af421bf3f8043418e3"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator5allocE6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate memory. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Allocate 256 bytes, zeroed</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Memory is guaranteed to be zeroed</span>
+<span class="w">    </span><span class="c1">// ... use memory ...</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Handle allocation failure</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Allocation failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bytes</strong> – Number of bytes to allocate </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize the allocated memory (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to allocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator13alloc_alignedE6size_t6size_tb">
+<span id="_CPPv3N4cslt9Allocator13alloc_alignedE6size_t6size_tb"></span><span id="_CPPv2N4cslt9Allocator13alloc_alignedE6size_t6size_tb"></span><span id="cslt::Allocator::alloc_aligned__s.s.b"></span><span class="target" id="classcslt_1_1Allocator_1a518d804fc4eb66096f2534fc922c1ac4"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc_aligned</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator13alloc_alignedE6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate aligned memory. </p>
+<p>
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default_alignment_.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Allocate 512 bytes aligned to 64-byte boundary</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Verify alignment</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// ... use memory ...</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bytes</strong> – Number of bytes to allocate </p></li>
+<li><p><strong>alignment</strong> – Required alignment in bytes (must be power of 2) </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize the allocated memory (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to allocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator7reallocEPv6size_t6size_tb">
+<span id="_CPPv3N4cslt9Allocator7reallocEPv6size_t6size_tb"></span><span id="_CPPv2N4cslt9Allocator7reallocEPv6size_t6size_tb"></span><span id="cslt::Allocator::realloc__voidP.s.s.b"></span><span class="target" id="classcslt_1_1Allocator_1ad83899b3087ecbf56883ef775048e81a"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator7reallocEPv6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Reallocate memory. </p>
+<p>
+Resizes an existing allocation. The existing data is preserved up to min(old_bytes, new_bytes). If growing and zeroed is true, the additional bytes are zero-initialized. The old pointer is automatically freed. The returned pointer may differ from the input.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Initial allocation</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result1</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mh">0xAA</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span><span class="w"> </span><span class="c1">// Fill with pattern</span>
+
+<span class="c1">// Grow to 512 bytes, zero the new space</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">realloc</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">new_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result2</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// First 256 bytes still contain 0xAA</span>
+<span class="w">    </span><span class="c1">// Bytes 256-511 are zeroed</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">new_ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to existing allocation </p></li>
+<li><p><strong>old_bytes</strong> – Size of existing allocation in bytes </p></li>
+<li><p><strong>new_bytes</strong> – Desired new size in bytes </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize new bytes when growing (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to reallocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator15realloc_alignedEPv6size_t6size_t6size_tb">
+<span id="_CPPv3N4cslt9Allocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="_CPPv2N4cslt9Allocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="cslt::Allocator::realloc_aligned__voidP.s.s.s.b"></span><span class="target" id="classcslt_1_1Allocator_1a7c5678c95eddff0fb5ae06a09492fb7c"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc_aligned</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator15realloc_alignedEPv6size_t6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Reallocate aligned memory. </p>
+<p>
+Like <a class="reference internal" href="#classcslt_1_1Allocator_1ad83899b3087ecbf56883ef775048e81a"><span class="std std-ref">realloc()</span></a>, but maintains the specified alignment.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Initial aligned allocation</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result1</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+
+<span class="c1">// Grow to 512 bytes, maintaining 64-byte alignment</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">realloc_aligned</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">new_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result2</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">new_ptr</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">new_ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to existing allocation </p></li>
+<li><p><strong>old_bytes</strong> – Size of existing allocation in bytes </p></li>
+<li><p><strong>new_bytes</strong> – Desired new size in bytes </p></li>
+<li><p><strong>alignment</strong> – Required alignment in bytes (must be power of 2) </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize new bytes when growing (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to reallocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator14return_elementEPv6size_t6size_t">
+<span id="_CPPv3N4cslt9Allocator14return_elementEPv6size_t6size_t"></span><span id="_CPPv2N4cslt9Allocator14return_elementEPv6size_t6size_t"></span><span id="cslt::Allocator::return_element__voidP.s.s"></span><span class="target" id="classcslt_1_1Allocator_1af485658fdffd558a73ce7a8c0d18339c"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">return_element</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator14return_elementEPv6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return/free allocated memory. </p>
+<p>
+Frees memory previously allocated by this allocator. For heap allocators, this calls operator delete or free(). For arena allocators, this may be a no-op or update bookkeeping. Always safe to call with nullptr (no-op).</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+
+<span class="c1">// ... use memory ...</span>
+
+<span class="c1">// Free memory - must pass same size and alignment as allocation</span>
+<span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+
+<span class="c1">// Safe to call with nullptr</span>
+<span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// No-op</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to memory to free </p></li>
+<li><p><strong>bytes</strong> – Size of allocation in bytes </p></li>
+<li><p><strong>alignment</strong> – Alignment used for the allocation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator11memory_typeEv">
+<span id="_CPPv3NK4cslt9Allocator11memory_typeEv"></span><span id="_CPPv2NK4cslt9Allocator11memory_typeEv"></span><span id="cslt::Allocator::memory_typeC"></span><span class="target" id="classcslt_1_1Allocator_1ab32af42a412bd9d92ca7bd3d8ee4ecae"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">MemType</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">memory_type</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator11memory_typeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get memory type. </p>
+<p>
+Returns whether this allocator uses static or dynamic memory. STATIC = fixed buffer allocated at compile-time or startup DYNAMIC = memory from OS heap (malloc/new)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">heap_alloc</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">arena_alloc</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">heap_alloc</span><span class="p">.</span><span class="n">memory_type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">DYNAMIC</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Heap allocator uses dynamic memory</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arena_alloc</span><span class="p">.</span><span class="n">memory_type</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">STATIC</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Arena allocator uses static memory</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>MemType enum value (STATIC, DYNAMIC, or ALLOC_INVALID)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator5statsEPc6size_t">
+<span id="_CPPv3NK4cslt9Allocator5statsEPc6size_t"></span><span id="_CPPv2NK4cslt9Allocator5statsEPc6size_t"></span><span id="cslt::Allocator::stats__cP.sC"></span><span class="target" id="classcslt_1_1Allocator_1a794cb0fe500dc3a698015474ad8a7c86"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stats</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buffer</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">buffer_size</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator5statsEPc6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Generate statistics string. </p>
+<p>
+Writes human-readable statistics about the allocator to the provided buffer. Returns false if buffer is too small or null.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="kt">char</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">stats</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Output:</span>
+<span class="w">    </span><span class="c1">// HeapAllocator Statistics:</span>
+<span class="w">    </span><span class="c1">//   Type: DYNAMIC</span>
+<span class="w">    </span><span class="c1">//   Default Alignment: 16 bytes</span>
+<span class="w">    </span><span class="c1">//   Memory Model: System Heap (operator new/delete)</span>
+<span class="w">    </span><span class="c1">//   ...</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Buffer too small for statistics</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> – Character buffer to write statistics to </p></li>
+<li><p><strong>buffer_size</strong> – Size of buffer in bytes </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if statistics were written successfully, false otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator11owns_memoryEv">
+<span id="_CPPv3NK4cslt9Allocator11owns_memoryEv"></span><span id="_CPPv2NK4cslt9Allocator11owns_memoryEv"></span><span id="cslt::Allocator::owns_memoryC"></span><span class="target" id="classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">owns_memory</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator11owns_memoryEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if allocator owns its memory. </p>
+<p>
+Returns whether this allocator owns its underlying memory. true = allocator allocated and manages the memory (e.g., ArenaAllocator) false = allocator is a wrapper around system allocator (e.g., <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>)</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">heap_alloc</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">arena_alloc</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">heap_alloc</span><span class="p">.</span><span class="n">owns_memory</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Heap allocator owns memory</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Won&#39;t print</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arena_alloc</span><span class="p">.</span><span class="n">owns_memory</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Arena allocator owns memory</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// Will print</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if allocator owns/manages its memory buffer, false otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator4sizeEv">
+<span id="_CPPv3NK4cslt9Allocator4sizeEv"></span><span id="_CPPv2NK4cslt9Allocator4sizeEv"></span><span id="cslt::Allocator::sizeC"></span><span class="target" id="classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get current bytes in use. </p>
+<p>
+Returns the amount of memory currently in use. For allocators that don’t track usage (like <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>), returns 0. For tracking allocators (like ArenaAllocator), returns actual usage.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Initial size: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 0</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;After alloc: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 256</span>
+
+<span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">(),</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;After free: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 0 (if supported)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of bytes currently allocated and not freed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator9remainingEv">
+<span id="_CPPv3NK4cslt9Allocator9remainingEv"></span><span id="_CPPv2NK4cslt9Allocator9remainingEv"></span><span id="cslt::Allocator::remainingC"></span><span class="target" id="classcslt_1_1Allocator_1a1b34a9c4860a9e28255745b1d1e7cb62"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">remaining</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator9remainingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get remaining available bytes. </p>
+<p>
+Returns alloc_ - size_, i.e., how much usable space is left. For allocators without fixed capacity (like <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>), returns 0. Includes underflow protection.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Initial remaining: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">remaining</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// ~1024</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;After alloc: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">remaining</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// ~768</span>
+
+<span class="c1">// Can use remaining to check if allocation will succeed</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">remaining</span><span class="p">()</span><span class="w"> </span><span class="o">&gt;=</span><span class="w"> </span><span class="mi">512</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of bytes still available for allocation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator9allocatedEv">
+<span id="_CPPv3NK4cslt9Allocator9allocatedEv"></span><span id="_CPPv2NK4cslt9Allocator9allocatedEv"></span><span id="cslt::Allocator::allocatedC"></span><span class="target" id="classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allocated</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator9allocatedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get total usable bytes. </p>
+<p>
+Returns the total amount of memory available for user allocations, excluding any internal overhead or headers. This is calculated as: <a class="reference internal" href="#classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5"><span class="std std-ref">allocated()</span></a> = <a class="reference internal" href="#classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf"><span class="std std-ref">total_alloc()</span></a> - overhead</p>
+<p>For allocators without fixed capacity (like <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>), returns 0. For allocators with fixed capacity (like ArenaAllocator), returns the usable capacity.</p>
+<p>Relationship between memory functions:<ul class="simple">
+<li><p><a class="reference internal" href="#classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf"><span class="std std-ref">total_alloc()</span></a> = total memory including overhead</p></li>
+<li><p><a class="reference internal" href="#classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5"><span class="std std-ref">allocated()</span></a> = usable memory (this function)</p></li>
+<li><p><a class="reference internal" href="#classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37"><span class="std std-ref">size()</span></a> = currently used memory</p></li>
+<li><p><a class="reference internal" href="#classcslt_1_1Allocator_1a1b34a9c4860a9e28255745b1d1e7cb62"><span class="std std-ref">remaining()</span></a> = <a class="reference internal" href="#classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5"><span class="std std-ref">allocated()</span></a> - <a class="reference internal" href="#classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37"><span class="std std-ref">size()</span></a></p></li>
+</ul>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span><span class="w"> </span><span class="c1">// Request 1024 total bytes</span>
+
+<span class="kt">size_t</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">total_alloc</span><span class="p">();</span><span class="w">      </span><span class="c1">// 1024 (what user requested)</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">usable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">allocated</span><span class="p">();</span><span class="w">        </span><span class="c1">// ~960 (after overhead)</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="n">overhead</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">usable</span><span class="p">;</span><span class="w">             </span><span class="c1">// ~64 (internal headers)</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Total budget: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; bytes</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Usable memory: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">usable</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; bytes</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Overhead: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">overhead</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; bytes</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+
+<span class="c1">// After some allocations</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Allocated (capacity): &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">allocated</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w">  </span><span class="c1">// ~960</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Used: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w">                       </span><span class="c1">// 256</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Remaining: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">remaining</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w">             </span><span class="c1">// ~704</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This differs from <a class="reference internal" href="#classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37"><span class="std std-ref">size()</span></a> which returns currently used memory. <a class="reference internal" href="#classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5"><span class="std std-ref">allocated()</span></a> is the total capacity, <a class="reference internal" href="#classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37"><span class="std std-ref">size()</span></a> is current usage. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Total usable memory in bytes (excluding overhead)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator11total_allocEv">
+<span id="_CPPv3NK4cslt9Allocator11total_allocEv"></span><span id="_CPPv2NK4cslt9Allocator11total_allocEv"></span><span id="cslt::Allocator::total_allocC"></span><span class="target" id="classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">total_alloc</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator11total_allocEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get total allocated bytes. </p>
+<p>
+Returns the total memory allocation size including any internal overhead. This is the value passed to the constructor. For heap allocators without fixed capacity, returns 0.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Total allocation: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">total_alloc</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 1024</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Usable memory: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">remaining</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// &lt; 1024</span>
+
+<span class="kt">size_t</span><span class="w"> </span><span class="n">overhead</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">total_alloc</span><span class="p">()</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">remaining</span><span class="p">();</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Overhead: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">overhead</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot; bytes</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Total memory budget in bytes (including overhead)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator6is_ptrEPv">
+<span id="_CPPv3NK4cslt9Allocator6is_ptrEPv"></span><span id="_CPPv2NK4cslt9Allocator6is_ptrEPv"></span><span id="cslt::Allocator::is_ptr__voidPC"></span><span class="target" id="classcslt_1_1Allocator_1a8b9fcb5da49538257f1272d2a11b832c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_ptr</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator6is_ptrEPv" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if pointer belongs to this allocator. </p>
+<p>
+Checks if the given pointer was allocated by this allocator. Default implementation returns false (cannot verify). Allocators that own memory can override to provide actual verification.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">external_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">malloc</span><span class="p">(</span><span class="mi">256</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">is_ptr</span><span class="p">(</span><span class="n">ptr</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;ptr belongs to allocator</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">allocator</span><span class="p">.</span><span class="n">is_ptr</span><span class="p">(</span><span class="n">external_ptr</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;external_ptr does not belong to allocator</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">free</span><span class="p">(</span><span class="n">external_ptr</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> – Pointer to check </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if pointer was allocated by this allocator, false otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator12is_ptr_sizedEPv6size_t">
+<span id="_CPPv3NK4cslt9Allocator12is_ptr_sizedEPv6size_t"></span><span id="_CPPv2NK4cslt9Allocator12is_ptr_sizedEPv6size_t"></span><span id="cslt::Allocator::is_ptr_sized__voidP.sC"></span><span class="target" id="classcslt_1_1Allocator_1a9174d07a2777d286188e0221558505dc"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_ptr_sized</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator12is_ptr_sizedEPv6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if pointer and size are valid for this allocator. </p>
+<p>
+Checks if the pointer was allocated by this allocator AND if it has the specified size. Default returns false. Useful for debugging and validation.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">is_ptr_sized</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;ptr is valid 256-byte allocation</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">allocator</span><span class="p">.</span><span class="n">is_ptr_sized</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;ptr is not a 512-byte allocation</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to check </p></li>
+<li><p><strong>bytes</strong> – <a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> size of allocation </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if pointer with given size is valid, false otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9Allocator4saveEv">
+<span id="_CPPv3NK4cslt9Allocator4saveEv"></span><span id="_CPPv2NK4cslt9Allocator4saveEv"></span><span id="cslt::Allocator::saveC"></span><span class="target" id="classcslt_1_1Allocator_1a59fcf1ce582d5cf99d942a941af5e107"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">save</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt9Allocator4saveEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Save allocator state checkpoint. </p>
+<p>
+Saves the current state of the allocator for later restoration. Useful for implementing transactional semantics or temporary allocations. Default returns nullptr (not supported). Arena allocators typically return a position marker.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="c1">// Save checkpoint</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">checkpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">save</span><span class="p">();</span>
+
+<span class="c1">// Make temporary allocations</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">temp1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">temp2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="c1">// Restore to checkpoint (frees temp1 and temp2)</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">restore</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Temporary allocations rolled back</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Opaque checkpoint pointer, or nullptr if not supported</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator7restoreEPv">
+<span id="_CPPv3N4cslt9Allocator7restoreEPv"></span><span id="_CPPv2N4cslt9Allocator7restoreEPv"></span><span id="cslt::Allocator::restore__voidP"></span><span class="target" id="classcslt_1_1Allocator_1ab96e7b76511d29b505c5da81fb8b3cba"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">restore</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">checkpoint</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt9Allocator7restoreEPv" title="Link to this definition"></a><br /></dt>
+<dd><p>Restore allocator to saved checkpoint. </p>
+<p>
+Restores allocator state to a previous checkpoint, effectively freeing all allocations made after that checkpoint. Default returns false (not supported).</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">permanent</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">checkpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">save</span><span class="p">();</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Size with temp: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 384</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">restore</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Size after restore: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 128</span>
+<span class="w">    </span><span class="c1">// temp is now invalid, permanent is still valid</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> – Checkpoint pointer from previous <a class="reference internal" href="#classcslt_1_1Allocator_1a59fcf1ce582d5cf99d942a941af5e107"><span class="std std-ref">save()</span></a> call </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if restore succeeded, false if not supported or invalid checkpoint</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator5resetEv">
+<span id="_CPPv3N4cslt9Allocator5resetEv"></span><span id="_CPPv2N4cslt9Allocator5resetEv"></span><span id="cslt::Allocator::reset"></span><span class="target" id="classcslt_1_1Allocator_1adec46a5fcc21a63c0ef3a617dbaa40a4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reset</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt9Allocator5resetEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset allocator to initial state. </p>
+<p>Frees all allocations and resets the allocator to its initial state. Default is a no-op. Allocators that own memory override this to actually reset their state. After reset, all previous pointers are invalid.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">ptr1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">ptr2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Before reset: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 384</span>
+
+<span class="n">allocator</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;After reset: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 0</span>
+<span class="c1">// ptr1 and ptr2 are now INVALID - do not use!</span>
+
+<span class="c1">// Can allocate again from fresh state</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">ptr3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-protected-attributes">Protected Attributes</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator18default_alignment_E">
+<span id="_CPPv3N4cslt9Allocator18default_alignment_E"></span><span id="_CPPv2N4cslt9Allocator18default_alignment_E"></span><span id="cslt::Allocator::default_alignment___s"></span><span class="target" id="classcslt_1_1Allocator_1ae915028e563a4d04f80f273037e1584a"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">default_alignment_</span></span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator18default_alignment_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Default alignment for memory allocations. </p>
+<p>Alignment value used when no specific alignment is requested. Typically set to alignof(max_align_t) for maximum portability. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator5size_E">
+<span id="_CPPv3N4cslt9Allocator5size_E"></span><span id="_CPPv2N4cslt9Allocator5size_E"></span><span id="cslt::Allocator::size___s"></span><span class="target" id="classcslt_1_1Allocator_1ab76cd7ab2a5756223580eda667b38cb6"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size_</span></span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator5size_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Current bytes of memory in use. </p>
+<p>Tracks how many bytes are currently allocated and not yet freed. For allocators that don’t track usage (like <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>), this remains 0. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator6alloc_E">
+<span id="_CPPv3N4cslt9Allocator6alloc_E"></span><span id="_CPPv2N4cslt9Allocator6alloc_E"></span><span id="cslt::Allocator::alloc___s"></span><span class="target" id="classcslt_1_1Allocator_1a711b3e63e9c8bc79a55fdf5e52222992"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc_</span></span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator6alloc_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Bytes of usable memory available. </p>
+<p>The amount of memory available for user allocations, excluding any internal overhead or headers. Calculated as: alloc_ = total_alloc_ - overhead </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator12total_alloc_E">
+<span id="_CPPv3N4cslt9Allocator12total_alloc_E"></span><span id="_CPPv2N4cslt9Allocator12total_alloc_E"></span><span id="cslt::Allocator::total_alloc___s"></span><span class="target" id="classcslt_1_1Allocator_1a5ef6bd69fbf7f2363aa5bb6cae49b923"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">total_alloc_</span></span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator12total_alloc_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Total bytes of allocated memory. </p>
+<p>The total memory budget including overhead. This is what the user requested when creating the allocator. For heap allocators, this is 0. </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator9mem_type_E">
+<span id="_CPPv3N4cslt9Allocator9mem_type_E"></span><span id="_CPPv2N4cslt9Allocator9mem_type_E"></span><span id="cslt::Allocator::mem_type___uint8_t"></span><span class="target" id="classcslt_1_1Allocator_1a7183bacd2973b4d8b822b01d081600ba"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">mem_type_</span></span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator9mem_type_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Memory type (STATIC or DYNAMIC) </p>
+<p>Stored as uint8_t, cast to/from MemType enum. STATIC = memory allocated at compile time or from a fixed buffer DYNAMIC = memory allocated from OS heap </p>
+</dd></dl>
+
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9Allocator12owns_memory_E">
+<span id="_CPPv3N4cslt9Allocator12owns_memory_E"></span><span id="_CPPv2N4cslt9Allocator12owns_memory_E"></span><span id="cslt::Allocator::owns_memory___uint8_t"></span><span class="target" id="classcslt_1_1Allocator_1a423d19bef35c2505d3d32cfe6b768776"></span><span class="n"><span class="pre">uint8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">owns_memory_</span></span></span><a class="headerlink" href="#_CPPv4N4cslt9Allocator12owns_memory_E" title="Link to this definition"></a><br /></dt>
+<dd><p>Whether allocator owns its memory. </p>
+<p>Stored as uint8_t, cast to/from bool. true = allocator owns and manages the memory buffer false = allocator is a wrapper (e.g., <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a> wraps operator new) </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
+</section>
+<section id="heap-overview">
+<span id="id2"></span><h2>Heap Overview<a class="headerlink" href="#heap-overview" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocatorE">
+<span id="_CPPv3N4cslt13HeapAllocatorE"></span><span id="_CPPv2N4cslt13HeapAllocatorE"></span><span id="cslt::HeapAllocator"></span><span class="target" id="classcslt_1_1HeapAllocator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HeapAllocator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">cslt</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocatorE" title="Link to this definition"></a><br /></dt>
+<dd><p><a class="reference internal" href="#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> wrapper around system heap (operator new/delete) </p>
+<p><a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a> is a simple wrapper around the system’s dynamic memory allocation facilities (operator new, operator delete, and platform-specific aligned allocation functions). It does not own or track memory - all allocations go directly to the OS heap.</p>
+<p>Key characteristics:<ul class="simple">
+<li><p>Does not own memory (<a class="reference internal" href="#classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185"><span class="std std-ref">owns_memory()</span></a> returns false)</p></li>
+<li><p>Does not track allocations (<a class="reference internal" href="#classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37"><span class="std std-ref">size()</span></a> returns 0)</p></li>
+<li><p>No fixed capacity (<a class="reference internal" href="#classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf"><span class="std std-ref">total_alloc()</span></a> and <a class="reference internal" href="#classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5"><span class="std std-ref">allocated()</span></a> return 0)</p></li>
+<li><p>Uses DYNAMIC memory type</p></li>
+<li><p>Thread-safety depends on system allocator</p></li>
+<li><p>No overhead beyond system allocator overhead</p></li>
+</ul>
+</p>
+<p>Use this allocator when:<ul class="simple">
+<li><p>You need a uniform interface with other allocators</p></li>
+<li><p>You want to switch between allocator types at runtime</p></li>
+<li><p>You need alignment support beyond standard new</p></li>
+<li><p>You don’t need memory tracking or limits</p></li>
+</ul>
+</p>
+<p>Alignment behavior:<ul class="simple">
+<li><p>For alignments &lt;= max_align_t: uses operator new</p></li>
+<li><p>For alignments &gt; max_align_t: uses platform-specific functions (posix_memalign on POSIX, _aligned_malloc on Windows)</p></li>
+</ul>
+</p>
+<p>Creates a <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a> with specified default alignment.<ul class="simple">
+<li><p><strong><a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>(size_t alignment = alignof(max_align_t))</strong> - Construct with default alignment</p></li>
+<li><p><strong>alloc(size_t bytes, bool zeroed = false)</strong> - Allocate memory with default alignment</p></li>
+<li><p><strong>alloc_aligned(size_t bytes, size_t alignment, bool zeroed = false)</strong> - Allocate aligned memory</p></li>
+<li><p><strong>realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed = false)</strong> - Resize allocation</p></li>
+<li><p><strong>realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes, size_t alignment, bool zeroed = false)</strong> - Resize aligned allocation</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1"><span class="std std-ref">return_element(void* ptr, size_t bytes, size_t alignment)</span></a></strong> - Free allocated memory</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0"><span class="std std-ref">default_alignment() const</span></a></strong> - Get default alignment in bytes</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1ab32af42a412bd9d92ca7bd3d8ee4ecae"><span class="std std-ref">memory_type() const</span></a></strong> - Returns DYNAMIC</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185"><span class="std std-ref">owns_memory() const</span></a></strong> - Returns false (doesn’t own memory)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37"><span class="std std-ref">size() const</span></a></strong> - Returns 0 (doesn’t track usage)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5"><span class="std std-ref">allocated() const</span></a></strong> - Returns 0 (no fixed capacity)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a1b34a9c4860a9e28255745b1d1e7cb62"><span class="std std-ref">remaining() const</span></a></strong> - Returns 0 (no capacity limit)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf"><span class="std std-ref">total_alloc() const</span></a></strong> - Returns 0 (no fixed allocation)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1HeapAllocator_1a8638f377e7dcb4d83d241e2a94dbb6e2"><span class="std std-ref">stats(char* buffer, size_t buffer_size) const</span></a></strong> - Generate statistics string</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a8b9fcb5da49538257f1272d2a11b832c"><span class="std std-ref">is_ptr(void* ptr) const</span></a></strong> - Returns false (cannot verify pointers)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a9174d07a2777d286188e0221558505dc"><span class="std std-ref">is_ptr_sized(void* ptr, size_t bytes) const</span></a></strong> - Returns false (cannot verify)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1a59fcf1ce582d5cf99d942a941af5e107"><span class="std std-ref">save() const</span></a></strong> - Returns nullptr (no checkpoint support)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1ab96e7b76511d29b505c5da81fb8b3cba"><span class="std std-ref">restore(void* checkpoint)</span></a></strong> - Returns false (no restore support)</p></li>
+<li><p><strong><a class="reference internal" href="#classcslt_1_1Allocator_1adec46a5fcc21a63c0ef3a617dbaa40a4"><span class="std std-ref">reset()</span></a></strong> - No-op (cannot reset system heap)</p></li>
+</ul>
+</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span> <span class="p">{</span><span class="o">.</span><span class="n">c</span><span class="o">++</span><span class="p">}</span>
+<span class="n">cslt</span><span class="p">::</span><span class="n">HeapAllocator</span> <span class="n">allocator</span><span class="p">;</span>
+
+<span class="o">//</span> <span class="n">Allocate</span> <span class="mi">1</span><span class="n">KB</span> <span class="n">of</span> <span class="n">zeroed</span> <span class="n">memory</span>
+<span class="n">auto</span> <span class="n">result</span> <span class="o">=</span> <span class="n">allocator</span><span class="o">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span> <span class="n">true</span><span class="p">);</span>
+<span class="k">if</span> <span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">hasValue</span><span class="p">())</span> <span class="p">{</span>
+    <span class="n">void</span><span class="o">*</span> <span class="n">ptr</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">value</span><span class="p">();</span>
+    <span class="o">//</span> <span class="n">Memory</span> <span class="ow">is</span> <span class="n">guaranteed</span> <span class="n">to</span> <span class="n">be</span> <span class="n">zeroed</span>
+    <span class="o">//</span> <span class="n">Use</span> <span class="n">memory</span><span class="o">...</span>
+    <span class="n">allocator</span><span class="o">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span> <span class="mi">1024</span><span class="p">,</span> <span class="n">allocator</span><span class="o">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocator13HeapAllocatorE6size_t">
+<span id="_CPPv3N4cslt13HeapAllocator13HeapAllocatorE6size_t"></span><span id="_CPPv2N4cslt13HeapAllocator13HeapAllocatorE6size_t"></span><span id="cslt::HeapAllocator::HeapAllocator__s"></span><span class="target" id="classcslt_1_1HeapAllocator_1a3f01101edebcc07b7c33dcbc261d21ac"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">HeapAllocator</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">alignof</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_align_t</span></span><span class="p"><span class="pre">)</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocator13HeapAllocatorE6size_t" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocatorD0Ev">
+<span id="_CPPv3N4cslt13HeapAllocatorD0Ev"></span><span id="_CPPv2N4cslt13HeapAllocatorD0Ev"></span><span id="cslt::HeapAllocator::~HeapAllocator"></span><span class="target" id="classcslt_1_1HeapAllocator_1a7e2a721eaaee3ecc3b68118de8b1812b"></span><span class="sig-name descname"><span class="n"><span class="pre">~HeapAllocator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">default</span></span><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocatorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocator5allocE6size_tb">
+<span id="_CPPv3N4cslt13HeapAllocator5allocE6size_tb"></span><span id="_CPPv2N4cslt13HeapAllocator5allocE6size_tb"></span><span id="cslt::HeapAllocator::alloc__s.b"></span><span class="target" id="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocator5allocE6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate memory. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Allocate 256 bytes, zeroed</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Memory is guaranteed to be zeroed</span>
+<span class="w">    </span><span class="c1">// ... use memory ...</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Handle allocation failure</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Allocation failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bytes</strong> – Number of bytes to allocate </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize the allocated memory (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to allocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocator13alloc_alignedE6size_t6size_tb">
+<span id="_CPPv3N4cslt13HeapAllocator13alloc_alignedE6size_t6size_tb"></span><span id="_CPPv2N4cslt13HeapAllocator13alloc_alignedE6size_t6size_tb"></span><span id="cslt::HeapAllocator::alloc_aligned__s.s.b"></span><span class="target" id="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc_aligned</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocator13alloc_alignedE6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate aligned memory. </p>
+<p>
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default_alignment_.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Allocate 512 bytes aligned to 64-byte boundary</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Verify alignment</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// ... use memory ...</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bytes</strong> – Number of bytes to allocate </p></li>
+<li><p><strong>alignment</strong> – Required alignment in bytes (must be power of 2) </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize the allocated memory (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to allocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocator7reallocEPv6size_t6size_tb">
+<span id="_CPPv3N4cslt13HeapAllocator7reallocEPv6size_t6size_tb"></span><span id="_CPPv2N4cslt13HeapAllocator7reallocEPv6size_t6size_tb"></span><span id="cslt::HeapAllocator::realloc__voidP.s.s.b"></span><span class="target" id="classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocator7reallocEPv6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Reallocate memory. </p>
+<p>
+Resizes an existing allocation. The existing data is preserved up to min(old_bytes, new_bytes). If growing and zeroed is true, the additional bytes are zero-initialized. The old pointer is automatically freed. The returned pointer may differ from the input.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Initial allocation</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result1</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="n">memset</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mh">0xAA</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">);</span><span class="w"> </span><span class="c1">// Fill with pattern</span>
+
+<span class="c1">// Grow to 512 bytes, zero the new space</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">realloc</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">new_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result2</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// First 256 bytes still contain 0xAA</span>
+<span class="w">    </span><span class="c1">// Bytes 256-511 are zeroed</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">new_ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to existing allocation </p></li>
+<li><p><strong>old_bytes</strong> – Size of existing allocation in bytes </p></li>
+<li><p><strong>new_bytes</strong> – Desired new size in bytes </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize new bytes when growing (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to reallocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocator15realloc_alignedEPv6size_t6size_t6size_tb">
+<span id="_CPPv3N4cslt13HeapAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="_CPPv2N4cslt13HeapAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="cslt::HeapAllocator::realloc_aligned__voidP.s.s.s.b"></span><span class="target" id="classcslt_1_1HeapAllocator_1adeb125664bb070ffb9522604fe753aa1"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc_aligned</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocator15realloc_alignedEPv6size_t6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Reallocate aligned memory. </p>
+<p>
+Like <a class="reference internal" href="#classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363"><span class="std std-ref">realloc()</span></a>, but maintains the specified alignment.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Initial aligned allocation</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result1</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+
+<span class="c1">// Grow to 512 bytes, maintaining 64-byte alignment</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">realloc_aligned</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">new_ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result2</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">new_ptr</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">new_ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to existing allocation </p></li>
+<li><p><strong>old_bytes</strong> – Size of existing allocation in bytes </p></li>
+<li><p><strong>new_bytes</strong> – Desired new size in bytes </p></li>
+<li><p><strong>alignment</strong> – Required alignment in bytes (must be power of 2) </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize new bytes when growing (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to reallocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13HeapAllocator14return_elementEPv6size_t6size_t">
+<span id="_CPPv3N4cslt13HeapAllocator14return_elementEPv6size_t6size_t"></span><span id="_CPPv2N4cslt13HeapAllocator14return_elementEPv6size_t6size_t"></span><span id="cslt::HeapAllocator::return_element__voidP.s.s"></span><span class="target" id="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">return_element</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13HeapAllocator14return_elementEPv6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return/free allocated memory. </p>
+<p>
+Frees memory previously allocated by this allocator. For heap allocators, this calls operator delete or free(). For arena allocators, this may be a no-op or update bookkeeping. Always safe to call with nullptr (no-op).</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+
+<span class="c1">// ... use memory ...</span>
+
+<span class="c1">// Free memory - must pass same size and alignment as allocation</span>
+<span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+
+<span class="c1">// Safe to call with nullptr</span>
+<span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// No-op</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to memory to free </p></li>
+<li><p><strong>bytes</strong> – Size of allocation in bytes </p></li>
+<li><p><strong>alignment</strong> – Alignment used for the allocation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13HeapAllocator5statsEPc6size_t">
+<span id="_CPPv3NK4cslt13HeapAllocator5statsEPc6size_t"></span><span id="_CPPv2NK4cslt13HeapAllocator5statsEPc6size_t"></span><span id="cslt::HeapAllocator::stats__cP.sC"></span><span class="target" id="classcslt_1_1HeapAllocator_1a8638f377e7dcb4d83d241e2a94dbb6e2"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stats</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buffer</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">buffer_size</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt13HeapAllocator5statsEPc6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Generate statistics string. </p>
+<p>
+Writes human-readable statistics about the allocator to the provided buffer. Returns false if buffer is too small or null.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="kt">char</span><span class="w"> </span><span class="n">buffer</span><span class="p">[</span><span class="mi">512</span><span class="p">];</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">allocator</span><span class="p">.</span><span class="n">stats</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buffer</span><span class="p">)))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;%s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">buffer</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Output:</span>
+<span class="w">    </span><span class="c1">// HeapAllocator Statistics:</span>
+<span class="w">    </span><span class="c1">//   Type: DYNAMIC</span>
+<span class="w">    </span><span class="c1">//   Default Alignment: 16 bytes</span>
+<span class="w">    </span><span class="c1">//   Memory Model: System Heap (operator new/delete)</span>
+<span class="w">    </span><span class="c1">//   ...</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Buffer too small for statistics</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> – Character buffer to write statistics to </p></li>
+<li><p><strong>buffer_size</strong> – Size of buffer in bytes </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if statistics were written successfully, false otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
+</section>
+<section id="arena-overview">
+<span id="id3"></span><h2>Arena Overview<a class="headerlink" href="#arena-overview" title="Link to this heading"></a></h2>
+</section>
+<section id="pool-overview">
+<span id="id4"></span><h2>Pool Overview<a class="headerlink" href="#pool-overview" title="Link to this heading"></a></h2>
+</section>
+<section id="free-list-overview">
+<span id="freelist-overview"></span><h2>Free List Overview<a class="headerlink" href="#free-list-overview" title="Link to this heading"></a></h2>
+</section>
+<section id="buddy-overview">
+<span id="id5"></span><h2>Buddy Overview<a class="headerlink" href="#buddy-overview" title="Link to this heading"></a></h2>
+</section>
+<section id="slab-overview">
+<span id="id6"></span><h2>Slab Overview<a class="headerlink" href="#slab-overview" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Error.html" class="btn btn-neutral float-left" title="Error Handling Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

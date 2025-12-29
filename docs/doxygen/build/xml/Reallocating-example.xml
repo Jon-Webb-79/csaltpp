@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Reallocating-example" kind="example">
+    <compoundname>Reallocating</compoundname>
+    <briefdescription>
+<para>a buffer </para>
+    </briefdescription>
+    <detaileddescription>
+<para>a buffer <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Start<sp/>with<sp/>256<sp/>bytes</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result1<sp/>=<sp/>allocator.alloc(256,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
+<codeline><highlight class="normal">memset(ptr,<sp/>0xAA,<sp/>256);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Grow<sp/>to<sp/>512<sp/>bytes,<sp/>zero<sp/>new<sp/>space</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result2<sp/>=<sp/>allocator.realloc(ptr,<sp/>256,<sp/>512,<sp/>true);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>unsigned<sp/>char*<sp/>data<sp/>=<sp/>static_cast&lt;unsigned<sp/>char*&gt;(result2.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>First<sp/>256<sp/>bytes:<sp/>0xAA<sp/>(preserved)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Next<sp/>256<sp/>bytes:<sp/>0x00<sp/>(zeroed)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(data,<sp/>512,<sp/>allocator.default_alignment());</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Original<sp/>ptr<sp/>is<sp/>now<sp/>invalid<sp/>-<sp/>don&apos;t<sp/>use<sp/>it!</highlight></codeline>
+</programlisting> <programlisting filename="Reallocating"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

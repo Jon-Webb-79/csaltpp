@@ -1,7 +1,8 @@
 // ================================================================================
 // ================================================================================
 // - File:    error.hpp
-// - Purpose: Describe the file purpose here
+// - Purpose: This file contains prototypes for error handling classes as part 
+//            of the cslt namespace
 //
 // Source Metadata
 // - Author:  Jonathan A. Webb

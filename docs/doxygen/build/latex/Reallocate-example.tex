@@ -1,0 +1,70 @@
+\hypertarget{Reallocate-example}{}\doxysection{Reallocate}
+Reallocate aligned memory from system heap
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to existing aligned allocation \\
+\hline
+{\em old\+\_\+bytes} & Size of existing allocation in bytes \\
+\hline
+{\em new\+\_\+bytes} & Desired new size in bytes \\
+\hline
+{\em alignment} & Required alignment in bytes (must be power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize new bytes when growing (default\+: false) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$void$\ast$$>$ containing pointer to reallocated aligned memory or error
+\end{DoxyReturn}
+Like realloc(), but maintains the specified alignment. The returned pointer is guaranteed to be aligned to the specified boundary.
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Never} & throws\\
+\hline
+\end{DoxyExceptions}
+
+\begin{DoxyRetVals}{Return values}
+{\em Expected} & with new aligned pointer on success \\
+\hline
+{\em Expected} & with Null\+Pointer\+Error if ptr is null \\
+\hline
+{\em Expected} & with Invalid\+Arg\+Error if new\+\_\+bytes is 0 \\
+\hline
+{\em Expected} & with Realloc\+Fail\+Error if new allocation fails\\
+\hline
+\end{DoxyRetVals}
+cache-\/aligned buffer 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Initial 64-\/byte aligned allocation}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result1 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(512, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result1.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow while maintaining 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_adeb125664bb070ffb9522604fe753aa1}{realloc\_aligned}}(ptr, 512, 1024, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result2.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = result2.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Verify alignment maintained}}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr) \% 64 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(new\_ptr, 1024, 64);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyWarning}{Warning}
+The alignment parameter must match the alignment used in the original allocation.
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+realloc() For non-\/aligned reallocation 
+
+alloc\+\_\+aligned() For initial aligned allocation
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

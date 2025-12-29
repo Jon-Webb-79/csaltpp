@@ -1,0 +1,45 @@
+\hypertarget{Print-example}{}\doxysection{Print}
+Generate statistics string
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Character buffer to write statistics to \\
+\hline
+{\em buffer\+\_\+size} & Size of buffer in bytes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if statistics were written successfully, false on error
+\end{DoxyReturn}
+Writes human-\/readable statistics about the Heap\+Allocator to the provided buffer. Since Heap\+Allocator doesn\textquotesingle{}t track allocations, the statistics primarily describe the allocator type and configuration.
+
+Returns false if\+:
+\begin{DoxyItemize}
+\item buffer is nullptr
+\item buffer\+\_\+size is 0
+\item buffer is too small for the statistics string
+\end{DoxyItemize}
+
+statistics 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator(64);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[512];}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (allocator.stats(buffer, \textcolor{keyword}{sizeof}(buffer))) \{}
+\DoxyCodeLine{    printf(\textcolor{stringliteral}{"{}\%s\(\backslash\)n"{}}, buffer);}
+\DoxyCodeLine{    \textcolor{comment}{// Output:}}
+\DoxyCodeLine{    \textcolor{comment}{// HeapAllocator Statistics:}}
+\DoxyCodeLine{    \textcolor{comment}{//   Type: DYNAMIC}}
+\DoxyCodeLine{    \textcolor{comment}{//   Default Alignment: 64 bytes}}
+\DoxyCodeLine{    \textcolor{comment}{//   Memory Model: System Heap (operator new/delete)}}
+\DoxyCodeLine{    \textcolor{comment}{//   Note: HeapAllocator is a wrapper around system allocator.}}
+\DoxyCodeLine{    \textcolor{comment}{//         It does not own or track memory; all allocations}}
+\DoxyCodeLine{    \textcolor{comment}{//         are managed directly by the OS heap.}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

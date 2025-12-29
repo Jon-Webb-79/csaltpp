@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Aligned-example" kind="example">
+    <compoundname>Aligned</compoundname>
+    <briefdescription>
+<para>allocation for SIMD </para>
+    </briefdescription>
+    <detaileddescription>
+<para>allocation for SIMD <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Allocate<sp/>512<sp/>bytes<sp/>aligned<sp/>to<sp/>64-byte<sp/>cache<sp/>line</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Verify<sp/>alignment</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(reinterpret_cast&lt;uintptr_t&gt;(ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Can<sp/>safely<sp/>use<sp/>SIMD<sp/>instructions</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>float*<sp/>data<sp/>=<sp/>static_cast&lt;float*&gt;(ptr);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...<sp/>perform<sp/>SIMD<sp/>operations<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(ptr,<sp/>512,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> <programlisting filename="Aligned"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

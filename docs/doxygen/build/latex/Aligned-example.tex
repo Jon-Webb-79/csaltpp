@@ -1,0 +1,28 @@
+\hypertarget{Aligned-example}{}\doxysection{Aligned}
+allocation for SIMD 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 512 bytes aligned to 64-\/byte cache line}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(512, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Verify alignment}}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 64 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Can safely use SIMD instructions}}
+\DoxyCodeLine{    \textcolor{keywordtype}{float}* data = \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{    \textcolor{comment}{// ... perform SIMD operations ...}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(ptr, 512, 64);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

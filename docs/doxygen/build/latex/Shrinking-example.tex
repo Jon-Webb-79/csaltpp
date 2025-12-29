@@ -1,0 +1,32 @@
+\hypertarget{Shrinking-example}{}\doxysection{Shrinking}
+allocation 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} result1 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(1024, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result1.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Shrink to 512 bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8da5b4e9dc6e8d13020a66d384835363}{realloc}}(ptr, 1024, 512, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result2.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = result2.value();}
+\DoxyCodeLine{    \textcolor{comment}{// First 512 bytes preserved}}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(new\_ptr, 512, allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyWarning}{Warning}
+After calling realloc, the original pointer is invalid. Always use the newly returned pointer.
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+realloc\+\_\+aligned() For aligned reallocation 
+
+alloc() For initial allocation
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Reallocate-example" kind="example">
+    <compoundname>Reallocate</compoundname>
+    <briefdescription>
+<para>Reallocate aligned memory from system heap. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Reallocate aligned memory from system heap<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to existing aligned allocation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>old_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of existing allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired new size in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Required alignment in bytes (must be power of 2) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize new bytes when growing (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to reallocated aligned memory or error</para>
+</simplesect>
+Like realloc(), but maintains the specified alignment. The returned pointer is guaranteed to be aligned to the specified boundary.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>Never</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>throws</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with new aligned pointer on success </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with NullPointerError if ptr is null </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with InvalidArgError if new_bytes is 0 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with ReallocFailError if new allocation fails</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+cache-aligned buffer <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Initial<sp/>64-byte<sp/>aligned<sp/>allocation</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result1<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Grow<sp/>while<sp/>maintaining<sp/>64-byte<sp/>alignment</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result2<sp/>=<sp/>allocator.realloc_aligned(ptr,<sp/>512,<sp/>1024,<sp/>64,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void*<sp/>new_ptr<sp/>=<sp/>result2.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Verify<sp/>alignment<sp/>maintained</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(reinterpret_cast&lt;uintptr_t&gt;(new_ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(new_ptr,<sp/>1024,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="warning"><para>The alignment parameter must match the alignment used in the original allocation.</para>
+</simplesect>
+<simplesect kind="see"><para>realloc() For non-aligned reallocation </para>
+</simplesect>
+<simplesect kind="see"><para>alloc_aligned() For initial aligned allocation <programlisting filename="Reallocate"></programlisting> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

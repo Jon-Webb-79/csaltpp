@@ -1,0 +1,237 @@
+\hypertarget{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{}\doxysection{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}
+Get the default alignment\begin{DoxyReturn}{Returns}
+Default alignment in bytes
+\end{DoxyReturn}
+Returns the alignment value that will be used for allocations when no specific alignment is requested.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator(32); \textcolor{comment}{// 32-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} align = allocator.default\_alignment();}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Default alignment: "{}} << align << \textcolor{stringliteral}{"{} bytes\(\backslash\)n"{}};}
+\DoxyCodeLine{\textcolor{comment}{// Output: Default alignment: 32 bytes}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ File:    allocator.hpp}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Purpose: This file contains the prototypes for custom allocators as part of the }}
+\DoxyCodeLine{\textcolor{comment}{//            cslt namespace}}
+\DoxyCodeLine{\textcolor{comment}{//}}
+\DoxyCodeLine{\textcolor{comment}{// Source Metadata}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Author:  Jonathan A. Webb}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Date:    December 28, 2025}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Version: 1.0}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Copyright: Copyright 2022, Jon Webb Inc.}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{// Include modules here}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#ifndef allocator\_HPP}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define allocator\_HPP}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Compile for static or dynamic memory allocation for MISRA compliance}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#ifndef ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  ifdef STATIC\_ONLY}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#    define ARENA\_ENABLE\_DYNAMIC 0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  else}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#    define ARENA\_ENABLE\_DYNAMIC 1}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  endif}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if defined(STATIC\_ONLY) \&\& defined(ARENA\_ENABLE\_DYNAMIC) \&\& (ARENA\_ENABLE\_DYNAMIC+0)!=0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#  error "{}STATIC\_ONLY set but ARENA\_ENABLE\_DYNAMIC != 0"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{error_8hpp}{error.hpp}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <iostream>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include <cstddef>}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{namespace }\mbox{\hyperlink{namespacecslt}{cslt}} \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{enum} \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} \{}
+\DoxyCodeLine{        \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edafe9db55c66dd1368b469bd19ac7f7732}{ALLOC\_INVALID}} = 0,}
+\DoxyCodeLine{        \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956eda0af05f0e42195dea493d9fb04af1414b}{STATIC}} = 1,}
+\DoxyCodeLine{        \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}} = 2}
+\DoxyCodeLine{    \};}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{class }Allocator \{}
+\DoxyCodeLine{    \textcolor{keyword}{protected}:}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_ae915028e563a4d04f80f273037e1584a}{default\_alignment\_}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}}; }
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}};             }
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a5ef6bd69fbf7f2363aa5bb6cae49b923}{total\_alloc\_}}; }
+\DoxyCodeLine{}
+\DoxyCodeLine{        uint8\_t \mbox{\hyperlink{classcslt_1_1Allocator_a7183bacd2973b4d8b822b01d081600ba}{mem\_type\_}}; }
+\DoxyCodeLine{}
+\DoxyCodeLine{        uint8\_t \mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}};}
+\DoxyCodeLine{    \textcolor{keyword}{public}:}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{explicit} \mbox{\hyperlink{classcslt_1_1Allocator_aa4603a4a1a33e3519c6e30dbc3223ec6}{Allocator}}(\textcolor{keywordtype}{size\_t} alignment = \textcolor{keyword}{alignof}(max\_align\_t), }
+\DoxyCodeLine{                           \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a91c8438280ddbe1fa7ecaf8cc555daaf}{total\_alloc}} = 0,}
+\DoxyCodeLine{                           \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} type = \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edafe9db55c66dd1368b469bd19ac7f7732}{ALLOC\_INVALID}}, }
+\DoxyCodeLine{                           \textcolor{keywordtype}{bool} owns\_mem = \textcolor{keyword}{false}) noexcept}
+\DoxyCodeLine{            : \mbox{\hyperlink{classcslt_1_1Allocator_ae915028e563a4d04f80f273037e1584a}{default\_alignment\_}}(alignment), }
+\DoxyCodeLine{              \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}}(0),}
+\DoxyCodeLine{              \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}}(0),}
+\DoxyCodeLine{              \mbox{\hyperlink{classcslt_1_1Allocator_a5ef6bd69fbf7f2363aa5bb6cae49b923}{total\_alloc\_}}(\mbox{\hyperlink{classcslt_1_1Allocator_a91c8438280ddbe1fa7ecaf8cc555daaf}{total\_alloc}}),}
+\DoxyCodeLine{              \mbox{\hyperlink{classcslt_1_1Allocator_a7183bacd2973b4d8b822b01d081600ba}{mem\_type\_}}(\textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(type)), }
+\DoxyCodeLine{              \mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}}(\textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(owns\_mem)) \{\}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \mbox{\hyperlink{classcslt_1_1Allocator_afaec0741935d3b33af37c535565ce719}{\string~Allocator}}() noexcept = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}() \textcolor{keyword}{const} noexcept \{\textcolor{keywordflow}{return} \mbox{\hyperlink{classcslt_1_1Allocator_ae915028e563a4d04f80f273037e1584a}{default\_alignment\_}}; \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} Expected<void*> \mbox{\hyperlink{classcslt_1_1Allocator_adb93a70659ab65af421bf3f8043418e3}{alloc}}(\textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                                      \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) = 0;}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} Expected<void*> \mbox{\hyperlink{classcslt_1_1Allocator_a518d804fc4eb66096f2534fc922c1ac4}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                                              \textcolor{keywordtype}{size\_t} alignment,}
+\DoxyCodeLine{                                              \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) = 0;}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} Expected<void*> \mbox{\hyperlink{classcslt_1_1Allocator_ad83899b3087ecbf56883ef775048e81a}{realloc}}(\textcolor{keywordtype}{void}* ptr,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} old\_bytes,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) = 0;}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} Expected<void*> \mbox{\hyperlink{classcslt_1_1Allocator_a7c5678c95eddff0fb5ae06a09492fb7c}{realloc\_aligned}}(\textcolor{keywordtype}{void} *ptr,}
+\DoxyCodeLine{                                                \textcolor{keywordtype}{size\_t} old\_bytes,}
+\DoxyCodeLine{                                                \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{                                                \textcolor{keywordtype}{size\_t} alignment,}
+\DoxyCodeLine{                                                \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) = 0;}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classcslt_1_1Allocator_af485658fdffd558a73ce7a8c0d18339c}{return\_element}}(\textcolor{keywordtype}{void} *ptr, \textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{size\_t} alignment) = 0;}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} \mbox{\hyperlink{classcslt_1_1Allocator_ab32af42a412bd9d92ca7bd3d8ee4ecae}{memory\_type}}() \textcolor{keyword}{const} noexcept \{}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Allocator_a7183bacd2973b4d8b822b01d081600ba}{mem\_type\_}});}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1Allocator_a794cb0fe500dc3a698015474ad8a7c86}{stats}}(\textcolor{keywordtype}{char} *buffer, \textcolor{keywordtype}{size\_t} buffer\_size) \textcolor{keyword}{const} = 0;}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1Allocator_a5eed4e825db775062f2a8d72b0a80185}{owns\_memory}}() \textcolor{keyword}{const} noexcept \{ }
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}});}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}}() \textcolor{keyword}{const} noexcept \{ }
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}};}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a1b34a9c4860a9e28255745b1d1e7cb62}{remaining}}() \textcolor{keyword}{const} noexcept \{ }
+\DoxyCodeLine{            \textcolor{keywordflow}{if} (\mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}} > \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}}) \{}
+\DoxyCodeLine{                \textcolor{keywordflow}{return} \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}} -\/ \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}};}
+\DoxyCodeLine{            \}}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}}() \textcolor{keyword}{const} noexcept \{}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}};}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a91c8438280ddbe1fa7ecaf8cc555daaf}{total\_alloc}}() \textcolor{keyword}{const} noexcept \{ }
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \mbox{\hyperlink{classcslt_1_1Allocator_a5ef6bd69fbf7f2363aa5bb6cae49b923}{total\_alloc\_}};}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1Allocator_a8b9fcb5da49538257f1272d2a11b832c}{is\_ptr}}(\textcolor{keywordtype}{void}* ptr)\textcolor{keyword}{ const }\{ }
+\DoxyCodeLine{            (void)ptr;}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{false};  \textcolor{comment}{// Default: can't verify pointers}}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1Allocator_a9174d07a2777d286188e0221558505dc}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} bytes)\textcolor{keyword}{ const }\{ }
+\DoxyCodeLine{            (void)ptr; (void)bytes;}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{false};  \textcolor{comment}{// Default: can't verify sized pointers}}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{void}* \mbox{\hyperlink{classcslt_1_1Allocator_a59fcf1ce582d5cf99d942a941af5e107}{save}}()\textcolor{keyword}{ const }\{ }
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{nullptr};  \textcolor{comment}{// Default: doesn't support save/restore}}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1Allocator_ab96e7b76511d29b505c5da81fb8b3cba}{restore}}(\textcolor{keywordtype}{void}* checkpoint) \{ }
+\DoxyCodeLine{            (void)checkpoint;}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{false};  \textcolor{comment}{// Default: doesn't support save/restore}}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{virtual} \textcolor{keywordtype}{void} \mbox{\hyperlink{classcslt_1_1Allocator_adec46a5fcc21a63c0ef3a617dbaa40a4}{reset}}() \{\}}
+\DoxyCodeLine{    \};}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{class }HeapAllocator : \textcolor{keyword}{public} Allocator \{}
+\DoxyCodeLine{    \textcolor{keyword}{public}:}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{explicit} \mbox{\hyperlink{classcslt_1_1HeapAllocator_a3f01101edebcc07b7c33dcbc261d21ac}{HeapAllocator}}(\textcolor{keywordtype}{size\_t} alignment = \textcolor{keyword}{alignof}(max\_align\_t)) noexcept}
+\DoxyCodeLine{            : \mbox{\hyperlink{classcslt_1_1Allocator_aa4603a4a1a33e3519c6e30dbc3223ec6}{Allocator}}(alignment, 0, \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}}, \textcolor{keyword}{false}) \{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1HeapAllocator_a7e2a721eaaee3ecc3b68118de8b1812b}{\string~HeapAllocator}}() noexcept \textcolor{keyword}{override}  = \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(\textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                              \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                                      \textcolor{keywordtype}{size\_t} alignment,}
+\DoxyCodeLine{                                      \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1HeapAllocator_a8da5b4e9dc6e8d13020a66d384835363}{realloc}}(\textcolor{keywordtype}{void}* ptr,}
+\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} old\_bytes,}
+\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{                                \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1HeapAllocator_adeb125664bb070ffb9522604fe753aa1}{realloc\_aligned}}(\textcolor{keywordtype}{void}* ptr,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} old\_bytes,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} alignment,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(\textcolor{keywordtype}{void} *ptr, \textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{size\_t} alignment) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1HeapAllocator_a8638f377e7dcb4d83d241e2a94dbb6e2}{stats}}(\textcolor{keywordtype}{char} *buffer, \textcolor{keywordtype}{size\_t} buffer\_size) \textcolor{keyword}{const};}
+\DoxyCodeLine{    \};}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif }\textcolor{comment}{/* ARENA\_ENABLE\_DYNAMIC */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif }\textcolor{comment}{/* allocator\_HPP */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{// eof}}
+
+\end{DoxyCodeInclude}
+ 

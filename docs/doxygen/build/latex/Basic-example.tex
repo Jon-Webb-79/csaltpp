@@ -1,0 +1,48 @@
+\hypertarget{Basic-example}{}\doxysection{Basic}
+Allocate memory from system heap
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Number of bytes to allocate \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory (default\+: false) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$void$\ast$$>$ containing pointer to allocated memory or error
+\end{DoxyReturn}
+Allocates memory using operator new with the allocator\textquotesingle{}s default alignment. Uses std\+::nothrow to avoid exceptions.
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Never} & throws (uses nothrow allocation)\\
+\hline
+\end{DoxyExceptions}
+
+\begin{DoxyRetVals}{Return values}
+{\em Expected} & with pointer on success \\
+\hline
+{\em Expected} & with Invalid\+Arg\+Error if bytes is 0 \\
+\hline
+{\em Expected} & with Bad\+Alloc\+Error if allocation fails\\
+\hline
+\end{DoxyRetVals}
+allocation 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(512, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{    memset(ptr, 0xAB, 512);}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1391df8ff30a4a57eea4cc14250ab4a1}{return\_element}}(ptr, 512, allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Allocation failed\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

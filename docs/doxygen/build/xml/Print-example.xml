@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Print-example" kind="example">
+    <compoundname>Print</compoundname>
+    <briefdescription>
+<para>Generate statistics string. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Generate statistics string<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character buffer to write statistics to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer in bytes </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if statistics were written successfully, false on error</para>
+</simplesect>
+Writes human-readable statistics about the HeapAllocator to the provided buffer. Since HeapAllocator doesn&apos;t track allocations, the statistics primarily describe the allocator type and configuration.</para>
+<para>Returns false if:<itemizedlist>
+<listitem><para>buffer is nullptr</para>
+</listitem><listitem><para>buffer_size is 0</para>
+</listitem><listitem><para>buffer is too small for the statistics string</para>
+</listitem></itemizedlist>
+</para>
+<para>statistics <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator(64);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">char<sp/>buffer[512];</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(allocator.stats(buffer,<sp/>sizeof(buffer)))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(&quot;%s\n&quot;,<sp/>buffer);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Output:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>HeapAllocator<sp/>Statistics:</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/>Type:<sp/>DYNAMIC</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/>Default<sp/>Alignment:<sp/>64<sp/>bytes</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/>Memory<sp/>Model:<sp/>System<sp/>Heap<sp/>(operator<sp/>new/delete)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/>Note:<sp/>HeapAllocator<sp/>is<sp/>a<sp/>wrapper<sp/>around<sp/>system<sp/>allocator.</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>It<sp/>does<sp/>not<sp/>own<sp/>or<sp/>track<sp/>memory;<sp/>all<sp/>allocations</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>are<sp/>managed<sp/>directly<sp/>by<sp/>the<sp/>OS<sp/>heap.</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> <programlisting filename="Print"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

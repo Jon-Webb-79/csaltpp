@@ -1,0 +1,586 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classcslt_1_1HeapAllocator" kind="class" language="C++" prot="public">
+    <compoundname>cslt::HeapAllocator</compoundname>
+    <basecompoundref refid="classcslt_1_1Allocator" prot="public" virt="non-virtual">cslt::Allocator</basecompoundref>
+    <includes refid="allocator_8hpp" local="no">allocator.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1a3f01101edebcc07b7c33dcbc261d21ac" prot="public" static="no" const="no" explicit="yes" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::HeapAllocator::HeapAllocator</definition>
+        <argsstring>(size_t alignment=alignof(max_align_t)) noexcept</argsstring>
+        <name>HeapAllocator</name>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>alignof(max_align_t)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="966" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="966" bodyend="967"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1a7e2a721eaaee3ecc3b68118de8b1812b" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::HeapAllocator::~HeapAllocator</definition>
+        <argsstring>() noexcept override=default</argsstring>
+        <name>~HeapAllocator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="994" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt;void*&gt; cslt::HeapAllocator::alloc</definition>
+        <argsstring>(size_t bytes, bool zeroed=false) override</argsstring>
+        <name>alloc</name>
+        <reimplements refid="classcslt_1_1Allocator_1adb93a70659ab65af421bf3f8043418e3">alloc</reimplements>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Allocate memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to allocated memory or error</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Allocate<sp/>256<sp/>bytes,<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde" kindref="member">alloc</ref>(256,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Memory<sp/>is<sp/>guaranteed<sp/>to<sp/>be<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" kindref="member">return_element</ref>(ptr,<sp/>256,<sp/>allocator.<ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment</ref>());</highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Handle<sp/>allocation<sp/>failure</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Allocation<sp/>failed\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1042" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt;void*&gt; cslt::HeapAllocator::alloc_aligned</definition>
+        <argsstring>(size_t bytes, size_t alignment, bool zeroed=false) override</argsstring>
+        <name>alloc_aligned</name>
+        <reimplements refid="classcslt_1_1Allocator_1a518d804fc4eb66096f2534fc922c1ac4">alloc_aligned</reimplements>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Allocate aligned memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Required alignment in bytes (must be power of 2) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to allocated memory or error</para>
+</simplesect>
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default_alignment_.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Allocate<sp/>512<sp/>bytes<sp/>aligned<sp/>to<sp/>64-byte<sp/>boundary</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Verify<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal">uintptr_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" kindref="member">return_element</ref>(ptr,<sp/>512,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1103" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt;void*&gt; cslt::HeapAllocator::realloc</definition>
+        <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, bool zeroed=false) override</argsstring>
+        <name>realloc</name>
+        <reimplements refid="classcslt_1_1Allocator_1ad83899b3087ecbf56883ef775048e81a">realloc</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>old_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>new_bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Reallocate memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to existing allocation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>old_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of existing allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired new size in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize new bytes when growing (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to reallocated memory or error</para>
+</simplesect>
+Resizes an existing allocation. The existing data is preserved up to min(old_bytes, new_bytes). If growing and zeroed is true, the additional bytes are zero-initialized. The old pointer is automatically freed. The returned pointer may differ from the input.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Initial<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result1<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde" kindref="member">alloc</ref>(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
+<codeline><highlight class="normal">memset(ptr,<sp/>0xAA,<sp/>256);<sp/></highlight><highlight class="comment">//<sp/>Fill<sp/>with<sp/>pattern</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Grow<sp/>to<sp/>512<sp/>bytes,<sp/>zero<sp/>the<sp/>new<sp/>space</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result2<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363" kindref="member">realloc</ref>(ptr,<sp/>256,<sp/>512,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>new_ptr<sp/>=<sp/>result2.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>256<sp/>bytes<sp/>still<sp/>contain<sp/>0xAA</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Bytes<sp/>256-511<sp/>are<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" kindref="member">return_element</ref>(new_ptr,<sp/>512,<sp/>allocator.<ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment</ref>());</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1174" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1adeb125664bb070ffb9522604fe753aa1" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt;void*&gt; cslt::HeapAllocator::realloc_aligned</definition>
+        <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, size_t alignment, bool zeroed=false) override</argsstring>
+        <name>realloc_aligned</name>
+        <reimplements refid="classcslt_1_1Allocator_1a7c5678c95eddff0fb5ae06a09492fb7c">realloc_aligned</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>old_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>new_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Reallocate aligned memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to existing allocation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>old_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of existing allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired new size in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Required alignment in bytes (must be power of 2) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize new bytes when growing (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to reallocated memory or error</para>
+</simplesect>
+Like <ref refid="classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363" kindref="member">realloc()</ref>, but maintains the specified alignment.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Initial<sp/>aligned<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result1<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(256,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Grow<sp/>to<sp/>512<sp/>bytes,<sp/>maintaining<sp/>64-byte<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result2<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1adeb125664bb070ffb9522604fe753aa1" kindref="member">realloc_aligned</ref>(ptr,<sp/>256,<sp/>512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>new_ptr<sp/>=<sp/>result2.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal">uintptr_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(new_ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" kindref="member">return_element</ref>(new_ptr,<sp/>512,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1226" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void cslt::HeapAllocator::return_element</definition>
+        <argsstring>(void *ptr, size_t bytes, size_t alignment) override</argsstring>
+        <name>return_element</name>
+        <reimplements refid="classcslt_1_1Allocator_1af485658fdffd558a73ce7a8c0d18339c">return_element</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+        </param>
+        <briefdescription>
+<para>Return/free allocated memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to free </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Alignment used for the allocation</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Frees memory previously allocated by this allocator. For heap allocators, this calls operator delete or free(). For arena allocators, this may be a no-op or update bookkeeping. Always safe to call with nullptr (no-op).</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(1024,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Free<sp/>memory<sp/>-<sp/>must<sp/>pass<sp/>same<sp/>size<sp/>and<sp/>alignment<sp/>as<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.<ref refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" kindref="member">return_element</ref>(ptr,<sp/>1024,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Safe<sp/>to<sp/>call<sp/>with<sp/>nullptr</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.<ref refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" kindref="member">return_element</ref>(</highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,<sp/>0,<sp/>0);<sp/></highlight><highlight class="comment">//<sp/>No-op</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1290" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1HeapAllocator_1a8638f377e7dcb4d83d241e2a94dbb6e2" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::HeapAllocator::stats</definition>
+        <argsstring>(char *buffer, size_t buffer_size) const</argsstring>
+        <name>stats</name>
+        <reimplements refid="classcslt_1_1Allocator_1a794cb0fe500dc3a698015474ad8a7c86">stats</reimplements>
+        <param>
+          <type>char *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_size</declname>
+        </param>
+        <briefdescription>
+<para>Generate statistics string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character buffer to write statistics to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer in bytes </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if statistics were written successfully, false otherwise</para>
+</simplesect>
+Writes human-readable statistics about the allocator to the provided buffer. Returns false if buffer is too small or null.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buffer[512];</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(allocator.<ref refid="classcslt_1_1HeapAllocator_1a8638f377e7dcb4d83d241e2a94dbb6e2" kindref="member">stats</ref>(buffer,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(buffer)))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%s\n&quot;</highlight><highlight class="normal">,<sp/>buffer);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Output:</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>HeapAllocator<sp/>Statistics:</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Type:<sp/>DYNAMIC</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Default<sp/>Alignment:<sp/>16<sp/>bytes</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Memory<sp/>Model:<sp/>System<sp/>Heap<sp/>(operator<sp/>new/delete)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;Buffer<sp/>too<sp/>small<sp/>for<sp/>statistics\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1343" column="14"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> wrapper around system heap (operator new/delete) </para>
+    </briefdescription>
+    <detaileddescription>
+<para><ref refid="classcslt_1_1HeapAllocator" kindref="compound">HeapAllocator</ref> is a simple wrapper around the system&apos;s dynamic memory allocation facilities (operator new, operator delete, and platform-specific aligned allocation functions). It does not own or track memory - all allocations go directly to the OS heap.</para>
+<para>Key characteristics:<itemizedlist>
+<listitem><para>Does not own memory (<ref refid="classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185" kindref="member">owns_memory()</ref> returns false)</para>
+</listitem><listitem><para>Does not track allocations (<ref refid="classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37" kindref="member">size()</ref> returns 0)</para>
+</listitem><listitem><para>No fixed capacity (<ref refid="classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf" kindref="member">total_alloc()</ref> and <ref refid="classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5" kindref="member">allocated()</ref> return 0)</para>
+</listitem><listitem><para>Uses DYNAMIC memory type</para>
+</listitem><listitem><para>Thread-safety depends on system allocator</para>
+</listitem><listitem><para>No overhead beyond system allocator overhead</para>
+</listitem></itemizedlist>
+</para>
+<para>Use this allocator when:<itemizedlist>
+<listitem><para>You need a uniform interface with other allocators</para>
+</listitem><listitem><para>You want to switch between allocator types at runtime</para>
+</listitem><listitem><para>You need alignment support beyond standard new</para>
+</listitem><listitem><para>You don&apos;t need memory tracking or limits</para>
+</listitem></itemizedlist>
+</para>
+<para>Alignment behavior:<itemizedlist>
+<listitem><para>For alignments &lt;= max_align_t: uses operator new</para>
+</listitem><listitem><para>For alignments &gt; max_align_t: uses platform-specific functions (posix_memalign on POSIX, _aligned_malloc on Windows)</para>
+</listitem></itemizedlist>
+</para>
+<para>Creates a <ref refid="classcslt_1_1HeapAllocator" kindref="compound">HeapAllocator</ref> with specified default alignment.<itemizedlist>
+<listitem><para><bold><ref refid="classcslt_1_1HeapAllocator" kindref="compound">HeapAllocator</ref>(size_t alignment = alignof(max_align_t))</bold> - Construct with default alignment</para>
+</listitem><listitem><para><bold>alloc(size_t bytes, bool zeroed = false)</bold> - Allocate memory with default alignment</para>
+</listitem><listitem><para><bold>alloc_aligned(size_t bytes, size_t alignment, bool zeroed = false)</bold> - Allocate aligned memory</para>
+</listitem><listitem><para><bold>realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed = false)</bold> - Resize allocation</para>
+</listitem><listitem><para><bold>realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes, size_t alignment, bool zeroed = false)</bold> - Resize aligned allocation</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" kindref="member">return_element(void* ptr, size_t bytes, size_t alignment)</ref></bold> - Free allocated memory</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment() const</ref></bold> - Get default alignment in bytes</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1ab32af42a412bd9d92ca7bd3d8ee4ecae" kindref="member">memory_type() const</ref></bold> - Returns DYNAMIC</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185" kindref="member">owns_memory() const</ref></bold> - Returns false (doesn&apos;t own memory)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37" kindref="member">size() const</ref></bold> - Returns 0 (doesn&apos;t track usage)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5" kindref="member">allocated() const</ref></bold> - Returns 0 (no fixed capacity)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a1b34a9c4860a9e28255745b1d1e7cb62" kindref="member">remaining() const</ref></bold> - Returns 0 (no capacity limit)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf" kindref="member">total_alloc() const</ref></bold> - Returns 0 (no fixed allocation)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1HeapAllocator_1a8638f377e7dcb4d83d241e2a94dbb6e2" kindref="member">stats(char* buffer, size_t buffer_size) const</ref></bold> - Generate statistics string</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a8b9fcb5da49538257f1272d2a11b832c" kindref="member">is_ptr(void* ptr) const</ref></bold> - Returns false (cannot verify pointers)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a9174d07a2777d286188e0221558505dc" kindref="member">is_ptr_sized(void* ptr, size_t bytes) const</ref></bold> - Returns false (cannot verify)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1a59fcf1ce582d5cf99d942a941af5e107" kindref="member">save() const</ref></bold> - Returns nullptr (no checkpoint support)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1ab96e7b76511d29b505c5da81fb8b3cba" kindref="member">restore(void* checkpoint)</ref></bold> - Returns false (no restore support)</para>
+</listitem><listitem><para><bold><ref refid="classcslt_1_1Allocator_1adec46a5fcc21a63c0ef3a617dbaa40a4" kindref="member">reset()</ref></bold> - No-op (cannot reset system heap)</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting><codeline><highlight class="normal"><sp/>{.c++}</highlight></codeline>
+<codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Allocate<sp/>1KB<sp/>of<sp/>zeroed<sp/>memory</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>allocator.alloc(1024,<sp/>true);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Memory<sp/>is<sp/>guaranteed<sp/>to<sp/>be<sp/>zeroed</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Use<sp/>memory...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(ptr,<sp/>1024,<sp/>allocator.default_alignment());</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>cslt::HeapAllocator</label>
+        <link refid="classcslt_1_1HeapAllocator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cslt::Allocator</label>
+        <link refid="classcslt_1_1Allocator"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>cslt::HeapAllocator</label>
+        <link refid="classcslt_1_1HeapAllocator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cslt::Allocator</label>
+        <link refid="classcslt_1_1Allocator"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="935" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="935" bodyend="1344"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>alloc</name></member>
+      <member refid="classcslt_1_1Allocator_1a711b3e63e9c8bc79a55fdf5e52222992" prot="protected" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>alloc_</name></member>
+      <member refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>alloc_aligned</name></member>
+      <member refid="classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>allocated</name></member>
+      <member refid="classcslt_1_1Allocator_1aa4603a4a1a33e3519c6e30dbc3223ec6" prot="public" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>Allocator</name></member>
+      <member refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" prot="public" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>default_alignment</name></member>
+      <member refid="classcslt_1_1Allocator_1ae915028e563a4d04f80f273037e1584a" prot="protected" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>default_alignment_</name></member>
+      <member refid="classcslt_1_1HeapAllocator_1a3f01101edebcc07b7c33dcbc261d21ac" prot="public" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>HeapAllocator</name></member>
+      <member refid="classcslt_1_1Allocator_1a8b9fcb5da49538257f1272d2a11b832c" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>is_ptr</name></member>
+      <member refid="classcslt_1_1Allocator_1a9174d07a2777d286188e0221558505dc" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>is_ptr_sized</name></member>
+      <member refid="classcslt_1_1Allocator_1a7183bacd2973b4d8b822b01d081600ba" prot="protected" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>mem_type_</name></member>
+      <member refid="classcslt_1_1Allocator_1ab32af42a412bd9d92ca7bd3d8ee4ecae" prot="public" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>memory_type</name></member>
+      <member refid="classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185" prot="public" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>owns_memory</name></member>
+      <member refid="classcslt_1_1Allocator_1a423d19bef35c2505d3d32cfe6b768776" prot="protected" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>owns_memory_</name></member>
+      <member refid="classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>realloc</name></member>
+      <member refid="classcslt_1_1HeapAllocator_1adeb125664bb070ffb9522604fe753aa1" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>realloc_aligned</name></member>
+      <member refid="classcslt_1_1Allocator_1a1b34a9c4860a9e28255745b1d1e7cb62" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>remaining</name></member>
+      <member refid="classcslt_1_1Allocator_1adec46a5fcc21a63c0ef3a617dbaa40a4" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>reset</name></member>
+      <member refid="classcslt_1_1Allocator_1ab96e7b76511d29b505c5da81fb8b3cba" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>restore</name></member>
+      <member refid="classcslt_1_1HeapAllocator_1a1391df8ff30a4a57eea4cc14250ab4a1" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>return_element</name></member>
+      <member refid="classcslt_1_1Allocator_1a59fcf1ce582d5cf99d942a941af5e107" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>save</name></member>
+      <member refid="classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>size</name></member>
+      <member refid="classcslt_1_1Allocator_1ab76cd7ab2a5756223580eda667b38cb6" prot="protected" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>size_</name></member>
+      <member refid="classcslt_1_1HeapAllocator_1a8638f377e7dcb4d83d241e2a94dbb6e2" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>stats</name></member>
+      <member refid="classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>total_alloc</name></member>
+      <member refid="classcslt_1_1Allocator_1a5ef6bd69fbf7f2363aa5bb6cae49b923" prot="protected" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>total_alloc_</name></member>
+      <member refid="classcslt_1_1Allocator_1afaec0741935d3b33af37c535565ce719" prot="public" virt="virtual"><scope>cslt::HeapAllocator</scope><name>~Allocator</name></member>
+      <member refid="classcslt_1_1HeapAllocator_1a7e2a721eaaee3ecc3b68118de8b1812b" prot="public" virt="non-virtual"><scope>cslt::HeapAllocator</scope><name>~HeapAllocator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

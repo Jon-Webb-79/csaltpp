@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Basic-example" kind="example">
+    <compoundname>Basic</compoundname>
+    <briefdescription>
+<para>Allocate memory from system heap. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Allocate memory from system heap<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to allocated memory or error</para>
+</simplesect>
+Allocates memory using operator new with the allocator&apos;s default alignment. Uses std::nothrow to avoid exceptions.</para>
+<para><parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>Never</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>throws (uses nothrow allocation)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with pointer on success </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with InvalidArgError if bytes is 0 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with BadAllocError if allocation fails</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+allocation <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>allocator.alloc(512,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>memset(ptr,<sp/>0xAB,<sp/>512);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(ptr,<sp/>512,<sp/>allocator.default_alignment());</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>else<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/>&quot;Allocation<sp/>failed\n&quot;;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> <programlisting filename="Basic"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,7 +1,8 @@
 // ================================================================================
 // ================================================================================
 // - File:    allocator.cpp
-// - Purpose: Describe the file purpose here
+// - Purpose: This file contains the implementation for custom allocators as part 
+//            of the cslt namespace
 //
 // Source Metadata
 // - Author:  Jonathan A. Webb
@@ -15,6 +16,7 @@
 #include "allocator.hpp"
 
 #include <cstring>
+#include <cstdarg>
 #include <new>
 #ifdef _WIN32
     #include <malloc.h>  // for _aligned_malloc/_aligned_free
@@ -26,6 +28,37 @@
 
 namespace cslt {
 
+    // Helper function for formatted appending
+    static bool _buf_appendf(char *buffer,
+                            size_t buffer_size,
+                            size_t *p_offset,
+                            const char *fmt, ...) {
+        if ((buffer == NULL) || (p_offset == NULL) || (fmt == NULL)) {
+            return false;
+        }
+        size_t const offset = *p_offset;
+        if (offset > buffer_size) {
+            return false;
+        }
+        size_t const remaining = buffer_size - offset;
+        if (remaining == 0U) {
+            return false;
+        }
+        va_list args;
+        va_start(args, fmt);
+        int const n = vsnprintf(&buffer[offset], remaining, fmt, args);
+        va_end(args);
+        if (n < 0) {
+            return false;
+        }
+        if ((size_t)n >= remaining) {
+            return false;
+        }
+        *p_offset = offset + (size_t)n;
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
     static size_t normalize_alignment(size_t a) {
         if (a == 0) return alignof(max_align_t);
         if (a < alignof(max_align_t)) a = alignof(max_align_t);
@@ -34,6 +67,7 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+#if ARENA_ENABLE_DYNAMIC
     Expected<void*> HeapAllocator::alloc(size_t bytes, bool zeroed) {
         Expected<void*> result;
         if (bytes == 0) {
@@ -195,6 +229,52 @@ namespace cslt {
             #endif
         }
     }
+// -------------------------------------------------------------------------------- 
+
+    bool HeapAllocator::stats(char *buffer, size_t buffer_size) const {
+        size_t offset = 0U;
+        
+        if ((buffer == NULL) || (buffer_size == 0U)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset, "%s", "HeapAllocator Statistics:\n")) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Type: %s\n", "DYNAMIC")) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Default Alignment: %zu bytes\n", default_alignment_)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Memory Model: %s\n", "System Heap (operator new/delete)")) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Note: HeapAllocator is a wrapper around system allocator.\n")) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "        It does not own or track memory; all allocations\n")) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "        are managed directly by the OS heap.\n")) {
+            return false;
+        }
+        
+        return true;
+    }
+#endif /* ARENA_ENABLE_DYNAMIC */
 }
 // ================================================================================
 // ================================================================================

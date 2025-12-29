@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Getting-example" kind="example">
+    <compoundname>Getting</compoundname>
+    <briefdescription>
+<para>statistics </para>
+    </briefdescription>
+    <detaileddescription>
+<para>statistics <programlisting><codeline><highlight class="normal"><sp/>{.c++}</highlight></codeline>
+<codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator(32);<sp/><sp/>//<sp/>32-byte<sp/>default<sp/>alignment</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">char<sp/>buffer[512];</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(allocator.stats(buffer,<sp/>sizeof(buffer)))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(&quot;%s\n&quot;,<sp/>buffer);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Outputs<sp/>allocator<sp/>type,<sp/>alignment,<sp/>and<sp/>capabilities</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<sect3 id="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp_1autotoc_md0">
+<title>Always match allocation and deallocation:</title>
+<para><programlisting><codeline><highlight class="normal">//<sp/>CORRECT</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>r<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">allocator.return_element(r.value(),<sp/>512,<sp/>64);<sp/><sp/>//<sp/>Same<sp/>alignment!</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>INCORRECT<sp/>-<sp/>mismatched<sp/>alignment</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>r<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">allocator.return_element(r.value(),<sp/>512,<sp/>16);<sp/><sp/>//<sp/>Wrong!<sp/>Undefined<sp/>behavior!</highlight></codeline>
+</programlisting></para>
+</sect3>
+<sect3 id="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp_1autotoc_md1">
+<title>Check return values:</title>
+<para><programlisting><codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>allocator.alloc(1024,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Safe<sp/>to<sp/>use<sp/>result.value()</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>else<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Handle<sp/>allocation<sp/>failure</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+</sect3>
+<sect3 id="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp_1autotoc_md2">
+<title>Clean up before destruction:</title>
+<para><programlisting><codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>result<sp/>=<sp/>allocator.alloc(1024,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>MUST<sp/>free<sp/>before<sp/>allocator<sp/>is<sp/>destroyed</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(result.value(),<sp/>1024,<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>allocator.default_alignment());</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>//<sp/>Safe<sp/>-<sp/>all<sp/>memory<sp/>freed</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="note"><para>This class is only available when ARENA_ENABLE_DYNAMIC is enabled. Define STATIC_ONLY to disable dynamic allocation for MISRA compliance.</para>
+</simplesect>
+<simplesect kind="warning"><para>HeapAllocator does not track memory usage. Methods like size(), remaining(), and is_ptr() will return default values (0/false).</para>
+</simplesect>
+<simplesect kind="warning"><para>After calling realloc() or realloc_aligned(), the original pointer is invalid and must not be used. Always use the newly returned pointer.</para>
+</simplesect>
+<simplesect kind="warning"><para>Always use the same alignment value for return_element() that was used during allocation. Mismatched alignment causes undefined behavior.</para>
+</simplesect>
+<simplesect kind="see"><para>Allocator Base class interface with full method documentation </para>
+</simplesect>
+<simplesect kind="see"><para>ArenaAllocator For memory tracking and fixed capacity allocations </para>
+</simplesect>
+<simplesect kind="see"><para>PoolAllocator For fixed-size object allocation <programlisting filename="Getting"></programlisting> </para>
+</simplesect>
+</para>
+</sect3>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

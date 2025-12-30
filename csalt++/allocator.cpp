@@ -18,6 +18,7 @@
 #include <cstring>
 #include <cstdarg>
 #include <new>
+#include <cstdint>
 #ifdef _WIN32
     #include <malloc.h>  // for _aligned_malloc/_aligned_free
 #else
@@ -26,6 +27,10 @@
 // ================================================================================ 
 // ================================================================================ 
 
+// In allocator.cpp or as class static members
+static constexpr size_t k_growth_limit = 4 * 1024 * 1024;  // 4MB
+static constexpr size_t k_max_chunk = 64 * 1024 * 1024;    // 64MB
+
 namespace cslt {
 
     // Helper function for formatted appending
@@ -33,7 +38,7 @@ namespace cslt {
                             size_t buffer_size,
                             size_t *p_offset,
                             const char *fmt, ...) {
-        if ((buffer == NULL) || (p_offset == NULL) || (fmt == NULL)) {
+        if ((buffer == nullptr) || (p_offset == nullptr) || (fmt == nullptr)) {
             return false;
         }
         size_t const offset = *p_offset;
@@ -208,7 +213,9 @@ namespace cslt {
     }
 // -------------------------------------------------------------------------------- 
 
-    void HeapAllocator::return_element(void *ptr, size_t bytes, size_t alignment) {
+    void HeapAllocator::return_element(void *ptr, 
+                                       size_t bytes, 
+                                       size_t alignment) {
         (void)bytes;
         if (!ptr) {
             return;  // Nothing to free
@@ -234,7 +241,7 @@ namespace cslt {
     bool HeapAllocator::stats(char *buffer, size_t buffer_size) const {
         size_t offset = 0U;
         
-        if ((buffer == NULL) || (buffer_size == 0U)) {
+        if ((buffer == nullptr) || (buffer_size == 0U)) {
             return false;
         }
         
@@ -275,7 +282,1207 @@ namespace cslt {
         return true;
     }
 #endif /* ARENA_ENABLE_DYNAMIC */
-}
+// ================================================================================ 
+// ================================================================================ 
+
+    static inline size_t _align_up_size(size_t x, size_t a) {
+        /* a must be power-of-two */
+        return (x + (a - 1)) & ~(a - 1);
+    }
+// -------------------------------------------------------------------------------- 
+
+    static inline uintptr_t _align_up_uintptr(uintptr_t p, size_t a) {
+        return (p + (a - 1)) & ~(a - 1);
+    }
+// -------------------------------------------------------------------------------- 
+
+    static inline size_t _pad_up(uintptr_t p, size_t a) {
+        size_t const mask = a - 1u;
+        return (size_t)(((p + mask) & ~mask) - p);
+    }
+// -------------------------------------------------------------------------------- 
+
+    static inline size_t _mul_div_ceil(size_t x, size_t mul, size_t div) {
+        /* assumes div > 0, caller ensures small constants like 2 or 3 */
+        size_t q = x / div;
+        size_t r = x % div;
+        size_t hi = r * mul;
+        size_t add = (hi + (div - 1u)) / div;
+        size_t t = q * mul;
+        size_t y = t + add;
+        /* very defensive overflow clamp */
+        if (y < t) { return SIZE_MAX; }
+        return y;
+    }
+// -------------------------------------------------------------------------------- 
+
+#if ARENA_ENABLE_DYNAMIC 
+    static size_t _next_chunk_size(size_t prev_data_alloc, size_t need, size_t align, size_t min_chunk) {
+        /* meet the request at minimum */
+        size_t grow = (need > prev_data_alloc) ? need : prev_data_alloc;
+
+        /* geometric target: 2x until growth_limit, then 1.5x */
+        size_t doubled = (prev_data_alloc <= (SIZE_MAX / 2u)) ? (prev_data_alloc << 1) : SIZE_MAX;
+        size_t onefive = _mul_div_ceil(prev_data_alloc, 3u, 2u); /* 1.5x */
+
+        size_t target = (prev_data_alloc < k_growth_limit) ? doubled : onefive;
+        if (target > grow) { grow = target; }
+
+        /* clamp to floor/ceiling */
+        if (grow < min_chunk) { grow = min_chunk; }
+        if (grow > k_max_chunk) { grow = k_max_chunk; }
+
+        /* align capacity to alignment to keep chunk->chunk naturally aligned */
+        grow = _align_up_size(grow, align);
+
+        /* final safety: ensure capacity still covers need after rounding */
+        if (grow < need) { grow = need; }
+
+        return grow;
+    }
+#endif /* ARENA_ENABLE_DYNAMIC */
+// -------------------------------------------------------------------------------- 
+
+    ArenaAllocator::Chunk* ArenaAllocator::find_chunk_in_chain(Chunk* target, 
+                                                                Chunk** out_prev) const {
+        if (!target) {
+            return nullptr;
+        }
+        
+        Chunk* prev = nullptr;
+        for (Chunk const* cur = head_; cur; cur = cur->next) {
+            if (cur == target) {
+                if (out_prev) {
+                    *out_prev = prev;
+                }
+                return const_cast<Chunk*>(cur);  // FIXED: return cur, not cur_
+            }
+            prev = const_cast<Chunk*>(cur);  // FIXED: prev = cur, not cur_
+        }
+        
+        return nullptr;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void ArenaAllocator::initDynamicArena(size_t bytes, 
+                                          bool resize, 
+                                          size_t min_chunk_size,
+                                          size_t base_align_in) {
+        // Normalize min_chunk (0 allowed)
+        size_t min_chunk = min_chunk_size;
+        if (min_chunk && !is_pow2(min_chunk)) {
+            min_chunk = next_pow2(min_chunk);
+            if (!min_chunk) {
+                throw PreconditionFailError("Arena Chunk size does not conform to power of 2");
+            }
+        }
+        
+        // Normalize base alignment; enforce ABI floor
+        size_t base_align = base_align_in ? base_align_in : alignof(max_align_t);
+        if (!is_pow2(base_align)) {
+            base_align = next_pow2(base_align);
+            if (!base_align) {
+                throw AlignmentError("Arena Alignment Fail in Dynamic Initialization");
+            }
+        }
+        if (base_align < alignof(max_align_t)) {
+            base_align = alignof(max_align_t);
+        }
+        
+        // Initial total buffer size
+        size_t total = bytes;
+        if (min_chunk && total < min_chunk) {
+            total = min_chunk;
+        }
+        if (total < sizeof(Chunk)) {  // FIXED: Don't need sizeof(ArenaAllocator)
+            throw ArgumentError("Total Arena size does not fit chunk structure");  // FIXED: Typo "Toal" and wrong error type
+        }
+        
+        // Allocate memory
+        void *base = ::operator new(total, std::nothrow);
+        if (!base) {
+            throw MemoryError("Arena Dynamic Memory Allocation Failed");  // FIXED: Use MemoryError
+        }
+        
+        uintptr_t const b = reinterpret_cast<uintptr_t>(base);  // FIXED: Use reinterpret_cast
+        
+        // Layout: [Chunk][padding][data...]
+        uintptr_t p_chunk = b;
+        uintptr_t chunk_end = p_chunk + sizeof(Chunk);
+        
+        if (chunk_end < p_chunk) {  // FIXED: Check chunk_end vs p_chunk (not arena_end vs p_arena)
+            ::operator delete(base);
+            throw LengthOverflowError("Overflow in chunk calculation");
+        }
+        
+        // Data starts aligned to base_align
+        uintptr_t p_data = _align_up_uintptr(chunk_end, base_align);
+        if (p_data > b + total) {
+            ::operator delete(base);  // FIXED: Use ::operator delete
+            throw AlignmentError("Alignment exceeds allocation");
+        }
+        
+        size_t usable = static_cast<size_t>((b + total) - p_data);  // FIXED: Use static_cast
+        if (!usable) {
+            ::operator delete(base);  // FIXED: Use ::operator delete
+            throw MemoryError("No usable memory after alignment");
+        }
+        
+        // Initialize chunk
+        Chunk *h = reinterpret_cast<Chunk*>(p_chunk);  // FIXED: Use reinterpret_cast
+        h->chunk = reinterpret_cast<uint8_t*>(p_data);  // FIXED: Use reinterpret_cast
+        h->len = 0;
+        h->alloc = usable;
+        h->next = nullptr;
+        
+        // Set ArenaAllocator members
+        head_ = h;
+        tail_ = h;
+        cur_ = reinterpret_cast<uint8_t*>(p_data);  // FIXED: Use reinterpret_cast
+        min_chunk_ = min_chunk;
+        resize_ = static_cast<uint8_t>(resize);
+        
+        // Set Allocator base class members
+        size_ = 0;
+        alloc_ = usable;
+        total_alloc_ = total;  // FIXED: Use total_alloc_ not tot_alloc_
+        default_alignment_ = base_align;
+        mem_type_ = static_cast<uint8_t>(DYNAMIC);
+        owns_memory_ = static_cast<uint8_t>(true);
+    }
+// -------------------------------------------------------------------------------- 
+
+    void ArenaAllocator::initStaticArena(void *buffer,
+                                         size_t bytes,
+                                         size_t base_align_in) {
+        // Validate buffer
+        if (!buffer) {
+            throw ArgumentError("Static arena buffer cannot be null");
+        }
+        if (bytes < sizeof(Chunk)) {
+            throw ArgumentError("Static arena buffer too small for chunk structure");
+        }
+        
+        // Normalize base alignment; enforce ABI floor
+        size_t base_align = base_align_in ? base_align_in : alignof(max_align_t);
+        if (!is_pow2(base_align)) {
+            base_align = next_pow2(base_align);
+            if (!base_align) {
+                throw AlignmentError("Arena Alignment Fail in Static Initialization");
+            }
+        }
+        if (base_align < alignof(max_align_t)) {
+            base_align = alignof(max_align_t);
+        }
+        
+        uintptr_t const b = reinterpret_cast<uintptr_t>(buffer);
+        
+        // Layout: [Chunk][padding][data...]
+        uintptr_t p_chunk = b;
+        uintptr_t chunk_end = p_chunk + sizeof(Chunk);
+        
+        if (chunk_end < p_chunk) {
+            throw LengthOverflowError("Overflow in chunk calculation");
+        }
+        
+        // Data starts aligned to base_align
+        uintptr_t p_data = _align_up_uintptr(chunk_end, base_align);
+        if (p_data > b + bytes) {
+            throw AlignmentError("Alignment exceeds buffer size");
+        }
+        
+        size_t usable = static_cast<size_t>((b + bytes) - p_data);
+        if (!usable) {
+            throw MemoryError("No usable memory after alignment");
+        }
+        
+        // Initialize chunk in the provided buffer
+        Chunk *h = reinterpret_cast<Chunk*>(p_chunk);
+        h->chunk = reinterpret_cast<uint8_t*>(p_data);
+        h->len = 0;
+        h->alloc = usable;
+        h->next = nullptr;
+        
+        // Set ArenaAllocator members
+        head_ = h;
+        tail_ = h;
+        cur_ = reinterpret_cast<uint8_t*>(p_data);
+        min_chunk_ = 0;      // Static arenas don't resize
+        resize_ = 0;         // Cannot resize static arena
+        
+        // Set Allocator base class members
+        size_ = 0;
+        alloc_ = usable;
+        total_alloc_ = bytes;
+        default_alignment_ = base_align;
+        mem_type_ = static_cast<uint8_t>(STATIC);
+        owns_memory_ = static_cast<uint8_t>(false);  // We don't own the buffer
+    }
+// -------------------------------------------------------------------------------- 
+
+    void ArenaAllocator::initSubArena(ArenaAllocator& parent,
+                                      size_t bytes,
+                                      size_t base_align_in) {
+        // Validate input
+        if (bytes == 0) {
+            throw ArgumentError("Sub-arena size cannot be 0");
+        }
+        
+        // Normalize base alignment; enforce ABI floor
+        size_t base_align = base_align_in ? base_align_in : alignof(max_align_t);
+        if (!is_pow2(base_align)) {
+            base_align = next_pow2(base_align);
+            if (!base_align) {
+                throw AlignmentError("Sub-arena alignment normalization failed");
+            }
+        }
+        if (base_align < alignof(max_align_t)) {
+            base_align = alignof(max_align_t);
+        }
+        
+        // Allocate entire sub-arena buffer from parent
+        Expected<void*> expect = parent.alloc(bytes, false);
+        if (!expect.hasValue()) {
+            throw MemoryError("Parent arena out of memory for sub-arena");
+        }
+        
+        void* buffer = expect.value();
+        uintptr_t const b = reinterpret_cast<uintptr_t>(buffer);
+        uintptr_t const b_end = b + bytes;
+        
+        // Detect overflow in b + bytes
+        if (b_end < b) {
+            throw LengthOverflowError("Overflow in sub-arena size calculation");
+        }
+        
+        // Note: We don't need to place ArenaAllocator header in the buffer
+        // because 'this' already exists. We only need Chunk + data.
+        
+        // Place Chunk header aligned
+        uintptr_t p_chunk = _align_up_uintptr(b, alignof(Chunk));
+        if (p_chunk > b_end) {
+            throw ArgumentError("Sub-arena buffer too small for chunk header");
+        }
+        
+        uintptr_t chunk_end = p_chunk + sizeof(Chunk);
+        if ((chunk_end < p_chunk) || (chunk_end > b_end)) {
+            throw LengthOverflowError("Overflow in chunk calculation");
+        }
+        
+        // Place data aligned to base alignment
+        uintptr_t p_data = _align_up_uintptr(chunk_end, base_align);
+        if (p_data > b_end) {
+            throw AlignmentError("Alignment exceeds sub-arena buffer");
+        }
+        
+        size_t usable = static_cast<size_t>(b_end - p_data);
+        if (usable == 0) {
+            throw MemoryError("No usable space in sub-arena after alignment");
+        }
+        
+        // Initialize chunk in the allocated buffer
+        Chunk *h = reinterpret_cast<Chunk*>(p_chunk);
+        h->chunk = reinterpret_cast<uint8_t*>(p_data);
+        h->len = 0;
+        h->alloc = usable;
+        h->next = nullptr;
+        
+        // Set ArenaAllocator members
+        head_ = h;
+        tail_ = h;
+        cur_ = reinterpret_cast<uint8_t*>(p_data);
+        min_chunk_ = 0;      // Sub-arenas cannot resize
+        resize_ = 0;         // Fixed capacity
+        
+        // Set Allocator base class members
+        size_ = 0;
+        alloc_ = usable;
+        total_alloc_ = bytes;  // Full region footprint
+        default_alignment_ = base_align;
+        mem_type_ = parent.mem_type_;           // Inherit from parent
+        owns_memory_ = static_cast<uint8_t>(false);  // Parent owns the memory
+    }
+// ================================================================================ 
+
+#if ARENA_ENABLE_DYNAMIC
+    ArenaAllocator::ArenaAllocator(size_t bytes,
+                                   bool resize,
+                                   size_t alignment,
+                                   size_t min_chunk_size)
+        : Allocator(alignment, bytes, DYNAMIC, true) {
+        initDynamicArena(bytes, resize, min_chunk_size, alignment);
+    }
+#endif /* ARENA_ENABLE_DYNAMIC */
+// -------------------------------------------------------------------------------- 
+
+    ArenaAllocator::~ArenaAllocator() noexcept {
+        // Only free memory if we own it (DYNAMIC allocation)
+        if (static_cast<bool>(owns_memory_)) {
+            // Free all chunks
+            Chunk* current = head_;
+            while (current != nullptr) {
+                Chunk* next = current->next;
+                ::operator delete(current);
+                current = next;
+            }
+        }
+        // If STATIC, we don't own the memory, so just do nothing
+        // The buffer was provided externally and will be cleaned up by the owner
+    }
+// -------------------------------------------------------------------------------- 
+
+    ArenaAllocator::ArenaAllocator(void *buffer,
+                                   size_t bytes,
+                                   size_t alignment)
+        : Allocator(alignment, bytes, STATIC, false) {
+        initStaticArena(buffer, bytes, alignment);
+    }
+// -------------------------------------------------------------------------------- 
+
+    ArenaAllocator::ArenaAllocator(ArenaAllocator& parent,
+                                   size_t bytes,
+                                   size_t alignment)
+        : Allocator(alignment, bytes, parent.memory_type(), false) {
+        initSubArena(parent, bytes, alignment);
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> ArenaAllocator::alloc(size_t bytes, bool zeroed) {
+        Expected<void*> result;
+        
+        // Validate input
+        if (bytes == 0) {
+            result.setError(ArgumentError());
+            return result;
+        }
+        
+        size_t const a = default_alignment_;
+        
+        // Validate alignment (should always be valid from constructor, but defensive)
+        if (a == 0 || (a & (a - 1)) != 0) {
+            result.setError(AlignmentError());
+            return result;
+        }
+        
+        Chunk *tail = tail_;
+        if (tail == nullptr) {
+            result.setError(MemoryError());
+            return result;
+        }
+        
+        uintptr_t const cur = reinterpret_cast<uintptr_t>(cur_);
+        size_t const pad = _pad_up(cur, a);
+        
+        // Check for overflow in pad + bytes
+        if (bytes > (SIZE_MAX - pad)) {
+            result.setError(LengthOverflowError());
+            return result;
+        }
+        
+        size_t const need = pad + bytes;
+        size_t const avail = (alloc_ >= size_) ? (alloc_ - size_) : 0;
+        
+        // Fast path: fits in current tail
+        if (avail >= need) {
+            uint8_t *p = reinterpret_cast<uint8_t*>(cur + pad);  // a-aligned
+            cur_ = p + bytes;
+            tail->len += need;  // charge pad + bytes
+            size_ += need;
+            
+            if (zeroed) {
+                memset(p, 0, bytes);
+            }
+            
+            result.setValue(p);
+            return result;
+        }
+        
+        // No space in current chunk - need to grow
+#if ARENA_ENABLE_DYNAMIC        
+        // Check if growth is allowed
+        if (static_cast<MemType>(mem_type_) == STATIC || !resize_) {
+            result.setError(MemoryError("Arena out of memory and resize disabled"));
+            return result;
+        }
+        
+        // Calculate new chunk size
+        size_t const grow_data = _next_chunk_size(tail->alloc, need, a, min_chunk_);
+        if (grow_data == 0) {
+            result.setError(LengthOverflowError("Chunk size calculation overflow"));
+            return result;
+        }
+        
+        // Allocate new chunk
+        size_t chunk_total = _align_up_size(sizeof(Chunk), a) + grow_data;
+        void *base = ::operator new(chunk_total, std::nothrow);
+        if (!base) {
+            result.setError(MemoryError("Failed to allocate new arena chunk"));
+            return result;
+        }
+        
+        // Initialize new chunk
+        uintptr_t b = reinterpret_cast<uintptr_t>(base);
+        uintptr_t p_chunk = b;
+        uintptr_t chunk_end = p_chunk + sizeof(Chunk);
+        uintptr_t p_data = _align_up_uintptr(chunk_end, a);
+        size_t usable = static_cast<size_t>((b + chunk_total) - p_data);
+        
+        Chunk *nc = reinterpret_cast<Chunk*>(p_chunk);
+        nc->chunk = reinterpret_cast<uint8_t*>(p_data);
+        nc->len = bytes;
+        nc->alloc = usable;
+        nc->next = nullptr;
+        
+        // Link new chunk as tail
+        tail->next = nc;
+        tail_ = nc;
+        
+        // Update accounting
+        alloc_ += nc->alloc;
+        total_alloc_ += chunk_total;
+        
+        // First allocation from fresh chunk: base is a-aligned -> no pad needed
+        void *p = nc->chunk;
+        cur_ = nc->chunk + bytes;
+        size_ += bytes;
+        
+        if (zeroed) {
+            memset(p, 0, bytes);
+        }
+        
+        result.setValue(p);
+        return result;
+#endif /* ARENA_ENABLE_DYNAMIC */
+        result.setError(MemoryError("Arena out of memory and resize disabled"));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> ArenaAllocator::alloc_aligned(size_t bytes,
+                                                  size_t alignment,
+                                                  bool zeroed) {
+        Expected<void*> result;
+        
+        // Validate input
+        if (bytes == 0) {
+            result.setError(ArgumentError("Cannot allocate 0 bytes"));
+            return result;
+        }
+        
+        // Normalize alignment (0 means use default)
+        size_t a = alignment ? alignment : default_alignment_;
+        
+        // Validate alignment is power of 2
+        if (!is_pow2(a)) {
+            result.setError(AlignmentError("Alignment must be power of 2"));
+            return result;
+        }
+        
+        Chunk *tail = tail_;
+        if (tail == nullptr) {
+            result.setError(MemoryError("Arena not properly initialized"));
+            return result;
+        }
+        
+        uintptr_t const cur = reinterpret_cast<uintptr_t>(cur_);
+        size_t const pad = _pad_up(cur, a);
+        
+        // Check for overflow in pad + bytes
+        if (bytes > (SIZE_MAX - pad)) {
+            result.setError(LengthOverflowError("Allocation size overflow"));
+            return result;
+        }
+        
+        size_t const need = pad + bytes;
+        size_t const avail = (alloc_ >= size_) ? (alloc_ - size_) : 0;
+        
+        // Fast path: fits in current tail
+        if (avail >= need) {
+            uint8_t *p = reinterpret_cast<uint8_t*>(cur + pad);  // a-aligned
+            cur_ = p + bytes;
+            tail->len += need;  // charge pad + bytes
+            size_ += need;
+            
+            if (zeroed) {
+                memset(p, 0, bytes);
+            }
+            
+            result.setValue(p);
+            return result;
+        }
+        
+        // No space in current chunk - need to grow
+#if ARENA_ENABLE_DYNAMIC 
+        // Check if growth is allowed
+        if (static_cast<MemType>(mem_type_) == STATIC || !resize_) {
+            result.setError(MemoryError("Arena out of memory and resize disabled"));
+            return result;
+        }
+        
+        // Calculate new chunk size
+        size_t const grow_data = _next_chunk_size(tail->alloc, need, a, min_chunk_);
+        if (grow_data == 0) {
+            result.setError(LengthOverflowError("Chunk size calculation overflow"));
+            return result;
+        }
+        
+        // Allocate new chunk with extra space for alignment
+        size_t chunk_total = _align_up_size(sizeof(Chunk), a) + grow_data + a;
+        void *base = ::operator new(chunk_total, std::nothrow);
+        if (!base) {
+            result.setError(MemoryError("Failed to allocate new arena chunk"));
+            return result;
+        }
+        
+        // Initialize new chunk
+        uintptr_t b = reinterpret_cast<uintptr_t>(base);
+        uintptr_t p_chunk = b;
+        uintptr_t chunk_end = p_chunk + sizeof(Chunk);
+        uintptr_t p_data = _align_up_uintptr(chunk_end, a);
+        size_t usable = static_cast<size_t>((b + chunk_total) - p_data);
+        
+        Chunk *nc = reinterpret_cast<Chunk*>(p_chunk);
+        nc->chunk = reinterpret_cast<uint8_t*>(p_data);
+        nc->len = bytes;
+        nc->alloc = usable;
+        nc->next = nullptr;
+        
+        // Link new chunk as tail
+        tail->next = nc;
+        tail_ = nc;
+        
+        // Update accounting
+        alloc_ += nc->alloc;
+        total_alloc_ += chunk_total;
+        
+        // First allocation from fresh chunk: base is a-aligned -> no pad needed
+        void *p = nc->chunk;
+        cur_ = nc->chunk + bytes;
+        size_ += bytes;
+        
+        if (zeroed) {
+            memset(p, 0, bytes);
+        }
+        
+        result.setValue(p);
+        return result;
+#endif /* ARENA_ENABLE_DYNAMIC */
+        result.setError(MemoryError("Arena out of memory and resize disabled"));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> ArenaAllocator::realloc(void* ptr,
+                                            size_t old_bytes,
+                                            size_t new_bytes,
+                                            bool zeroed) {
+        Expected<void*> result;
+        
+        // Validate input
+        if (!ptr) {
+            result.setError(ArgumentError("Cannot realloc null pointer"));
+            return result;
+        }
+        if (new_bytes == 0) {
+            result.setError(ArgumentError("Cannot realloc to 0 bytes"));
+            return result;
+        }
+        
+        // Special case: if shrinking, we could just return the same pointer
+        // But for simplicity and consistency, we always allocate new space
+        
+        // Check if this is the most recent allocation and we can extend in-place
+        // This is an optimization for the common case of growing the last allocation
+        uintptr_t ptr_addr = reinterpret_cast<uintptr_t>(ptr);
+        uintptr_t cur_addr = reinterpret_cast<uintptr_t>(cur_);
+        
+        // Check if ptr + old_bytes == cur_ (this is the last allocation)
+        if (ptr_addr + old_bytes == cur_addr) {
+            // Try to extend in-place
+            size_t additional = new_bytes - old_bytes;
+            size_t const avail = (alloc_ >= size_) ? (alloc_ - size_) : 0;
+            
+            if (avail >= additional) {
+                // Can extend in-place!
+                cur_ = reinterpret_cast<uint8_t*>(ptr_addr + new_bytes);
+                tail_->len += additional;
+                size_ += additional;
+                
+                // Zero the new bytes if requested
+                if (zeroed && new_bytes > old_bytes) {
+                    memset(static_cast<uint8_t*>(ptr) + old_bytes, 0, additional);
+                }
+                
+                result.setValue(ptr);
+                return result;
+            }
+        }
+        
+        // Cannot extend in-place - allocate new memory
+        Expected<void*> new_ptr = alloc(new_bytes, false);
+        if (!new_ptr.hasValue()) {
+            result.setError(new_ptr.error());
+            return result;
+        }
+        
+        // Copy old data
+        if (old_bytes > 0) {
+            size_t copy_size = (old_bytes < new_bytes) ? old_bytes : new_bytes;
+            memcpy(new_ptr.value(), ptr, copy_size);
+        }
+        
+        // Zero new bytes if requested and growing
+        if (zeroed && new_bytes > old_bytes) {
+            memset(static_cast<uint8_t*>(new_ptr.value()) + old_bytes, 0, new_bytes - old_bytes);
+        }
+        
+        // Note: old memory is NOT freed in arena (it becomes wasted space until reset)
+        
+        result.setValue(new_ptr.value());
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> ArenaAllocator::realloc_aligned(void* ptr,
+                                                    size_t old_bytes,
+                                                    size_t new_bytes,
+                                                    size_t alignment,
+                                                    bool zeroed) {
+        Expected<void*> result;
+        
+        // Validate input
+        if (!ptr) {
+            result.setError(ArgumentError("Cannot realloc null pointer"));
+            return result;
+        }
+        if (new_bytes == 0) {
+            result.setError(ArgumentError("Cannot realloc to 0 bytes"));
+            return result;
+        }
+        
+        // Normalize alignment
+        size_t a = alignment ? alignment : default_alignment_;
+        
+        // Validate alignment
+        if (!is_pow2(a)) {
+            result.setError(AlignmentError("Alignment must be power of 2"));
+            return result;
+        }
+        
+        // Check if this is the most recent allocation and we can extend in-place
+        uintptr_t ptr_addr = reinterpret_cast<uintptr_t>(ptr);
+        uintptr_t cur_addr = reinterpret_cast<uintptr_t>(cur_);
+        
+        // Verify pointer is already aligned (it should be from original alloc_aligned)
+        if ((ptr_addr % a) != 0) {
+            result.setError(AlignmentError("Pointer is not aligned to specified alignment"));
+            return result;
+        }
+        
+        // Check if ptr + old_bytes == cur_ (this is the last allocation)
+        if (ptr_addr + old_bytes == cur_addr) {
+            // Try to extend in-place
+            size_t additional = new_bytes - old_bytes;
+            size_t const avail = (alloc_ >= size_) ? (alloc_ - size_) : 0;
+            
+            if (avail >= additional) {
+                // Can extend in-place!
+                cur_ = reinterpret_cast<uint8_t*>(ptr_addr + new_bytes);
+                tail_->len += additional;
+                size_ += additional;
+                
+                // Zero the new bytes if requested
+                if (zeroed && new_bytes > old_bytes) {
+                    memset(static_cast<uint8_t*>(ptr) + old_bytes, 0, additional);
+                }
+                
+                result.setValue(ptr);
+                return result;
+            }
+        }
+        
+        // Cannot extend in-place - allocate new aligned memory
+        Expected<void*> new_ptr = alloc_aligned(new_bytes, a, false);
+        if (!new_ptr.hasValue()) {
+            result.setError(new_ptr.error());
+            return result;
+        }
+        
+        // Copy old data
+        if (old_bytes > 0) {
+            size_t copy_size = (old_bytes < new_bytes) ? old_bytes : new_bytes;
+            memcpy(new_ptr.value(), ptr, copy_size);
+        }
+        
+        // Zero new bytes if requested and growing
+        if (zeroed && new_bytes > old_bytes) {
+            memset(static_cast<uint8_t*>(new_ptr.value()) + old_bytes, 0, new_bytes - old_bytes);
+        }
+        
+        result.setValue(new_ptr.value());
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool ArenaAllocator::is_ptr(void* ptr) const {
+        if (!ptr) {
+            return false;
+        }
+        
+        uintptr_t const p = reinterpret_cast<uintptr_t>(ptr);
+        
+        // Fast check: tail first (most recent allocations likely here)
+        Chunk const* c = tail_;
+        if (c && c->chunk && c->len <= c->alloc) {
+            uintptr_t s = reinterpret_cast<uintptr_t>(c->chunk);
+            uintptr_t e = s + c->len;  // end is exclusive
+            
+            // Guard against overflow and check range
+            if (e >= s && p >= s && p < e) {
+                return true;
+            }
+        }
+        
+        // Walk remaining chunks
+        for (Chunk const* cur = head_; cur; cur = cur->next) {
+            if (!cur->chunk) {
+                continue;
+            }
+            
+            // Defensive clamp: use min of len and alloc
+            size_t used = cur->len;
+            if (used > cur->alloc) {
+                used = cur->alloc;
+            }
+            
+            uintptr_t s = reinterpret_cast<uintptr_t>(cur->chunk);
+            uintptr_t e = s + used;
+            
+            // Overflow guard
+            if (e < s) {
+                continue;
+            }
+            
+            // Check if pointer is in range [s, e)
+            if (p >= s && p < e) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool ArenaAllocator::is_ptr_sized(void* ptr, size_t bytes) const {
+        if (!ptr || bytes == 0) {
+            return false;
+        }
+        
+        uintptr_t const p = reinterpret_cast<uintptr_t>(ptr);
+        uintptr_t const pe = p + bytes;  // end (exclusive)
+        
+        // Overflow check
+        if (pe < p) {
+            return false;
+        }
+        
+        // Tail fast-path (most recent allocations likely here)
+        Chunk const* c = tail_;
+        if (c && c->chunk && c->len <= c->alloc) {
+            uintptr_t const s = reinterpret_cast<uintptr_t>(c->chunk);
+            uintptr_t const ue = s + c->len;
+            
+            // Guard overflow and check if entire range fits
+            if (ue >= s && p >= s && pe <= ue) {
+                return true;
+            }
+        }
+        
+        // Walk remaining chunks
+        for (Chunk const* cur = head_; cur; cur = cur->next) {
+            if (!cur->chunk) {
+                continue;
+            }
+            
+            // Defensive clamp if corrupted
+            size_t used = cur->len;
+            if (used > cur->alloc) {
+                used = cur->alloc;
+            }
+            
+            uintptr_t const s = reinterpret_cast<uintptr_t>(cur->chunk);
+            uintptr_t const ue = s + used;  // end (exclusive)
+            
+            // Overflow guard in chunk arithmetic
+            if (ue < s) {
+                continue;
+            }
+            
+            // Check if entire range [p, pe) fits within [s, ue)
+            if (p >= s && pe <= ue) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void ArenaAllocator::return_element(void *ptr, 
+                                        size_t bytes, 
+                                        size_t alignment) {
+        (void)ptr;
+        (void)bytes;
+        (void) alignment;
+        throw UnsupportedError("Return is not supported for an ArenaAllocator");
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool ArenaAllocator::reset(bool trim_extra_chunks) {
+        // Defensive: if no head, reset to empty state and return false
+        if (!head_) {
+            cur_ = nullptr;
+            size_ = 0;
+            tail_ = nullptr;
+            return false;
+        }
+        
+        // Zero usage counters on all chunks
+        for (Chunk *cur = head_; cur; cur = cur->next) {
+            cur->len = 0;
+        }
+        size_ = 0;
+        
+        // Trim extra chunks if requested and allowed
+        if (trim_extra_chunks && static_cast<MemType>(mem_type_) == DYNAMIC) {
+            // Calculate header size rounded to alignment
+            size_t const hdr_rounded = _align_up_size(sizeof(Chunk), default_alignment_);
+            
+            // Free all chunks after head
+            Chunk *to_free = head_->next;
+            while (to_free) {
+                Chunk *next = to_free->next;
+                
+                // Subtract this chunk's contribution from total allocation
+                size_t contrib = hdr_rounded + to_free->alloc;
+                if (total_alloc_ >= contrib) {
+                    total_alloc_ -= contrib;
+                } else {
+                    total_alloc_ = 0;  // Defensive clamp
+                }
+                
+                // IMPORTANT: Free the chunk header pointer (owns the whole block)
+                // NOT to_free->chunk which is interior to the allocation
+                ::operator delete(to_free);
+                
+                to_free = next;
+            }
+            
+            // Detach and normalize to a single head chunk
+            head_->next = nullptr;
+            tail_ = head_;
+            cur_ = head_->chunk;
+            
+            // Usable capacity now equals the head's data capacity
+            alloc_ = head_->alloc;
+            
+            // total_alloc_ already adjusted above
+        } else {
+            // Keep all chunks allocated: zero usage but preserve capacity/footprint
+            tail_ = tail_ ? tail_ : head_;
+            cur_ = tail_->chunk ? tail_->chunk : head_->chunk;
+            
+            // alloc_ and total_alloc_ unchanged
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void* ArenaAllocator::save() const {
+        if (!tail_) {
+            return nullptr;
+        }
+        
+        // Allocate checkpoint data
+        CheckpointData* cp = new (std::nothrow) CheckpointData;
+        if (!cp) {
+            return nullptr;
+        }
+        
+        // Save current state
+        cp->chunk = tail_;
+        cp->cur = cur_;
+        cp->len = size_;
+        
+        return static_cast<void*>(cp);
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool ArenaAllocator::restore(void* checkpoint) {
+        if (!checkpoint) {
+            return false;
+        }
+        
+        // Unpack the checkpoint
+        CheckpointData* cp = static_cast<CheckpointData*>(checkpoint);
+        
+        // Empty checkpoint is a no-op (success)
+        if (!cp->chunk) {
+            delete cp;
+            return true;
+        }
+        
+        // Validate that the checkpoint's chunk still exists in the chain
+        Chunk* prev = nullptr;
+        Chunk* hit = find_chunk_in_chain(cp->chunk, &prev);
+        if (!hit) {
+            delete cp;
+            return false;
+        }
+        
+        // Validate the chunk has a valid data region
+        if (!cp->chunk->chunk) {
+            delete cp;
+            return false;
+        }
+        
+        // Validate the checkpoint cursor is within bounds
+        uintptr_t chunk_start = reinterpret_cast<uintptr_t>(cp->chunk->chunk);
+        uintptr_t cursor_pos = reinterpret_cast<uintptr_t>(cp->cur);
+        uintptr_t chunk_end = chunk_start + cp->chunk->alloc;  // exclusive
+        
+        // Check for overflow and valid cursor position
+        if (chunk_end < chunk_start || cursor_pos < chunk_start || cursor_pos > chunk_end) {
+            delete cp;
+            return false;
+        }
+        
+        // For DYNAMIC arenas: free all chunks after the checkpoint chunk
+        if (static_cast<MemType>(mem_type_) == DYNAMIC) {
+            size_t const hdr_rounded = _align_up_size(sizeof(Chunk), default_alignment_);
+            
+            Chunk* to_free = cp->chunk->next;
+            while (to_free) {
+                Chunk* next = to_free->next;
+                
+                // Subtract this chunk's contribution from total_alloc_
+                size_t contrib = hdr_rounded + to_free->alloc;
+                if (total_alloc_ >= contrib) {
+                    total_alloc_ -= contrib;
+                } else {
+                    total_alloc_ = 0;  // Defensive clamp
+                }
+                
+                ::operator delete(to_free);
+                to_free = next;
+            }
+            
+            // Detach the freed chunks from the list
+            cp->chunk->next = nullptr;
+        }
+        // For STATIC arenas: can't free chunks, just validate they exist
+        // (validation already happened via find_chunk_in_chain)
+        
+        // Update the tail chunk's used length to match the checkpoint cursor
+        cp->chunk->len = static_cast<size_t>(cursor_pos - chunk_start);
+        
+        // Update arena state
+        tail_ = cp->chunk;
+        cur_ = cp->cur;
+        
+        // Recompute accounting for the remaining chain
+        size_t alignment = default_alignment_;
+        
+        // Validate alignment is a power of two
+        if (alignment == 0 || (alignment & (alignment - 1)) != 0) {
+            delete cp;
+            return false;
+        }
+        
+        // Walk the chain and recompute totals
+        size_t total_used = 0;
+        size_t total_cap = 0;
+        
+        for (Chunk* k = head_; k; k = k->next) {
+            // Clamp used to allocation (defensive)
+            size_t used = (k->len <= k->alloc) ? k->len : k->alloc;
+            
+            total_used += used;
+            total_cap += k->alloc;
+        }
+        
+        size_ = total_used;
+        alloc_ = total_cap;
+        
+        // For STATIC arenas, recompute total_alloc_
+        // For DYNAMIC, we already adjusted it during chunk freeing
+        if (static_cast<MemType>(mem_type_) == STATIC) {
+            size_t total_foot = 0;
+            for (Chunk* k = head_; k; k = k->next) {
+                total_foot += _align_up_size(sizeof(Chunk), alignment) + k->alloc;
+            }
+            total_alloc_ = total_foot;
+        }
+        
+        // Clean up checkpoint data
+        delete cp;
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t ArenaAllocator::remaining() const noexcept {
+        if (!head_) {
+            return 0;
+        }
+        
+        size_t total_alloc = 0;
+        size_t total_used = 0;
+        
+        for (Chunk* cur = head_; cur; cur = cur->next) {
+            total_alloc += cur->alloc;
+            
+            // Clamp used to allocated (defensive)
+            size_t used = (cur->len <= cur->alloc) ? cur->len : cur->alloc;
+            total_used += used;
+        }
+        
+        if (total_alloc > total_used) {
+            return total_alloc - total_used;
+        }
+        return 0;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool ArenaAllocator::stats(char *buffer, size_t buffer_size) const {
+        size_t offset = 0;
+        
+        if (!buffer || buffer_size == 0) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset, "%s", "Arena Statistics:\n")) {
+            return false;
+        }
+        
+        // Memory type
+        const char* type_str = (static_cast<MemType>(mem_type_) == STATIC) ? "STATIC" : "DYNAMIC";
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Type: %s\n", type_str)) {
+            return false;
+        }
+        
+        // Used bytes
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Used: %zu bytes\n", size_)) {
+            return false;
+        }
+        
+        // Capacity
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Capacity: %zu bytes\n", alloc_)) {
+            return false;
+        }
+        
+        // Total with overhead
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Total (with overhead): %zu bytes\n", total_alloc_)) {
+            return false;
+        }
+        
+        // Utilization with divide-by-zero guard
+        if (alloc_ == 0) {
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                             "%s", "  Utilization: N/A (capacity is 0)\n")) {
+                return false;
+            }
+        } else {
+            double const util = (100.0 * static_cast<double>(size_)) / static_cast<double>(alloc_);
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                             "  Utilization: %.1f%%\n", util)) {
+                return false;
+            }
+        }
+        
+        // Default alignment
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Default Alignment: %zu bytes\n", default_alignment_)) {
+            return false;
+        }
+        
+        // List chunks
+        int chunk_num = 0;
+        Chunk const* current = head_;
+        while (current) {
+            chunk_num++;
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                             "  Chunk %d: %zu/%zu bytes\n",
+                             chunk_num, current->len, current->alloc)) {
+                return false;
+            }
+            current = current->next;
+        }
+        
+        // Resizable status
+        const char* resize_str = resize_ ? "Yes" : "No";
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Resizable: %s\n", resize_str)) {
+            return false;
+        }
+        
+        // Ownership status
+        const char* owns_str = static_cast<bool>(owns_memory_) ? "Yes" : "No";
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Owns Memory: %s\n", owns_str)) {
+            return false;
+        }
+        
+        // Min chunk size (if applicable)
+        if (min_chunk_ > 0) {
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                             "  Min Chunk Size: %zu bytes\n", min_chunk_)) {
+                return false;
+            }
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t ArenaAllocator::chunk_count() const noexcept {
+        size_t count = 0;
+        Chunk const* current = head_;
+        while (current) {
+            count++;
+            current = current->next;
+        }
+        return count;
+    }
+    // -------------------------------------------------------------------------------- 
+
+    size_t ArenaAllocator::min_chunk_size() const noexcept {
+        return min_chunk_;
+    }
+    // -------------------------------------------------------------------------------- 
+
+    void ArenaAllocator::toggle_resize(bool toggle) noexcept {
+        // Cannot toggle resize for static arenas
+        if (static_cast<MemType>(mem_type_) == STATIC) {
+            return;
+        }
+        
+        // Cannot toggle resize for sub-arenas (borrowed memory)
+        // Sub-arenas are always fixed-size by design
+        if (!static_cast<bool>(owns_memory_)) {
+            return;
+        }
+        
+        // Only dynamic arenas that own their memory can have resize toggled
+        resize_ = static_cast<uint8_t>(toggle ? 1 : 0);
+    }
+// ================================================================================ 
+// ================================================================================ 
+} /* cslt namespace */
 // ================================================================================
 // ================================================================================
 // eof

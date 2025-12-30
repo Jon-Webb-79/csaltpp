@@ -112,6 +112,12 @@ Base Error Class
 Category-Level Error Classes
 -----------------------------
 
+No Error 
+~~~~~~~~
+
+.. doxygenclass:: cslt::NoError
+   :members:
+
 Argument and Input Validation Errors
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

@@ -142,6 +142,39 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+     /**
+     * @brief Argument and input for no error.
+     * 
+     * NoError represents state where no error is present
+     * 
+     * @par Example Usage:
+     * @code
+     * // Using default message
+     * throw NoError();  // "No Error"
+     * 
+     * // Using custom message
+     * throw NoError("Function X executed with no error");
+     * @endcode
+     */
+    class NoError : public Error {
+    public:
+        /**
+         * @brief Constructs an NoError with the default message.
+         * 
+         * Creates an NoError with the predefined message "No Error".
+         */
+        NoError();
+// --------------------------------------------------------------------------------
+        /**
+         * @brief Constructs an NoError with a custom message.
+         * 
+         * @param msg Custom null-terminated error message (max 255 characters)
+         */
+        NoError(const char* msg);
+    };
+// ================================================================================ 
+// ================================================================================ 
+
     /**
      * @brief Argument and input validation errors.
      * 

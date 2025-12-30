@@ -355,7 +355,9 @@ namespace cslt {
          * allocator.return_element(nullptr, 0, 0); // No-op
          * @endcode
          */
-        virtual void return_element(void *ptr, size_t bytes, size_t alignment) = 0;
+        virtual void return_element(void *ptr, 
+                                    size_t bytes, 
+                                    size_t alignment = alignof(max_align_t)) = 0;
     // -------------------------------------------------------------------------------- 
 
         /**
@@ -720,7 +722,10 @@ namespace cslt {
          * auto ptr3 = allocator.alloc(512, false);
          * @endcode
          */
-        virtual void reset() {}
+        virtual bool reset(bool trim_extra_chunks = false) { 
+            (void)trim_extra_chunks;
+            return true;
+        }
     };
 // ================================================================================ 
 // ================================================================================ 
@@ -1287,7 +1292,9 @@ namespace cslt {
          * @note The bytes parameter is required by the interface but is not used by
          *       HeapAllocator since operator delete/free don't require size.
          */
-        void return_element(void *ptr, size_t bytes, size_t alignment) override;
+        void return_element(void *ptr, 
+                            size_t bytes, 
+                            size_t alignment = alignof(max_align_t)) override;
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -1341,9 +1348,240 @@ namespace cslt {
          * @see Allocator::stats() Base class documentation
          */
         bool stats(char *buffer, size_t buffer_size) const;
+// -------------------------------------------------------------------------------- 
+
+        bool reset(bool trim_extra_chunks = false) {
+            (void)trim_extra_chunks;
+            return true;
+        }
     };
 #endif /* ARENA_ENABLE_DYNAMIC */
-}
+// ================================================================================ 
+// ================================================================================ 
+
+    /**
+     * @brief Check if a value is a power of 2
+     * 
+     * @param x Value to check
+     * @return 1 if x is a power of 2, 0 otherwise
+     * 
+     * @details Returns 1 for 1, 2, 4, 8, 16, etc. Returns 0 for 0.
+     * 
+     * @par Example:
+     * @code
+     * assert(cslt::is_pow2(16) == 1);
+     * assert(cslt::is_pow2(15) == 0);
+     * assert(cslt::is_pow2(0) == 0);
+     * @endcode
+     */
+    inline int is_pow2(size_t x) { 
+        return x && !(x & (x - 1)); 
+    }
+// -------------------------------------------------------------------------------- 
+
+    /**
+     * @brief Round up to next power of 2
+     * 
+     * @param x Value to round up
+     * @return Next power of 2 >= x, or 0 if overflow
+     * 
+     * @details Returns the smallest power of 2 that is >= x.
+     *          Returns 0 if x is too large and would overflow.
+     *          Returns 1 for x=1, 0 for x=0.
+     * 
+     * @par Example:
+     * @code
+     * assert(cslt::next_pow2(15) == 16);
+     * assert(cslt::next_pow2(16) == 16);
+     * assert(cslt::next_pow2(17) == 32);
+     * assert(cslt::next_pow2(1) == 1);
+     * assert(cslt::next_pow2(0) == 0);
+     * @endcode
+     */
+    inline size_t next_pow2(size_t x) {
+        if (x <= 1) return x ? 1 : 0;
+        if (x > (SIZE_MAX >> 1)) return 0;
+        x--;
+        for (size_t s = 1; s < 8 * sizeof(size_t); s <<= 1) {
+            x |= x >> s;
+        }
+        return x + 1;
+    }
+// ================================================================================ 
+// ================================================================================ 
+
+    class ArenaAllocator : public Allocator {
+    private:
+        /**
+         * @brief Internal memory chunk structure for arena allocation
+         * @internal
+         */
+        struct Chunk {
+            uint8_t *chunk;     ///< Pointer to beginning of memory block
+            size_t len;         ///< Used bytes in this chunk
+            size_t alloc;       ///< Total allocated bytes in this chunk
+            Chunk* next;        ///< Pointer to next chunk in linked list
+        };
+        /**
+         * @brief Internal checkpoint representation
+         * @internal
+         */
+        struct CheckpointData {
+            Chunk* chunk;    ///< Chunk at checkpoint time
+            uint8_t* cur;    ///< Cursor position at checkpoint time
+            size_t len;      ///< Total used bytes at checkpoint time
+        };
+// -------------------------------------------------------------------------------- 
+
+        uint8_t *cur_;       ///< Pointer to the next available memory slot 
+        Chunk* head_;        ///< Pointer to head of memory chunk linked list 
+        Chunk* tail_;        ///< Pointer to the tail of memory chunks
+        size_t min_chunk_;   ///< The minimum chunk size in bytes
+        uint8_t resize_;     ///< Allows resizing if true with mem_type == DYNAMIC 
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Find a chunk in the arena's chunk list
+         * 
+         * @param target Chunk to find
+         * @param out_prev Output parameter for previous chunk (can be nullptr)
+         * @return Pointer to found chunk, or nullptr if not found
+         */
+        Chunk* find_chunk_in_chain(Chunk* target, Chunk** out_prev = nullptr) const;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Initialize arena for dynamic allocation
+         * 
+         * @param bytes Initial allocation size
+         * @param resize Allow resizing if true
+         * @param min_chunk_size Minimum chunk size (will be rounded to power of 2)
+         * @param base_align_in Base alignment (will be rounded to power of 2)
+         * 
+         * @throws PreconditionFailError if chunk size cannot be normalized
+         * @throws AlignmentError if alignment cannot be normalized
+         * @throws ArgumentError if total size is too small
+         * @throws MemoryError if allocation fails
+         * @throws LengthOverflowError if overflow in calculations
+         */
+        void initDynamicArena(size_t bytes, 
+                             bool resize, 
+                             size_t min_chunk_size, 
+                             size_t base_align_in);
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Initialize arena for static allocation
+         * 
+         * @param buffer Pointer to pre-allocated memory buffer
+         * @param bytes Size of buffer in bytes
+         * @param base_align_in Base alignment (will be rounded to power of 2)
+         * 
+         * @throws ArgumentError if buffer is null or bytes is too small
+         * @throws AlignmentError if alignment cannot be normalized
+         */
+        void initStaticArena(void *buffer,
+                            size_t bytes,
+                            size_t base_align_in);
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Initialize sub-arena from parent arena
+         * 
+         * @param parent Parent arena to allocate from
+         * @param bytes Size of sub-arena in bytes
+         * @param base_align_in Base alignment (will be rounded to power of 2)
+         * 
+         * @throws ArgumentError if bytes is 0 or too small
+         * @throws AlignmentError if alignment cannot be normalized
+         * @throws MemoryError if parent allocation fails
+         * @throws LengthOverflowError if overflow in calculations
+         */
+        void initSubArena(ArenaAllocator& parent,
+                         size_t bytes,
+                         size_t base_align_in);
+// ================================================================================ 
+
+    public:
+#if ARENA_ENABLE_DYNAMIC
+        explicit ArenaAllocator(size_t bytes,
+                                bool resize = false,
+                                size_t alignment = alignof(max_align_t),
+                                size_t min_chunk_size = 4096);
+#endif /* ARENA_ENABLE_DYNAMIC */
+// -------------------------------------------------------------------------------- 
+
+        ~ArenaAllocator() noexcept override;
+// -------------------------------------------------------------------------------- 
+        
+        explicit ArenaAllocator(void *buffer,
+                                size_t bytes,
+                                size_t alignment = alignof(max_align_t));
+// -------------------------------------------------------------------------------- 
+
+        explicit ArenaAllocator(ArenaAllocator& parent,
+                                size_t bytes,
+                                size_t alignment = alignof(max_align_t));
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> alloc(size_t bytes, bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> alloc_aligned(size_t bytes,
+                                      size_t alignment,
+                                      bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> realloc(void* ptr,
+                                size_t old_bytes,
+                                size_t new_bytes,
+                                bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> realloc_aligned(void* ptr,
+                                        size_t old_bytes,
+                                        size_t new_bytes,
+                                        size_t alignment,
+                                        bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        bool is_ptr(void* ptr) const override;
+// -------------------------------------------------------------------------------- 
+
+        bool is_ptr_sized(void* ptr, size_t bytes) const override;
+// -------------------------------------------------------------------------------- 
+
+        void return_element(void *ptr, 
+                            size_t bytes, 
+                            size_t alignment = alignof(max_align_t)) override;
+// -------------------------------------------------------------------------------- 
+
+        bool reset(bool trim_extra_chunks = false) override;
+// -------------------------------------------------------------------------------- 
+
+        void* save() const override;
+// -------------------------------------------------------------------------------- 
+
+        bool restore(void* checkpoint) override;
+// -------------------------------------------------------------------------------- 
+
+        size_t remaining() const noexcept override;
+// -------------------------------------------------------------------------------- 
+
+        bool stats(char *buffer, size_t buffer_size) const override;
+// -------------------------------------------------------------------------------- 
+
+        size_t chunk_count() const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        size_t min_chunk_size() const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        void toggle_resize(bool toggle) noexcept;
+    };
+// ================================================================================ 
+// ================================================================================ 
+} /* cslt namespace */
 // ================================================================================ 
 // ================================================================================ 
 #endif /* allocator_HPP */

@@ -80,6 +80,7 @@ Typical Use Cases
    :maxdepth: 1
    :caption: Modules:
 
+    Utilities <Utilities>
     Error <Error>
     Allocator <Allocator>
     

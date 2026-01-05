@@ -1,0 +1,1275 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classcslt_1_1ArenaAllocator" kind="class" language="C++" prot="public">
+    <compoundname>cslt::ArenaAllocator</compoundname>
+    <basecompoundref refid="classcslt_1_1Allocator" prot="public" virt="non-virtual">cslt::Allocator</basecompoundref>
+    <includes refid="allocator_8hpp" local="no">allocator.hpp</includes>
+    <innerclass refid="structcslt_1_1ArenaAllocator_1_1CheckpointData" prot="private">cslt::ArenaAllocator::CheckpointData</innerclass>
+    <innerclass refid="structcslt_1_1ArenaAllocator_1_1Chunk" prot="private">cslt::ArenaAllocator::Chunk</innerclass>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcslt_1_1ArenaAllocator_1a2e69c14646e771e58094e130829b2317" prot="private" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* cslt::ArenaAllocator::cur_</definition>
+        <argsstring></argsstring>
+        <name>cur_</name>
+        <briefdescription>
+<para>Pointer to the next available memory slot. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1436" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1436" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1ArenaAllocator_1a8a07aaf6432c397462442d46e932e93a" prot="private" static="no" mutable="no">
+        <type>Chunk *</type>
+        <definition>Chunk* cslt::ArenaAllocator::head_</definition>
+        <argsstring></argsstring>
+        <name>head_</name>
+        <briefdescription>
+<para>Pointer to head of memory chunk linked list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1437" column="15" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1437" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1ArenaAllocator_1a7738375f52101368f147ece0ba2e4dbe" prot="private" static="no" mutable="no">
+        <type>Chunk *</type>
+        <definition>Chunk* cslt::ArenaAllocator::tail_</definition>
+        <argsstring></argsstring>
+        <name>tail_</name>
+        <briefdescription>
+<para>Pointer to the tail of memory chunks. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1438" column="15" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1438" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1ArenaAllocator_1a2a9fcc058b64af33075b4c19e2187293" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::ArenaAllocator::min_chunk_</definition>
+        <argsstring></argsstring>
+        <name>min_chunk_</name>
+        <briefdescription>
+<para>The minimum chunk size in bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1439" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1439" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1ArenaAllocator_1ae07bd15b220ac4fc392f8f3e6b5e575c" prot="private" static="no" mutable="no">
+        <type>uint8_t</type>
+        <definition>uint8_t cslt::ArenaAllocator::resize_</definition>
+        <argsstring></argsstring>
+        <name>resize_</name>
+        <briefdescription>
+<para>Allows resizing if true with mem_type == DYNAMIC. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1440" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1440" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a13aa36c712c22a149d8d80f284a8998d" prot="private" static="no" const="yes" explicit="no" inline="no" virt="non-virtual">
+        <type>Chunk *</type>
+        <definition>ArenaAllocator::Chunk * cslt::ArenaAllocator::find_chunk_in_chain</definition>
+        <argsstring>(Chunk *target, Chunk **out_prev=nullptr) const</argsstring>
+        <name>find_chunk_in_chain</name>
+        <param>
+          <type>Chunk *</type>
+          <declname>target</declname>
+        </param>
+        <param>
+          <type>Chunk **</type>
+          <declname>out_prev</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Find a chunk in the arena&apos;s chunk list. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>target</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Chunk to find </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>out_prev</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output parameter for previous chunk (can be nullptr) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Pointer to found chunk, or nullptr if not found </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1450" column="15" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="346" bodyend="364"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1aa28df2e90987fa8fadf6a10b5dfa29e6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::ArenaAllocator::initDynamicArena</definition>
+        <argsstring>(size_t bytes, bool resize, size_t min_chunk_size, size_t base_align_in)</argsstring>
+        <name>initDynamicArena</name>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>resize</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>min_chunk_size</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>base_align_in</declname>
+        </param>
+        <briefdescription>
+<para>Initialize arena for dynamic allocation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial allocation size </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>resize</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Allow resizing if true </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>min_chunk_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Minimum chunk size (will be rounded to power of 2) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>base_align_in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base alignment (will be rounded to power of 2)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1PreconditionFailError" kindref="compound">PreconditionFailError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if chunk size cannot be normalized </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1AlignmentError" kindref="compound">AlignmentError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if alignment cannot be normalized </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if total size is too small </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if allocation fails </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1LengthOverflowError" kindref="compound">LengthOverflowError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if overflow in calculations </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1467" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="367" bodyend="452"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a1c5319721b55f8798a66850efd547700" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::ArenaAllocator::initStaticArena</definition>
+        <argsstring>(void *buffer, size_t bytes, size_t base_align_in)</argsstring>
+        <name>initStaticArena</name>
+        <param>
+          <type>void *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>base_align_in</declname>
+        </param>
+        <briefdescription>
+<para>Initialize arena for static allocation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to pre-allocated memory buffer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>base_align_in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base alignment (will be rounded to power of 2)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if buffer is null or bytes is too small </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1AlignmentError" kindref="compound">AlignmentError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if alignment cannot be normalized </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1483" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="455" bodyend="520"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1ab9ddcd8c2c7bc1ce4dd9349d976a6c7a" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::ArenaAllocator::initSubArena</definition>
+        <argsstring>(ArenaAllocator &amp;parent, size_t bytes, size_t base_align_in)</argsstring>
+        <name>initSubArena</name>
+        <param>
+          <type><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">ArenaAllocator</ref> &amp;</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>base_align_in</declname>
+        </param>
+        <briefdescription>
+<para>Initialize sub-arena from parent arena. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>parent</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Parent arena to allocate from </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of sub-arena in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>base_align_in</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Base alignment (will be rounded to power of 2)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if bytes is 0 or too small </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1AlignmentError" kindref="compound">AlignmentError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if alignment cannot be normalized </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if parent allocation fails </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername><ref refid="classcslt_1_1LengthOverflowError" kindref="compound">LengthOverflowError</ref></parametername>
+</parameternamelist>
+<parameterdescription>
+<para>if overflow in calculations </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1500" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="523" bodyend="604"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a69497841ddf14258d0fc13585f9732f0" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::ArenaAllocator::ArenaAllocator</definition>
+        <argsstring>(size_t bytes, bool resize=false, size_t alignment=alignof(max_align_t), size_t min_chunk_size=4096)</argsstring>
+        <name>ArenaAllocator</name>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>resize</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>alignof(max_align_t)</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>min_chunk_size</declname>
+          <defval>4096</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1507" column="18"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a91150136502502b877a6deb7abf95e82" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::ArenaAllocator::~ArenaAllocator</definition>
+        <argsstring>() noexcept override</argsstring>
+        <name>~ArenaAllocator</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1514" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="618" bodyend="631"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a3b159f6ce803784265e5254746cbc5e9" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::ArenaAllocator::ArenaAllocator</definition>
+        <argsstring>(void *buffer, size_t bytes, size_t alignment=alignof(max_align_t))</argsstring>
+        <name>ArenaAllocator</name>
+        <param>
+          <type>void *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>alignof(max_align_t)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1517" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="634" bodyend="639"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1acec7e787f86a7ba3256b7b61260f3dec" prot="public" static="no" const="no" explicit="yes" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::ArenaAllocator::ArenaAllocator</definition>
+        <argsstring>(ArenaAllocator &amp;parent, size_t bytes, size_t alignment=alignof(max_align_t))</argsstring>
+        <name>ArenaAllocator</name>
+        <param>
+          <type><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">ArenaAllocator</ref> &amp;</type>
+          <declname>parent</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>alignof(max_align_t)</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1522" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="642" bodyend="647"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a00688da293e6682906b33dc0bd955389" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::ArenaAllocator::alloc</definition>
+        <argsstring>(size_t bytes, bool zeroed=false) override</argsstring>
+        <name>alloc</name>
+        <reimplements refid="classcslt_1_1Allocator_1adb93a70659ab65af421bf3f8043418e3">alloc</reimplements>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Allocate memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to allocated memory or error</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Allocate<sp/>256<sp/>bytes,<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde" kindref="member">alloc</ref>(256,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Memory<sp/>is<sp/>guaranteed<sp/>to<sp/>be<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(ptr,<sp/>256,<sp/>allocator.<ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment</ref>());</highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Handle<sp/>allocation<sp/>failure</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Allocation<sp/>failed\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1527" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="650" bodyend="758"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1ab0c53e0a43ba95fc09b75ded7d926554" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::ArenaAllocator::alloc_aligned</definition>
+        <argsstring>(size_t bytes, size_t alignment, bool zeroed=false) override</argsstring>
+        <name>alloc_aligned</name>
+        <reimplements refid="classcslt_1_1Allocator_1a518d804fc4eb66096f2534fc922c1ac4">alloc_aligned</reimplements>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Allocate aligned memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Required alignment in bytes (must be power of 2) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to allocated memory or error</para>
+</simplesect>
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default_alignment_.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Allocate<sp/>512<sp/>bytes<sp/>aligned<sp/>to<sp/>64-byte<sp/>boundary</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Verify<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal">uintptr_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(ptr,<sp/>512,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1530" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="761" bodyend="872"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a60a6b8aa87cf0cb7f9a83451acb45b15" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::ArenaAllocator::realloc</definition>
+        <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, bool zeroed=false) override</argsstring>
+        <name>realloc</name>
+        <reimplements refid="classcslt_1_1Allocator_1ad83899b3087ecbf56883ef775048e81a">realloc</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>old_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>new_bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Reallocate memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to existing allocation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>old_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of existing allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired new size in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize new bytes when growing (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to reallocated memory or error</para>
+</simplesect>
+Resizes an existing allocation. The existing data is preserved up to min(old_bytes, new_bytes). If growing and zeroed is true, the additional bytes are zero-initialized. The old pointer is automatically freed. The returned pointer may differ from the input.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Initial<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result1<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde" kindref="member">alloc</ref>(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
+<codeline><highlight class="normal">memset(ptr,<sp/>0xAA,<sp/>256);<sp/></highlight><highlight class="comment">//<sp/>Fill<sp/>with<sp/>pattern</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Grow<sp/>to<sp/>512<sp/>bytes,<sp/>zero<sp/>the<sp/>new<sp/>space</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result2<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363" kindref="member">realloc</ref>(ptr,<sp/>256,<sp/>512,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>new_ptr<sp/>=<sp/>result2.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>256<sp/>bytes<sp/>still<sp/>contain<sp/>0xAA</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Bytes<sp/>256-511<sp/>are<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(new_ptr,<sp/>512,<sp/>allocator.<ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment</ref>());</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1535" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="875" bodyend="943"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a7ae9f73f0df57cab73cf2b9fe3c3f9b1" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::ArenaAllocator::realloc_aligned</definition>
+        <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, size_t alignment, bool zeroed=false) override</argsstring>
+        <name>realloc_aligned</name>
+        <reimplements refid="classcslt_1_1Allocator_1a7c5678c95eddff0fb5ae06a09492fb7c">realloc_aligned</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>old_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>new_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Reallocate aligned memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to existing allocation </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>old_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of existing allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>new_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Desired new size in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Required alignment in bytes (must be power of 2) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize new bytes when growing (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to reallocated memory or error</para>
+</simplesect>
+Like <ref refid="classcslt_1_1ArenaAllocator_1a60a6b8aa87cf0cb7f9a83451acb45b15" kindref="member">realloc()</ref>, but maintains the specified alignment.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Initial<sp/>aligned<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result1<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(256,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Grow<sp/>to<sp/>512<sp/>bytes,<sp/>maintaining<sp/>64-byte<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result2<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1adeb125664bb070ffb9522604fe753aa1" kindref="member">realloc_aligned</ref>(ptr,<sp/>256,<sp/>512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>new_ptr<sp/>=<sp/>result2.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal">uintptr_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(new_ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(new_ptr,<sp/>512,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1541" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="946" bodyend="1024"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1ac709ae6498290a5a4c12eeb65034969e" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::ArenaAllocator::is_ptr</definition>
+        <argsstring>(void *ptr) const override</argsstring>
+        <name>is_ptr</name>
+        <reimplements refid="classcslt_1_1Allocator_1a8b9fcb5da49538257f1272d2a11b832c">is_ptr</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+<para>Check if pointer belongs to this allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to check </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if pointer was allocated by this allocator, false otherwise</para>
+</simplesect>
+Checks if the given pointer was allocated by this allocator. Default implementation returns false (cannot verify). Allocators that own memory can override to provide actual verification.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>external_ptr<sp/>=<sp/>malloc(256);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(allocator.is_ptr(ptr))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ptr<sp/>belongs<sp/>to<sp/>allocator\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!allocator.is_ptr(external_ptr))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;external_ptr<sp/>does<sp/>not<sp/>belong<sp/>to<sp/>allocator\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">free(external_ptr);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1548" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1027" bodyend="1073"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a29fe5661a722f554829c480ee040ebd5" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::ArenaAllocator::is_ptr_sized</definition>
+        <argsstring>(void *ptr, size_t bytes) const override</argsstring>
+        <name>is_ptr_sized</name>
+        <reimplements refid="classcslt_1_1Allocator_1a9174d07a2777d286188e0221558505dc">is_ptr_sized</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <briefdescription>
+<para>Check if pointer and size are valid for this allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to check </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref> size of allocation </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if pointer with given size is valid, false otherwise</para>
+</simplesect>
+Checks if the pointer was allocated by this allocator AND if it has the specified size. Default returns false. Useful for debugging and validation.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(allocator.is_ptr_sized(ptr,<sp/>256))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ptr<sp/>is<sp/>valid<sp/>256-byte<sp/>allocation\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!allocator.is_ptr_sized(ptr,<sp/>512))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;ptr<sp/>is<sp/>not<sp/>a<sp/>512-byte<sp/>allocation\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1551" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1076" bodyend="1128"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a7fe8fbcdba4b1e2ee15c850ca12549e7" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void cslt::ArenaAllocator::return_element</definition>
+        <argsstring>(void *ptr, size_t bytes, size_t alignment=alignof(max_align_t)) override</argsstring>
+        <name>return_element</name>
+        <reimplements refid="classcslt_1_1Allocator_1a68ee49ecae412b74b73dcf56ceb6c5ed">return_element</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>alignof(max_align_t)</defval>
+        </param>
+        <briefdescription>
+<para>Return/free allocated memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to free </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Alignment used for the allocation</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Frees memory previously allocated by this allocator. For heap allocators, this calls operator delete or free(). For arena allocators, this may be a no-op or update bookkeeping. Always safe to call with nullptr (no-op).</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(1024,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Free<sp/>memory<sp/>-<sp/>must<sp/>pass<sp/>same<sp/>size<sp/>and<sp/>alignment<sp/>as<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(ptr,<sp/>1024,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Safe<sp/>to<sp/>call<sp/>with<sp/>nullptr</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(</highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,<sp/>0,<sp/>0);<sp/></highlight><highlight class="comment">//<sp/>No-op</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1554" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1131" bodyend="1138"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a33e3302b97aed2d9c6bd764ca028e191" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::ArenaAllocator::reset</definition>
+        <argsstring>(bool trim_extra_chunks=false) override</argsstring>
+        <name>reset</name>
+        <reimplements refid="classcslt_1_1Allocator_1a63cbbfc6cfeb46e51a14a91f8f5c48ea">reset</reimplements>
+        <param>
+          <type>bool</type>
+          <declname>trim_extra_chunks</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Reset allocator to initial state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Frees all allocations and resets the allocator to its initial state. Default is a no-op. Allocators that own memory override this to actually reset their state. After reset, all previous pointers are invalid.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr1<sp/>=<sp/>allocator.alloc(128,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr2<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Before<sp/>reset:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.size()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>384</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.reset();</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;After<sp/>reset:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.size()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>ptr1<sp/>and<sp/>ptr2<sp/>are<sp/>now<sp/>INVALID<sp/>-<sp/>do<sp/>not<sp/>use!</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Can<sp/>allocate<sp/>again<sp/>from<sp/>fresh<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr3<sp/>=<sp/>allocator.alloc(512,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1559" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1141" bodyend="1199"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a1b7407a444c6ca47d4ba995e9335a77b" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void *</type>
+        <definition>void * cslt::ArenaAllocator::save</definition>
+        <argsstring>() const override</argsstring>
+        <name>save</name>
+        <reimplements refid="classcslt_1_1Allocator_1a59fcf1ce582d5cf99d942a941af5e107">save</reimplements>
+        <briefdescription>
+<para>Save allocator state checkpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Opaque checkpoint pointer, or nullptr if not supported</para>
+</simplesect>
+Saves the current state of the allocator for later restoration. Useful for implementing transactional semantics or temporary allocations. Default returns nullptr (not supported). Arena allocators typically return a position marker.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Save<sp/>checkpoint</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>checkpoint<sp/>=<sp/>allocator.save();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Make<sp/>temporary<sp/>allocations</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>temp1<sp/>=<sp/>allocator.alloc(128,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>temp2<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Restore<sp/>to<sp/>checkpoint<sp/>(frees<sp/>temp1<sp/>and<sp/>temp2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(checkpoint)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.restore(checkpoint);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Temporary<sp/>allocations<sp/>rolled<sp/>back\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1562" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1202" bodyend="1219"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1af1b43a92fa1c3bf0e77e1284eab4f7c8" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::ArenaAllocator::restore</definition>
+        <argsstring>(void *checkpoint) override</argsstring>
+        <name>restore</name>
+        <reimplements refid="classcslt_1_1Allocator_1ab96e7b76511d29b505c5da81fb8b3cba">restore</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>checkpoint</declname>
+        </param>
+        <briefdescription>
+<para>Restore allocator to saved checkpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>checkpoint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Checkpoint pointer from previous <ref refid="classcslt_1_1ArenaAllocator_1a1b7407a444c6ca47d4ba995e9335a77b" kindref="member">save()</ref> call </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if restore succeeded, false if not supported or invalid checkpoint</para>
+</simplesect>
+Restores allocator state to a previous checkpoint, effectively freeing all allocations made after that checkpoint. Default returns false (not supported).</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>permanent<sp/>=<sp/>allocator.alloc(128,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>checkpoint<sp/>=<sp/>allocator.save();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>temp<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Size<sp/>with<sp/>temp:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.size()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>384</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(allocator.restore(checkpoint))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Size<sp/>after<sp/>restore:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.size()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>128</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>temp<sp/>is<sp/>now<sp/>invalid,<sp/>permanent<sp/>is<sp/>still<sp/>valid</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1565" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1222" bodyend="1331"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a13698c33d4b6e47073bf0ca823e7d94c" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::ArenaAllocator::remaining</definition>
+        <argsstring>() const noexcept override</argsstring>
+        <name>remaining</name>
+        <reimplements refid="classcslt_1_1Allocator_1a1b34a9c4860a9e28255745b1d1e7cb62">remaining</reimplements>
+        <briefdescription>
+<para>Get remaining available bytes. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Number of bytes still available for allocation</para>
+</simplesect>
+Returns alloc_ - size_, i.e., how much usable space is left. For allocators without fixed capacity (like <ref refid="classcslt_1_1HeapAllocator" kindref="compound">HeapAllocator</ref>), returns 0. Includes underflow protection.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Initial<sp/>remaining:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.remaining()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>~1024</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;After<sp/>alloc:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.remaining()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>~768</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Can<sp/>use<sp/>remaining<sp/>to<sp/>check<sp/>if<sp/>allocation<sp/>will<sp/>succeed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(allocator.remaining()<sp/>&gt;=<sp/>512)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result2<sp/>=<sp/>allocator.alloc(512,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1568" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1334" bodyend="1354"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1ab128304aeae005b402dbf4fbc105df3f" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::ArenaAllocator::stats</definition>
+        <argsstring>(char *buffer, size_t buffer_size) const override</argsstring>
+        <name>stats</name>
+        <reimplements refid="classcslt_1_1Allocator_1a794cb0fe500dc3a698015474ad8a7c86">stats</reimplements>
+        <param>
+          <type>char *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_size</declname>
+        </param>
+        <briefdescription>
+<para>Generate statistics string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Character buffer to write statistics to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer in bytes </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if statistics were written successfully, false otherwise</para>
+</simplesect>
+Writes human-readable statistics about the allocator to the provided buffer. Returns false if buffer is too small or null.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buffer[512];</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(allocator.<ref refid="classcslt_1_1HeapAllocator_1a8638f377e7dcb4d83d241e2a94dbb6e2" kindref="member">stats</ref>(buffer,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(buffer)))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%s\n&quot;</highlight><highlight class="normal">,<sp/>buffer);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Output:</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>HeapAllocator<sp/>Statistics:</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Type:<sp/>DYNAMIC</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Default<sp/>Alignment:<sp/>16<sp/>bytes</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>Memory<sp/>Model:<sp/>System<sp/>Heap<sp/>(operator<sp/>new/delete)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>fprintf(stderr,<sp/></highlight><highlight class="stringliteral">&quot;Buffer<sp/>too<sp/>small<sp/>for<sp/>statistics\n&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1571" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1357" bodyend="1449"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a15d84f50e78476e1112f00cf63e90b00" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::ArenaAllocator::chunk_count</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>chunk_count</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1574" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1452" bodyend="1460"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a76f827485553a4b7bb284827f81df308" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::ArenaAllocator::min_chunk_size</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>min_chunk_size</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1577" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1463" bodyend="1465"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1ArenaAllocator_1a1510ea6b6c62a51247b0b0b785c8a161" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::ArenaAllocator::toggle_resize</definition>
+        <argsstring>(bool toggle) noexcept</argsstring>
+        <name>toggle_resize</name>
+        <param>
+          <type>bool</type>
+          <declname>toggle</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1580" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1468" bodyend="1482"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>cslt::ArenaAllocator</label>
+        <link refid="classcslt_1_1ArenaAllocator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cslt::Allocator</label>
+        <link refid="classcslt_1_1Allocator"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>cslt::ArenaAllocator</label>
+        <link refid="classcslt_1_1ArenaAllocator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cslt::Allocator</label>
+        <link refid="classcslt_1_1Allocator"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1413" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1413" bodyend="1581"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1ArenaAllocator_1a00688da293e6682906b33dc0bd955389" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>alloc</name></member>
+      <member refid="classcslt_1_1Allocator_1a711b3e63e9c8bc79a55fdf5e52222992" prot="protected" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>alloc_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1ab0c53e0a43ba95fc09b75ded7d926554" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>alloc_aligned</name></member>
+      <member refid="classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>allocated</name></member>
+      <member refid="classcslt_1_1Allocator_1aa4603a4a1a33e3519c6e30dbc3223ec6" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>Allocator</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a69497841ddf14258d0fc13585f9732f0" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>ArenaAllocator</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a3b159f6ce803784265e5254746cbc5e9" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>ArenaAllocator</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1acec7e787f86a7ba3256b7b61260f3dec" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>ArenaAllocator</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a15d84f50e78476e1112f00cf63e90b00" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>chunk_count</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a2e69c14646e771e58094e130829b2317" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>cur_</name></member>
+      <member refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>default_alignment</name></member>
+      <member refid="classcslt_1_1Allocator_1ae915028e563a4d04f80f273037e1584a" prot="protected" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>default_alignment_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a13aa36c712c22a149d8d80f284a8998d" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>find_chunk_in_chain</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a8a07aaf6432c397462442d46e932e93a" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>head_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1aa28df2e90987fa8fadf6a10b5dfa29e6" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>initDynamicArena</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a1c5319721b55f8798a66850efd547700" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>initStaticArena</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1ab9ddcd8c2c7bc1ce4dd9349d976a6c7a" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>initSubArena</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1ac709ae6498290a5a4c12eeb65034969e" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>is_ptr</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a29fe5661a722f554829c480ee040ebd5" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>is_ptr_sized</name></member>
+      <member refid="classcslt_1_1Allocator_1a7183bacd2973b4d8b822b01d081600ba" prot="protected" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>mem_type_</name></member>
+      <member refid="classcslt_1_1Allocator_1ab32af42a412bd9d92ca7bd3d8ee4ecae" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>memory_type</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a2a9fcc058b64af33075b4c19e2187293" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>min_chunk_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a76f827485553a4b7bb284827f81df308" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>min_chunk_size</name></member>
+      <member refid="classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>owns_memory</name></member>
+      <member refid="classcslt_1_1Allocator_1a423d19bef35c2505d3d32cfe6b768776" prot="protected" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>owns_memory_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a60a6b8aa87cf0cb7f9a83451acb45b15" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>realloc</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a7ae9f73f0df57cab73cf2b9fe3c3f9b1" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>realloc_aligned</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a13698c33d4b6e47073bf0ca823e7d94c" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>remaining</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a33e3302b97aed2d9c6bd764ca028e191" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>reset</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1ae07bd15b220ac4fc392f8f3e6b5e575c" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>resize_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1af1b43a92fa1c3bf0e77e1284eab4f7c8" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>restore</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a7fe8fbcdba4b1e2ee15c850ca12549e7" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>return_element</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a1b7407a444c6ca47d4ba995e9335a77b" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>save</name></member>
+      <member refid="classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>size</name></member>
+      <member refid="classcslt_1_1Allocator_1ab76cd7ab2a5756223580eda667b38cb6" prot="protected" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>size_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1ab128304aeae005b402dbf4fbc105df3f" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>stats</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a7738375f52101368f147ece0ba2e4dbe" prot="private" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>tail_</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a1510ea6b6c62a51247b0b0b785c8a161" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>toggle_resize</name></member>
+      <member refid="classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>total_alloc</name></member>
+      <member refid="classcslt_1_1Allocator_1a5ef6bd69fbf7f2363aa5bb6cae49b923" prot="protected" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>total_alloc_</name></member>
+      <member refid="classcslt_1_1Allocator_1afaec0741935d3b33af37c535565ce719" prot="public" virt="virtual"><scope>cslt::ArenaAllocator</scope><name>~Allocator</name></member>
+      <member refid="classcslt_1_1ArenaAllocator_1a91150136502502b877a6deb7abf95e82" prot="public" virt="non-virtual"><scope>cslt::ArenaAllocator</scope><name>~ArenaAllocator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

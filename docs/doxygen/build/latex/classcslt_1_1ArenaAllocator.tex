@@ -1,0 +1,676 @@
+\hypertarget{classcslt_1_1ArenaAllocator}{}\doxysection{cslt\+::Arena\+Allocator Class Reference}
+\label{classcslt_1_1ArenaAllocator}\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+
+
+{\ttfamily \#include $<$allocator.\+hpp$>$}
+
+
+
+Inheritance diagram for cslt\+::Arena\+Allocator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classcslt_1_1ArenaAllocator__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for cslt\+::Arena\+Allocator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=192pt]{classcslt_1_1ArenaAllocator__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}{Arena\+Allocator}} (size\+\_\+t bytes, bool resize=false, size\+\_\+t alignment=alignof(max\+\_\+align\+\_\+t), size\+\_\+t \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\+\_\+chunk\+\_\+size}}=4096)
+\item 
+\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}{$\sim$\+Arena\+Allocator}} () noexcept override
+\item 
+\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a3b159f6ce803784265e5254746cbc5e9}{Arena\+Allocator}} (void $\ast$buffer, size\+\_\+t bytes, size\+\_\+t alignment=alignof(max\+\_\+align\+\_\+t))
+\item 
+\mbox{\hyperlink{classcslt_1_1ArenaAllocator_acec7e787f86a7ba3256b7b61260f3dec}{Arena\+Allocator}} (\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} \&parent, size\+\_\+t bytes, size\+\_\+t alignment=alignof(max\+\_\+align\+\_\+t))
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}{alloc}} (size\+\_\+t bytes, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Allocate memory. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab0c53e0a43ba95fc09b75ded7d926554}{alloc\+\_\+aligned}} (size\+\_\+t bytes, size\+\_\+t alignment, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Allocate aligned memory. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a60a6b8aa87cf0cb7f9a83451acb45b15}{realloc}} (void $\ast$ptr, size\+\_\+t old\+\_\+bytes, size\+\_\+t new\+\_\+bytes, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Reallocate memory. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a7ae9f73f0df57cab73cf2b9fe3c3f9b1}{realloc\+\_\+aligned}} (void $\ast$ptr, size\+\_\+t old\+\_\+bytes, size\+\_\+t new\+\_\+bytes, size\+\_\+t alignment, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Reallocate aligned memory. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ac709ae6498290a5a4c12eeb65034969e}{is\+\_\+ptr}} (void $\ast$ptr) const override
+\begin{DoxyCompactList}\small\item\em Check if pointer belongs to this allocator. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a29fe5661a722f554829c480ee040ebd5}{is\+\_\+ptr\+\_\+sized}} (void $\ast$ptr, size\+\_\+t bytes) const override
+\begin{DoxyCompactList}\small\item\em Check if pointer and size are valid for this allocator. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a7fe8fbcdba4b1e2ee15c850ca12549e7}{return\+\_\+element}} (void $\ast$ptr, size\+\_\+t bytes, size\+\_\+t alignment=alignof(max\+\_\+align\+\_\+t)) override
+\begin{DoxyCompactList}\small\item\em Return/free allocated memory. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a33e3302b97aed2d9c6bd764ca028e191}{reset}} (bool trim\+\_\+extra\+\_\+chunks=false) override
+\begin{DoxyCompactList}\small\item\em Reset allocator to initial state. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a1b7407a444c6ca47d4ba995e9335a77b}{save}} () const override
+\begin{DoxyCompactList}\small\item\em Save allocator state checkpoint. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1ArenaAllocator_af1b43a92fa1c3bf0e77e1284eab4f7c8}{restore}} (void $\ast$checkpoint) override
+\begin{DoxyCompactList}\small\item\em Restore allocator to saved checkpoint. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a13698c33d4b6e47073bf0ca823e7d94c}{remaining}} () const noexcept override
+\begin{DoxyCompactList}\small\item\em Get remaining available bytes. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab128304aeae005b402dbf4fbc105df3f}{stats}} (char $\ast$buffer, size\+\_\+t buffer\+\_\+size) const override
+\begin{DoxyCompactList}\small\item\em Generate statistics string. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a15d84f50e78476e1112f00cf63e90b00}{chunk\+\_\+count}} () const noexcept
+\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\+\_\+chunk\+\_\+size}} () const noexcept
+\item 
+void \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}{toggle\+\_\+resize}} (bool toggle) noexcept
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{Polymorphic-example}{Polymorphic}}.\end{Desc}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}\label{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!ArenaAllocator@{ArenaAllocator}}
+\index{ArenaAllocator@{ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{ArenaAllocator()}{ArenaAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::\+Arena\+Allocator (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{bool}]{resize = {\ttfamily false},  }\item[{size\+\_\+t}]{alignment = {\ttfamily alignof(max\+\_\+align\+\_\+t)},  }\item[{size\+\_\+t}]{min\+\_\+chunk\+\_\+size = {\ttfamily 4096} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}\label{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!````~ArenaAllocator@{$\sim$ArenaAllocator}}
+\index{````~ArenaAllocator@{$\sim$ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{$\sim$ArenaAllocator()}{~ArenaAllocator()}}
+{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::$\sim$\+Arena\+Allocator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [noexcept]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a3b159f6ce803784265e5254746cbc5e9}\label{classcslt_1_1ArenaAllocator_a3b159f6ce803784265e5254746cbc5e9}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!ArenaAllocator@{ArenaAllocator}}
+\index{ArenaAllocator@{ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{ArenaAllocator()}{ArenaAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::\+Arena\+Allocator (\begin{DoxyParamCaption}\item[{void $\ast$}]{buffer,  }\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_acec7e787f86a7ba3256b7b61260f3dec}\label{classcslt_1_1ArenaAllocator_acec7e787f86a7ba3256b7b61260f3dec}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!ArenaAllocator@{ArenaAllocator}}
+\index{ArenaAllocator@{ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{ArenaAllocator()}{ArenaAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::\+Arena\+Allocator (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} \&}]{parent,  }\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}\label{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!alloc@{alloc}}
+\index{alloc@{alloc}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{alloc()}{alloc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Arena\+Allocator\+::alloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Allocate memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Number of bytes to allocate \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory (default\+: false) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$void$\ast$$>$ containing pointer to allocated memory or error
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 256 bytes, zeroed}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(256, \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{    \textcolor{comment}{// Memory is guaranteed to be zeroed}}
+\DoxyCodeLine{    \textcolor{comment}{// ... use memory ...}}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr, 256, allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    \textcolor{comment}{// Handle allocation failure}}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Allocation failed\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_adb93a70659ab65af421bf3f8043418e3}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_ab0c53e0a43ba95fc09b75ded7d926554}\label{classcslt_1_1ArenaAllocator_ab0c53e0a43ba95fc09b75ded7d926554}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!alloc\_aligned@{alloc\_aligned}}
+\index{alloc\_aligned@{alloc\_aligned}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{alloc\_aligned()}{alloc\_aligned()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Arena\+Allocator\+::alloc\+\_\+aligned (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Allocate aligned memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Number of bytes to allocate \\
+\hline
+{\em alignment} & Required alignment in bytes (must be power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory (default\+: false) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$void$\ast$$>$ containing pointer to allocated memory or error
+\end{DoxyReturn}
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default\+\_\+alignment\+\_\+.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 512 bytes aligned to 64-\/byte boundary}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(512, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Verify alignment}}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 64 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// ... use memory ...}}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr, 512, 64);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a518d804fc4eb66096f2534fc922c1ac4}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a15d84f50e78476e1112f00cf63e90b00}\label{classcslt_1_1ArenaAllocator_a15d84f50e78476e1112f00cf63e90b00}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!chunk\_count@{chunk\_count}}
+\index{chunk\_count@{chunk\_count}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{chunk\_count()}{chunk\_count()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Arena\+Allocator\+::chunk\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_ac709ae6498290a5a4c12eeb65034969e}\label{classcslt_1_1ArenaAllocator_ac709ae6498290a5a4c12eeb65034969e}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!is\_ptr@{is\_ptr}}
+\index{is\_ptr@{is\_ptr}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{is\_ptr()}{is\_ptr()}}
+{\footnotesize\ttfamily bool cslt\+::\+Arena\+Allocator\+::is\+\_\+ptr (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Check if pointer belongs to this allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if pointer was allocated by this allocator, false otherwise
+\end{DoxyReturn}
+Checks if the given pointer was allocated by this allocator. Default implementation returns false (cannot verify). Allocators that own memory can override to provide actual verification.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} allocator(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* external\_ptr = malloc(256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (allocator.is\_ptr(ptr)) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}ptr belongs to allocator\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!allocator.is\_ptr(external\_ptr)) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}external\_ptr does not belong to allocator\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{free(external\_ptr);}
+
+\end{DoxyCode}
+ 
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a8b9fcb5da49538257f1272d2a11b832c}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a29fe5661a722f554829c480ee040ebd5}\label{classcslt_1_1ArenaAllocator_a29fe5661a722f554829c480ee040ebd5}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!is\_ptr\_sized@{is\_ptr\_sized}}
+\index{is\_ptr\_sized@{is\_ptr\_sized}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{is\_ptr\_sized()}{is\_ptr\_sized()}}
+{\footnotesize\ttfamily bool cslt\+::\+Arena\+Allocator\+::is\+\_\+ptr\+\_\+sized (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Check if pointer and size are valid for this allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to check \\
+\hline
+{\em bytes} & \mbox{\hyperlink{classcslt_1_1Expected}{Expected}} size of allocation \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if pointer with given size is valid, false otherwise
+\end{DoxyReturn}
+Checks if the pointer was allocated by this allocator AND if it has the specified size. Default returns false. Useful for debugging and validation.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} allocator(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (allocator.is\_ptr\_sized(ptr, 256)) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}ptr is valid 256-\/byte allocation\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!allocator.is\_ptr\_sized(ptr, 512)) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}ptr is not a 512-\/byte allocation\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a9174d07a2777d286188e0221558505dc}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}\label{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!min\_chunk\_size@{min\_chunk\_size}}
+\index{min\_chunk\_size@{min\_chunk\_size}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{min\_chunk\_size()}{min\_chunk\_size()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Arena\+Allocator\+::min\+\_\+chunk\+\_\+size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a60a6b8aa87cf0cb7f9a83451acb45b15}\label{classcslt_1_1ArenaAllocator_a60a6b8aa87cf0cb7f9a83451acb45b15}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!realloc@{realloc}}
+\index{realloc@{realloc}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{realloc()}{realloc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Arena\+Allocator\+::realloc (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{old\+\_\+bytes,  }\item[{size\+\_\+t}]{new\+\_\+bytes,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reallocate memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to existing allocation \\
+\hline
+{\em old\+\_\+bytes} & Size of existing allocation in bytes \\
+\hline
+{\em new\+\_\+bytes} & Desired new size in bytes \\
+\hline
+{\em zeroed} & If true, zero-\/initialize new bytes when growing (default\+: false) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$void$\ast$$>$ containing pointer to reallocated memory or error
+\end{DoxyReturn}
+Resizes an existing allocation. The existing data is preserved up to min(old\+\_\+bytes, new\+\_\+bytes). If growing and zeroed is true, the additional bytes are zero-\/initialized. The old pointer is automatically freed. The returned pointer may differ from the input.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Initial allocation}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result1 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result1.value();}
+\DoxyCodeLine{memset(ptr, 0xAA, 256); \textcolor{comment}{// Fill with pattern}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow to 512 bytes, zero the new space}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8da5b4e9dc6e8d13020a66d384835363}{realloc}}(ptr, 256, 512, \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result2.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = result2.value();}
+\DoxyCodeLine{    \textcolor{comment}{// First 256 bytes still contain 0xAA}}
+\DoxyCodeLine{    \textcolor{comment}{// Bytes 256-\/511 are zeroed}}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(new\_ptr, 512, allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_ad83899b3087ecbf56883ef775048e81a}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a7ae9f73f0df57cab73cf2b9fe3c3f9b1}\label{classcslt_1_1ArenaAllocator_a7ae9f73f0df57cab73cf2b9fe3c3f9b1}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!realloc\_aligned@{realloc\_aligned}}
+\index{realloc\_aligned@{realloc\_aligned}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{realloc\_aligned()}{realloc\_aligned()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Arena\+Allocator\+::realloc\+\_\+aligned (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{old\+\_\+bytes,  }\item[{size\+\_\+t}]{new\+\_\+bytes,  }\item[{size\+\_\+t}]{alignment,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reallocate aligned memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to existing allocation \\
+\hline
+{\em old\+\_\+bytes} & Size of existing allocation in bytes \\
+\hline
+{\em new\+\_\+bytes} & Desired new size in bytes \\
+\hline
+{\em alignment} & Required alignment in bytes (must be power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize new bytes when growing (default\+: false) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$void$\ast$$>$ containing pointer to reallocated memory or error
+\end{DoxyReturn}
+Like \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a60a6b8aa87cf0cb7f9a83451acb45b15}{realloc()}}, but maintains the specified alignment.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Initial aligned allocation}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result1 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(256, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result1.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow to 512 bytes, maintaining 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_adeb125664bb070ffb9522604fe753aa1}{realloc\_aligned}}(ptr, 256, 512, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result2.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = result2.value();}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr) \% 64 == 0);}
+\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(new\_ptr, 512, 64);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a7c5678c95eddff0fb5ae06a09492fb7c}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a13698c33d4b6e47073bf0ca823e7d94c}\label{classcslt_1_1ArenaAllocator_a13698c33d4b6e47073bf0ca823e7d94c}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!remaining@{remaining}}
+\index{remaining@{remaining}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{remaining()}{remaining()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Arena\+Allocator\+::remaining (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Get remaining available bytes. 
+
+\begin{DoxyReturn}{Returns}
+Number of bytes still available for allocation
+\end{DoxyReturn}
+Returns alloc\+\_\+ -\/ size\+\_\+, i.\+e., how much usable space is left. For allocators without fixed capacity (like \mbox{\hyperlink{classcslt_1_1HeapAllocator}{Heap\+Allocator}}), returns 0. Includes underflow protection.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} allocator(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Initial remaining: "{}} << allocator.remaining() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \textcolor{comment}{// \string~1024}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}After alloc: "{}} << allocator.remaining() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \textcolor{comment}{// \string~768}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Can use remaining to check if allocation will succeed}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (allocator.remaining() >= 512) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} result2 = allocator.alloc(512, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a1b34a9c4860a9e28255745b1d1e7cb62}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a33e3302b97aed2d9c6bd764ca028e191}\label{classcslt_1_1ArenaAllocator_a33e3302b97aed2d9c6bd764ca028e191}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!reset@{reset}}
+\index{reset@{reset}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily bool cslt\+::\+Arena\+Allocator\+::reset (\begin{DoxyParamCaption}\item[{bool}]{trim\+\_\+extra\+\_\+chunks = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reset allocator to initial state. 
+
+Frees all allocations and resets the allocator to its initial state. Default is a no-\/op. Allocators that own memory override this to actually reset their state. After reset, all previous pointers are invalid.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} allocator(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = allocator.alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = allocator.alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Before reset: "{}} << allocator.size() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \textcolor{comment}{// 384}}
+\DoxyCodeLine{}
+\DoxyCodeLine{allocator.reset();}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}After reset: "{}} << allocator.size() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \textcolor{comment}{// 0}}
+\DoxyCodeLine{\textcolor{comment}{// ptr1 and ptr2 are now INVALID -\/ do not use!}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Can allocate again from fresh state}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr3 = allocator.alloc(512, \textcolor{keyword}{false});}
+
+\end{DoxyCode}
+ 
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a63cbbfc6cfeb46e51a14a91f8f5c48ea}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_af1b43a92fa1c3bf0e77e1284eab4f7c8}\label{classcslt_1_1ArenaAllocator_af1b43a92fa1c3bf0e77e1284eab4f7c8}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!restore@{restore}}
+\index{restore@{restore}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{restore()}{restore()}}
+{\footnotesize\ttfamily bool cslt\+::\+Arena\+Allocator\+::restore (\begin{DoxyParamCaption}\item[{void $\ast$}]{checkpoint }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Restore allocator to saved checkpoint. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em checkpoint} & Checkpoint pointer from previous \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a1b7407a444c6ca47d4ba995e9335a77b}{save()}} call \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if restore succeeded, false if not supported or invalid checkpoint
+\end{DoxyReturn}
+Restores allocator state to a previous checkpoint, effectively freeing all allocations made after that checkpoint. Default returns false (not supported).
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} allocator(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} permanent = allocator.alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = allocator.save();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} temp = allocator.alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Size with temp: "{}} << allocator.size() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \textcolor{comment}{// 384}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (allocator.restore(checkpoint)) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Size after restore: "{}} << allocator.size() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}}; \textcolor{comment}{// 128}}
+\DoxyCodeLine{    \textcolor{comment}{// temp is now invalid, permanent is still valid}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_ab96e7b76511d29b505c5da81fb8b3cba}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a7fe8fbcdba4b1e2ee15c850ca12549e7}\label{classcslt_1_1ArenaAllocator_a7fe8fbcdba4b1e2ee15c850ca12549e7}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!return\_element@{return\_element}}
+\index{return\_element@{return\_element}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{return\_element()}{return\_element()}}
+{\footnotesize\ttfamily void cslt\+::\+Arena\+Allocator\+::return\+\_\+element (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Return/free allocated memory. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to memory to free \\
+\hline
+{\em bytes} & Size of allocation in bytes \\
+\hline
+{\em alignment} & Alignment used for the allocation\\
+\hline
+\end{DoxyParams}
+Frees memory previously allocated by this allocator. For heap allocators, this calls operator delete or free(). For arena allocators, this may be a no-\/op or update bookkeeping. Always safe to call with nullptr (no-\/op).
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(1024, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// ... use memory ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free memory -\/ must pass same size and alignment as allocation}}
+\DoxyCodeLine{allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr, 1024, 64);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe to call with nullptr}}
+\DoxyCodeLine{allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(\textcolor{keyword}{nullptr}, 0, 0); \textcolor{comment}{// No-\/op}}
+
+\end{DoxyCode}
+ 
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a1b7407a444c6ca47d4ba995e9335a77b}\label{classcslt_1_1ArenaAllocator_a1b7407a444c6ca47d4ba995e9335a77b}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!save@{save}}
+\index{save@{save}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily void $\ast$ cslt\+::\+Arena\+Allocator\+::save (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Save allocator state checkpoint. 
+
+\begin{DoxyReturn}{Returns}
+Opaque checkpoint pointer, or nullptr if not supported
+\end{DoxyReturn}
+Saves the current state of the allocator for later restoration. Useful for implementing transactional semantics or temporary allocations. Default returns nullptr (not supported). Arena allocators typically return a position marker.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} allocator(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Save checkpoint}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = allocator.save();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Make temporary allocations}}
+\DoxyCodeLine{\textcolor{keyword}{auto} temp1 = allocator.alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keyword}{auto} temp2 = allocator.alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Restore to checkpoint (frees temp1 and temp2)}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (checkpoint) \{}
+\DoxyCodeLine{    allocator.restore(checkpoint);}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Temporary allocations rolled back\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a59fcf1ce582d5cf99d942a941af5e107}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_ab128304aeae005b402dbf4fbc105df3f}\label{classcslt_1_1ArenaAllocator_ab128304aeae005b402dbf4fbc105df3f}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!stats@{stats}}
+\index{stats@{stats}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{stats()}{stats()}}
+{\footnotesize\ttfamily bool cslt\+::\+Arena\+Allocator\+::stats (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer,  }\item[{size\+\_\+t}]{buffer\+\_\+size }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Generate statistics string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Character buffer to write statistics to \\
+\hline
+{\em buffer\+\_\+size} & Size of buffer in bytes \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if statistics were written successfully, false otherwise
+\end{DoxyReturn}
+Writes human-\/readable statistics about the allocator to the provided buffer. Returns false if buffer is too small or null.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[512];}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8638f377e7dcb4d83d241e2a94dbb6e2}{stats}}(buffer, \textcolor{keyword}{sizeof}(buffer))) \{}
+\DoxyCodeLine{    printf(\textcolor{stringliteral}{"{}\%s\(\backslash\)n"{}}, buffer);}
+\DoxyCodeLine{    \textcolor{comment}{// Output:}}
+\DoxyCodeLine{    \textcolor{comment}{// HeapAllocator Statistics:}}
+\DoxyCodeLine{    \textcolor{comment}{//   Type: DYNAMIC}}
+\DoxyCodeLine{    \textcolor{comment}{//   Default Alignment: 16 bytes}}
+\DoxyCodeLine{    \textcolor{comment}{//   Memory Model: System Heap (operator new/delete)}}
+\DoxyCodeLine{    \textcolor{comment}{//   ...}}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    fprintf(stderr, \textcolor{stringliteral}{"{}Buffer too small for statistics\(\backslash\)n"{}});}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a794cb0fe500dc3a698015474ad8a7c86}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}\label{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!toggle\_resize@{toggle\_resize}}
+\index{toggle\_resize@{toggle\_resize}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{toggle\_resize()}{toggle\_resize()}}
+{\footnotesize\ttfamily void cslt\+::\+Arena\+Allocator\+::toggle\+\_\+resize (\begin{DoxyParamCaption}\item[{bool}]{toggle }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/\mbox{\hyperlink{allocator_8cpp}{allocator.\+cpp}}\end{DoxyCompactItemize}

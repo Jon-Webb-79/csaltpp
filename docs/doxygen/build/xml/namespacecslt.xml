@@ -4,7 +4,9 @@
     <compoundname>cslt</compoundname>
     <innerclass refid="classcslt_1_1Allocator" prot="public">cslt::Allocator</innerclass>
     <innerclass refid="classcslt_1_1HeapAllocator" prot="public">cslt::HeapAllocator</innerclass>
+    <innerclass refid="classcslt_1_1ArenaAllocator" prot="public">cslt::ArenaAllocator</innerclass>
     <innerclass refid="classcslt_1_1Error" prot="public">cslt::Error</innerclass>
+    <innerclass refid="classcslt_1_1NoError" prot="public">cslt::NoError</innerclass>
     <innerclass refid="classcslt_1_1ArgumentError" prot="public">cslt::ArgumentError</innerclass>
     <innerclass refid="classcslt_1_1MemoryError" prot="public">cslt::MemoryError</innerclass>
     <innerclass refid="classcslt_1_1StateError" prot="public">cslt::StateError</innerclass>
@@ -66,6 +68,21 @@
     <innerclass refid="classcslt_1_1OperationUnavailableError" prot="public">cslt::OperationUnavailableError</innerclass>
     <innerclass refid="classcslt_1_1UnknownError" prot="public">cslt::UnknownError</innerclass>
     <innerclass refid="classcslt_1_1Expected" prot="public">cslt::Expected</innerclass>
+    <innerclass refid="structcslt_1_1BoolConstant" prot="public">cslt::BoolConstant</innerclass>
+    <innerclass refid="structcslt_1_1RemoveRef" prot="public">cslt::RemoveRef</innerclass>
+    <innerclass refid="structcslt_1_1RemoveRef_3_01T_01_6_01_4" prot="public">cslt::RemoveRef&lt; T &amp; &gt;</innerclass>
+    <innerclass refid="structcslt_1_1RemoveRef_3_01T_01_6_6_01_4" prot="public">cslt::RemoveRef&lt; T &amp;&amp; &gt;</innerclass>
+    <innerclass refid="structcslt_1_1IsLValueRef" prot="public">cslt::IsLValueRef</innerclass>
+    <innerclass refid="structcslt_1_1IsLValueRef_3_01T_01_6_01_4" prot="public">cslt::IsLValueRef&lt; T &amp; &gt;</innerclass>
+    <innerclass refid="structcslt_1_1EnableIf" prot="public">cslt::EnableIf</innerclass>
+    <innerclass refid="structcslt_1_1EnableIf_3_01true_00_01T_01_4" prot="public">cslt::EnableIf&lt; true, T &gt;</innerclass>
+    <innerclass refid="structcslt_1_1IsSame" prot="public">cslt::IsSame</innerclass>
+    <innerclass refid="structcslt_1_1IsSame_3_01A_00_01A_01_4" prot="public">cslt::IsSame&lt; A, A &gt;</innerclass>
+    <innerclass refid="structcslt_1_1IsArray" prot="public">cslt::IsArray</innerclass>
+    <innerclass refid="structcslt_1_1IsArray_3_01T_0f_0e_4" prot="public">cslt::IsArray&lt; T[]&gt;</innerclass>
+    <innerclass refid="structcslt_1_1IsArray_3_01T_0fN_0e_4" prot="public">cslt::IsArray&lt; T[N]&gt;</innerclass>
+    <innerclass refid="structcslt_1_1IsConvertible" prot="public">cslt::IsConvertible</innerclass>
+    <innernamespace refid="namespacecslt_1_1detail">cslt::detail</innernamespace>
       <sectiondef kind="enum">
       <memberdef kind="enum" id="namespacecslt_1a96b27f1a16d21546d14d4f25a4c956ed" prot="public" static="no" strong="no">
         <type></type>
@@ -103,7 +120,274 @@
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="41" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="41" bodyend="45"/>
       </memberdef>
       </sectiondef>
+      <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" prot="public" static="no">
+        <type>decltype(nullptr)</type>
+        <definition>using cslt::nullptr_t = typedef decltype(nullptr)</definition>
+        <argsstring></argsstring>
+        <name>nullptr_t</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="24" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="24" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacecslt_1afcacd0f94372a59549bedff14a59e4c9" prot="public" static="no">
+        <type><ref refid="structcslt_1_1BoolConstant" kindref="compound">BoolConstant</ref>&lt; true &gt;</type>
+        <definition>using cslt::TrueType = typedef BoolConstant&lt;true&gt;</definition>
+        <argsstring></argsstring>
+        <name>TrueType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="31" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="31" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacecslt_1a6185905cbf47ccfe4b59a1e4a2fdc020" prot="public" static="no">
+        <type><ref refid="structcslt_1_1BoolConstant" kindref="compound">BoolConstant</ref>&lt; false &gt;</type>
+        <definition>using cslt::FalseType = typedef BoolConstant&lt;false&gt;</definition>
+        <argsstring></argsstring>
+        <name>FalseType</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="32" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="32" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacecslt_1a387ce1a7f22e8794a5e474d90a3720bc" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>typename <ref refid="structcslt_1_1RemoveRef" kindref="compound">RemoveRef</ref>&lt; T &gt;::type</type>
+        <definition>using cslt::RemoveRefT = typedef typename RemoveRef&lt;T&gt;::type</definition>
+        <argsstring></argsstring>
+        <name>RemoveRefT</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="50" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="50" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacecslt_1a5fda297689c673027737544d24c21927" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>bool</type>
+            <declname>Cond</declname>
+            <defname>Cond</defname>
+          </param>
+          <param>
+            <type>class T</type>
+            <defval>void</defval>
+          </param>
+        </templateparamlist>
+        <type>typename <ref refid="structcslt_1_1EnableIf" kindref="compound">EnableIf</ref>&lt; Cond, T &gt;::type</type>
+        <definition>using cslt::EnableIfT = typedef typename EnableIf&lt;Cond, T&gt;::type</definition>
+        <argsstring></argsstring>
+        <name>EnableIfT</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="74" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="74" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
       <sectiondef kind="func">
+      <memberdef kind="function" id="namespacecslt_1adb04c13835953770d190921376af439f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>int</type>
+        <definition>int cslt::is_pow2</definition>
+        <argsstring>(size_t x)</argsstring>
+        <name>is_pow2</name>
+        <param>
+          <type>size_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Check if a value is a power of 2. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to check </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>1 if x is a power of 2, 0 otherwise</para>
+</simplesect>
+Returns 1 for 1, 2, 4, 8, 16, etc. Returns 0 for 0.</para>
+<para><simplesect kind="par"><title>Example:</title><para><programlisting><codeline><highlight class="normal">assert(cslt::is_pow2(16)<sp/>==<sp/>1);</highlight></codeline>
+<codeline><highlight class="normal">assert(cslt::is_pow2(15)<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal">assert(cslt::is_pow2(0)<sp/>==<sp/>0);</highlight></codeline>
+</programlisting> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1377" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1377" bodyend="1379"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1acb97e0e477a841d7b9cc6d2982f3e78d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::next_pow2</definition>
+        <argsstring>(size_t x)</argsstring>
+        <name>next_pow2</name>
+        <param>
+          <type>size_t</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Round up to next power of 2. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>x</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to round up </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Next power of 2 &gt;= x, or 0 if overflow</para>
+</simplesect>
+Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and would overflow. Returns 1 for x=1, 0 for x=0.</para>
+<para><simplesect kind="par"><title>Example:</title><para><programlisting><codeline><highlight class="normal">assert(cslt::next_pow2(15)<sp/>==<sp/>16);</highlight></codeline>
+<codeline><highlight class="normal">assert(cslt::next_pow2(16)<sp/>==<sp/>16);</highlight></codeline>
+<codeline><highlight class="normal">assert(cslt::next_pow2(17)<sp/>==<sp/>32);</highlight></codeline>
+<codeline><highlight class="normal">assert(cslt::next_pow2(1)<sp/>==<sp/>1);</highlight></codeline>
+<codeline><highlight class="normal">assert(cslt::next_pow2(0)<sp/>==<sp/>0);</highlight></codeline>
+</programlisting> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1401" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1401" bodyend="1409"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a837bbe872aff901c868b62bb782b9600" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr <ref refid="namespacecslt_1a387ce1a7f22e8794a5e474d90a3720bc" kindref="member">RemoveRefT</ref>&lt; T &gt; &amp;&amp;</type>
+        <definition>constexpr RemoveRefT&lt;T&gt;&amp;&amp; cslt::move</definition>
+        <argsstring>(T &amp;&amp;x) noexcept</argsstring>
+        <name>move</name>
+        <param>
+          <type>T &amp;&amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="104" column="26" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="104" bodyend="106"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a7309f6ef48cee23ec6bd570f8127fed0" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr T &amp;&amp;</type>
+        <definition>constexpr T&amp;&amp; cslt::forward</definition>
+        <argsstring>(RemoveRefT&lt; T &gt; &amp;x) noexcept</argsstring>
+        <name>forward</name>
+        <param>
+          <type><ref refid="namespacecslt_1a387ce1a7f22e8794a5e474d90a3720bc" kindref="member">RemoveRefT</ref>&lt; T &gt; &amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="110" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="110" bodyend="112"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a1e03fa2317e0f287ce09484ae2eb3313" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr T &amp;&amp;</type>
+        <definition>constexpr T&amp;&amp; cslt::forward</definition>
+        <argsstring>(RemoveRefT&lt; T &gt; &amp;&amp;x) noexcept</argsstring>
+        <name>forward</name>
+        <param>
+          <type><ref refid="namespacecslt_1a387ce1a7f22e8794a5e474d90a3720bc" kindref="member">RemoveRefT</ref>&lt; T &gt; &amp;&amp;</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="116" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="116" bodyend="120"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a0ac3aa6b819d22ab27c3e9d24cab114a" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>constexpr void</type>
+        <definition>constexpr void cslt::swap</definition>
+        <argsstring>(T &amp;a, T &amp;b) noexcept</argsstring>
+        <name>swap</name>
+        <param>
+          <type>T &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>T &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="126" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="126" bodyend="130"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a4b0ef594ef77a75a23a698631c86c838" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>T &amp;&amp;</type>
+        <definition>T&amp;&amp; cslt::declval</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>declval</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="136" column="7" declfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" declline="136" declcolumn="7"/>
+      </memberdef>
       <memberdef kind="function" id="namespacecslt_1a60929310f6258747143b37bbebb0d22e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
         <definition>static bool cslt::_buf_appendf</definition>
@@ -134,7 +418,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="32" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="32" bodyend="59"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="37" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="37" bodyend="64"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1abc3a0835723fbba0ec2b994f712e3bf0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>size_t</type>
@@ -151,7 +435,95 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="62" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="62" bodyend="66"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="67" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="67" bodyend="71"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1abaf3729c2a283815b8a90776fe2c55bb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t cslt::_align_up_size</definition>
+        <argsstring>(size_t x, size_t a)</argsstring>
+        <name>_align_up_size</name>
+        <param>
+          <type>size_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="288" column="26" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="288" bodyend="291"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a3d05c36cc6408f030f92f49138c958cb" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>uintptr_t</type>
+        <definition>static uintptr_t cslt::_align_up_uintptr</definition>
+        <argsstring>(uintptr_t p, size_t a)</argsstring>
+        <name>_align_up_uintptr</name>
+        <param>
+          <type>uintptr_t</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="294" column="29" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="294" bodyend="296"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ab3d36c0fb67974f234d964174e9f7449" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t cslt::_pad_up</definition>
+        <argsstring>(uintptr_t p, size_t a)</argsstring>
+        <name>_pad_up</name>
+        <param>
+          <type>uintptr_t</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="299" column="26" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="299" bodyend="302"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a1a93f18dc32c8917b230e2f81e8e924e" prot="public" static="yes" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t cslt::_mul_div_ceil</definition>
+        <argsstring>(size_t x, size_t mul, size_t div)</argsstring>
+        <name>_mul_div_ceil</name>
+        <param>
+          <type>size_t</type>
+          <declname>x</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>mul</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>div</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" line="305" column="26" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="305" bodyend="316"/>
       </memberdef>
       </sectiondef>
     <briefdescription>

@@ -156,6 +156,40 @@ namespace cslt {
             static constexpr bool value = (sizeof(test<From>(0)) == sizeof(char));
         };
 
+// ================================================================================
+// IsConstructibleImpl
+// ================================================================================
+
+        template <class T, class... Args>
+        struct IsConstructibleImpl {
+        private:
+            template <class U, class = decltype(U(declval<Args>()...))>
+            static char test(int);
+
+            template <class, class...>
+            static long test(...);
+
+        public:
+            static constexpr bool value = (sizeof(test<T>(0)) == sizeof(char));
+        };
+
+// ================================================================================
+// IsAssignableImpl
+// ================================================================================
+
+        template <class T, class U>
+        struct IsAssignableImpl {
+        private:
+            template <class X, class Y, class = decltype(declval<X>() = declval<Y>())>
+            static char test(int);
+
+            template <class, class>
+            static long test(...);
+
+        public:
+            static constexpr bool value = (sizeof(test<T, U>(0)) == sizeof(char));
+        };
+
     } // namespace detail
 
 // ================================================================================
@@ -165,6 +199,55 @@ namespace cslt {
     struct IsConvertible {
         static constexpr bool value = detail::IsConvertibleImpl<From, To>::value;
     };
+
+// ================================================================================
+// IsConstructible (public wrapper)
+// ================================================================================
+
+    template <class T, class... Args>
+    struct IsConstructible {
+        static constexpr bool value = detail::IsConstructibleImpl<T, Args...>::value;
+    };
+// --------------------------------------------------------------------------------
+
+    template <class T>
+    struct IsDefaultConstructible {
+        static constexpr bool value = IsConstructible<T>::value;
+    };
+// --------------------------------------------------------------------------------
+
+    template <class T>
+    struct IsMoveConstructible {
+        static constexpr bool value = IsConstructible<T, T&&>::value;
+    };
+// --------------------------------------------------------------------------------
+
+    template <class T>
+    struct IsCopyConstructible {
+        static constexpr bool value = IsConstructible<T, const T&>::value;
+    };
+
+// ================================================================================
+// IsAssignable (public wrapper)
+// ================================================================================
+
+    template <class T, class U>
+    struct IsAssignable {
+        static constexpr bool value = detail::IsAssignableImpl<T, U>::value;
+    };
+// --------------------------------------------------------------------------------
+
+    template <class T>
+    struct IsMoveAssignable {
+        static constexpr bool value = IsAssignable<T&, T&&>::value;
+    };
+// --------------------------------------------------------------------------------
+
+    template <class T>
+    struct IsCopyAssignable {
+        static constexpr bool value = IsAssignable<T&, const T&>::value;
+    };
+
 // ================================================================================
 // ================================================================================
 } // namespace cslt
@@ -172,3 +255,4 @@ namespace cslt {
 // ================================================================================
 // ================================================================================
 // eof
+

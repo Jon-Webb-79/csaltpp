@@ -12,6 +12,7 @@ add_executable(unit_tests
   test_error.cpp
   test_allocator.cpp
   test_utilities.cpp
+  test_pointers.cpp
   #  test_matrix.cpp
 )
 

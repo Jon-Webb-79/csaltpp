@@ -624,6 +624,481 @@ namespace cslt {
 // ================================================================================
 // ================================================================================
 
+    template <class T>
+    class SharedPtr {
+    public:
+        using element_type = T;
+
+        // ----------------------------------------------------------------------------
+        // Constructors
+        // ----------------------------------------------------------------------------
+        constexpr SharedPtr() noexcept : ptr_(nullptr), cb_(nullptr) {}
+        constexpr SharedPtr(nullptr_t) noexcept : ptr_(nullptr), cb_(nullptr) {}
+
+        // Construct from raw pointer with default delete
+        explicit SharedPtr(T* p) : ptr_(p), cb_(nullptr) {
+            if (p) {
+                cb_ = new detail::ControlBlockPtr<T, DefaultDelete<T>>(p, DefaultDelete<T>{});
+            }
+        }
+
+        // Construct from raw pointer + deleter (value deleter)
+        template <class Deleter,
+                  class = EnableIfT<!IsLValueRef<Deleter>::value>>
+        SharedPtr(T* p, Deleter d) : ptr_(p), cb_(nullptr) {
+            if (p) {
+                cb_ = new detail::ControlBlockPtr<T, Deleter>(p, cslt::move(d));
+            }
+        }
+
+        // Copy
+        SharedPtr(const SharedPtr& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            detail::incref_strong(cb_);
+        }
+     
+        // Move
+        SharedPtr(SharedPtr&& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            other.ptr_ = nullptr;
+            other.cb_  = nullptr;
+        }
+
+        // ADD THIS: Converting move constructor (Derived -> Base)
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        SharedPtr(SharedPtr<U>&& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            other.ptr_ = nullptr;
+            other.cb_  = nullptr;
+        }
+
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        SharedPtr(const SharedPtr<U>& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            detail::incref_strong(cb_);
+        }
+      
+        // Copy assignment
+        SharedPtr& operator=(const SharedPtr& other) noexcept {
+            if (this != &other) {
+                release_();
+                ptr_ = other.ptr_;
+                cb_  = other.cb_;
+                detail::incref_strong(cb_);
+            }
+            return *this;
+        }
+
+        // Converting copy assignment
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        SharedPtr& operator=(const SharedPtr<U>& other) noexcept {
+            if ((void*)this != (void*)&other) {
+                release_();
+                ptr_ = other.ptr_;
+                cb_  = other.cb_;
+                detail::incref_strong(cb_);
+            }
+            return *this;
+        }
+       
+        // ----------------------------------------------------------------------------
+        // Destructor
+        // ----------------------------------------------------------------------------
+        ~SharedPtr() noexcept {
+            release_();
+        }
+
+        SharedPtr& operator=(SharedPtr&& other) noexcept {
+            if (this != &other) {
+                release_();
+                ptr_ = other.ptr_;
+                cb_  = other.cb_;
+                other.ptr_ = nullptr;
+                other.cb_  = nullptr;
+            }
+            return *this;
+        }
+
+        SharedPtr& operator=(nullptr_t) noexcept {
+            reset();
+            return *this;
+        }
+
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        SharedPtr& operator=(SharedPtr<U>&& other) noexcept {
+            release_();
+            ptr_ = other.ptr_;
+            cb_  = other.cb_;
+            other.ptr_ = nullptr;
+            other.cb_  = nullptr;
+            return *this;
+        }
+
+        // ----------------------------------------------------------------------------
+        // Observers
+        // ----------------------------------------------------------------------------
+        T* get() const noexcept { return ptr_; }
+        T& operator*() const noexcept { return *ptr_; }
+        T* operator->() const noexcept { return ptr_; }
+
+        explicit operator bool() const noexcept { return ptr_ != nullptr; }
+
+        size_t use_count() const noexcept { 
+            return detail::get_strong_count(cb_);
+        }
+       
+        bool unique() const noexcept { return use_count() == 1u; }
+
+        // ----------------------------------------------------------------------------
+        // Modifiers
+        // ----------------------------------------------------------------------------
+        void reset() noexcept { release_(); }
+
+        void reset(T* p) {
+            release_();
+            ptr_ = p;
+            cb_  = nullptr;
+            if (p) {
+                cb_ = new detail::ControlBlockPtr<T, DefaultDelete<T>>(p, DefaultDelete<T>{});
+            }
+        }
+
+        template <class Deleter,
+                  class = EnableIfT<!IsLValueRef<Deleter>::value>>
+        void reset(T* p, Deleter d) {
+            release_();
+            ptr_ = p;
+            cb_  = nullptr;
+            if (p) {
+                cb_ = new detail::ControlBlockPtr<T, Deleter>(p, cslt::move(d));
+            }
+        }
+
+        void swap(SharedPtr& other) noexcept {
+            cslt::swap(ptr_, other.ptr_);
+            cslt::swap(cb_, other.cb_);
+        }
+
+    private:
+        template <class U>
+        friend class SharedPtr;
+
+        template <class U>
+        friend class WeakPtr;
+
+        void release_() noexcept {
+            if (!cb_) {
+                ptr_ = nullptr;
+                return;
+            }
+            if (detail::decref_strong(cb_)) {
+                cb_->destroy_object();
+                // Decrement weak count (shared_ptr holds one weak ref to control block)
+                if (detail::decref_weak(cb_)) {
+                    delete cb_;
+                }
+            }
+            ptr_ = nullptr;
+            cb_  = nullptr;
+        }
+        
+        T* ptr_;
+        detail::ControlBlock* cb_;
+    };
+
+    // ================================================================================
+    // Non-member swap + comparisons
+    // ================================================================================
+
+    template <class T>
+    inline void swap(SharedPtr<T>& a, SharedPtr<T>& b) noexcept { a.swap(b); }
+
+    template <class T, class U>
+    inline bool operator==(const SharedPtr<T>& a, const SharedPtr<U>& b) noexcept {
+        return a.get() == b.get();
+    }
+
+    template <class T, class U>
+    inline bool operator!=(const SharedPtr<T>& a, const SharedPtr<U>& b) noexcept {
+        return !(a == b);
+    }
+
+    template <class T>
+    inline bool operator==(const SharedPtr<T>& p, nullptr_t) noexcept { return !p; }
+
+    template <class T>
+    inline bool operator==(nullptr_t, const SharedPtr<T>& p) noexcept { return !p; }
+
+    template <class T>
+    inline bool operator!=(const SharedPtr<T>& p, nullptr_t) noexcept { return static_cast<bool>(p); }
+
+    template <class T>
+    inline bool operator!=(nullptr_t, const SharedPtr<T>& p) noexcept { return static_cast<bool>(p); }
+
+    // ================================================================================
+    // make_shared (simple version)
+    // - Note: true std::make_shared uses single allocation (control block + object).
+    // - This version uses two allocations (new T + new control block) for simplicity.
+    // ================================================================================
+
+    template <class T, class... Args>
+    inline SharedPtr<T> make_shared(Args&&... args) {
+        return SharedPtr<T>(new T(cslt::forward<Args>(args)...));
+    }
+// ================================================================================ 
+// ================================================================================ 
+
+    // Equality comparisons between SharedPtr<T> and SharedPtr<U>
+    template <class T, class U>
+    inline bool operator<(const SharedPtr<T>& a, const SharedPtr<U>& b) noexcept {
+        return a.get() < b.get();
+    }
+
+    template <class T, class U>
+    inline bool operator<=(const SharedPtr<T>& a, const SharedPtr<U>& b) noexcept {
+        return !(b < a);
+    }
+
+    template <class T, class U>
+    inline bool operator>(const SharedPtr<T>& a, const SharedPtr<U>& b) noexcept {
+        return b < a;
+    }
+
+    template <class T, class U>
+    inline bool operator>=(const SharedPtr<T>& a, const SharedPtr<U>& b) noexcept {
+        return !(a < b);
+    }
+
+    // Comparisons with nullptr
+    template <class T>
+    inline bool operator<(const SharedPtr<T>& p, nullptr_t) noexcept {
+        return p.get() < static_cast<T*>(nullptr);
+    }
+
+    template <class T>
+    inline bool operator<(nullptr_t, const SharedPtr<T>& p) noexcept {
+        return static_cast<T*>(nullptr) < p.get();
+    }
+
+    template <class T>
+    inline bool operator<=(const SharedPtr<T>& p, nullptr_t) noexcept {
+        return !(nullptr < p);
+    }
+
+    template <class T>
+    inline bool operator<=(nullptr_t, const SharedPtr<T>& p) noexcept {
+        return !(p < nullptr);
+    }
+
+    template <class T>
+    inline bool operator>(const SharedPtr<T>& p, nullptr_t) noexcept {
+        return nullptr < p;
+    }
+
+    template <class T>
+    inline bool operator>(nullptr_t, const SharedPtr<T>& p) noexcept {
+        return p < nullptr;
+    }
+
+    template <class T>
+    inline bool operator>=(const SharedPtr<T>& p, nullptr_t) noexcept {
+        return !(p < nullptr);
+    }
+
+    template <class T>
+    inline bool operator>=(nullptr_t, const SharedPtr<T>& p) noexcept {
+        return !(nullptr < p);
+    }
+// ================================================================================ 
+// ================================================================================ 
+
+    template <class T>
+    class WeakPtr {
+    public:
+        using element_type = T;
+
+        // ----------------------------------------------------------------------------
+        // Constructors
+        // ----------------------------------------------------------------------------
+        constexpr WeakPtr() noexcept : ptr_(nullptr), cb_(nullptr) {}
+
+        // Construct from SharedPtr
+        WeakPtr(const SharedPtr<T>& sp) noexcept : ptr_(sp.ptr_), cb_(sp.cb_) {
+            detail::incref_weak(cb_);
+        }
+
+        // Converting constructor from SharedPtr<U>
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        WeakPtr(const SharedPtr<U>& sp) noexcept : ptr_(sp.ptr_), cb_(sp.cb_) {
+            detail::incref_weak(cb_);
+        }
+
+        // Copy constructor
+        WeakPtr(const WeakPtr& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            detail::incref_weak(cb_);
+        }
+
+        // Converting copy constructor
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        WeakPtr(const WeakPtr<U>& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            detail::incref_weak(cb_);
+        }
+
+        // Move constructor
+        WeakPtr(WeakPtr&& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            other.ptr_ = nullptr;
+            other.cb_  = nullptr;
+        }
+
+        // Converting move constructor
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        WeakPtr(WeakPtr<U>&& other) noexcept : ptr_(other.ptr_), cb_(other.cb_) {
+            other.ptr_ = nullptr;
+            other.cb_  = nullptr;
+        }
+
+        // ----------------------------------------------------------------------------
+        // Destructor
+        // ----------------------------------------------------------------------------
+        ~WeakPtr() noexcept {
+            release_();
+        }
+
+        // ----------------------------------------------------------------------------
+        // Assignment
+        // ----------------------------------------------------------------------------
+        WeakPtr& operator=(const WeakPtr& other) noexcept {
+            if (this != &other) {
+                release_();
+                ptr_ = other.ptr_;
+                cb_  = other.cb_;
+                detail::incref_weak(cb_);
+            }
+            return *this;
+        }
+
+        WeakPtr& operator=(WeakPtr&& other) noexcept {
+            if (this != &other) {
+                release_();
+                ptr_ = other.ptr_;
+                cb_  = other.cb_;
+                other.ptr_ = nullptr;
+                other.cb_  = nullptr;
+            }
+            return *this;
+        }
+
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        WeakPtr& operator=(const WeakPtr<U>& other) noexcept {
+            release_();
+            ptr_ = other.ptr_;
+            cb_  = other.cb_;
+            detail::incref_weak(cb_);
+            return *this;
+        }
+
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        WeakPtr& operator=(WeakPtr<U>&& other) noexcept {
+            release_();
+            ptr_ = other.ptr_;
+            cb_  = other.cb_;
+            other.ptr_ = nullptr;
+            other.cb_  = nullptr;
+            return *this;
+        }
+
+        WeakPtr& operator=(const SharedPtr<T>& sp) noexcept {
+            release_();
+            ptr_ = sp.ptr_;
+            cb_  = sp.cb_;
+            detail::incref_weak(cb_);
+            return *this;
+        }
+
+        template <class U,
+                  class = EnableIfT<IsConvertible<U*, T*>::value>>
+        WeakPtr& operator=(const SharedPtr<U>& sp) noexcept {
+            release_();
+            ptr_ = sp.ptr_;
+            cb_  = sp.cb_;
+            detail::incref_weak(cb_);
+            return *this;
+        }
+
+        // ----------------------------------------------------------------------------
+        // Observers
+        // ----------------------------------------------------------------------------
+        std::size_t use_count() const noexcept {
+            return detail::get_strong_count(cb_);
+        }
+
+        bool expired() const noexcept {
+            return use_count() == 0u;
+        }
+
+        // Convert to SharedPtr (returns empty SharedPtr if expired)
+        SharedPtr<T> lock() const noexcept {
+            if (!cb_) {
+                return SharedPtr<T>();
+            }
+            
+            // Try to atomically increment strong count if it's not zero
+            if (detail::try_incref_strong(cb_)) {
+                SharedPtr<T> sp;
+                sp.ptr_ = ptr_;
+                sp.cb_  = cb_;
+                return sp;
+            }
+            
+            return SharedPtr<T>();
+        }
+
+        // ----------------------------------------------------------------------------
+        // Modifiers
+        // ----------------------------------------------------------------------------
+        void reset() noexcept {
+            release_();
+        }
+
+        void swap(WeakPtr& other) noexcept {
+            cslt::swap(ptr_, other.ptr_);
+            cslt::swap(cb_, other.cb_);
+        }
+
+    private:
+        template <class U>
+        friend class WeakPtr;
+        
+        template <class U>
+        friend class SharedPtr;
+
+        void release_() noexcept {
+            if (cb_ && detail::decref_weak(cb_)) {
+                delete cb_;
+            }
+            ptr_ = nullptr;
+            cb_  = nullptr;
+        }
+
+        T* ptr_;
+        detail::ControlBlock* cb_;
+    };
+
+    // ================================================================================
+    // Non-member swap for WeakPtr
+    // ================================================================================
+
+    template <class T>
+    inline void swap(WeakPtr<T>& a, WeakPtr<T>& b) noexcept { 
+        a.swap(b); 
+    }
+// ================================================================================ 
+// ================================================================================ 
 } // namespace cslt
 
 #endif /* POINTERS_HPP */

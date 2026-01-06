@@ -15,6 +15,7 @@
 #define UTILITIES_HPP
 
 #include <cstddef>
+#include <atomic>
 
 // ================================================================================
 // ================================================================================
@@ -190,6 +191,167 @@ namespace cslt {
             static constexpr bool value = (sizeof(test<T, U>(0)) == sizeof(char));
         };
 
+        struct ControlBlock {
+            std::atomic<size_t> strong;
+            std::atomic<size_t> weak;
+
+            ControlBlock() : strong(1u), weak(1u) {}
+            virtual ~ControlBlock() {}
+
+            virtual void destroy_object() noexcept = 0;
+            virtual void* get_ptr() const noexcept = 0;
+        };
+        // struct ControlBlock {
+        //     std::atomic<size_t> strong;
+        //
+        //     ControlBlock() : strong(1u) {}
+        //     virtual ~ControlBlock() {}
+        //
+        //     virtual void destroy_object() noexcept = 0;
+        //     virtual void* get_ptr() const noexcept = 0;
+        // };
+
+        // Control block for pointer + deleter stored by value
+        template <class T, class Deleter>
+        struct ControlBlockPtr final : ControlBlock {
+            T* ptr;
+            Deleter del;
+
+            ControlBlockPtr(T* p, const Deleter& d) : ControlBlock(), ptr(p), del(d) {}
+            ControlBlockPtr(T* p, Deleter&& d)      : ControlBlock(), ptr(p), del(cslt::move(d)) {}
+
+            void destroy_object() noexcept override {
+                if (ptr) {
+                    del(ptr);
+                    ptr = nullptr;
+                }
+            }
+
+            void* get_ptr() const noexcept override { return (void*)ptr; }
+        };
+
+        // Strong reference operations
+        inline void incref_strong(ControlBlock* cb) noexcept {
+            if (cb) {
+                cb->strong.fetch_add(1u, std::memory_order_relaxed);
+            }
+        }
+
+        inline bool decref_strong(ControlBlock* cb) noexcept {
+            if (!cb) return false;
+            if (cb->strong.fetch_sub(1u, std::memory_order_acq_rel) == 1u) {
+                std::atomic_thread_fence(std::memory_order_acquire);
+                return true;
+            }
+            return false;
+        }
+
+        // Weak reference operations
+        inline void incref_weak(ControlBlock* cb) noexcept {
+            if (cb) {
+                cb->weak.fetch_add(1u, std::memory_order_relaxed);
+            }
+        }
+
+        inline bool decref_weak(ControlBlock* cb) noexcept {
+            if (!cb) return false;
+            if (cb->weak.fetch_sub(1u, std::memory_order_acq_rel) == 1u) {
+                std::atomic_thread_fence(std::memory_order_acquire);
+                return true;
+            }
+            return false;
+        }
+
+        inline size_t get_strong_count(const ControlBlock* cb) noexcept {
+            if (!cb) return 0u;
+            return cb->strong.load(std::memory_order_relaxed);
+        }
+
+        inline size_t get_weak_count(const ControlBlock* cb) noexcept {
+            if (!cb) return 0u;
+            return cb->weak.load(std::memory_order_relaxed);
+        }
+
+        // Try to increment strong count (for weak->shared conversion)
+        // Returns true if successful (strong count was > 0)
+        inline bool try_incref_strong(ControlBlock* cb) noexcept {
+            if (!cb) return false;
+            
+            size_t count = cb->strong.load(std::memory_order_relaxed);
+            while (count != 0u) {
+                // Try to increment if still non-zero
+                if (cb->strong.compare_exchange_weak(count, count + 1u,
+                                                     std::memory_order_relaxed,
+                                                     std::memory_order_relaxed)) {
+                    return true;
+                }
+                // count was updated by compare_exchange_weak on failure, retry
+            }
+            return false;
+        }
+        // Thread-safe refcount operations using atomics
+        // inline void incref(ControlBlock* cb) noexcept {
+        //     if (cb) {
+        //         cb->strong.fetch_add(1u, std::memory_order_relaxed);
+        //     }
+        // }
+        //
+        // inline bool decref(ControlBlock* cb) noexcept {
+        //     if (!cb) return false;
+        //     // fetch_sub returns the value BEFORE subtraction
+        //     // Use acquire-release ordering for proper synchronization
+        //     if (cb->strong.fetch_sub(1u, std::memory_order_acq_rel) == 1u) {
+        //         // We were the last reference
+        //         // Add an acquire fence to ensure all writes from other threads are visible
+        //         std::atomic_thread_fence(std::memory_order_acquire);
+        //         return true;
+        //     }
+        //     return false;
+        // }
+        //
+        // inline size_t get_refcount(const ControlBlock* cb) noexcept {
+        //     if (!cb) return 0u;
+        //     return cb->strong.load(std::memory_order_relaxed);
+        // }
+        // struct ControlBlock {
+        //     size_t strong;
+        //
+        //     ControlBlock() : strong(1u) {}
+        //     virtual ~ControlBlock() {}
+        //
+        //     virtual void destroy_object() noexcept = 0;
+        //     virtual void* get_ptr() const noexcept = 0;
+        // };
+        //
+        //  // Control block for pointer + deleter stored by value
+        // template <class T, class Deleter>
+        // struct ControlBlockPtr final : ControlBlock {
+        //     T* ptr;
+        //     Deleter del;
+        //
+        //     ControlBlockPtr(T* p, const Deleter& d) : ControlBlock(), ptr(p), del(d) {}
+        //     ControlBlockPtr(T* p, Deleter&& d)      : ControlBlock(), ptr(p), del(cslt::move(d)) {}
+        //
+        //     void destroy_object() noexcept override {
+        //         if (ptr) {
+        //             del(ptr);
+        //             ptr = nullptr;
+        //         }
+        //     }
+        //
+        //     void* get_ptr() const noexcept override { return (void*)ptr; }
+        // };
+        //
+        // // Simple refcount ops (non-atomic for now)
+        // inline void incref(ControlBlock* cb) noexcept {
+        //     if (cb) { ++cb->strong; }
+        // }
+        //
+        // inline bool decref(ControlBlock* cb) noexcept {
+        //     if (!cb) return false;
+        //     // returns true if reached zero
+        //     return (--cb->strong == 0u);
+        // }
     } // namespace detail
 
 // ================================================================================

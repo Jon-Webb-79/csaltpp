@@ -1,0 +1,1286 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Pointers Overview &mdash; csalt++-lib 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Error Handling Overview" href="Error.html" />
+    <link rel="prev" title="Utilities and Type Traits Overview" href="Utilities.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            csalt++-lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html"> Utilities</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Smart Pointers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#design-philosophy">Design Philosophy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#library-components">Library Components</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#smart-pointer-types">Smart Pointer Types</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uniqueptr-t-deleter">UniquePtr&lt;T, Deleter&gt;</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sharedptr-t">SharedPtr&lt;T&gt;</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#weakptr-t">WeakPtr&lt;T&gt;</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#supporting-components">Supporting Components</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#defaultdelete-t">DefaultDelete&lt;T&gt;</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#deleterstorage-deleter-isref">DeleterStorage&lt;Deleter, IsRef&gt;</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#helper-traits">Helper Traits</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#uniqueptr-details">UniquePtr Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-usage">Basic Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ownership-semantics">Ownership Semantics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#custom-deleters">Custom Deleters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#value-deleters">Value Deleters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#reference-deleters">Reference Deleters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#array-specialization">Array Specialization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#type-conversions">Type Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#member-functions">Member Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#constructors">Constructors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#observers">Observers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modifiers">Modifiers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#comparison-operators">Comparison Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#factory-functions">Factory Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#sharedptr-details">SharedPtr Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id1">Basic Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#reference-counting">Reference Counting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thread-safety">Thread Safety</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2">Custom Deleters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3">Type Conversions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4">Member Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id5">Constructors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id6">Observers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id7">Modifiers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#id8">Comparison Operators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#factory-function">Factory Function</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#weakptr-details">WeakPtr Details</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Basic Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#purpose-and-use-cases">Purpose and Use Cases</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#breaking-reference-cycles">Breaking Reference Cycles</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#cache-implementation">Cache Implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#observer-pattern">Observer Pattern</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#expiration">Expiration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#thread-safe-promotion">Thread-Safe Promotion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Member Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id11">Constructors</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id12">Observers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id13">Modifiers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#control-block-lifetime">Control Block Lifetime</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#usage-examples">Usage Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#basic-ownership-patterns">Basic Ownership Patterns</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#unique-ownership">Unique Ownership</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#shared-ownership">Shared Ownership</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#polymorphism">Polymorphism</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#raii-resource-management">RAII Resource Management</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#factory-pattern">Factory Pattern</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#doubly-linked-list">Doubly Linked List</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#caching-system">Caching System</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#performance-characteristics">Performance Characteristics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#uniqueptr-performance">UniquePtr Performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sharedptr-performance">SharedPtr Performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#weakptr-performance">WeakPtr Performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#memory-layout">Memory Layout</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#uniqueptr-memory-layout-default-deleter">UniquePtr Memory Layout (Default Deleter)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#sharedptr-memory-layout">SharedPtr Memory Layout</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#weakptr-memory-layout">WeakPtr Memory Layout</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#comparison-with-standard-library">Comparison with Standard Library</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#key-differences">Key Differences</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#requirements">Requirements</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#compiler-support">Compiler Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#dependencies">Dependencies</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#best-practices">Best Practices</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#prefer-make-unique-and-make-shared">Prefer make_unique and make_shared</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#use-uniqueptr-by-default">Use UniquePtr by Default</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#avoid-circular-sharedptr-references">Avoid Circular SharedPtr References</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#check-weakptr-before-use">Check WeakPtr Before Use</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#don-t-mix-ownership-models">Don’t Mix Ownership Models</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#common-pitfalls">Common Pitfalls</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#dangling-references-from-get">Dangling References from get()</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#forgetting-to-move-uniqueptr">Forgetting to Move UniquePtr</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#modifying-shared-object-without-synchronization">Modifying Shared Object Without Synchronization</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#future-enhancements">Future Enhancements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html"> Error</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Allocator.html"> Allocator</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">csalt++-lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Smart Pointers Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Pointers.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="smart-pointers-overview">
+<h1>Smart Pointers Overview<a class="headerlink" href="#smart-pointers-overview" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">pointers.hpp</span></code> provides three smart pointer types that implement automatic
+memory management with RAII semantics. The library includes <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code>
+for exclusive ownership, <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> for shared ownership with thread-safe
+reference counting, and <code class="docutils literal notranslate"><span class="pre">WeakPtr</span></code> for non-owning observation. All
+implementations closely mirror the C++ standard library’s smart pointer behavior.</p>
+<section id="design-philosophy">
+<h2>Design Philosophy<a class="headerlink" href="#design-philosophy" title="Link to this heading"></a></h2>
+<p>The smart pointer library follows these core principles:</p>
+<ul class="simple">
+<li><p><strong>RAII Semantics</strong>: Automatic resource management through object lifetime</p></li>
+<li><p><strong>Type-Safe</strong>: Extensive use of SFINAE to enforce correct usage at compile-time</p></li>
+<li><p><strong>Zero-Overhead Unique Ownership</strong>: <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> has no runtime cost compared to raw pointers</p></li>
+<li><p><strong>Thread-Safe Shared Ownership</strong>: <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> uses atomic reference counting for safe concurrent access</p></li>
+<li><p><strong>Standard-Compliant</strong>: Closely mirrors <code class="docutils literal notranslate"><span class="pre">std::unique_ptr</span></code>, <code class="docutils literal notranslate"><span class="pre">std::shared_ptr</span></code>, and <code class="docutils literal notranslate"><span class="pre">std::weak_ptr</span></code></p></li>
+<li><p><strong>Customizable Deletion</strong>: Support for custom deleters and stateful cleanup</p></li>
+</ul>
+</section>
+<section id="library-components">
+<h2>Library Components<a class="headerlink" href="#library-components" title="Link to this heading"></a></h2>
+<section id="smart-pointer-types">
+<h3>Smart Pointer Types<a class="headerlink" href="#smart-pointer-types" title="Link to this heading"></a></h3>
+<section id="uniqueptr-t-deleter">
+<h4>UniquePtr&lt;T, Deleter&gt;<a class="headerlink" href="#uniqueptr-t-deleter" title="Link to this heading"></a></h4>
+<p>Exclusive ownership smart pointer representing unique ownership of a dynamically allocated object.</p>
+<p><strong>Key Features</strong>:</p>
+<ul class="simple">
+<li><p>Zero overhead compared to raw pointers (with default deleter)</p></li>
+<li><p>Move-only semantics (non-copyable)</p></li>
+<li><p>Custom deleters by value or by reference</p></li>
+<li><p>Separate array specialization <code class="docutils literal notranslate"><span class="pre">UniquePtr&lt;T[]&gt;</span></code></p></li>
+<li><p>Converting constructors for polymorphic types</p></li>
+<li><p>Complete set of comparison operators</p></li>
+</ul>
+<p><strong>Size</strong>: Single pointer (with default deleter), or pointer + deleter size</p>
+</section>
+<section id="sharedptr-t">
+<h4>SharedPtr&lt;T&gt;<a class="headerlink" href="#sharedptr-t" title="Link to this heading"></a></h4>
+<p>Shared ownership smart pointer with thread-safe reference counting.</p>
+<p><strong>Key Features</strong>:</p>
+<ul class="simple">
+<li><p>Atomic reference counting for thread-safety</p></li>
+<li><p>Multiple <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> instances can own the same object</p></li>
+<li><p>Custom deleters (stored in control block)</p></li>
+<li><p>Supports <code class="docutils literal notranslate"><span class="pre">WeakPtr</span></code> for non-owning observation</p></li>
+<li><p>Converting constructors for polymorphic types</p></li>
+<li><p>Complete set of comparison operators</p></li>
+</ul>
+<p><strong>Size</strong>: Two pointers (object pointer + control block pointer)</p>
+</section>
+<section id="weakptr-t">
+<h4>WeakPtr&lt;T&gt;<a class="headerlink" href="#weakptr-t" title="Link to this heading"></a></h4>
+<p>Non-owning observer that doesn’t affect object lifetime.</p>
+<p><strong>Key Features</strong>:</p>
+<ul class="simple">
+<li><p>Observes <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code>-managed objects without ownership</p></li>
+<li><p>Thread-safe promotion to <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> via <code class="docutils literal notranslate"><span class="pre">lock()</span></code></p></li>
+<li><p>Automatically expires when referenced object is destroyed</p></li>
+<li><p>Essential for breaking reference cycles</p></li>
+<li><p>Supports type conversions (derived-to-base)</p></li>
+</ul>
+<p><strong>Size</strong>: Two pointers (same as <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code>)</p>
+</section>
+</section>
+<section id="supporting-components">
+<h3>Supporting Components<a class="headerlink" href="#supporting-components" title="Link to this heading"></a></h3>
+<section id="defaultdelete-t">
+<h4>DefaultDelete&lt;T&gt;<a class="headerlink" href="#defaultdelete-t" title="Link to this heading"></a></h4>
+<p>Default deleter that calls <code class="docutils literal notranslate"><span class="pre">delete</span></code> on the pointer.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">DefaultDelete</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">delete</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+<p><strong>Array Specialization</strong>: <code class="docutils literal notranslate"><span class="pre">DefaultDelete&lt;T[]&gt;</span></code> calls <code class="docutils literal notranslate"><span class="pre">delete[]</span></code></p>
+</section>
+<section id="deleterstorage-deleter-isref">
+<h4>DeleterStorage&lt;Deleter, IsRef&gt;<a class="headerlink" href="#deleterstorage-deleter-isref" title="Link to this heading"></a></h4>
+<p>Internal storage mechanism for deleters in <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code>.</p>
+<p><strong>Value Deleters</strong>: Stores deleter by value
+<strong>Reference Deleters</strong>: Stores pointer to external deleter</p>
+<p>This allows <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to support both stateless and stateful deleters efficiently.</p>
+</section>
+<section id="helper-traits">
+<h4>Helper Traits<a class="headerlink" href="#helper-traits" title="Link to this heading"></a></h4>
+<p><strong>HasPointerType&lt;D&gt;</strong>: Detects if deleter defines custom <code class="docutils literal notranslate"><span class="pre">::pointer</span></code> type</p>
+<p><strong>PointerType&lt;T, D&gt;</strong>: Resolves to <code class="docutils literal notranslate"><span class="pre">D::pointer</span></code> if available, otherwise <code class="docutils literal notranslate"><span class="pre">T*</span></code></p>
+<p>These enable support for “fancy pointers” (custom pointer types).</p>
+</section>
+</section>
+</section>
+<section id="uniqueptr-details">
+<h2>UniquePtr Details<a class="headerlink" href="#uniqueptr-details" title="Link to this heading"></a></h2>
+<section id="basic-usage">
+<h3>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+
+<span class="c1">// Basic construction</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p1</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+
+<span class="c1">// Factory function (recommended)</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+
+<span class="c1">// Access</span>
+<span class="o">*</span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">99</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">*</span><span class="n">p2</span><span class="p">;</span><span class="w">  </span><span class="c1">// 99</span>
+</pre></div>
+</div>
+</section>
+<section id="ownership-semantics">
+<h3>Ownership Semantics<a class="headerlink" href="#ownership-semantics" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> represents exclusive ownership and cannot be copied:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+
+<span class="c1">// cslt::UniquePtr&lt;int&gt; p2 = p1;  // ERROR: copy is deleted</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">p1</span><span class="p">);</span><span class="w">  </span><span class="c1">// OK: move transfers ownership</span>
+<span class="c1">// p1 is now null, p2 owns the object</span>
+</pre></div>
+</div>
+</section>
+<section id="custom-deleters">
+<h3>Custom Deleters<a class="headerlink" href="#custom-deleters" title="Link to this heading"></a></h3>
+<section id="value-deleters">
+<h4>Value Deleters<a class="headerlink" href="#value-deleters" title="Link to this heading"></a></h4>
+<p>Store the deleter by value in the <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">FileCloser</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="kt">FILE</span><span class="o">*</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="n">fclose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="kt">FILE</span><span class="p">,</span><span class="w"> </span><span class="n">FileCloser</span><span class="o">&gt;</span><span class="w"> </span><span class="n">file</span><span class="p">(</span><span class="n">fopen</span><span class="p">(</span><span class="s">&quot;data.txt&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="p">));</span>
+<span class="c1">// File automatically closed when file goes out of scope</span>
+</pre></div>
+</div>
+</section>
+<section id="reference-deleters">
+<h4>Reference Deleters<a class="headerlink" href="#reference-deleters" title="Link to this heading"></a></h4>
+<p>Store a reference to an external deleter:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">LoggingDeleter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="o">++</span><span class="n">count</span><span class="p">;</span>
+<span class="w">        </span><span class="k">delete</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">LoggingDeleter</span><span class="w"> </span><span class="n">deleter</span><span class="p">;</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">LoggingDeleter</span><span class="o">&amp;&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span><span class="w"> </span><span class="n">deleter</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="c1">// deleter.count is now 1</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="array-specialization">
+<h3>Array Specialization<a class="headerlink" href="#array-specialization" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">UniquePtr&lt;T[]&gt;</span></code> provides array-specific operations:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Array construction</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">[]</span><span class="o">&gt;</span><span class="w"> </span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique_array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">100</span><span class="p">);</span>
+
+<span class="c1">// Array access</span>
+<span class="n">arr</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span>
+<span class="n">arr</span><span class="p">[</span><span class="mi">99</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">99</span><span class="p">;</span>
+
+<span class="c1">// Automatic cleanup with delete[]</span>
+</pre></div>
+</div>
+<p><strong>Key Differences from Single-Object</strong>:</p>
+<ul class="simple">
+<li><p>Uses <code class="docutils literal notranslate"><span class="pre">operator[]</span></code> instead of <code class="docutils literal notranslate"><span class="pre">operator*</span></code> and <code class="docutils literal notranslate"><span class="pre">operator-&gt;</span></code></p></li>
+<li><p>Deleter calls <code class="docutils literal notranslate"><span class="pre">delete[]</span></code> instead of <code class="docutils literal notranslate"><span class="pre">delete</span></code></p></li>
+<li><p>No converting constructors between array and non-array types</p></li>
+</ul>
+</section>
+<section id="type-conversions">
+<h3>Type Conversions<a class="headerlink" href="#type-conversions" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> supports converting moves from derived to base types:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Base</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Derived</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">};</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;</span><span class="w"> </span><span class="n">derived</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">Base</span><span class="o">&gt;</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">derived</span><span class="p">);</span>
+<span class="c1">// derived is now null, base owns the Derived object</span>
+</pre></div>
+</div>
+</section>
+<section id="member-functions">
+<h3>Member Functions<a class="headerlink" href="#member-functions" title="Link to this heading"></a></h3>
+<section id="constructors">
+<h4>Constructors<a class="headerlink" href="#constructors" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">UniquePtr</span><span class="p">();</span><span class="w">                                    </span><span class="c1">// Default construct (null)</span>
+<span class="n">UniquePtr</span><span class="p">(</span><span class="n">nullptr_t</span><span class="p">);</span><span class="w">                           </span><span class="c1">// Null pointer</span>
+<span class="k">explicit</span><span class="w"> </span><span class="n">UniquePtr</span><span class="p">(</span><span class="n">pointer</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w">                  </span><span class="c1">// Take ownership of p</span>
+<span class="n">UniquePtr</span><span class="p">(</span><span class="n">pointer</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Deleter</span><span class="o">&amp;</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w">         </span><span class="c1">// With deleter copy</span>
+<span class="n">UniquePtr</span><span class="p">(</span><span class="n">pointer</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">Deleter</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w">              </span><span class="c1">// With deleter move</span>
+<span class="n">UniquePtr</span><span class="p">(</span><span class="n">UniquePtr</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Move constructor</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">D2</span><span class="o">&gt;</span>
+<span class="n">UniquePtr</span><span class="p">(</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">U</span><span class="p">,</span><span class="w"> </span><span class="n">D2</span><span class="o">&gt;&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">            </span><span class="c1">// Converting move</span>
+</pre></div>
+</div>
+</section>
+<section id="observers">
+<h4>Observers<a class="headerlink" href="#observers" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">pointer</span><span class="w"> </span><span class="nf">get</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Get raw pointer</span>
+<span class="n">Deleter</span><span class="o">&amp;</span><span class="w"> </span><span class="nf">get_deleter</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                </span><span class="c1">// Access deleter</span>
+<span class="k">explicit</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">         </span><span class="c1">// Test if non-null</span>
+<span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                  </span><span class="c1">// Dereference</span>
+<span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="k">operator</span><span class="o">-&gt;</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                 </span><span class="c1">// Member access</span>
+<span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="p">[](</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">         </span><span class="c1">// Array subscript (array specialization only)</span>
+</pre></div>
+</div>
+</section>
+<section id="modifiers">
+<h4>Modifiers<a class="headerlink" href="#modifiers" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">pointer</span><span class="w"> </span><span class="nf">release</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                     </span><span class="c1">// Release ownership, return pointer</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="n">pointer</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pointer</span><span class="p">())</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">     </span><span class="c1">// Replace managed object</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="n">UniquePtr</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">           </span><span class="c1">// Exchange contents</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="comparison-operators">
+<h3>Comparison Operators<a class="headerlink" href="#comparison-operators" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T1</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">D1</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">T2</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">D2</span><span class="o">&gt;</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T1</span><span class="p">,</span><span class="w"> </span><span class="n">D1</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T2</span><span class="p">,</span><span class="w"> </span><span class="n">D2</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T1</span><span class="p">,</span><span class="w"> </span><span class="n">D1</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T2</span><span class="p">,</span><span class="w"> </span><span class="n">D2</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T1</span><span class="p">,</span><span class="w"> </span><span class="n">D1</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T2</span><span class="p">,</span><span class="w"> </span><span class="n">D2</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T1</span><span class="p">,</span><span class="w"> </span><span class="n">D1</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T2</span><span class="p">,</span><span class="w"> </span><span class="n">D2</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T1</span><span class="p">,</span><span class="w"> </span><span class="n">D1</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T2</span><span class="p">,</span><span class="w"> </span><span class="n">D2</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T1</span><span class="p">,</span><span class="w"> </span><span class="n">D1</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T2</span><span class="p">,</span><span class="w"> </span><span class="n">D2</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+
+<span class="c1">// Comparisons with nullptr</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">nullptr_t</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">nullptr_t</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">nullptr_t</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="n">nullptr_t</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="p">,</span><span class="w"> </span><span class="n">D</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="factory-functions">
+<h3>Factory Functions<a class="headerlink" href="#factory-functions" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span>
+<span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">make_unique</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">);</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="p">[]</span><span class="o">&gt;</span><span class="w"> </span><span class="n">make_unique_array</span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="sharedptr-details">
+<h2>SharedPtr Details<a class="headerlink" href="#sharedptr-details" title="Link to this heading"></a></h2>
+<section id="id1">
+<h3>Basic Usage<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+
+<span class="c1">// Basic construction</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p1</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="kt">int</span><span class="p">(</span><span class="mi">42</span><span class="p">));</span>
+
+<span class="c1">// Factory function (recommended)</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+
+<span class="c1">// Shared ownership</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">p3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p2</span><span class="p">;</span><span class="w">  </span><span class="c1">// p2 and p3 share ownership</span>
+
+<span class="c1">// Reference count</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p2</span><span class="p">.</span><span class="n">use_count</span><span class="p">();</span><span class="w">  </span><span class="c1">// 2</span>
+</pre></div>
+</div>
+</section>
+<section id="reference-counting">
+<h3>Reference Counting<a class="headerlink" href="#reference-counting" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> maintains a reference count that tracks the number of <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> instances sharing ownership:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">use_count</span><span class="p">();</span><span class="w">  </span><span class="c1">// 1</span>
+
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">use_count</span><span class="p">();</span><span class="w">  </span><span class="c1">// 2</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">p3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p1</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">use_count</span><span class="p">();</span><span class="w">  </span><span class="c1">// 3</span>
+<span class="p">}</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p1</span><span class="p">.</span><span class="n">use_count</span><span class="p">();</span><span class="w">  </span><span class="c1">// 1</span>
+<span class="c1">// Object destroyed when p1 goes out of scope</span>
+</pre></div>
+</div>
+</section>
+<section id="thread-safety">
+<h3>Thread Safety<a class="headerlink" href="#thread-safety" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> provides thread-safe reference counting:</p>
+<p><strong>Thread-Safe Operations</strong>:</p>
+<ul class="simple">
+<li><p>Copying <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> instances (increments reference count atomically)</p></li>
+<li><p>Destroying <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> instances (decrements reference count atomically)</p></li>
+<li><p>Reading <code class="docutils literal notranslate"><span class="pre">use_count()</span></code> from multiple threads</p></li>
+<li><p>Different <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> instances managing the same object</p></li>
+</ul>
+<p><strong>Not Thread-Safe</strong>:</p>
+<ul class="simple">
+<li><p>Modifying the same <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> object from multiple threads (e.g., concurrent <code class="docutils literal notranslate"><span class="pre">reset()</span></code> or <code class="docutils literal notranslate"><span class="pre">operator=</span></code>)</p></li>
+<li><p>Accessing the managed object itself (requires external synchronization)</p></li>
+</ul>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="c1">// Thread 1</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">copy1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shared</span><span class="p">;</span><span class="w">  </span><span class="c1">// Safe: atomic increment</span>
+
+<span class="c1">// Thread 2</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">copy2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shared</span><span class="p">;</span><span class="w">  </span><span class="c1">// Safe: atomic increment</span>
+
+<span class="c1">// Not safe without external lock:</span>
+<span class="c1">// Thread 1: shared.reset();</span>
+<span class="c1">// Thread 2: shared.reset();</span>
+</pre></div>
+</div>
+</section>
+<section id="id2">
+<h3>Custom Deleters<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> can use custom deleters, stored in the control block:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">ResourceDeleter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="n">Resource</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cleanup_resource</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+<span class="w">        </span><span class="k">delete</span><span class="w"> </span><span class="n">p</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">res</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">Resource</span><span class="p">(),</span><span class="w"> </span><span class="n">ResourceDeleter</span><span class="p">{});</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: Unlike <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code>, the deleter type is not part of <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code>’s
+type. All <code class="docutils literal notranslate"><span class="pre">SharedPtr&lt;T&gt;</span></code> instances have the same type regardless of deleter.</p>
+</section>
+<section id="id3">
+<h3>Type Conversions<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> supports conversions between related types:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Base</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Derived</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Base</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">};</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;</span><span class="w"> </span><span class="n">derived</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Derived</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Base</span><span class="o">&gt;</span><span class="w"> </span><span class="n">base</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">derived</span><span class="p">;</span><span class="w">  </span><span class="c1">// Copy conversion</span>
+<span class="c1">// Both derived and base share ownership</span>
+</pre></div>
+</div>
+</section>
+<section id="id4">
+<h3>Member Functions<a class="headerlink" href="#id4" title="Link to this heading"></a></h3>
+<section id="id5">
+<h4>Constructors<a class="headerlink" href="#id5" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">SharedPtr</span><span class="p">();</span><span class="w">                                    </span><span class="c1">// Default construct (null)</span>
+<span class="n">SharedPtr</span><span class="p">(</span><span class="n">nullptr_t</span><span class="p">);</span><span class="w">                           </span><span class="c1">// Null pointer</span>
+<span class="k">explicit</span><span class="w"> </span><span class="n">SharedPtr</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w">                       </span><span class="c1">// Take ownership of p</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Deleter</span><span class="o">&gt;</span>
+<span class="n">SharedPtr</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">Deleter</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w">                     </span><span class="c1">// With custom deleter</span>
+<span class="n">SharedPtr</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">              </span><span class="c1">// Copy constructor</span>
+<span class="n">SharedPtr</span><span class="p">(</span><span class="n">SharedPtr</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">                   </span><span class="c1">// Move constructor</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="o">&gt;</span>
+<span class="n">SharedPtr</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">           </span><span class="c1">// Converting copy</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="o">&gt;</span>
+<span class="n">SharedPtr</span><span class="p">(</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">                </span><span class="c1">// Converting move</span>
+</pre></div>
+</div>
+</section>
+<section id="id6">
+<h4>Observers<a class="headerlink" href="#id6" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="nf">get</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                        </span><span class="c1">// Get raw pointer</span>
+<span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="k">operator</span><span class="o">*</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                  </span><span class="c1">// Dereference</span>
+<span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="k">operator</span><span class="o">-&gt;</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                 </span><span class="c1">// Member access</span>
+<span class="k">explicit</span><span class="w"> </span><span class="k">operator</span><span class="w"> </span><span class="kt">bool</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">         </span><span class="c1">// Test if non-null</span>
+<span class="kt">size_t</span><span class="w"> </span><span class="nf">use_count</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">              </span><span class="c1">// Get reference count</span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">unique</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                   </span><span class="c1">// Test if use_count() == 1</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h4>Modifiers<a class="headerlink" href="#id7" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">reset</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                          </span><span class="c1">// Release ownership</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">);</span><span class="w">                               </span><span class="c1">// Replace with new object</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">Deleter</span><span class="o">&gt;</span>
+<span class="kt">void</span><span class="w"> </span><span class="n">reset</span><span class="p">(</span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">Deleter</span><span class="w"> </span><span class="n">d</span><span class="p">);</span><span class="w">                    </span><span class="c1">// Replace with new object and deleter</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="n">SharedPtr</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">           </span><span class="c1">// Exchange contents</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h3>Comparison Operators<a class="headerlink" href="#id8" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="o">&gt;</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&gt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&gt;=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+
+<span class="c1">// Comparisons with nullptr</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">nullptr_t</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">==</span><span class="p">(</span><span class="n">nullptr_t</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">nullptr_t</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">!=</span><span class="p">(</span><span class="n">nullptr_t</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">,</span><span class="w"> </span><span class="n">nullptr_t</span><span class="p">);</span>
+<span class="kt">bool</span><span class="w"> </span><span class="k">operator</span><span class="o">&lt;</span><span class="p">(</span><span class="n">nullptr_t</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="p">);</span>
+<span class="c1">// ... (additional ordering comparisons with nullptr)</span>
+</pre></div>
+</div>
+</section>
+<section id="factory-function">
+<h3>Factory Function<a class="headerlink" href="#factory-function" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="p">,</span><span class="w"> </span><span class="k">class</span><span class="p">...</span><span class="w"> </span><span class="n">Args</span><span class="o">&gt;</span>
+<span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">make_shared</span><span class="p">(</span><span class="n">Args</span><span class="o">&amp;&amp;</span><span class="p">...</span><span class="w"> </span><span class="n">args</span><span class="p">);</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: This implementation uses two allocations (object + control block).
+The standard library’s <code class="docutils literal notranslate"><span class="pre">std::make_shared</span></code> uses a single allocation for better
+performance.</p>
+</section>
+</section>
+<section id="weakptr-details">
+<h2>WeakPtr Details<a class="headerlink" href="#weakptr-details" title="Link to this heading"></a></h2>
+<section id="id9">
+<h3>Basic Usage<a class="headerlink" href="#id9" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">weak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shared</span><span class="p">;</span>
+
+<span class="c1">// Check if still valid</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">weak</span><span class="p">.</span><span class="n">expired</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">locked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">locked</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="o">*</span><span class="n">locked</span><span class="p">;</span><span class="w">  </span><span class="c1">// 42</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="purpose-and-use-cases">
+<h3>Purpose and Use Cases<a class="headerlink" href="#purpose-and-use-cases" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">WeakPtr</span></code> solves several important problems:</p>
+<section id="breaking-reference-cycles">
+<h4>Breaking Reference Cycles<a class="headerlink" href="#breaking-reference-cycles" title="Link to this heading"></a></h4>
+<p>Prevents memory leaks in circular references:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">next</span><span class="p">;</span><span class="w">  </span><span class="c1">// Strong reference</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">    </span><span class="c1">// Weak reference (breaks cycle)</span>
+<span class="p">};</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">n1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">n2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="n">n1</span><span class="o">-&gt;</span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n2</span><span class="p">;</span>
+<span class="n">n2</span><span class="o">-&gt;</span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Weak pointer prevents cycle</span>
+</pre></div>
+</div>
+</section>
+<section id="cache-implementation">
+<h4>Cache Implementation<a class="headerlink" href="#cache-implementation" title="Link to this heading"></a></h4>
+<p>Allows objects to be cached without preventing cleanup:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">cache</span><span class="p">;</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get_resource</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cache</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">cache</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">locked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">.</span><span class="n">lock</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">locked</span><span class="p">;</span><span class="w">  </span><span class="c1">// Cache hit</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// Cache miss, create new</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="w">    </span><span class="n">cache</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resource</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">resource</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="observer-pattern">
+<h4>Observer Pattern<a class="headerlink" href="#observer-pattern" title="Link to this heading"></a></h4>
+<p>Allows observers without preventing subject destruction:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">Subject</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Observer</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">observers_</span><span class="p">;</span>
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">notify</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">weak</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">observers_</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">obs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">lock</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="n">obs</span><span class="o">-&gt;</span><span class="n">update</span><span class="p">();</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="expiration">
+<h3>Expiration<a class="headerlink" href="#expiration" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">WeakPtr</span></code> automatically expires when the referenced object is destroyed:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">weak</span><span class="p">;</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="w">    </span><span class="n">weak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shared</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">expired</span><span class="p">();</span><span class="w">  </span><span class="c1">// false</span>
+<span class="p">}</span>
+<span class="c1">// shared destroyed here</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">expired</span><span class="p">();</span><span class="w">  </span><span class="c1">// true</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">locked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">locked</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="k">nullptr</span><span class="p">);</span><span class="w">  </span><span class="c1">// true</span>
+</pre></div>
+</div>
+</section>
+<section id="thread-safe-promotion">
+<h3>Thread-Safe Promotion<a class="headerlink" href="#thread-safe-promotion" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">WeakPtr::lock()</span></code> is thread-safe and atomically promotes to <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="w"> </span><span class="n">weak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shared</span><span class="p">;</span>
+
+<span class="c1">// Thread 1</span>
+<span class="n">shared</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span><span class="w">  </span><span class="c1">// May destroy object</span>
+
+<span class="c1">// Thread 2</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">locked</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span><span class="w">  </span><span class="c1">// Thread-safe</span>
+<span class="c1">// Either gets valid SharedPtr or null, never dangling pointer</span>
+</pre></div>
+</div>
+<p>The implementation uses <code class="docutils literal notranslate"><span class="pre">compare_exchange_weak</span></code> in a loop to atomically check
+if the object is still alive and increment the reference count if so.</p>
+</section>
+<section id="id10">
+<h3>Member Functions<a class="headerlink" href="#id10" title="Link to this heading"></a></h3>
+<section id="id11">
+<h4>Constructors<a class="headerlink" href="#id11" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">WeakPtr</span><span class="p">();</span><span class="w">                                      </span><span class="c1">// Default construct (empty)</span>
+<span class="n">WeakPtr</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">sp</span><span class="p">);</span><span class="w">                </span><span class="c1">// Construct from SharedPtr</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="o">&gt;</span>
+<span class="n">WeakPtr</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">sp</span><span class="p">);</span><span class="w">                </span><span class="c1">// Converting construct from SharedPtr</span>
+<span class="n">WeakPtr</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">WeakPtr</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">                  </span><span class="c1">// Copy constructor</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="o">&gt;</span>
+<span class="n">WeakPtr</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">               </span><span class="c1">// Converting copy</span>
+<span class="n">WeakPtr</span><span class="p">(</span><span class="n">WeakPtr</span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">                       </span><span class="c1">// Move constructor</span>
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">U</span><span class="o">&gt;</span>
+<span class="n">WeakPtr</span><span class="p">(</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">U</span><span class="o">&gt;&amp;&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">);</span><span class="w">                    </span><span class="c1">// Converting move</span>
+</pre></div>
+</div>
+</section>
+<section id="id12">
+<h4>Observers<a class="headerlink" href="#id12" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">size_t</span><span class="w"> </span><span class="nf">use_count</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">              </span><span class="c1">// Get strong reference count</span>
+<span class="kt">bool</span><span class="w"> </span><span class="nf">expired</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                  </span><span class="c1">// Test if object destroyed</span>
+<span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">lock</span><span class="p">()</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">             </span><span class="c1">// Try to create SharedPtr</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h4>Modifiers<a class="headerlink" href="#id13" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span><span class="w"> </span><span class="nf">reset</span><span class="p">()</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">                          </span><span class="c1">// Release weak reference</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">swap</span><span class="p">(</span><span class="n">WeakPtr</span><span class="o">&amp;</span><span class="w"> </span><span class="n">other</span><span class="p">)</span><span class="w"> </span><span class="k">noexcept</span><span class="p">;</span><span class="w">             </span><span class="c1">// Exchange contents</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="control-block-lifetime">
+<h3>Control Block Lifetime<a class="headerlink" href="#control-block-lifetime" title="Link to this heading"></a></h3>
+<p>The control block survives as long as either strong or weak references exist:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">weak</span><span class="p">;</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="w">    </span><span class="n">weak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">shared</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="c1">// Object destroyed, but control block still exists</span>
+
+<span class="n">weak</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span>
+<span class="c1">// Control block now destroyed</span>
+</pre></div>
+</div>
+<p>This ensures <code class="docutils literal notranslate"><span class="pre">WeakPtr</span></code> can safely detect expiration without accessing freed memory.</p>
+</section>
+</section>
+<section id="usage-examples">
+<h2>Usage Examples<a class="headerlink" href="#usage-examples" title="Link to this heading"></a></h2>
+<section id="basic-ownership-patterns">
+<h3>Basic Ownership Patterns<a class="headerlink" href="#basic-ownership-patterns" title="Link to this heading"></a></h3>
+<section id="unique-ownership">
+<h4>Unique Ownership<a class="headerlink" href="#unique-ownership" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">process_data</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Data</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">data</span><span class="o">-&gt;</span><span class="n">process</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Automatic cleanup when function returns</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="shared-ownership">
+<h4>Shared Ownership<a class="headerlink" href="#shared-ownership" title="Link to this heading"></a></h4>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Resource</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Large resource...</span>
+<span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">workers</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">distribute_work</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="p">();</span>
+
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">10</span><span class="p">;</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">workers</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">resource</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// Resource shared among all workers</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="polymorphism">
+<h3>Polymorphism<a class="headerlink" href="#polymorphism" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;vector&gt;</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">Shape</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">draw</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Shape</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Circle</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">draw</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Square</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Shape</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">draw</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">};</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">Shape</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">shapes</span><span class="p">;</span>
+<span class="n">shapes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Circle</span><span class="o">&gt;</span><span class="p">());</span>
+<span class="n">shapes</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Square</span><span class="o">&gt;</span><span class="p">());</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">shape</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">shapes</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">shape</span><span class="o">-&gt;</span><span class="n">draw</span><span class="p">();</span><span class="w">  </span><span class="c1">// Polymorphic call</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="raii-resource-management">
+<h3>RAII Resource Management<a class="headerlink" href="#raii-resource-management" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">FileDeleter</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">operator</span><span class="p">()(</span><span class="kt">FILE</span><span class="o">*</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="n">fclose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">process_file</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">filename</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="kt">FILE</span><span class="p">,</span><span class="w"> </span><span class="n">FileDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">file</span><span class="p">(</span><span class="n">fopen</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;r&quot;</span><span class="p">));</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">file</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">throw</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">runtime_error</span><span class="p">(</span><span class="s">&quot;Failed to open file&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="c1">// Use file...</span>
+
+<span class="w">    </span><span class="c1">// Automatic close on all exit paths (return, exception, etc.)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="factory-pattern">
+<h3>Factory Pattern<a class="headerlink" href="#factory-pattern" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">Widget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="o">~</span><span class="n">Widget</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">default</span><span class="p">;</span>
+<span class="w">    </span><span class="k">virtual</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">action</span><span class="p">()</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">ButtonWidget</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Widget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">action</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="k">struct</span><span class="w"> </span><span class="nc">SliderWidget</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">Widget</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="nf">action</span><span class="p">()</span><span class="w"> </span><span class="k">override</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* ... */</span><span class="w"> </span><span class="p">}</span>
+<span class="p">};</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">Widget</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_widget</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">type</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;button&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">ButtonWidget</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">type</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;slider&quot;</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">SliderWidget</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="k">nullptr</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="doubly-linked-list">
+<h3>Doubly Linked List<a class="headerlink" href="#doubly-linked-list" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">T</span><span class="w"> </span><span class="n">data</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">next</span><span class="p">;</span><span class="w">  </span><span class="c1">// Strong reference (owns)</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">    </span><span class="c1">// Weak reference (observes)</span>
+
+<span class="w">    </span><span class="n">Node</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">data</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{}</span>
+<span class="p">};</span>
+
+<span class="k">template</span><span class="w"> </span><span class="o">&lt;</span><span class="k">class</span><span class="w"> </span><span class="nc">T</span><span class="o">&gt;</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">List</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">head_</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">tail_</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">push_back</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">T</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">new_node</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="n">value</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">tail</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tail_</span><span class="p">.</span><span class="n">lock</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">tail</span><span class="o">-&gt;</span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_node</span><span class="p">;</span>
+<span class="w">            </span><span class="n">new_node</span><span class="o">-&gt;</span><span class="n">prev</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tail_</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="n">head_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_node</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">tail_</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">new_node</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="caching-system">
+<h3>Caching System<a class="headerlink" href="#caching-system" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;pointers.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;map&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ResourceCache</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">map</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">cache_</span><span class="p">;</span>
+
+<span class="k">public</span><span class="o">:</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">get</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&amp;</span><span class="w"> </span><span class="n">key</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Try cache first</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">it</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cache_</span><span class="p">.</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">it</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="n">cache_</span><span class="p">.</span><span class="n">end</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">cached</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">it</span><span class="o">-&gt;</span><span class="n">second</span><span class="p">.</span><span class="n">lock</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">cached</span><span class="p">;</span><span class="w">  </span><span class="c1">// Cache hit</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">            </span><span class="c1">// Expired, remove from cache</span>
+<span class="w">            </span><span class="n">cache_</span><span class="p">.</span><span class="n">erase</span><span class="p">(</span><span class="n">it</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="c1">// Cache miss, load resource</span>
+<span class="w">        </span><span class="k">auto</span><span class="w"> </span><span class="n">resource</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="p">(</span><span class="n">key</span><span class="p">);</span>
+<span class="w">        </span><span class="n">cache_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">resource</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">resource</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="kt">void</span><span class="w"> </span><span class="n">clear</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cache_</span><span class="p">.</span><span class="n">clear</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="performance-characteristics">
+<h2>Performance Characteristics<a class="headerlink" href="#performance-characteristics" title="Link to this heading"></a></h2>
+<section id="uniqueptr-performance">
+<h3>UniquePtr Performance<a class="headerlink" href="#uniqueptr-performance" title="Link to this heading"></a></h3>
+<p><strong>Size</strong>:
+* Default deleter: sizeof(T*)
+* Custom value deleter: sizeof(T*) + sizeof(Deleter)
+* Reference deleter: sizeof(T*)</p>
+<p><strong>Operations</strong>:
+* Construction: O(1)
+* Destruction: O(1) + deleter cost
+* Move: O(1)
+* Copy: Not available
+* Comparison: O(1)</p>
+<p><strong>Overhead</strong>: Zero runtime overhead with default deleter</p>
+</section>
+<section id="sharedptr-performance">
+<h3>SharedPtr Performance<a class="headerlink" href="#sharedptr-performance" title="Link to this heading"></a></h3>
+<p><strong>Size</strong>:
+* Always 2 * sizeof(void*) (object pointer + control block pointer)</p>
+<p><strong>Operations</strong>:
+* Construction: O(1) + allocation (control block)
+* Copy: O(1) + atomic increment
+* Destruction: O(1) + atomic decrement (+ object deletion if last)
+* Move: O(1)
+* use_count(): O(1) + atomic load</p>
+<p><strong>Overhead</strong>:
+* Control block allocation (separate from object)
+* Atomic operations for reference counting
+* Two pointers instead of one</p>
+</section>
+<section id="weakptr-performance">
+<h3>WeakPtr Performance<a class="headerlink" href="#weakptr-performance" title="Link to this heading"></a></h3>
+<p><strong>Size</strong>:
+* Same as SharedPtr: 2 * sizeof(void*)</p>
+<p><strong>Operations</strong>:
+* Construction: O(1) + atomic increment (weak count)
+* Copy: O(1) + atomic increment
+* Destruction: O(1) + atomic decrement
+* Move: O(1)
+* lock(): O(1) + atomic compare-and-swap loop
+* expired(): O(1) + atomic load</p>
+<p><strong>Overhead</strong>:
+* Minimal - weak references don’t affect object lifetime
+* lock() may retry in highly contended scenarios</p>
+</section>
+<section id="memory-layout">
+<h3>Memory Layout<a class="headerlink" href="#memory-layout" title="Link to this heading"></a></h3>
+<section id="uniqueptr-memory-layout-default-deleter">
+<h4>UniquePtr Memory Layout (Default Deleter)<a class="headerlink" href="#uniqueptr-memory-layout-default-deleter" title="Link to this heading"></a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>UniquePtr&lt;T&gt;: [T* ptr]
+
+Heap: [T object]
+</pre></div>
+</div>
+</section>
+<section id="sharedptr-memory-layout">
+<h4>SharedPtr Memory Layout<a class="headerlink" href="#sharedptr-memory-layout" title="Link to this heading"></a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SharedPtr&lt;T&gt;: [T* ptr] [ControlBlock* cb]
+
+Heap object:  [T object]
+Control block: [atomic&lt;size_t&gt; strong]
+               [atomic&lt;size_t&gt; weak]
+               [vtable ptr]
+               [T* ptr]
+               [Deleter del]
+</pre></div>
+</div>
+</section>
+<section id="weakptr-memory-layout">
+<h4>WeakPtr Memory Layout<a class="headerlink" href="#weakptr-memory-layout" title="Link to this heading"></a></h4>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>WeakPtr&lt;T&gt;: [T* ptr] [ControlBlock* cb]
+
+(Shares control block with SharedPtr)
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="comparison-with-standard-library">
+<h2>Comparison with Standard Library<a class="headerlink" href="#comparison-with-standard-library" title="Link to this heading"></a></h2>
+<p>This implementation closely follows the C++ standard library:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>csalt++ Component</p></th>
+<th class="head"><p>Standard Library Equivalent</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cslt::UniquePtr&lt;T,</span> <span class="pre">D&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">std::unique_ptr&lt;T,</span> <span class="pre">D&gt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cslt::SharedPtr&lt;T&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">std::shared_ptr&lt;T&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cslt::WeakPtr&lt;T&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">std::weak_ptr&lt;T&gt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cslt::make_unique&lt;T&gt;(args...)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">std::make_unique&lt;T&gt;(args...)</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cslt::make_shared&lt;T&gt;(args...)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">std::make_shared&lt;T&gt;(args...)</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">cslt::DefaultDelete&lt;T&gt;</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">std::default_delete&lt;T&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<section id="key-differences">
+<h3>Key Differences<a class="headerlink" href="#key-differences" title="Link to this heading"></a></h3>
+<p><strong>SharedPtr / make_shared</strong>:</p>
+<ul class="simple">
+<li><p>Uses two allocations (object + control block) instead of one</p></li>
+<li><p>Simpler implementation, slight performance cost</p></li>
+<li><p>Control block structure is visible in this implementation</p></li>
+</ul>
+<p><strong>Missing Features</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">enable_shared_from_this&lt;T&gt;</span></code> - Safe sharing of <code class="docutils literal notranslate"><span class="pre">this</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weak_ptr::owner_before()</span></code> - Ordering by ownership</p></li>
+<li><p>Allocator support for <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unique_ptr</span></code> hash support</p></li>
+<li><p>Array support for <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> (C++17)</p></li>
+</ul>
+<p><strong>Thread Safety</strong>:</p>
+<ul class="simple">
+<li><p>Reference counting is always atomic (no separate <code class="docutils literal notranslate"><span class="pre">atomic_shared_ptr</span></code>)</p></li>
+<li><p>Same thread-safety guarantees as standard library</p></li>
+</ul>
+</section>
+</section>
+<section id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Link to this heading"></a></h2>
+<section id="compiler-support">
+<h3>Compiler Support<a class="headerlink" href="#compiler-support" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>C++11 or later</p></li>
+<li><p>Support for variadic templates</p></li>
+<li><p>Support for template aliases</p></li>
+<li><p>Support for <code class="docutils literal notranslate"><span class="pre">constexpr</span></code> and <code class="docutils literal notranslate"><span class="pre">noexcept</span></code></p></li>
+<li><p>Support for <code class="docutils literal notranslate"><span class="pre">std::atomic</span></code></p></li>
+<li><p>Support for deleted functions (<code class="docutils literal notranslate"><span class="pre">=</span> <span class="pre">delete</span></code>)</p></li>
+</ul>
+</section>
+<section id="dependencies">
+<h3>Dependencies<a class="headerlink" href="#dependencies" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">utilities.hpp</span></code> - Type traits, move/forward, reference counting</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&lt;cstddef&gt;</span></code> - For <code class="docutils literal notranslate"><span class="pre">size_t</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<section id="prefer-make-unique-and-make-shared">
+<h3>Prefer make_unique and make_shared<a class="headerlink" href="#prefer-make-unique-and-make-shared" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Preferred</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">...);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">args</span><span class="p">...);</span>
+
+<span class="c1">// Avoid</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">args</span><span class="p">...));</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="k">new</span><span class="w"> </span><span class="n">T</span><span class="p">(</span><span class="n">args</span><span class="p">...));</span>
+</pre></div>
+</div>
+<p><strong>Reasons</strong>:</p>
+<ul class="simple">
+<li><p>Exception safety (no leak if constructor throws)</p></li>
+<li><p>More concise</p></li>
+<li><p>Better performance (for <code class="docutils literal notranslate"><span class="pre">make_shared</span></code>)</p></li>
+</ul>
+</section>
+<section id="use-uniqueptr-by-default">
+<h3>Use UniquePtr by Default<a class="headerlink" href="#use-uniqueptr-by-default" title="Link to this heading"></a></h3>
+<p>Start with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> and only use <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> when shared ownership is actually needed:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Good: clear ownership</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create_resource</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Only use SharedPtr when truly needed</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Cache</span><span class="o">&gt;</span><span class="w"> </span><span class="n">global_cache</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">Cache</span><span class="o">&gt;</span><span class="p">();</span>
+</pre></div>
+</div>
+</section>
+<section id="avoid-circular-sharedptr-references">
+<h3>Avoid Circular SharedPtr References<a class="headerlink" href="#avoid-circular-sharedptr-references" title="Link to this heading"></a></h3>
+<p>Use <code class="docutils literal notranslate"><span class="pre">WeakPtr</span></code> to break cycles:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Bad: memory leak</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">next</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">  </span><span class="c1">// Circular reference!</span>
+<span class="p">};</span>
+
+<span class="c1">// Good: cycle broken</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Node</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">next</span><span class="p">;</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Node</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prev</span><span class="p">;</span><span class="w">  </span><span class="c1">// Weak reference</span>
+<span class="p">};</span>
+</pre></div>
+</div>
+</section>
+<section id="check-weakptr-before-use">
+<h3>Check WeakPtr Before Use<a class="headerlink" href="#check-weakptr-before-use" title="Link to this heading"></a></h3>
+<p>Always check <code class="docutils literal notranslate"><span class="pre">expired()</span></code> or test the result of <code class="docutils literal notranslate"><span class="pre">lock()</span></code>:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">WeakPtr</span><span class="o">&lt;</span><span class="n">Resource</span><span class="o">&gt;</span><span class="w"> </span><span class="n">weak</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="cm">/* ... */</span><span class="p">;</span>
+
+<span class="c1">// Method 1: Check expired</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">weak</span><span class="p">.</span><span class="n">expired</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">lock</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Use shared...</span>
+<span class="p">}</span>
+
+<span class="c1">// Method 2: Check lock result</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">weak</span><span class="p">.</span><span class="n">lock</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Use shared...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="don-t-mix-ownership-models">
+<h3>Don’t Mix Ownership Models<a class="headerlink" href="#don-t-mix-ownership-models" title="Link to this heading"></a></h3>
+<p>Avoid creating multiple <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> instances from the same raw pointer:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Bad: double delete!</span>
+<span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">T</span><span class="p">();</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p1</span><span class="p">(</span><span class="n">raw</span><span class="p">);</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p2</span><span class="p">(</span><span class="n">raw</span><span class="p">);</span><span class="w">  </span><span class="c1">// WRONG: two control blocks</span>
+
+<span class="c1">// Good: share through copy</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p1</span><span class="p">;</span><span class="w">  </span><span class="c1">// Correct: shared control block</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="common-pitfalls">
+<h2>Common Pitfalls<a class="headerlink" href="#common-pitfalls" title="Link to this heading"></a></h2>
+<section id="dangling-references-from-get">
+<h3>Dangling References from get()<a class="headerlink" href="#dangling-references-from-get" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">T</span><span class="o">*</span><span class="w"> </span><span class="n">raw</span><span class="p">;</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="n">raw</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ptr</span><span class="p">.</span><span class="n">get</span><span class="p">();</span><span class="w">  </span><span class="c1">// Get raw pointer</span>
+<span class="p">}</span>
+<span class="c1">// ptr destroyed, raw is now dangling!</span>
+<span class="c1">// *raw;  // Undefined behavior</span>
+</pre></div>
+</div>
+<p><strong>Solution</strong>: Keep the smart pointer alive as long as you need access.</p>
+</section>
+<section id="forgetting-to-move-uniqueptr">
+<h3>Forgetting to Move UniquePtr<a class="headerlink" href="#forgetting-to-move-uniqueptr" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">create</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_unique</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">ptr</span><span class="p">;</span><span class="w">  </span><span class="c1">// Implicitly moved (OK)</span>
+<span class="p">}</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="n">transfer</span><span class="p">(</span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">dest</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="w"> </span><span class="n">src</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">dest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">src</span><span class="p">;</span><span class="w">  </span><span class="c1">// ERROR: copy not allowed</span>
+<span class="w">    </span><span class="n">dest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">move</span><span class="p">(</span><span class="n">src</span><span class="p">);</span><span class="w">  </span><span class="c1">// OK</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="modifying-shared-object-without-synchronization">
+<h3>Modifying Shared Object Without Synchronization<a class="headerlink" href="#modifying-shared-object-without-synchronization" title="Link to this heading"></a></h3>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">SharedPtr</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w"> </span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">make_shared</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="c1">// Thread 1</span>
+<span class="o">*</span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">42</span><span class="p">;</span><span class="w">  </span><span class="c1">// Data race!</span>
+
+<span class="c1">// Thread 2</span>
+<span class="o">*</span><span class="n">shared</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">99</span><span class="p">;</span><span class="w">  </span><span class="c1">// Data race!</span>
+</pre></div>
+</div>
+<p><strong>Solution</strong>: Use external synchronization (mutex) when modifying shared data.</p>
+</section>
+</section>
+<section id="future-enhancements">
+<h2>Future Enhancements<a class="headerlink" href="#future-enhancements" title="Link to this heading"></a></h2>
+<p>Potential additions for future versions:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">enable_shared_from_this&lt;T&gt;</span></code> - Safe <code class="docutils literal notranslate"><span class="pre">this</span></code> sharing in member functions</p></li>
+<li><p>Single-allocation <code class="docutils literal notranslate"><span class="pre">make_shared</span></code> optimization</p></li>
+<li><p>Allocator support for custom memory allocation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">atomic_shared_ptr</span></code> and <code class="docutils literal notranslate"><span class="pre">atomic_weak_ptr</span></code> wrappers</p></li>
+<li><p>Array support for <code class="docutils literal notranslate"><span class="pre">SharedPtr</span></code> (<code class="docutils literal notranslate"><span class="pre">SharedPtr&lt;T[]&gt;</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">unique_ptr</span></code> hash specialization</p></li>
+<li><p>C++17/20 features (deduction guides, <code class="docutils literal notranslate"><span class="pre">std::span</span></code> integration)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">observer_ptr</span></code> - Non-owning raw pointer wrapper</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Utilities.html" class="btn btn-neutral float-left" title="Utilities and Type Traits Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Error.html" class="btn btn-neutral float-right" title="Error Handling Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

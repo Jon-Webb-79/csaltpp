@@ -4,7 +4,7 @@
 Utilities and Type Traits Overview
 **********************************
 
-**utilities.hpp** provides foundational type traits, metaprogramming utilities, 
+``utilities.hpp`` provides foundational type traits, metaprogramming utilities, 
 and core C++ utilities that serve as building blocks for more complex library 
 components. The header is designed to be self-contained with minimal 
 dependencies on the standard library, emphasizing clarity, correctness, and 

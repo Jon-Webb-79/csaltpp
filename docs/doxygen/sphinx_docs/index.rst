@@ -81,6 +81,7 @@ Typical Use Cases
    :caption: Modules:
 
     Utilities <Utilities>
+    Smart Pointers <Pointers>
     Error <Error>
     Allocator <Allocator>
     

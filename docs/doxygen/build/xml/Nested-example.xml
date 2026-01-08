@@ -1,0 +1,26 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Nested-example" kind="example">
+    <compoundname>Nested</compoundname>
+    <briefdescription>
+<para>sub-arenas </para>
+    </briefdescription>
+    <detaileddescription>
+<para>sub-arenas <programlisting><codeline><highlight class="normal">auto<sp/>parent<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(32768).value());</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>sub<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::SubArena(*parent,<sp/>16384).value());</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>subsub<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::SubArena(*sub,<sp/>8192).value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Three-level<sp/>hierarchy<sp/>works</highlight></codeline>
+<codeline><highlight class="normal">parent-&gt;alloc(128);</highlight></codeline>
+<codeline><highlight class="normal">sub-&gt;alloc(256);</highlight></codeline>
+<codeline><highlight class="normal">subsub-&gt;alloc(512);</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para>Heap() For arena that owns its memory </para>
+</simplesect>
+<simplesect kind="see"><para>Stack() For arena using user buffer <programlisting filename="Nested"></programlisting> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

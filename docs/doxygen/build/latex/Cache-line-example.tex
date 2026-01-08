@@ -1,0 +1,54 @@
+\hypertarget{Cache-line-example}{}\doxysection{Cache-\/line}
+Allocate aligned memory from the arena
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Number of bytes to allocate \\
+\hline
+{\em alignment} & Required alignment in bytes (must be power of 2, 0 = use default) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory (default\+: false)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected containing pointer to aligned memory on success, or error on failure
+\end{DoxyReturn}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em Never} & throws -\/ returns Expected with error on failure\\
+\hline
+\end{DoxyExceptions}
+Like alloc(), but ensures the returned pointer is aligned to the specified boundary. If alignment is 0, uses the arena\textquotesingle{}s default alignment. If alignment is not a power of 2, it is automatically rounded up to the next power of 2.
+
+The alignment requirement may cause padding to be inserted, which counts against the arena\textquotesingle{}s capacity but isn\textquotesingle{}t directly usable.
+
+
+\begin{DoxyRetVals}{Return values}
+{\em Expected} & with aligned pointer on success \\
+\hline
+{\em Expected} & with Argument\+Error if bytes is 0 \\
+\hline
+{\em Expected} & with Alignment\+Error if alignment normalization fails \\
+\hline
+{\em Expected} & with Memory\+Error if out of space or allocation fails \\
+\hline
+{\em Expected} & with Length\+Overflow\+Error if size calculations overflow\\
+\hline
+\end{DoxyRetVals}
+aligned allocation 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate aligned to 64-\/byte cache line}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = arena-\/>alloc\_aligned(256, 64);}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Verify alignment}}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 64 == 0);}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

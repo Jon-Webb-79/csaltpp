@@ -1,0 +1,22 @@
+\hypertarget{Multiple-example}{}\doxysection{Multiple}
+sub-\/arenas 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} parent\_result = \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(32768);}
+\DoxyCodeLine{\textcolor{keyword}{auto} parent = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(parent\_result.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create multiple independent sub-\/arenas}}
+\DoxyCodeLine{\textcolor{keyword}{auto} sub1 = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}{cslt::ArenaAllocator::SubArena}}(*parent, 8192).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto} sub2 = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}{cslt::ArenaAllocator::SubArena}}(*parent, 8192).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Each sub-\/arena is independent}}
+\DoxyCodeLine{sub1-\/>alloc(256);}
+\DoxyCodeLine{sub2-\/>alloc(512);}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

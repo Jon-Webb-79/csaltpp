@@ -1,0 +1,26 @@
+\hypertarget{Checkpoint-example}{}\doxysection{Checkpoint}
+and restore 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena\_result = \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192);}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(arena\_result.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} permanent = arena-\/>alloc(256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Save checkpoint before temporary allocations}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = arena-\/>save();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} temp1 = arena-\/>alloc(128);}
+\DoxyCodeLine{\textcolor{keyword}{auto} temp2 = arena-\/>alloc(512);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Rollback to checkpoint (frees temp1 and temp2)}}
+\DoxyCodeLine{arena-\/>restore(checkpoint);}
+\DoxyCodeLine{\textcolor{comment}{// permanent is still valid, temp1 and temp2 are now invalid}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

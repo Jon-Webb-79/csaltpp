@@ -48,6 +48,7 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{error_8hpp}{error.hpp}}"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include "{}\mbox{\hyperlink{pointers_8hpp}{pointers.hpp}}"{}}}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <iostream>}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <cstddef>}}
@@ -258,6 +259,14 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{class }ArenaAllocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{struct }ArenaDeleter \{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{operator()}}(ArenaAllocator* arena) \textcolor{keyword}{const} noexcept;}
+\DoxyCodeLine{    \};}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{class }ArenaAllocator : \textcolor{keyword}{public} Allocator \{}
 \DoxyCodeLine{    \textcolor{keyword}{private}:}
 \DoxyCodeLine{        \textcolor{keyword}{struct }Chunk \{}
@@ -283,42 +292,52 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{        Chunk* find\_chunk\_in\_chain(Chunk* target, Chunk** out\_prev = \textcolor{keyword}{nullptr}) \textcolor{keyword}{const};}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        \textcolor{keywordtype}{void} initDynamicArena(\textcolor{keywordtype}{size\_t} bytes, }
-\DoxyCodeLine{                             \textcolor{keywordtype}{bool} resize, }
-\DoxyCodeLine{                             \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\_chunk\_size}}, }
-\DoxyCodeLine{                             \textcolor{keywordtype}{size\_t} base\_align\_in);}
-\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
-\DoxyCodeLine{}
-\DoxyCodeLine{        \textcolor{keywordtype}{void} initStaticArena(\textcolor{keywordtype}{void} *buffer,}
-\DoxyCodeLine{                            \textcolor{keywordtype}{size\_t} bytes,}
-\DoxyCodeLine{                            \textcolor{keywordtype}{size\_t} base\_align\_in);}
-\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
-\DoxyCodeLine{}
-\DoxyCodeLine{        \textcolor{keywordtype}{void} initSubArena(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}{ArenaAllocator}}\& parent,}
-\DoxyCodeLine{                         \textcolor{keywordtype}{size\_t} bytes,}
-\DoxyCodeLine{                         \textcolor{keywordtype}{size\_t} base\_align\_in);}
+\DoxyCodeLine{    \textcolor{comment}{/* Private constructor for factory methods only}}
+\DoxyCodeLine{\textcolor{comment}{     * This initializes the base Allocator with default values}}
+\DoxyCodeLine{\textcolor{comment}{     * The factory methods will then set the proper values directly}}
+\DoxyCodeLine{\textcolor{comment}{     */}}
+\DoxyCodeLine{        ArenaAllocator() }
+\DoxyCodeLine{            : \mbox{\hyperlink{classcslt_1_1Allocator_aa4603a4a1a33e3519c6e30dbc3223ec6}{Allocator}}(\textcolor{keyword}{alignof}(max\_align\_t), 0, \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edafe9db55c66dd1368b469bd19ac7f7732}{ALLOC\_INVALID}}, \textcolor{keyword}{false}),}
+\DoxyCodeLine{              cur\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{              head\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{              tail\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{              min\_chunk\_(0),}
+\DoxyCodeLine{              resize\_(0) \{\}}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{public}:}
+\DoxyCodeLine{         \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}{\string~ArenaAllocator}}() noexcept \textcolor{keyword}{override} \{}
+\DoxyCodeLine{                \textcolor{keywordflow}{if} (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}})) \{}
+\DoxyCodeLine{                    \textcolor{comment}{// Free additional chunks (NOT the head)}}
+\DoxyCodeLine{                    Chunk* current = head\_ ? head\_-\/>next : \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{                    \textcolor{keywordflow}{while} (current != \textcolor{keyword}{nullptr}) \{}
+\DoxyCodeLine{                        Chunk* next = current-\/>next;}
+\DoxyCodeLine{                        ::operator \textcolor{keyword}{delete}(current);}
+\DoxyCodeLine{                        current = next;}
+\DoxyCodeLine{                    \}}
+\DoxyCodeLine{                \}}
+\DoxyCodeLine{            \}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{preprocessor}{\#if ARENA\_ENABLE\_DYNAMIC}}
-\DoxyCodeLine{        \textcolor{keyword}{explicit} \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}{ArenaAllocator}}(\textcolor{keywordtype}{size\_t} bytes,}
-\DoxyCodeLine{                                \textcolor{keywordtype}{bool} resize = \textcolor{keyword}{false},}
-\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} alignment = \textcolor{keyword}{alignof}(max\_align\_t),}
-\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\_chunk\_size}} = 4096);}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{Heap}}(\textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{             \textcolor{keywordtype}{bool} resize = \textcolor{keyword}{false},}
+\DoxyCodeLine{             \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\_chunk\_size}} = 4096,}
+\DoxyCodeLine{             \textcolor{keywordtype}{size\_t} base\_align\_in = \textcolor{keyword}{alignof}(max\_align\_t));}
 \DoxyCodeLine{\textcolor{preprocessor}{\#endif }\textcolor{comment}{/* ARENA\_ENABLE\_DYNAMIC */}\textcolor{preprocessor}{}}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}{\string~ArenaAllocator}}() noexcept \textcolor{keyword}{override};}
-\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
-\DoxyCodeLine{        }
-\DoxyCodeLine{        \textcolor{keyword}{explicit} \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}{ArenaAllocator}}(\textcolor{keywordtype}{void} *buffer,}
-\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} bytes,}
-\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} alignment = \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}{Stack}}(\textcolor{keywordtype}{void}* buffer,}
+\DoxyCodeLine{              \textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{              \textcolor{keywordtype}{size\_t} base\_align\_in = \textcolor{keyword}{alignof}(max\_align\_t));}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        \textcolor{keyword}{explicit} \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}{ArenaAllocator}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}{ArenaAllocator}}\& parent,}
-\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} bytes,}
-\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} alignment = \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}{SubArena}}(ArenaAllocator\& parent,}
+\DoxyCodeLine{                 \textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                 \textcolor{keywordtype}{size\_t} base\_align\_in = \textcolor{keyword}{alignof}(max\_align\_t));}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}{alloc}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
@@ -376,6 +395,24 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{}
 \DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}{toggle\_resize}}(\textcolor{keywordtype}{bool} toggle) noexcept;}
 \DoxyCodeLine{    \};}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{ArenaDeleter::operator()}}(ArenaAllocator* arena) \textcolor{keyword}{const} noexcept \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (!arena) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} type = arena-\/>memory\_type();}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} owns = arena-\/>owns\_memory();}
+\DoxyCodeLine{        \textcolor{keywordtype}{void}* base = arena;}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Call destructor}}
+\DoxyCodeLine{        arena-\/>\string~ArenaAllocator();}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Only free if DYNAMIC *and* owns the memory}}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (type == \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}} \&\& owns) \{}
+\DoxyCodeLine{            ::operator \textcolor{keyword}{delete}(base);}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \}}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\} \textcolor{comment}{/* cslt namespace */}}

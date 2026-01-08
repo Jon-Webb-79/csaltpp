@@ -1,0 +1,25 @@
+\hypertarget{Manual-example}{}\doxysection{Manual}
+construction (not typical) 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{ArenaAllocator* raw\_arena = \textcolor{comment}{// ... created via factory ...;}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<ArenaAllocator, ArenaDeleter>}} arena(raw\_arena, ArenaDeleter\{\});}
+\DoxyCodeLine{\textcolor{comment}{// Automatic cleanup when arena goes out of scope}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyWarning}{Warning}
+Never call \+::operator delete directly on an Arena\+Allocator created by a factory method. Always use Arena\+Deleter or let Unique\+Ptr handle it.
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+Arena\+Allocator\+::\+Heap() 
+
+Arena\+Allocator\+::\+Stack() 
+
+Arena\+Allocator\+::\+Sub\+Arena()
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

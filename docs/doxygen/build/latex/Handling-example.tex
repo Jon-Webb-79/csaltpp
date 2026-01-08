@@ -1,0 +1,29 @@
+\hypertarget{Handling-example}{}\doxysection{Handling}
+allocation failure 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(512, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Fill arena}}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (arena-\/>alloc(64).hasValue()) \{ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// This will fail -\/ no space left}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = arena-\/>alloc(128);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!result.hasValue()) \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Out of memory: "{}} << result.error().what() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+alloc\+\_\+aligned() For custom alignment 
+
+realloc() To resize last allocation 
+
+reset() To free all allocations
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

@@ -15,7 +15,9 @@ A type that represents either a value of type T or an \mbox{\hyperlink{classcslt
 \mbox{\hyperlink{classcslt_1_1Expected_a0032c1a667af0b89d6dba16c83a467ce}{Expected}} ()
 \begin{DoxyCompactList}\small\item\em Default constructor -\/ initializes with no value and generic error. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{set\+Value}} (const T \&val)
-\begin{DoxyCompactList}\small\item\em Sets the value and marks this as containing a value. \end{DoxyCompactList}\item 
+\begin{DoxyCompactList}\small\item\em Sets the value by copy and marks this as containing a value. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1Expected_abc6c60a67eeac1e4da5ac9a363ea4160}{set\+Value}} (T \&\&val)
+\begin{DoxyCompactList}\small\item\em Sets the value by move and marks this as containing a value. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{set\+Error}} (const \mbox{\hyperlink{classcslt_1_1Error}{Error}} \&err)
 \begin{DoxyCompactList}\small\item\em Sets the error and marks this as containing an error. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classcslt_1_1Expected_a457cd7aa736a7cc327310c75a2e30661}{has\+Value}} () const
@@ -30,7 +32,7 @@ const T \& \mbox{\hyperlink{classcslt_1_1Expected_a06e939d88c00473cffbcca869086c
 \begin{DoxyCompactList}\small\item\em Gets the contained error. \end{DoxyCompactList}\item 
 const \mbox{\hyperlink{classcslt_1_1Error}{Error}} \& \mbox{\hyperlink{classcslt_1_1Expected_a1bd1ec1e1713215eeba65adb58671b13}{error}} () const
 \begin{DoxyCompactList}\small\item\em Gets the contained error (const version). \end{DoxyCompactList}\item 
-T \mbox{\hyperlink{classcslt_1_1Expected_adbf1a56d52f76d40146bc86fff0ec085}{value\+Or}} (const T \&default\+\_\+val) const
+T \mbox{\hyperlink{classcslt_1_1Expected_abb62ed34ebc8a8ded1b1a27b6d820773}{value\+Or}} (T \&\&default\+\_\+val) const
 \begin{DoxyCompactList}\small\item\em Gets the value or a default if error. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{classcslt_1_1Expected_a2d1c2360ca166042ebcc6cc670e6d8a6}{operator bool}} () const
 \begin{DoxyCompactList}\small\item\em Conversion to bool (checks if has value). \end{DoxyCompactList}\end{DoxyCompactItemize}
@@ -182,17 +184,33 @@ Sets the error and marks this as containing an error.
 \mbox{\Hypertarget{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}\label{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}} 
 \index{cslt::Expected$<$ T $>$@{cslt::Expected$<$ T $>$}!setValue@{setValue}}
 \index{setValue@{setValue}!cslt::Expected$<$ T $>$@{cslt::Expected$<$ T $>$}}
-\doxysubsubsection{\texorpdfstring{setValue()}{setValue()}}
+\doxysubsubsection{\texorpdfstring{setValue()}{setValue()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
 {\footnotesize\ttfamily template$<$typename T $>$ \\
 void \mbox{\hyperlink{classcslt_1_1Expected}{cslt\+::\+Expected}}$<$ T $>$\+::set\+Value (\begin{DoxyParamCaption}\item[{const T \&}]{val }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 
-Sets the value and marks this as containing a value. 
+Sets the value by copy and marks this as containing a value. 
 
 
 \begin{DoxyParams}{Parameters}
 {\em val} & The value to store \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classcslt_1_1Expected_abc6c60a67eeac1e4da5ac9a363ea4160}\label{classcslt_1_1Expected_abc6c60a67eeac1e4da5ac9a363ea4160}} 
+\index{cslt::Expected$<$ T $>$@{cslt::Expected$<$ T $>$}!setValue@{setValue}}
+\index{setValue@{setValue}!cslt::Expected$<$ T $>$@{cslt::Expected$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{setValue()}{setValue()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classcslt_1_1Expected}{cslt\+::\+Expected}}$<$ T $>$\+::set\+Value (\begin{DoxyParamCaption}\item[{T \&\&}]{val }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+Sets the value by move and marks this as containing a value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em val} & The value to move \\
 \hline
 \end{DoxyParams}
 \mbox{\Hypertarget{classcslt_1_1Expected_a22d497d5f274197ed394d95f7213ef62}\label{classcslt_1_1Expected_a22d497d5f274197ed394d95f7213ef62}} 
@@ -227,12 +245,12 @@ Behavior is undefined if the \mbox{\hyperlink{classcslt_1_1Expected}{Expected}} 
 \begin{DoxyReturn}{Returns}
 Const reference to the contained value 
 \end{DoxyReturn}
-\mbox{\Hypertarget{classcslt_1_1Expected_adbf1a56d52f76d40146bc86fff0ec085}\label{classcslt_1_1Expected_adbf1a56d52f76d40146bc86fff0ec085}} 
+\mbox{\Hypertarget{classcslt_1_1Expected_abb62ed34ebc8a8ded1b1a27b6d820773}\label{classcslt_1_1Expected_abb62ed34ebc8a8ded1b1a27b6d820773}} 
 \index{cslt::Expected$<$ T $>$@{cslt::Expected$<$ T $>$}!valueOr@{valueOr}}
 \index{valueOr@{valueOr}!cslt::Expected$<$ T $>$@{cslt::Expected$<$ T $>$}}
 \doxysubsubsection{\texorpdfstring{valueOr()}{valueOr()}}
 {\footnotesize\ttfamily template$<$typename T $>$ \\
-T \mbox{\hyperlink{classcslt_1_1Expected}{cslt\+::\+Expected}}$<$ T $>$\+::value\+Or (\begin{DoxyParamCaption}\item[{const T \&}]{default\+\_\+val }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+T \mbox{\hyperlink{classcslt_1_1Expected}{cslt\+::\+Expected}}$<$ T $>$\+::value\+Or (\begin{DoxyParamCaption}\item[{T \&\&}]{default\+\_\+val }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
 

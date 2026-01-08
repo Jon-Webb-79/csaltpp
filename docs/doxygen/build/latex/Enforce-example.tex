@@ -1,0 +1,28 @@
+\hypertarget{Enforce-example}{}\doxysection{Enforce}
+memory budget 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(1024 * 1024, \textcolor{keyword}{true}).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Disable resize to enforce 1MB limit}}
+\DoxyCodeLine{arena-\/>toggle\_resize(\textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocations will fail if they exceed 1MB total}}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (\textcolor{keyword}{auto} ptr = arena-\/>alloc(1024); ptr.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Process...}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Hit 1MB limit\(\backslash\)n"{}};}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+Has no effect on STATIC arenas (user buffer) or SUB arenas (borrowed memory)
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+Heap() Set initial resize capability
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

@@ -1,0 +1,100 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Cache-line-example" kind="example">
+    <compoundname>Cache-line</compoundname>
+    <briefdescription>
+<para>Allocate aligned memory from the arena. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Allocate aligned memory from the arena<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Required alignment in bytes (must be power of 2, 0 = use default) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected containing pointer to aligned memory on success, or error on failure</para>
+</simplesect>
+<parameterlist kind="exception"><parameteritem>
+<parameternamelist>
+<parametername>Never</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>throws - returns Expected with error on failure</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Like alloc(), but ensures the returned pointer is aligned to the specified boundary. If alignment is 0, uses the arena&apos;s default alignment. If alignment is not a power of 2, it is automatically rounded up to the next power of 2.</para>
+<para>The alignment requirement may cause padding to be inserted, which counts against the arena&apos;s capacity but isn&apos;t directly usable.</para>
+<para><parameterlist kind="retval"><parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with aligned pointer on success </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with ArgumentError if bytes is 0 </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with AlignmentError if alignment normalization fails </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with MemoryError if out of space or allocation fails </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Expected</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>with LengthOverflowError if size calculations overflow</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+aligned allocation <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(8192).value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Allocate<sp/>aligned<sp/>to<sp/>64-byte<sp/>cache<sp/>line</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>arena-&gt;alloc_aligned(256,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Verify<sp/>alignment</highlight></codeline>
+<codeline><highlight class="normal">assert(reinterpret_cast&lt;uintptr_t&gt;(ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+</programlisting> <programlisting filename="Cache-line"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

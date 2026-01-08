@@ -12,8 +12,10 @@ class \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}
 \begin{DoxyCompactList}\small\item\em Abstract base class for custom memory allocators. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classcslt_1_1HeapAllocator}{Heap\+Allocator}}
 \begin{DoxyCompactList}\small\item\em \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} wrapper around system heap (operator new/delete) \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}}
+\begin{DoxyCompactList}\small\item\em Custom deleter for \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} unique pointers. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}}
-\item 
+\begin{DoxyCompactList}\small\item\em Fast, region-\/based memory allocator that allocates memory in chunks. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classcslt_1_1Error}{Error}}
 \begin{DoxyCompactList}\small\item\em Base class for all cslt library exceptions with fixed-\/size error messages. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classcslt_1_1NoError}{No\+Error}}
@@ -140,6 +142,34 @@ class \mbox{\hyperlink{classcslt_1_1UnknownError}{Unknown\+Error}}
 \begin{DoxyCompactList}\small\item\em Unknown error. \end{DoxyCompactList}\item 
 class \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}
 \begin{DoxyCompactList}\small\item\em A type that represents either a value of type T or an \mbox{\hyperlink{classcslt_1_1Error}{Error}}. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structcslt_1_1VoidTImpl}{Void\+TImpl}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1HasPointerType}{Has\+Pointer\+Type}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1HasPointerType_3_01D_00_01VoidT_3_01typename_01RemoveRefT_3_01D_01_4_1_1pointer_01_4_01_4}{Has\+Pointer\+Type$<$ D, Void\+T$<$ typename Remove\+Ref\+T$<$ D $>$\+::pointer $>$ $>$}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1PointerType}{Pointer\+Type}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1PointerType_3_01T_00_01D_00_01true_01_4}{Pointer\+Type$<$ T, D, true $>$}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1DefaultDelete}{Default\+Delete}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1DefaultDelete_3_01T_0f_0e_4}{Default\+Delete$<$ T\mbox{[}$\,$\mbox{]}$>$}}
+\item 
+class \mbox{\hyperlink{classcslt_1_1DeleterStorage}{Deleter\+Storage}}
+\item 
+class \mbox{\hyperlink{classcslt_1_1DeleterStorage_3_01Deleter_00_01false_01_4}{Deleter\+Storage$<$ Deleter, false $>$}}
+\item 
+class \mbox{\hyperlink{classcslt_1_1DeleterStorage_3_01Deleter_00_01true_01_4}{Deleter\+Storage$<$ Deleter, true $>$}}
+\item 
+class \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}
+\item 
+class \mbox{\hyperlink{classcslt_1_1UniquePtr_3_01T_0f_0e_00_01Deleter_01_4}{Unique\+Ptr$<$ T\mbox{[}$\,$\mbox{]}, Deleter $>$}}
+\item 
+class \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}
+\item 
+class \mbox{\hyperlink{classcslt_1_1WeakPtr}{Weak\+Ptr}}
+\item 
 struct \mbox{\hyperlink{structcslt_1_1BoolConstant}{Bool\+Constant}}
 \item 
 struct \mbox{\hyperlink{structcslt_1_1RemoveRef}{Remove\+Ref}}
@@ -167,9 +197,27 @@ struct \mbox{\hyperlink{structcslt_1_1IsArray_3_01T_0f_0e_4}{Is\+Array$<$ T\mbox
 struct \mbox{\hyperlink{structcslt_1_1IsArray_3_01T_0fN_0e_4}{Is\+Array$<$ T\mbox{[}\+N\mbox{]}$>$}}
 \item 
 struct \mbox{\hyperlink{structcslt_1_1IsConvertible}{Is\+Convertible}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1IsConstructible}{Is\+Constructible}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1IsDefaultConstructible}{Is\+Default\+Constructible}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1IsMoveConstructible}{Is\+Move\+Constructible}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1IsCopyConstructible}{Is\+Copy\+Constructible}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1IsAssignable}{Is\+Assignable}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1IsMoveAssignable}{Is\+Move\+Assignable}}
+\item 
+struct \mbox{\hyperlink{structcslt_1_1IsCopyAssignable}{Is\+Copy\+Assignable}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Typedefs}
 \begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$class... Ts$>$ }\\using \mbox{\hyperlink{namespacecslt_a9116c0d60ce6199718bcb4aa967cc9da}{VoidT}} = typename \mbox{\hyperlink{structcslt_1_1VoidTImpl}{Void\+TImpl}}$<$ Ts... $>$\+::type
+\item 
+{\footnotesize template$<$class T , class D $>$ }\\using \mbox{\hyperlink{namespacecslt_af502d92164a1695f56c93f6b5fe963aa}{Pointer\+TypeT}} = typename \mbox{\hyperlink{structcslt_1_1PointerType}{Pointer\+Type}}$<$ T, D $>$\+::type
 \item 
 using \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}} = decltype(nullptr)
 \item 
@@ -196,6 +244,76 @@ int \mbox{\hyperlink{namespacecslt_adb04c13835953770d190921376af439f}{is\+\_\+po
 \begin{DoxyCompactList}\small\item\em Check if a value is a power of 2. \end{DoxyCompactList}\item 
 size\+\_\+t \mbox{\hyperlink{namespacecslt_acb97e0e477a841d7b9cc6d2982f3e78d}{next\+\_\+pow2}} (size\+\_\+t x)
 \begin{DoxyCompactList}\small\item\em Round up to next power of 2. \end{DoxyCompactList}\item 
+{\footnotesize template$<$class T , class D $>$ }\\void \mbox{\hyperlink{namespacecslt_ad5e0362c774ef1c0474fa5fb0b9f0dac}{swap}} (\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&a, \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T , class D $>$ }\\void \mbox{\hyperlink{namespacecslt_ab6ede81b849eb381dd4fdf71d32ade65}{swap}} (\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T\mbox{[}$\,$\mbox{]}, D $>$ \&a, \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T\mbox{[}$\,$\mbox{]}, D $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T1 , class D1 , class T2 , class D2 $>$ }\\bool \mbox{\hyperlink{namespacecslt_a149d003ebb3088979f8af459bed4d56e}{operator==}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&a, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T1 , class D1 , class T2 , class D2 $>$ }\\bool \mbox{\hyperlink{namespacecslt_af2f3360c84775af4ad83815038b673cf}{operator!=}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&a, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T1 , class D1 , class T2 , class D2 $>$ }\\bool \mbox{\hyperlink{namespacecslt_aa2b6e630ae4cdbe48c61ade7e203242b}{operator$<$}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&a, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T1 , class D1 , class T2 , class D2 $>$ }\\bool \mbox{\hyperlink{namespacecslt_ac68423b52fa8d809170d53166103d48e}{operator$<$=}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&a, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T1 , class D1 , class T2 , class D2 $>$ }\\bool \mbox{\hyperlink{namespacecslt_a79a19a9cddc18138afd3459afa9d211f}{operator$>$}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&a, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T1 , class D1 , class T2 , class D2 $>$ }\\bool \mbox{\hyperlink{namespacecslt_a67a130853437efcfe781e99e203b2654}{operator$>$=}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&a, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T , class D $>$ }\\bool \mbox{\hyperlink{namespacecslt_a9c3b23e610935fa63946abda6dc258ac}{operator==}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T , class D $>$ }\\bool \mbox{\hyperlink{namespacecslt_a1d962a047b58b7187edcce6d3a69d8cc}{operator==}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T , class D $>$ }\\bool \mbox{\hyperlink{namespacecslt_ab4d7115118a98119342f6ddd59a79607}{operator!=}} (const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T , class D $>$ }\\bool \mbox{\hyperlink{namespacecslt_a9fbcd0a6f8a2841e76ec67ff1118ae52}{operator!=}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T , class... Args$>$ }\\\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T $>$ \mbox{\hyperlink{namespacecslt_a2bd597b0d289490ed2da9ca3e1aab97f}{make\+\_\+unique}} (Args \&\&... args)
+\item 
+{\footnotesize template$<$class T $>$ }\\\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T\mbox{[}$\,$\mbox{]}$>$ \mbox{\hyperlink{namespacecslt_a733e01aaed7819a9e13c227a807a2a24}{make\+\_\+unique\+\_\+array}} (\+::size\+\_\+t n)
+\item 
+{\footnotesize template$<$class T $>$ }\\void \mbox{\hyperlink{namespacecslt_a1bc7063e6305ecbe4e7b3bad160c7288}{swap}} (\mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&a, \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T , class U $>$ }\\bool \mbox{\hyperlink{namespacecslt_a3e18bb0ffbdc5da8fccc7b795308ecec}{operator==}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&a, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T , class U $>$ }\\bool \mbox{\hyperlink{namespacecslt_a67249486fc8f526b00d1c79da3f4f14f}{operator!=}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&a, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_abe87376eb0938f840b9c7638c5f870c2}{operator==}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_a8cccd08b211d41070dd58ea11a8e6b9a}{operator==}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_a69821b19984f44ae9bb9bcf9fd182d00}{operator!=}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_ac8a087219943401ab6d169019a705469}{operator!=}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T , class... Args$>$ }\\\mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \mbox{\hyperlink{namespacecslt_aac66227d6c414e06d60fb4ae0b563c46}{make\+\_\+shared}} (Args \&\&... args)
+\item 
+{\footnotesize template$<$class T , class U $>$ }\\bool \mbox{\hyperlink{namespacecslt_ab8b42bc864391d1da546b9a6fdf9681e}{operator$<$}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&a, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T , class U $>$ }\\bool \mbox{\hyperlink{namespacecslt_a8cba6bf6d7b26aaf96438f4c809ec2cc}{operator$<$=}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&a, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T , class U $>$ }\\bool \mbox{\hyperlink{namespacecslt_add51e1350d647b364311cf57ea1764ee}{operator$>$}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&a, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T , class U $>$ }\\bool \mbox{\hyperlink{namespacecslt_a06f2a1557be08d18ad473ab0f5ea2538}{operator$>$=}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&a, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&b) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_afbbdb4e1225c667b7135d485a56df8ba}{operator$<$}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_ae6db44ddb32f9137508d1cc1c17729e1}{operator$<$}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_a7b2f74859e7013628d2b5a5206b5890a}{operator$<$=}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_a920b101fc066fa0a0060c4586e670509}{operator$<$=}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_ae048869b75d77e8a3bf73d2b3b49b979}{operator$>$}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_a3d4a2ab3a7d66d01f2c79af8efc17292}{operator$>$}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_a98113a576639beec1b9e81f65896095d}{operator$>$=}} (const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p, \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\bool \mbox{\hyperlink{namespacecslt_a020a8ff8893c433b42c2baf9bb602925}{operator$>$=}} (\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}, const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&p) noexcept
+\item 
+{\footnotesize template$<$class T $>$ }\\void \mbox{\hyperlink{namespacecslt_a40e65ff2465e8c2a9bb981f679c026a4}{swap}} (\mbox{\hyperlink{classcslt_1_1WeakPtr}{Weak\+Ptr}}$<$ T $>$ \&a, \mbox{\hyperlink{classcslt_1_1WeakPtr}{Weak\+Ptr}}$<$ T $>$ \&b) noexcept
+\item 
 {\footnotesize template$<$class T $>$ }\\constexpr \mbox{\hyperlink{namespacecslt_a387ce1a7f22e8794a5e474d90a3720bc}{Remove\+RefT}}$<$ T $>$ \&\& \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{move}} (T \&\&x) noexcept
 \item 
 {\footnotesize template$<$class T $>$ }\\constexpr T \&\& \mbox{\hyperlink{namespacecslt_a7309f6ef48cee23ec6bd570f8127fed0}{forward}} (\mbox{\hyperlink{namespacecslt_a387ce1a7f22e8794a5e474d90a3720bc}{Remove\+RefT}}$<$ T $>$ \&x) noexcept
@@ -240,6 +358,13 @@ using \mbox{\hyperlink{namespacecslt_a5fda297689c673027737544d24c21927}{cslt\+::
 \doxysubsubsection{\texorpdfstring{nullptr\_t}{nullptr\_t}}
 {\footnotesize\ttfamily using \mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{cslt\+::nullptr\+\_\+t}} = typedef decltype(nullptr)}
 
+\mbox{\Hypertarget{namespacecslt_af502d92164a1695f56c93f6b5fe963aa}\label{namespacecslt_af502d92164a1695f56c93f6b5fe963aa}} 
+\index{cslt@{cslt}!PointerTypeT@{PointerTypeT}}
+\index{PointerTypeT@{PointerTypeT}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{PointerTypeT}{PointerTypeT}}
+{\footnotesize\ttfamily template$<$class T , class D $>$ \\
+using \mbox{\hyperlink{namespacecslt_af502d92164a1695f56c93f6b5fe963aa}{cslt\+::\+Pointer\+TypeT}} = typedef typename \mbox{\hyperlink{structcslt_1_1PointerType}{Pointer\+Type}}$<$T, D$>$\+::type}
+
 \mbox{\Hypertarget{namespacecslt_a387ce1a7f22e8794a5e474d90a3720bc}\label{namespacecslt_a387ce1a7f22e8794a5e474d90a3720bc}} 
 \index{cslt@{cslt}!RemoveRefT@{RemoveRefT}}
 \index{RemoveRefT@{RemoveRefT}!cslt@{cslt}}
@@ -252,6 +377,13 @@ using \mbox{\hyperlink{namespacecslt_a387ce1a7f22e8794a5e474d90a3720bc}{cslt\+::
 \index{TrueType@{TrueType}!cslt@{cslt}}
 \doxysubsubsection{\texorpdfstring{TrueType}{TrueType}}
 {\footnotesize\ttfamily using \mbox{\hyperlink{namespacecslt_afcacd0f94372a59549bedff14a59e4c9}{cslt\+::\+True\+Type}} = typedef \mbox{\hyperlink{structcslt_1_1BoolConstant}{Bool\+Constant}}$<$true$>$}
+
+\mbox{\Hypertarget{namespacecslt_a9116c0d60ce6199718bcb4aa967cc9da}\label{namespacecslt_a9116c0d60ce6199718bcb4aa967cc9da}} 
+\index{cslt@{cslt}!VoidT@{VoidT}}
+\index{VoidT@{VoidT}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{VoidT}{VoidT}}
+{\footnotesize\ttfamily template$<$class... Ts$>$ \\
+using \mbox{\hyperlink{namespacecslt_a9116c0d60ce6199718bcb4aa967cc9da}{cslt\+::\+VoidT}} = typedef typename \mbox{\hyperlink{structcslt_1_1VoidTImpl}{Void\+TImpl}}$<$Ts...$>$\+::type}
 
 
 
@@ -366,6 +498,27 @@ Returns 1 for 1, 2, 4, 8, 16, etc. Returns 0 for 0.
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{namespacecslt_aac66227d6c414e06d60fb4ae0b563c46}\label{namespacecslt_aac66227d6c414e06d60fb4ae0b563c46}} 
+\index{cslt@{cslt}!make\_shared@{make\_shared}}
+\index{make\_shared@{make\_shared}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{make\_shared()}{make\_shared()}}
+{\footnotesize\ttfamily template$<$class T , class... Args$>$ \\
+\mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$T$>$ cslt\+::make\+\_\+shared (\begin{DoxyParamCaption}\item[{Args \&\&...}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{namespacecslt_a2bd597b0d289490ed2da9ca3e1aab97f}\label{namespacecslt_a2bd597b0d289490ed2da9ca3e1aab97f}} 
+\index{cslt@{cslt}!make\_unique@{make\_unique}}
+\index{make\_unique@{make\_unique}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{make\_unique()}{make\_unique()}}
+{\footnotesize\ttfamily template$<$class T , class... Args$>$ \\
+\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$T$>$ cslt\+::make\+\_\+unique (\begin{DoxyParamCaption}\item[{Args \&\&...}]{args }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{namespacecslt_a733e01aaed7819a9e13c227a807a2a24}\label{namespacecslt_a733e01aaed7819a9e13c227a807a2a24}} 
+\index{cslt@{cslt}!make\_unique\_array@{make\_unique\_array}}
+\index{make\_unique\_array@{make\_unique\_array}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{make\_unique\_array()}{make\_unique\_array()}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$T\mbox{[}$\,$\mbox{]}$>$ cslt\+::make\+\_\+unique\+\_\+array (\begin{DoxyParamCaption}\item[{\+::size\+\_\+t}]{n }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 \mbox{\Hypertarget{namespacecslt_a837bbe872aff901c868b62bb782b9600}\label{namespacecslt_a837bbe872aff901c868b62bb782b9600}} 
 \index{cslt@{cslt}!move@{move}}
 \index{move@{move}!cslt@{cslt}}
@@ -373,6 +526,9 @@ Returns 1 for 1, 2, 4, 8, 16, etc. Returns 0 for 0.
 {\footnotesize\ttfamily template$<$class T $>$ \\
 constexpr \mbox{\hyperlink{namespacecslt_a387ce1a7f22e8794a5e474d90a3720bc}{Remove\+RefT}}$<$T$>$\&\& cslt\+::move (\begin{DoxyParamCaption}\item[{T \&\&}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
 
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{Automatic-example}{Automatic}}, \mbox{\hyperlink{Cache-line-example}{Cache-\/line}}, \mbox{\hyperlink{Checkpoint-example}{Checkpoint}}, \mbox{\hyperlink{Demonstrating-example}{Demonstrating}}, \mbox{\hyperlink{Enforce-example}{Enforce}}, \mbox{\hyperlink{Frame-based-example}{Frame-\/based}}, \mbox{\hyperlink{Handling-example}{Handling}}, \mbox{\hyperlink{Heap-example}{Heap}}, \mbox{\hyperlink{Monitor-example}{Monitor}}, \mbox{\hyperlink{Multiple-example}{Multiple}}, \mbox{\hyperlink{Nested-example}{Nested}}, \mbox{\hyperlink{Non-resizable-example}{Non-\/resizable}}, \mbox{\hyperlink{Reset-example}{Reset}}, \mbox{\hyperlink{Stack-example}{Stack}}, \mbox{\hyperlink{Temporarily-example}{Temporarily}}, \mbox{\hyperlink{Transactional-example}{Transactional}}, \mbox{\hyperlink{Try-catch-example}{Try-\/catch}}, and \mbox{\hyperlink{Validate-example}{Validate}}.\end{Desc}
 \mbox{\Hypertarget{namespacecslt_acb97e0e477a841d7b9cc6d2982f3e78d}\label{namespacecslt_acb97e0e477a841d7b9cc6d2982f3e78d}} 
 \index{cslt@{cslt}!next\_pow2@{next\_pow2}}
 \index{next\_pow2@{next\_pow2}!cslt@{cslt}}
@@ -414,10 +570,234 @@ Returns the smallest power of 2 that is $>$= x. Returns 0 if x is too large and 
 \doxysubsubsection{\texorpdfstring{normalize\_alignment()}{normalize\_alignment()}}
 {\footnotesize\ttfamily static size\+\_\+t cslt\+::normalize\+\_\+alignment (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{a }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
 
+\mbox{\Hypertarget{namespacecslt_a67249486fc8f526b00d1c79da3f4f14f}\label{namespacecslt_a67249486fc8f526b00d1c79da3f4f14f}} 
+\index{cslt@{cslt}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily template$<$class T , class U $>$ \\
+bool cslt\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a69821b19984f44ae9bb9bcf9fd182d00}\label{namespacecslt_a69821b19984f44ae9bb9bcf9fd182d00}} 
+\index{cslt@{cslt}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ab4d7115118a98119342f6ddd59a79607}\label{namespacecslt_ab4d7115118a98119342f6ddd59a79607}} 
+\index{cslt@{cslt}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily template$<$class T , class D $>$ \\
+bool cslt\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_af2f3360c84775af4ad83815038b673cf}\label{namespacecslt_af2f3360c84775af4ad83815038b673cf}} 
+\index{cslt@{cslt}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily template$<$class T1 , class D1 , class T2 , class D2 $>$ \\
+bool cslt\+::operator!= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ac8a087219943401ab6d169019a705469}\label{namespacecslt_ac8a087219943401ab6d169019a705469}} 
+\index{cslt@{cslt}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator!= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a9fbcd0a6f8a2841e76ec67ff1118ae52}\label{namespacecslt_a9fbcd0a6f8a2841e76ec67ff1118ae52}} 
+\index{cslt@{cslt}!operator"!=@{operator"!=}}
+\index{operator"!=@{operator"!=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator"!=()}{operator!=()}\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily template$<$class T , class D $>$ \\
+bool cslt\+::operator!= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ab8b42bc864391d1da546b9a6fdf9681e}\label{namespacecslt_ab8b42bc864391d1da546b9a6fdf9681e}} 
+\index{cslt@{cslt}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$class T , class U $>$ \\
+bool cslt\+::operator$<$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_afbbdb4e1225c667b7135d485a56df8ba}\label{namespacecslt_afbbdb4e1225c667b7135d485a56df8ba}} 
+\index{cslt@{cslt}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$<$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_aa2b6e630ae4cdbe48c61ade7e203242b}\label{namespacecslt_aa2b6e630ae4cdbe48c61ade7e203242b}} 
+\index{cslt@{cslt}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$class T1 , class D1 , class T2 , class D2 $>$ \\
+bool cslt\+::operator$<$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ae6db44ddb32f9137508d1cc1c17729e1}\label{namespacecslt_ae6db44ddb32f9137508d1cc1c17729e1}} 
+\index{cslt@{cslt}!operator$<$@{operator$<$}}
+\index{operator$<$@{operator$<$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$()}{operator<()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$<$ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a8cba6bf6d7b26aaf96438f4c809ec2cc}\label{namespacecslt_a8cba6bf6d7b26aaf96438f4c809ec2cc}} 
+\index{cslt@{cslt}!operator$<$=@{operator$<$=}}
+\index{operator$<$=@{operator$<$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$=()}{operator<=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$class T , class U $>$ \\
+bool cslt\+::operator$<$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a7b2f74859e7013628d2b5a5206b5890a}\label{namespacecslt_a7b2f74859e7013628d2b5a5206b5890a}} 
+\index{cslt@{cslt}!operator$<$=@{operator$<$=}}
+\index{operator$<$=@{operator$<$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$=()}{operator<=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$<$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ac68423b52fa8d809170d53166103d48e}\label{namespacecslt_ac68423b52fa8d809170d53166103d48e}} 
+\index{cslt@{cslt}!operator$<$=@{operator$<$=}}
+\index{operator$<$=@{operator$<$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$=()}{operator<=()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$class T1 , class D1 , class T2 , class D2 $>$ \\
+bool cslt\+::operator$<$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a920b101fc066fa0a0060c4586e670509}\label{namespacecslt_a920b101fc066fa0a0060c4586e670509}} 
+\index{cslt@{cslt}!operator$<$=@{operator$<$=}}
+\index{operator$<$=@{operator$<$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$=()}{operator<=()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$<$= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a3e18bb0ffbdc5da8fccc7b795308ecec}\label{namespacecslt_a3e18bb0ffbdc5da8fccc7b795308ecec}} 
+\index{cslt@{cslt}!operator==@{operator==}}
+\index{operator==@{operator==}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [1/6]}}
+{\footnotesize\ttfamily template$<$class T , class U $>$ \\
+bool cslt\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_abe87376eb0938f840b9c7638c5f870c2}\label{namespacecslt_abe87376eb0938f840b9c7638c5f870c2}} 
+\index{cslt@{cslt}!operator==@{operator==}}
+\index{operator==@{operator==}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [2/6]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a9c3b23e610935fa63946abda6dc258ac}\label{namespacecslt_a9c3b23e610935fa63946abda6dc258ac}} 
+\index{cslt@{cslt}!operator==@{operator==}}
+\index{operator==@{operator==}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [3/6]}}
+{\footnotesize\ttfamily template$<$class T , class D $>$ \\
+bool cslt\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a149d003ebb3088979f8af459bed4d56e}\label{namespacecslt_a149d003ebb3088979f8af459bed4d56e}} 
+\index{cslt@{cslt}!operator==@{operator==}}
+\index{operator==@{operator==}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [4/6]}}
+{\footnotesize\ttfamily template$<$class T1 , class D1 , class T2 , class D2 $>$ \\
+bool cslt\+::operator== (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a8cccd08b211d41070dd58ea11a8e6b9a}\label{namespacecslt_a8cccd08b211d41070dd58ea11a8e6b9a}} 
+\index{cslt@{cslt}!operator==@{operator==}}
+\index{operator==@{operator==}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [5/6]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator== (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a1d962a047b58b7187edcce6d3a69d8cc}\label{namespacecslt_a1d962a047b58b7187edcce6d3a69d8cc}} 
+\index{cslt@{cslt}!operator==@{operator==}}
+\index{operator==@{operator==}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}\hspace{0.1cm}{\footnotesize\ttfamily [6/6]}}
+{\footnotesize\ttfamily template$<$class T , class D $>$ \\
+bool cslt\+::operator== (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_add51e1350d647b364311cf57ea1764ee}\label{namespacecslt_add51e1350d647b364311cf57ea1764ee}} 
+\index{cslt@{cslt}!operator$>$@{operator$>$}}
+\index{operator$>$@{operator$>$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$()}{operator>()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$class T , class U $>$ \\
+bool cslt\+::operator$>$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ae048869b75d77e8a3bf73d2b3b49b979}\label{namespacecslt_ae048869b75d77e8a3bf73d2b3b49b979}} 
+\index{cslt@{cslt}!operator$>$@{operator$>$}}
+\index{operator$>$@{operator$>$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$()}{operator>()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$>$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a79a19a9cddc18138afd3459afa9d211f}\label{namespacecslt_a79a19a9cddc18138afd3459afa9d211f}} 
+\index{cslt@{cslt}!operator$>$@{operator$>$}}
+\index{operator$>$@{operator$>$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$()}{operator>()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$class T1 , class D1 , class T2 , class D2 $>$ \\
+bool cslt\+::operator$>$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a3d4a2ab3a7d66d01f2c79af8efc17292}\label{namespacecslt_a3d4a2ab3a7d66d01f2c79af8efc17292}} 
+\index{cslt@{cslt}!operator$>$@{operator$>$}}
+\index{operator$>$@{operator$>$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$()}{operator>()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$>$ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a06f2a1557be08d18ad473ab0f5ea2538}\label{namespacecslt_a06f2a1557be08d18ad473ab0f5ea2538}} 
+\index{cslt@{cslt}!operator$>$=@{operator$>$=}}
+\index{operator$>$=@{operator$>$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$=()}{operator>=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}
+{\footnotesize\ttfamily template$<$class T , class U $>$ \\
+bool cslt\+::operator$>$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ U $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a98113a576639beec1b9e81f65896095d}\label{namespacecslt_a98113a576639beec1b9e81f65896095d}} 
+\index{cslt@{cslt}!operator$>$=@{operator$>$=}}
+\index{operator$>$=@{operator$>$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$=()}{operator>=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$>$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p,  }\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a67a130853437efcfe781e99e203b2654}\label{namespacecslt_a67a130853437efcfe781e99e203b2654}} 
+\index{cslt@{cslt}!operator$>$=@{operator$>$=}}
+\index{operator$>$=@{operator$>$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$=()}{operator>=()}\hspace{0.1cm}{\footnotesize\ttfamily [3/4]}}
+{\footnotesize\ttfamily template$<$class T1 , class D1 , class T2 , class D2 $>$ \\
+bool cslt\+::operator$>$= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T1, D1 $>$ \&}]{a,  }\item[{const \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T2, D2 $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a020a8ff8893c433b42c2baf9bb602925}\label{namespacecslt_a020a8ff8893c433b42c2baf9bb602925}} 
+\index{cslt@{cslt}!operator$>$=@{operator$>$=}}
+\index{operator$>$=@{operator$>$=}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$>$=()}{operator>=()}\hspace{0.1cm}{\footnotesize\ttfamily [4/4]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+bool cslt\+::operator$>$= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a1bc7063e6305ecbe4e7b3bad160c7288}\label{namespacecslt_a1bc7063e6305ecbe4e7b3bad160c7288}} 
+\index{cslt@{cslt}!swap@{swap}}
+\index{swap@{swap}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{swap()}{swap()}\hspace{0.1cm}{\footnotesize\ttfamily [1/5]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+void cslt\+::swap (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{\mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
 \mbox{\Hypertarget{namespacecslt_a0ac3aa6b819d22ab27c3e9d24cab114a}\label{namespacecslt_a0ac3aa6b819d22ab27c3e9d24cab114a}} 
 \index{cslt@{cslt}!swap@{swap}}
 \index{swap@{swap}!cslt@{cslt}}
-\doxysubsubsection{\texorpdfstring{swap()}{swap()}}
+\doxysubsubsection{\texorpdfstring{swap()}{swap()}\hspace{0.1cm}{\footnotesize\ttfamily [2/5]}}
 {\footnotesize\ttfamily template$<$class T $>$ \\
 constexpr void cslt\+::swap (\begin{DoxyParamCaption}\item[{T \&}]{a,  }\item[{T \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [constexpr]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ad5e0362c774ef1c0474fa5fb0b9f0dac}\label{namespacecslt_ad5e0362c774ef1c0474fa5fb0b9f0dac}} 
+\index{cslt@{cslt}!swap@{swap}}
+\index{swap@{swap}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{swap()}{swap()}\hspace{0.1cm}{\footnotesize\ttfamily [3/5]}}
+{\footnotesize\ttfamily template$<$class T , class D $>$ \\
+void cslt\+::swap (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&}]{a,  }\item[{\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_ab6ede81b849eb381dd4fdf71d32ade65}\label{namespacecslt_ab6ede81b849eb381dd4fdf71d32ade65}} 
+\index{cslt@{cslt}!swap@{swap}}
+\index{swap@{swap}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{swap()}{swap()}\hspace{0.1cm}{\footnotesize\ttfamily [4/5]}}
+{\footnotesize\ttfamily template$<$class T , class D $>$ \\
+void cslt\+::swap (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T\mbox{[}$\,$\mbox{]}, D $>$ \&}]{a,  }\item[{\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T\mbox{[}$\,$\mbox{]}, D $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{namespacecslt_a40e65ff2465e8c2a9bb981f679c026a4}\label{namespacecslt_a40e65ff2465e8c2a9bb981f679c026a4}} 
+\index{cslt@{cslt}!swap@{swap}}
+\index{swap@{swap}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{swap()}{swap()}\hspace{0.1cm}{\footnotesize\ttfamily [5/5]}}
+{\footnotesize\ttfamily template$<$class T $>$ \\
+void cslt\+::swap (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1WeakPtr}{Weak\+Ptr}}$<$ T $>$ \&}]{a,  }\item[{\mbox{\hyperlink{classcslt_1_1WeakPtr}{Weak\+Ptr}}$<$ T $>$ \&}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
 

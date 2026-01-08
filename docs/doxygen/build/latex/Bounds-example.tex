@@ -1,0 +1,21 @@
+\hypertarget{Bounds-example}{}\doxysection{Bounds}
+checking 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void} safe\_write(\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}}* arena, \textcolor{keywordtype}{void}* buf, \textcolor{keywordtype}{size\_t} size) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (!arena-\/>\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a29fe5661a722f554829c480ee040ebd5}{is\_ptr\_sized}}(buf, size)) \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{throw} std::out\_of\_range(\textcolor{stringliteral}{"{}Buffer too small or invalid"{}});}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    memset(buf, 0, size);  \textcolor{comment}{// Safe}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+is\+\_\+ptr() To check pointer only without size
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

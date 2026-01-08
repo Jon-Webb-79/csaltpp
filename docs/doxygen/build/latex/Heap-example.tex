@@ -1,0 +1,29 @@
+\hypertarget{Heap-example}{}\doxysection{Heap}
+buffer arena 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{uint8\_t* buffer = \textcolor{keyword}{new} uint8\_t[65536];}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}{cslt::ArenaAllocator::Stack}}(buffer, 65536, 32);}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(result.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use arena...}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = arena-\/>alloc(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Arena destroyed first}}
+\DoxyCodeLine{arena.reset();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now safe to free buffer}}
+\DoxyCodeLine{\textcolor{keyword}{delete}[] buffer;}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+Heap() For arena that owns its memory 
+
+Sub\+Arena() For arena within parent arena
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

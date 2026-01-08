@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Non-resizable-example" kind="example">
+    <compoundname>Non-resizable</compoundname>
+    <briefdescription>
+<para>fixed-size arena </para>
+    </briefdescription>
+    <detaileddescription>
+<para>fixed-size arena <programlisting><codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>cslt::ArenaAllocator::Heap(8192,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(result.value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Fill<sp/>arena</highlight></codeline>
+<codeline><highlight class="normal">while<sp/>(arena-&gt;remaining()<sp/>&gt;=<sp/>64)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;alloc(64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>This<sp/>will<sp/>fail<sp/>-<sp/>no<sp/>space<sp/>and<sp/>resize<sp/>disabled</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>fail<sp/>=<sp/>arena-&gt;alloc(1024);</highlight></codeline>
+<codeline><highlight class="normal">assert(!fail.hasValue());</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para>Stack() For arena using user-provided buffer </para>
+</simplesect>
+<simplesect kind="see"><para>SubArena() For arena within parent arena <programlisting filename="Non-resizable"></programlisting> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

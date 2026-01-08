@@ -1,0 +1,48 @@
+\hypertarget{Demonstrating-example}{}\doxysection{Demonstrating}
+No-\/op for arena allocators (individual deallocation not supported)
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to memory (ignored) \\
+\hline
+{\em bytes} & Size of allocation (ignored) \\
+\hline
+{\em alignment} & Alignment used (ignored)\\
+\hline
+\end{DoxyParams}
+Arena allocators do not support individual deallocation. All memory is freed together via reset() or when the arena is destroyed. This method is a no-\/op to maintain compatibility with the Allocator interface.
+
+This design is intentional and provides\+:
+\begin{DoxyItemize}
+\item Much faster allocation (no per-\/allocation metadata)
+\item No fragmentation
+\item Simpler implementation
+\item Better cache locality
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+To free memory, use reset() to free all allocations, or restore() to rollback to a checkpoint, or let the arena be destroyed.
+\end{DoxyNote}
+no-\/op behavior 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(4096).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = arena-\/>alloc(256).value();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} size\_before = arena-\/>size();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// This does nothing}}
+\DoxyCodeLine{arena-\/>return\_element(ptr, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Size unchanged -\/ memory still allocated}}
+\DoxyCodeLine{assert(arena-\/>size() == size\_before);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// To actually free memory:}}
+\DoxyCodeLine{arena-\/>reset();}
+\DoxyCodeLine{assert(arena-\/>size() == 0);}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

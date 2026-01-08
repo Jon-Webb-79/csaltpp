@@ -6,10 +6,23 @@
     <includes local="no">climits</includes>
     <includes refid="error_8hpp" local="yes">error.hpp</includes>
     <incdepgraph>
+      <node id="7">
+        <label>atomic</label>
+      </node>
+      <node id="6">
+        <label>utilities.hpp</label>
+        <link refid="utilities_8hpp"/>
+        <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+      </node>
       <node id="4">
         <label>error.hpp</label>
         <link refid="error_8hpp"/>
         <childnode refid="5" relation="include">
+        </childnode>
+        <childnode refid="6" relation="include">
         </childnode>
       </node>
       <node id="1">
@@ -6693,7 +6706,7 @@
           <type>ExpectedTest</type>
         </param>
         <param>
-          <type>PointerType</type>
+          <type><ref refid="structcslt_1_1PointerType" kindref="compound">PointerType</ref></type>
         </param>
         <briefdescription>
         </briefdescription>
@@ -10679,17 +10692,17 @@
 <codeline lineno="3588"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">Expected&lt;int&gt;</ref><sp/>result;</highlight></codeline>
 <codeline lineno="3589"><highlight class="normal"><sp/><sp/><sp/><sp/>result.<ref refid="classcslt_1_1Expected_1a7494922b71d0465f02c28dbd86404c7d" kindref="member">setValue</ref>(42);</highlight></codeline>
 <codeline lineno="3590"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="3591"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(42,<sp/>result.<ref refid="classcslt_1_1Expected_1adbf1a56d52f76d40146bc86fff0ec085" kindref="member">valueOr</ref>(0));</highlight></codeline>
-<codeline lineno="3592"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(42,<sp/>result.<ref refid="classcslt_1_1Expected_1adbf1a56d52f76d40146bc86fff0ec085" kindref="member">valueOr</ref>(-1));</highlight></codeline>
+<codeline lineno="3591"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(42,<sp/>result.<ref refid="classcslt_1_1Expected_1abb62ed34ebc8a8ded1b1a27b6d820773" kindref="member">valueOr</ref>(0));</highlight></codeline>
+<codeline lineno="3592"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(42,<sp/>result.<ref refid="classcslt_1_1Expected_1abb62ed34ebc8a8ded1b1a27b6d820773" kindref="member">valueOr</ref>(-1));</highlight></codeline>
 <codeline lineno="3593"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="3594"><highlight class="normal"></highlight></codeline>
 <codeline lineno="3595"><highlight class="normal"><ref refid="test__error_8cpp_1ae087ef09e101c7ca76247c3e4b73b0f6" kindref="member">TEST</ref>(ExpectedTest,<sp/>ValueOrWithError)<sp/>{</highlight></codeline>
 <codeline lineno="3596"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">Expected&lt;int&gt;</ref><sp/>result;</highlight></codeline>
 <codeline lineno="3597"><highlight class="normal"><sp/><sp/><sp/><sp/>result.<ref refid="classcslt_1_1Expected_1aebb77bab2c8690dece4fd9b0fbd673c0" kindref="member">setError</ref>(<ref refid="classcslt_1_1Error" kindref="compound">Error</ref>(</highlight><highlight class="stringliteral">&quot;Test<sp/>error&quot;</highlight><highlight class="normal">));</highlight></codeline>
 <codeline lineno="3598"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline lineno="3599"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(0,<sp/>result.<ref refid="classcslt_1_1Expected_1adbf1a56d52f76d40146bc86fff0ec085" kindref="member">valueOr</ref>(0));</highlight></codeline>
-<codeline lineno="3600"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(-1,<sp/>result.<ref refid="classcslt_1_1Expected_1adbf1a56d52f76d40146bc86fff0ec085" kindref="member">valueOr</ref>(-1));</highlight></codeline>
-<codeline lineno="3601"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(999,<sp/>result.<ref refid="classcslt_1_1Expected_1adbf1a56d52f76d40146bc86fff0ec085" kindref="member">valueOr</ref>(999));</highlight></codeline>
+<codeline lineno="3599"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(0,<sp/>result.<ref refid="classcslt_1_1Expected_1abb62ed34ebc8a8ded1b1a27b6d820773" kindref="member">valueOr</ref>(0));</highlight></codeline>
+<codeline lineno="3600"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(-1,<sp/>result.<ref refid="classcslt_1_1Expected_1abb62ed34ebc8a8ded1b1a27b6d820773" kindref="member">valueOr</ref>(-1));</highlight></codeline>
+<codeline lineno="3601"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_EQ(999,<sp/>result.<ref refid="classcslt_1_1Expected_1abb62ed34ebc8a8ded1b1a27b6d820773" kindref="member">valueOr</ref>(999));</highlight></codeline>
 <codeline lineno="3602"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="3603"><highlight class="normal"></highlight></codeline>
 <codeline lineno="3604"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
@@ -10711,7 +10724,7 @@
 <codeline lineno="3620"><highlight class="normal"><sp/><sp/><sp/><sp/>EXPECT_STREQ(</highlight><highlight class="stringliteral">&quot;Hello,<sp/>World!&quot;</highlight><highlight class="normal">,<sp/>result.<ref refid="classcslt_1_1Expected_1a22d497d5f274197ed394d95f7213ef62" kindref="member">value</ref>());</highlight></codeline>
 <codeline lineno="3621"><highlight class="normal">}</highlight></codeline>
 <codeline lineno="3622"><highlight class="normal"></highlight></codeline>
-<codeline lineno="3623"><highlight class="normal"><ref refid="test__error_8cpp_1ae087ef09e101c7ca76247c3e4b73b0f6" kindref="member">TEST</ref>(ExpectedTest,<sp/>PointerType)<sp/>{</highlight></codeline>
+<codeline lineno="3623"><highlight class="normal"><ref refid="test__error_8cpp_1ae087ef09e101c7ca76247c3e4b73b0f6" kindref="member">TEST</ref>(ExpectedTest,<sp/><ref refid="structcslt_1_1PointerType" kindref="compound">PointerType</ref>)<sp/>{</highlight></codeline>
 <codeline lineno="3624"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>x<sp/>=<sp/>42;</highlight></codeline>
 <codeline lineno="3625"><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">Expected&lt;int*&gt;</ref><sp/>result;</highlight></codeline>
 <codeline lineno="3626"><highlight class="normal"><sp/><sp/><sp/><sp/>result.<ref refid="classcslt_1_1Expected_1a7494922b71d0465f02c28dbd86404c7d" kindref="member">setValue</ref>(&amp;x);</highlight></codeline>

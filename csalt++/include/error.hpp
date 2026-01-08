@@ -17,6 +17,7 @@
 #define error_HPP
 
 #include <cstddef>
+#include "utilities.hpp"
 // ================================================================================ 
 // ================================================================================ 
 
@@ -1963,7 +1964,7 @@ namespace cslt {
         bool has_value_;
         T value_;
         Error error_;
-
+        
     public:
         /**
          * @brief Default constructor - initializes with no value and generic error.
@@ -1971,12 +1972,22 @@ namespace cslt {
         Expected() : has_value_(false), value_(), error_("No value") {}
         
         /**
-         * @brief Sets the value and marks this as containing a value.
+         * @brief Sets the value by copy and marks this as containing a value.
          * 
          * @param val The value to store
          */
         void setValue(const T& val) {
             value_ = val;
+            has_value_ = true;
+        }
+        
+        /**
+         * @brief Sets the value by move and marks this as containing a value.
+         * 
+         * @param val The value to move
+         */
+        void setValue(T&& val) {
+            value_ = cslt::move(val);  // Use your move utility
             has_value_ = true;
         }
         
@@ -2062,8 +2073,8 @@ namespace cslt {
          * @param default_val The default value to return if this contains an error
          * @return The contained value if present, otherwise default_val
          */
-        T valueOr(const T& default_val) const {
-            return has_value_ ? value_ : default_val;
+        T valueOr(T&& default_val) const {
+            return has_value_ ? value_ : cslt::move(default_val);
         }
         
         /**
@@ -2075,6 +2086,126 @@ namespace cslt {
             return has_value_;
         }
     };
+
+    // template<typename T>
+    // class Expected {
+    // private:
+    //     bool has_value_;
+    //     T value_;
+    //     Error error_;
+    //
+    // public:
+    //
+    //     /**
+    //      * @brief Default constructor - initializes with no value and generic error.
+    //      */
+    //     Expected() : has_value_(false), value_(), error_("No value") {}
+    //     
+    //     /**
+    //      * @brief Sets the value and marks this as containing a value.
+    //      * 
+    //      * @param val The value to store
+    //      */
+    //     void setValue(const T& val) {
+    //         value_ = val;
+    //         has_value_ = true;
+    //     }
+    //     
+    //     /**
+    //      * @brief Sets the error and marks this as containing an error.
+    //      * 
+    //      * @param err The error to store
+    //      */
+    //     void setError(const Error& err) {
+    //         error_ = err;
+    //         has_value_ = false;
+    //     }
+    //     
+    //     /**
+    //      * @brief Checks if the Expected contains a value.
+    //      * 
+    //      * @return true if contains a value, false if contains an error
+    //      */
+    //     bool hasValue() const {
+    //         return has_value_;
+    //     }
+    //     
+    //     /**
+    //      * @brief Checks if the Expected contains an error.
+    //      * 
+    //      * @return true if contains an error, false if contains a value
+    //      */
+    //     bool hasError() const {
+    //         return !has_value_;
+    //     }
+    //     
+    //     /**
+    //      * @brief Gets the contained value.
+    //      * 
+    //      * Behavior is undefined if the Expected contains an error.
+    //      * Use hasValue() to check before calling this method.
+    //      * 
+    //      * @return Reference to the contained value
+    //      */
+    //     T& value() {
+    //         return value_;
+    //     }
+    //     
+    //     /**
+    //      * @brief Gets the contained value (const version).
+    //      * 
+    //      * Behavior is undefined if the Expected contains an error.
+    //      * Use hasValue() to check before calling this method.
+    //      * 
+    //      * @return Const reference to the contained value
+    //      */
+    //     const T& value() const {
+    //         return value_;
+    //     }
+    //     
+    //     /**
+    //      * @brief Gets the contained error.
+    //      * 
+    //      * Behavior is undefined if the Expected contains a value.
+    //      * Use hasError() to check before calling this method.
+    //      * 
+    //      * @return Reference to the contained error
+    //      */
+    //     Error& error() {
+    //         return error_;
+    //     }
+    //     
+    //     /**
+    //      * @brief Gets the contained error (const version).
+    //      * 
+    //      * Behavior is undefined if the Expected contains a value.
+    //      * Use hasError() to check before calling this method.
+    //      * 
+    //      * @return Const reference to the contained error
+    //      */
+    //     const Error& error() const {
+    //         return error_;
+    //     }
+    //     
+    //     /**
+    //      * @brief Gets the value or a default if error.
+    //      * 
+    //      * @param default_val The default value to return if this contains an error
+    //      * @return The contained value if present, otherwise default_val
+    //      */
+    //     T valueOr(const T& default_val) const {
+    //         return has_value_ ? value_ : default_val;
+    //     }
+    //     
+    //     /**
+    //      * @brief Conversion to bool (checks if has value).
+    //      * 
+    //      * @return true if contains a value, false if contains an error
+    //      */
+    //     explicit operator bool() const {
+    //         return has_value_;
+    //     }
+    // };
 // ================================================================================
 // ================================================================================ 
 } // namespace cslt

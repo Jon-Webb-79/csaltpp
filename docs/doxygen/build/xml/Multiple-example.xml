@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Multiple-example" kind="example">
+    <compoundname>Multiple</compoundname>
+    <briefdescription>
+<para>sub-arenas </para>
+    </briefdescription>
+    <detaileddescription>
+<para>sub-arenas <programlisting><codeline><highlight class="normal">auto<sp/>parent_result<sp/>=<sp/>cslt::ArenaAllocator::Heap(32768);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>parent<sp/>=<sp/>cslt::move(parent_result.value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Create<sp/>multiple<sp/>independent<sp/>sub-arenas</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>sub1<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::SubArena(*parent,<sp/>8192).value());</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>sub2<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::SubArena(*parent,<sp/>8192).value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Each<sp/>sub-arena<sp/>is<sp/>independent</highlight></codeline>
+<codeline><highlight class="normal">sub1-&gt;alloc(256);</highlight></codeline>
+<codeline><highlight class="normal">sub2-&gt;alloc(512);</highlight></codeline>
+</programlisting> <programlisting filename="Multiple"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

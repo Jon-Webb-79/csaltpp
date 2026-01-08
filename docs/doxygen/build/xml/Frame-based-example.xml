@@ -1,0 +1,28 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Frame-based-example" kind="example">
+    <compoundname>Frame-based</compoundname>
+    <briefdescription>
+<para>allocation pattern </para>
+    </briefdescription>
+    <detaileddescription>
+<para>allocation pattern <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(1024<sp/>*<sp/>1024).value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">while<sp/>(running)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Allocate<sp/>temporary<sp/>data<sp/>for<sp/>this<sp/>frame</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>temp_data<sp/>=<sp/>arena-&gt;alloc(4096).value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>process_frame(temp_data);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Free<sp/>all<sp/>frame<sp/>allocations<sp/>at<sp/>once<sp/>(very<sp/>fast!)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;reset();</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para>save() To create checkpoint before temporary allocations </para>
+</simplesect>
+<simplesect kind="see"><para>restore() To rollback to checkpoint instead of full reset <programlisting filename="Frame-based"></programlisting> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

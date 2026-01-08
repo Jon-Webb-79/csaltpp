@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Reset-example" kind="example">
+    <compoundname>Reset</compoundname>
+    <briefdescription>
+<para>with trim </para>
+    </briefdescription>
+    <detaileddescription>
+<para>with trim <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(512,<sp/>true,<sp/>512).value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Fill<sp/>initial<sp/>chunk</highlight></codeline>
+<codeline><highlight class="normal">while<sp/>(arena-&gt;remaining()<sp/>&gt;=<sp/>64)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;alloc(64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Trigger<sp/>growth</highlight></codeline>
+<codeline><highlight class="normal">arena-&gt;alloc(256);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">size_t<sp/>chunks<sp/>=<sp/>arena-&gt;chunk_count();<sp/><sp/>//<sp/>&gt;<sp/>1</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Reset<sp/>and<sp/>trim<sp/>extra<sp/>chunks</highlight></codeline>
+<codeline><highlight class="normal">arena-&gt;reset(true);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">assert(arena-&gt;chunk_count()<sp/>==<sp/>1);<sp/><sp/>//<sp/>Back<sp/>to<sp/>single<sp/>chunk</highlight></codeline>
+</programlisting> <programlisting filename="Reset"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

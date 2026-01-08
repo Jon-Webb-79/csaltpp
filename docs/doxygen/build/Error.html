@@ -20,7 +20,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="C Allocator Overview" href="Allocator.html" />
-    <link rel="prev" title="Utilities and Type Traits" href="Utilities.html" /> 
+    <link rel="prev" title="Smart Pointers Overview" href="Pointers.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,6 +45,7 @@
               <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="Utilities.html"> Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pointers.html"> Smart Pointers</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#"> Error</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#error-class-overview">Error Class Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#error-class-hierarchy">Error Class Hierarchy</a></li>
@@ -2854,10 +2855,21 @@ and safety.</p>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt8Expected8setValueERK1T">
 <span id="_CPPv3N4cslt8Expected8setValueERK1T"></span><span id="_CPPv2N4cslt8Expected8setValueERK1T"></span><span id="cslt::Expected::setValue__TCR"></span><span class="target" id="classcslt_1_1Expected_1a7494922b71d0465f02c28dbd86404c7d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setValue</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt8Expected8setValueERK1T" title="Link to this definition"></a><br /></dt>
-<dd><p>Sets the value and marks this as containing a value. </p>
+<dd><p>Sets the value by copy and marks this as containing a value. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>val</strong> – The value to store </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt8Expected8setValueERR1T">
+<span id="_CPPv3N4cslt8Expected8setValueERR1T"></span><span id="_CPPv2N4cslt8Expected8setValueERR1T"></span><span id="cslt::Expected::setValue__TRR"></span><span class="target" id="classcslt_1_1Expected_1abc6c60a67eeac1e4da5ac9a363ea4160"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setValue</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><br /></dt>
+<dd><p>Sets the value by move and marks this as containing a value. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>val</strong> – The value to move </p>
 </dd>
 </dl>
 </dd></dl>
@@ -2944,8 +2956,8 @@ and safety.</p>
 </dd></dl>
 
 <dl class="cpp function">
-<dt class="sig sig-object cpp" id="_CPPv4NK4cslt8Expected7valueOrERK1T">
-<span id="_CPPv3NK4cslt8Expected7valueOrERK1T"></span><span id="_CPPv2NK4cslt8Expected7valueOrERK1T"></span><span id="cslt::Expected::valueOr__TCRC"></span><span class="target" id="classcslt_1_1Expected_1adbf1a56d52f76d40146bc86fff0ec085"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">valueOr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">default_val</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt8Expected7valueOrERK1T" title="Link to this definition"></a><br /></dt>
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt8Expected7valueOrERR1T">
+<span id="_CPPv3NK4cslt8Expected7valueOrERR1T"></span><span id="_CPPv2NK4cslt8Expected7valueOrERR1T"></span><span id="cslt::Expected::valueOr__TRRC"></span><span class="target" id="classcslt_1_1Expected_1abb62ed34ebc8a8ded1b1a27b6d820773"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">valueOr</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">default_val</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt8Expected7valueOrERR1T" title="Link to this definition"></a><br /></dt>
 <dd><p>Gets the value or a default if error. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3097,7 +3109,7 @@ error type, and the polymorphic behavior is preserved:</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="Utilities.html" class="btn btn-neutral float-left" title="Utilities and Type Traits" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Pointers.html" class="btn btn-neutral float-left" title="Smart Pointers Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="Allocator.html" class="btn btn-neutral float-right" title="C Allocator Overview" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

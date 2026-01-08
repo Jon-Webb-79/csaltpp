@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Validate-example" kind="example">
+    <compoundname>Validate</compoundname>
+    <briefdescription>
+<para>Check if pointer was allocated by this arena. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Check if pointer was allocated by this arena<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to check</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if pointer was allocated by this arena, false otherwise</para>
+</simplesect>
+Checks if the given pointer points to memory within any of this arena&apos;s chunks. This is useful for debugging and validation.</para>
+<para>Returns false for:<itemizedlist>
+<listitem><para>nullptr</para>
+</listitem><listitem><para>Pointers allocated by other arenas</para>
+</listitem><listitem><para>Pointers allocated by other allocators</para>
+</listitem><listitem><para>Invalid pointers</para>
+</listitem></itemizedlist>
+</para>
+<para>pointer <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(4096).value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>arena-&gt;alloc(128).value();</highlight></codeline>
+<codeline><highlight class="normal">void*<sp/>external<sp/>=<sp/>malloc(128);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">assert(arena-&gt;is_ptr(ptr));<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>true</highlight></codeline>
+<codeline><highlight class="normal">assert(!arena-&gt;is_ptr(external));<sp/><sp/><sp/><sp/>//<sp/>false</highlight></codeline>
+<codeline><highlight class="normal">assert(!arena-&gt;is_ptr(nullptr));<sp/><sp/><sp/><sp/><sp/>//<sp/>false</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">free(external);</highlight></codeline>
+</programlisting> <programlisting filename="Validate"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

@@ -1,0 +1,46 @@
+\hypertarget{Transactional-example}{}\doxysection{Transactional}
+Save current arena state as a checkpoint\begin{DoxyReturn}{Returns}
+Opaque checkpoint pointer, or nullptr on failure
+\end{DoxyReturn}
+Creates a checkpoint of the current arena state. The checkpoint can later be used with restore() to rollback all allocations made after the checkpoint. This is useful for transactional or scoped allocations.
+
+The checkpoint is allocated separately (not from the arena) and must be freed by restore(). If you don\textquotesingle{}t call restore(), you leak the checkpoint (but not the arena memory).
+
+Returns nullptr if\+:
+\begin{DoxyItemize}
+\item Arena has no chunks
+\item Checkpoint allocation fails
+\end{DoxyItemize}
+
+\begin{DoxyWarning}{Warning}
+You must call restore() on the checkpoint to free it. Losing the checkpoint pointer without calling restore() causes a memory leak.
+\end{DoxyWarning}
+allocations 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Make some permanent allocations}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* permanent1 = arena-\/>alloc(256).value();}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* permanent2 = arena-\/>alloc(512).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Save checkpoint before temporary work}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = arena-\/>save();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Make temporary allocations}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* temp1 = arena-\/>alloc(1024).value();}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* temp2 = arena-\/>alloc(2048).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Rollback -\/ frees temp1 and temp2}}
+\DoxyCodeLine{arena-\/>restore(checkpoint);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// permanent1 and permanent2 still valid}}
+\DoxyCodeLine{\textcolor{comment}{// temp1 and temp2 now INVALID}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

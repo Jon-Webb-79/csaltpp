@@ -4,6 +4,7 @@
     <compoundname>cslt</compoundname>
     <innerclass refid="classcslt_1_1Allocator" prot="public">cslt::Allocator</innerclass>
     <innerclass refid="classcslt_1_1HeapAllocator" prot="public">cslt::HeapAllocator</innerclass>
+    <innerclass refid="structcslt_1_1ArenaDeleter" prot="public">cslt::ArenaDeleter</innerclass>
     <innerclass refid="classcslt_1_1ArenaAllocator" prot="public">cslt::ArenaAllocator</innerclass>
     <innerclass refid="classcslt_1_1Error" prot="public">cslt::Error</innerclass>
     <innerclass refid="classcslt_1_1NoError" prot="public">cslt::NoError</innerclass>
@@ -68,6 +69,20 @@
     <innerclass refid="classcslt_1_1OperationUnavailableError" prot="public">cslt::OperationUnavailableError</innerclass>
     <innerclass refid="classcslt_1_1UnknownError" prot="public">cslt::UnknownError</innerclass>
     <innerclass refid="classcslt_1_1Expected" prot="public">cslt::Expected</innerclass>
+    <innerclass refid="structcslt_1_1VoidTImpl" prot="public">cslt::VoidTImpl</innerclass>
+    <innerclass refid="structcslt_1_1HasPointerType" prot="public">cslt::HasPointerType</innerclass>
+    <innerclass refid="structcslt_1_1HasPointerType_3_01D_00_01VoidT_3_01typename_01RemoveRefT_3_01D_01_4_1_1pointer_01_4_01_4" prot="public">cslt::HasPointerType&lt; D, VoidT&lt; typename RemoveRefT&lt; D &gt;::pointer &gt; &gt;</innerclass>
+    <innerclass refid="structcslt_1_1PointerType" prot="public">cslt::PointerType</innerclass>
+    <innerclass refid="structcslt_1_1PointerType_3_01T_00_01D_00_01true_01_4" prot="public">cslt::PointerType&lt; T, D, true &gt;</innerclass>
+    <innerclass refid="structcslt_1_1DefaultDelete" prot="public">cslt::DefaultDelete</innerclass>
+    <innerclass refid="structcslt_1_1DefaultDelete_3_01T_0f_0e_4" prot="public">cslt::DefaultDelete&lt; T[]&gt;</innerclass>
+    <innerclass refid="classcslt_1_1DeleterStorage" prot="public">cslt::DeleterStorage</innerclass>
+    <innerclass refid="classcslt_1_1DeleterStorage_3_01Deleter_00_01false_01_4" prot="public">cslt::DeleterStorage&lt; Deleter, false &gt;</innerclass>
+    <innerclass refid="classcslt_1_1DeleterStorage_3_01Deleter_00_01true_01_4" prot="public">cslt::DeleterStorage&lt; Deleter, true &gt;</innerclass>
+    <innerclass refid="classcslt_1_1UniquePtr" prot="public">cslt::UniquePtr</innerclass>
+    <innerclass refid="classcslt_1_1UniquePtr_3_01T_0f_0e_00_01Deleter_01_4" prot="public">cslt::UniquePtr&lt; T[], Deleter &gt;</innerclass>
+    <innerclass refid="classcslt_1_1SharedPtr" prot="public">cslt::SharedPtr</innerclass>
+    <innerclass refid="classcslt_1_1WeakPtr" prot="public">cslt::WeakPtr</innerclass>
     <innerclass refid="structcslt_1_1BoolConstant" prot="public">cslt::BoolConstant</innerclass>
     <innerclass refid="structcslt_1_1RemoveRef" prot="public">cslt::RemoveRef</innerclass>
     <innerclass refid="structcslt_1_1RemoveRef_3_01T_01_6_01_4" prot="public">cslt::RemoveRef&lt; T &amp; &gt;</innerclass>
@@ -82,6 +97,13 @@
     <innerclass refid="structcslt_1_1IsArray_3_01T_0f_0e_4" prot="public">cslt::IsArray&lt; T[]&gt;</innerclass>
     <innerclass refid="structcslt_1_1IsArray_3_01T_0fN_0e_4" prot="public">cslt::IsArray&lt; T[N]&gt;</innerclass>
     <innerclass refid="structcslt_1_1IsConvertible" prot="public">cslt::IsConvertible</innerclass>
+    <innerclass refid="structcslt_1_1IsConstructible" prot="public">cslt::IsConstructible</innerclass>
+    <innerclass refid="structcslt_1_1IsDefaultConstructible" prot="public">cslt::IsDefaultConstructible</innerclass>
+    <innerclass refid="structcslt_1_1IsMoveConstructible" prot="public">cslt::IsMoveConstructible</innerclass>
+    <innerclass refid="structcslt_1_1IsCopyConstructible" prot="public">cslt::IsCopyConstructible</innerclass>
+    <innerclass refid="structcslt_1_1IsAssignable" prot="public">cslt::IsAssignable</innerclass>
+    <innerclass refid="structcslt_1_1IsMoveAssignable" prot="public">cslt::IsMoveAssignable</innerclass>
+    <innerclass refid="structcslt_1_1IsCopyAssignable" prot="public">cslt::IsCopyAssignable</innerclass>
     <innernamespace refid="namespacecslt_1_1detail">cslt::detail</innernamespace>
       <sectiondef kind="enum">
       <memberdef kind="enum" id="namespacecslt_1a96b27f1a16d21546d14d4f25a4c956ed" prot="public" static="no" strong="no">
@@ -117,10 +139,51 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="41" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="41" bodyend="45"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="42" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="42" bodyend="46"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="typedef">
+      <memberdef kind="typedef" id="namespacecslt_1a9116c0d60ce6199718bcb4aa967cc9da" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>class...</type>
+            <declname>Ts</declname>
+            <defname>Ts</defname>
+          </param>
+        </templateparamlist>
+        <type>typename <ref refid="structcslt_1_1VoidTImpl" kindref="compound">VoidTImpl</ref>&lt; Ts... &gt;::type</type>
+        <definition>using cslt::VoidT = typedef typename VoidTImpl&lt;Ts...&gt;::type</definition>
+        <argsstring></argsstring>
+        <name>VoidT</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="33" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="33" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="typedef" id="namespacecslt_1af502d92164a1695f56c93f6b5fe963aa" prot="public" static="no">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>typename <ref refid="structcslt_1_1PointerType" kindref="compound">PointerType</ref>&lt; T, D &gt;::type</type>
+        <definition>using cslt::PointerTypeT = typedef typename PointerType&lt;T, D&gt;::type</definition>
+        <argsstring></argsstring>
+        <name>PointerTypeT</name>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="58" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="58" bodyend="-1"/>
+      </memberdef>
       <memberdef kind="typedef" id="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" prot="public" static="no">
         <type>decltype(nullptr)</type>
         <definition>using cslt::nullptr_t = typedef decltype(nullptr)</definition>
@@ -132,7 +195,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="24" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="24" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="25" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="25" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacecslt_1afcacd0f94372a59549bedff14a59e4c9" prot="public" static="no">
         <type><ref refid="structcslt_1_1BoolConstant" kindref="compound">BoolConstant</ref>&lt; true &gt;</type>
@@ -145,7 +208,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="31" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="31" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="32" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="32" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacecslt_1a6185905cbf47ccfe4b59a1e4a2fdc020" prot="public" static="no">
         <type><ref refid="structcslt_1_1BoolConstant" kindref="compound">BoolConstant</ref>&lt; false &gt;</type>
@@ -158,7 +221,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="32" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="32" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="33" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="33" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacecslt_1a387ce1a7f22e8794a5e474d90a3720bc" prot="public" static="no">
         <templateparamlist>
@@ -176,7 +239,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="50" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="50" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="51" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="51" bodyend="-1"/>
       </memberdef>
       <memberdef kind="typedef" id="namespacecslt_1a5fda297689c673027737544d24c21927" prot="public" static="no">
         <templateparamlist>
@@ -200,7 +263,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="74" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="74" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="75" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="75" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="func">
@@ -238,7 +301,7 @@ Returns 1 for 1, 2, 4, 8, 16, etc. Returns 0 for 0.</para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1377" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1377" bodyend="1379"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1378" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1378" bodyend="1380"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1acb97e0e477a841d7b9cc6d2982f3e78d" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
         <type>size_t</type>
@@ -276,7 +339,989 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1401" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1401" bodyend="1409"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1402" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1402" bodyend="1410"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ad5e0362c774ef1c0474fa5fb0b9f0dac" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cslt::swap</definition>
+        <argsstring>(UniquePtr&lt; T, D &gt; &amp;a, UniquePtr&lt; T, D &gt; &amp;b) noexcept</argsstring>
+        <name>swap</name>
+        <param>
+          <type><ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T, D &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T, D &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="559" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="559" bodyend="559"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ab6ede81b849eb381dd4fdf71d32ade65" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cslt::swap</definition>
+        <argsstring>(UniquePtr&lt; T[], D &gt; &amp;a, UniquePtr&lt; T[], D &gt; &amp;b) noexcept</argsstring>
+        <name>swap</name>
+        <param>
+          <type><ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T[], D &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T[], D &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="562" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="562" bodyend="562"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a149d003ebb3088979f8af459bed4d56e" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T1</type>
+          </param>
+          <param>
+            <type>class D1</type>
+          </param>
+          <param>
+            <type>class T2</type>
+          </param>
+          <param>
+            <type>class D2</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator==</definition>
+        <argsstring>(const UniquePtr&lt; T1, D1 &gt; &amp;a, const UniquePtr&lt; T2, D2 &gt; &amp;b) noexcept</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T1, D1 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T2, D2 &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="569" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="569" bodyend="571"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1af2f3360c84775af4ad83815038b673cf" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T1</type>
+          </param>
+          <param>
+            <type>class D1</type>
+          </param>
+          <param>
+            <type>class T2</type>
+          </param>
+          <param>
+            <type>class D2</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator!=</definition>
+        <argsstring>(const UniquePtr&lt; T1, D1 &gt; &amp;a, const UniquePtr&lt; T2, D2 &gt; &amp;b) noexcept</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T1, D1 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T2, D2 &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="574" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="574" bodyend="576"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1aa2b6e630ae4cdbe48c61ade7e203242b" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T1</type>
+          </param>
+          <param>
+            <type>class D1</type>
+          </param>
+          <param>
+            <type>class T2</type>
+          </param>
+          <param>
+            <type>class D2</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;</definition>
+        <argsstring>(const UniquePtr&lt; T1, D1 &gt; &amp;a, const UniquePtr&lt; T2, D2 &gt; &amp;b) noexcept</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T1, D1 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T2, D2 &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="579" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="579" bodyend="581"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ac68423b52fa8d809170d53166103d48e" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T1</type>
+          </param>
+          <param>
+            <type>class D1</type>
+          </param>
+          <param>
+            <type>class T2</type>
+          </param>
+          <param>
+            <type>class D2</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;=</definition>
+        <argsstring>(const UniquePtr&lt; T1, D1 &gt; &amp;a, const UniquePtr&lt; T2, D2 &gt; &amp;b) noexcept</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T1, D1 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T2, D2 &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="584" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="584" bodyend="586"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a79a19a9cddc18138afd3459afa9d211f" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T1</type>
+          </param>
+          <param>
+            <type>class D1</type>
+          </param>
+          <param>
+            <type>class T2</type>
+          </param>
+          <param>
+            <type>class D2</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;</definition>
+        <argsstring>(const UniquePtr&lt; T1, D1 &gt; &amp;a, const UniquePtr&lt; T2, D2 &gt; &amp;b) noexcept</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T1, D1 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T2, D2 &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="589" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="589" bodyend="591"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a67a130853437efcfe781e99e203b2654" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T1</type>
+          </param>
+          <param>
+            <type>class D1</type>
+          </param>
+          <param>
+            <type>class T2</type>
+          </param>
+          <param>
+            <type>class D2</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;=</definition>
+        <argsstring>(const UniquePtr&lt; T1, D1 &gt; &amp;a, const UniquePtr&lt; T2, D2 &gt; &amp;b) noexcept</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T1, D1 &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T2, D2 &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="594" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="594" bodyend="596"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a9c3b23e610935fa63946abda6dc258ac" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator==</definition>
+        <argsstring>(const UniquePtr&lt; T, D &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T, D &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="599" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="599" bodyend="599"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a1d962a047b58b7187edcce6d3a69d8cc" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator==</definition>
+        <argsstring>(nullptr_t, const UniquePtr&lt; T, D &gt; &amp;p) noexcept</argsstring>
+        <name>operator==</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T, D &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="602" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="602" bodyend="602"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ab4d7115118a98119342f6ddd59a79607" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator!=</definition>
+        <argsstring>(const UniquePtr&lt; T, D &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T, D &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="605" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="605" bodyend="605"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a9fbcd0a6f8a2841e76ec67ff1118ae52" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class D</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator!=</definition>
+        <argsstring>(nullptr_t, const UniquePtr&lt; T, D &gt; &amp;p) noexcept</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T, D &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="608" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="608" bodyend="608"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a2bd597b0d289490ed2da9ca3e1aab97f" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T &gt;</type>
+        <definition>UniquePtr&lt;T&gt; cslt::make_unique</definition>
+        <argsstring>(Args &amp;&amp;... args)</argsstring>
+        <name>make_unique</name>
+        <param>
+          <type>Args &amp;&amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="615" column="22" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="615" bodyend="617"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a733e01aaed7819a9e13c227a807a2a24" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt; T[]&gt;</type>
+        <definition>UniquePtr&lt;T[]&gt; cslt::make_unique_array</definition>
+        <argsstring>(::size_t n)</argsstring>
+        <name>make_unique_array</name>
+        <param>
+          <type>::size_t</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="620" column="22" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="620" bodyend="622"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a1bc7063e6305ecbe4e7b3bad160c7288" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cslt::swap</definition>
+        <argsstring>(SharedPtr&lt; T &gt; &amp;a, SharedPtr&lt; T &gt; &amp;b) noexcept</argsstring>
+        <name>swap</name>
+        <param>
+          <type><ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="814" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="814" bodyend="814"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a3e18bb0ffbdc5da8fccc7b795308ecec" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class U</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator==</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;a, const SharedPtr&lt; U &gt; &amp;b) noexcept</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; U &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="817" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="817" bodyend="819"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a67249486fc8f526b00d1c79da3f4f14f" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class U</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator!=</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;a, const SharedPtr&lt; U &gt; &amp;b) noexcept</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; U &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="822" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="822" bodyend="824"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1abe87376eb0938f840b9c7638c5f870c2" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator==</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator==</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="827" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="827" bodyend="827"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a8cccd08b211d41070dd58ea11a8e6b9a" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator==</definition>
+        <argsstring>(nullptr_t, const SharedPtr&lt; T &gt; &amp;p) noexcept</argsstring>
+        <name>operator==</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="830" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="830" bodyend="830"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a69821b19984f44ae9bb9bcf9fd182d00" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator!=</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="833" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="833" bodyend="833"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ac8a087219943401ab6d169019a705469" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator!=</definition>
+        <argsstring>(nullptr_t, const SharedPtr&lt; T &gt; &amp;p) noexcept</argsstring>
+        <name>operator!=</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="836" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="836" bodyend="836"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1aac66227d6c414e06d60fb4ae0b563c46" prot="public" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class...</type>
+            <declname>Args</declname>
+            <defname>Args</defname>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt;</type>
+        <definition>SharedPtr&lt;T&gt; cslt::make_shared</definition>
+        <argsstring>(Args &amp;&amp;... args)</argsstring>
+        <name>make_shared</name>
+        <param>
+          <type>Args &amp;&amp;...</type>
+          <declname>args</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="845" column="22" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="845" bodyend="847"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ab8b42bc864391d1da546b9a6fdf9681e" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class U</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;a, const SharedPtr&lt; U &gt; &amp;b) noexcept</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; U &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="853" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="853" bodyend="855"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a8cba6bf6d7b26aaf96438f4c809ec2cc" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class U</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;=</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;a, const SharedPtr&lt; U &gt; &amp;b) noexcept</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; U &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="858" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="858" bodyend="860"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1add51e1350d647b364311cf57ea1764ee" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class U</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;a, const SharedPtr&lt; U &gt; &amp;b) noexcept</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; U &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="863" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="863" bodyend="865"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a06f2a1557be08d18ad473ab0f5ea2538" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+          <param>
+            <type>class U</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;=</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;a, const SharedPtr&lt; U &gt; &amp;b) noexcept</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; U &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="868" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="868" bodyend="870"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1afbbdb4e1225c667b7135d485a56df8ba" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="874" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="874" bodyend="876"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ae6db44ddb32f9137508d1cc1c17729e1" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;</definition>
+        <argsstring>(nullptr_t, const SharedPtr&lt; T &gt; &amp;p) noexcept</argsstring>
+        <name>operator&lt;</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="879" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="879" bodyend="881"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a7b2f74859e7013628d2b5a5206b5890a" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;=</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="884" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="884" bodyend="886"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a920b101fc066fa0a0060c4586e670509" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&lt;=</definition>
+        <argsstring>(nullptr_t, const SharedPtr&lt; T &gt; &amp;p) noexcept</argsstring>
+        <name>operator&lt;=</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="889" column="12" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="889" bodyend="891"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1ae048869b75d77e8a3bf73d2b3b49b979" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="894" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="894" bodyend="896"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a3d4a2ab3a7d66d01f2c79af8efc17292" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;</definition>
+        <argsstring>(nullptr_t, const SharedPtr&lt; T &gt; &amp;p) noexcept</argsstring>
+        <name>operator&gt;</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="899" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="899" bodyend="901"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a98113a576639beec1b9e81f65896095d" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;=</definition>
+        <argsstring>(const SharedPtr&lt; T &gt; &amp;p, nullptr_t) noexcept</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="904" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="904" bodyend="906"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a020a8ff8893c433b42c2baf9bb602925" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::operator&gt;=</definition>
+        <argsstring>(nullptr_t, const SharedPtr&lt; T &gt; &amp;p) noexcept</argsstring>
+        <name>operator&gt;=</name>
+        <param>
+          <type><ref refid="namespacecslt_1a8b88a2ec39f36d897c6a52ca28e7d38e" kindref="member">nullptr_t</ref></type>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1SharedPtr" kindref="compound">SharedPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>p</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="909" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="909" bodyend="911"/>
+      </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a40e65ff2465e8c2a9bb981f679c026a4" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>class T</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cslt::swap</definition>
+        <argsstring>(WeakPtr&lt; T &gt; &amp;a, WeakPtr&lt; T &gt; &amp;b) noexcept</argsstring>
+        <name>swap</name>
+        <param>
+          <type><ref refid="classcslt_1_1WeakPtr" kindref="compound">WeakPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1WeakPtr" kindref="compound">WeakPtr</ref>&lt; T &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" line="1097" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/pointers.hpp" bodystart="1097" bodyend="1099"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1a837bbe872aff901c868b62bb782b9600" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <templateparamlist>
@@ -298,7 +1343,7 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="104" column="26" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="104" bodyend="106"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="105" column="26" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="105" bodyend="107"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1a7309f6ef48cee23ec6bd570f8127fed0" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <templateparamlist>
@@ -320,7 +1365,7 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="110" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="110" bodyend="112"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="111" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="111" bodyend="113"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1a1e03fa2317e0f287ce09484ae2eb3313" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <templateparamlist>
@@ -342,7 +1387,7 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="116" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="116" bodyend="120"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="117" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="117" bodyend="121"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1a0ac3aa6b819d22ab27c3e9d24cab114a" prot="public" static="no" constexpr="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <templateparamlist>
@@ -368,7 +1413,7 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="126" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="126" bodyend="130"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="127" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" bodystart="127" bodyend="131"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1a4b0ef594ef77a75a23a698631c86c838" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <templateparamlist>
@@ -386,7 +1431,7 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="136" column="7" declfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" declline="136" declcolumn="7"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" line="137" column="7" declfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/utilities.hpp" declline="137" declcolumn="7"/>
       </memberdef>
       <memberdef kind="function" id="namespacecslt_1a60929310f6258747143b37bbebb0d22e" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
         <type>bool</type>
@@ -530,6 +1575,6 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
     </briefdescription>
     <detaileddescription>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="39" column="1"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="40" column="1"/>
   </compounddef>
 </doxygen>

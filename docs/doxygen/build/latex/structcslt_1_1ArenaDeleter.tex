@@ -1,0 +1,49 @@
+\hypertarget{structcslt_1_1ArenaDeleter}{}\doxysection{cslt\+::Arena\+Deleter Struct Reference}
+\label{structcslt_1_1ArenaDeleter}\index{cslt::ArenaDeleter@{cslt::ArenaDeleter}}
+
+
+Custom deleter for \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} unique pointers.  
+
+
+
+
+{\ttfamily \#include $<$allocator.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{operator()}} (\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} $\ast$arena) const noexcept
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Custom deleter for \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} unique pointers. 
+
+This deleter properly cleans up \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} instances created by factory methods (Heap, Stack, Sub\+Arena). It\+:
+\begin{DoxyEnumerate}
+\item Calls the arena\textquotesingle{}s destructor (frees additional chunks)
+\item Frees the base memory only if the arena owns it (DYNAMIC only)
+\end{DoxyEnumerate}
+
+Memory ownership\+:
+\begin{DoxyItemize}
+\item DYNAMIC (Heap)\+: Owns memory → frees with \+::operator delete
+\item STATIC (Stack)\+: User owns buffer → doesn\textquotesingle{}t free
+\item SUB (Sub\+Arena)\+: Parent owns memory → doesn\textquotesingle{}t free 
+\end{DoxyItemize}
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}\label{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}} 
+\index{cslt::ArenaDeleter@{cslt::ArenaDeleter}!operator()@{operator()}}
+\index{operator()@{operator()}!cslt::ArenaDeleter@{cslt::ArenaDeleter}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily void cslt\+::\+Arena\+Deleter\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} $\ast$}]{arena }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\end{DoxyCompactItemize}

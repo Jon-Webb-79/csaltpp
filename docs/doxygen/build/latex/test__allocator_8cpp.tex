@@ -16,6 +16,12 @@ Include dependency graph for test\+\_\+allocator.\+cpp\+:\nopagebreak
 class \mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}
 \item 
 class \mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}
+\item 
+class \mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}
+\item 
+class \mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}
+\item 
+class \mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -99,247 +105,967 @@ class \mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended
 \mbox{\hyperlink{test__allocator_8cpp_a81f426cdb029d150be64ddaf8e8db5fe}{TEST\+\_\+F}} (\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}, Stats\+With\+Custom\+Alignment)
 \item 
 \mbox{\hyperlink{test__allocator_8cpp_a8d75578130fc41c2231e8cff7d4b069e}{TEST\+\_\+F}} (\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}, Remaining\+With\+Zero\+Alloc)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a956ccceebfdcbe2748e53f2fa94d8f04}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Basic\+Creation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a988ba7ad13b3fd65deaab0276c3776c6}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Creation\+With\+All\+Params)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aab445450b776c590dec2d66418621ab6}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Respects\+Min\+Chunk\+Size)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a66e8afc8b4197769fc4164283cf9e3dc}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Creation\+Too\+Small\+Gets\+Bumped\+Up)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a6e4387054410bd16de6c8489d84e4750}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Creation\+Zero\+Size\+Gets\+Bumped\+Up)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a52b4298674b990b9849f631c705a65b8}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Simple\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a001116960b64689db1eed19b2c88d1de}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Multiple\+Allocations)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a1f6c28b519d38ff8c1a352e4e72bb347}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Allocation\+Fills\+Arena)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_afaed1b25e4f635ae650eb566fdf2b001}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Zeroed\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a168dcd4797de7a164b7f88b9a3bf1fa3}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Allocation\+Zero\+Bytes)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a3e5ce7f3ce8d345064504b7e4fab559f}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Aligned\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aed07ec19aa88e077c5e4bd18b52de347}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Multiple\+Aligned\+Allocations)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a5c6ef3d0ec58db794a64f3dd2a17c105}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Aligned\+Allocation\+Uses\+Default)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ad2c6637484ad42cd256400aa6438e181}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Resize\+Enabled\+Grows)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a8378bfbc7198a20357b43e6dd7287172}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Resize\+Disabled\+Fails)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a824c60f60cb874467354e2f77523616d}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Toggle\+Resize)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a8a72d1c357c5db853c6a6ab7645fd62f}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Reset\+Clears\+Usage)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ae2a1e270b3c82e53ff580e7aa5d76f5f}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Reset\+With\+Trim)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a48b48e1ecd1c5f3279c0bdeea3cf083c}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Save\+And\+Restore)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a38eb1d579f620da6f01014aa436239b9}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Restore\+Null\+Checkpoint)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_af7ebc23ef20f2809f230af27817cd73b}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Realloc\+Last\+Allocation\+Grow)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_adf80c3a272d00d861f14f92b1144f7f7}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Realloc\+With\+Zeroing)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a013e532e5931409878db3062bd385191}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Realloc\+Null\+Pointer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a211dffcba9ec65358920892d697e54f2}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Stats)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aaea56a39c9cb6129fb22312596361b9c}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Stats\+Buffer\+Too\+Small)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a270f03fe54047695da348602894ad9e0}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Stats\+Null\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aaf6a607aa23d0210d4336b3331cd8de5}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Is\+Ptr\+Valid)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_af1d7b877f96d2b82e9913818a2fd4f04}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Is\+Ptr\+Sized\+Valid)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a07d33e75979552bc5231a59b382e6b6b}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Is\+Ptr\+Sized\+Null)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_acea097b5a4d4f5524a489d341d9c9b40}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Remaining\+Decreases)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a54549eebc73c2498ca80cb5637f7d26d}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Remaining\+With\+Multiple\+Chunks)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aa0636cec979aef1c8b74791720a80d8e}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Large\+Alignment)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a9fc325a2143e0a3f12efb38b9bb8aad9}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Many\+Small\+Allocations)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ac18d79570b41ef286c30a8f21a6060b6}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Basic\+Creation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a758ee32a6261ac76174d9086e80a34d6}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Creation\+With\+Alignment)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a32bf24d752e6937c92a176391c3d2092}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Creation\+Null\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aa6d8959b845dd38eed890128c07318a5}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Creation\+Buffer\+Too\+Small)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a4366a59eb9cc434ec61bf963789525b3}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Simple\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a1fa0737077aa11ee6cabebae1172a69e}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Multiple\+Allocations)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a937af4f667b3675a51e0bc54400f308b}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Allocation\+Fills\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aa6608f212def076cf4e51d287f14cb37}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Zeroed\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a48640a2a14931340a47b7aaf7e8ff8b7}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Aligned\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_af6808bfc5bafaa6a01d9b409272ef322}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Multiple\+Aligned\+Allocations)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a1e9566c633a3d7cb3130dc163c6bd1de}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Cannot\+Resize)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a0cb73a60b1a54421cbcd61870bc2302e}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Toggle\+Resize\+Has\+No\+Effect)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aff297e2cceef0ef48b0c2aa1ff89229b}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Single\+Chunk\+Only)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a69251d54bb1f5d482fe0ed07ea1f2684}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Reset\+Clears\+Usage)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a2f4bee29c42793ce50005f3c953128c4}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Reset\+With\+Trim\+Has\+No\+Effect)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_acf000c5870b8440fb1c89921d51dec83}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Save\+And\+Restore)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a580812eb5f15c506c5c88ed84005bb5e}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Arena\+Lifetime\+Independent\+Of\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a94e7ea85a25dbb1b9f9b34e878299691}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Aligned\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ab178095503139b2f80104dfde19715ba}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Stats)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ae918e9212e87bdf18f17fcc0d9c1c9d7}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Is\+Ptr\+Valid)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a783cdd89a6151dfcfa845775d5f2cb6d}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Is\+Ptr\+Sized\+Valid)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a7ac0bb0aecc25ccd3c1a07dbf5d5b6d8}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Realloc\+Last\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a59f9d215db7386b6d318a399e6660019}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Very\+Large\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a00833fcaa5b8b169e0a5ddc593698978}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Minimum\+Viable\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_adc83f10d22ba88732c0e9d28e04ff310}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}, Unaligned\+Buffer)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aaa9ef095f1e9d7592ff4b4f2c7bcbdda}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Basic\+Creation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a2fde24b86999d0ac9494af149de02f0a}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Creation\+With\+Alignment)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_abbeccc25d8a627bc7aa464b2e1021659}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Creation\+Zero\+Size)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ac1f8a125ef21d10590ef65c06d415d74}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Creation\+Too\+Large)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_af2a9cd5028f3d335e4a9c166f89a037f}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Creation\+Size\+Too\+Small)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ab6358eddcd8e398ec8df611d1924fa84}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Simple\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a1a3f59f0c9e7770696a39a92f7754954}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Multiple\+Allocations)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a04d9c976b841e75681334af220a071e3}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Allocation\+Fills\+Sub\+Arena)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a615ec590c9684c11df35d98252e2c9cb}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Zeroed\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a89814641ee328da79616bc2b11fb9b41}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Aligned\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ac3203c29b717d51c8339529d729b4892}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Multiple\+Aligned\+Allocations)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a5923149f30ed1c5203c14b336a72339c}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Parent\+Tracks\+Sub\+Arena\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ac04a180fe65454c2cd375231e4bb732d}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Sub\+Arena\+Allocations\+Independent\+From\+Parent)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ae3effd78da074eee68cee7c94ee1a97d}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Multiple\+Sub\+Arenas)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aa7544c823a9ad945807f71af87c7447b}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Nested\+Sub\+Arenas)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a9e5d2f83881824689bfb6ceb7f00d658}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Cannot\+Resize)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_acb362a0d488a9d8a57c9bcc0b98378fc}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Toggle\+Resize\+Has\+No\+Effect)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a542428b36b00d2b2991f1f387660844b}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Single\+Chunk\+Only)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aa45eb2bddfe3f304ea42fbb76a24193a}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Reset\+Clears\+Usage)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a6bc521cb9cf242bdabc4b801111c10e5}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Reset\+Does\+Not\+Affect\+Parent)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a03ffc9a6ac223bdb418429e1122f39c8}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Save\+And\+Restore)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aa5833dd71dd4099cffc7fdce5ceb1561}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Stats)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a7b58cdf23ca3985fc120066f1e488513}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Is\+Ptr\+Valid)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a2f8139040482abf42c698ea1745df12f}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Is\+Ptr\+Sized\+Valid)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a85130c1b1a88d7dcca5d6a7b4d5b8d71}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Realloc\+Last\+Allocation)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_ae3b3fdcbbfdb3ca81b6b8b4f89ac4ec2}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Sub\+Arena\+From\+Static\+Parent)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a1d2fec46966092bf41784885a2bbdbe1}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Sub\+Arena\+Consumes\+All\+Parent)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_aa84f0a69e7d8b36fb68ebc2d660ea680}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}, Deep\+Nesting)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a590d15fb0c5796aa88aa5d542462c1a8}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Min\+Chunk\+Size)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a94da5d77ee31fe615c95ec49cecc4421}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Memory\+Accounting)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a2f64f61c96167f06f4c988e9d424225f}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Memory\+Type\+Stable)
+\item 
+\mbox{\hyperlink{test__allocator_8cpp_a9d2c5edf388d0f15cadb4522d7d781ec}{TEST\+\_\+F}} (\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}, Pointer\+Not\+In\+Different\+Arena)
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Function Documentation}
+\mbox{\Hypertarget{test__allocator_8cpp_a3e5ce7f3ce8d345064504b7e4fab559f}\label{test__allocator_8cpp_a3e5ce7f3ce8d345064504b7e4fab559f}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [1/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Aligned\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a5c6ef3d0ec58db794a64f3dd2a17c105}\label{test__allocator_8cpp_a5c6ef3d0ec58db794a64f3dd2a17c105}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [2/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Aligned\+Allocation\+Uses\+Default}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a1f6c28b519d38ff8c1a352e4e72bb347}\label{test__allocator_8cpp_a1f6c28b519d38ff8c1a352e4e72bb347}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [3/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Allocation\+Fills\+Arena}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a168dcd4797de7a164b7f88b9a3bf1fa3}\label{test__allocator_8cpp_a168dcd4797de7a164b7f88b9a3bf1fa3}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [4/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Allocation\+Zero\+Bytes}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a956ccceebfdcbe2748e53f2fa94d8f04}\label{test__allocator_8cpp_a956ccceebfdcbe2748e53f2fa94d8f04}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [5/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Basic\+Creation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a66e8afc8b4197769fc4164283cf9e3dc}\label{test__allocator_8cpp_a66e8afc8b4197769fc4164283cf9e3dc}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [6/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Creation\+Too\+Small\+Gets\+Bumped\+Up}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a988ba7ad13b3fd65deaab0276c3776c6}\label{test__allocator_8cpp_a988ba7ad13b3fd65deaab0276c3776c6}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [7/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Creation\+With\+All\+Params}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a6e4387054410bd16de6c8489d84e4750}\label{test__allocator_8cpp_a6e4387054410bd16de6c8489d84e4750}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [8/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Creation\+Zero\+Size\+Gets\+Bumped\+Up}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a07d33e75979552bc5231a59b382e6b6b}\label{test__allocator_8cpp_a07d33e75979552bc5231a59b382e6b6b}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [9/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Is\+Ptr\+Sized\+Null}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_af1d7b877f96d2b82e9913818a2fd4f04}\label{test__allocator_8cpp_af1d7b877f96d2b82e9913818a2fd4f04}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [10/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Is\+Ptr\+Sized\+Valid}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aaf6a607aa23d0210d4336b3331cd8de5}\label{test__allocator_8cpp_aaf6a607aa23d0210d4336b3331cd8de5}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [11/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Is\+Ptr\+Valid}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aa0636cec979aef1c8b74791720a80d8e}\label{test__allocator_8cpp_aa0636cec979aef1c8b74791720a80d8e}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [12/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Large\+Alignment}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a9fc325a2143e0a3f12efb38b9bb8aad9}\label{test__allocator_8cpp_a9fc325a2143e0a3f12efb38b9bb8aad9}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [13/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Many\+Small\+Allocations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a94da5d77ee31fe615c95ec49cecc4421}\label{test__allocator_8cpp_a94da5d77ee31fe615c95ec49cecc4421}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [14/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Memory\+Accounting}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a2f64f61c96167f06f4c988e9d424225f}\label{test__allocator_8cpp_a2f64f61c96167f06f4c988e9d424225f}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [15/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Memory\+Type\+Stable}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a590d15fb0c5796aa88aa5d542462c1a8}\label{test__allocator_8cpp_a590d15fb0c5796aa88aa5d542462c1a8}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [16/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Min\+Chunk\+Size}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aed07ec19aa88e077c5e4bd18b52de347}\label{test__allocator_8cpp_aed07ec19aa88e077c5e4bd18b52de347}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [17/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Multiple\+Aligned\+Allocations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a001116960b64689db1eed19b2c88d1de}\label{test__allocator_8cpp_a001116960b64689db1eed19b2c88d1de}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [18/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Multiple\+Allocations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a9d2c5edf388d0f15cadb4522d7d781ec}\label{test__allocator_8cpp_a9d2c5edf388d0f15cadb4522d7d781ec}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [19/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Pointer\+Not\+In\+Different\+Arena}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_af7ebc23ef20f2809f230af27817cd73b}\label{test__allocator_8cpp_af7ebc23ef20f2809f230af27817cd73b}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [20/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Realloc\+Last\+Allocation\+Grow}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a013e532e5931409878db3062bd385191}\label{test__allocator_8cpp_a013e532e5931409878db3062bd385191}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [21/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Realloc\+Null\+Pointer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_adf80c3a272d00d861f14f92b1144f7f7}\label{test__allocator_8cpp_adf80c3a272d00d861f14f92b1144f7f7}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [22/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Realloc\+With\+Zeroing}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_acea097b5a4d4f5524a489d341d9c9b40}\label{test__allocator_8cpp_acea097b5a4d4f5524a489d341d9c9b40}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [23/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Remaining\+Decreases}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a54549eebc73c2498ca80cb5637f7d26d}\label{test__allocator_8cpp_a54549eebc73c2498ca80cb5637f7d26d}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [24/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Remaining\+With\+Multiple\+Chunks}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a8a72d1c357c5db853c6a6ab7645fd62f}\label{test__allocator_8cpp_a8a72d1c357c5db853c6a6ab7645fd62f}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [25/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Reset\+Clears\+Usage}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ae2a1e270b3c82e53ff580e7aa5d76f5f}\label{test__allocator_8cpp_ae2a1e270b3c82e53ff580e7aa5d76f5f}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [26/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Reset\+With\+Trim}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a8378bfbc7198a20357b43e6dd7287172}\label{test__allocator_8cpp_a8378bfbc7198a20357b43e6dd7287172}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [27/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Resize\+Disabled\+Fails}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ad2c6637484ad42cd256400aa6438e181}\label{test__allocator_8cpp_ad2c6637484ad42cd256400aa6438e181}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [28/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Resize\+Enabled\+Grows}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aab445450b776c590dec2d66418621ab6}\label{test__allocator_8cpp_aab445450b776c590dec2d66418621ab6}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [29/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Respects\+Min\+Chunk\+Size}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a38eb1d579f620da6f01014aa436239b9}\label{test__allocator_8cpp_a38eb1d579f620da6f01014aa436239b9}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [30/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Restore\+Null\+Checkpoint}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a48b48e1ecd1c5f3279c0bdeea3cf083c}\label{test__allocator_8cpp_a48b48e1ecd1c5f3279c0bdeea3cf083c}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [31/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Save\+And\+Restore}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a52b4298674b990b9849f631c705a65b8}\label{test__allocator_8cpp_a52b4298674b990b9849f631c705a65b8}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [32/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Simple\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a211dffcba9ec65358920892d697e54f2}\label{test__allocator_8cpp_a211dffcba9ec65358920892d697e54f2}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [33/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Stats}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aaea56a39c9cb6129fb22312596361b9c}\label{test__allocator_8cpp_aaea56a39c9cb6129fb22312596361b9c}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [34/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Stats\+Buffer\+Too\+Small}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a270f03fe54047695da348602894ad9e0}\label{test__allocator_8cpp_a270f03fe54047695da348602894ad9e0}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [35/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Stats\+Null\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a824c60f60cb874467354e2f77523616d}\label{test__allocator_8cpp_a824c60f60cb874467354e2f77523616d}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [36/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Toggle\+Resize}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_afaed1b25e4f635ae650eb566fdf2b001}\label{test__allocator_8cpp_afaed1b25e4f635ae650eb566fdf2b001}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [37/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorHeapTest}{Arena\+Allocator\+Heap\+Test}}}]{,  }\item[{Zeroed\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a48640a2a14931340a47b7aaf7e8ff8b7}\label{test__allocator_8cpp_a48640a2a14931340a47b7aaf7e8ff8b7}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [38/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Aligned\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a94e7ea85a25dbb1b9f9b34e878299691}\label{test__allocator_8cpp_a94e7ea85a25dbb1b9f9b34e878299691}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [39/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Aligned\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a937af4f667b3675a51e0bc54400f308b}\label{test__allocator_8cpp_a937af4f667b3675a51e0bc54400f308b}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [40/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Allocation\+Fills\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a580812eb5f15c506c5c88ed84005bb5e}\label{test__allocator_8cpp_a580812eb5f15c506c5c88ed84005bb5e}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [41/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Arena\+Lifetime\+Independent\+Of\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ac18d79570b41ef286c30a8f21a6060b6}\label{test__allocator_8cpp_ac18d79570b41ef286c30a8f21a6060b6}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [42/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Basic\+Creation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a1e9566c633a3d7cb3130dc163c6bd1de}\label{test__allocator_8cpp_a1e9566c633a3d7cb3130dc163c6bd1de}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [43/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Cannot\+Resize}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aa6d8959b845dd38eed890128c07318a5}\label{test__allocator_8cpp_aa6d8959b845dd38eed890128c07318a5}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [44/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Creation\+Buffer\+Too\+Small}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a32bf24d752e6937c92a176391c3d2092}\label{test__allocator_8cpp_a32bf24d752e6937c92a176391c3d2092}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [45/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Creation\+Null\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a758ee32a6261ac76174d9086e80a34d6}\label{test__allocator_8cpp_a758ee32a6261ac76174d9086e80a34d6}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [46/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Creation\+With\+Alignment}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a783cdd89a6151dfcfa845775d5f2cb6d}\label{test__allocator_8cpp_a783cdd89a6151dfcfa845775d5f2cb6d}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [47/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Is\+Ptr\+Sized\+Valid}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ae918e9212e87bdf18f17fcc0d9c1c9d7}\label{test__allocator_8cpp_ae918e9212e87bdf18f17fcc0d9c1c9d7}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [48/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Is\+Ptr\+Valid}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a00833fcaa5b8b169e0a5ddc593698978}\label{test__allocator_8cpp_a00833fcaa5b8b169e0a5ddc593698978}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [49/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Minimum\+Viable\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_af6808bfc5bafaa6a01d9b409272ef322}\label{test__allocator_8cpp_af6808bfc5bafaa6a01d9b409272ef322}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [50/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Multiple\+Aligned\+Allocations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a1fa0737077aa11ee6cabebae1172a69e}\label{test__allocator_8cpp_a1fa0737077aa11ee6cabebae1172a69e}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [51/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Multiple\+Allocations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a7ac0bb0aecc25ccd3c1a07dbf5d5b6d8}\label{test__allocator_8cpp_a7ac0bb0aecc25ccd3c1a07dbf5d5b6d8}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [52/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Realloc\+Last\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a69251d54bb1f5d482fe0ed07ea1f2684}\label{test__allocator_8cpp_a69251d54bb1f5d482fe0ed07ea1f2684}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [53/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Reset\+Clears\+Usage}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a2f4bee29c42793ce50005f3c953128c4}\label{test__allocator_8cpp_a2f4bee29c42793ce50005f3c953128c4}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [54/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Reset\+With\+Trim\+Has\+No\+Effect}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_acf000c5870b8440fb1c89921d51dec83}\label{test__allocator_8cpp_acf000c5870b8440fb1c89921d51dec83}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [55/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Save\+And\+Restore}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a4366a59eb9cc434ec61bf963789525b3}\label{test__allocator_8cpp_a4366a59eb9cc434ec61bf963789525b3}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [56/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Simple\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aff297e2cceef0ef48b0c2aa1ff89229b}\label{test__allocator_8cpp_aff297e2cceef0ef48b0c2aa1ff89229b}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [57/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Single\+Chunk\+Only}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ab178095503139b2f80104dfde19715ba}\label{test__allocator_8cpp_ab178095503139b2f80104dfde19715ba}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [58/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Stats}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a0cb73a60b1a54421cbcd61870bc2302e}\label{test__allocator_8cpp_a0cb73a60b1a54421cbcd61870bc2302e}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [59/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Toggle\+Resize\+Has\+No\+Effect}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_adc83f10d22ba88732c0e9d28e04ff310}\label{test__allocator_8cpp_adc83f10d22ba88732c0e9d28e04ff310}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [60/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Unaligned\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a59f9d215db7386b6d318a399e6660019}\label{test__allocator_8cpp_a59f9d215db7386b6d318a399e6660019}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [61/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Very\+Large\+Buffer}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aa6608f212def076cf4e51d287f14cb37}\label{test__allocator_8cpp_aa6608f212def076cf4e51d287f14cb37}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [62/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorStackTest}{Arena\+Allocator\+Stack\+Test}}}]{,  }\item[{Zeroed\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a89814641ee328da79616bc2b11fb9b41}\label{test__allocator_8cpp_a89814641ee328da79616bc2b11fb9b41}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [63/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Aligned\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a04d9c976b841e75681334af220a071e3}\label{test__allocator_8cpp_a04d9c976b841e75681334af220a071e3}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [64/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Allocation\+Fills\+Sub\+Arena}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aaa9ef095f1e9d7592ff4b4f2c7bcbdda}\label{test__allocator_8cpp_aaa9ef095f1e9d7592ff4b4f2c7bcbdda}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [65/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Basic\+Creation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a9e5d2f83881824689bfb6ceb7f00d658}\label{test__allocator_8cpp_a9e5d2f83881824689bfb6ceb7f00d658}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [66/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Cannot\+Resize}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_af2a9cd5028f3d335e4a9c166f89a037f}\label{test__allocator_8cpp_af2a9cd5028f3d335e4a9c166f89a037f}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [67/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Creation\+Size\+Too\+Small}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ac1f8a125ef21d10590ef65c06d415d74}\label{test__allocator_8cpp_ac1f8a125ef21d10590ef65c06d415d74}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [68/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Creation\+Too\+Large}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a2fde24b86999d0ac9494af149de02f0a}\label{test__allocator_8cpp_a2fde24b86999d0ac9494af149de02f0a}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [69/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Creation\+With\+Alignment}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_abbeccc25d8a627bc7aa464b2e1021659}\label{test__allocator_8cpp_abbeccc25d8a627bc7aa464b2e1021659}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [70/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Creation\+Zero\+Size}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aa84f0a69e7d8b36fb68ebc2d660ea680}\label{test__allocator_8cpp_aa84f0a69e7d8b36fb68ebc2d660ea680}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [71/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Deep\+Nesting}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a2f8139040482abf42c698ea1745df12f}\label{test__allocator_8cpp_a2f8139040482abf42c698ea1745df12f}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [72/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Is\+Ptr\+Sized\+Valid}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a7b58cdf23ca3985fc120066f1e488513}\label{test__allocator_8cpp_a7b58cdf23ca3985fc120066f1e488513}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [73/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Is\+Ptr\+Valid}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ac3203c29b717d51c8339529d729b4892}\label{test__allocator_8cpp_ac3203c29b717d51c8339529d729b4892}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [74/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Multiple\+Aligned\+Allocations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a1a3f59f0c9e7770696a39a92f7754954}\label{test__allocator_8cpp_a1a3f59f0c9e7770696a39a92f7754954}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [75/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Multiple\+Allocations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ae3effd78da074eee68cee7c94ee1a97d}\label{test__allocator_8cpp_ae3effd78da074eee68cee7c94ee1a97d}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [76/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Multiple\+Sub\+Arenas}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aa7544c823a9ad945807f71af87c7447b}\label{test__allocator_8cpp_aa7544c823a9ad945807f71af87c7447b}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [77/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Nested\+Sub\+Arenas}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a5923149f30ed1c5203c14b336a72339c}\label{test__allocator_8cpp_a5923149f30ed1c5203c14b336a72339c}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [78/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Parent\+Tracks\+Sub\+Arena\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a85130c1b1a88d7dcca5d6a7b4d5b8d71}\label{test__allocator_8cpp_a85130c1b1a88d7dcca5d6a7b4d5b8d71}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [79/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Realloc\+Last\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aa45eb2bddfe3f304ea42fbb76a24193a}\label{test__allocator_8cpp_aa45eb2bddfe3f304ea42fbb76a24193a}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [80/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Reset\+Clears\+Usage}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a6bc521cb9cf242bdabc4b801111c10e5}\label{test__allocator_8cpp_a6bc521cb9cf242bdabc4b801111c10e5}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [81/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Reset\+Does\+Not\+Affect\+Parent}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a03ffc9a6ac223bdb418429e1122f39c8}\label{test__allocator_8cpp_a03ffc9a6ac223bdb418429e1122f39c8}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [82/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Save\+And\+Restore}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ab6358eddcd8e398ec8df611d1924fa84}\label{test__allocator_8cpp_ab6358eddcd8e398ec8df611d1924fa84}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [83/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Simple\+Allocation}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a542428b36b00d2b2991f1f387660844b}\label{test__allocator_8cpp_a542428b36b00d2b2991f1f387660844b}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [84/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Single\+Chunk\+Only}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_aa5833dd71dd4099cffc7fdce5ceb1561}\label{test__allocator_8cpp_aa5833dd71dd4099cffc7fdce5ceb1561}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [85/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Stats}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ac04a180fe65454c2cd375231e4bb732d}\label{test__allocator_8cpp_ac04a180fe65454c2cd375231e4bb732d}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [86/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Sub\+Arena\+Allocations\+Independent\+From\+Parent}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a1d2fec46966092bf41784885a2bbdbe1}\label{test__allocator_8cpp_a1d2fec46966092bf41784885a2bbdbe1}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [87/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Sub\+Arena\+Consumes\+All\+Parent}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_ae3b3fdcbbfdb3ca81b6b8b4f89ac4ec2}\label{test__allocator_8cpp_ae3b3fdcbbfdb3ca81b6b8b4f89ac4ec2}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [88/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Sub\+Arena\+From\+Static\+Parent}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_acb362a0d488a9d8a57c9bcc0b98378fc}\label{test__allocator_8cpp_acb362a0d488a9d8a57c9bcc0b98378fc}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [89/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Toggle\+Resize\+Has\+No\+Effect}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__allocator_8cpp_a615ec590c9684c11df35d98252e2c9cb}\label{test__allocator_8cpp_a615ec590c9684c11df35d98252e2c9cb}} 
+\index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [90/130]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classArenaAllocatorSubArenaTest}{Arena\+Allocator\+Sub\+Arena\+Test}}}]{,  }\item[{Zeroed\+Allocation}]{ }\end{DoxyParamCaption})}
+
 \mbox{\Hypertarget{test__allocator_8cpp_a1de4fec2b8be7f26c374890dcaa57483}\label{test__allocator_8cpp_a1de4fec2b8be7f26c374890dcaa57483}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [1/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [91/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Custom\+Alignment}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a33c0b0ff552ac8e05b03222ff5abcc6d}\label{test__allocator_8cpp_a33c0b0ff552ac8e05b03222ff5abcc6d}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [2/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [92/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Default\+Alignment}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a586a89ffc2fc399579c3e118930a3867}\label{test__allocator_8cpp_a586a89ffc2fc399579c3e118930a3867}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [3/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [93/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Full\+Workflow}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a65f7df6398c30162df8e1bba4047faff}\label{test__allocator_8cpp_a65f7df6398c30162df8e1bba4047faff}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [4/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [94/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Is\+Ptr\+Returns\+False}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_af64e37e2ee7efaf124d5ff3d6dff43dd}\label{test__allocator_8cpp_af64e37e2ee7efaf124d5ff3d6dff43dd}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [5/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [95/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Is\+Ptr\+Sized\+Returns\+False}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a9c73fe07634b52a1f768068d82542952}\label{test__allocator_8cpp_a9c73fe07634b52a1f768068d82542952}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [6/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [96/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Memory\+Type}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a16663e11e9ff9c7ebef8698bf63ebaf7}\label{test__allocator_8cpp_a16663e11e9ff9c7ebef8698bf63ebaf7}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [7/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [97/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Owns\+Memory}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_aa9bae61d63ef3e15078db8da85740688}\label{test__allocator_8cpp_aa9bae61d63ef3e15078db8da85740688}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [8/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [98/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Remaining}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a8d75578130fc41c2231e8cff7d4b069e}\label{test__allocator_8cpp_a8d75578130fc41c2231e8cff7d4b069e}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [9/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [99/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Remaining\+With\+Zero\+Alloc}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_aa6f4d0b181773c9c7fb9512df9f6e21d}\label{test__allocator_8cpp_aa6f4d0b181773c9c7fb9512df9f6e21d}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [10/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [100/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Reset\+Does\+Nothing}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a203b00c19ca1e042a348560b91e75a05}\label{test__allocator_8cpp_a203b00c19ca1e042a348560b91e75a05}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [11/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [101/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Restore\+Returns\+False}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_ab6112150c73f06dce8d12760c45bc909}\label{test__allocator_8cpp_ab6112150c73f06dce8d12760c45bc909}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [12/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [102/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Save\+Returns\+Null}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_afecec4610db2fd418cd42d59691dd33e}\label{test__allocator_8cpp_afecec4610db2fd418cd42d59691dd33e}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [13/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [103/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Size}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_abc537b9113a5b188fd3e9999d63e8caf}\label{test__allocator_8cpp_abc537b9113a5b188fd3e9999d63e8caf}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [14/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [104/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Stats\+Basic}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a3973b62f6d2ed33769c0f5e7fbc5b8e2}\label{test__allocator_8cpp_a3973b62f6d2ed33769c0f5e7fbc5b8e2}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [15/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [105/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Stats\+Buffer\+Too\+Small}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_af7516b37a7b4bd2f6760a8078983ff43}\label{test__allocator_8cpp_af7516b37a7b4bd2f6760a8078983ff43}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [16/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [106/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Stats\+Null\+Buffer}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_aa50b53d31f9a6e1ea2d133885aa17419}\label{test__allocator_8cpp_aa50b53d31f9a6e1ea2d133885aa17419}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [17/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [107/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Stats\+Print\+Output}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a81f426cdb029d150be64ddaf8e8db5fe}\label{test__allocator_8cpp_a81f426cdb029d150be64ddaf8e8db5fe}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [18/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [108/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Stats\+With\+Custom\+Alignment}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_ae83b20c71c82fb73b1c135e480f05668}\label{test__allocator_8cpp_ae83b20c71c82fb73b1c135e480f05668}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [19/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [109/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Stats\+With\+Default\+Alignment16}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_abb34a3e1be143c66099ee7fcc8c36a5d}\label{test__allocator_8cpp_abb34a3e1be143c66099ee7fcc8c36a5d}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [20/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [110/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Stats\+Zero\+Size}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_ada9c183a430ed3e6fc4bcf31dc659c4c}\label{test__allocator_8cpp_ada9c183a430ed3e6fc4bcf31dc659c4c}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [21/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [111/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorExtendedTest}{Heap\+Allocator\+Extended\+Test}}}]{,  }\item[{Total\+Alloc}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_ae8cf30fbd16c1f67fc8b69cadfa8eaa1}\label{test__allocator_8cpp_ae8cf30fbd16c1f67fc8b69cadfa8eaa1}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [22/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [112/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Aligned\+Allocation}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_ad6dcf464f9cc63fc73a991900256e095}\label{test__allocator_8cpp_ad6dcf464f9cc63fc73a991900256e095}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [23/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [113/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Aligned\+Allocation\+Default\+Alignment}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a25a46dd7a87118d8f164d63f76283d10}\label{test__allocator_8cpp_a25a46dd7a87118d8f164d63f76283d10}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [24/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [114/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Aligned\+Allocation\+Zero\+Bytes}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a2dd72a8baac215a59af52c6887ae1c40}\label{test__allocator_8cpp_a2dd72a8baac215a59af52c6887ae1c40}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [25/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [115/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Aligned\+Allocation\+Zeroed}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a2804bf7f95ef4ed00cb1a6fcce60d2dc}\label{test__allocator_8cpp_a2804bf7f95ef4ed00cb1a6fcce60d2dc}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [26/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [116/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Alloc\+Zero\+Bytes}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a33df7454c12751a533d93d71fe0335f2}\label{test__allocator_8cpp_a33df7454c12751a533d93d71fe0335f2}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [27/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [117/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Alloc\+Zeroed}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a83ea3704e3289c30e52cf7784c02c5a7}\label{test__allocator_8cpp_a83ea3704e3289c30e52cf7784c02c5a7}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [28/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [118/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Basic\+Allocation}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_ad8fea8357ede835984f9e701856c8839}\label{test__allocator_8cpp_ad8fea8357ede835984f9e701856c8839}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [29/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [119/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Large\+Allocation}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a62c999cce62ddda2f42eea55bde6510e}\label{test__allocator_8cpp_a62c999cce62ddda2f42eea55bde6510e}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [30/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [120/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Many\+Small\+Allocations}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a47b141c3100eba185e5654c91724ab38}\label{test__allocator_8cpp_a47b141c3100eba185e5654c91724ab38}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [31/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [121/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Multiple\+Simultaneous\+Allocations}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a03585dcbade90506968aa0d0714f0882}\label{test__allocator_8cpp_a03585dcbade90506968aa0d0714f0882}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [32/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [122/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Aligned}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a1a786c3982fece6fe407f141cf8020eb}\label{test__allocator_8cpp_a1a786c3982fece6fe407f141cf8020eb}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [33/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [123/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Aligned\+Null\+Pointer}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a68fe3fbeb6daf5eed834b6fb8ea3f317}\label{test__allocator_8cpp_a68fe3fbeb6daf5eed834b6fb8ea3f317}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [34/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [124/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Aligned\+Zero\+Bytes}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a67b6cf43fe85e9056858bb4f8a5169d0}\label{test__allocator_8cpp_a67b6cf43fe85e9056858bb4f8a5169d0}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [35/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [125/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Aligned\+Zeroed}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a4014d99ab8d54d8df80e2e62cfba41f6}\label{test__allocator_8cpp_a4014d99ab8d54d8df80e2e62cfba41f6}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [36/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [126/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Grow}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_a51ef992a112478f6d3edec10978d483b}\label{test__allocator_8cpp_a51ef992a112478f6d3edec10978d483b}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [37/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [127/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Null\+Pointer}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_aefe7fb714f7392ec03417328297c3473}\label{test__allocator_8cpp_aefe7fb714f7392ec03417328297c3473}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [38/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [128/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Shrink}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_af827bf1b37570f2b57c9859c9de308f7}\label{test__allocator_8cpp_af827bf1b37570f2b57c9859c9de308f7}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [39/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [129/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Zero\+Bytes}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__allocator_8cpp_af4089f9f30ec7d7373a36283bc29a9f1}\label{test__allocator_8cpp_af4089f9f30ec7d7373a36283bc29a9f1}} 
 \index{test\_allocator.cpp@{test\_allocator.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_allocator.cpp@{test\_allocator.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [40/40]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [130/130]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classHeapAllocatorTest}{Heap\+Allocator\+Test}}}]{,  }\item[{Realloc\+Zeroed}]{ }\end{DoxyParamCaption})}
 

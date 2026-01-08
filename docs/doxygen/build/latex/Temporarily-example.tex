@@ -1,0 +1,55 @@
+\hypertarget{Temporarily-example}{}\doxysection{Temporarily}
+Enable or disable arena resizing
+\begin{DoxyParams}{Parameters}
+{\em toggle} & If true, enable resizing; if false, disable resizing\\
+\hline
+\end{DoxyParams}
+Dynamically enables or disables the arena\textquotesingle{}s ability to grow by allocating additional chunks. Only works for DYNAMIC arenas that own their memory. Has no effect on STATIC or SUB arenas (they cannot resize regardless).
+
+Useful for\+:
+\begin{DoxyItemize}
+\item Enforcing strict memory limits during critical sections
+\item Testing allocation failure handling
+\item Preventing unbounded growth
+\end{DoxyItemize}
+
+disable growth 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(4096, \textcolor{keyword}{true}).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Fill initial capacity}}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (arena-\/>remaining() >= 64) \{}
+\DoxyCodeLine{    arena-\/>alloc(64);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Can still grow}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = arena-\/>alloc(1024);}
+\DoxyCodeLine{assert(ptr1.hasValue());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Disable growth}}
+\DoxyCodeLine{arena-\/>toggle\_resize(\textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Fill again}}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (arena-\/>remaining() >= 64) \{}
+\DoxyCodeLine{    arena-\/>alloc(64);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// This will fail -\/ no growth allowed}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = arena-\/>alloc(1024);}
+\DoxyCodeLine{assert(!ptr2.hasValue());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Re-\/enable growth}}
+\DoxyCodeLine{arena-\/>toggle\_resize(\textcolor{keyword}{true});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now works again}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr3 = arena-\/>alloc(1024);}
+\DoxyCodeLine{assert(ptr3.hasValue());}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

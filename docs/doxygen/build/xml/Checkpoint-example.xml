@@ -1,0 +1,27 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Checkpoint-example" kind="example">
+    <compoundname>Checkpoint</compoundname>
+    <briefdescription>
+<para>and restore </para>
+    </briefdescription>
+    <detaileddescription>
+<para>and restore <programlisting><codeline><highlight class="normal">auto<sp/>arena_result<sp/>=<sp/>cslt::ArenaAllocator::Heap(8192);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(arena_result.value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>permanent<sp/>=<sp/>arena-&gt;alloc(256);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Save<sp/>checkpoint<sp/>before<sp/>temporary<sp/>allocations</highlight></codeline>
+<codeline><highlight class="normal">void*<sp/>checkpoint<sp/>=<sp/>arena-&gt;save();</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">auto<sp/>temp1<sp/>=<sp/>arena-&gt;alloc(128);</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>temp2<sp/>=<sp/>arena-&gt;alloc(512);</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>Rollback<sp/>to<sp/>checkpoint<sp/>(frees<sp/>temp1<sp/>and<sp/>temp2)</highlight></codeline>
+<codeline><highlight class="normal">arena-&gt;restore(checkpoint);</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>permanent<sp/>is<sp/>still<sp/>valid,<sp/>temp1<sp/>and<sp/>temp2<sp/>are<sp/>now<sp/>invalid</highlight></codeline>
+</programlisting> <programlisting filename="Checkpoint"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

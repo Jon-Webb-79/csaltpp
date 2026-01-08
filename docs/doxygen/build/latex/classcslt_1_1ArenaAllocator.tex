@@ -2,6 +2,11 @@
 \label{classcslt_1_1ArenaAllocator}\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}}
 
 
+Fast, region-\/based memory allocator that allocates memory in chunks.  
+
+
+
+
 {\ttfamily \#include $<$allocator.\+hpp$>$}
 
 
@@ -27,13 +32,7 @@ Collaboration diagram for cslt\+::Arena\+Allocator\+:
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}{Arena\+Allocator}} (size\+\_\+t bytes, bool resize=false, size\+\_\+t alignment=alignof(max\+\_\+align\+\_\+t), size\+\_\+t \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\+\_\+chunk\+\_\+size}}=4096)
-\item 
 \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}{$\sim$\+Arena\+Allocator}} () noexcept override
-\item 
-\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a3b159f6ce803784265e5254746cbc5e9}{Arena\+Allocator}} (void $\ast$buffer, size\+\_\+t bytes, size\+\_\+t alignment=alignof(max\+\_\+align\+\_\+t))
-\item 
-\mbox{\hyperlink{classcslt_1_1ArenaAllocator_acec7e787f86a7ba3256b7b61260f3dec}{Arena\+Allocator}} (\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} \&parent, size\+\_\+t bytes, size\+\_\+t alignment=alignof(max\+\_\+align\+\_\+t))
 \item 
 \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}{alloc}} (size\+\_\+t bytes, bool zeroed=false) override
 \begin{DoxyCompactList}\small\item\em Allocate memory. \end{DoxyCompactList}\item 
@@ -65,46 +64,53 @@ size\+\_\+t \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb2848
 \item 
 void \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}{toggle\+\_\+resize}} (bool toggle) noexcept
 \end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}}, \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} $>$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{Heap}} (size\+\_\+t bytes, bool resize=false, size\+\_\+t \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\+\_\+chunk\+\_\+size}}=4096, size\+\_\+t base\+\_\+align\+\_\+in=alignof(max\+\_\+align\+\_\+t))
+\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}}, \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} $>$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}{Stack}} (void $\ast$buffer, size\+\_\+t bytes, size\+\_\+t base\+\_\+align\+\_\+in=alignof(max\+\_\+align\+\_\+t))
+\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}}, \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} $>$ $>$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}{Sub\+Arena}} (\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} \&parent, size\+\_\+t bytes, size\+\_\+t base\+\_\+align\+\_\+in=alignof(max\+\_\+align\+\_\+t))
+\end{DoxyCompactItemize}
 \doxysubsection*{Additional Inherited Members}
 
 
 \doxysubsection{Detailed Description}
-\begin{Desc}
+Fast, region-\/based memory allocator that allocates memory in chunks. 
+
+\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} is a memory allocator that uses \char`\"{}arena\char`\"{} or \char`\"{}region\char`\"{} allocation strategy. It allocates memory sequentially from large chunks and does not support individual deallocation. All memory is freed together when the arena is reset or destroyed.
+
+Key characteristics\+:
+\begin{DoxyItemize}
+\item Very fast allocation (just pointer bumping)
+\item No per-\/allocation metadata overhead
+\item No fragmentation
+\item No individual deallocation (use \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a33e3302b97aed2d9c6bd764ca028e191}{reset()}} instead)
+\item Supports checkpoints for transactional rollback
+\item Optional dynamic growth with additional chunks
+\end{DoxyItemize}
+
+Three initialization modes\+:
+\begin{DoxyItemize}
+\item \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{Heap()}}\+: Dynamically allocated arena that owns its memory
+\item \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}{Stack()}}\+: Arena using a user-\/provided buffer (doesn\textquotesingle{}t own memory)
+\item \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}{Sub\+Arena()}}\+: Arena allocated within a parent arena (doesn\textquotesingle{}t own memory) 
+\end{DoxyItemize}\begin{Desc}
 \item[Examples]\par
-\mbox{\hyperlink{Polymorphic-example}{Polymorphic}}.\end{Desc}
+\mbox{\hyperlink{Bounds-example}{Bounds}}, \mbox{\hyperlink{Check-example}{Check}}, and \mbox{\hyperlink{Polymorphic-example}{Polymorphic}}.\end{Desc}
 
 
 \doxysubsection{Constructor \& Destructor Documentation}
-\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}\label{classcslt_1_1ArenaAllocator_a69497841ddf14258d0fc13585f9732f0}} 
-\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!ArenaAllocator@{ArenaAllocator}}
-\index{ArenaAllocator@{ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
-\doxysubsubsection{\texorpdfstring{ArenaAllocator()}{ArenaAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
-{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::\+Arena\+Allocator (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{bool}]{resize = {\ttfamily false},  }\item[{size\+\_\+t}]{alignment = {\ttfamily alignof(max\+\_\+align\+\_\+t)},  }\item[{size\+\_\+t}]{min\+\_\+chunk\+\_\+size = {\ttfamily 4096} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
-
-\begin{Desc}
-\item[Examples]\par
-\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
 \mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}\label{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}} 
 \index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!````~ArenaAllocator@{$\sim$ArenaAllocator}}
 \index{````~ArenaAllocator@{$\sim$ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
 \doxysubsubsection{\texorpdfstring{$\sim$ArenaAllocator()}{~ArenaAllocator()}}
-{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::$\sim$\+Arena\+Allocator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [noexcept]}}
+{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::$\sim$\+Arena\+Allocator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [noexcept]}}
 
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
-\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a3b159f6ce803784265e5254746cbc5e9}\label{classcslt_1_1ArenaAllocator_a3b159f6ce803784265e5254746cbc5e9}} 
-\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!ArenaAllocator@{ArenaAllocator}}
-\index{ArenaAllocator@{ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
-\doxysubsubsection{\texorpdfstring{ArenaAllocator()}{ArenaAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
-{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::\+Arena\+Allocator (\begin{DoxyParamCaption}\item[{void $\ast$}]{buffer,  }\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
-
-\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_acec7e787f86a7ba3256b7b61260f3dec}\label{classcslt_1_1ArenaAllocator_acec7e787f86a7ba3256b7b61260f3dec}} 
-\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!ArenaAllocator@{ArenaAllocator}}
-\index{ArenaAllocator@{ArenaAllocator}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
-\doxysubsubsection{\texorpdfstring{ArenaAllocator()}{ArenaAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
-{\footnotesize\ttfamily cslt\+::\+Arena\+Allocator\+::\+Arena\+Allocator (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} \&}]{parent,  }\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [explicit]}}
-
 
 
 \doxysubsection{Member Function Documentation}
@@ -209,6 +215,15 @@ Implements \mbox{\hyperlink{classcslt_1_1Allocator_a518d804fc4eb66096f2534fc922c
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}\label{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!Heap@{Heap}}
+\index{Heap@{Heap}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{Heap()}{Heap()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}}, \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}}$>$ $>$ cslt\+::\+Arena\+Allocator\+::\+Heap (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{bool}]{resize = {\ttfamily false},  }\item[{size\+\_\+t}]{min\+\_\+chunk\+\_\+size = {\ttfamily 4096},  }\item[{size\+\_\+t}]{base\+\_\+align\+\_\+in = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}, \mbox{\hyperlink{Automatic-example}{Automatic}}, \mbox{\hyperlink{Cache-line-example}{Cache-\/line}}, \mbox{\hyperlink{Checkpoint-example}{Checkpoint}}, \mbox{\hyperlink{Demonstrating-example}{Demonstrating}}, \mbox{\hyperlink{Enforce-example}{Enforce}}, \mbox{\hyperlink{Frame-based-example}{Frame-\/based}}, \mbox{\hyperlink{Handling-example}{Handling}}, \mbox{\hyperlink{Monitor-example}{Monitor}}, \mbox{\hyperlink{Multiple-example}{Multiple}}, \mbox{\hyperlink{Nested-example}{Nested}}, \mbox{\hyperlink{Non-resizable-example}{Non-\/resizable}}, \mbox{\hyperlink{Reset-example}{Reset}}, \mbox{\hyperlink{Temporarily-example}{Temporarily}}, \mbox{\hyperlink{Transactional-example}{Transactional}}, \mbox{\hyperlink{Try-catch-example}{Try-\/catch}}, and \mbox{\hyperlink{Validate-example}{Validate}}.\end{Desc}
 \mbox{\Hypertarget{classcslt_1_1ArenaAllocator_ac709ae6498290a5a4c12eeb65034969e}\label{classcslt_1_1ArenaAllocator_ac709ae6498290a5a4c12eeb65034969e}} 
 \index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!is\_ptr@{is\_ptr}}
 \index{is\_ptr@{is\_ptr}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
@@ -254,7 +269,7 @@ Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a8b9fcb5da49538257f12
 
 \begin{Desc}
 \item[Examples]\par
-\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}, and \mbox{\hyperlink{Check-example}{Check}}.\end{Desc}
 \mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a29fe5661a722f554829c480ee040ebd5}\label{classcslt_1_1ArenaAllocator_a29fe5661a722f554829c480ee040ebd5}} 
 \index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!is\_ptr\_sized@{is\_ptr\_sized}}
 \index{is\_ptr\_sized@{is\_ptr\_sized}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
@@ -299,7 +314,7 @@ Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a9174d07a2777d286188e
 
 \begin{Desc}
 \item[Examples]\par
-\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}, and \mbox{\hyperlink{Bounds-example}{Bounds}}.\end{Desc}
 \mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}\label{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}} 
 \index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!min\_chunk\_size@{min\_chunk\_size}}
 \index{min\_chunk\_size@{min\_chunk\_size}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
@@ -612,6 +627,15 @@ Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a59fcf1ce582d5cf99d94
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}\label{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!Stack@{Stack}}
+\index{Stack@{Stack}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{Stack()}{Stack()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}}, \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} $>$ $>$ cslt\+::\+Arena\+Allocator\+::\+Stack (\begin{DoxyParamCaption}\item[{void $\ast$}]{buffer,  }\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{base\+\_\+align\+\_\+in = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}, \mbox{\hyperlink{Heap-example}{Heap}}, and \mbox{\hyperlink{Stack-example}{Stack}}.\end{Desc}
 \mbox{\Hypertarget{classcslt_1_1ArenaAllocator_ab128304aeae005b402dbf4fbc105df3f}\label{classcslt_1_1ArenaAllocator_ab128304aeae005b402dbf4fbc105df3f}} 
 \index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!stats@{stats}}
 \index{stats@{stats}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
@@ -659,6 +683,15 @@ Implements \mbox{\hyperlink{classcslt_1_1Allocator_a794cb0fe500dc3a698015474ad8a
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}\label{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}} 
+\index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!SubArena@{SubArena}}
+\index{SubArena@{SubArena}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}
+\doxysubsubsection{\texorpdfstring{SubArena()}{SubArena()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}}, \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} $>$ $>$ cslt\+::\+Arena\+Allocator\+::\+Sub\+Arena (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{Arena\+Allocator}} \&}]{parent,  }\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{base\+\_\+align\+\_\+in = {\ttfamily alignof(max\+\_\+align\+\_\+t)} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}, \mbox{\hyperlink{Multiple-example}{Multiple}}, and \mbox{\hyperlink{Nested-example}{Nested}}.\end{Desc}
 \mbox{\Hypertarget{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}\label{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}} 
 \index{cslt::ArenaAllocator@{cslt::ArenaAllocator}!toggle\_resize@{toggle\_resize}}
 \index{toggle\_resize@{toggle\_resize}!cslt::ArenaAllocator@{cslt::ArenaAllocator}}

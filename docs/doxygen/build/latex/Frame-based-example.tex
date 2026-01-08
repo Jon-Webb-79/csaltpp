@@ -1,0 +1,27 @@
+\hypertarget{Frame-based-example}{}\doxysection{Frame-\/based}
+allocation pattern 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(1024 * 1024).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (running) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Allocate temporary data for this frame}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} temp\_data = arena-\/>alloc(4096).value();}
+\DoxyCodeLine{    process\_frame(temp\_data);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Free all frame allocations at once (very fast!)}}
+\DoxyCodeLine{    arena-\/>reset();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+save() To create checkpoint before temporary allocations 
+
+restore() To rollback to checkpoint instead of full reset
+\end{DoxySeeAlso}
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

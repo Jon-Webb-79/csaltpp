@@ -2257,6 +2257,961 @@ TEST_F(ArenaAllocatorHeapTest, PointerNotInDifferentArena) {
     EXPECT_TRUE(arena1->is_ptr(ptr1));
     EXPECT_FALSE(arena2->is_ptr(ptr1));  // Not in arena2
 }
+// ================================================================================ 
+// ================================================================================ 
+
+class PoolHeapTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Common setup if needed
+    }
+
+    void TearDown() override {
+        // Common cleanup if needed
+    }
+
+    // Helper to check if pointer is properly aligned
+    bool is_aligned(void* ptr, size_t alignment) {
+        return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0;
+    }
+};
+
+// ================================================================================
+// Phase 1: Core Heap Initialization Tests (10 tests)
+// ================================================================================
+
+TEST_F(PoolHeapTest, CreateBasicPool) {
+    // Test basic pool creation with typical parameters
+    auto result = PoolAllocator::Heap(
+        256,    // block_size
+        32,     // blocks_per_chunk
+        0,      // alignment (default)
+        10240,  // arena_initial_bytes (enough for 32 blocks + overhead)
+        4096,   // min_chunk_bytes
+        true,   // grow_enabled
+        true    // prewarm
+    );
+
+    ASSERT_TRUE(result.hasValue()) << "Failed to create basic pool";
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_NE(pool.get(), nullptr);
+    EXPECT_EQ(pool->block_size(), 256);
+    EXPECT_EQ(pool->stride(), 256);
+    EXPECT_EQ(pool->total_blocks(), 32);  // Prewarmed with 32 blocks
+    EXPECT_TRUE(pool->can_grow());
+}
+
+TEST_F(PoolHeapTest, CreatePoolWithPrewarm) {
+    // Verify prewarming allocates the initial blocks
+    auto result = PoolAllocator::Heap(
+        128,
+        16,
+        0,
+        4096,
+        4096,
+        true,
+        true    // Prewarm enabled
+    );
+
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_EQ(pool->total_blocks(), 16);  // 16 blocks prewarmed
+    EXPECT_EQ(pool->free_blocks(), 0);    // None in free list yet
+}
+
+TEST_F(PoolHeapTest, CreatePoolWithoutPrewarm) {
+    // Pool without prewarm should start with 0 blocks
+    auto result = PoolAllocator::Heap(
+        256,
+        32,
+        0,
+        2048,   // Just enough for headers
+        4096,
+        true,   // Can grow
+        false   // No prewarm
+    );
+    
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_EQ(pool->total_blocks(), 0);  // No blocks yet
+    EXPECT_TRUE(pool->can_grow());       // But can grow on demand
+}
+
+TEST_F(PoolHeapTest, CreateNonGrowablePool) {
+    // Fixed-capacity pool (cannot grow after creation)
+    auto result = PoolAllocator::Heap(
+        128,
+        64,
+        0,
+        10240,  // Enough for 64 blocks + overhead
+        4096,
+        false,  // Cannot grow
+        true    // Must prewarm
+    );
+    
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_FALSE(pool->can_grow());
+    EXPECT_EQ(pool->total_blocks(), 64);
+}
+
+TEST_F(PoolHeapTest, CreatePoolWithCustomAlignment) {
+    // Pool with 64-byte alignment (cache line)
+    auto result = PoolAllocator::Heap(
+        256,
+        32,
+        64,     // 64-byte alignment
+        10240,
+        4096,
+        true,
+        true
+    );
+
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_EQ(pool->default_alignment(), 64);
+    EXPECT_GE(pool->stride(), 256);  // At least block_size, aligned to 64
+}
+
+TEST_F(PoolHeapTest, FailZeroBlockSize) {
+    // Should fail with zero block size
+    auto result = PoolAllocator::Heap(
+        0,      // Invalid: zero block size
+        32,
+        0,
+        8192,
+        4096,
+        true,
+        true
+    );
+
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_NE(error_msg.find("must be"), std::string::npos);
+}
+
+TEST_F(PoolHeapTest, FailZeroBlocksPerChunk) {
+    // Should fail with zero blocks per chunk
+    auto result = PoolAllocator::Heap(
+        256,
+        0,      // Invalid: zero blocks per chunk
+        0,
+        8192,
+        4096,
+        true,
+        true
+    );
+
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_NE(error_msg.find("must be"), std::string::npos);
+}
+
+TEST_F(PoolHeapTest, FailZeroArenaSize) {
+    // Should fail with zero arena size
+    auto result = PoolAllocator::Heap(
+        256,
+        32,
+        0,
+        0,      // Invalid: zero arena size
+        4096,
+        true,
+        true
+    );
+
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_NE(error_msg.find("must be"), std::string::npos);
+}
+
+TEST_F(PoolHeapTest, FailNonGrowableWithoutPrewarm) {
+    // Non-growable pool without prewarm would be unusable
+    auto result = PoolAllocator::Heap(
+        256,
+        32,
+        0,
+        8192,
+        4096,
+        false,  // Cannot grow
+        false   // No prewarm
+    );
+
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_NE(error_msg.find("prewarm"), std::string::npos);
+}
+
+TEST_F(PoolHeapTest, VerifyMemoryType) {
+    // Verify pool reports correct memory type
+    auto result = PoolAllocator::Heap(256, 32, 0, 8192, 4096, true, true);
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_EQ(pool->memory_type(), DYNAMIC);
+    EXPECT_TRUE(pool->owns_memory());
+}
+// -------------------------------------------------------------------------------- 
+
+TEST_F(PoolHeapTest, AllocateSingleBlock) {
+    // Test basic allocation from prewarmed pool
+    auto pool = cslt::move(PoolAllocator::Heap(128, 16, 0, 4096, 4096, true, true).value());
+    
+    auto result = pool->alloc(128);
+    ASSERT_TRUE(result.hasValue());
+    
+    void* ptr = result.value();
+    EXPECT_NE(ptr, nullptr);
+    EXPECT_TRUE(is_aligned(ptr, pool->default_alignment()));
+}
+
+TEST_F(PoolHeapTest, AllocateMultipleBlocks) {
+    // Allocate several blocks and verify they're distinct
+    auto pool = cslt::move(PoolAllocator::Heap(256, 32, 0, 10240, 4096, true, true).value());
+    
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 10; ++i) {
+        auto result = pool->alloc(256);
+        ASSERT_TRUE(result.hasValue()) << "Failed at allocation " << i;
+        ptrs.push_back(result.value());
+    }
+    
+    // Verify all pointers are unique
+    for (size_t i = 0; i < ptrs.size(); ++i) {
+        for (size_t j = i + 1; j < ptrs.size(); ++j) {
+            EXPECT_NE(ptrs[i], ptrs[j]) << "Duplicate pointer at " << i << " and " << j;
+        }
+    }
+}
+
+TEST_F(PoolHeapTest, AllocateZeroed) {
+    // Test zeroed allocation
+    auto pool = cslt::move(PoolAllocator::Heap(128, 16, 0, 4096, 4096, true, true).value());
+    
+    auto result = pool->alloc(128, true);  // Request zeroed
+    ASSERT_TRUE(result.hasValue());
+    
+    uint8_t* ptr = static_cast<uint8_t*>(result.value());
+    for (size_t i = 0; i < 128; ++i) {
+        EXPECT_EQ(ptr[i], 0) << "Byte " << i << " not zeroed";
+    }
+}
+
+TEST_F(PoolHeapTest, AllocateFromNonPrewarmedPool) {
+    // Pool without prewarm should allocate by growing
+    auto pool = cslt::move(PoolAllocator::Heap(256, 32, 0, 2048, 4096, true, false).value());
+    
+    EXPECT_EQ(pool->total_blocks(), 0);  // No blocks yet
+    
+    auto result = pool->alloc(256);
+    ASSERT_TRUE(result.hasValue());
+    
+    // Should have grown to accommodate allocation
+    EXPECT_GT(pool->total_blocks(), 0);
+}
+
+TEST_F(PoolHeapTest, GrowthBehavior) {
+    // Allocate beyond initial capacity to trigger growth
+    auto pool = cslt::move(PoolAllocator::Heap(128, 16, 0, 4096, 4096, true, true).value());
+    
+    size_t initial_blocks = pool->total_blocks();
+    EXPECT_EQ(initial_blocks, 16);
+    
+    // Allocate all initial blocks
+    for (size_t i = 0; i < 16; ++i) {
+        auto result = pool->alloc(128);
+        ASSERT_TRUE(result.hasValue()) << "Failed at block " << i;
+    }
+    
+    // Next allocation should trigger growth
+    auto result = pool->alloc(128);
+    ASSERT_TRUE(result.hasValue());
+    
+    EXPECT_GT(pool->total_blocks(), initial_blocks) << "Pool did not grow";
+}
+
+TEST_F(PoolHeapTest, NonGrowableCapacityLimit) {
+    // Non-growable pool should fail when capacity exhausted
+    auto pool = cslt::move(PoolAllocator::Heap(128, 16, 0, 4096, 4096, false, true).value());
+    
+    EXPECT_FALSE(pool->can_grow());
+    EXPECT_EQ(pool->total_blocks(), 16);
+    
+    // Allocate all blocks
+    std::vector<void*> ptrs;
+    for (size_t i = 0; i < 16; ++i) {
+        auto result = pool->alloc(128);
+        ASSERT_TRUE(result.hasValue()) << "Failed at block " << i;
+        ptrs.push_back(result.value());
+    }
+    
+    // Next allocation should fail
+    auto result = pool->alloc(128);
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_TRUE(error_msg.find("capacity") != std::string::npos ||
+                error_msg.find("grow") != std::string::npos);
+}
+
+TEST_F(PoolHeapTest, FreeAndReuse) {
+    // Test free-list recycling
+    auto pool = cslt::move(PoolAllocator::Heap(256, 32, 0, 10240, 4096, true, true).value());
+    
+    auto result1 = pool->alloc(256);
+    ASSERT_TRUE(result1.hasValue());
+    void* ptr1 = result1.value();
+    
+    EXPECT_EQ(pool->free_blocks(), 0);
+    
+    // Free the block
+    pool->return_element(ptr1, 256);
+    EXPECT_EQ(pool->free_blocks(), 1);
+    
+    // Allocate again - should reuse freed block
+    auto result2 = pool->alloc(256);
+    ASSERT_TRUE(result2.hasValue());
+    void* ptr2 = result2.value();
+    
+    EXPECT_EQ(ptr1, ptr2) << "Block not reused from free list";
+    EXPECT_EQ(pool->free_blocks(), 0);
+}
+
+TEST_F(PoolHeapTest, Statistics) {
+    // Test statistics generation
+    auto pool = cslt::move(PoolAllocator::Heap(256, 32, 0, 10240, 4096, true, true).value());
+    
+    char buffer[1024];
+    ASSERT_TRUE(pool->stats(buffer, sizeof(buffer)));
+    
+    std::string stats_str(buffer);
+    
+    // Should contain key information
+    EXPECT_NE(stats_str.find("Pool Allocator"), std::string::npos);
+    EXPECT_NE(stats_str.find("Block Size: 256"), std::string::npos);
+    EXPECT_NE(stats_str.find("Total Blocks: 32"), std::string::npos);
+    EXPECT_NE(stats_str.find("Type: DYNAMIC"), std::string::npos);
+}
+
+TEST_F(PoolHeapTest, MultiplePools) {
+    // Multiple independent pools shouldn't interfere
+    auto pool1 = cslt::move(PoolAllocator::Heap(128, 16, 0, 4096, 4096, true, true).value());
+    auto pool2 = cslt::move(PoolAllocator::Heap(256, 16, 0, 8192, 4096, true, true).value());
+    
+    EXPECT_EQ(pool1->block_size(), 128);
+    EXPECT_EQ(pool2->block_size(), 256);
+    
+    auto ptr1 = pool1->alloc(128);
+    auto ptr2 = pool2->alloc(256);
+    
+    ASSERT_TRUE(ptr1.hasValue());
+    ASSERT_TRUE(ptr2.hasValue());
+    
+    // Pointers from different pools should be different
+    EXPECT_NE(ptr1.value(), ptr2.value());
+}
+// -------------------------------------------------------------------------------- 
+
+TEST_F(PoolHeapTest, CheckpointAndRestore) {
+    // Test checkpoint/restore functionality
+    auto pool = cslt::move(PoolAllocator::Heap(128, 32, 0, 8192, 4096, true, true).value());
+    
+    // Make some permanent allocations
+    auto perm1 = pool->alloc(false, 128);
+    auto perm2 = pool->alloc(false, 128);
+    ASSERT_TRUE(perm1.hasValue());
+    ASSERT_TRUE(perm2.hasValue());
+    
+    // Save checkpoint
+    void* checkpoint = pool->save();
+    ASSERT_NE(checkpoint, nullptr);
+    
+    // Make temporary allocations
+    auto temp1 = pool->alloc(false, 128);
+    auto temp2 = pool->alloc(false, 128);
+    ASSERT_TRUE(temp1.hasValue());
+    ASSERT_TRUE(temp2.hasValue());
+    
+    // Restore to checkpoint
+    ASSERT_TRUE(pool->restore(checkpoint));
+    
+    // After restore, checkpoint is freed (don't use it again)
+}
+
+TEST_F(PoolHeapTest, ResetPool) {
+    // Test pool reset
+    auto pool = cslt::move(PoolAllocator::Heap(256, 16, 0, 8192, 4096, true, true).value());
+    
+    // Allocate some blocks
+    pool->alloc(false, 256);
+    pool->alloc(false, 256);
+    pool->alloc(false, 256);
+    
+    // Reset pool
+    ASSERT_TRUE(pool->reset());
+    
+    // Pool should be usable again
+    auto result = pool->alloc(false, 256);
+    EXPECT_TRUE(result.hasValue());
+}
+
+TEST_F(PoolHeapTest, VeryLargeBlocks) {
+    // Test with large block sizes (4KB)
+    auto pool = cslt::move(PoolAllocator::Heap(
+        4096,   // 4KB blocks
+        8,      // 8 blocks per chunk
+        0,
+        64 * 1024,  // 64KB arena
+        8192,
+        true,
+        true
+    ).value());
+    
+    EXPECT_EQ(pool->block_size(), 4096);
+    
+    auto result = pool->alloc(false, 4096);
+    EXPECT_TRUE(result.hasValue());
+}
+
+TEST_F(PoolHeapTest, ManySmallBlocks) {
+    // Test with many small blocks
+    auto pool = cslt::move(PoolAllocator::Heap(
+        16,     // Small 16-byte blocks
+        256,    // Many blocks per chunk
+        0,
+        16 * 1024,  // Enough space
+        4096,
+        true,
+        true
+    ).value());
+    
+    EXPECT_EQ(pool->total_blocks(), 256);
+    
+    // Allocate many blocks
+    for (int i = 0; i < 100; ++i) {
+        auto result = pool->alloc(false, 16);
+        ASSERT_TRUE(result.hasValue()) << "Failed at block " << i;
+    }
+}
+
+TEST_F(PoolHeapTest, PageAlignedBlocks) {
+    // Test with page-aligned blocks (4096 bytes)
+    auto pool = cslt::move(PoolAllocator::Heap(
+        256,
+        32,
+        4096,   // Page alignment
+        64 * 1024,
+        4096,
+        true,
+        true
+    ).value());
+    
+    EXPECT_EQ(pool->default_alignment(), 4096);
+    
+    auto result = pool->alloc(false, 256);
+    ASSERT_TRUE(result.hasValue());
+    
+    // Verify alignment
+    EXPECT_TRUE(is_aligned(result.value(), 4096));
+}
+
+TEST_F(PoolHeapTest, AllocateAllPrewarmedBlocks) {
+    // Allocate every prewarmed block
+    auto pool = cslt::move(PoolAllocator::Heap(128, 16, 0, 4096, 4096, false, true).value());
+    
+    std::vector<void*> ptrs;
+    
+    // Should be able to allocate exactly 16 blocks
+    for (int i = 0; i < 16; ++i) {
+        auto result = pool->alloc(false, 128);
+        ASSERT_TRUE(result.hasValue()) << "Failed at block " << i;
+        ptrs.push_back(result.value());
+    }
+    
+    // 17th should fail (non-growable)
+    auto result = pool->alloc(false, 128);
+    EXPECT_FALSE(result.hasValue());
+}
+
+TEST_F(PoolHeapTest, PointerValidation) {
+    // Test is_ptr() validation
+    auto pool = cslt::move(PoolAllocator::Heap(256, 32, 0, 10240, 4096, true, true).value());
+    
+    auto result = pool->alloc(false, 256);
+    ASSERT_TRUE(result.hasValue());
+    void* valid_ptr = result.value();
+    
+    // Valid pointer should be recognized
+    EXPECT_TRUE(pool->is_ptr(valid_ptr));
+    
+    // External pointer should not be recognized
+    void* external_ptr = malloc(256);
+    EXPECT_FALSE(pool->is_ptr(external_ptr));
+    free(external_ptr);
+    
+    // Null pointer should not be valid
+    EXPECT_FALSE(pool->is_ptr(nullptr));
+}
+
+TEST_F(PoolHeapTest, FreedBlockRecycling) {
+    // Test that freed blocks go to free list and get recycled
+    auto pool = cslt::move(PoolAllocator::Heap(256, 32, 0, 10240, 4096, true, true).value());
+    
+    // Allocate 5 blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 5; ++i) {
+        auto result = pool->alloc(false, 256);
+        ASSERT_TRUE(result.hasValue());
+        ptrs.push_back(result.value());
+    }
+    
+    EXPECT_EQ(pool->free_blocks(), 0);
+    
+    // Free all 5 blocks
+    for (void* ptr : ptrs) {
+        pool->return_element(ptr, 256);
+    }
+    
+    EXPECT_EQ(pool->free_blocks(), 5);
+    
+    // Reallocate - should get blocks from free list
+    for (int i = 0; i < 5; ++i) {
+        auto result = pool->alloc(false, 256);
+        ASSERT_TRUE(result.hasValue());
+    }
+    
+    EXPECT_EQ(pool->free_blocks(), 0);
+}
+
+TEST_F(PoolHeapTest, MixedAllocFreePattern) {
+    // Realistic pattern: allocate some, free some, allocate more
+    auto pool = cslt::move(PoolAllocator::Heap(128, 32, 0, 8192, 4096, true, true).value());
+    
+    // Allocate 3
+    auto ptr1 = pool->alloc(false, 128).value();
+    auto ptr2 = pool->alloc(false, 128).value();
+    auto ptr3 = pool->alloc(false, 128).value();
+    
+    // Free middle one
+    pool->return_element(ptr2, 128);
+    EXPECT_EQ(pool->free_blocks(), 1);
+    
+    // Allocate another - should reuse ptr2
+    auto ptr4 = pool->alloc(false, 128).value();
+    EXPECT_EQ(ptr4, ptr2);
+    EXPECT_EQ(pool->free_blocks(), 0);
+    
+    // Free first and last
+    pool->return_element(ptr1, 128);
+    pool->return_element(ptr3, 128);
+    EXPECT_EQ(pool->free_blocks(), 2);
+}
+
+TEST_F(PoolHeapTest, StatsAfterOperations) {
+    // Test statistics after various operations
+    auto pool = cslt::move(PoolAllocator::Heap(256, 16, 0, 8192, 4096, true, true).value());
+    
+    // Allocate some
+    auto ptr1 = pool->alloc(false, 256).value();
+    auto ptr2 = pool->alloc(false, 256).value();
+    (void)ptr2;
+    
+    // Free one
+    pool->return_element(ptr1, 256);
+    
+    char buffer[1024];
+    ASSERT_TRUE(pool->stats(buffer, sizeof(buffer)));
+    
+    std::string stats_str(buffer);
+    
+    // Should show correct counts
+    EXPECT_NE(stats_str.find("Total Blocks: 16"), std::string::npos);
+    EXPECT_NE(stats_str.find("Free Blocks: 1"), std::string::npos);
+}
+// ================================================================================ 
+// ================================================================================ 
+
+class PoolStackTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Common setup if needed
+    }
+
+    void TearDown() override {
+        // Common cleanup if needed
+    }
+
+    // Helper to check if pointer is properly aligned
+    bool is_aligned(void* ptr, size_t alignment) {
+        return (reinterpret_cast<uintptr_t>(ptr) % alignment) == 0;
+    }
+};
+
+// ================================================================================
+// Phase 1: Stack Pool Tests (10 tests)
+// ================================================================================
+
+TEST_F(PoolStackTest, CreateBasicStackPool) {
+    // Test basic stack pool creation with typical buffer
+    uint8_t buffer[4096];
+    
+    auto result = PoolAllocator::Stack(
+        buffer,
+        sizeof(buffer),
+        256,    // block_size
+        0       // default alignment
+    );
+
+    ASSERT_TRUE(result.hasValue()) << "Failed to create stack pool";
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_NE(pool.get(), nullptr);
+    EXPECT_EQ(pool->block_size(), 256);
+    EXPECT_EQ(pool->memory_type(), STATIC);
+    EXPECT_FALSE(pool->owns_memory());  // User owns buffer
+    EXPECT_FALSE(pool->can_grow());     // Stack pools never grow
+    EXPECT_GT(pool->total_blocks(), 0); // Should have some blocks
+}
+
+TEST_F(PoolStackTest, VerifyBlockCapacity) {
+    // Verify correct number of blocks fit in buffer
+    uint8_t buffer[8192];
+    
+    auto result = PoolAllocator::Stack(buffer, sizeof(buffer), 128, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    // 8192 bytes - overhead ≈ 7000+ bytes usable
+    // 7000 / 128 ≈ 54 blocks (approximately)
+    EXPECT_GT(pool->total_blocks(), 40);  // At least 40 blocks
+    EXPECT_LT(pool->total_blocks(), 64);  // But not more than 64
+}
+
+TEST_F(PoolStackTest, AllocateFromStackPool) {
+    // Test allocation from stack pool
+    uint8_t buffer[4096];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 128, 0).value());
+    
+    auto result = pool->alloc(false, 128);
+    ASSERT_TRUE(result.hasValue());
+    
+    void* ptr = result.value();
+    EXPECT_NE(ptr, nullptr);
+    
+    // Pointer should be within buffer range
+    EXPECT_GE(ptr, buffer);
+    EXPECT_LT(ptr, buffer + sizeof(buffer));
+}
+
+TEST_F(PoolStackTest, AllocateAllBlocks) {
+    // Allocate all available blocks from stack pool
+    uint8_t buffer[2048];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 64, 0).value());
+    
+    size_t total = pool->total_blocks();
+    std::vector<void*> ptrs;
+    
+    // Should be able to allocate all blocks
+    for (size_t i = 0; i < total; ++i) {
+        auto result = pool->alloc(false, 64);
+        ASSERT_TRUE(result.hasValue()) << "Failed at block " << i;
+        ptrs.push_back(result.value());
+    }
+    
+    // Next allocation should fail (no growth allowed)
+    auto result = pool->alloc(false, 64);
+    EXPECT_FALSE(result.hasValue());
+}
+
+TEST_F(PoolStackTest, StackPoolWithCustomAlignment) {
+    // Test stack pool with custom alignment
+    uint8_t buffer[8192];
+    
+    auto result = PoolAllocator::Stack(
+        buffer,
+        sizeof(buffer),
+        256,
+        64      // 64-byte alignment
+    );
+    
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    EXPECT_EQ(pool->default_alignment(), 64);
+    
+    auto alloc_result = pool->alloc(false, 256);
+    ASSERT_TRUE(alloc_result.hasValue());
+    
+    EXPECT_TRUE(is_aligned(alloc_result.value(), 64));
+}
+
+TEST_F(PoolStackTest, SmallBufferFewBlocks) {
+    // Small buffer should yield few blocks but still work
+    uint8_t buffer[512];
+    
+    auto result = PoolAllocator::Stack(buffer, sizeof(buffer), 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+    
+    // Should have at least 1 block
+    EXPECT_GT(pool->total_blocks(), 0);
+    
+    // Should be able to allocate at least one
+    auto alloc_result = pool->alloc(false, 64);
+    EXPECT_TRUE(alloc_result.hasValue());
+}
+
+TEST_F(PoolStackTest, FailNullBuffer) {
+    // Should fail with null buffer
+    auto result = PoolAllocator::Stack(
+        nullptr,
+        4096,
+        256,
+        0
+    );
+    
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_NE(error_msg.find("null"), std::string::npos);
+}
+
+TEST_F(PoolStackTest, FailZeroBufferSize) {
+    // Should fail with zero buffer size
+    uint8_t buffer[4096];
+    
+    auto result = PoolAllocator::Stack(
+        buffer,
+        0,      // Invalid: zero size
+        256,
+        0
+    );
+    
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_NE(error_msg.find("must be"), std::string::npos);
+}
+
+TEST_F(PoolStackTest, FailZeroBlockSize) {
+    // Should fail with zero block size
+    uint8_t buffer[4096];
+    
+    auto result = PoolAllocator::Stack(
+        buffer,
+        sizeof(buffer),
+        0,      // Invalid: zero block size
+        0
+    );
+    
+    EXPECT_FALSE(result.hasValue());
+    std::string error_msg(result.error().what());
+    EXPECT_NE(error_msg.find("must be"), std::string::npos);
+}
+
+TEST_F(PoolStackTest, FreeAndReuseStackPool) {
+    // Test free-list recycling in stack pool
+    uint8_t buffer[4096];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 128, 0).value());
+    
+    auto result1 = pool->alloc(false, 128);
+    ASSERT_TRUE(result1.hasValue());
+    void* ptr1 = result1.value();
+    
+    EXPECT_EQ(pool->free_blocks(), 0);
+    
+    // Free the block
+    pool->return_element(ptr1, 128);
+    EXPECT_EQ(pool->free_blocks(), 1);
+    
+    // Allocate again - should reuse freed block
+    auto result2 = pool->alloc(false, 128);
+    ASSERT_TRUE(result2.hasValue());
+    void* ptr2 = result2.value();
+    
+    EXPECT_EQ(ptr1, ptr2) << "Block not reused from free list";
+    EXPECT_EQ(pool->free_blocks(), 0);
+}
+// -------------------------------------------------------------------------------- 
+
+TEST_F(PoolStackTest, TinyBufferMinimalBlocks) {
+    // Smallest viable buffer (just enough for headers + 1 block)
+    uint8_t buffer[256];
+    
+    auto result = PoolAllocator::Stack(buffer, sizeof(buffer), 16, 0);
+    
+    if (result.hasValue()) {
+        auto pool = cslt::move(result.value());
+        // If it succeeds, should have at least 1 block
+        EXPECT_EQ(pool->total_blocks(), 1);
+    }
+    // May fail if buffer too small - that's acceptable
+}
+
+TEST_F(PoolStackTest, BufferTooSmallForOneBlock) {
+    // Buffer too small to fit even one block after overhead
+    uint8_t buffer[128];
+    
+    auto result = PoolAllocator::Stack(
+        buffer,
+        sizeof(buffer),
+        1024,   // Block larger than buffer
+        0
+    );
+    
+    // Should fail
+    EXPECT_FALSE(result.hasValue());
+}
+
+TEST_F(PoolStackTest, StackPoolReset) {
+    // Test reset functionality
+    uint8_t buffer[4096];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 128, 0).value());
+    
+    // Allocate some blocks
+    pool->alloc(false, 128);
+    pool->alloc(false, 128);
+    pool->alloc(false, 128);
+    
+    // Reset pool
+    ASSERT_TRUE(pool->reset());
+    
+    // Should be able to allocate again
+    auto result = pool->alloc(false, 128);
+    EXPECT_TRUE(result.hasValue());
+}
+
+TEST_F(PoolStackTest, StackPoolCheckpoint) {
+    // Test checkpoint/restore with stack pool
+    uint8_t buffer[4096];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 128, 0).value());
+    
+    // Allocate one block
+    auto perm = pool->alloc(false, 128);
+    ASSERT_TRUE(perm.hasValue());
+    
+    // Save checkpoint
+    void* checkpoint = pool->save();
+    ASSERT_NE(checkpoint, nullptr);
+    
+    // Allocate more
+    pool->alloc(false, 128);
+    pool->alloc(false, 128);
+    
+    // Restore
+    ASSERT_TRUE(pool->restore(checkpoint));
+}
+
+TEST_F(PoolStackTest, MixedAllocFreeStackPool) {
+    // Realistic pattern with stack pool
+    uint8_t buffer[4096];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 256, 0).value());
+    
+    // Allocate 3
+    auto ptr1 = pool->alloc(false, 256).value();
+    auto ptr2 = pool->alloc(false, 256).value();
+    auto ptr3 = pool->alloc(false, 256).value();
+    
+    // Free middle one
+    pool->return_element(ptr2, 256);
+    EXPECT_EQ(pool->free_blocks(), 1);
+    
+    // Allocate - should reuse ptr2
+    auto ptr4 = pool->alloc(false, 256).value();
+    EXPECT_EQ(ptr4, ptr2);
+    
+    // Free all
+    pool->return_element(ptr1, 256);
+    pool->return_element(ptr3, 256);
+    pool->return_element(ptr4, 256);
+    EXPECT_EQ(pool->free_blocks(), 3);
+}
+
+TEST_F(PoolStackTest, StackPoolStatistics) {
+    // Test statistics for stack pool
+    uint8_t buffer[4096];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 128, 0).value());
+    
+    char stats_buffer[1024];
+    ASSERT_TRUE(pool->stats(stats_buffer, sizeof(stats_buffer)));
+    
+    std::string stats_str(stats_buffer);
+    
+    // Should show STATIC type
+    EXPECT_NE(stats_str.find("Type: STATIC"), std::string::npos);
+    EXPECT_NE(stats_str.find("Block Size: 128"), std::string::npos);
+    EXPECT_NE(stats_str.find("Can Grow: No"), std::string::npos);
+}
+
+TEST_F(PoolStackTest, HeapVsStackBuffer) {
+    // Compare heap-allocated buffer vs stack buffer
+    
+    // Heap buffer
+    uint8_t* heap_buffer = new uint8_t[4096];
+    
+    {  // Scope for pool1
+        auto pool1 = cslt::move(PoolAllocator::Stack(heap_buffer, 4096, 128, 0).value());
+        
+        // Stack buffer
+        uint8_t stack_buffer[4096];
+        auto pool2 = cslt::move(PoolAllocator::Stack(stack_buffer, 4096, 128, 0).value());
+        
+        // Both should work the same
+        EXPECT_EQ(pool1->block_size(), pool2->block_size());
+        EXPECT_EQ(pool1->memory_type(), pool2->memory_type());
+        
+        // Both should allocate
+        auto result1 = pool1->alloc(false, 128);
+        auto result2 = pool2->alloc(false, 128);
+        EXPECT_TRUE(result1.hasValue());
+        EXPECT_TRUE(result2.hasValue());
+        
+    }  // pool1 and pool2 destroyed here (before buffer is freed)
+    
+    // Now safe to delete buffer
+    delete[] heap_buffer;
+}
+
+TEST_F(PoolStackTest, AlignedStackBuffer) {
+    // Test with aligned buffer
+    alignas(64) uint8_t buffer[8192];
+    
+    auto result = PoolAllocator::Stack(buffer, sizeof(buffer), 256, 64);
+    ASSERT_TRUE(result.hasValue());
+    auto pool = cslt::move(result.value());
+   
+    EXPECT_EQ(pool->default_alignment(), 64);
+
+    auto alloc_result = pool->alloc(256, false);
+    ASSERT_TRUE(alloc_result.hasValue());
+
+    // Should be 64-byte aligned
+    EXPECT_TRUE(is_aligned(alloc_result.value(), 64));
+}
+
+TEST_F(PoolStackTest, PointerValidationStackPool) {
+    // Test pointer validation for stack pool
+    uint8_t buffer[4096];
+    auto pool = cslt::move(PoolAllocator::Stack(buffer, sizeof(buffer), 128, 0).value());
+    
+    auto result = pool->alloc(128, false);
+    ASSERT_TRUE(result.hasValue());
+    void* valid_ptr = result.value();
+    
+    // Valid pointer should be recognized
+    EXPECT_TRUE(pool->is_ptr(valid_ptr));
+
+    // Pointer outside buffer should not be valid
+    uint8_t external_buffer[128];
+    EXPECT_FALSE(pool->is_ptr(external_buffer));
+
+    // Null should not be valid
+    EXPECT_FALSE(pool->is_ptr(nullptr));
+
+    // Pointer just beyond buffer should not be valid
+    EXPECT_FALSE(pool->is_ptr(buffer + sizeof(buffer)));
+}
 // ================================================================================
 // ================================================================================
 // eof

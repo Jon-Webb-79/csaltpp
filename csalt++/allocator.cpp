@@ -24,6 +24,7 @@
 #else
     #include <stdlib.h>  // for posix_memalign/free
 #endif
+
 // ================================================================================ 
 // ================================================================================ 
 
@@ -1532,6 +1533,717 @@ namespace cslt {
         
         // Only dynamic arenas that own their memory can have resize toggled
         resize_ = static_cast<uint8_t>(toggle ? 1 : 0);
+    }
+// ================================================================================ 
+// ================================================================================ 
+
+    bool PoolAllocator::grow_pool() {
+        if (!grow_enabled_ || !arena_) {
+            return false;
+        }
+
+        // Calculate bytes needed for this chunk
+        size_t bytes = stride_ * blocks_per_chunk_;
+
+        // Allocate from arena
+        auto result = arena_->alloc_aligned(bytes, stride_, false);
+        if (!result.hasValue()) {
+            return false;
+        }
+
+        uint8_t* base = static_cast<uint8_t*>(result.value());
+        cur_ = base;
+        end_ = base + bytes;
+        total_blocks_ += blocks_per_chunk_;
+
+        // Update accounting
+        size_ += bytes;
+
+        return true;
+    } 
+// -------------------------------------------------------------------------------- 
+
+    void* PoolAllocator::pop_free() {
+        void* blk = free_list_;
+        if (blk) {
+            // Read next pointer from first word of block
+            free_list_ = *static_cast<void**>(blk);
+            free_blocks_--;
+        }
+        return blk;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void PoolAllocator::push_free(void* blk) {
+        if (!blk) return;
+
+        // Write current free_list head into first word of block
+        *static_cast<void**>(blk) = free_list_;
+        free_list_ = blk;
+        free_blocks_++;
+    }
+// ================================================================================ 
+
+    PoolAllocator::~PoolAllocator() noexcept {
+        // Pool destructor doesn't need to do much - the PoolDeleter
+        // handles arena cleanup if needed
+        // Just clear our state
+        free_list_ = nullptr;
+        cur_ = nullptr;
+        arena_ = nullptr;
+    }
+// -------------------------------------------------------------------------------- 
+
+#if ARENA_ENABLE_DYNAMIC
+    Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>>
+    PoolAllocator::Heap(size_t block_size,
+                        size_t blocks_per_chunk,
+                        size_t alignment,
+                        size_t arena_initial_bytes,
+                        size_t min_chunk_bytes,
+                        bool grow_enabled,
+                        bool prewarm) {
+        Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>> result;
+
+        // Validate inputs
+        if (block_size == 0 || blocks_per_chunk == 0) {
+            result.setError(InvalidArgError("Block size and blocks_per_chunk must be > 0"));
+            return result;
+        }
+
+        if (arena_initial_bytes == 0) {
+            result.setError(InvalidArgError("Arena initial bytes must be > 0"));
+            return result;
+        }
+
+        // Fixed pools must be prewarmed
+        if (!grow_enabled && !prewarm) {
+            result.setError(InvalidArgError("Fixed-capacity pools must be prewarmed"));
+            return result;
+        }
+
+        if (alignment != 0u && (alignment & (alignment - 1u)) != 0u) {
+            result.setError(AlignmentError("Pool Heap Alignment not set properly!"));
+            return result;
+        }
+
+        // Normalize alignment (use LOCAL variable, not stride_)
+        size_t eff_align = alignment ? alignment : alignof(max_align_t);
+        if (eff_align < alignof(void*)) {
+            eff_align = alignof(void*);
+        }
+
+        // Calculate stride (LOCAL variable)
+        size_t stride = _align_up_size(block_size, eff_align);
+        if (stride < sizeof(void*)) {
+            stride = sizeof(void*);
+        }
+
+        // const size_t slice_bytes = stride * blocks_per_chunk;
+
+        /* Arena base alignment should never be less than max_align_t */
+        size_t arena_base_align = eff_align;
+        if (arena_base_align < alignof(max_align_t)) {
+            arena_base_align = alignof(max_align_t);
+        }
+
+        // Create the arena
+        auto arena_result = ArenaAllocator::Heap(
+            arena_initial_bytes,
+            grow_enabled,  // Arena resize matches pool growth
+            min_chunk_bytes,
+            arena_base_align
+        );
+
+        if (!arena_result.hasValue()) {
+            result.setError(arena_result.error());
+            return result;
+        }
+
+        auto arena_ptr = cslt::move(arena_result.value());
+        ArenaAllocator* arena = arena_ptr.get();
+
+        // Allocate pool header from the arena
+        auto pool_header = arena->alloc_aligned(sizeof(PoolAllocator), alignof(PoolAllocator), false);
+        if (!pool_header.hasValue()) {
+            result.setError(pool_header.error());
+            return result;
+        }
+
+        // Construct pool in-place
+        PoolAllocator* pool = new (pool_header.value()) PoolAllocator();
+
+        // Release arena from UniquePtr - pool now owns it
+        arena_ptr.release();
+
+        // Initialize pool members (NOW assign to pool->stride_)
+        pool->arena_ = arena;
+        pool->owns_arena_ = true;
+        pool->block_size_ = block_size;
+        pool->stride_ = stride;  // Assign local variable to member
+        pool->blocks_per_chunk_ = blocks_per_chunk;
+        pool->cur_ = nullptr;
+        pool->end_ = nullptr;
+        pool->free_list_ = nullptr;
+        pool->total_blocks_ = 0;
+        pool->free_blocks_ = 0;
+        pool->grow_enabled_ = grow_enabled;
+
+        // Base class initialization
+        pool->default_alignment_ = arena_base_align;
+        pool->mem_type_ = static_cast<uint8_t>(DYNAMIC);
+        pool->owns_memory_ = static_cast<uint8_t>(true);
+        pool->size_ = 0;
+        pool->alloc_ = 0;
+        pool->total_alloc_ = arena_initial_bytes;
+
+        // Prewarm if requested
+        if (prewarm) {
+            // Calculate bytes needed for initial chunk
+            size_t bytes = stride * blocks_per_chunk;
+            
+            // Allocate from arena directly (not via grow_pool which checks grow_enabled)
+            auto prewarm_result = arena->alloc_aligned(bytes, stride, false);
+            if (!prewarm_result.hasValue()) {
+                pool->~PoolAllocator();
+                ArenaDeleter{}(arena);
+                result.setError(MemoryError("Failed to prewarm pool"));
+                return result;
+            }
+            
+            uint8_t* base = static_cast<uint8_t*>(prewarm_result.value());
+            pool->cur_ = base;
+            pool->end_ = base + bytes;
+            pool->total_blocks_ = blocks_per_chunk;
+            pool->size_ = bytes;
+            pool->alloc_ = pool->total_blocks_ * stride;
+        }
+
+        cslt::UniquePtr<PoolAllocator, PoolDeleter> ptr(pool, PoolDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+#endif
+// -------------------------------------------------------------------------------- 
+
+    Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>>
+    PoolAllocator::Stack(void* buffer,
+                         size_t buffer_bytes,
+                         size_t block_size,
+                         size_t alignment) {
+        Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>> result;
+
+        // Validate inputs
+        if (!buffer) {
+            result.setError(ArgumentError("Buffer cannot be null"));
+            return result;
+        }
+
+        if (buffer_bytes == 0 || block_size == 0) {
+            result.setError(ArgumentError("Buffer size and block size must be > 0"));
+            return result;
+        }
+
+        // Validate alignment
+        if (alignment != 0u && (alignment & (alignment - 1u)) != 0u) {
+            result.setError(AlignmentError("Pool Stack Alignment not set properly!"));
+            return result;
+        }
+
+        // Normalize alignment (LOCAL variable)
+        size_t eff_align = alignment ? alignment : alignof(max_align_t);
+        if (eff_align < alignof(void*)) {
+            eff_align = alignof(void*);
+        }
+
+        // Calculate stride (LOCAL variable)
+        size_t stride = _align_up_size(block_size, eff_align);
+        if (stride < sizeof(void*)) {
+            stride = sizeof(void*);
+        }
+
+        // Arena base alignment should be >= max_align_t
+        size_t arena_base_align = eff_align;
+        if (arena_base_align < alignof(max_align_t)) {
+            arena_base_align = alignof(max_align_t);
+        }
+
+        // Create the owned static arena (header lives in caller buffer)
+        auto arena_result = ArenaAllocator::Stack(buffer, buffer_bytes, arena_base_align);
+        if (!arena_result.hasValue()) {
+            result.setError(arena_result.error());
+            return result;
+        }
+
+        auto arena_ptr = cslt::move(arena_result.value());
+        ArenaAllocator* arena = arena_ptr.get();
+
+        // Allocate pool header inside the arena
+        auto pool_header = arena->alloc_aligned(sizeof(PoolAllocator), alignof(PoolAllocator), false);
+        if (!pool_header.hasValue()) {
+            result.setError(pool_header.error());
+            return result;
+        }
+
+        // Construct pool in-place
+        PoolAllocator* pool = new (pool_header.value()) PoolAllocator();
+
+        // Release arena from UniquePtr - pool now manages it
+        arena_ptr.release();
+
+        // Calculate how many blocks fit
+        size_t remaining = arena->remaining();
+        size_t blocks = remaining / stride;
+
+        if (blocks == 0) {
+            pool->~PoolAllocator();
+            ArenaDeleter{}(arena);
+            result.setError(MemoryError("Buffer too small for even one block"));
+            return result;
+        }
+
+        // Initialize pool members
+        pool->arena_ = arena;
+        pool->owns_arena_ = true;   // Pool owns the arena object
+        pool->block_size_ = block_size;
+        pool->stride_ = stride;
+        pool->blocks_per_chunk_ = 0;  // Not used for static pools
+        pool->cur_ = nullptr;
+        pool->end_ = nullptr;
+        pool->free_list_ = nullptr;
+        pool->total_blocks_ = 0;
+        pool->free_blocks_ = 0;
+        pool->grow_enabled_ = false;  // Static pools never grow
+
+        // Base class initialization
+        pool->default_alignment_ = eff_align;
+        pool->mem_type_ = static_cast<uint8_t>(STATIC);
+        pool->owns_memory_ = static_cast<uint8_t>(false);  // User owns buffer
+        pool->size_ = 0;
+        pool->alloc_ = blocks * stride;
+        pool->total_alloc_ = buffer_bytes;
+
+        // Prewarm (required for static pools - allocate all available blocks)
+        size_t bytes = blocks * stride;
+        auto slice = arena->alloc_aligned(bytes, stride, false);
+        if (!slice.hasValue()) {
+            pool->~PoolAllocator();
+            ArenaDeleter{}(arena);
+            result.setError(slice.error());
+            return result;
+        }
+
+        uint8_t* base = static_cast<uint8_t*>(slice.value());
+        pool->cur_ = base;
+        pool->end_ = base + bytes;
+        pool->total_blocks_ = blocks;
+        pool->size_ = bytes;
+
+        cslt::UniquePtr<PoolAllocator, PoolDeleter> ptr(pool, PoolDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>>
+    PoolAllocator::WithArena(ArenaAllocator& arena,
+                             size_t block_size,
+                             size_t blocks_per_chunk,
+                             size_t alignment,
+                             bool grow_enabled,
+                             bool prewarm) {
+        Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>> result;
+
+        // Validate inputs
+        if (block_size == 0 || blocks_per_chunk == 0) {
+            result.setError(InvalidArgError("Block size and blocks_per_chunk must be > 0"));
+            return result;
+        }
+
+        // Validate alignment
+        if (alignment != 0u && (alignment & (alignment - 1u)) != 0u) {
+            result.setError(AlignmentError("Pool WithArena Alignment not set properly!"));
+            return result;
+        }
+
+        // Normalize alignment (LOCAL variable)
+        size_t eff_align = alignment ? alignment : alignof(max_align_t);
+        if (eff_align < alignof(void*)) {
+            eff_align = alignof(void*);
+        }
+
+        // Calculate stride (LOCAL variable)
+        size_t stride = _align_up_size(block_size, eff_align);
+        if (stride < sizeof(void*)) {
+            stride = sizeof(void*);
+        }
+
+        // Allocate pool header from arena
+        auto pool_header = arena.alloc_aligned(sizeof(PoolAllocator), alignof(PoolAllocator), false);
+        if (!pool_header.hasValue()) {
+            result.setError(pool_header.error());
+            return result;
+        }
+
+        // Construct pool in-place
+        PoolAllocator* pool = new (pool_header.value()) PoolAllocator();
+
+        // Initialize pool members
+        pool->arena_ = &arena;
+        pool->owns_arena_ = false;  // Borrowed arena
+        pool->block_size_ = block_size;
+        pool->stride_ = stride;
+        pool->blocks_per_chunk_ = blocks_per_chunk;
+        pool->cur_ = nullptr;
+        pool->end_ = nullptr;
+        pool->free_list_ = nullptr;
+        pool->total_blocks_ = 0;
+        pool->free_blocks_ = 0;
+        pool->grow_enabled_ = grow_enabled;
+
+        // Base class initialization
+        pool->default_alignment_ = eff_align;
+        pool->mem_type_ = static_cast<uint8_t>(arena.memory_type());
+        pool->owns_memory_ = static_cast<uint8_t>(false);
+        pool->size_ = 0;
+        pool->alloc_ = 0;
+        pool->total_alloc_ = 0;
+
+        // Prewarm if requested
+        if (prewarm) {
+            // Calculate bytes needed for initial chunk
+            size_t bytes = stride * blocks_per_chunk;
+            
+            // Allocate from arena directly
+            auto prewarm_result = arena.alloc_aligned(bytes, stride, false);
+            if (!prewarm_result.hasValue()) {
+                pool->~PoolAllocator();
+                result.setError(MemoryError("Failed to prewarm pool"));
+                return result;
+            }
+            
+            uint8_t* base = static_cast<uint8_t*>(prewarm_result.value());
+            pool->cur_ = base;
+            pool->end_ = base + bytes;
+            pool->total_blocks_ = blocks_per_chunk;
+            pool->size_ = bytes;
+            pool->alloc_ = pool->total_blocks_ * stride;
+        }
+
+        cslt::UniquePtr<PoolAllocator, PoolDeleter> ptr(pool, PoolDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> PoolAllocator::alloc_aligned(size_t bytes,
+                                                 size_t alignment,
+                                                 bool zeroed) {
+        Expected<void*> result;
+
+        // Validate size matches block size
+        if (bytes != block_size_) {
+            result.setError(ArgumentError("Allocation size must equal pool block size"));
+            return result;
+        }
+
+        // Validate alignment matches pool alignment
+        size_t eff_align = alignment ? alignment : default_alignment_;
+        if (eff_align != default_alignment_) {
+            result.setError(AlignmentError("Pool alignment is fixed at creation time"));
+            return result;
+        }
+
+        // Delegate to regular alloc
+        return alloc(zeroed);
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> PoolAllocator::alloc(size_t bytes, bool zeroed) {
+        (void) bytes;
+        Expected<void*> result;
+        void* blk = nullptr;
+        
+        // Validate size matches block size
+        // if (bytes != block_size_) {
+        //     result.setError(ArgumentError("Allocation size must equal pool block size"));
+        //     return result;
+        // }
+        
+        // 1.) Try to pop from free list first
+        void* ptr = pop_free();
+        if (ptr) {
+            if (zeroed) {
+                memset(ptr, 0, block_size_);
+            }
+            result.setValue(ptr);
+            return result;
+        }
+        
+        // 2.) Carve from the current slice
+        if (cur_ != end_) {
+            blk = cur_;
+            cur_ += stride_;
+            if (zeroed) {
+                memset(blk, 0, block_size_);
+            }
+            result.setValue(blk);
+            return result;
+        }
+        
+        // 3.) At slice end -> attempt to grow (if allowed)
+        if (!grow_enabled_) {
+            result.setError(CapacityOverflowError("Pool out of capacity and cannot grow"));
+            return result;
+        }
+        
+        bool ok = grow_pool();
+        if (!ok) {
+            result.setError(BadAllocError("Pool cannot alloc more memory"));
+            return result;
+        }
+        
+        if (cur_ == end_) {
+            result.setError(StateCorruptError("Pool state corrupted"));
+            return result;
+        }
+        
+        blk = cur_;
+        cur_ += stride_;
+        if (zeroed) {
+            memset(blk, 0, block_size_);
+        }
+        result.setValue(blk);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> PoolAllocator::realloc(void* ptr,
+                                           size_t old_bytes,
+                                           size_t new_bytes,
+                                           bool zeroed) {
+        (void)ptr;
+        (void)old_bytes;
+        (void)new_bytes;
+        (void)zeroed;
+
+        Expected<void*> result;
+        result.setError(FeatureDisabledError("Pool allocators do not support realloc"));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> PoolAllocator::realloc_aligned(void* ptr,
+                                                   size_t old_bytes,
+                                                   size_t new_bytes,
+                                                   size_t alignment,
+                                                   bool zeroed) {
+        (void)ptr;
+        (void)old_bytes;
+        (void)new_bytes;
+        (void)alignment;
+        (void)zeroed;
+
+        Expected<void*> result;
+        result.setError(FeatureDisabledError("Pool allocators do not support realloc"));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void PoolAllocator::return_element(void* ptr, size_t bytes, size_t alignment) {
+        (void)alignment;
+
+        if (!ptr) return;
+
+        // Validate size
+        if (bytes != block_size_) {
+            // In debug builds, this is a serious error
+            // In release, we'll just ignore it
+            return;
+        }
+
+        // Validate pointer belongs to this pool
+        if (!is_ptr(ptr)) {
+            return;
+        }
+
+        // Push to free list
+        push_free(ptr);
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool PoolAllocator::reset(bool trim_extra_chunks) {
+        // Clear free list
+        free_list_ = nullptr;
+        free_blocks_ = 0;
+
+        // Reset arena if we own it
+        if (owns_arena_ && arena_) {
+            return arena_->reset(trim_extra_chunks);
+        }
+
+        // If we don't own the arena, we can't reset it
+        // Just clear our state
+        cur_ = nullptr;
+        total_blocks_ = 0;
+        size_ = 0;
+
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void* PoolAllocator::save() const {
+        if (!arena_) {
+            return nullptr;
+        }
+
+        // Allocate checkpoint data
+        PoolCheckpointData* cp = new (std::nothrow) PoolCheckpointData;
+        if (!cp) {
+            return nullptr;
+        }
+
+        // Save current state
+        cp->free_list = free_list_;
+        cp->free_blocks = free_blocks_;
+        cp->cur = cur_;
+        cp->total_blocks = total_blocks_;
+
+        return static_cast<void*>(cp);
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool PoolAllocator::restore(void* checkpoint) {
+        if (!checkpoint) {
+            return false;
+        }
+
+        PoolCheckpointData* cp = static_cast<PoolCheckpointData*>(checkpoint);
+
+        // Restore state
+        free_list_ = cp->free_list;
+        free_blocks_ = cp->free_blocks;
+        cur_ = cp->cur;
+        total_blocks_ = cp->total_blocks;
+
+        // Update size accounting
+        size_t allocated = total_blocks_ - free_blocks_;
+        size_ = allocated * stride_;
+
+        // Clean up checkpoint
+        delete cp;
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool PoolAllocator::is_ptr(void* ptr) const {
+        if (!arena_) {
+            return false;
+        }
+        return arena_->is_ptr(ptr);
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool PoolAllocator::is_ptr_sized(void* ptr, size_t bytes) const {
+        if (bytes != block_size_) {
+            return false;
+        }
+        return is_ptr(ptr);
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool PoolAllocator::stats(char* buffer, size_t buffer_size) const {
+        size_t offset = 0;
+
+        if (!buffer || buffer_size == 0) {
+            return false;
+        }
+
+        if (!_buf_appendf(buffer, buffer_size, &offset, "Pool Allocator Statistics:\n")) {
+            return false;
+        }
+
+        // Memory type
+        const char* type_str = (static_cast<MemType>(mem_type_) == STATIC) ? "STATIC" : "DYNAMIC";
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Type: %s\n", type_str)) {
+            return false;
+        }
+
+        // Block information
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Block Size: %zu bytes\n", block_size_)) {
+            return false;
+        }
+
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Stride (aligned): %zu bytes\n", stride_)) {
+            return false;
+        }
+
+        // Block counts
+        size_t allocated = total_blocks_ - free_blocks_;
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Total Blocks: %zu\n", total_blocks_)) {
+            return false;
+        }
+
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Allocated Blocks: %zu\n", allocated)) {
+            return false;
+        }
+
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Free Blocks: %zu\n", free_blocks_)) {
+            return false;
+        }
+
+        // Utilization
+        if (total_blocks_ > 0) {
+            double util = (100.0 * static_cast<double>(allocated)) / static_cast<double>(total_blocks_);
+            if (!_buf_appendf(buffer, buffer_size, &offset, "  Utilization: %.1f%%\n", util)) {
+                return false;
+            }
+        }
+
+        // Memory usage
+        size_t total_memory = total_blocks_ * stride_;
+        size_t used_memory = allocated * stride_;
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Total Memory: %zu bytes\n", total_memory)) {
+            return false;
+        }
+
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Used Memory: %zu bytes\n", used_memory)) {
+            return false;
+        }
+
+        // Growth information
+        const char* grow_str = grow_enabled_ ? "Yes" : "No";
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Can Grow: %s\n", grow_str)) {
+            return false;
+        }
+
+        if (blocks_per_chunk_ > 0) {
+            if (!_buf_appendf(buffer, buffer_size, &offset, "  Blocks Per Chunk: %zu\n", blocks_per_chunk_)) {
+                return false;
+            }
+        }
+
+        // Arena ownership
+        const char* owns_str = owns_arena_ ? "Yes" : "No";
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Owns Arena: %s\n", owns_str)) {
+            return false;
+        }
+
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void PoolAllocator::toggle_grow(bool enable) noexcept {
+        // Can only enable growth if we own a dynamic arena
+        if (!owns_arena_) {
+            return;
+        }
+
+        if (static_cast<MemType>(mem_type_) == STATIC) {
+            return;
+        }
+
+        grow_enabled_ = enable;
     }
 // ================================================================================ 
 // ================================================================================ 

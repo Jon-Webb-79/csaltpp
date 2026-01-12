@@ -2746,6 +2746,492 @@ namespace cslt {
     }
 // ================================================================================ 
 // ================================================================================ 
+
+    class PoolAllocator;
+
+    /**
+     * @struct PoolDeleter
+     * @brief Custom deleter for PoolAllocator unique pointers
+     * 
+     * @details Similar to ArenaDeleter, properly cleans up PoolAllocator instances
+     *          created by factory methods. Handles ownership appropriately:
+     *          - DYNAMIC pools that own their arena: frees the pool and arena
+     *          - Pools with borrowed arenas: only frees the pool structure
+     */
+    struct PoolDeleter {
+        void operator()(PoolAllocator* pool) const noexcept;
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    class PoolAllocator : public Allocator {
+        friend struct PoolDeleter;
+    private:
+        /**
+         * @brief Checkpoint representation for save/restore
+         * @internal
+         */
+        struct PoolCheckpointData {
+            void*    free_list;      ///< Head of free list at checkpoint time
+            size_t   free_blocks;    ///< Number of blocks in free list
+            uint8_t* cur;            ///< Bump pointer position in arena
+            size_t   total_blocks;   ///< Total blocks available at checkpoint time
+        };
+        
+        ArenaAllocator* arena_;           ///< Backing arena (owned or borrowed)
+        bool            owns_arena_;      ///< true if pool must destroy arena
+        size_t          block_size_;      ///< User-requested block size
+        size_t          stride_;          ///< Actual block size (aligned)
+        size_t          blocks_per_chunk_;///< Blocks allocated per growth
+        uint8_t*        cur_;             ///< Next free byte in arena
+        uint8_t*        end_;             ///< End of current arena slice
+        void*           free_list_;       ///< Head of intrusive free list
+        size_t          total_blocks_;    ///< Total blocks ever available
+        size_t          free_blocks_;     ///< Blocks currently in free list
+        bool            grow_enabled_;    ///< If false, fixed capacity
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Private constructor for factory methods
+         */
+        PoolAllocator()
+            : Allocator(alignof(max_align_t), 0, ALLOC_INVALID, false),
+              arena_(nullptr),
+              owns_arena_(false),
+              block_size_(0),
+              stride_(0),
+              blocks_per_chunk_(0),
+              cur_(nullptr),
+              free_list_(nullptr),
+              total_blocks_(0),
+              free_blocks_(0),
+              grow_enabled_(false) {}
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Grow pool by allocating a new chunk from arena
+         * @return true on success, false if growth failed or disabled
+         */
+        bool grow_pool();
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Pop a block from the free list
+         * @return Pointer to block, or nullptr if free list empty
+         */
+        void* pop_free();
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Push a block onto the free list
+         * @param blk Block to add to free list
+         */
+        void push_free(void* blk);
+// ================================================================================ 
+
+    public:
+        /**
+         * @brief Destructor - cleans up pool and optionally arena
+         * 
+         * @details If the pool owns its arena, destroys the arena. Otherwise,
+         *          just cleans up pool state. All allocated blocks become invalid.
+         */
+        ~PoolAllocator() noexcept override;
+// -------------------------------------------------------------------------------- 
+
+#if ARENA_ENABLE_DYNAMIC
+        /**
+         * @brief Create a heap-allocated pool with owned arena
+         * 
+         * @param block_size Size of each block in bytes
+         * @param blocks_per_chunk Number of blocks to allocate per growth
+         * @param alignment Block alignment (0 = default, must be power of 2)
+         * @param arena_initial_bytes Initial arena size
+         * @param grow_enabled If true, pool can grow dynamically
+         * @param prewarm If true, allocate first chunk immediately
+         * 
+         * @return Expected containing UniquePtr to pool on success, or error
+         * 
+         * @details Creates a pool that owns its own dynamic arena. The pool can
+         *          optionally grow by allocating additional chunks as needed.
+         *          
+         *          If prewarm=true, allocates the first chunk immediately so the
+         *          first allocation is guaranteed O(1). If prewarm=false and
+         *          grow_enabled=false, the pool will be unusable.
+         * 
+         * @example Resizable pool
+         * @code
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(
+         *     256,      // 256-byte blocks
+         *     64,       // 64 blocks per chunk
+         *     0,        // default alignment
+         *     16384,    // 16KB initial arena
+         *     true,     // can grow
+         *     true      // prewarm
+         * ).value());
+         * 
+         * // Can allocate indefinitely - pool grows as needed
+         * for (int i = 0; i < 1000; ++i) {
+         *     auto ptr = pool->alloc(256);
+         * }
+         * @endcode
+         */
+        static Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>>
+        Heap(size_t block_size,
+             size_t blocks_per_chunk,
+             size_t alignment = 0,
+             size_t arena_initial_bytes = 4096,
+             size_t min_chunk_bytes = 4096,
+             bool grow_enabled = true,
+             bool prewarm = true);
+#endif
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Create a pool using a user-provided buffer
+         * 
+         * @param buffer Pointer to pre-allocated memory buffer
+         * @param buffer_bytes Size of buffer in bytes
+         * @param block_size Size of each block in bytes
+         * @param alignment Block alignment (0 = default, must be power of 2)
+         * 
+         * @return Expected containing UniquePtr to pool on success, or error
+         * 
+         * @details Creates a fixed-capacity pool using a user-provided buffer.
+         *          The pool does NOT own the buffer. The buffer must remain valid
+         *          for the pool's lifetime.
+         *          
+         *          The pool creates a static arena within the buffer, then
+         *          allocates all blocks from that arena. Cannot grow.
+         * 
+         * @example Stack-based pool
+         * @code
+         * uint8_t buffer[8192];
+         * auto pool = cslt::move(cslt::PoolAllocator::Stack(
+         *     buffer, sizeof(buffer), 128
+         * ).value());
+         * 
+         * // All allocations from stack buffer
+         * auto ptr = pool->alloc(128);
+         * @endcode
+         */
+        static Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>>
+        Stack(void* buffer,
+              size_t buffer_bytes,
+              size_t block_size,
+              size_t alignment = 0);
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Create a pool using an existing arena
+         * 
+         * @param arena Arena to allocate from (borrowed, not owned)
+         * @param block_size Size of each block in bytes
+         * @param blocks_per_chunk Number of blocks to allocate per growth
+         * @param alignment Block alignment (0 = default, must be power of 2)
+         * @param grow_enabled If true, pool can request more chunks from arena
+         * @param prewarm If true, allocate first chunk immediately
+         * 
+         * @return Expected containing UniquePtr to pool on success, or error
+         * 
+         * @details Creates a pool that uses a borrowed arena for storage. The pool
+         *          does NOT own the arena - the arena must outlive the pool.
+         *          
+         *          If the arena is dynamic and grow_enabled=true, the pool can
+         *          request additional chunks. If the arena is static, grow_enabled
+         *          is automatically disabled.
+         * 
+         * @example Multiple pools sharing arena
+         * @code
+         * auto arena = cslt::move(cslt::ArenaAllocator::Heap(128 * 1024).value());
+         * 
+         * // Small block pool
+         * auto small_pool = cslt::move(cslt::PoolAllocator::WithArena(
+         *     *arena, 64, 128
+         * ).value());
+         * 
+         * // Large block pool
+         * auto large_pool = cslt::move(cslt::PoolAllocator::WithArena(
+         *     *arena, 1024, 16
+         * ).value());
+         * 
+         * // Both share the same arena memory
+         * @endcode
+         */
+        static Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>>
+        WithArena(ArenaAllocator& arena,
+                  size_t block_size,
+                  size_t blocks_per_chunk,
+                  size_t alignment = 0,
+                  bool grow_enabled = false,
+                  bool prewarm = true);
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Allocate a block from the pool
+         * 
+         * @param bytes Number of bytes to allocate (must equal block_size)
+         * @param zeroed If true, zero-initialize the block
+         * 
+         * @return Expected containing pointer to block on success, or error
+         * 
+         * @details Allocates a fixed-size block. The bytes parameter must match
+         *          the pool's block_size (validation for safety). First checks
+         *          the free-list for recycled blocks (O(1)), then allocates from
+         *          the arena if needed.
+         * 
+         * @retval Expected with pointer on success
+         * @retval Expected with ArgumentError if bytes != block_size
+         * @retval Expected with MemoryError if out of capacity
+         * 
+         * @example
+         * @code
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32).value());
+         * 
+         * auto ptr = pool->alloc(256);  // OK
+         * // auto bad = pool->alloc(128);  // ERROR: wrong size
+         * @endcode
+         */
+        Expected<void*> alloc(size_t bytes, bool zeroed = false) override;
+
+        /**
+         * @brief Allocate aligned block (same as alloc for pools)
+         * 
+         * @details For pools, alignment is fixed at creation time. This method
+         *          validates the requested alignment matches the pool's stride
+         *          alignment, then delegates to alloc().
+         */
+        Expected<void*> alloc_aligned(size_t bytes,
+                                      size_t alignment,
+                                      bool zeroed = false) override;
+
+        /**
+         * @brief Realloc not supported for pools
+         * 
+         * @return Expected with FeatureDisabledError
+         * 
+         * @details Pools allocate fixed-size blocks and cannot resize them.
+         *          To "resize", allocate a new block, copy data, and free the old.
+         */
+        Expected<void*> realloc(void* ptr,
+                                size_t old_bytes,
+                                size_t new_bytes,
+                                bool zeroed = false) override;
+
+        /**
+         * @brief Realloc aligned not supported for pools
+         * 
+         * @return Expected with FeatureDisabledError
+         */
+        Expected<void*> realloc_aligned(void* ptr,
+                                        size_t old_bytes,
+                                        size_t new_bytes,
+                                        size_t alignment,
+                                        bool zeroed = false) override;
+
+        /**
+         * @brief Return a block to the free-list
+         * 
+         * @param ptr Pointer to block to free
+         * @param bytes Size of block (must equal block_size)
+         * @param alignment Alignment (ignored, but should match pool alignment)
+         * 
+         * @details Returns the block to the pool's free-list for reuse. This is
+         *          O(1) and the block can be immediately reallocated. The pool
+         *          does NOT zero or clear the block - caller's responsibility if needed.
+         * 
+         * @warning Unlike arena allocators, this DOES free the block for reuse.
+         *          After calling return_element, the pointer is invalid until
+         *          reallocated.
+         * 
+         * @example
+         * @code
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32).value());
+         * 
+         * auto ptr = pool->alloc(256).value();
+         * // Use ptr...
+         * 
+         * pool->return_element(ptr, 256);  // Back to free-list
+         * // ptr now INVALID
+         * 
+         * auto ptr2 = pool->alloc(256).value();  // Likely reuses ptr's block
+         * @endcode
+         */
+        void return_element(void* ptr,
+                           size_t bytes,
+                           size_t alignment = alignof(max_align_t)) override;
+
+        /**
+         * @brief Reset pool to initial state
+         * 
+         * @param trim_extra_chunks If true, free extra arena chunks (if arena supports)
+         * 
+         * @return true on success
+         * 
+         * @details Clears the free-list and resets the arena allocation pointer.
+         *          All allocated blocks become invalid. If trim_extra_chunks=true
+         *          and the pool owns a dynamic arena, extra chunks are freed.
+         * 
+         * @example
+         * @code
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32).value());
+         * 
+         * for (int i = 0; i < 100; ++i) {
+         *     pool->alloc(256);
+         * }
+         * 
+         * pool->reset();  // All blocks invalid, pool is fresh
+         * @endcode
+         */
+        bool reset(bool trim_extra_chunks = false) override;
+
+        /**
+         * @brief Save pool state as checkpoint
+         * 
+         * @return Opaque checkpoint pointer, or nullptr on failure
+         * 
+         * @details Saves the current pool state including free-list, arena position,
+         *          and block counts. Can later restore() to this point.
+         * 
+         * @example
+         * @code
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(128, 64).value());
+         * 
+         * auto permanent = pool->alloc(128);
+         * void* checkpoint = pool->save();
+         * 
+         * auto temp1 = pool->alloc(128);
+         * auto temp2 = pool->alloc(128);
+         * 
+         * pool->restore(checkpoint);  // temp1, temp2 invalid
+         * @endcode
+         */
+        void* save() const override;
+
+        /**
+         * @brief Restore pool to saved checkpoint
+         * 
+         * @param checkpoint Checkpoint from previous save()
+         * 
+         * @return true on success, false on error
+         * 
+         * @details Restores pool to checkpoint state. All blocks allocated after
+         *          the checkpoint become invalid. The checkpoint is freed.
+         */
+        bool restore(void* checkpoint) override;
+
+        /**
+         * @brief Check if pointer was allocated by this pool
+         * 
+         * @param ptr Pointer to check
+         * 
+         * @return true if pointer is from this pool's arena
+         * 
+         * @details Delegates to the underlying arena's is_ptr() check.
+         */
+        bool is_ptr(void* ptr) const override;
+
+        /**
+         * @brief Check if pointer with size is valid for this pool
+         * 
+         * @param ptr Pointer to check
+         * @param bytes Size to validate (should be block_size)
+         * 
+         * @return true if pointer and size are valid
+         */
+        bool is_ptr_sized(void* ptr, size_t bytes) const override;
+
+        /**
+         * @brief Generate pool statistics
+         * 
+         * @param buffer Buffer to write statistics to
+         * @param buffer_size Size of buffer
+         * 
+         * @return true if statistics written successfully
+         * 
+         * @details Writes detailed pool statistics including block size, total
+         *          blocks, free blocks, utilization, and arena information.
+         */
+        bool stats(char* buffer, size_t buffer_size) const override;
+
+        // ------------------------------------------------------------------------
+        // Pool-Specific Methods
+        // ------------------------------------------------------------------------
+
+        /**
+         * @brief Get the pool's fixed block size
+         * 
+         * @return Block size in bytes
+         */
+        size_t block_size() const noexcept { return block_size_; }
+
+        /**
+         * @brief Get the actual stride (aligned block size)
+         * 
+         * @return Stride in bytes
+         */
+        size_t stride() const noexcept { return stride_; }
+
+        /**
+         * @brief Get total number of blocks available
+         * 
+         * @return Total blocks (allocated + free)
+         */
+        size_t total_blocks() const noexcept { return total_blocks_; }
+
+        /**
+         * @brief Get number of free blocks available
+         * 
+         * @return Free blocks in free-list
+         */
+        size_t free_blocks() const noexcept { return free_blocks_; }
+
+        /**
+         * @brief Get number of allocated blocks
+         * 
+         * @return Blocks currently in use
+         */
+        size_t allocated_blocks() const noexcept {
+            return total_blocks_ - free_blocks_;
+        }
+
+        /**
+         * @brief Check if pool can grow
+         * 
+         * @return true if growth enabled
+         */
+        bool can_grow() const noexcept { return grow_enabled_; }
+
+        /**
+         * @brief Enable or disable pool growth
+         * 
+         * @param enable If true, enable growth; if false, disable
+         * 
+         * @details Only works if pool owns arena or arena supports growth.
+         */
+        void toggle_grow(bool enable) noexcept;
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    inline void PoolDeleter::operator()(PoolAllocator* pool) const noexcept {
+        if (!pool) return;
+
+        bool owns_arena = pool->owns_arena_;
+        ArenaAllocator* arena = pool->arena_;
+
+        // Call destructor
+        pool->~PoolAllocator();
+
+        // If pool owned its arena, the arena was created by the pool
+        // and needs to be destroyed
+        if (owns_arena && arena) {
+            ArenaDeleter{}(arena);
+        }
+    }
+
+// ================================================================================ 
+// ================================================================================ 
 } /* cslt namespace */
 // ================================================================================ 
 // ================================================================================ 

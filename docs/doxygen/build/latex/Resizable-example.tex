@@ -1,0 +1,47 @@
+\hypertarget{Resizable-example}{}\doxysection{Resizable}
+Create a heap-\/allocated pool with owned arena
+\begin{DoxyParams}{Parameters}
+{\em block\+\_\+size} & Size of each block in bytes \\
+\hline
+{\em blocks\+\_\+per\+\_\+chunk} & Number of blocks to allocate per growth \\
+\hline
+{\em alignment} & Block alignment (0 = default, must be power of 2) \\
+\hline
+{\em arena\+\_\+initial\+\_\+bytes} & Initial arena size \\
+\hline
+{\em grow\+\_\+enabled} & If true, pool can grow dynamically \\
+\hline
+{\em prewarm} & If true, allocate first chunk immediately\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected containing Unique\+Ptr to pool on success, or error
+\end{DoxyReturn}
+Creates a pool that owns its own dynamic arena. The pool can optionally grow by allocating additional chunks as needed.
+
+If prewarm=true, allocates the first chunk immediately so the first allocation is guaranteed O(1). If prewarm=false and grow\+\_\+enabled=false, the pool will be unusable.
+
+pool 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} pool = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{cslt::PoolAllocator::Heap}}(}
+\DoxyCodeLine{    256,      \textcolor{comment}{// 256-\/byte blocks}}
+\DoxyCodeLine{    64,       \textcolor{comment}{// 64 blocks per chunk}}
+\DoxyCodeLine{    0,        \textcolor{comment}{// default alignment}}
+\DoxyCodeLine{    16384,    \textcolor{comment}{// 16KB initial arena}}
+\DoxyCodeLine{    \textcolor{keyword}{true},     \textcolor{comment}{// can grow}}
+\DoxyCodeLine{    \textcolor{keyword}{true}      \textcolor{comment}{// prewarm}}
+\DoxyCodeLine{).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Can allocate indefinitely -\/ pool grows as needed}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 1000; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = pool-\/>alloc(256);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

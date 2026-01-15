@@ -1,0 +1,56 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structcslt_1_1PoolDeleter" kind="struct" language="C++" prot="public">
+    <compoundname>cslt::PoolDeleter</compoundname>
+    <includes refid="allocator_8hpp" local="no">allocator.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structcslt_1_1PoolDeleter_1a995981aea9e4715122dc8e1703c71e9b" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::PoolDeleter::operator()</definition>
+        <argsstring>(PoolAllocator *pool) const noexcept</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="classcslt_1_1PoolAllocator" kindref="compound">PoolAllocator</ref> *</type>
+          <declname>pool</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2762" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3435" bodyend="3449"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Custom deleter for <ref refid="classcslt_1_1PoolAllocator" kindref="compound">PoolAllocator</ref> unique pointers. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Similar to <ref refid="structcslt_1_1ArenaDeleter" kindref="compound">ArenaDeleter</ref>, properly cleans up <ref refid="classcslt_1_1PoolAllocator" kindref="compound">PoolAllocator</ref> instances created by factory methods. Handles ownership appropriately:<itemizedlist>
+<listitem><para>DYNAMIC pools that own their arena: frees the pool and arena</para>
+</listitem><listitem><para>Pools with borrowed arenas: only frees the pool structure</para>
+</listitem></itemizedlist>
+</para>
+<para>This deleter properly cleans up <ref refid="classcslt_1_1PoolAllocator" kindref="compound">PoolAllocator</ref> instances created by factory methods (Heap, WithArena, Stack). It handles the complex ownership relationships between pools and their backing arenas:</para>
+<para><orderedlist>
+<listitem><para>Calls the pool&apos;s destructor (cleans up pool state)</para>
+</listitem><listitem><para>Conditionally destroys the arena based on ownership</para>
+</listitem></orderedlist>
+</para>
+<para>Arena ownership patterns:<itemizedlist>
+<listitem><para><bold>Heap()</bold>: Pool owns arena → <ref refid="structcslt_1_1ArenaDeleter" kindref="compound">ArenaDeleter</ref> frees arena and memory</para>
+</listitem><listitem><para><bold>WithArena()</bold>: Pool borrows arena → Arena not deleted (caller owns it)</para>
+</listitem><listitem><para><bold>Stack()</bold>: Pool owns arena object → <ref refid="structcslt_1_1ArenaDeleter" kindref="compound">ArenaDeleter</ref> destructs arena (but doesn&apos;t free buffer, user owns it)</para>
+</listitem></itemizedlist>
+</para>
+<para>The deleter respects the <computeroutput>owns_arena_</computeroutput> flag to determine whether the pool created its own arena (Heap/Stack) or borrowed one (WithArena).</para>
+<para><simplesect kind="note"><para>This deleter is noexcept and safe to call with nullptr. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2761" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2761" bodyend="2763"/>
+    <listofallmembers>
+      <member refid="structcslt_1_1PoolDeleter_1a995981aea9e4715122dc8e1703c71e9b" prot="public" virt="non-virtual"><scope>cslt::PoolDeleter</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

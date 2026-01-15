@@ -1977,16 +1977,6 @@ namespace cslt {
     }
 // -------------------------------------------------------------------------------- 
 
-    Expected<void*> PoolAllocator::alloc_aligned_pool(size_t alignment, bool zeroed) {
-        if (alignment != default_alignment_) {
-            Expected<void*> result;
-            result.setError(ArgumentError("Alignment must be equal to pool alignment"));
-            return result;
-        }
-        return alloc_aligned(block_size_, alignment, zeroed);
-    }
-// -------------------------------------------------------------------------------- 
-
     Expected<void*> PoolAllocator::alloc(size_t bytes, bool zeroed) {
         (void) bytes;
         Expected<void*> result;

@@ -1,0 +1,57 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="Stack-based-example" kind="example">
+    <compoundname>Stack-based</compoundname>
+    <briefdescription>
+<para>Create a pool using a user-provided buffer. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Create a pool using a user-provided buffer<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to pre-allocated memory buffer </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>block_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of each block in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Block alignment (0 = default, must be power of 2)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected containing UniquePtr to pool on success, or error</para>
+</simplesect>
+Creates a fixed-capacity pool using a user-provided buffer. The pool does NOT own the buffer. The buffer must remain valid for the pool&apos;s lifetime.</para>
+<para>The pool creates a static arena within the buffer, then allocates all blocks from that arena. Cannot grow.</para>
+<para>pool <programlisting><codeline><highlight class="normal">uint8_t<sp/>buffer[8192];</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>pool<sp/>=<sp/>cslt::move(cslt::PoolAllocator::Stack(</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>buffer,<sp/>sizeof(buffer),<sp/>128</highlight></codeline>
+<codeline><highlight class="normal">).value());</highlight></codeline>
+<codeline></codeline>
+<codeline><highlight class="normal">//<sp/>All<sp/>allocations<sp/>from<sp/>stack<sp/>buffer</highlight></codeline>
+<codeline><highlight class="normal">auto<sp/>ptr<sp/>=<sp/>pool-&gt;alloc(128);</highlight></codeline>
+</programlisting> <programlisting filename="Stack-based"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

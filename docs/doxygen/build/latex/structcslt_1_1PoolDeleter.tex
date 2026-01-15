@@ -1,0 +1,64 @@
+\hypertarget{structcslt_1_1PoolDeleter}{}\doxysection{cslt\+::Pool\+Deleter Struct Reference}
+\label{structcslt_1_1PoolDeleter}\index{cslt::PoolDeleter@{cslt::PoolDeleter}}
+
+
+Custom deleter for \mbox{\hyperlink{classcslt_1_1PoolAllocator}{Pool\+Allocator}} unique pointers.  
+
+
+
+
+{\ttfamily \#include $<$allocator.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{structcslt_1_1PoolDeleter_a995981aea9e4715122dc8e1703c71e9b}{operator()}} (\mbox{\hyperlink{classcslt_1_1PoolAllocator}{Pool\+Allocator}} $\ast$pool) const noexcept
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Custom deleter for \mbox{\hyperlink{classcslt_1_1PoolAllocator}{Pool\+Allocator}} unique pointers. 
+
+Similar to \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}}, properly cleans up \mbox{\hyperlink{classcslt_1_1PoolAllocator}{Pool\+Allocator}} instances created by factory methods. Handles ownership appropriately\+:
+\begin{DoxyItemize}
+\item DYNAMIC pools that own their arena\+: frees the pool and arena
+\item Pools with borrowed arenas\+: only frees the pool structure
+\end{DoxyItemize}
+
+This deleter properly cleans up \mbox{\hyperlink{classcslt_1_1PoolAllocator}{Pool\+Allocator}} instances created by factory methods (Heap, With\+Arena, Stack). It handles the complex ownership relationships between pools and their backing arenas\+:
+
+
+\begin{DoxyEnumerate}
+\item Calls the pool\textquotesingle{}s destructor (cleans up pool state)
+\item Conditionally destroys the arena based on ownership
+\end{DoxyEnumerate}
+
+Arena ownership patterns\+:
+\begin{DoxyItemize}
+\item {\bfseries{Heap()}}\+: Pool owns arena → \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} frees arena and memory
+\item {\bfseries{With\+Arena()}}\+: Pool borrows arena → Arena not deleted (caller owns it)
+\item {\bfseries{Stack()}}\+: Pool owns arena object → \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} destructs arena (but doesn\textquotesingle{}t free buffer, user owns it)
+\end{DoxyItemize}
+
+The deleter respects the {\ttfamily owns\+\_\+arena\+\_\+} flag to determine whether the pool created its own arena (Heap/\+Stack) or borrowed one (With\+Arena).
+
+\begin{DoxyNote}{Note}
+This deleter is noexcept and safe to call with nullptr. 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structcslt_1_1PoolDeleter_a995981aea9e4715122dc8e1703c71e9b}\label{structcslt_1_1PoolDeleter_a995981aea9e4715122dc8e1703c71e9b}} 
+\index{cslt::PoolDeleter@{cslt::PoolDeleter}!operator()@{operator()}}
+\index{operator()@{operator()}!cslt::PoolDeleter@{cslt::PoolDeleter}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily void cslt\+::\+Pool\+Deleter\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1PoolAllocator}{Pool\+Allocator}} $\ast$}]{pool }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\end{DoxyCompactItemize}

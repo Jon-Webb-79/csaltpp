@@ -1,0 +1,1112 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classcslt_1_1PoolAllocator" kind="class" language="C++" prot="public">
+    <compoundname>cslt::PoolAllocator</compoundname>
+    <basecompoundref refid="classcslt_1_1Allocator" prot="public" virt="non-virtual">cslt::Allocator</basecompoundref>
+    <includes refid="allocator_8hpp" local="no">allocator.hpp</includes>
+    <innerclass refid="structcslt_1_1PoolAllocator_1_1PoolCheckpointData" prot="private">cslt::PoolAllocator::PoolCheckpointData</innerclass>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classcslt_1_1PoolAllocator_1a4db56c6e01e00bd05ffcf0147a484df9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>struct</type>
+        <definition>friend struct PoolDeleter</definition>
+        <argsstring></argsstring>
+        <name>PoolDeleter</name>
+        <param>
+          <type><ref refid="structcslt_1_1PoolDeleter" kindref="compound">PoolDeleter</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2768" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2768" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a669ba9d3667954f22e3a4f5a8d4bcc32" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">ArenaAllocator</ref> *</type>
+        <definition>ArenaAllocator* cslt::PoolAllocator::arena_</definition>
+        <argsstring></argsstring>
+        <name>arena_</name>
+        <briefdescription>
+<para>Backing arena (owned or borrowed) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2781" column="24" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2781" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1ab5ebca13b2fcf22780bb4547d729e3fd" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::owns_arena_</definition>
+        <argsstring></argsstring>
+        <name>owns_arena_</name>
+        <briefdescription>
+<para>true if pool must destroy arena </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2782" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2782" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1af553ce6edd5494a914f0affec0820594" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::block_size_</definition>
+        <argsstring></argsstring>
+        <name>block_size_</name>
+        <briefdescription>
+<para>User-requested block size. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2783" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2783" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a09566304a7e60a20741e5a49b0d1e26a" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::stride_</definition>
+        <argsstring></argsstring>
+        <name>stride_</name>
+        <briefdescription>
+<para>Actual block size (aligned) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2784" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2784" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a5bc09df0bf4e02c4a60a9c792959cbf1" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::blocks_per_chunk_</definition>
+        <argsstring></argsstring>
+        <name>blocks_per_chunk_</name>
+        <briefdescription>
+<para>Blocks allocated per growth. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2785" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2785" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a13db1c802d1ee63744a28ef83d05ca19" prot="private" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* cslt::PoolAllocator::cur_</definition>
+        <argsstring></argsstring>
+        <name>cur_</name>
+        <briefdescription>
+<para>Next free byte in arena. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2786" column="24" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2786" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a0d9d4c02a09939212168a4bbed9dc1e0" prot="private" static="no" mutable="no">
+        <type>uint8_t *</type>
+        <definition>uint8_t* cslt::PoolAllocator::end_</definition>
+        <argsstring></argsstring>
+        <name>end_</name>
+        <briefdescription>
+<para>End of current arena slice. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2787" column="24" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2787" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a5137bdd353307b59e214bf805178cd15" prot="private" static="no" mutable="no">
+        <type>void *</type>
+        <definition>void* cslt::PoolAllocator::free_list_</definition>
+        <argsstring></argsstring>
+        <name>free_list_</name>
+        <briefdescription>
+<para>Head of intrusive free list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2788" column="24" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2788" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a660494b0c954348274ba0a7ed97cd1e8" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::total_blocks_</definition>
+        <argsstring></argsstring>
+        <name>total_blocks_</name>
+        <briefdescription>
+<para>Total blocks ever available. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2789" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2789" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1aa5d8c5af760d0441d389e4a2d783908b" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::free_blocks_</definition>
+        <argsstring></argsstring>
+        <name>free_blocks_</name>
+        <briefdescription>
+<para>Blocks currently in free list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2790" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2790" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1PoolAllocator_1a2875e831f30d43f430540956a8cbb735" prot="private" static="no" mutable="no">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::grow_enabled_</definition>
+        <argsstring></argsstring>
+        <name>grow_enabled_</name>
+        <briefdescription>
+<para>If false, fixed capacity. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2791" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2791" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a968282eb8e9d93f271cc2efca040cf32" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::PoolAllocator::PoolAllocator</definition>
+        <argsstring>()</argsstring>
+        <name>PoolAllocator</name>
+        <briefdescription>
+<para>Private constructor for factory methods. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2797" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2797" bodyend="2808"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a58a3f1d66f5fe7044f6a7a55115b18df" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::grow_pool</definition>
+        <argsstring>()</argsstring>
+        <name>grow_pool</name>
+        <briefdescription>
+<para>Grow pool by allocating a new chunk from arena. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true on success, false if growth failed or disabled </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2815" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1540" bodyend="1563"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1ad156b67d0f0183af5036770702ae072c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void *</type>
+        <definition>void * cslt::PoolAllocator::pop_free</definition>
+        <argsstring>()</argsstring>
+        <name>pop_free</name>
+        <briefdescription>
+<para>Pop a block from the free list. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Pointer to block, or nullptr if free list empty </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2822" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1566" bodyend="1574"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1adc1ab90171db94ed0353106365e514a0" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::PoolAllocator::push_free</definition>
+        <argsstring>(void *blk)</argsstring>
+        <name>push_free</name>
+        <param>
+          <type>void *</type>
+          <declname>blk</declname>
+        </param>
+        <briefdescription>
+<para>Push a block onto the free list. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>blk</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Block to add to free list </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2829" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1577" bodyend="1584"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a3e78d611aaf3bce16001b8e606e63252" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::PoolAllocator::~PoolAllocator</definition>
+        <argsstring>() noexcept override</argsstring>
+        <name>~PoolAllocator</name>
+        <briefdescription>
+<para>Destructor - cleans up pool and optionally arena. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>If the pool owns its arena, destroys the arena. Otherwise, just cleans up pool state. All allocated blocks become invalid. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2839" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1587" bodyend="1594"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1ad0bc8ae3b4e0dfba9bd1fc249871e1ad" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::PoolAllocator::alloc</definition>
+        <argsstring>(size_t bytes, bool zeroed=false) override</argsstring>
+        <name>alloc</name>
+        <reimplements refid="classcslt_1_1Allocator_1adb93a70659ab65af421bf3f8043418e3">alloc</reimplements>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Allocate memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to allocated memory or error</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Allocate<sp/>256<sp/>bytes,<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde" kindref="member">alloc</ref>(256,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Memory<sp/>is<sp/>guaranteed<sp/>to<sp/>be<sp/>zeroed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(ptr,<sp/>256,<sp/>allocator.<ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment</ref>());</highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Handle<sp/>allocation<sp/>failure</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cerr<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Allocation<sp/>failed\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3007" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1980" bodyend="2030"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a60017f4ac27e670899fee8cf83614ff3" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::PoolAllocator::alloc_pool</definition>
+        <argsstring>(bool zeroed=false)</argsstring>
+        <name>alloc_pool</name>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3085" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2033" bodyend="2035"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1ad7120090b154102a0487eceeb314c266" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::PoolAllocator::alloc_aligned</definition>
+        <argsstring>(size_t bytes, size_t alignment, bool zeroed=false) override</argsstring>
+        <name>alloc_aligned</name>
+        <reimplements refid="classcslt_1_1Allocator_1a518d804fc4eb66096f2534fc922c1ac4">alloc_aligned</reimplements>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Allocate aligned memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of bytes to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Required alignment in bytes (must be power of 2) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>zeroed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, zero-initialize the allocated memory (default: false) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;void*&gt; containing pointer to allocated memory or error</para>
+</simplesect>
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default_alignment_.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Allocate<sp/>512<sp/>bytes<sp/>aligned<sp/>to<sp/>64-byte<sp/>boundary</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Verify<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal">uintptr_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(ptr,<sp/>512,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3127" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1957" bodyend="1977"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a255488b39d1deab13ee70cba9d654497" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::PoolAllocator::realloc</definition>
+        <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, bool zeroed=false) override</argsstring>
+        <name>realloc</name>
+        <reimplements refid="classcslt_1_1Allocator_1ad83899b3087ecbf56883ef775048e81a">realloc</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>old_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>new_bytes</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Realloc not supported for pools. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref> with <ref refid="classcslt_1_1FeatureDisabledError" kindref="compound">FeatureDisabledError</ref></para>
+</simplesect>
+Pools allocate fixed-size blocks and cannot resize them. To &quot;resize&quot;, allocate a new block, copy data, and free the old. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3140" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2038" bodyend="2050"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a7714e34698f34991e086dcf4250ed7b2" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; void * &gt;</type>
+        <definition>Expected&lt; void * &gt; cslt::PoolAllocator::realloc_aligned</definition>
+        <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, size_t alignment, bool zeroed=false) override</argsstring>
+        <name>realloc_aligned</name>
+        <reimplements refid="classcslt_1_1Allocator_1a7c5678c95eddff0fb5ae06a09492fb7c">realloc_aligned</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>old_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>new_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>zeroed</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Realloc aligned not supported for pools. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref> with <ref refid="classcslt_1_1FeatureDisabledError" kindref="compound">FeatureDisabledError</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3151" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2053" bodyend="2067"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1ae06d33c7738ae591c06cff4ab777ce5a" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>void</type>
+        <definition>void cslt::PoolAllocator::return_element</definition>
+        <argsstring>(void *ptr, size_t bytes, size_t alignment=alignof(max_align_t)) override</argsstring>
+        <name>return_element</name>
+        <reimplements refid="classcslt_1_1Allocator_1a68ee49ecae412b74b73dcf56ceb6c5ed">return_element</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>alignof(max_align_t)</defval>
+        </param>
+        <briefdescription>
+<para>Return/free allocated memory. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to memory to free </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of allocation in bytes </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>alignment</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Alignment used for the allocation</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Frees memory previously allocated by this allocator. For heap allocators, this calls operator delete or free(). For arena allocators, this may be a no-op or update bookkeeping. Always safe to call with nullptr (no-op).</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9" kindref="member">alloc_aligned</ref>(1024,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result.value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Free<sp/>memory<sp/>-<sp/>must<sp/>pass<sp/>same<sp/>size<sp/>and<sp/>alignment<sp/>as<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(ptr,<sp/>1024,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Safe<sp/>to<sp/>call<sp/>with<sp/>nullptr</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(</highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">,<sp/>0,<sp/>0);<sp/></highlight><highlight class="comment">//<sp/>No-op</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3186" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2070" bodyend="2089"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1af5664d161af7b55ce3c22d23c745b917" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::reset</definition>
+        <argsstring>(bool trim_extra_chunks=false) override</argsstring>
+        <name>reset</name>
+        <reimplements refid="classcslt_1_1Allocator_1a63cbbfc6cfeb46e51a14a91f8f5c48ea">reset</reimplements>
+        <param>
+          <type>bool</type>
+          <declname>trim_extra_chunks</declname>
+          <defval>false</defval>
+        </param>
+        <briefdescription>
+<para>Reset allocator to initial state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Frees all allocations and resets the allocator to its initial state. Default is a no-op. Allocators that own memory override this to actually reset their state. After reset, all previous pointers are invalid.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr1<sp/>=<sp/>allocator.alloc(128,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr2<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Before<sp/>reset:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.size()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>384</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">allocator.reset();</highlight></codeline>
+<codeline><highlight class="normal">std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;After<sp/>reset:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>allocator.size()<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;\n&quot;</highlight><highlight class="normal">;<sp/></highlight><highlight class="comment">//<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>ptr1<sp/>and<sp/>ptr2<sp/>are<sp/>now<sp/>INVALID<sp/>-<sp/>do<sp/>not<sp/>use!</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Can<sp/>allocate<sp/>again<sp/>from<sp/>fresh<sp/>state</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr3<sp/>=<sp/>allocator.alloc(512,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3213" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2092" bodyend="2109"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a9e6ee76c7b903bc5b686dcbf9ccc62b3" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>void *</type>
+        <definition>void * cslt::PoolAllocator::save</definition>
+        <argsstring>() const override</argsstring>
+        <name>save</name>
+        <reimplements refid="classcslt_1_1Allocator_1a59fcf1ce582d5cf99d942a941af5e107">save</reimplements>
+        <briefdescription>
+<para>Save allocator state checkpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Opaque checkpoint pointer, or nullptr if not supported</para>
+</simplesect>
+Saves the current state of the allocator for later restoration. Useful for implementing transactional semantics or temporary allocations. Default returns nullptr (not supported). Arena allocators typically return a position marker.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>allocator(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Save<sp/>checkpoint</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>checkpoint<sp/>=<sp/>allocator.save();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Make<sp/>temporary<sp/>allocations</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>temp1<sp/>=<sp/>allocator.alloc(128,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>temp2<sp/>=<sp/>allocator.alloc(256,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Restore<sp/>to<sp/>checkpoint<sp/>(frees<sp/>temp1<sp/>and<sp/>temp2)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(checkpoint)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.restore(checkpoint);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Temporary<sp/>allocations<sp/>rolled<sp/>back\n&quot;</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3237" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2112" bodyend="2130"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1aedaddd14dee2b0cf12a5ae7b30606703" prot="public" static="no" const="no" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::restore</definition>
+        <argsstring>(void *checkpoint) override</argsstring>
+        <name>restore</name>
+        <reimplements refid="classcslt_1_1Allocator_1ab96e7b76511d29b505c5da81fb8b3cba">restore</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>checkpoint</declname>
+        </param>
+        <briefdescription>
+<para>Restore pool to saved checkpoint. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>checkpoint</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Checkpoint from previous <ref refid="classcslt_1_1PoolAllocator_1a9e6ee76c7b903bc5b686dcbf9ccc62b3" kindref="member">save()</ref></para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success, false on error</para>
+</simplesect>
+Restores pool to checkpoint state. All blocks allocated after the checkpoint become invalid. The checkpoint is freed. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3250" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2133" bodyend="2153"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a40b37c013a8f0b135259c3a60bb5a6f1" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::is_ptr</definition>
+        <argsstring>(void *ptr) const override</argsstring>
+        <name>is_ptr</name>
+        <reimplements refid="classcslt_1_1Allocator_1a8b9fcb5da49538257f1272d2a11b832c">is_ptr</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+<para>Check if pointer was allocated by this pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to check</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if pointer is from this pool&apos;s arena</para>
+</simplesect>
+Delegates to the underlying arena&apos;s <ref refid="classcslt_1_1PoolAllocator_1a40b37c013a8f0b135259c3a60bb5a6f1" kindref="member">is_ptr()</ref> check. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3262" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2156" bodyend="2161"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a5863352d0f96684741cdf182aafe8ad7" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::is_ptr_sized</definition>
+        <argsstring>(void *ptr, size_t bytes) const override</argsstring>
+        <name>is_ptr_sized</name>
+        <reimplements refid="classcslt_1_1Allocator_1a9174d07a2777d286188e0221558505dc">is_ptr_sized</reimplements>
+        <param>
+          <type>void *</type>
+          <declname>ptr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>bytes</declname>
+        </param>
+        <briefdescription>
+<para>Check if pointer with size is valid for this pool. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to check </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size to validate (should be block_size)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if pointer and size are valid </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3273" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2164" bodyend="2169"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1aded567137597d76ef1d5385157170008" prot="public" static="no" const="yes" explicit="no" inline="no" virt="virtual">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::stats</definition>
+        <argsstring>(char *buffer, size_t buffer_size) const override</argsstring>
+        <name>stats</name>
+        <reimplements refid="classcslt_1_1Allocator_1a794cb0fe500dc3a698015474ad8a7c86">stats</reimplements>
+        <param>
+          <type>char *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_size</declname>
+        </param>
+        <briefdescription>
+<para>Generate pool statistics. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>buffer</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Buffer to write statistics to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>buffer_size</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Size of buffer</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if statistics written successfully</para>
+</simplesect>
+Writes detailed pool statistics including block size, total blocks, free blocks, utilization, and arena information. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3287" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2172" bodyend="2250"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1adcbe53a0cd188e2bd639a4f2772bcbaf" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::block_size</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>block_size</name>
+        <briefdescription>
+<para>Get the pool&apos;s fixed block size. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Block size in bytes </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3295" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3295" bodyend="3295"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a601f268b0606695ecba2acd4f9ca9570" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::stride</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>stride</name>
+        <briefdescription>
+<para>Get the actual stride (aligned block size) </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Stride in bytes </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3303" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3303" bodyend="3303"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a9e6bcc7b7dd338b1d1b352adeae33fe6" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::total_blocks</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>total_blocks</name>
+        <briefdescription>
+<para>Get total number of blocks available. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Total blocks (allocated + free) </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3311" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3311" bodyend="3311"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a815be7568fb17a80731a22b4741c4506" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::free_blocks</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>free_blocks</name>
+        <briefdescription>
+<para>Get number of free blocks available. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Free blocks in free-list </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3319" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3319" bodyend="3319"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a3f58239d0f1e825c7129e13cf5d9ee57" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::PoolAllocator::allocated_blocks</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>allocated_blocks</name>
+        <briefdescription>
+<para>Get number of allocated blocks. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Blocks currently in use </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3327" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3327" bodyend="3329"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1ad10b30f42fc38dcd785a19018002fc53" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::PoolAllocator::can_grow</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>can_grow</name>
+        <briefdescription>
+<para>Check if pool can grow. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if growth enabled </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3337" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3337" bodyend="3337"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1ac2964c7ba47f7bb79f56a16f01989cc5" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::PoolAllocator::toggle_grow</definition>
+        <argsstring>(bool enable) noexcept</argsstring>
+        <name>toggle_grow</name>
+        <param>
+          <type>bool</type>
+          <declname>enable</declname>
+        </param>
+        <briefdescription>
+<para>Enable or disable pool growth. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>enable</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, enable growth; if false, disable</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Only works if pool owns arena or arena supports growth. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3347" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="2253" bodyend="2264"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a87a93c1ba62e4a84c9c7134926210813" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr</ref>&lt; <ref refid="classcslt_1_1PoolAllocator" kindref="compound">PoolAllocator</ref>, <ref refid="structcslt_1_1PoolDeleter" kindref="compound">PoolDeleter</ref> &gt; &gt;</type>
+        <definition>static Expected&lt;cslt::UniquePtr&lt;PoolAllocator, PoolDeleter&gt; &gt; cslt::PoolAllocator::Heap</definition>
+        <argsstring>(size_t block_size, size_t blocks_per_chunk, size_t alignment=0, size_t arena_initial_bytes=4096, size_t min_chunk_bytes=4096, bool grow_enabled=true, bool prewarm=true)</argsstring>
+        <name>Heap</name>
+        <param>
+          <type>size_t</type>
+          <declname>block_size</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>blocks_per_chunk</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>arena_initial_bytes</declname>
+          <defval>4096</defval>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>min_chunk_bytes</declname>
+          <defval>4096</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>grow_enabled</declname>
+          <defval>true</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>prewarm</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2880" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1aba7d6b8001492558a41a8880952a8ec0" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr</ref>&lt; <ref refid="classcslt_1_1PoolAllocator" kindref="compound">PoolAllocator</ref>, <ref refid="structcslt_1_1PoolDeleter" kindref="compound">PoolDeleter</ref> &gt; &gt;</type>
+        <definition>Expected&lt; cslt::UniquePtr&lt; PoolAllocator, PoolDeleter &gt; &gt; cslt::PoolAllocator::Stack</definition>
+        <argsstring>(void *buffer, size_t buffer_bytes, size_t block_size, size_t alignment=0)</argsstring>
+        <name>Stack</name>
+        <param>
+          <type>void *</type>
+          <declname>buffer</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>buffer_bytes</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>block_size</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>0</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2919" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1730" bodyend="1863"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1PoolAllocator_1a0c326119acf6c989582eb93585990133" prot="public" static="yes" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr</ref>&lt; <ref refid="classcslt_1_1PoolAllocator" kindref="compound">PoolAllocator</ref>, <ref refid="structcslt_1_1PoolDeleter" kindref="compound">PoolDeleter</ref> &gt; &gt;</type>
+        <definition>Expected&lt; cslt::UniquePtr&lt; PoolAllocator, PoolDeleter &gt; &gt; cslt::PoolAllocator::WithArena</definition>
+        <argsstring>(ArenaAllocator &amp;arena, size_t block_size, size_t blocks_per_chunk, size_t alignment=0, bool grow_enabled=false, bool prewarm=true)</argsstring>
+        <name>WithArena</name>
+        <param>
+          <type><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">ArenaAllocator</ref> &amp;</type>
+          <declname>arena</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>block_size</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>blocks_per_chunk</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>alignment</declname>
+          <defval>0</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>grow_enabled</declname>
+          <defval>false</defval>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>prewarm</declname>
+          <defval>true</defval>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2962" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp" bodystart="1867" bodyend="1954"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <inheritancegraph>
+      <node id="1">
+        <label>cslt::PoolAllocator</label>
+        <link refid="classcslt_1_1PoolAllocator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cslt::Allocator</label>
+        <link refid="classcslt_1_1Allocator"/>
+      </node>
+    </inheritancegraph>
+    <collaborationgraph>
+      <node id="1">
+        <label>cslt::PoolAllocator</label>
+        <link refid="classcslt_1_1PoolAllocator"/>
+        <childnode refid="2" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="2">
+        <label>cslt::Allocator</label>
+        <link refid="classcslt_1_1Allocator"/>
+      </node>
+    </collaborationgraph>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="2767" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="2767" bodyend="3348"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1PoolAllocator_1ad0bc8ae3b4e0dfba9bd1fc249871e1ad" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>alloc</name></member>
+      <member refid="classcslt_1_1Allocator_1a711b3e63e9c8bc79a55fdf5e52222992" prot="protected" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>alloc_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1ad7120090b154102a0487eceeb314c266" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>alloc_aligned</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a60017f4ac27e670899fee8cf83614ff3" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>alloc_pool</name></member>
+      <member refid="classcslt_1_1Allocator_1ac5a7770e8ed38355d7ae996b3475a4c5" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>allocated</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a3f58239d0f1e825c7129e13cf5d9ee57" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>allocated_blocks</name></member>
+      <member refid="classcslt_1_1Allocator_1aa4603a4a1a33e3519c6e30dbc3223ec6" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>Allocator</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a669ba9d3667954f22e3a4f5a8d4bcc32" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>arena_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1adcbe53a0cd188e2bd639a4f2772bcbaf" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>block_size</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1af553ce6edd5494a914f0affec0820594" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>block_size_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a5bc09df0bf4e02c4a60a9c792959cbf1" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>blocks_per_chunk_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1ad10b30f42fc38dcd785a19018002fc53" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>can_grow</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a13db1c802d1ee63744a28ef83d05ca19" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>cur_</name></member>
+      <member refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>default_alignment</name></member>
+      <member refid="classcslt_1_1Allocator_1ae915028e563a4d04f80f273037e1584a" prot="protected" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>default_alignment_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a0d9d4c02a09939212168a4bbed9dc1e0" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>end_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a815be7568fb17a80731a22b4741c4506" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>free_blocks</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1aa5d8c5af760d0441d389e4a2d783908b" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>free_blocks_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a5137bdd353307b59e214bf805178cd15" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>free_list_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a2875e831f30d43f430540956a8cbb735" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>grow_enabled_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a58a3f1d66f5fe7044f6a7a55115b18df" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>grow_pool</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a87a93c1ba62e4a84c9c7134926210813" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>Heap</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a40b37c013a8f0b135259c3a60bb5a6f1" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>is_ptr</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a5863352d0f96684741cdf182aafe8ad7" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>is_ptr_sized</name></member>
+      <member refid="classcslt_1_1Allocator_1a7183bacd2973b4d8b822b01d081600ba" prot="protected" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>mem_type_</name></member>
+      <member refid="classcslt_1_1Allocator_1ab32af42a412bd9d92ca7bd3d8ee4ecae" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>memory_type</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1ab5ebca13b2fcf22780bb4547d729e3fd" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>owns_arena_</name></member>
+      <member refid="classcslt_1_1Allocator_1a5eed4e825db775062f2a8d72b0a80185" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>owns_memory</name></member>
+      <member refid="classcslt_1_1Allocator_1a423d19bef35c2505d3d32cfe6b768776" prot="protected" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>owns_memory_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a968282eb8e9d93f271cc2efca040cf32" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>PoolAllocator</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a4db56c6e01e00bd05ffcf0147a484df9" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>PoolDeleter</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1ad156b67d0f0183af5036770702ae072c" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>pop_free</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1adc1ab90171db94ed0353106365e514a0" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>push_free</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a255488b39d1deab13ee70cba9d654497" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>realloc</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a7714e34698f34991e086dcf4250ed7b2" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>realloc_aligned</name></member>
+      <member refid="classcslt_1_1Allocator_1a1b34a9c4860a9e28255745b1d1e7cb62" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>remaining</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1af5664d161af7b55ce3c22d23c745b917" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>reset</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1aedaddd14dee2b0cf12a5ae7b30606703" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>restore</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1ae06d33c7738ae591c06cff4ab777ce5a" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>return_element</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a9e6ee76c7b903bc5b686dcbf9ccc62b3" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>save</name></member>
+      <member refid="classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>size</name></member>
+      <member refid="classcslt_1_1Allocator_1ab76cd7ab2a5756223580eda667b38cb6" prot="protected" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>size_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1aba7d6b8001492558a41a8880952a8ec0" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>Stack</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1aded567137597d76ef1d5385157170008" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>stats</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a601f268b0606695ecba2acd4f9ca9570" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>stride</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a09566304a7e60a20741e5a49b0d1e26a" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>stride_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1ac2964c7ba47f7bb79f56a16f01989cc5" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>toggle_grow</name></member>
+      <member refid="classcslt_1_1Allocator_1a91c8438280ddbe1fa7ecaf8cc555daaf" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>total_alloc</name></member>
+      <member refid="classcslt_1_1Allocator_1a5ef6bd69fbf7f2363aa5bb6cae49b923" prot="protected" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>total_alloc_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a9e6bcc7b7dd338b1d1b352adeae33fe6" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>total_blocks</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a660494b0c954348274ba0a7ed97cd1e8" prot="private" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>total_blocks_</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a0c326119acf6c989582eb93585990133" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>WithArena</name></member>
+      <member refid="classcslt_1_1Allocator_1afaec0741935d3b33af37c535565ce719" prot="public" virt="virtual"><scope>cslt::PoolAllocator</scope><name>~Allocator</name></member>
+      <member refid="classcslt_1_1PoolAllocator_1a3e78d611aaf3bce16001b8e606e63252" prot="public" virt="non-virtual"><scope>cslt::PoolAllocator</scope><name>~PoolAllocator</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

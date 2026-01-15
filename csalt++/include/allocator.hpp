@@ -2968,49 +2968,165 @@ namespace cslt {
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Allocate a block from the pool
+         * @brief Allocate a block from the pool (base class interface - prefer alloc_pool)
          * 
-         * @param bytes Number of bytes to allocate (must equal block_size)
+         * @param bytes Number of bytes to allocate (must equal block_size, validated but ignored)
          * @param zeroed If true, zero-initialize the block
          * 
          * @return Expected containing pointer to block on success, or error
          * 
-         * @details Allocates a fixed-size block. The bytes parameter must match
-         *          the pool's block_size (validation for safety). First checks
-         *          the free-list for recycled blocks (O(1)), then allocates from
-         *          the arena if needed.
+         * @note **Prefer using alloc_pool() for direct PoolAllocator usage.**
+         *       This method exists to satisfy the Allocator base class interface contract.
+         *       Since pools allocate fixed-size blocks, the bytes parameter is somewhat
+         *       artificial - it must equal block_size but doesn't control allocation size.
+         * 
+         * @details Allocates a fixed-size block from the pool. First checks the free-list
+         *          for recycled blocks (O(1)), then carves from the current memory slice,
+         *          and finally attempts to grow the pool if needed and enabled.
          * 
          * @retval Expected with pointer on success
-         * @retval Expected with ArgumentError if bytes != block_size
-         * @retval Expected with MemoryError if out of capacity
+         * @retval Expected with ArgumentError if bytes != block_size (validation)
+         * @retval Expected with CapacityOverflowError if pool full and cannot grow
+         * @retval Expected with BadAllocError if growth fails
+         * @retval Expected with StateCorruptError if pool state is corrupted
+         * 
+         * @see alloc_pool() The preferred pool-specific allocation method
+         * @see return_element() To return blocks to the free-list for reuse
          * 
          * @example
          * @code
-         * auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32).value());
+         * // When using through base class pointer (polymorphic use):
+         * Allocator* allocator = pool.get();
+         * auto ptr = allocator->alloc(256, false);  // Must use base interface
          * 
-         * auto ptr = pool->alloc(256);  // OK
-         * // auto bad = pool->alloc(128);  // ERROR: wrong size
+         * // When using PoolAllocator directly (prefer alloc_pool instead):
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32).value());
+         * auto ptr = pool->alloc(256, false);       // Works, but alloc_pool(false) is clearer
          * @endcode
          */
         Expected<void*> alloc(size_t bytes, bool zeroed = false) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Allocate a block from the pool (pool-specific interface - PREFERRED)
+         * 
+         * @param zeroed If true, zero-initialize the block (default: false)
+         * 
+         * @return Expected containing pointer to block on success, or error
+         * 
+         * @details **This is the recommended way to allocate from a PoolAllocator.**
+         *          Unlike the base class alloc() method, this interface doesn't require
+         *          a size parameter since pools always allocate fixed-size blocks of
+         *          block_size bytes.
+         * 
+         *          Allocation strategy:
+         *          1. Check free-list for recycled blocks (O(1) pop)
+         *          2. If free-list empty, carve from current memory slice
+         *          3. If slice exhausted and growth enabled, request new chunk
+         *          4. If growth disabled or fails, return error
+         * 
+         * @retval Expected with pointer to allocated block (block_size bytes)
+         * @retval Expected with CapacityOverflowError if pool full and cannot grow
+         * @retval Expected with BadAllocError if growth fails
+         * @retval Expected with StateCorruptError if pool state is corrupted
+         * 
+         * @note The returned block is always block_size bytes and aligned to the
+         *       pool's stride alignment (set at construction).
+         * 
+         * @see return_element() To return blocks for reuse in the free-list
+         * @see block_size() To query the pool's fixed block size
+         * @see can_grow() To check if pool can expand when capacity is reached
+         * 
+         * @example
+         * @code
+         * // Create a pool for 256-byte blocks
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32).value());
+         * 
+         * // Allocate uninitialized block
+         * auto ptr1 = pool->alloc_pool();
+         * if (!ptr1.hasValue()) {
+         *     // Handle error
+         * }
+         * 
+         * // Allocate zero-initialized block
+         * auto ptr2 = pool->alloc_pool(true);
+         * 
+         * // Return block to free-list for reuse
+         * pool->return_element(ptr1.value(), 256);
+         * 
+         * // Next allocation will reuse the freed block
+         * auto ptr3 = pool->alloc_pool();  // Reuses ptr1's block (O(1))
+         * @endcode
+         * 
+         * @example
+         * @code
+         * // Non-growable pool with fixed capacity
+         * auto pool = cslt::move(PoolAllocator::Heap(
+         *     128,    // block_size
+         *     64,     // blocks_per_chunk
+         *     0,      // default alignment
+         *     10240,  // arena_initial_bytes
+         *     4096,   // min_chunk_bytes
+         *     false,  // grow_enabled = false
+         *     true    // prewarm = true
+         * ).value());
+         * 
+         * // Can allocate exactly 64 blocks
+         * for (int i = 0; i < 64; ++i) {
+         *     auto ptr = pool->alloc_pool();
+         *     assert(ptr.hasValue());
+         * }
+         * 
+         * // 65th allocation fails
+         * auto ptr = pool->alloc_pool();
+         * assert(!ptr.hasValue());  // CapacityOverflowError
+         * @endcode
+         */
         Expected<void*> alloc_pool(bool zeroed = false);
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Allocate aligned block (same as alloc for pools)
+         * @brief Allocate aligned block from pool (base class interface - prefer alloc_aligned_pool)
          * 
-         * @details For pools, alignment is fixed at creation time. This method
-         *          validates the requested alignment matches the pool's stride
-         *          alignment, then delegates to alloc().
+         * @param bytes Number of bytes to allocate (must equal block_size, validated but ignored)
+         * @param alignment Required alignment (must equal default_alignment, validated)
+         * @param zeroed If true, zero-initialize the block
+         * 
+         * @return Expected containing pointer to aligned block on success, or error
+         * 
+         * @note **Prefer using alloc_aligned_pool() for direct PoolAllocator usage.**
+         *       This method exists to satisfy the Allocator base class interface contract.
+         *       For pools, both size and alignment are fixed at creation time, making
+         *       these parameters redundant (though validated for safety).
+         * 
+         * @details For PoolAllocator, alignment is fixed at pool creation and cannot be
+         *          changed per-allocation. This method validates that the requested size
+         *          and alignment match the pool's configuration, then delegates to alloc().
+         *          All blocks from a pool have the same size and alignment.
+         * 
+         * @retval Expected with pointer on success
+         * @retval Expected with ArgumentError if bytes != block_size
+         * @retval Expected with AlignmentError if alignment != default_alignment
+         * @retval Expected with CapacityOverflowError if pool full and cannot grow
+         * 
+         * @see alloc_aligned_pool() The preferred pool-specific aligned allocation method
+         * @see alloc_pool() Pool-specific allocation without redundant parameters
+         * 
+         * @example
+         * @code
+         * // When using through base class pointer (polymorphic use):
+         * Allocator* allocator = pool.get();
+         * auto ptr = allocator->alloc_aligned(256, 64, false);  // Must use base interface
+         * 
+         * // When using PoolAllocator directly (prefer alloc_aligned_pool instead):
+         * auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32, 64).value());
+         * auto ptr = pool->alloc_aligned(256, 64, false);  // Works, but verbose
+         * auto ptr = pool->alloc_aligned_pool(64, false);  // Clearer - preferred
+         * @endcode
          */
         Expected<void*> alloc_aligned(size_t bytes,
                                       size_t alignment,
                                       bool zeroed = false) override;
-// -------------------------------------------------------------------------------- 
-
-        Expected <void*> alloc_aligned_pool(size_t alignment, bool zeroed = false);
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -3233,6 +3349,89 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+        /**
+         * @struct PoolDeleter
+         * @brief Custom deleter for PoolAllocator unique pointers
+         * 
+         * @details This deleter properly cleans up PoolAllocator instances created by
+         *          factory methods (Heap, WithArena, Stack). It handles the complex
+         *          ownership relationships between pools and their backing arenas:
+         * 
+         *          1. Calls the pool's destructor (cleans up pool state)
+         *          2. Conditionally destroys the arena based on ownership
+         * 
+         *          Arena ownership patterns:
+         *          - **Heap()**: Pool owns arena → ArenaDeleter frees arena and memory
+         *          - **WithArena()**: Pool borrows arena → Arena not deleted (caller owns it)
+         *          - **Stack()**: Pool owns arena object → ArenaDeleter destructs arena
+         *                         (but doesn't free buffer, user owns it)
+         * 
+         *          The deleter respects the `owns_arena_` flag to determine whether the
+         *          pool created its own arena (Heap/Stack) or borrowed one (WithArena).
+         * 
+         * @note This deleter is noexcept and safe to call with nullptr.
+         * 
+         * @example Automatic via UniquePtr (typical usage)
+         * @code
+         * {
+         *     auto pool = cslt::move(cslt::PoolAllocator::Heap(256, 32).value());
+         *     // Use pool...
+         * } // PoolDeleter automatically called here, cleans up pool and arena
+         * @endcode
+         * 
+         * @example Heap pool (pool owns arena)
+         * @code
+         * {
+         *     auto pool = cslt::move(PoolAllocator::Heap(256, 32).value());
+         *     // owns_arena_ = true
+         *     // When pool destroyed: pool destructor + ArenaDeleter frees arena
+         * }
+         * @endcode
+         * 
+         * @example WithArena pool (borrowed arena)
+         * @code
+         * auto arena = cslt::move(ArenaAllocator::Heap(16384).value());
+         * {
+         *     auto pool = cslt::move(PoolAllocator::WithArena(*arena, 256, 32).value());
+         *     // owns_arena_ = false
+         *     // When pool destroyed: only pool destructor called, arena untouched
+         * }
+         * // Arena still alive and usable
+         * @endcode
+         * 
+         * @example Stack pool (pool owns arena object, user owns buffer)
+         * @code
+         * {
+         *     uint8_t buffer[4096];
+         *     {
+         *         auto pool = cslt::move(PoolAllocator::Stack(buffer, 4096, 128).value());
+         *         // owns_arena_ = true, but mem_type_ = STATIC
+         *         // When pool destroyed: pool destructor + arena destructor called
+         *         //                     (ArenaDeleter won't free buffer - it's STATIC)
+         *     }
+         *     // buffer still valid, can reuse
+         * }
+         * @endcode
+         * 
+         * @example Manual construction (not typical)
+         * @code
+         * PoolAllocator* raw_pool = // ... created via factory ...;
+         * cslt::UniquePtr<PoolAllocator, PoolDeleter> pool(raw_pool, PoolDeleter{});
+         * // Automatic cleanup when pool goes out of scope
+         * @endcode
+         * 
+         * @warning Never call ::operator delete directly on a PoolAllocator created
+         *          by a factory method. Always use PoolDeleter or let UniquePtr handle it.
+         * 
+         * @warning For Stack pools, ensure the buffer outlives the pool. The deleter
+         *          doesn't free the buffer (user owns it), but the pool must be destroyed
+         *          before the buffer goes out of scope.
+         * 
+         * @see PoolAllocator::Heap() Creates pool with owned arena
+         * @see PoolAllocator::WithArena() Creates pool with borrowed arena
+         * @see PoolAllocator::Stack() Creates pool with owned arena in user buffer
+         * @see ArenaDeleter For arena cleanup details
+         */
     inline void PoolDeleter::operator()(PoolAllocator* pool) const noexcept {
         if (!pool) return;
 

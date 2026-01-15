@@ -1,0 +1,37 @@
+\hypertarget{Stack-based-example}{}\doxysection{Stack-\/based}
+Create a pool using a user-\/provided buffer
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Pointer to pre-\/allocated memory buffer \\
+\hline
+{\em buffer\+\_\+bytes} & Size of buffer in bytes \\
+\hline
+{\em block\+\_\+size} & Size of each block in bytes \\
+\hline
+{\em alignment} & Block alignment (0 = default, must be power of 2)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected containing Unique\+Ptr to pool on success, or error
+\end{DoxyReturn}
+Creates a fixed-\/capacity pool using a user-\/provided buffer. The pool does NOT own the buffer. The buffer must remain valid for the pool\textquotesingle{}s lifetime.
+
+The pool creates a static arena within the buffer, then allocates all blocks from that arena. Cannot grow.
+
+pool 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{uint8\_t buffer[8192];}
+\DoxyCodeLine{\textcolor{keyword}{auto} pool = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1PoolAllocator_aba7d6b8001492558a41a8880952a8ec0}{cslt::PoolAllocator::Stack}}(}
+\DoxyCodeLine{    buffer, \textcolor{keyword}{sizeof}(buffer), 128}
+\DoxyCodeLine{).value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All allocations from stack buffer}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = pool-\/>alloc(128);}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+
+\end{DoxyCodeInclude}
+ 

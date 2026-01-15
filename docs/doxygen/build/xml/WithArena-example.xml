@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="WithArena-example" kind="example">
+    <compoundname>WithArena</compoundname>
+    <briefdescription>
+<para>pool (borrowed arena) </para>
+    </briefdescription>
+    <detaileddescription>
+<para>pool (borrowed arena) <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(ArenaAllocator::Heap(16384).value());</highlight></codeline>
+<codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>pool<sp/>=<sp/>cslt::move(PoolAllocator::WithArena(*arena,<sp/>256,<sp/>32).value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>owns_arena_<sp/>=<sp/>false</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>When<sp/>pool<sp/>destroyed:<sp/>only<sp/>pool<sp/>destructor<sp/>called,<sp/>arena<sp/>untouched</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Arena<sp/>still<sp/>alive<sp/>and<sp/>usable</highlight></codeline>
+</programlisting> <programlisting filename="WithArena"></programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+  </compounddef>
+</doxygen>

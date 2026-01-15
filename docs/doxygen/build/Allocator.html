@@ -115,7 +115,35 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#pool-overview">Pool Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pool-overview">Pool Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocatorE"><code class="docutils literal notranslate"><span class="pre">cslt::PoolAllocator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocatorD0Ev"><code class="docutils literal notranslate"><span class="pre">~PoolAllocator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator5allocE6size_tb"><code class="docutils literal notranslate"><span class="pre">alloc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator13alloc_alignedE6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">alloc_aligned()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator7reallocEPv6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">realloc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator15realloc_alignedEPv6size_t6size_t6size_tb"><code class="docutils literal notranslate"><span class="pre">realloc_aligned()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator14return_elementEPv6size_t6size_t"><code class="docutils literal notranslate"><span class="pre">return_element()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator5resetEb"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator4saveEv"><code class="docutils literal notranslate"><span class="pre">save()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator7restoreEPv"><code class="docutils literal notranslate"><span class="pre">restore()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator6is_ptrEPv"><code class="docutils literal notranslate"><span class="pre">is_ptr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator12is_ptr_sizedEPv6size_t"><code class="docutils literal notranslate"><span class="pre">is_ptr_sized()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator5statsEPc6size_t"><code class="docutils literal notranslate"><span class="pre">stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator10block_sizeEv"><code class="docutils literal notranslate"><span class="pre">block_size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator6strideEv"><code class="docutils literal notranslate"><span class="pre">stride()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator12total_blocksEv"><code class="docutils literal notranslate"><span class="pre">total_blocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator11free_blocksEv"><code class="docutils literal notranslate"><span class="pre">free_blocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator16allocated_blocksEv"><code class="docutils literal notranslate"><span class="pre">allocated_blocks()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt13PoolAllocator8can_growEv"><code class="docutils literal notranslate"><span class="pre">can_grow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt13PoolAllocator11toggle_growEb"><code class="docutils literal notranslate"><span class="pre">toggle_grow()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#pool-deleter">Pool Deleter</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt11PoolDeleterE"><code class="docutils literal notranslate"><span class="pre">cslt::PoolDeleter</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#free-list-overview">Free List Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#buddy-overview">Buddy Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#slab-overview">Slab Overview</a></li>
@@ -218,7 +246,7 @@ the stack or dynamically allocated memory from the heap.</p>
 <p class="admonition-title">Note</p>
 <p>This is an abstract class and cannot be instantiated directly. Use derived classes like <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">HeapAllocator</span></a>, <a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">ArenaAllocator</span></a>, etc. </p>
 </div>
-<p>Subclassed by <a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">cslt::ArenaAllocator</span></a>, <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">cslt::HeapAllocator</span></a></p>
+<p>Subclassed by <a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">cslt::ArenaAllocator</span></a>, <a class="reference internal" href="#classcslt_1_1HeapAllocator"><span class="std std-ref">cslt::HeapAllocator</span></a>, <a class="reference internal" href="#classcslt_1_1PoolAllocator"><span class="std std-ref">cslt::PoolAllocator</span></a></p>
 <div class="breathe-sectiondef docutils container">
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
 <dl class="cpp function">
@@ -1577,6 +1605,383 @@ is initialized, and the user does not need to interact with it.</p>
 </section>
 <section id="pool-overview">
 <span id="id4"></span><h2>Pool Overview<a class="headerlink" href="#pool-overview" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocatorE">
+<span id="_CPPv3N4cslt13PoolAllocatorE"></span><span id="_CPPv2N4cslt13PoolAllocatorE"></span><span id="cslt::PoolAllocator"></span><span class="target" id="classcslt_1_1PoolAllocator"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PoolAllocator</span></span></span><span class="w"> </span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="k"><span class="pre">public</span></span><span class="w"> </span><span class="n"><span class="pre">cslt</span></span><span class="p"><span class="pre">::</span></span><a class="reference internal" href="#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocatorE" title="Link to this definition"></a><br /></dt>
+<dd><div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocatorD0Ev">
+<span id="_CPPv3N4cslt13PoolAllocatorD0Ev"></span><span id="_CPPv2N4cslt13PoolAllocatorD0Ev"></span><span id="cslt::PoolAllocator::~PoolAllocator"></span><span class="target" id="classcslt_1_1PoolAllocator_1a3e78d611aaf3bce16001b8e606e63252"></span><span class="sig-name descname"><span class="n"><span class="pre">~PoolAllocator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocatorD0Ev" title="Link to this definition"></a><br /></dt>
+<dd><p>Destructor - cleans up pool and optionally arena. </p>
+<p>If the pool owns its arena, destroys the arena. Otherwise, just cleans up pool state. All allocated blocks become invalid. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator5allocE6size_tb">
+<span id="_CPPv3N4cslt13PoolAllocator5allocE6size_tb"></span><span id="_CPPv2N4cslt13PoolAllocator5allocE6size_tb"></span><span id="cslt::PoolAllocator::alloc__s.b"></span><span class="target" id="classcslt_1_1PoolAllocator_1ad0bc8ae3b4e0dfba9bd1fc249871e1ad"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator5allocE6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate memory. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Allocate 256 bytes, zeroed</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Memory is guaranteed to be zeroed</span>
+<span class="w">    </span><span class="c1">// ... use memory ...</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">default_alignment</span><span class="p">());</span>
+<span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Handle allocation failure</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Allocation failed</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bytes</strong> – Number of bytes to allocate </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize the allocated memory (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to allocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator13alloc_alignedE6size_t6size_tb">
+<span id="_CPPv3N4cslt13PoolAllocator13alloc_alignedE6size_t6size_tb"></span><span id="_CPPv2N4cslt13PoolAllocator13alloc_alignedE6size_t6size_tb"></span><span id="cslt::PoolAllocator::alloc_aligned__s.s.b"></span><span class="target" id="classcslt_1_1PoolAllocator_1ad7120090b154102a0487eceeb314c266"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc_aligned</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator13alloc_alignedE6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate aligned memory. </p>
+<p>
+Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default_alignment_.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="c1">// Allocate 512 bytes aligned to 64-byte boundary</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Verify alignment</span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="k">reinterpret_cast</span><span class="o">&lt;</span><span class="kt">uintptr_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ptr</span><span class="p">)</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="mi">64</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// ... use memory ...</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>bytes</strong> – Number of bytes to allocate </p></li>
+<li><p><strong>alignment</strong> – Required alignment in bytes (must be power of 2) </p></li>
+<li><p><strong>zeroed</strong> – If true, zero-initialize the allocated memory (default: false) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;void*&gt; containing pointer to allocated memory or error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator7reallocEPv6size_t6size_tb">
+<span id="_CPPv3N4cslt13PoolAllocator7reallocEPv6size_t6size_tb"></span><span id="_CPPv2N4cslt13PoolAllocator7reallocEPv6size_t6size_tb"></span><span id="cslt::PoolAllocator::realloc__voidP.s.s.b"></span><span class="target" id="classcslt_1_1PoolAllocator_1a255488b39d1deab13ee70cba9d654497"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator7reallocEPv6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Realloc not supported for pools. </p>
+<p>
+Pools allocate fixed-size blocks and cannot resize them. To “resize”, allocate a new block, copy data, and free the old. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> with <a class="reference internal" href="Error.html#classcslt_1_1FeatureDisabledError"><span class="std std-ref">FeatureDisabledError</span></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator15realloc_alignedEPv6size_t6size_t6size_tb">
+<span id="_CPPv3N4cslt13PoolAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="_CPPv2N4cslt13PoolAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="cslt::PoolAllocator::realloc_aligned__voidP.s.s.s.b"></span><span class="target" id="classcslt_1_1PoolAllocator_1a7714e34698f34991e086dcf4250ed7b2"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc_aligned</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator15realloc_alignedEPv6size_t6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<dd><p>Realloc aligned not supported for pools. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> with <a class="reference internal" href="Error.html#classcslt_1_1FeatureDisabledError"><span class="std std-ref">FeatureDisabledError</span></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator14return_elementEPv6size_t6size_t">
+<span id="_CPPv3N4cslt13PoolAllocator14return_elementEPv6size_t6size_t"></span><span id="_CPPv2N4cslt13PoolAllocator14return_elementEPv6size_t6size_t"></span><span id="cslt::PoolAllocator::return_element__voidP.s.s"></span><span class="target" id="classcslt_1_1PoolAllocator_1ae06d33c7738ae591c06cff4ab777ce5a"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">return_element</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">alignof</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_align_t</span></span><span class="p"><span class="pre">)</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator14return_elementEPv6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return/free allocated memory. </p>
+<p>
+Frees memory previously allocated by this allocator. For heap allocators, this calls operator delete or free(). For arena allocators, this may be a no-op or update bookkeeping. Always safe to call with nullptr (no-op).</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc_aligned</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+
+<span class="c1">// ... use memory ...</span>
+
+<span class="c1">// Free memory - must pass same size and alignment as allocation</span>
+<span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="n">ptr</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+
+<span class="c1">// Safe to call with nullptr</span>
+<span class="n">allocator</span><span class="p">.</span><span class="n">return_element</span><span class="p">(</span><span class="k">nullptr</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="c1">// No-op</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to memory to free </p></li>
+<li><p><strong>bytes</strong> – Size of allocation in bytes </p></li>
+<li><p><strong>alignment</strong> – Alignment used for the allocation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator5resetEb">
+<span id="_CPPv3N4cslt13PoolAllocator5resetEb"></span><span id="_CPPv2N4cslt13PoolAllocator5resetEb"></span><span id="cslt::PoolAllocator::reset__b"></span><span class="target" id="classcslt_1_1PoolAllocator_1af5664d161af7b55ce3c22d23c745b917"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reset</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">trim_extra_chunks</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator5resetEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Reset allocator to initial state. </p>
+<p>Frees all allocations and resets the allocator to its initial state. Default is a no-op. Allocators that own memory override this to actually reset their state. After reset, all previous pointers are invalid.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">ptr1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">ptr2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Before reset: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 384</span>
+
+<span class="n">allocator</span><span class="p">.</span><span class="n">reset</span><span class="p">();</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;After reset: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span><span class="w"> </span><span class="c1">// 0</span>
+<span class="c1">// ptr1 and ptr2 are now INVALID - do not use!</span>
+
+<span class="c1">// Can allocate again from fresh state</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">ptr3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator4saveEv">
+<span id="_CPPv3NK4cslt13PoolAllocator4saveEv"></span><span id="_CPPv2NK4cslt13PoolAllocator4saveEv"></span><span id="cslt::PoolAllocator::saveC"></span><span class="target" id="classcslt_1_1PoolAllocator_1a9e6ee76c7b903bc5b686dcbf9ccc62b3"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">save</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator4saveEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Save allocator state checkpoint. </p>
+<p>
+Saves the current state of the allocator for later restoration. Useful for implementing transactional semantics or temporary allocations. Default returns nullptr (not supported). Arena allocators typically return a position marker.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">allocator</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="c1">// Save checkpoint</span>
+<span class="kt">void</span><span class="o">*</span><span class="w"> </span><span class="n">checkpoint</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">save</span><span class="p">();</span>
+
+<span class="c1">// Make temporary allocations</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">temp1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">temp2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">allocator</span><span class="p">.</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="c1">// Restore to checkpoint (frees temp1 and temp2)</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">checkpoint</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">allocator</span><span class="p">.</span><span class="n">restore</span><span class="p">(</span><span class="n">checkpoint</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Temporary allocations rolled back</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Opaque checkpoint pointer, or nullptr if not supported</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator7restoreEPv">
+<span id="_CPPv3N4cslt13PoolAllocator7restoreEPv"></span><span id="_CPPv2N4cslt13PoolAllocator7restoreEPv"></span><span id="cslt::PoolAllocator::restore__voidP"></span><span class="target" id="classcslt_1_1PoolAllocator_1aedaddd14dee2b0cf12a5ae7b30606703"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">restore</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">checkpoint</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator7restoreEPv" title="Link to this definition"></a><br /></dt>
+<dd><p>Restore pool to saved checkpoint. </p>
+<p>
+Restores pool to checkpoint state. All blocks allocated after the checkpoint become invalid. The checkpoint is freed. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>checkpoint</strong> – Checkpoint from previous <a class="reference internal" href="#classcslt_1_1PoolAllocator_1a9e6ee76c7b903bc5b686dcbf9ccc62b3"><span class="std std-ref">save()</span></a></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success, false on error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator6is_ptrEPv">
+<span id="_CPPv3NK4cslt13PoolAllocator6is_ptrEPv"></span><span id="_CPPv2NK4cslt13PoolAllocator6is_ptrEPv"></span><span id="cslt::PoolAllocator::is_ptr__voidPC"></span><span class="target" id="classcslt_1_1PoolAllocator_1a40b37c013a8f0b135259c3a60bb5a6f1"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_ptr</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator6is_ptrEPv" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if pointer was allocated by this pool. </p>
+<p>
+Delegates to the underlying arena’s <a class="reference internal" href="#classcslt_1_1PoolAllocator_1a40b37c013a8f0b135259c3a60bb5a6f1"><span class="std std-ref">is_ptr()</span></a> check. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> – Pointer to check</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if pointer is from this pool’s arena</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator12is_ptr_sizedEPv6size_t">
+<span id="_CPPv3NK4cslt13PoolAllocator12is_ptr_sizedEPv6size_t"></span><span id="_CPPv2NK4cslt13PoolAllocator12is_ptr_sizedEPv6size_t"></span><span id="cslt::PoolAllocator::is_ptr_sized__voidP.sC"></span><span class="target" id="classcslt_1_1PoolAllocator_1a5863352d0f96684741cdf182aafe8ad7"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_ptr_sized</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator12is_ptr_sizedEPv6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if pointer with size is valid for this pool. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ptr</strong> – Pointer to check </p></li>
+<li><p><strong>bytes</strong> – Size to validate (should be block_size)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if pointer and size are valid </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator5statsEPc6size_t">
+<span id="_CPPv3NK4cslt13PoolAllocator5statsEPc6size_t"></span><span id="_CPPv2NK4cslt13PoolAllocator5statsEPc6size_t"></span><span id="cslt::PoolAllocator::stats__cP.sC"></span><span class="target" id="classcslt_1_1PoolAllocator_1aded567137597d76ef1d5385157170008"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stats</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">buffer</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">buffer_size</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator5statsEPc6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Generate pool statistics. </p>
+<p>
+Writes detailed pool statistics including block size, total blocks, free blocks, utilization, and arena information. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer</strong> – Buffer to write statistics to </p></li>
+<li><p><strong>buffer_size</strong> – Size of buffer</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if statistics written successfully</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator10block_sizeEv">
+<span id="_CPPv3NK4cslt13PoolAllocator10block_sizeEv"></span><span id="_CPPv2NK4cslt13PoolAllocator10block_sizeEv"></span><span id="cslt::PoolAllocator::block_sizeC"></span><span class="target" id="classcslt_1_1PoolAllocator_1adcbe53a0cd188e2bd639a4f2772bcbaf"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">block_size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator10block_sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the pool’s fixed block size. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Block size in bytes </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator6strideEv">
+<span id="_CPPv3NK4cslt13PoolAllocator6strideEv"></span><span id="_CPPv2NK4cslt13PoolAllocator6strideEv"></span><span id="cslt::PoolAllocator::strideC"></span><span class="target" id="classcslt_1_1PoolAllocator_1a601f268b0606695ecba2acd4f9ca9570"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">stride</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator6strideEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the actual stride (aligned block size) </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Stride in bytes </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator12total_blocksEv">
+<span id="_CPPv3NK4cslt13PoolAllocator12total_blocksEv"></span><span id="_CPPv2NK4cslt13PoolAllocator12total_blocksEv"></span><span id="cslt::PoolAllocator::total_blocksC"></span><span class="target" id="classcslt_1_1PoolAllocator_1a9e6bcc7b7dd338b1d1b352adeae33fe6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">total_blocks</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator12total_blocksEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get total number of blocks available. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Total blocks (allocated + free) </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator11free_blocksEv">
+<span id="_CPPv3NK4cslt13PoolAllocator11free_blocksEv"></span><span id="_CPPv2NK4cslt13PoolAllocator11free_blocksEv"></span><span id="cslt::PoolAllocator::free_blocksC"></span><span class="target" id="classcslt_1_1PoolAllocator_1a815be7568fb17a80731a22b4741c4506"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">free_blocks</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator11free_blocksEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get number of free blocks available. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Free blocks in free-list </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator16allocated_blocksEv">
+<span id="_CPPv3NK4cslt13PoolAllocator16allocated_blocksEv"></span><span id="_CPPv2NK4cslt13PoolAllocator16allocated_blocksEv"></span><span id="cslt::PoolAllocator::allocated_blocksC"></span><span class="target" id="classcslt_1_1PoolAllocator_1a3f58239d0f1e825c7129e13cf5d9ee57"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">allocated_blocks</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator16allocated_blocksEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get number of allocated blocks. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Blocks currently in use </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt13PoolAllocator8can_growEv">
+<span id="_CPPv3NK4cslt13PoolAllocator8can_growEv"></span><span id="_CPPv2NK4cslt13PoolAllocator8can_growEv"></span><span id="cslt::PoolAllocator::can_growC"></span><span class="target" id="classcslt_1_1PoolAllocator_1ad10b30f42fc38dcd785a19018002fc53"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">can_grow</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt13PoolAllocator8can_growEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Check if pool can grow. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if growth enabled </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt13PoolAllocator11toggle_growEb">
+<span id="_CPPv3N4cslt13PoolAllocator11toggle_growEb"></span><span id="_CPPv2N4cslt13PoolAllocator11toggle_growEb"></span><span id="cslt::PoolAllocator::toggle_grow__b"></span><span class="target" id="classcslt_1_1PoolAllocator_1ac2964c7ba47f7bb79f56a16f01989cc5"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">toggle_grow</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">enable</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt13PoolAllocator11toggle_growEb" title="Link to this definition"></a><br /></dt>
+<dd><p>Enable or disable pool growth. </p>
+<p>
+Only works if pool owns arena or arena supports growth. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>enable</strong> – If true, enable growth; if false, disable</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
+<section id="pool-deleter">
+<h3>Pool Deleter<a class="headerlink" href="#pool-deleter" title="Link to this heading"></a></h3>
+<p>A <code class="docutils literal notranslate"><span class="pre">PoolAllocator</span></code> class can have it memory manually freed or be passed
+between scopes.  However, if the user does not manually free the memory, it
+will be automatically freed after it leaves its originating scope.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">PoolDeleter</span></code> struct is a data structure used to destroy Arena memory
+after it goes out of scope.  While this is a publically available struct, the
+struct is automatically invoked via a <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> when a <code class="docutils literal notranslate"><span class="pre">PoolAllocator</span></code>
+is initialized, and the user does not need to interact with it.</p>
+<blockquote>
+<div><dl class="cpp struct">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt11PoolDeleterE">
+<span id="_CPPv3N4cslt11PoolDeleterE"></span><span id="_CPPv2N4cslt11PoolDeleterE"></span><span id="cslt::PoolDeleter"></span><span class="target" id="structcslt_1_1PoolDeleter"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">PoolDeleter</span></span></span><a class="headerlink" href="#_CPPv4N4cslt11PoolDeleterE" title="Link to this definition"></a><br /></dt>
+<dd><p>Custom deleter for <a class="reference internal" href="#classcslt_1_1PoolAllocator"><span class="std std-ref">PoolAllocator</span></a> unique pointers. </p>
+<p>Similar to <a class="reference internal" href="#structcslt_1_1ArenaDeleter"><span class="std std-ref">ArenaDeleter</span></a>, properly cleans up <a class="reference internal" href="#classcslt_1_1PoolAllocator"><span class="std std-ref">PoolAllocator</span></a> instances created by factory methods. Handles ownership appropriately:<ul class="simple">
+<li><p>DYNAMIC pools that own their arena: frees the pool and arena</p></li>
+<li><p>Pools with borrowed arenas: only frees the pool structure</p></li>
+</ul>
+</p>
+<p>This deleter properly cleans up <a class="reference internal" href="#classcslt_1_1PoolAllocator"><span class="std std-ref">PoolAllocator</span></a> instances created by factory methods (Heap, WithArena, Stack). It handles the complex ownership relationships between pools and their backing arenas:</p>
+<p><ol class="loweralpha simple">
+<li><p>Calls the pool’s destructor (cleans up pool state)</p></li>
+<li><p>Conditionally destroys the arena based on ownership</p></li>
+</ol>
+</p>
+<p>Arena ownership patterns:<ul class="simple">
+<li><p><strong>Heap()</strong>: Pool owns arena → <a class="reference internal" href="#structcslt_1_1ArenaDeleter"><span class="std std-ref">ArenaDeleter</span></a> frees arena and memory</p></li>
+<li><p><strong>WithArena()</strong>: Pool borrows arena → Arena not deleted (caller owns it)</p></li>
+<li><p><strong>Stack()</strong>: Pool owns arena object → <a class="reference internal" href="#structcslt_1_1ArenaDeleter"><span class="std std-ref">ArenaDeleter</span></a> destructs arena (but doesn’t free buffer, user owns it)</p></li>
+</ul>
+</p>
+<p>The deleter respects the <code class="docutils literal notranslate"><span class="pre">owns_arena_</span></code> flag to determine whether the pool created its own arena (Heap/Stack) or borrowed one (WithArena).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This deleter is noexcept and safe to call with nullptr. </p>
+</div>
+</dd></dl>
+
+</div></blockquote>
+</section>
 </section>
 <section id="free-list-overview">
 <span id="freelist-overview"></span><h2>Free List Overview<a class="headerlink" href="#free-list-overview" title="Link to this heading"></a></h2>

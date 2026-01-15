@@ -2861,40 +2861,6 @@ TEST_F(PoolHeapTest, AllocPoolZeroed) {
         EXPECT_EQ(ptr[i], 0) << "Byte " << i << " not zeroed";
     }
 }
-// -------------------------------------------------------------------------------- 
-
-TEST_F(PoolHeapTest, AllocAlignedPoolBasic) {
-    // Test aligned allocation using pool-specific interface
-    auto pool = cslt::move(PoolAllocator::Heap(256, 32, 64, 10240, 4096, true, true).value());
-    
-    // Allocate with pool's default alignment (no size needed)
-    auto result = pool->alloc_aligned_pool(64);  // Uses default zeroed=false
-    ASSERT_TRUE(result.hasValue());
-
-    void* ptr = result.value();
-    EXPECT_NE(ptr, nullptr);
-    EXPECT_TRUE(is_aligned(ptr, 64)) << "Pointer not 64-byte aligned";
-}
-
-TEST_F(PoolHeapTest, AllocAlignedPoolZeroed) {
-    // Test zeroed aligned allocation using pool-specific interface
-    auto pool = cslt::move(PoolAllocator::Heap(128, 16, 32, 4096, 4096, true, true).value());
-    
-    // Allocate with alignment and zeroing
-    auto result = pool->alloc_aligned_pool(32, true);
-    ASSERT_TRUE(result.hasValue());
-
-    uint8_t* ptr = static_cast<uint8_t*>(result.value());
-
-    // Verify alignment
-    EXPECT_TRUE(is_aligned(ptr, 32)) << "Pointer not 32-byte aligned";
-
-    // Verify all bytes are zero
-    for (size_t i = 0; i < 128; ++i) {
-        //std::cout << ptr[i] << "\n";
-        EXPECT_EQ(ptr[i], 0) << "Byte " << i << " not zeroed";
-    }
-}
 // ================================================================================ 
 // ================================================================================ 
 

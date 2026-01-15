@@ -109,7 +109,7 @@ endif()
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
   target_compile_options(csaltpp ${_csaltxx_flag_scope} -Wall -Wextra -Wpedantic)
 
-  if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "csaltpp: Debug build with AVX/AVX2 disabled; SSE3/SSE4.1 allowed, no -Werror")
     target_compile_options(csaltpp ${_csaltxx_flag_scope}
       -O0 -g -march=x86-64 -mno-avx -mno-avx2 -mno-fma -msse3 -msse4.1
@@ -118,6 +118,18 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     message(STATUS "csaltpp: ${CMAKE_BUILD_TYPE} build with -O3 -march=native and -Werror")
     target_compile_options(csaltpp ${_csaltxx_flag_scope} -O3 -march=native -Werror)
   endif()
+  # if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+  #   message(STATUS "csaltpp: Debug build with AVX/AVX2 disabled; SSE3/SSE4.1 allowed, no -Werror")
+  #   target_compile_options(csaltpp ${_csaltxx_flag_scope}
+  #     -O0 -g -march=x86-64 -mno-avx -mno-avx2 -mno-fma -msse3 -msse4.1
+  #   )
+  #   target_link_options(csaltpp ${_csaltxx_flag_scope}
+  #   -fsanitize=address           # Link with ASan runtime
+  # )
+  # else()
+  #   message(STATUS "csaltpp: ${CMAKE_BUILD_TYPE} build with -O3 -march=native and -Werror")
+  #   target_compile_options(csaltpp ${_csaltxx_flag_scope} -O3 -march=native -Werror)
+  # endif()
 
 elseif (MSVC)
   target_compile_options(csaltpp ${_csaltxx_flag_scope} /W4)

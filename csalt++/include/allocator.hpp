@@ -222,7 +222,7 @@ namespace cslt {
          */
         virtual Expected<void*> alloc(size_t bytes,
                                       bool zeroed = false) = 0;
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Allocate aligned memory
@@ -254,7 +254,7 @@ namespace cslt {
         virtual Expected<void*> alloc_aligned(size_t bytes,
                                               size_t alignment,
                                               bool zeroed = false) = 0;
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Reallocate memory
@@ -292,7 +292,7 @@ namespace cslt {
                                         size_t old_bytes,
                                         size_t new_bytes,
                                         bool zeroed = false) = 0;
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Reallocate aligned memory
@@ -327,7 +327,7 @@ namespace cslt {
                                                 size_t new_bytes,
                                                 size_t alignment,
                                                 bool zeroed = false) = 0;
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Return/free allocated memory
@@ -359,7 +359,7 @@ namespace cslt {
         virtual void return_element(void *ptr, 
                                     size_t bytes, 
                                     size_t alignment = alignof(max_align_t)) = 0;
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get memory type
@@ -386,7 +386,7 @@ namespace cslt {
         MemType memory_type() const noexcept {
             return static_cast<MemType>(mem_type_);
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Generate statistics string
@@ -416,7 +416,7 @@ namespace cslt {
          * @endcode
          */
         virtual bool stats(char *buffer, size_t buffer_size) const = 0;
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Check if allocator owns its memory
@@ -443,7 +443,7 @@ namespace cslt {
         bool owns_memory() const noexcept { 
             return static_cast<bool>(owns_memory_);
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get current bytes in use
@@ -469,7 +469,7 @@ namespace cslt {
         virtual size_t size() const noexcept { 
             return size_;
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get remaining available bytes
@@ -500,7 +500,7 @@ namespace cslt {
             }
             return 0;
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get total usable bytes
@@ -546,7 +546,7 @@ namespace cslt {
         virtual size_t allocated() const noexcept {
             return alloc_;
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get total allocated bytes
@@ -570,7 +570,7 @@ namespace cslt {
         virtual size_t total_alloc() const noexcept { 
             return total_alloc_;
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Check if pointer belongs to this allocator
@@ -604,7 +604,7 @@ namespace cslt {
             (void)ptr;
             return false;  // Default: can't verify pointers
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Check if pointer and size are valid for this allocator
@@ -636,7 +636,7 @@ namespace cslt {
             (void)ptr; (void)bytes;
             return false;  // Default: can't verify sized pointers
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Save allocator state checkpoint
@@ -668,7 +668,7 @@ namespace cslt {
         virtual void* save() const { 
             return nullptr;  // Default: doesn't support save/restore
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Restore allocator to saved checkpoint
@@ -699,7 +699,7 @@ namespace cslt {
             (void)checkpoint;
             return false;  // Default: doesn't support save/restore
         }
-    // -------------------------------------------------------------------------------- 
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Reset allocator to initial state
@@ -2993,6 +2993,10 @@ namespace cslt {
          * @endcode
          */
         Expected<void*> alloc(size_t bytes, bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> alloc_pool(bool zeroed = false);
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Allocate aligned block (same as alloc for pools)
@@ -3004,6 +3008,10 @@ namespace cslt {
         Expected<void*> alloc_aligned(size_t bytes,
                                       size_t alignment,
                                       bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected <void*> alloc_aligned_pool(size_t alignment, bool zeroed = false);
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Realloc not supported for pools
@@ -3017,6 +3025,7 @@ namespace cslt {
                                 size_t old_bytes,
                                 size_t new_bytes,
                                 bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Realloc aligned not supported for pools
@@ -3028,6 +3037,7 @@ namespace cslt {
                                         size_t new_bytes,
                                         size_t alignment,
                                         bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Return a block to the free-list
@@ -3060,6 +3070,7 @@ namespace cslt {
         void return_element(void* ptr,
                            size_t bytes,
                            size_t alignment = alignof(max_align_t)) override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Reset pool to initial state
@@ -3084,6 +3095,7 @@ namespace cslt {
          * @endcode
          */
         bool reset(bool trim_extra_chunks = false) override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Save pool state as checkpoint
@@ -3107,6 +3119,7 @@ namespace cslt {
          * @endcode
          */
         void* save() const override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Restore pool to saved checkpoint
@@ -3119,6 +3132,7 @@ namespace cslt {
          *          the checkpoint become invalid. The checkpoint is freed.
          */
         bool restore(void* checkpoint) override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Check if pointer was allocated by this pool
@@ -3130,6 +3144,7 @@ namespace cslt {
          * @details Delegates to the underlying arena's is_ptr() check.
          */
         bool is_ptr(void* ptr) const override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Check if pointer with size is valid for this pool
@@ -3140,6 +3155,7 @@ namespace cslt {
          * @return true if pointer and size are valid
          */
         bool is_ptr_sized(void* ptr, size_t bytes) const override;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Generate pool statistics
@@ -3153,10 +3169,7 @@ namespace cslt {
          *          blocks, free blocks, utilization, and arena information.
          */
         bool stats(char* buffer, size_t buffer_size) const override;
-
-        // ------------------------------------------------------------------------
-        // Pool-Specific Methods
-        // ------------------------------------------------------------------------
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get the pool's fixed block size
@@ -3164,6 +3177,7 @@ namespace cslt {
          * @return Block size in bytes
          */
         size_t block_size() const noexcept { return block_size_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get the actual stride (aligned block size)
@@ -3171,6 +3185,7 @@ namespace cslt {
          * @return Stride in bytes
          */
         size_t stride() const noexcept { return stride_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get total number of blocks available
@@ -3178,6 +3193,7 @@ namespace cslt {
          * @return Total blocks (allocated + free)
          */
         size_t total_blocks() const noexcept { return total_blocks_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get number of free blocks available
@@ -3185,6 +3201,7 @@ namespace cslt {
          * @return Free blocks in free-list
          */
         size_t free_blocks() const noexcept { return free_blocks_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get number of allocated blocks
@@ -3194,6 +3211,7 @@ namespace cslt {
         size_t allocated_blocks() const noexcept {
             return total_blocks_ - free_blocks_;
         }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Check if pool can grow
@@ -3201,6 +3219,7 @@ namespace cslt {
          * @return true if growth enabled
          */
         bool can_grow() const noexcept { return grow_enabled_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Enable or disable pool growth

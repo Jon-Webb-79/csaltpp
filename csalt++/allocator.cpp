@@ -1791,9 +1791,27 @@ namespace cslt {
         // Release arena from UniquePtr - pool now manages it
         arena_ptr.release();
 
-        // Calculate how many blocks fit
+        // ============================================================================
+        // CHANGED: Calculate how many blocks fit, accounting for alignment padding
+        // ============================================================================
         size_t remaining = arena->remaining();
-        size_t blocks = remaining / stride;
+        
+        // When we call arena->alloc_aligned(bytes, stride, false), the arena may need
+        // up to (stride - 1) bytes of padding to align the allocation.
+        // We must reserve this padding to avoid the allocation failing.
+        size_t max_padding = stride > 0 ? (stride - 1) : 0;
+        
+        if (remaining <= max_padding) {
+            pool->~PoolAllocator();
+            ArenaDeleter{}(arena);
+            result.setError(MemoryError("Buffer too small for even one block"));
+            return result;
+        }
+        
+        // Calculate usable space after reserving for worst-case alignment padding
+        size_t usable = remaining - max_padding;
+        size_t blocks = usable / stride;
+        // ============================================================================
 
         if (blocks == 0) {
             pool->~PoolAllocator();
@@ -1843,7 +1861,7 @@ namespace cslt {
         result.setValue(cslt::move(ptr));
         return result;
     }
-// -------------------------------------------------------------------------------- 
+// // -------------------------------------------------------------------------------- 
 
     Expected<cslt::UniquePtr<PoolAllocator, PoolDeleter>>
     PoolAllocator::WithArena(ArenaAllocator& arena,
@@ -1955,7 +1973,17 @@ namespace cslt {
         }
 
         // Delegate to regular alloc
-        return alloc(zeroed);
+        return alloc(block_size_, zeroed);
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> PoolAllocator::alloc_aligned_pool(size_t alignment, bool zeroed) {
+        if (alignment != default_alignment_) {
+            Expected<void*> result;
+            result.setError(ArgumentError("Alignment must be equal to pool alignment"));
+            return result;
+        }
+        return alloc_aligned(block_size_, alignment, zeroed);
     }
 // -------------------------------------------------------------------------------- 
 
@@ -1963,12 +1991,6 @@ namespace cslt {
         (void) bytes;
         Expected<void*> result;
         void* blk = nullptr;
-        
-        // Validate size matches block size
-        // if (bytes != block_size_) {
-        //     result.setError(ArgumentError("Allocation size must equal pool block size"));
-        //     return result;
-        // }
         
         // 1.) Try to pop from free list first
         void* ptr = pop_free();
@@ -2003,7 +2025,7 @@ namespace cslt {
             return result;
         }
         
-        if (cur_ == end_) {
+        if (cur_ >= end_) {
             result.setError(StateCorruptError("Pool state corrupted"));
             return result;
         }
@@ -2015,6 +2037,11 @@ namespace cslt {
         }
         result.setValue(blk);
         return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> PoolAllocator::alloc_pool(bool zeroed) {
+        return alloc(10, zeroed);
     }
 // -------------------------------------------------------------------------------- 
 

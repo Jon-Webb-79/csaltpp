@@ -589,9 +589,168 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{            ArenaDeleter\{\}(arena);}
 \DoxyCodeLine{        \}}
 \DoxyCodeLine{    \}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
 \DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{class }FreeListAllocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{struct }FreeListDeleter \{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}{operator()}}(FreeListAllocator* freelist) \textcolor{keyword}{const} noexcept;}
+\DoxyCodeLine{    \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{// FreeListAllocator Class}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{class }FreeListAllocator : \textcolor{keyword}{public} Allocator \{}
+\DoxyCodeLine{        \textcolor{comment}{// Friend declaration so deleter can access private members}}
+\DoxyCodeLine{        \textcolor{keyword}{friend} \textcolor{keyword}{struct }\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a6dfc32c23f25fe7a664c8f60b58ee12c}{FreeListDeleter}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{private}:}
+\DoxyCodeLine{        \textcolor{keyword}{struct }FreeBlock \{}
+\DoxyCodeLine{            \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}};          }
+\DoxyCodeLine{            FreeBlock* next;      }
+\DoxyCodeLine{        \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{struct }FreeListHeader \{}
+\DoxyCodeLine{            \textcolor{keywordtype}{size\_t} block\_size;    }
+\DoxyCodeLine{            \textcolor{keywordtype}{size\_t} offset;        }
+\DoxyCodeLine{        \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{comment}{// Member variables}}
+\DoxyCodeLine{        FreeBlock*       head\_;          }
+\DoxyCodeLine{        uint8\_t*         cur\_;           }
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t}           len\_;           }
+\DoxyCodeLine{        \textcolor{keywordtype}{void}*            memory\_;        }
+\DoxyCodeLine{        ArenaAllocator*  arena\_;         }
+\DoxyCodeLine{        \textcolor{keywordtype}{bool}             owns\_arena\_;    }
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{comment}{// Private constructor (use factory methods)}}
+\DoxyCodeLine{        FreeListAllocator();}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{comment}{// Helper methods}}
+\DoxyCodeLine{        \textcolor{keyword}{static} \textcolor{keywordtype}{size\_t} min\_request();}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{public}:}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1FreeListAllocator_adc0f45a2991e99648609f1fb84d22f0a}{\string~FreeListAllocator}}() noexcept \textcolor{keyword}{override};}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{comment}{// Factory methods cannot be copied or moved after construction}}
+\DoxyCodeLine{        FreeListAllocator(\textcolor{keyword}{const} FreeListAllocator\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{        FreeListAllocator\& \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a2a14273274607fc00cbe2632d35048fe}{operator=}}(\textcolor{keyword}{const} FreeListAllocator\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{        FreeListAllocator(FreeListAllocator\&\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{        FreeListAllocator\& \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a2a14273274607fc00cbe2632d35048fe}{operator=}}(FreeListAllocator\&\&) = \textcolor{keyword}{delete};}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{comment}{// ============================================================================}}
+\DoxyCodeLine{        \textcolor{comment}{// Factory Methods}}
+\DoxyCodeLine{        \textcolor{comment}{// ============================================================================}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<UniquePtr<FreeListAllocator, FreeListDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa2f748bf100ae9f46a7927f890709857}{Heap}}(\textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{             \textcolor{keywordtype}{size\_t} alignment = 0,}
+\DoxyCodeLine{             \textcolor{keywordtype}{bool} resize = \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<UniquePtr<FreeListAllocator, FreeListDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{WithArena}}(ArenaAllocator\& arena,}
+\DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} alignment = 0);}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<UniquePtr<FreeListAllocator, FreeListDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a00da504efb8f8317abf7498c697cf891}{Stack}}(\textcolor{keywordtype}{void}* buffer,}
+\DoxyCodeLine{              \textcolor{keywordtype}{size\_t} buffer\_bytes,}
+\DoxyCodeLine{              \textcolor{keywordtype}{size\_t} alignment = 0);}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa290f402dabf95b51f352235c77809ed}{alloc}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a683d799ad03202bc7b6aef3ad020d2e8}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                                      \textcolor{keywordtype}{size\_t} alignment,}
+\DoxyCodeLine{                                      \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1FreeListAllocator_af100ec762c3ebda5e255af32e4ba594d}{realloc}}(\textcolor{keywordtype}{void}* ptr,}
+\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} old\_bytes,}
+\DoxyCodeLine{                                \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{                                \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a5e4f1b888388ebc7b60ec719c9a3aa5b}{realloc\_aligned}}(\textcolor{keywordtype}{void}* ptr,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} old\_bytes,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} alignment,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a92297e3568123854b9c2ea7398f4058f}{return\_element}}(\textcolor{keywordtype}{void}* ptr,}
+\DoxyCodeLine{                           \textcolor{keywordtype}{size\_t} bytes = 0,}
+\DoxyCodeLine{                           \textcolor{keywordtype}{size\_t} alignment = 0) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset}}(\textcolor{keywordtype}{bool} trim = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a79163fc9aea930755f26d0652e105529}{is\_ptr}}(\textcolor{keywordtype}{void}* ptr) \textcolor{keyword}{const override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a90a7d9f260434769fefd96bffc592fc2}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} bytes) \textcolor{keyword}{const override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a11d836fb3a2b2d22257999cabdf9756f}{stats}}(\textcolor{keywordtype}{char}* buffer, \textcolor{keywordtype}{size\_t} buffer\_size) \textcolor{keyword}{const override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining}}() \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}}() \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used}}() \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a3b2f9e190bc3751d679d1c75f1d5b8f5}{owns\_arena}}() \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void}* \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a76c322f65fcfc52b7424bbc11f152677}{save}}()\textcolor{keyword}{ const override }\{ \textcolor{keywordflow}{return} \textcolor{keyword}{nullptr}; \}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a7f22b04d167f05865cfa7dfd1f6ca8cf}{restore}}(\textcolor{keywordtype}{void}* checkpoint)\textcolor{keyword}{ override }\{}
+\DoxyCodeLine{            (void)checkpoint;}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{false};}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \};}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}{FreeListDeleter::operator()}}(FreeListAllocator* freelist) \textcolor{keyword}{const} noexcept \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (!freelist) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} owns\_arena = freelist-\/>owns\_arena\_;}
+\DoxyCodeLine{        ArenaAllocator* arena = freelist-\/>arena\_;}
+\DoxyCodeLine{        MemoryType mem\_type = \textcolor{keyword}{static\_cast<}MemoryType\textcolor{keyword}{>}(freelist-\/>mem\_type\_);}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Call freelist destructor}}
+\DoxyCodeLine{        freelist-\/>\string~FreeListAllocator();}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Only delete arena if:}}
+\DoxyCodeLine{        \textcolor{comment}{// 1. Freelist owns it AND}}
+\DoxyCodeLine{        \textcolor{comment}{// 2. It's DYNAMIC (heap-\/allocated)}}
+\DoxyCodeLine{        \textcolor{comment}{// For STATIC arenas (Stack freelists), the arena is in the user buffer}}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (owns\_arena \&\& arena \&\& mem\_type == \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}}) \{}
+\DoxyCodeLine{            ArenaDeleter\{\}(arena);}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{        \textcolor{comment}{// For STATIC freelists, we still need to call arena destructor}}
+\DoxyCodeLine{        \textcolor{comment}{// but NOT delete it, since it's in the user buffer}}
+\DoxyCodeLine{        \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (owns\_arena \&\& arena \&\& mem\_type == \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956eda0af05f0e42195dea493d9fb04af1414b}{STATIC}}) \{}
+\DoxyCodeLine{            arena-\/>\string~ArenaAllocator();}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
 \DoxyCodeLine{\} \textcolor{comment}{/* cslt namespace */}}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}

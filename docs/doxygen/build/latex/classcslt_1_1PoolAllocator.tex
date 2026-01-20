@@ -2,12 +2,16 @@
 \label{classcslt_1_1PoolAllocator}\index{cslt::PoolAllocator@{cslt::PoolAllocator}}
 
 
+Fixed-\/size block allocator with O(1) allocation and deallocation.  
+
+
+
+
 {\ttfamily \#include $<$allocator.\+hpp$>$}
 
 
 
-Inheritance diagram for cslt\+::Pool\+Allocator\+:
-\nopagebreak
+Inheritance diagram for cslt\+::Pool\+Allocator\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -16,8 +20,7 @@ Inheritance diagram for cslt\+::Pool\+Allocator\+:
 \end{figure}
 
 
-Collaboration diagram for cslt\+::Pool\+Allocator\+:
-\nopagebreak
+Collaboration diagram for cslt\+::Pool\+Allocator\+:\nopagebreak
 \begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -82,6 +85,59 @@ static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{cl
 struct \mbox{\hyperlink{classcslt_1_1PoolAllocator_a4db56c6e01e00bd05ffcf0147a484df9}{Pool\+Deleter}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+Fixed-\/size block allocator with O(1) allocation and deallocation. 
+
+\mbox{\hyperlink{classcslt_1_1PoolAllocator}{Pool\+Allocator}} manages memory as a collection of uniformly-\/sized blocks, providing constant-\/time allocation and deallocation through free-\/list recycling. All allocations return blocks of exactly the same size, making it ideal for object pools and frequently allocated/deallocated data structures.
+
+The pool carves blocks from contiguous memory slices backed by an arena. Freed blocks are returned to a linked free-\/list for O(1) reuse. Optionally, the pool can request additional slices when capacity is exhausted.
+
+\begin{DoxyParagraph}{Basic Usage}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create pool for 256-\/byte blocks}}
+\DoxyCodeLine{\textcolor{keyword}{auto} pool = \mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{PoolAllocator::Heap}}(256, 32).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate block}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = pool-\/>alloc\_pool(\textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Return block for reuse}}
+\DoxyCodeLine{pool-\/>return\_element(ptr.value(), 256);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Object Pool Pattern}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }Particle \{ \textcolor{keywordtype}{float} x, y, z; \};}
+\DoxyCodeLine{\textcolor{keyword}{auto} pool = \mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{PoolAllocator::Heap}}(\textcolor{keyword}{sizeof}(Particle), 1000).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate and construct}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* mem = pool-\/>alloc\_pool().value();}
+\DoxyCodeLine{Particle* p = \textcolor{keyword}{new} (mem) Particle();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Destroy and return}}
+\DoxyCodeLine{p-\/>\string~Particle();}
+\DoxyCodeLine{pool-\/>return\_element(mem, \textcolor{keyword}{sizeof}(Particle));}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyNote}{Note}
+Block size must be at least sizeof(void$\ast$) for free-\/list management 
+
+Not thread-\/safe -\/ requires external synchronization for concurrent access
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{Heap()}} Create pool with owned heap-\/allocated arena 
+
+\mbox{\hyperlink{classcslt_1_1PoolAllocator_a0c326119acf6c989582eb93585990133}{With\+Arena()}} Create pool sharing an existing arena 
+
+\mbox{\hyperlink{classcslt_1_1PoolAllocator_aba7d6b8001492558a41a8880952a8ec0}{Stack()}} Create pool using user-\/provided buffer 
+\end{DoxySeeAlso}
 
 
 \doxysubsection{Constructor \& Destructor Documentation}

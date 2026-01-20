@@ -1,0 +1,102 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structcslt_1_1FreeListDeleter" kind="struct" language="C++" prot="public">
+    <compoundname>cslt::FreeListDeleter</compoundname>
+    <includes refid="allocator_8hpp" local="no">allocator.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structcslt_1_1FreeListDeleter_1a504beab7d06fe29fc0d4c147aa05d78e" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::FreeListDeleter::operator()</definition>
+        <argsstring>(FreeListAllocator *freelist) const noexcept</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="classcslt_1_1FreeListAllocator" kindref="compound">FreeListAllocator</ref> *</type>
+          <declname>freelist</declname>
+        </param>
+        <briefdescription>
+<para>Custom deleter for <ref refid="classcslt_1_1FreeListAllocator" kindref="compound">FreeListAllocator</ref> <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref> cleanup. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>freelist</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to <ref refid="classcslt_1_1FreeListAllocator" kindref="compound">FreeListAllocator</ref> to delete. May be nullptr.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+This custom deleter is invoked when a UniquePtr&lt;FreeListAllocator&gt; goes out of scope or is explicitly reset. It handles proper cleanup of the freelist and its backing arena based on ownership semantics.</para>
+<para><bold>Cleanup sequence:</bold><orderedlist>
+<listitem><para>Extract ownership information (owns_arena, arena, mem_type)</para>
+</listitem><listitem><para>Call ~FreeListAllocator() destructor</para>
+</listitem><listitem><para>Conditionally clean up arena based on ownership and type:</para>
+</listitem></orderedlist>
+</para>
+<para><bold>Heap() freelists</bold> (owns_arena=true, mem_type=DYNAMIC):<itemizedlist>
+<listitem><para>Calls <ref refid="structcslt_1_1ArenaDeleter" kindref="compound">ArenaDeleter</ref>{}(arena)</para>
+</listitem><listitem><para>Arena and all memory is freed back to heap</para>
+</listitem></itemizedlist>
+</para>
+<para><bold>WithArena() freelists</bold> (owns_arena=false):<itemizedlist>
+<listitem><para>No arena cleanup performed</para>
+</listitem><listitem><para>Arena remains valid for other allocators</para>
+</listitem></itemizedlist>
+</para>
+<para><bold>Stack() freelists</bold> (owns_arena=true, mem_type=STATIC):<itemizedlist>
+<listitem><para>Calls arena-&gt;~ArenaAllocator() destructor</para>
+</listitem><listitem><para>Does NOT free buffer (user owns it)</para>
+</listitem><listitem><para>Arena object destroyed, buffer remains valid</para>
+</listitem></itemizedlist>
+</para>
+<para>This deleter ensures memory is properly released for heap-allocated arenas while preserving user-owned buffers for stack-based freelists and borrowed arenas for shared freelists.</para>
+<para><simplesect kind="note"><para>This is a noexcept function - no exceptions are thrown during cleanup.</para>
+</simplesect>
+<simplesect kind="note"><para>Null pointer is safely handled (early return, no crash).</para>
+</simplesect>
+<simplesect kind="note"><para>The freelist destructor is always called before arena cleanup to ensure proper cleanup ordering.</para>
+</simplesect>
+<simplesect kind="note"><para>Users should never call this directly - it is automatically invoked by <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref> when the freelist goes out of scope.</para>
+</simplesect>
+<simplesect kind="see"><para>Heap() Creates freelist with owned <ref refid="namespacecslt_1a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da" kindref="member">DYNAMIC</ref> arena (arena will be freed) </para>
+</simplesect>
+<simplesect kind="see"><para>WithArena() Creates freelist with borrowed arena (arena not touched) </para>
+</simplesect>
+<simplesect kind="see"><para>Stack() Creates freelist with owned <ref refid="namespacecslt_1a96b27f1a16d21546d14d4f25a4c956eda0af05f0e42195dea493d9fb04af1414b" kindref="member">STATIC</ref> arena (destructor only) </para>
+</simplesect>
+<simplesect kind="see"><para>~FreeListAllocator() Freelist destructor called before arena cleanup </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3523" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="5301" bodyend="5323"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Custom deleter for <ref refid="classcslt_1_1FreeListAllocator" kindref="compound">FreeListAllocator</ref> unique pointers. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>This deleter properly cleans up <ref refid="classcslt_1_1FreeListAllocator" kindref="compound">FreeListAllocator</ref> instances created by factory methods (Heap, WithArena, Stack). It handles the complex ownership relationships between freelists and their backing arenas:</para>
+<para>Arena ownership patterns:<itemizedlist>
+<listitem><para><bold>Heap()</bold>: FreeList owns arena → <ref refid="structcslt_1_1ArenaDeleter" kindref="compound">ArenaDeleter</ref> frees arena and memory</para>
+</listitem><listitem><para><bold>WithArena()</bold>: FreeList borrows arena → Arena not deleted (caller owns it)</para>
+</listitem><listitem><para><bold>Stack()</bold>: FreeList owns arena object → <ref refid="structcslt_1_1ArenaDeleter" kindref="compound">ArenaDeleter</ref> destructs arena (but doesn&apos;t free buffer, user owns it)</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1aa2f748bf100ae9f46a7927f890709857" kindref="member">FreeListAllocator::Heap()</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a3aeae7f8f210d8507d280375db819e4a" kindref="member">FreeListAllocator::WithArena()</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a00da504efb8f8317abf7498c697cf891" kindref="member">FreeListAllocator::Stack()</ref> </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="structcslt_1_1ArenaDeleter" kindref="compound">ArenaDeleter</ref> </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="3522" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="3522" bodyend="3524"/>
+    <listofallmembers>
+      <member refid="structcslt_1_1FreeListDeleter_1a504beab7d06fe29fc0d4c147aa05d78e" prot="public" virt="non-virtual"><scope>cslt::FreeListDeleter</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

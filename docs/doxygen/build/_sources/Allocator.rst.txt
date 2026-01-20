@@ -110,6 +110,24 @@ is initialized, and the user does not need to interact with it.
 Free List Overview 
 ==================
 
+    .. doxygenclass:: cslt::FreeListAllocator
+       :members:
+
+FreeListDeleter
+---------------
+
+An ``FreeListAllocator`` class can have it memory manually freed or be passed 
+between scopes.  However, if the user does not manually free the memory, it 
+will be automatically freed after it leaves its originating scope.
+
+The ``FreeListDeleter`` struct is a data structure used to destroy Arena memory 
+after it goes out of scope.  While this is a publically available struct, the 
+struct is automatically invoked via a ``UniquePtr`` when an ``FreeListAllocator``
+is initialized, and the user does not need to interact with it.
+
+    .. doxygenstruct:: cslt::FreeListDeleter
+       :members:
+
 .. _buddy_overview:
 
 Buddy Overview 

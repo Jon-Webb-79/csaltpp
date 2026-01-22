@@ -2264,6 +2264,906 @@ namespace cslt {
     }
 // ================================================================================ 
 // ================================================================================ 
+
+    constexpr size_t DEFAULT_FREELIST_SIZE = 4096;
+
+    // Minimum allocation size (must fit a FreeBlock)
+    size_t FreeListAllocator::min_request() {
+        return DEFAULT_FREELIST_SIZE;
+    }
+
+// ================================================================================
+// FreeListAllocator Constructor/Destructor
+// ================================================================================
+
+    FreeListAllocator::FreeListAllocator()
+        : head_(nullptr)
+        , cur_(nullptr)
+        , len_(0)
+        , memory_(nullptr)
+        , arena_(nullptr)
+        , owns_arena_(false) {
+    }
+
+    FreeListAllocator::~FreeListAllocator() noexcept {
+        // Destructor doesn't need to do much - the FreeListDeleter
+        // handles arena cleanup if needed
+        head_ = nullptr;
+        cur_ = nullptr;
+        memory_ = nullptr;
+        arena_ = nullptr;
+    }
+
+// ================================================================================
+// Factory Methods
+// ================================================================================
+
+#if ARENA_ENABLE_DYNAMIC
+    Expected<cslt::UniquePtr<FreeListAllocator, FreeListDeleter>>
+    FreeListAllocator::Heap(size_t bytes,
+                            size_t alignment,
+                            bool resize) {
+        Expected<cslt::UniquePtr<FreeListAllocator, FreeListDeleter>> result;
+
+        // Validate inputs - bytes must be at least DEFAULT_FREELIST_SIZE
+        if (bytes < DEFAULT_FREELIST_SIZE) {
+            bytes = DEFAULT_FREELIST_SIZE;  // Default to 4096
+        }
+        
+        if (bytes < min_request()) {
+            result.setError(ArgumentError("Bytes must be at least minimum freelist size"));
+            return result;
+        }
+
+        // Validate and normalize alignment
+        size_t eff_align;
+        if (alignment != 0u && (alignment & (alignment - 1u)) != 0u) {
+            result.setError(AlignmentError("Alignment must be power of 2"));
+            return result;
+        }
+        
+        eff_align = alignment ? alignment : alignof(max_align_t);
+        if (eff_align < alignof(max_align_t)) {
+            eff_align = alignof(max_align_t);
+        }
+
+        // Compute minimum user-space required:
+        // [aligned FreeListAllocator] + [at least one FreeBlock] + [payload bytes]
+        size_t struct_size_aligned = _align_up_size(sizeof(FreeListAllocator), eff_align);
+        size_t min_free_region = sizeof(FreeBlock);
+        size_t requested_payload = bytes;
+
+        // Overflow guard
+        if (struct_size_aligned > SIZE_MAX - min_free_region ||
+            (struct_size_aligned + min_free_region) > SIZE_MAX - requested_payload) {
+            result.setError(LengthOverflowError("Size calculation overflow"));
+            return result;
+        }
+
+        size_t min_total_user = struct_size_aligned + min_free_region + requested_payload;
+
+        // Create owned arena (dynamic)
+        size_t min_chunk = 0;  // Use arena's default
+        
+        auto arena_result = ArenaAllocator::Heap(
+            min_total_user,
+            resize,
+            min_chunk,
+            eff_align
+        );
+
+        if (!arena_result.hasValue()) {
+            result.setError(arena_result.error());
+            return result;
+        }
+
+        auto arena_ptr = cslt::move(arena_result.value());
+        ArenaAllocator* arena = arena_ptr.get();
+
+        // Determine actual usable bytes exposed by arena
+        size_t available = arena->remaining();
+        if (available < (struct_size_aligned + min_free_region)) {
+            result.setError(MemoryError("Arena too small for freelist structures"));
+            return result;
+        }
+
+        // Carve a single contiguous region from the arena for everything
+        auto mem_result = arena->alloc(available, false);
+        if (!mem_result.hasValue()) {
+            result.setError(mem_result.error());
+            return result;
+        }
+
+        void* base = mem_result.value();
+
+        // FreeListAllocator at the beginning
+        FreeListAllocator* fl = new (base) FreeListAllocator();
+
+        // Release arena from UniquePtr - freelist now owns it
+        arena_ptr.release();
+
+        // Usable memory starts after the aligned FreeListAllocator
+        void* memory = static_cast<uint8_t*>(base) + struct_size_aligned;
+        size_t usable_size = available - struct_size_aligned;
+
+        // Initialize freelist members
+        fl->memory_ = memory;
+        fl->cur_ = static_cast<uint8_t*>(memory);
+        fl->len_ = 0;
+        fl->arena_ = arena;
+        fl->owns_arena_ = true;
+
+        // Base class initialization
+        fl->default_alignment_ = eff_align;
+        fl->mem_type_ = static_cast<uint8_t>(DYNAMIC);
+        fl->owns_memory_ = static_cast<uint8_t>(true);
+        fl->size_ = 0;
+        fl->alloc_ = usable_size;       // Usable space for allocations
+        fl->total_alloc_ = bytes;       // Total requested by user
+
+        // Initialize with one large free block spanning entire usable region
+        fl->head_ = static_cast<FreeBlock*>(memory);
+        fl->head_->size = usable_size;
+        fl->head_->next = nullptr;
+
+        cslt::UniquePtr<FreeListAllocator, FreeListDeleter> ptr(fl, FreeListDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+#endif // ARENA_ENABLE_DYNAMIC
+// ================================================================================ 
+// ================================================================================ 
+
+    Expected<cslt::UniquePtr<FreeListAllocator, FreeListDeleter>>
+    FreeListAllocator::Stack(void* buffer,
+                             size_t buffer_bytes,
+                             size_t alignment) {
+        Expected<cslt::UniquePtr<FreeListAllocator, FreeListDeleter>> result;
+
+        // Validate inputs
+        if (!buffer) {
+            result.setError(ArgumentError("Buffer cannot be null"));
+            return result;
+        }
+
+        if (buffer_bytes == 0) {
+            result.setError(ArgumentError("Buffer size must be > 0"));
+            return result;
+        }
+
+        // Must at least fit control structures in the caller buffer
+        if (buffer_bytes < (sizeof(FreeListAllocator) + sizeof(FreeBlock))) {
+            result.setError(ArgumentError("Buffer too small for freelist structures"));
+            return result;
+        }
+
+        // Validate and normalize alignment
+        if (alignment != 0u && (alignment & (alignment - 1u)) != 0u) {
+            result.setError(AlignmentError("Alignment must be power of 2"));
+            return result;
+        }
+
+        size_t eff_align = alignment ? alignment : alignof(max_align_t);
+        if (eff_align < alignof(max_align_t)) {
+            eff_align = alignof(max_align_t);
+        }
+
+        // Create static arena over user buffer (arena header lives in buffer)
+        auto arena_result = ArenaAllocator::Stack(buffer, buffer_bytes, eff_align);
+        if (!arena_result.hasValue()) {
+            result.setError(arena_result.error());
+            return result;
+        }
+
+        auto arena_ptr = cslt::move(arena_result.value());
+        ArenaAllocator* arena = arena_ptr.get();
+
+        // Space for freelist header inside arena
+        size_t fl_hdr = _align_up_size(sizeof(FreeListAllocator), eff_align);
+
+        // Use arena usable capacity (data capacity, not total footprint)
+        size_t arena_bytes = arena->allocated();
+        if (arena_bytes < (fl_hdr + sizeof(FreeBlock))) {
+            result.setError(ArgumentError("Arena capacity insufficient after overhead"));
+            return result;
+        }
+
+        // Calculate usable space for freelist region
+        size_t usable_size = arena_bytes - fl_hdr;
+        size_t total_needed = fl_hdr + usable_size;
+
+        // Carve everything (freelist header + remaining usable memory) in one shot
+        auto mem_result = arena->alloc(total_needed, false);
+        if (!mem_result.hasValue()) {
+            result.setError(mem_result.error());
+            return result;
+        }
+
+        void* base = mem_result.value();
+
+        // Construct freelist in-place
+        FreeListAllocator* fl = new (base) FreeListAllocator();
+
+        // Release arena from UniquePtr - freelist now manages it
+        arena_ptr.release();
+
+        // Usable region starts after aligned freelist header
+        void* region = static_cast<uint8_t*>(base) + fl_hdr;
+
+        // Initialize freelist members
+        fl->memory_ = region;
+        fl->cur_ = static_cast<uint8_t*>(region);
+        fl->len_ = 0;
+        fl->arena_ = arena;
+        fl->owns_arena_ = true;  // Owns the arena object (but not the buffer)
+
+        // Base class initialization
+        fl->default_alignment_ = eff_align;
+        fl->mem_type_ = static_cast<uint8_t>(STATIC);
+        fl->owns_memory_ = static_cast<uint8_t>(false);  // User owns buffer
+        fl->size_ = 0;
+        fl->alloc_ = usable_size;
+        fl->total_alloc_ = total_needed;
+
+        // Initialize with one large free block
+        fl->head_ = static_cast<FreeBlock*>(region);
+        fl->head_->size = usable_size;
+        fl->head_->next = nullptr;
+
+        cslt::UniquePtr<FreeListAllocator, FreeListDeleter> ptr(fl, FreeListDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<cslt::UniquePtr<FreeListAllocator, FreeListDeleter>>
+    FreeListAllocator::WithArena(ArenaAllocator& arena,
+                                 size_t bytes,
+                                 size_t alignment) {
+        Expected<cslt::UniquePtr<FreeListAllocator, FreeListDeleter>> result;
+
+        // Validate inputs
+        if (bytes < DEFAULT_FREELIST_SIZE) {
+            bytes = DEFAULT_FREELIST_SIZE;
+        }
+
+        // Validate and normalize alignment
+        if (alignment != 0u && (alignment & (alignment - 1u)) != 0u) {
+            result.setError(AlignmentError("Alignment must be power of 2"));
+            return result;
+        }
+
+        size_t eff_align = alignment ? alignment : alignof(max_align_t);
+        if (eff_align < alignof(max_align_t)) {
+            eff_align = alignof(max_align_t);
+        }
+
+        // Compute struct and usable sizes (both aligned)
+        size_t struct_size = _align_up_size(sizeof(FreeListAllocator), eff_align);
+        size_t usable_size = _align_up_size(bytes, eff_align);
+
+        if (usable_size < sizeof(FreeBlock)) {
+            usable_size = sizeof(FreeBlock);
+        }
+
+        // Overflow guard: total_alloc = struct_size + usable_size
+        if (struct_size > (SIZE_MAX - usable_size)) {
+            result.setError(LengthOverflowError("Size calculation overflow"));
+            return result;
+        }
+
+        size_t total_alloc = struct_size + usable_size;
+
+        // Single allocation from arena for everything
+        auto alloc_result = arena.alloc(total_alloc, false);
+        if (!alloc_result.hasValue()) {
+            result.setError(alloc_result.error());
+            return result;
+        }
+
+        void* base = alloc_result.value();
+
+        // FreeListAllocator struct at the beginning
+        FreeListAllocator* fl = new (base) FreeListAllocator();
+
+        // Usable memory starts after the struct region (already aligned)
+        void* memory = static_cast<uint8_t*>(base) + struct_size;
+
+        // Initialize freelist members
+        fl->memory_ = memory;
+        fl->cur_ = static_cast<uint8_t*>(memory);
+        fl->len_ = 0;
+        fl->arena_ = &arena;
+        fl->owns_arena_ = false;  // Borrowed arena
+
+        // Base class initialization
+        fl->default_alignment_ = eff_align;
+        fl->mem_type_ = static_cast<uint8_t>(arena.memory_type());  // Inherit from arena
+        fl->owns_memory_ = static_cast<uint8_t>(false);  // Doesn't own arena
+        fl->size_ = 0;
+        fl->alloc_ = usable_size;
+        fl->total_alloc_ = total_alloc;
+
+        // Initialize with one large free block
+        fl->head_ = static_cast<FreeBlock*>(memory);
+        fl->head_->size = usable_size;
+        fl->head_->next = nullptr;
+
+        cslt::UniquePtr<FreeListAllocator, FreeListDeleter> ptr(fl, FreeListDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+// ================================================================================
+// Allocator Interface Implementation - Stubs for now
+// ================================================================================
+
+    Expected<void*> FreeListAllocator::alloc(size_t bytes, bool zeroed) {
+        Expected<void*> result;
+        
+        if (bytes == 0) {
+            result.setError(ArgumentError("Cannot allocate 0 bytes"));
+            return result;
+        }
+        
+        // Use default alignment
+        return alloc_aligned(bytes, default_alignment_, zeroed);
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> FreeListAllocator::alloc_aligned(size_t bytes,
+                                                      size_t alignment,
+                                                      bool zeroed) {
+        Expected<void*> result;
+        
+        if (bytes == 0) {
+            result.setError(ArgumentError("Cannot allocate 0 bytes"));
+            return result;
+        }
+        
+        // Normalize alignment (0 means use default)
+        size_t eff_align = alignment ? alignment : default_alignment_;
+        
+        // Validate alignment is power of 2
+        if ((eff_align & (eff_align - 1u)) != 0u) {
+            result.setError(AlignmentError("Alignment must be power of 2"));
+            return result;
+        }
+        
+        const size_t header_size = sizeof(FreeListHeader);
+        
+        // Overflow guard for: user_addr = align_up(block_addr + header_size, eff_align)
+        // and user_end = user_addr + bytes
+        if (bytes > SIZE_MAX - header_size - (eff_align - 1u)) {
+            result.setError(CapacityOverflowError("Allocation size overflow"));
+            return result;
+        }
+        
+        // Search free list for suitable block
+        FreeBlock** current = &head_;
+        
+        while (*current) {
+            FreeBlock* block = *current;
+            uintptr_t block_addr = reinterpret_cast<uintptr_t>(block);
+            
+            // Defensive overflow check for block_end
+            if (block->size > static_cast<size_t>(UINTPTR_MAX - block_addr)) {
+                result.setError(CapacityOverflowError("Block size overflow"));
+                return result;
+            }
+            uintptr_t block_end = block_addr + static_cast<uintptr_t>(block->size);
+            
+            // Calculate where user pointer would be (after header and alignment)
+            uintptr_t after_header = block_addr + static_cast<uintptr_t>(header_size);
+            uintptr_t user_addr = _align_up_uintptr(after_header, eff_align);
+            
+            // Defensive overflow check for user_end
+            if (static_cast<uintptr_t>(bytes) > (UINTPTR_MAX - user_addr)) {
+                result.setError(CapacityOverflowError("User region overflow"));
+                return result;
+            }
+            uintptr_t user_end = user_addr + static_cast<uintptr_t>(bytes);
+            
+            // Does this block have enough space?
+            if (user_end > block_end) {
+                current = &block->next;
+                continue;
+            }
+            
+            // Block is large enough - calculate sizes
+            size_t offset = static_cast<size_t>(user_addr - block_addr);
+            size_t used_size = static_cast<size_t>(user_end - block_addr);
+            size_t remaining = block->size - used_size;
+            
+            size_t block_size_for_hdr;
+            
+            // Should we split the block?
+            if (remaining >= sizeof(FreeBlock)) {
+                // Split block: front portion used, remainder stays free
+                FreeBlock* new_block = reinterpret_cast<FreeBlock*>(
+                    reinterpret_cast<uint8_t*>(block) + used_size
+                );
+                new_block->size = remaining;
+                new_block->next = block->next;
+                
+                block->size = used_size;
+                *current = new_block;
+                
+                block_size_for_hdr = used_size;
+            } else {
+                // Consume entire block (remaining too small to split)
+                block_size_for_hdr = block->size;
+                *current = block->next;
+            }
+            
+            // Store allocation metadata in header
+            uint8_t* user_ptr = reinterpret_cast<uint8_t*>(user_addr);
+            FreeListHeader* hdr = reinterpret_cast<FreeListHeader*>(user_ptr - header_size);
+            
+            hdr->block_size = block_size_for_hdr;
+            hdr->offset = offset;
+            
+            // Account for full block consumption
+            len_ += block_size_for_hdr;
+            size_ += block_size_for_hdr;
+            
+            // Update high-water mark
+            uint8_t* block_used_end = reinterpret_cast<uint8_t*>(block) + block_size_for_hdr;
+            if (block_used_end > cur_) {
+                cur_ = block_used_end;
+            }
+            
+            // Zero if requested
+            if (zeroed) {
+                memset(user_ptr, 0, bytes);
+            }
+            
+            result.setValue(user_ptr);
+            return result;
+        }
+        
+        // No block large enough
+        result.setError(CapacityOverflowError("No suitable free block available"));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> FreeListAllocator::realloc(void* ptr,
+                                               size_t old_bytes,
+                                               size_t new_bytes,
+                                               bool zeroed) {
+        Expected<void*> result;
+        
+        // Reject zero-size realloc requests
+        if (new_bytes == 0) {
+            result.setError(ArgumentError("Cannot realloc to 0 bytes"));
+            return result;
+        }
+        
+        // NULL ptr behaves like alloc
+        if (!ptr) {
+            return alloc(new_bytes, zeroed);
+        }
+        
+        // Shrink or same size: keep pointer (freelist semantics - no shrinking)
+        if (new_bytes <= old_bytes) {
+            result.setValue(ptr);
+            return result;
+        }
+        
+        // Grow: allocate new, copy, optionally zero tail, then free old
+        auto alloc_result = alloc(new_bytes, false);  // Don't zero yet
+        if (!alloc_result.hasValue()) {
+            // Propagate the allocation failure
+            return alloc_result;
+        }
+        
+        void* new_ptr = alloc_result.value();
+        
+        // Copy old data
+        memcpy(new_ptr, ptr, old_bytes);
+        
+        // Zero new region if requested
+        if (zeroed) {
+            memset(static_cast<uint8_t*>(new_ptr) + old_bytes, 0, new_bytes - old_bytes);
+        }
+        
+        // Return old block to freelist
+        return_element(ptr, old_bytes, 0);
+        
+        result.setValue(new_ptr);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> FreeListAllocator::realloc_aligned(void* ptr,
+                                                        size_t old_bytes,
+                                                        size_t new_bytes,
+                                                        size_t alignment,
+                                                        bool zeroed) {
+        Expected<void*> result;
+        
+        // Validate requested size
+        if (new_bytes == 0) {
+            result.setError(ArgumentError("Cannot realloc to 0 bytes"));
+            return result;
+        }
+        
+        // NULL ptr behaves like aligned alloc
+        if (!ptr) {
+            return alloc_aligned(new_bytes, alignment, zeroed);
+        }
+        
+        // Shrink or same size: keep pointer (no shrink performed)
+        if (new_bytes <= old_bytes) {
+            result.setValue(ptr);
+            return result;
+        }
+        
+        // Grow with requested alignment
+        auto alloc_result = alloc_aligned(new_bytes, alignment, false);  // Don't zero yet
+        if (!alloc_result.hasValue()) {
+            // Propagate alignment/capacity failures
+            return alloc_result;
+        }
+        
+        void* new_ptr = alloc_result.value();
+        
+        // Copy old data
+        memcpy(new_ptr, ptr, old_bytes);
+        
+        // Zero new tail region if requested
+        if (zeroed) {
+            memset(static_cast<uint8_t*>(new_ptr) + old_bytes, 0, new_bytes - old_bytes);
+        }
+        
+        // Return old block to freelist
+        return_element(ptr, old_bytes, 0);
+        
+        result.setValue(new_ptr);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void FreeListAllocator::return_element(void* ptr, size_t bytes, size_t alignment) {
+        // bytes and alignment are unused for freelists (interface compatibility)
+        (void)bytes;
+        (void)alignment;
+        
+        if (!ptr) {
+            return;
+        }
+        
+        const size_t header_size = sizeof(FreeListHeader);
+        
+        uint8_t* user_ptr = static_cast<uint8_t*>(ptr);
+        uint8_t* mem_start8 = static_cast<uint8_t*>(memory_);
+        uint8_t* mem_end8 = mem_start8 + alloc_;
+        
+        // Basic bounds: user pointer must be inside region and leave room for header
+        if (user_ptr < mem_start8 + header_size || user_ptr > mem_end8) {
+            return;  // Invalid pointer
+        }
+        
+        // Header sits immediately before user pointer
+        FreeListHeader* hdr = reinterpret_cast<FreeListHeader*>(user_ptr - header_size);
+        
+        size_t block_size = hdr->block_size;
+        size_t offset = hdr->offset;
+        
+        // Reconstruct block start
+        uint8_t* block_start = user_ptr - offset;
+        
+        uintptr_t block_addr = reinterpret_cast<uintptr_t>(block_start);
+        uintptr_t mem_start = reinterpret_cast<uintptr_t>(memory_);
+        uintptr_t mem_end = mem_start + alloc_;
+        
+        // Sanity checks on block size and bounds
+        if (block_size < sizeof(FreeBlock) || block_size > alloc_) {
+            return;  // Invalid block size
+        }
+        
+        if (block_addr < mem_start || block_addr + block_size > mem_end) {
+            return;  // Block out of bounds
+        }
+        
+        // Also ensure offset is sane (block_size must cover offset + header at least)
+        if (offset > block_size) {
+            return;  // Invalid offset
+        }
+        
+        // Accounting: we charged block_size on alloc, so undo exactly that
+        if (len_ < block_size) {
+            return;  // Underflow - shouldn't happen
+        }
+        
+        len_ -= block_size;
+        size_ -= block_size;
+        
+        // Turn region back into a free block
+        FreeBlock* block = reinterpret_cast<FreeBlock*>(block_start);
+        block->size = block_size;
+        
+        // Insert into free list in address order
+        FreeBlock* prev = nullptr;
+        FreeBlock* curr = head_;
+        
+        while (curr && curr < block) {
+            prev = curr;
+            curr = curr->next;
+        }
+        
+        block->next = curr;
+        if (prev) {
+            prev->next = block;
+        } else {
+            head_ = block;
+        }
+        
+        // Coalesce with next block if adjacent
+        if (block->next) {
+            uint8_t* block_end = reinterpret_cast<uint8_t*>(block) + block->size;
+            if (block_end == reinterpret_cast<uint8_t*>(block->next)) {
+                // Merge with next
+                block->size += block->next->size;
+                block->next = block->next->next;
+            }
+        }
+        
+        // Coalesce with previous block if adjacent
+        if (prev) {
+            uint8_t* prev_end = reinterpret_cast<uint8_t*>(prev) + prev->size;
+            if (prev_end == reinterpret_cast<uint8_t*>(block)) {
+                // Merge with prev
+                prev->size += block->size;
+                prev->next = block->next;
+            }
+        }
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool FreeListAllocator::reset(bool trim) {
+        // trim parameter unused for freelists
+        (void)trim;
+        
+        if (!memory_ || alloc_ == 0) {
+            // Freelist not properly initialized or already torn down
+            return false;
+        }
+        
+        // Reset accounting
+        cur_ = static_cast<uint8_t*>(memory_);
+        len_ = 0;
+        size_ = 0;
+        
+        // Recreate a single large free block covering the entire region
+        head_ = static_cast<FreeBlock*>(memory_);
+        head_->size = alloc_;
+        head_->next = nullptr;
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool FreeListAllocator::is_ptr(void* ptr) const {
+        if (!ptr) {
+            return false;
+        }
+        
+        const size_t header_size = sizeof(FreeListHeader);
+        
+        uintptr_t mem_start = reinterpret_cast<uintptr_t>(memory_);
+        uintptr_t mem_end = mem_start + alloc_;
+        uintptr_t ptr_addr = reinterpret_cast<uintptr_t>(ptr);
+        
+        // Pointer must be within the managed region and leave room for the header
+        if (ptr_addr < mem_start + header_size || ptr_addr > mem_end) {
+            return false;
+        }
+        
+        // Header sits immediately before the user pointer
+        const uint8_t* user_ptr = static_cast<const uint8_t*>(ptr);
+        const FreeListHeader* hdr = reinterpret_cast<const FreeListHeader*>(user_ptr - header_size);
+        
+        size_t block_size = hdr->block_size;
+        size_t offset = hdr->offset;
+        
+        // Reconstruct block start
+        const uint8_t* block_start = user_ptr - offset;
+        uintptr_t block_addr = reinterpret_cast<uintptr_t>(block_start);
+        
+        // Basic sanity on offset and size
+        // block_size must be large enough to cover the offset and at least a FreeBlock
+        if (offset > block_size) {
+            return false;
+        }
+        
+        if (block_size < sizeof(FreeBlock) || block_size > alloc_) {
+            return false;
+        }
+        
+        // block_start must be within the freelist region
+        if (block_addr < mem_start || block_addr >= mem_end) {
+            return false;
+        }
+        
+        // Check that the full block fits within the region, overflow-safe:
+        // block_addr + block_size <= mem_end  <=>  block_size <= mem_end - block_addr
+        if (block_size > static_cast<size_t>(mem_end - block_addr)) {
+            return false;
+        }
+        
+        // Also check that ptr lies within [block_start, block_start + block_size)
+        if (ptr_addr < block_addr || ptr_addr >= block_addr + block_size) {
+            return false;
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool FreeListAllocator::is_ptr_sized(void* ptr, size_t bytes) const {
+        if (!ptr || bytes == 0) {
+            return false;
+        }
+        
+        // First check if it's at least a plausible freelist pointer
+        if (!is_ptr(ptr)) {
+            return false;
+        }
+        
+        const size_t header_size = sizeof(FreeListHeader);
+        const uint8_t* user_ptr = static_cast<const uint8_t*>(ptr);
+        
+        const FreeListHeader* hdr = reinterpret_cast<const FreeListHeader*>(user_ptr - header_size);
+        
+        size_t block_size = hdr->block_size;
+        size_t offset = hdr->offset;
+        
+        if (offset > block_size) {
+            return false;
+        }
+        
+        // User data size = block_size - offset
+        size_t user_data_size = block_size - offset;
+        
+        // Requested size must fit within the user data region
+        if (bytes > user_data_size) {
+            return false;
+        }
+        
+        // Also verify that ptr + bytes doesn't run off the freelist region
+        uintptr_t ptr_addr = reinterpret_cast<uintptr_t>(ptr);
+        uintptr_t mem_start = reinterpret_cast<uintptr_t>(memory_);
+        uintptr_t mem_end = mem_start + alloc_;
+        
+        // Overflow-safe: ptr_addr + bytes <= mem_end  <=>  bytes <= mem_end - ptr_addr
+        if (bytes > static_cast<size_t>(mem_end - ptr_addr)) {
+            return false;
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool FreeListAllocator::stats(char* buffer, size_t buffer_size) const {
+        size_t offset = 0;
+        
+        if (!buffer || buffer_size == 0) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset, "%s", "FreeListAllocator Statistics:\n")) {
+            return false;
+        }
+        
+        // Type / ownership information
+        const char* type_str = "UNKNOWN";
+        switch (static_cast<MemType>(mem_type_)) {
+            case STATIC:  type_str = "STATIC";  break;
+            case DYNAMIC: type_str = "DYNAMIC"; break;
+            default:      type_str = "UNKNOWN"; break;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset, "  Type: %s\n", type_str)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Owns arena: %s\n", owns_arena_ ? "yes" : "no")) {
+            return false;
+        }
+        
+        // Basic accounting
+        size_t used = len_;                    // Current usage
+        size_t capacity = alloc_;              // Usable capacity
+        size_t total = total_alloc_;           // Total with overhead
+        size_t remaining_bytes = capacity > used ? capacity - used : 0;
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Used (accounted): %zu bytes\n", used)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Remaining: %zu bytes\n", remaining_bytes)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Capacity (usable region): %zu bytes\n", capacity)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Total (with header/overhead): %zu bytes\n", total)) {
+            return false;
+        }
+        
+        // Utilization of the usable freelist region
+        if (capacity == 0) {
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                             "%s", "  Utilization: N/A (capacity is 0)\n")) {
+                return false;
+            }
+        } else {
+            double util = (100.0 * static_cast<double>(used)) / static_cast<double>(capacity);
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                             "  Utilization: %.1f%%\n", util)) {
+                return false;
+            }
+        }
+        
+        // Alignment info
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Base alignment: %zu bytes\n", default_alignment_)) {
+            return false;
+        }
+        
+        // Free list layout
+        const FreeBlock* current = head_;
+        int block_count = 0;
+        size_t free_bytes = 0;
+        
+        while (current) {
+            block_count++;
+            free_bytes += current->size;
+            
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                             "  Free block %d: %p, %zu bytes\n",
+                             block_count,
+                             static_cast<const void*>(current),
+                             current->size)) {
+                return false;
+            }
+            
+            current = current->next;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                         "  Free blocks: %d, total free bytes (raw): %zu\n",
+                         block_count, free_bytes)) {
+            return false;
+        }
+        
+        return true;
+    }
+// ================================================================================
+// FreeList-Specific Query Methods
+// ================================================================================
+
+    size_t FreeListAllocator::remaining() const noexcept {
+        return alloc_ - size_;
+    }
+
+    size_t FreeListAllocator::used() const {
+        return len_;
+    }
+
+    bool FreeListAllocator::owns_arena() const {
+        return owns_arena_;
+    }
+// ================================================================================ 
+// ================================================================================ 
 } /* cslt namespace */
 // ================================================================================
 // ================================================================================

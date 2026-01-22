@@ -2747,6 +2747,54 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+    /**
+     * @class PoolAllocator
+     * @brief Fixed-size block allocator with O(1) allocation and deallocation
+     * 
+     * @details PoolAllocator manages memory as a collection of uniformly-sized blocks,
+     *          providing constant-time allocation and deallocation through free-list
+     *          recycling. All allocations return blocks of exactly the same size,
+     *          making it ideal for object pools and frequently allocated/deallocated
+     *          data structures.
+     * 
+     *          The pool carves blocks from contiguous memory slices backed by an arena.
+     *          Freed blocks are returned to a linked free-list for O(1) reuse.
+     *          Optionally, the pool can request additional slices when capacity is
+     *          exhausted.
+     * 
+     * @par Basic Usage
+     * @code{.cpp}
+     * // Create pool for 256-byte blocks
+     * auto pool = PoolAllocator::Heap(256, 32).value();
+     * 
+     * // Allocate block
+     * auto ptr = pool->alloc_pool(false);
+     * 
+     * // Return block for reuse
+     * pool->return_element(ptr.value(), 256);
+     * @endcode
+     * 
+     * @par Object Pool Pattern
+     * @code{.cpp}
+     * struct Particle { float x, y, z; };
+     * auto pool = PoolAllocator::Heap(sizeof(Particle), 1000).value();
+     * 
+     * // Allocate and construct
+     * void* mem = pool->alloc_pool().value();
+     * Particle* p = new (mem) Particle();
+     * 
+     * // Destroy and return
+     * p->~Particle();
+     * pool->return_element(mem, sizeof(Particle));
+     * @endcode
+     * 
+     * @note Block size must be at least sizeof(void*) for free-list management
+     * @note Not thread-safe - requires external synchronization for concurrent access
+     * 
+     * @see Heap() Create pool with owned heap-allocated arena
+     * @see WithArena() Create pool sharing an existing arena
+     * @see Stack() Create pool using user-provided buffer
+     */
     class PoolAllocator;
 
     /**
@@ -3447,9 +3495,1805 @@ namespace cslt {
             ArenaDeleter{}(arena);
         }
     }
+// ================================================================================ 
+// ================================================================================
 
+    class FreeListAllocator;
+
+    /**
+     * @struct FreeListDeleter
+     * @brief Custom deleter for FreeListAllocator unique pointers
+     * 
+     * @details This deleter properly cleans up FreeListAllocator instances created by
+     *          factory methods (Heap, WithArena, Stack). It handles the complex
+     *          ownership relationships between freelists and their backing arenas:
+     * 
+     *          Arena ownership patterns:
+     *          - **Heap()**: FreeList owns arena → ArenaDeleter frees arena and memory
+     *          - **WithArena()**: FreeList borrows arena → Arena not deleted (caller owns it)
+     *          - **Stack()**: FreeList owns arena object → ArenaDeleter destructs arena
+     *                         (but doesn't free buffer, user owns it)
+     * 
+     * @see FreeListAllocator::Heap()
+     * @see FreeListAllocator::WithArena()
+     * @see FreeListAllocator::Stack()
+     * @see ArenaDeleter
+     */
+    struct FreeListDeleter {
+        void operator()(FreeListAllocator* freelist) const noexcept;
+    };
+
+// ================================================================================
+// FreeListAllocator Class
+// ================================================================================
+
+    /**
+     * @class FreeListAllocator
+     * @brief Variable-size block allocator with automatic coalescing to reduce fragmentation
+     * 
+     * @details FreeListAllocator manages variable-sized allocations from a contiguous
+     *          memory region using a linked list of free blocks. Unlike PoolAllocator
+     *          which handles fixed-size blocks, FreeListAllocator can allocate blocks
+     *          of any size up to available capacity. Freed blocks are automatically
+     *          coalesced with adjacent free blocks to reduce external fragmentation.
+     * 
+     *          Each allocated block carries a small header storing its size and alignment
+     *          offset. Free blocks maintain a linked list for efficient reuse. The
+     *          allocator uses a best-fit search strategy to find suitable free blocks.
+     * 
+     * @par Basic Usage
+     * @code{.cpp}
+     * // Create freelist with 4KB capacity
+     * auto freelist = FreeListAllocator::Heap(4096, 0, false).value();
+     * 
+     * // Allocate variable-sized blocks
+     * auto ptr1 = freelist->alloc(256, false);
+     * auto ptr2 = freelist->alloc(512, false);
+     * auto ptr3 = freelist->alloc(128, false);
+     * 
+     * // Free blocks (automatically coalesces adjacent blocks)
+     * freelist->return_element(ptr2.value(), 512);
+     * freelist->return_element(ptr1.value(), 256);
+     * @endcode
+     * 
+     * @par Resize Support
+     * @code{.cpp}
+     * auto freelist = FreeListAllocator::Heap(8192).value();
+     * 
+     * // Initial allocation
+     * auto ptr = freelist->alloc(128, false).value();
+     * 
+     * // Grow allocation (allocates new block, copies data, frees old)
+     * auto new_ptr = freelist->realloc(ptr, 128, 512, false);
+     * 
+     * // Can also resize with specific alignment
+     * auto aligned = freelist->realloc_aligned(new_ptr.value(), 512, 1024, 64, true);
+     * @endcode
+     * 
+     * @note Allocations have small per-block overhead for metadata (FreeListHeader)
+     * @note Not thread-safe - requires external synchronization for concurrent access
+     * @note Best suited for general-purpose allocation with varying sizes
+     * 
+     * @see Heap() Create freelist with owned heap-allocated arena
+     * @see WithArena() Create freelist sharing an existing arena
+     * @see Stack() Create freelist using user-provided buffer
+     */
+    class FreeListAllocator : public Allocator {
+        // Friend declaration so deleter can access private members
+        friend struct FreeListDeleter;
+
+    private:
+        /**
+         * @brief Free block node for linked list management
+         * @internal
+         */
+        struct FreeBlock {
+            size_t size;          ///< Size of this free block
+            FreeBlock* next;      ///< Next free block in list
+        };
+
+        /**
+         * @brief Header stored before each allocated block
+         * @internal
+         */
+        struct FreeListHeader {
+            size_t block_size;    ///< Total size including header and padding
+            size_t offset;        ///< Distance from block start to user pointer
+        };
+
+        // Member variables
+        FreeBlock*       head_;          ///< Head of free list
+        uint8_t*         cur_;           ///< High-water mark
+        size_t           len_;           ///< Current usage
+        void*            memory_;        ///< Start of memory region
+        ArenaAllocator*  arena_;         ///< Parent arena
+        bool             owns_arena_;    ///< Arena ownership flag
+
+        // Private constructor (use factory methods)
+        FreeListAllocator();
+
+        // Helper methods
+        static size_t min_request();
+// ================================================================================ 
+
+    public:
+        /**
+         * @brief Destructor for FreeListAllocator
+         * 
+         * @details Cleans up the freelist allocator's internal state. The destructor
+         *          is intentionally minimal because memory management is handled by
+         *          the FreeListDeleter custom deleter, which determines whether to
+         *          destroy the backing arena based on ownership.
+         * 
+         *          The destructor simply nulls internal pointers to prevent dangling
+         *          references. Actual memory deallocation (if any) is performed by
+         *          FreeListDeleter after calling this destructor.
+         * 
+         * @note This destructor is called by FreeListDeleter, not directly by users.
+         *       Users should let UniquePtr manage the freelist lifetime.
+         * 
+         * @see FreeListDeleter For the cleanup logic that follows destruction
+         */ 
+        ~FreeListAllocator() noexcept override;
+
+        // Factory methods cannot be copied or moved after construction
+        FreeListAllocator(const FreeListAllocator&) = delete;
+        FreeListAllocator& operator=(const FreeListAllocator&) = delete;
+        FreeListAllocator(FreeListAllocator&&) = delete;
+        FreeListAllocator& operator=(FreeListAllocator&&) = delete;
+
+        // ============================================================================
+        // Factory Methods
+        // ============================================================================
+
+#if ARENA_ENABLE_DYNAMIC
+        /**
+         * @brief Create a dynamically-backed freelist allocator (PREFERRED for heap use)
+         * 
+         * @param bytes Minimum usable payload size (excluding metadata). If 0, defaults
+         *              to a reasonable minimum (4096 bytes). Must be at least
+         *              sizeof(FreeBlock).
+         * @param alignment Desired alignment for allocations (0 = default = alignof(max_align_t)).
+         *                  Must be power of 2. The effective alignment is always at least
+         *                  alignof(max_align_t).
+         * @param resize Whether the underlying arena is permitted to grow. Currently,
+         *               the freelist itself remains fixed-size after construction.
+         * 
+         * @return Expected containing UniquePtr to freelist on success, or error
+         * 
+         * @retval Expected with UniquePtr<FreeListAllocator> on success
+         * @retval Expected with ArgumentError if bytes < minimum size
+         * @retval Expected with AlignmentError if alignment is not power of 2
+         * @retval Expected with LengthOverflowError if size calculations overflow
+         * @retval Expected with MemoryError if arena allocation fails
+         * 
+         * @details Creates a freelist with its own dedicated heap-allocated arena.
+         *          The freelist owns the arena and will destroy it on cleanup via
+         *          FreeListDeleter. All memory managed by the freelist is carved
+         *          from this owned arena.
+         * 
+         *          The actual usable capacity may exceed the requested bytes,
+         *          depending on how the underlying arena rounds allocations and
+         *          alignment padding requirements.
+         * 
+         * @note The freelist owns the arena. Call reset() on the UniquePtr to
+         *       release all associated memory.
+         * 
+         * @note Requires ARENA_ENABLE_DYNAMIC to be enabled at compile time.
+         * 
+         * @warning All pointers obtained from this freelist become invalid once
+         *          the freelist is destroyed.
+         * 
+         * @par Example - Basic heap freelist
+         * @code{.cpp}
+         * #include "FreeListAllocator.hpp"
+         * 
+         * // Create 8KB freelist
+         * auto result = cslt::FreeListAllocator::Heap(8192, 0, false);
+         * if (!result.hasValue()) {
+         *     // Handle error
+         *     std::cerr << result.error().what() << std::endl;
+         *     return;
+         * }
+         * 
+         * auto freelist = cslt::move(result.value());
+         * 
+         * // Allocate variable-sized blocks
+         * auto ptr1 = freelist->alloc(256, false);
+         * auto ptr2 = freelist->alloc(512, true);  // Zero-initialized
+         * auto ptr3 = freelist->alloc(128, false);
+         * 
+         * // Use allocations...
+         * 
+         * // Free blocks (will be coalesced if adjacent)
+         * freelist->return_element(ptr1.value(), 256);
+         * freelist->return_element(ptr3.value(), 128);
+         * 
+         * // Freelist and arena automatically destroyed when freelist goes out of scope
+         * @endcode
+         * 
+         * @par Example - Custom alignment
+         * @code{.cpp}
+         * // Create freelist with 64-byte alignment
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 64, false).value();
+         * 
+         * // All allocations will be at least 64-byte aligned
+         * auto ptr = freelist->alloc(256, false);
+         * assert(reinterpret_cast<uintptr_t>(ptr.value()) % 64 == 0);
+         * @endcode
+         * 
+         * @see WithArena() For sharing an arena between multiple allocators
+         * @see Stack() For stack/embedded scenarios with user-provided buffers
+         * @see FreeListDeleter For cleanup behavior
+         */
+        static Expected<UniquePtr<FreeListAllocator, FreeListDeleter>>
+        Heap(size_t bytes,
+             size_t alignment = 0,
+             bool resize = false);
+#endif
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Create a freelist using a borrowed arena (PREFERRED for shared arena)
+         * 
+         * @param arena Reference to existing arena (must outlive freelist). The arena
+         *              is borrowed, not owned. Multiple freelists can share the same
+         *              arena.
+         * @param bytes Usable payload size to allocate from arena (excluding metadata).
+         *              Must be at least sizeof(FreeBlock).
+         * @param alignment Desired alignment for allocations (0 = default = alignof(max_align_t)).
+         *                  Must be power of 2.
+         * 
+         * @return Expected containing UniquePtr to freelist on success, or error
+         * 
+         * @retval Expected with UniquePtr<FreeListAllocator> on success
+         * @retval Expected with ArgumentError if bytes < minimum size
+         * @retval Expected with AlignmentError if alignment is not power of 2
+         * @retval Expected with LengthOverflowError if size calculations overflow
+         * @retval Expected with MemoryError if arena cannot supply requested memory
+         * 
+         * @details Creates a freelist within an existing arena's memory space.
+         *          The freelist does NOT own the arena - the caller or another
+         *          component is responsible for the arena's lifetime. Multiple
+         *          allocators can share the same arena for efficient memory use.
+         * 
+         *          The freelist inherits its memory type (STATIC/DYNAMIC) from the
+         *          parent arena. When the freelist is destroyed, the arena remains
+         *          valid and usable by other allocators.
+         * 
+         * @note Arena must remain valid for the freelist's entire lifetime.
+         * 
+         * @note The freelist does NOT own the arena. Destroying the freelist
+         *       does not affect the arena.
+         * 
+         * @warning Destroying the arena while freelists still reference it results
+         *          in undefined behavior.
+         * 
+         * @par Example - Multiple freelists sharing one arena
+         * @code{.cpp}
+         * #include "FreeListAllocator.hpp"
+         * #include "ArenaAllocator.hpp"
+         * 
+         * // Create parent arena
+         * auto arena = cslt::ArenaAllocator::Heap(64 * 1024).value();
+         * 
+         * // Create multiple freelists sharing the arena
+         * auto freelist1 = cslt::FreeListAllocator::WithArena(*arena, 8192, 0).value();
+         * auto freelist2 = cslt::FreeListAllocator::WithArena(*arena, 4096, 0).value();
+         * auto freelist3 = cslt::FreeListAllocator::WithArena(*arena, 2048, 0).value();
+         * 
+         * // All freelists allocate from the same 64KB arena
+         * auto ptr1 = freelist1->alloc(512, false);
+         * auto ptr2 = freelist2->alloc(256, false);
+         * auto ptr3 = freelist3->alloc(128, false);
+         * 
+         * // Freelists can be destroyed independently
+         * freelist1.reset();
+         * freelist2.reset();
+         * 
+         * // Arena still valid for freelist3
+         * auto ptr4 = freelist3->alloc(64, false);
+         * 
+         * // Arena destroyed last (after all freelists)
+         * @endcode
+         * 
+         * @par Example - Mixing allocator types
+         * @code{.cpp}
+         * auto arena = cslt::ArenaAllocator::Heap(128 * 1024).value();
+         * 
+         * // Mix different allocator types on same arena
+         * auto freelist = cslt::FreeListAllocator::WithArena(*arena, 16384, 0).value();
+         * auto pool = cslt::PoolAllocator::WithArena(*arena, 256, 64, 0, true, true).value();
+         * 
+         * // Both share the same underlying memory efficiently
+         * auto var_sized = freelist->alloc(1024, false);
+         * auto fixed_sized = pool->alloc_pool(false);
+         * @endcode
+         * 
+         * @see Heap() For standalone freelists with owned arenas
+         * @see Stack() For stack-based freelists
+         */
+        static Expected<UniquePtr<FreeListAllocator, FreeListDeleter>>
+        WithArena(ArenaAllocator& arena,
+                  size_t bytes,
+                  size_t alignment = 0);
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Create a freelist over a user-supplied buffer (PREFERRED for embedded)
+         * 
+         * @param buffer Pointer to user-owned memory buffer. Must not be NULL.
+         *               The buffer must remain valid for the freelist's entire lifetime.
+         * @param buffer_bytes Total size of buffer in bytes. Must be large enough to
+         *                     contain FreeListAllocator header, arena header, and at
+         *                     least one FreeBlock.
+         * @param alignment Required alignment for allocations (0 = default = alignof(max_align_t)).
+         *                  Must be power of 2.
+         * 
+         * @return Expected containing UniquePtr to freelist on success, or error
+         * 
+         * @retval Expected with UniquePtr<FreeListAllocator> on success
+         * @retval Expected with ArgumentError if buffer is NULL or buffer_bytes == 0
+         * @retval Expected with ArgumentError if buffer too small for structures
+         * @retval Expected with AlignmentError if alignment is not power of 2
+         * @retval Expected with MemoryError if arena initialization fails
+         * 
+         * @details Constructs a freelist entirely within a caller-provided memory buffer.
+         *          No heap allocation is performed. The freelist does NOT take ownership
+         *          of the buffer; the caller is responsible for ensuring that the buffer
+         *          remains valid for the full lifetime of the freelist.
+         * 
+         *          Internally, this creates a non-owning STATIC arena over the supplied
+         *          buffer and then carves the freelist allocator from that arena. The
+         *          freelist owns the arena object but not the underlying buffer.
+         * 
+         * @note The freelist does NOT own the buffer. Destroying or resetting the
+         *       freelist does not free the buffer.
+         * 
+         * @note Well suited for embedded systems, scratch allocators, or environments
+         *       where dynamic allocation is restricted.
+         * 
+         * @warning Buffer must outlive the freelist. Destroying the buffer before
+         *          the freelist results in undefined behavior.
+         * 
+         * @par Example - Stack-based freelist
+         * @code{.cpp}
+         * #include "FreeListAllocator.hpp"
+         * 
+         * void process_data() {
+         *     uint8_t buffer[4096];  // Stack-allocated buffer
+         *     
+         *     auto result = cslt::FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+         *     if (!result.hasValue()) {
+         *         // Handle error
+         *         return;
+         *     }
+         *     
+         *     auto freelist = cslt::move(result.value());
+         *     
+         *     // Allocate from stack buffer
+         *     auto ptr1 = freelist->alloc(256, false);
+         *     auto ptr2 = freelist->alloc(512, false);
+         *     
+         *     // Use allocations...
+         *     
+         *     freelist->return_element(ptr1.value(), 256);
+         *     
+         *     // Freelist automatically cleaned up at scope exit
+         * }  // Buffer still valid after freelist destruction
+         * @endcode
+         * 
+         * @par Example - Embedded system with static buffer
+         * @code{.cpp}
+         * // Global or static buffer
+         * static uint8_t g_memory_pool[8192];
+         * 
+         * void init_allocator() {
+         *     auto freelist = cslt::FreeListAllocator::Stack(
+         *         g_memory_pool, 
+         *         sizeof(g_memory_pool),
+         *         16  // 16-byte alignment
+         *     ).value();
+         *     
+         *     // Use freelist for temporary allocations
+         *     void* temp = freelist->alloc(128, true);
+         *     // ... process ...
+         *     freelist->return_element(temp, 128);
+         *     
+         *     // Reset for reuse
+         *     freelist->reset();
+         * }
+         * @endcode
+         * 
+         * @par Example - Heap-allocated buffer (user controls lifetime)
+         * @code{.cpp}
+         * uint8_t* buffer = new uint8_t[16384];
+         * 
+         * {
+         *     auto freelist = cslt::FreeListAllocator::Stack(buffer, 16384, 0).value();
+         *     
+         *     // Use freelist...
+         *     auto ptr = freelist->alloc(1024, false);
+         *     
+         * }  // Freelist destroyed, but buffer remains valid
+         * 
+         * // Buffer can be reused or freed
+         * delete[] buffer;
+         * @endcode
+         * 
+         * @see Heap() For heap-allocated freelists
+         * @see WithArena() For sharing arenas
+         */
+        static Expected<UniquePtr<FreeListAllocator, FreeListDeleter>>
+        Stack(void* buffer,
+              size_t buffer_bytes,
+              size_t alignment = 0);
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Allocate variable-size block from freelist
+         * 
+         * @param bytes Number of bytes to allocate. Must be greater than 0.
+         * @param zeroed If true, zero-initialize the allocated block before returning.
+         * 
+         * @return Expected containing pointer to allocated block on success, or error
+         * 
+         * @retval Expected with void* pointer on success
+         * @retval Expected with ArgumentError if bytes == 0
+         * @retval Expected with AlignmentError if alignment validation fails
+         * @retval Expected with CapacityOverflowError if no suitable free block available
+         * 
+         * @details Allocates a block of the requested size from the freelist using
+         *          a first-fit search strategy. The allocator searches the free list
+         *          for the first block large enough to satisfy the request, accounting
+         *          for alignment padding and header overhead.
+         * 
+         *          Internally, this delegates to alloc_aligned() using the freelist's
+         *          default alignment. Each allocated block carries a small header
+         *          (FreeListHeader) storing its total size and offset for proper
+         *          deallocation.
+         * 
+         *          If a free block is larger than needed, it may be split into an
+         *          allocated portion and a new smaller free block. If the remainder
+         *          would be too small (< sizeof(FreeBlock)), the entire block is
+         *          consumed to avoid creating unusable fragments.
+         * 
+         * @note The actual memory consumed may exceed 'bytes' due to:
+         *       - FreeListHeader (stored before user pointer)
+         *       - Alignment padding
+         *       - Full block consumption when remainder is too small
+         * 
+         * @note Allocated blocks must be returned via return_element() for reuse.
+         *       Adjacent freed blocks are automatically coalesced to reduce
+         *       fragmentation.
+         * 
+         * @warning Passing bytes larger than available capacity will fail.
+         *          Check remaining() before large allocations if needed.
+         * 
+         * @par Example - Basic allocation
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(8192, 0, false).value();
+         * 
+         * // Allocate different sizes
+         * auto ptr1 = freelist->alloc(256, false);
+         * if (!ptr1.hasValue()) {
+         *     std::cerr << "Allocation failed: " << ptr1.error().what() << std::endl;
+         *     return;
+         * }
+         * 
+         * auto ptr2 = freelist->alloc(512, true);  // Zero-initialized
+         * auto ptr3 = freelist->alloc(128, false);
+         * 
+         * // Use allocations...
+         * uint8_t* data = static_cast<uint8_t*>(ptr1.value());
+         * data[0] = 42;
+         * 
+         * // Free when done
+         * freelist->return_element(ptr1.value(), 256);
+         * freelist->return_element(ptr2.value(), 512);
+         * freelist->return_element(ptr3.value(), 128);
+         * @endcode
+         * 
+         * @par Example - Checking capacity
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * size_t large_size = 8192;
+         * if (freelist->remaining() >= large_size) {
+         *     auto ptr = freelist->alloc(large_size, false);
+         *     // Will succeed
+         * } else {
+         *     std::cerr << "Insufficient space: need " << large_size 
+         *               << ", have " << freelist->remaining() << std::endl;
+         * }
+         * @endcode
+         * 
+         * @par Example - Zero-initialized allocation
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * // Allocate zero-initialized buffer
+         * auto result = freelist->alloc(1024, true);
+         * if (result.hasValue()) {
+         *     uint8_t* buffer = static_cast<uint8_t*>(result.value());
+         *     // All 1024 bytes guaranteed to be 0
+         *     assert(buffer[0] == 0);
+         *     assert(buffer[1023] == 0);
+         * }
+         * @endcode
+         * 
+         * @see alloc_aligned() For allocations with specific alignment requirements
+         * @see return_element() To free allocated blocks
+         * @see realloc() To resize existing allocations
+         * @see remaining() To check available capacity
+         */
+        Expected<void*> alloc(size_t bytes, bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Allocate variable-size block with specific alignment
+         * 
+         * @param bytes Number of bytes to allocate. Must be greater than 0.
+         * @param alignment Required alignment for the returned pointer. If 0, uses
+         *                  freelist's default alignment. Must be power of 2.
+         *                  The effective alignment is always at least the freelist's
+         *                  default alignment.
+         * @param zeroed If true, zero-initialize the allocated block before returning.
+         * 
+         * @return Expected containing aligned pointer on success, or error
+         * 
+         * @retval Expected with void* pointer (aligned to requested alignment) on success
+         * @retval Expected with ArgumentError if bytes == 0
+         * @retval Expected with AlignmentError if alignment is not power of 2
+         * @retval Expected with CapacityOverflowError if no suitable free block available
+         * 
+         * @details Allocates a block of the requested size with the specified alignment.
+         *          The allocator searches the free list for a block large enough to
+         *          accommodate:
+         *          - FreeListHeader metadata
+         *          - Alignment padding to satisfy the alignment requirement
+         *          - The requested user bytes
+         * 
+         *          The returned pointer is guaranteed to be aligned to at least the
+         *          requested alignment (or the freelist's default alignment, whichever
+         *          is greater). Alignment padding increases internal fragmentation but
+         *          ensures correct data alignment for hardware requirements.
+         * 
+         *          If the requested alignment is 0 or less than the freelist's default,
+         *          the default alignment is used. Non-power-of-two alignments are
+         *          rounded up to the next power of 2.
+         * 
+         * @note Stricter alignment may consume significantly more memory due to
+         *       padding. For example, a 64-byte allocation with 256-byte alignment
+         *       may consume up to ~320 bytes total.
+         * 
+         * @note The allocated block must be freed via return_element(), not free().
+         * 
+         * @warning Requesting alignment stricter than the freelist's base alignment
+         *          increases fragmentation and reduces effective capacity.
+         * 
+         * @par Example - Cache-line aligned allocation
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 0, false).value();
+         * 
+         * // Allocate 256 bytes aligned to 64-byte cache line
+         * auto result = freelist->alloc_aligned(256, 64, false);
+         * if (!result.hasValue()) {
+         *     std::cerr << "Aligned allocation failed" << std::endl;
+         *     return;
+         * }
+         * 
+         * void* ptr = result.value();
+         * 
+         * // Verify alignment
+         * assert(reinterpret_cast<uintptr_t>(ptr) % 64 == 0);
+         * 
+         * // Use aligned memory...
+         * 
+         * freelist->return_element(ptr, 256);
+         * @endcode
+         * 
+         * @par Example - SIMD-friendly allocation
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(8192, 0, false).value();
+         * 
+         * // Allocate buffer for AVX operations (32-byte alignment)
+         * auto buffer = freelist->alloc_aligned(1024, 32, true);
+         * 
+         * if (buffer.hasValue()) {
+         *     float* simd_data = static_cast<float*>(buffer.value());
+         *     
+         *     // Safe for AVX intrinsics
+         *     // __m256 vec = _mm256_load_ps(simd_data);
+         *     
+         *     freelist->return_element(buffer.value(), 1024);
+         * }
+         * @endcode
+         * 
+         * @par Example - Page-aligned allocation
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(65536, 0, false).value();
+         * 
+         * // Allocate page-aligned memory (4KB pages)
+         * auto result = freelist->alloc_aligned(8192, 4096, false);
+         * 
+         * if (result.hasValue()) {
+         *     void* page_aligned = result.value();
+         *     
+         *     // Pointer is aligned to 4KB boundary
+         *     assert(reinterpret_cast<uintptr_t>(page_aligned) % 4096 == 0);
+         *     
+         *     // Could be used for mmap-like operations or DMA
+         *     
+         *     freelist->return_element(page_aligned, 8192);
+         * }
+         * @endcode
+         * 
+         * @par Example - Mixing alignments
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 16, false).value();
+         * 
+         * // Default alignment (16 bytes)
+         * auto ptr1 = freelist->alloc(256, false);
+         * 
+         * // Custom alignment (128 bytes)
+         * auto ptr2 = freelist->alloc_aligned(256, 128, false);
+         * 
+         * // Alignment less than default - uses default (16 bytes)
+         * auto ptr3 = freelist->alloc_aligned(256, 8, false);  // Actually 16-byte aligned
+         * 
+         * // Verify alignments
+         * assert(reinterpret_cast<uintptr_t>(ptr1.value()) % 16 == 0);
+         * assert(reinterpret_cast<uintptr_t>(ptr2.value()) % 128 == 0);
+         * assert(reinterpret_cast<uintptr_t>(ptr3.value()) % 16 == 0);
+         * @endcode
+         * 
+         * @see alloc() For allocations with default alignment
+         * @see realloc_aligned() To resize with specific alignment
+         * @see return_element() To free allocated blocks
+         */
+        Expected<void*> alloc_aligned(size_t bytes,
+                                      size_t alignment,
+                                      bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Resize an existing allocation
+         * 
+         * @param ptr Existing pointer previously returned by alloc() or alloc_aligned().
+         *            May be nullptr, in which case this behaves like alloc(new_bytes, zeroed).
+         * @param old_bytes Size of the existing allocation in bytes. The freelist does
+         *                  not track user sizes internally; caller must provide accurate value.
+         * @param new_bytes Desired new size in bytes. Must be greater than 0.
+         * @param zeroed If true and the allocation grows, the newly added region
+         *               [old_bytes, new_bytes) is zero-initialized.
+         * 
+         * @return Expected containing pointer to resized allocation on success, or error
+         * 
+         * @retval Expected with void* pointer on success (may be same as ptr or different)
+         * @retval Expected with ArgumentError if new_bytes == 0
+         * @retval Expected with CapacityOverflowError if growth fails due to insufficient space
+         * 
+         * @details Resizes an allocation following standard realloc() semantics:
+         * 
+         *          **NULL pointer**: Behaves like alloc(new_bytes, zeroed)
+         * 
+         *          **Shrink or same size** (new_bytes <= old_bytes):
+         *          - Returns the original pointer unchanged
+         *          - No memory is freed or reallocated
+         *          - Freelist does not support in-place shrinking
+         * 
+         *          **Grow** (new_bytes > old_bytes):
+         *          1. Allocates new block of new_bytes
+         *          2. Copies first old_bytes from old block to new block
+         *          3. Zero-fills [old_bytes, new_bytes) if zeroed == true
+         *          4. Returns old block to freelist via return_element()
+         *          5. Returns pointer to new block
+         * 
+         *          The freelist never performs in-place growth; all expansions require
+         *          allocate-copy-free semantics. This ensures proper alignment and
+         *          allows coalescing of the old block.
+         * 
+         * @note Growth always allocates a new block - the returned pointer will be
+         *       different from the original when new_bytes > old_bytes.
+         * 
+         * @note The caller must track old_bytes accurately. Incorrect values may
+         *       result in data corruption (too small) or invalid memory access (too large).
+         * 
+         * @note Old pointer becomes invalid after successful growth. Do not use it.
+         * 
+         * @warning Passing incorrect old_bytes can corrupt data or crash. The freelist
+         *          cannot validate the size parameter.
+         * 
+         * @par Example - Growing a buffer
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(8192, 0, false).value();
+         * 
+         * // Initial allocation
+         * auto result = freelist->alloc(128, false);
+         * if (!result.hasValue()) {
+         *     return;
+         * }
+         * 
+         * void* ptr = result.value();
+         * memcpy(ptr, "Hello", 5);  // Store some data
+         * 
+         * // Need more space - grow to 512 bytes
+         * auto new_result = freelist->realloc(ptr, 128, 512, false);
+         * if (!new_result.hasValue()) {
+         *     std::cerr << "Realloc failed: " << new_result.error().what() << std::endl;
+         *     freelist->return_element(ptr, 128);  // Free original on failure
+         *     return;
+         * }
+         * 
+         * void* new_ptr = new_result.value();
+         * // First 128 bytes copied, "Hello" still there
+         * assert(memcmp(new_ptr, "Hello", 5) == 0);
+         * // ptr is now invalid, use new_ptr
+         * 
+         * freelist->return_element(new_ptr, 512);
+         * @endcode
+         * 
+         * @par Example - Growing with zero-fill
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * // Allocate 64 bytes
+         * void* ptr = freelist->alloc(64, false).value();
+         * uint8_t* data = static_cast<uint8_t*>(ptr);
+         * data[0] = 42;
+         * 
+         * // Grow to 256 bytes, zero new region
+         * auto new_ptr = freelist->realloc(ptr, 64, 256, true).value();
+         * uint8_t* new_data = static_cast<uint8_t*>(new_ptr);
+         * 
+         * // Old data preserved
+         * assert(new_data[0] == 42);
+         * 
+         * // New region zeroed
+         * assert(new_data[64] == 0);
+         * assert(new_data[255] == 0);
+         * 
+         * freelist->return_element(new_ptr, 256);
+         * @endcode
+         * 
+         * @par Example - Shrinking (no-op)
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * void* ptr = freelist->alloc(512, false).value();
+         * 
+         * // Try to shrink to 256 bytes
+         * auto result = freelist->realloc(ptr, 512, 256, false);
+         * 
+         * // Returns same pointer (no reallocation)
+         * assert(result.value() == ptr);
+         * 
+         * // Still need to free with original size
+         * freelist->return_element(ptr, 512);
+         * @endcode
+         * 
+         * @par Example - NULL pointer (behaves like alloc)
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * // NULL pointer - allocates new block
+         * auto result = freelist->realloc(nullptr, 0, 256, true);
+         * 
+         * // Equivalent to alloc(256, true)
+         * assert(result.hasValue());
+         * 
+         * freelist->return_element(result.value(), 256);
+         * @endcode
+         * 
+         * @par Example - Dynamic array growth pattern
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 0, false).value();
+         * 
+         * void* array = nullptr;
+         * size_t capacity = 0;
+         * size_t count = 0;
+         * 
+         * // Add elements, growing as needed
+         * for (int i = 0; i < 100; ++i) {
+         *     if (count >= capacity) {
+         *         // Grow by 2x
+         *         size_t new_capacity = capacity == 0 ? 16 : capacity * 2;
+         *         size_t new_bytes = new_capacity * sizeof(int);
+         *         size_t old_bytes = capacity * sizeof(int);
+         *         
+         *         auto result = freelist->realloc(array, old_bytes, new_bytes, false);
+         *         if (!result.hasValue()) {
+         *             break;  // Out of memory
+         *         }
+         *         
+         *         array = result.value();
+         *         capacity = new_capacity;
+         *     }
+         *     
+         *     static_cast<int*>(array)[count++] = i;
+         * }
+         * 
+         * // Cleanup
+         * if (array) {
+         *     freelist->return_element(array, capacity * sizeof(int));
+         * }
+         * @endcode
+         * 
+         * @see alloc() For initial allocations
+         * @see realloc_aligned() To resize with specific alignment
+         * @see return_element() To free allocations
+         */
+        Expected<void*> realloc(void* ptr,
+                                size_t old_bytes,
+                                size_t new_bytes,
+                                bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Resize an existing allocation with specific alignment
+         * 
+         * @param ptr Existing pointer previously returned by alloc() or alloc_aligned().
+         *            May be nullptr, in which case this behaves like alloc_aligned().
+         * @param old_bytes Size of the existing allocation in bytes. Must be accurate.
+         * @param new_bytes Desired new size in bytes. Must be greater than 0.
+         * @param alignment Required alignment for the new allocation. If 0, uses
+         *                  freelist's default alignment. Must be power of 2.
+         * @param zeroed If true and the allocation grows, the newly added tail region
+         *               [old_bytes, new_bytes) is zero-initialized.
+         * 
+         * @return Expected containing aligned pointer on success, or error
+         * 
+         * @retval Expected with void* pointer (aligned to requested alignment) on success
+         * @retval Expected with ArgumentError if new_bytes == 0
+         * @retval Expected with AlignmentError if alignment is not power of 2
+         * @retval Expected with CapacityOverflowError if growth fails
+         * 
+         * @details Resizes an allocation with alignment-aware semantics:
+         * 
+         *          **NULL pointer**: Behaves like alloc_aligned(new_bytes, alignment, zeroed)
+         * 
+         *          **Shrink or same size** (new_bytes <= old_bytes):
+         *          - Returns the original pointer unchanged
+         *          - No reallocation occurs (even if alignment differs)
+         * 
+         *          **Grow** (new_bytes > old_bytes):
+         *          1. Allocates new aligned block of new_bytes with requested alignment
+         *          2. Copies first old_bytes from old block to new block
+         *          3. Zero-fills [old_bytes, new_bytes) if zeroed == true
+         *          4. Returns old block to freelist
+         *          5. Returns pointer to new aligned block
+         * 
+         *          If the original block was allocated with weaker alignment than
+         *          requested, the new block will necessarily move to satisfy the
+         *          stricter alignment requirement.
+         * 
+         * @note Growth always allocates a new block with the requested alignment.
+         *       The returned pointer will differ from the original when growing.
+         * 
+         * @note The effective alignment is max(requested, freelist_default_alignment).
+         * 
+         * @warning If the original allocation had strict alignment and you request
+         *          weaker alignment on realloc, the new block may not preserve the
+         *          original alignment. Specify alignment explicitly if needed.
+         * 
+         * @par Example - Growing with alignment preserved
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 0, false).value();
+         * 
+         * // Allocate 128 bytes with 64-byte alignment
+         * auto result = freelist->alloc_aligned(128, 64, false);
+         * void* ptr = result.value();
+         * 
+         * // Verify alignment
+         * assert(reinterpret_cast<uintptr_t>(ptr) % 64 == 0);
+         * 
+         * // Grow to 512 bytes, preserving 64-byte alignment
+         * auto new_result = freelist->realloc_aligned(ptr, 128, 512, 64, false);
+         * void* new_ptr = new_result.value();
+         * 
+         * // New block also 64-byte aligned
+         * assert(reinterpret_cast<uintptr_t>(new_ptr) % 64 == 0);
+         * 
+         * freelist->return_element(new_ptr, 512);
+         * @endcode
+         * 
+         * @par Example - SIMD buffer growth
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(32768, 0, false).value();
+         * 
+         * // Start with small AVX-aligned buffer
+         * void* buffer = freelist->alloc_aligned(256, 32, true).value();
+         * float* simd_buffer = static_cast<float*>(buffer);
+         * 
+         * // Fill with data
+         * for (int i = 0; i < 64; ++i) {
+         *     simd_buffer[i] = static_cast<float>(i);
+         * }
+         * 
+         * // Need more space - grow to 1024 bytes
+         * auto new_buffer = freelist->realloc_aligned(
+         *     buffer, 256, 1024, 32, true  // Preserve 32-byte alignment, zero new region
+         * ).value();
+         * 
+         * float* new_simd = static_cast<float*>(new_buffer);
+         * 
+         * // Old data preserved
+         * assert(new_simd[0] == 0.0f);
+         * assert(new_simd[63] == 63.0f);
+         * 
+         * // New region zeroed
+         * assert(new_simd[64] == 0.0f);
+         * 
+         * freelist->return_element(new_buffer, 1024);
+         * @endcode
+         * 
+         * @par Example - Changing alignment on realloc
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 0, false).value();
+         * 
+         * // Start with default alignment
+         * void* ptr = freelist->alloc(128, false).value();
+         * 
+         * // Grow and require stricter alignment (128-byte)
+         * auto new_ptr = freelist->realloc_aligned(ptr, 128, 512, 128, false).value();
+         * 
+         * // New allocation is 128-byte aligned
+         * assert(reinterpret_cast<uintptr_t>(new_ptr) % 128 == 0);
+         * 
+         * freelist->return_element(new_ptr, 512);
+         * @endcode
+         * 
+         * @par Example - Page-aligned buffer expansion
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(65536, 0, false).value();
+         * 
+         * // Allocate page-aligned buffer for DMA
+         * void* dma_buffer = freelist->alloc_aligned(4096, 4096, false).value();
+         * 
+         * // Need to expand DMA buffer
+         * auto expanded = freelist->realloc_aligned(
+         *     dma_buffer, 4096, 8192, 4096, false  // Maintain page alignment
+         * );
+         * 
+         * if (expanded.hasValue()) {
+         *     void* new_dma = expanded.value();
+         *     
+         *     // Still page-aligned for DMA operations
+         *     assert(reinterpret_cast<uintptr_t>(new_dma) % 4096 == 0);
+         *     
+         *     freelist->return_element(new_dma, 8192);
+         * }
+         * @endcode
+         * 
+         * @par Example - NULL pointer with alignment
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(8192, 0, false).value();
+         * 
+         * // NULL pointer - allocates new aligned block
+         * auto result = freelist->realloc_aligned(nullptr, 0, 512, 64, true);
+         * 
+         * // Equivalent to alloc_aligned(512, 64, true)
+         * assert(result.hasValue());
+         * assert(reinterpret_cast<uintptr_t>(result.value()) % 64 == 0);
+         * 
+         * freelist->return_element(result.value(), 512);
+         * @endcode
+         * 
+         * @see realloc() For resizing with default alignment
+         * @see alloc_aligned() For initial aligned allocations
+         * @see return_element() To free allocations
+         */
+        Expected<void*> realloc_aligned(void* ptr,
+                                        size_t old_bytes,
+                                        size_t new_bytes,
+                                        size_t alignment,
+                                        bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Return an allocated block to the freelist for reuse
+         * 
+         * @param ptr Pointer to block previously allocated from this freelist.
+         *            Must have been returned by alloc(), alloc_aligned(), realloc(),
+         *            or realloc_aligned(). Must not be NULL.
+         * @param bytes Size parameter (unused for freelists, for interface compatibility).
+         *              FreeListAllocator stores size in the block header.
+         * @param alignment Alignment parameter (unused for freelists, for interface compatibility).
+         * 
+         * @details Returns an allocated block to the freelist, making it available for
+         *          future allocations. The freelist automatically coalesces the freed
+         *          block with adjacent free blocks to reduce external fragmentation.
+         * 
+         *          The method performs extensive validation:
+         *          1. Pointer is within freelist memory region
+         *          2. Valid FreeListHeader exists before the pointer
+         *          3. Block size and offset are sane
+         *          4. Block fits within freelist bounds
+         * 
+         *          The freed block is inserted into the free list in address order,
+         *          then coalesced with adjacent blocks:
+         *          - **Forward coalescing**: Merges with next block if adjacent
+         *          - **Backward coalescing**: Merges with previous block if adjacent
+         * 
+         *          Coalescing prevents fragmentation by combining small free blocks
+         *          into larger contiguous regions.
+         * 
+         * @note The bytes and alignment parameters are ignored. FreeListAllocator
+         *       retrieves size information from the block's header.
+         * 
+         * @note This method is silent on invalid pointers - it returns without error
+         *       if validation fails. This is defensive programming to prevent crashes.
+         * 
+         * @note Double-freeing the same pointer is detected and ignored safely.
+         * 
+         * @warning After calling this method, ptr becomes invalid and must not be
+         *          dereferenced. Any attempt to use the pointer results in undefined
+         *          behavior.
+         * 
+         * @warning Passing a pointer from a different allocator results in undefined
+         *          behavior. Only return pointers allocated from this freelist.
+         * 
+         * @par Example - Basic free and reuse
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * // Allocate block
+         * auto ptr = freelist->alloc(256, false).value();
+         * 
+         * // Use the allocation
+         * memset(ptr, 0x42, 256);
+         * 
+         * // Return to freelist
+         * freelist->return_element(ptr, 256);  // bytes parameter is ignored
+         * 
+         * // ptr is now invalid - do not use it
+         * 
+         * // Next allocation may reuse the freed block
+         * auto ptr2 = freelist->alloc(256, false).value();
+         * // ptr2 might equal ptr (block was reused)
+         * @endcode
+         * 
+         * @par Example - Coalescing demonstration
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(8192, 0, false).value();
+         * 
+         * // Allocate three adjacent blocks
+         * auto ptr1 = freelist->alloc(256, false).value();
+         * auto ptr2 = freelist->alloc(256, false).value();
+         * auto ptr3 = freelist->alloc(256, false).value();
+         * 
+         * std::cout << "Free blocks: " << count_free_blocks(freelist) << std::endl;
+         * // Output: Free blocks: 1 (one large remaining block)
+         * 
+         * // Free middle block
+         * freelist->return_element(ptr2, 256);
+         * // Output: Free blocks: 2 (middle block + remaining)
+         * 
+         * // Free first block - coalesces with middle
+         * freelist->return_element(ptr1, 256);
+         * // Output: Free blocks: 2 (first+middle merged, remaining)
+         * 
+         * // Free last block - coalesces all three
+         * freelist->return_element(ptr3, 256);
+         * // Output: Free blocks: 1 (all merged back into one large block)
+         * @endcode
+         * 
+         * @par Example - Safe double-free protection
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * auto ptr = freelist->alloc(128, false).value();
+         * 
+         * // Free once
+         * freelist->return_element(ptr, 128);
+         * 
+         * // Accidentally free again - silently ignored (no crash)
+         * freelist->return_element(ptr, 128);  // Safe, but still a bug in caller code
+         * 
+         * // Best practice: null out pointer after freeing
+         * ptr = nullptr;
+         * @endcode
+         * 
+         * @par Example - RAII wrapper for automatic cleanup
+         * @code{.cpp}
+         * template<typename T>
+         * class FreeListPtr {
+         *     FreeListAllocator* freelist_;
+         *     T* ptr_;
+         *     size_t size_;
+         * 
+         * public:
+         *     FreeListPtr(FreeListAllocator* fl, T* p, size_t sz)
+         *         : freelist_(fl), ptr_(p), size_(sz) {}
+         *     
+         *     ~FreeListPtr() {
+         *         if (ptr_) {
+         *             freelist_->return_element(ptr_, size_);
+         *         }
+         *     }
+         *     
+         *     T* get() { return ptr_; }
+         *     T* operator->() { return ptr_; }
+         * };
+         * 
+         * // Usage
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * {
+         *     auto result = freelist->alloc(256, false);
+         *     FreeListPtr<uint8_t> managed(freelist.get(), 
+         *                                   static_cast<uint8_t*>(result.value()),
+         *                                   256);
+         *     
+         *     // Use managed.get()...
+         *     
+         * }  // Automatically freed here
+         * @endcode
+         * 
+         * @par Example - Tracking allocations for bulk free
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 0, false).value();
+         * 
+         * std::vector<std::pair<void*, size_t>> allocations;
+         * 
+         * // Make several allocations
+         * allocations.push_back({freelist->alloc(128, false).value(), 128});
+         * allocations.push_back({freelist->alloc(256, false).value(), 256});
+         * allocations.push_back({freelist->alloc(512, false).value(), 512});
+         * 
+         * // Use allocations...
+         * 
+         * // Bulk free
+         * for (const auto& [ptr, size] : allocations) {
+         *     freelist->return_element(ptr, size);
+         * }
+         * @endcode
+         * 
+         * @see alloc() For allocating blocks
+         * @see alloc_aligned() For aligned allocations
+         * @see reset() To free all allocations at once
+         * @see is_ptr() To validate pointers before freeing
+         */
+        void return_element(void* ptr,
+                           size_t bytes = 0,
+                           size_t alignment = 0) override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Reset freelist to initial empty state
+         * 
+         * @param trim Unused for freelists (for interface compatibility). Freelists
+         *             do not trim or release memory back to the system.
+         * 
+         * @return true if reset succeeded, false if freelist is not initialized
+         * 
+         * @details Resets the freelist to its initial pristine state, as if freshly
+         *          created. All allocation state is cleared and the entire usable
+         *          region is rebuilt as a single large free block.
+         * 
+         *          The reset operation:
+         *          1. Clears usage accounting (len_ = 0, size_ = 0)
+         *          2. Resets high-water mark (cur_ = memory_)
+         *          3. Destroys free list
+         *          4. Creates single free block spanning entire region
+         * 
+         *          This is an O(1) operation regardless of how many allocations exist
+         *          or how fragmented the freelist has become. No memory is freed back
+         *          to the operating system; the freelist retains its capacity.
+         * 
+         * @note All outstanding allocations become invalid immediately. Any pointers
+         *       obtained before reset() must not be used after reset().
+         * 
+         * @note The freelist is immediately ready for new allocations after reset().
+         *       There is no fragmentation - the entire capacity is available as one
+         *       contiguous block.
+         * 
+         * @note No memory is released. The backing arena remains unchanged.
+         * 
+         * @warning Invalidates ALL outstanding pointers. Ensure no code holds
+         *          pointers across a reset() call.
+         * 
+         * @par Example - Per-frame allocation pattern
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(65536, 0, false).value();
+         * 
+         * while (game_running) {
+         *     // Frame allocations
+         *     auto vertex_buffer = freelist->alloc(8192, false);
+         *     auto index_buffer = freelist->alloc(4096, false);
+         *     auto uniform_buffer = freelist->alloc(256, false);
+         *     
+         *     // Render frame using buffers...
+         *     render_frame(vertex_buffer.value(), 
+         *                  index_buffer.value(),
+         *                  uniform_buffer.value());
+         *     
+         *     // Fast cleanup - all frame allocations freed instantly
+         *     freelist->reset();
+         *     
+         *     // Ready for next frame with zero fragmentation
+         * }
+         * @endcode
+         * 
+         * @par Example - Request/response processing
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 0, false).value();
+         * 
+         * void handle_request(const Request& req) {
+         *     // Clear previous request's allocations
+         *     freelist->reset();
+         *     
+         *     // Allocate buffers for this request
+         *     void* parse_buffer = freelist->alloc(4096, false).value();
+         *     void* response_buffer = freelist->alloc(8192, false).value();
+         *     
+         *     // Process request...
+         *     
+         *     // No manual cleanup needed - next request will reset()
+         * }
+         * @endcode
+         * 
+         * @par Example - Temporary computation workspace
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(32768, 0, false).value();
+         * 
+         * void complex_computation() {
+         *     // Many temporary allocations
+         *     std::vector<void*> temp_buffers;
+         *     
+         *     for (int i = 0; i < 100; ++i) {
+         *         auto temp = freelist->alloc(256, false);
+         *         if (temp.hasValue()) {
+         *             temp_buffers.push_back(temp.value());
+         *         }
+         *     }
+         *     
+         *     // Use temporary buffers...
+         *     
+         *     // Fast cleanup - O(1) instead of freeing 100 individual blocks
+         *     freelist->reset();
+         * }
+         * @endcode
+         * 
+         * @par Example - Testing/benchmarking reset
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * // Allocate and fragment the freelist
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 10; ++i) {
+         *     auto ptr = freelist->alloc(128, false);
+         *     if (ptr.hasValue()) {
+         *         ptrs.push_back(ptr.value());
+         *     }
+         * }
+         * 
+         * // Free every other block (create fragmentation)
+         * for (size_t i = 0; i < ptrs.size(); i += 2) {
+         *     freelist->return_element(ptrs[i], 128);
+         * }
+         * 
+         * std::cout << "Before reset - used: " << freelist->used() << std::endl;
+         * std::cout << "Before reset - fragmented" << std::endl;
+         * 
+         * // Reset to pristine state
+         * bool ok = freelist->reset();
+         * assert(ok);
+         * 
+         * std::cout << "After reset - used: " << freelist->used() << std::endl;  // 0
+         * std::cout << "After reset - capacity: " << freelist->capacity() << std::endl;
+         * std::cout << "After reset - no fragmentation" << std::endl;
+         * 
+         * // All pointers in ptrs are now invalid
+         * @endcode
+         * 
+         * @par Example - Reusing freelist across operations
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(8192, 0, false).value();
+         * 
+         * // Operation 1
+         * {
+         *     auto data = freelist->alloc(2048, false).value();
+         *     process_data(data);
+         *     // Don't bother freeing individually
+         * }
+         * 
+         * // Clean slate for operation 2
+         * freelist->reset();
+         * 
+         * // Operation 2
+         * {
+         *     auto buffer = freelist->alloc(4096, false).value();
+         *     process_buffer(buffer);
+         * }
+         * 
+         * // Clean slate for operation 3
+         * freelist->reset();
+         * 
+         * // Continue reusing...
+         * @endcode
+         * 
+         * @see return_element() To free individual blocks
+         * @see remaining() To check available capacity after reset
+         * @see used() To verify reset cleared allocations (should be 0)
+         */
+        bool reset(bool trim = false) override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Validate whether a pointer belongs to this freelist
+         * 
+         * @param ptr Pointer to validate. May be NULL.
+         * 
+         * @return true if pointer is a valid allocation from this freelist, false otherwise
+         * 
+         * @details Performs comprehensive validation to determine if a pointer was
+         *          allocated by this freelist and is still valid. The validation checks:
+         * 
+         *          1. Pointer is not NULL
+         *          2. Pointer is within the freelist's memory region
+         *          3. Pointer has room for FreeListHeader before it
+         *          4. Valid header exists with sane block_size and offset
+         *          5. Reconstructed block boundaries fit within memory region
+         *          6. Pointer lies within the reconstructed block
+         * 
+         *          This method cannot distinguish between currently allocated blocks
+         *          and blocks that have been freed (returned to free list). It only
+         *          validates that the pointer could have come from this freelist based
+         *          on memory layout and metadata.
+         * 
+         * @note Returns false for NULL pointers without error.
+         * 
+         * @note Returns false for pointers from other allocators.
+         * 
+         * @note Cannot detect if a pointer has been freed - only validates that it
+         *       could be a valid freelist pointer based on structure.
+         * 
+         * @note Useful for defensive programming and debugging, but not foolproof
+         *       against all forms of pointer corruption.
+         * 
+         * @see is_ptr_sized() To additionally validate available size
+         * @see return_element() Uses validation internally before freeing
+         */
+        bool is_ptr(void* ptr) const override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Validate pointer and verify it has at least the requested size
+         * 
+         * @param ptr Pointer to validate. May be NULL.
+         * @param bytes Minimum number of bytes required to be available at the pointer.
+         * 
+         * @return true if pointer is valid and has at least bytes available, false otherwise
+         * 
+         * @details Extends is_ptr() validation with size checking. First validates
+         *          that the pointer is a plausible freelist allocation using the same
+         *          checks as is_ptr(). Then additionally verifies:
+         * 
+         *          1. Requested bytes is greater than 0
+         *          2. Block's user data region is large enough (user_data_size >= bytes)
+         *          3. ptr + bytes does not exceed freelist memory bounds
+         * 
+         *          The user data size is calculated as (block_size - offset), representing
+         *          the actual space available to the user after accounting for the header
+         *          and alignment padding.
+         * 
+         *          This method is useful for bounds checking before writing to a buffer,
+         *          ensuring that the allocation is large enough to hold the intended data.
+         * 
+         * @note Returns false if bytes == 0 (zero-size check is invalid).
+         * 
+         * @note Returns false if ptr fails basic is_ptr() validation.
+         * 
+         * @note The check is conservative - it validates against the block's actual
+         *       capacity, not just the user's original allocation request.
+         * 
+         * @warning Does not prevent buffer overruns within the validated size. It only
+         *          checks that the block is large enough, not that subsequent writes
+         *          will be bounds-safe.
+         * 
+         * @see is_ptr() For basic pointer validation without size check
+         */
+        bool is_ptr_sized(void* ptr, size_t bytes) const override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Generate diagnostic statistics report for the freelist
+         * 
+         * @param buffer Destination character buffer for the report. Must not be NULL.
+         * @param buffer_size Size of buffer in bytes. Must be greater than 0.
+         * 
+         * @return true if report was successfully generated, false on error
+         * 
+         * @retval true Report generated successfully (may be truncated if buffer too small)
+         * @retval false Invalid parameters (buffer is NULL or buffer_size is 0)
+         * 
+         * @details Generates a human-readable, multi-line text report describing the
+         *          internal state of the freelist allocator. The report includes:
+         * 
+         *          - **Type**: STATIC or DYNAMIC (inherited from backing arena)
+         *          - **Ownership**: Whether the freelist owns its arena
+         *          - **Memory accounting**: Used bytes, remaining bytes, capacity
+         *          - **Overhead**: Total size including headers
+         *          - **Utilization**: Percentage of capacity currently in use
+         *          - **Alignment**: Base alignment for allocations
+         *          - **Free list**: Enumeration of all free blocks with addresses and sizes
+         * 
+         *          The report is written using internal `_buf_appendf()` utility which
+         *          safely handles buffer overflow. Output is always null-terminated as
+         *          long as buffer_size >= 1.
+         * 
+         *          This method is useful for debugging, logging, performance analysis,
+         *          and verification during development. It provides insight into
+         *          fragmentation, capacity utilization, and memory layout.
+         * 
+         * @note If the buffer is too small, the report will be truncated but still
+         *       null-terminated and safe to use.
+         * 
+         * @note This method does not allocate memory - all output uses the provided buffer.
+         * 
+         * @warning Large freelists with many free blocks may produce output exceeding
+         *          typical buffer sizes. Consider using a 2KB or larger buffer for
+         *          detailed reports.
+         * 
+         * @par Example - Basic statistics report
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(8192, 0, false).value();
+         * 
+         * // Make some allocations
+         * auto ptr1 = freelist->alloc(512, false).value();
+         * auto ptr2 = freelist->alloc(1024, false).value();
+         * auto ptr3 = freelist->alloc(256, false).value();
+         * 
+         * // Free one to create fragmentation
+         * freelist->return_element(ptr2, 1024);
+         * 
+         * // Generate report
+         * char buffer[2048];
+         * if (freelist->stats(buffer, sizeof(buffer))) {
+         *     std::cout << buffer << std::endl;
+         * } else {
+         *     std::cerr << "Failed to generate stats" << std::endl;
+         * }
+         * @endcode
+         * 
+         * @par Example Output
+         * @code{.txt}
+         * FreeListAllocator Statistics:
+         *   Type: DYNAMIC
+         *   Owns arena: yes
+         *   Used (accounted): 1872 bytes
+         *   Remaining: 6224 bytes
+         *   Capacity (usable region): 8096 bytes
+         *   Total (with header/overhead): 8288 bytes
+         *   Utilization: 23.1%
+         *   Base alignment: 16 bytes
+         *   Free block 1: 0x7f8a4c002400, 1024 bytes
+         *   Free block 2: 0x7f8a4c002c00, 5200 bytes
+         *   Free blocks: 2, total free bytes (raw): 6224
+         * @endcode
+         * 
+         * @par Example - Comparing before/after reset
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(4096, 0, false).value();
+         * 
+         * // Create fragmentation
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 5; ++i) {
+         *     auto ptr = freelist->alloc(256, false);
+         *     if (ptr.hasValue()) ptrs.push_back(ptr.value());
+         * }
+         * 
+         * // Free alternating blocks
+         * for (size_t i = 0; i < ptrs.size(); i += 2) {
+         *     freelist->return_element(ptrs[i], 256);
+         * }
+         * 
+         * char buffer[2048];
+         * 
+         * // Before reset
+         * std::cout << "=== BEFORE RESET ===" << std::endl;
+         * freelist->stats(buffer, sizeof(buffer));
+         * std::cout << buffer << std::endl;
+         * 
+         * // Reset
+         * freelist->reset();
+         * 
+         * // After reset
+         * std::cout << "=== AFTER RESET ===" << std::endl;
+         * freelist->stats(buffer, sizeof(buffer));
+         * std::cout << buffer << std::endl;
+         * @endcode
+         * 
+         * @par Example Output - Before/After Reset
+         * @code{.txt}
+         * === BEFORE RESET ===
+         * FreeListAllocator Statistics:
+         *   Type: DYNAMIC
+         *   Owns arena: yes
+         *   Used (accounted): 768 bytes
+         *   Remaining: 3328 bytes
+         *   Capacity (usable region): 4096 bytes
+         *   Total (with header/overhead): 4288 bytes
+         *   Utilization: 18.8%
+         *   Base alignment: 16 bytes
+         *   Free block 1: 0x7f8a4c002000, 256 bytes
+         *   Free block 2: 0x7f8a4c002200, 256 bytes
+         *   Free block 3: 0x7f8a4c002400, 256 bytes
+         *   Free block 4: 0x7f8a4c002a00, 2560 bytes
+         *   Free blocks: 4, total free bytes (raw): 3328
+         * 
+         * === AFTER RESET ===
+         * FreeListAllocator Statistics:
+         *   Type: DYNAMIC
+         *   Owns arena: yes
+         *   Used (accounted): 0 bytes
+         *   Remaining: 4096 bytes
+         *   Capacity (usable region): 4096 bytes
+         *   Total (with header/overhead): 4288 bytes
+         *   Utilization: 0.0%
+         *   Base alignment: 16 bytes
+         *   Free block 1: 0x7f8a4c002000, 4096 bytes
+         *   Free blocks: 1, total free bytes (raw): 4096
+         * @endcode
+         * 
+         * @par Example - Logging to file
+         * @code{.cpp}
+         * auto freelist = cslt::FreeListAllocator::Heap(16384, 0, false).value();
+         * 
+         * // Perform operations...
+         * 
+         * // Log statistics to file
+         * char buffer[4096];
+         * if (freelist->stats(buffer, sizeof(buffer))) {
+         *     std::ofstream log("freelist_stats.txt");
+         *     log << "Freelist Statistics at " << current_timestamp() << std::endl;
+         *     log << buffer << std::endl;
+         *     log.close();
+         * }
+         * @endcode
+         * 
+         * @see remaining() For just available capacity
+         * @see used() For just current usage
+         * @see capacity() For just total capacity
+         */
+        bool stats(char* buffer, size_t buffer_size) const override;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Get the number of bytes available for new allocations
+         * 
+         * @return Number of bytes remaining for allocation
+         * 
+         * @details Returns the number of bytes currently available for new allocations,
+         *          calculated as (capacity - used). This represents the logical free
+         *          space, accounting for all overhead including headers and alignment
+         *          padding that has been consumed by existing allocations.
+         * 
+         *          Note that the actual usable space for a new allocation may be less
+         *          than this value due to:
+         *          - Fragmentation (free space split across multiple small blocks)
+         *          - Alignment requirements for the new allocation
+         *          - Per-allocation header overhead (FreeListHeader)
+         * 
+         * @note This is a logical capacity measure, not a guarantee that an allocation
+         *       of this size will succeed. Use is_ptr_sized() to validate actual
+         *       allocation feasibility.
+         * 
+         * @note The value equals capacity() immediately after construction or reset().
+         * 
+         * @see capacity() For total usable capacity
+         * @see used() For currently consumed bytes
+         */
+        size_t remaining() const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Get the number of bytes currently consumed by allocations
+         * 
+         * @return Number of bytes currently in use (including internal overhead)
+         * 
+         * @details Returns the total number of bytes consumed by current allocations,
+         *          including all internal overhead such as:
+         *          - FreeListHeader metadata for each allocated block
+         *          - Alignment padding between headers and user data
+         *          - Full block consumption when remainders are too small to split
+         * 
+         *          This is the internal accounting value (len_) which tracks the total
+         *          size charged for all outstanding allocations. It increases with each
+         *          alloc() call and decreases with each return_element() call.
+         * 
+         *          The value may be significantly larger than the sum of user-requested
+         *          allocation sizes due to internal overhead. For example, a 256-byte
+         *          allocation might consume 280+ bytes when accounting for header and
+         *          alignment padding.
+         * 
+         * @note This is the total block size consumed, not just user-visible bytes.
+         *       It includes all metadata and padding.
+         * 
+         * @note Returns 0 immediately after construction or reset().
+         * 
+         * @note The relationship: used() + remaining() == capacity() always holds.
+         * 
+         * @see remaining() For available bytes
+         * @see capacity() For total capacity
+         * @see stats() For detailed usage breakdown
+         */
+        size_t used() const;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Check whether the freelist owns its backing arena
+         * 
+         * @return true if the freelist owns the arena, false if arena is borrowed
+         * 
+         * @details Returns the ownership status of the freelist's backing arena, which
+         *          determines cleanup behavior when the freelist is destroyed.
+         * 
+         *          **Ownership by factory method:**
+         *          - **Heap()**: Returns true - freelist owns the arena (DYNAMIC)
+         *          - **WithArena()**: Returns false - arena is borrowed
+         *          - **Stack()**: Returns true - freelist owns the arena object (STATIC)
+         * 
+         *          When owns_arena() returns true, the FreeListDeleter will destroy
+         *          the arena when the freelist is destroyed:
+         *          - For DYNAMIC arenas (Heap): Arena is deleted
+         *          - For STATIC arenas (Stack): Arena destructor called, buffer not freed
+         * 
+         *          When owns_arena() returns false (WithArena), the arena outlives the
+         *          freelist and remains valid for use by other allocators.
+         * 
+         * @note This indicates ownership of the arena OBJECT, not necessarily the
+         *       underlying memory buffer. Stack() freelists own their arena object
+         *       but not the user-provided buffer.
+         * 
+         * @note This value is set at construction time and never changes.
+         * 
+         * @see Heap() Creates freelist with owned arena
+         * @see WithArena() Creates freelist with borrowed arena
+         * @see Stack() Creates freelist with owned arena object over user buffer
+         * @see FreeListDeleter For cleanup behavior based on ownership
+         */
+        bool owns_arena() const;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Save allocator state (not supported for freelists)
+         * 
+         * @return Always returns nullptr
+         * 
+         * @details This method is implemented to satisfy the Allocator base class
+         *          interface contract but is not supported for FreeListAllocator.
+         * 
+         *          Unlike ArenaAllocator and PoolAllocator which support checkpointing,
+         *          FreeListAllocator cannot provide meaningful checkpoint/restore
+         *          functionality because:
+         *          - Free blocks are managed via a linked list with pointers
+         *          - Allocation metadata is interleaved with user data
+         *          - Restoring would require tracking all allocation headers
+         *          - No clear way to invalidate user pointers to restored allocations
+         * 
+         *          For bulk cleanup of all allocations, use reset() instead, which
+         *          returns the freelist to its initial empty state.
+         * 
+         * @note This is a no-op implementation. Always returns nullptr.
+         * 
+         * @note If checkpoint/restore functionality is needed, consider using
+         *       ArenaAllocator or PoolAllocator instead.
+         * 
+         * @see restore() Corresponding restore method (also unsupported)
+         * @see reset() To clear all allocations and return to initial state
+         */
+        void* save() const override { return nullptr; }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Restore allocator state (not supported for freelists)
+         * 
+         * @param checkpoint Checkpoint pointer (ignored, must be from save())
+         * 
+         * @return Always returns false
+         * 
+         * @details This method is implemented to satisfy the Allocator base class
+         *          interface contract but is not supported for FreeListAllocator.
+         * 
+         *          FreeListAllocator cannot support checkpoint/restore semantics because:
+         *          - The free list structure uses embedded pointers that would be invalidated
+         *          - Allocation headers contain metadata that cannot be simply discarded
+         *          - User pointers to "restored away" allocations would become dangling
+         *          - No efficient way to track which allocations to invalidate
+         * 
+         *          For resetting the allocator state, use reset() which clears all
+         *          allocations and returns the freelist to pristine condition.
+         * 
+         * @note This is a no-op implementation. The checkpoint parameter is ignored
+         *       and the method always returns false.
+         * 
+         * @note Attempting to use checkpoints from other allocator types will fail
+         *       safely (returns false) but should be avoided.
+         * 
+         * @see save() Corresponding save method (also unsupported)
+         * @see reset() To clear all allocations and start fresh
+         */
+        bool restore(void* checkpoint) override {
+            (void)checkpoint;
+            return false;
+        }
+    };
 // ================================================================================ 
 // ================================================================================ 
+
+    /**
+     * @brief Custom deleter for FreeListAllocator UniquePtr cleanup
+     * 
+     * @param freelist Pointer to FreeListAllocator to delete. May be nullptr.
+     * 
+     * @details This custom deleter is invoked when a UniquePtr<FreeListAllocator>
+     *          goes out of scope or is explicitly reset. It handles proper cleanup
+     *          of the freelist and its backing arena based on ownership semantics.
+     * 
+     *          **Cleanup sequence:**
+     *          1. Extract ownership information (owns_arena, arena, mem_type)
+     *          2. Call ~FreeListAllocator() destructor
+     *          3. Conditionally clean up arena based on ownership and type:
+     * 
+     *          **Heap() freelists** (owns_arena=true, mem_type=DYNAMIC):
+     *          - Calls ArenaDeleter{}(arena)
+     *          - Arena and all memory is freed back to heap
+     * 
+     *          **WithArena() freelists** (owns_arena=false):
+     *          - No arena cleanup performed
+     *          - Arena remains valid for other allocators
+     * 
+     *          **Stack() freelists** (owns_arena=true, mem_type=STATIC):
+     *          - Calls arena->~ArenaAllocator() destructor
+     *          - Does NOT free buffer (user owns it)
+     *          - Arena object destroyed, buffer remains valid
+     * 
+     *          This deleter ensures memory is properly released for heap-allocated
+     *          arenas while preserving user-owned buffers for stack-based freelists
+     *          and borrowed arenas for shared freelists.
+     * 
+     * @note This is a noexcept function - no exceptions are thrown during cleanup.
+     * 
+     * @note Null pointer is safely handled (early return, no crash).
+     * 
+     * @note The freelist destructor is always called before arena cleanup to ensure
+     *       proper cleanup ordering.
+     * 
+     * @note Users should never call this directly - it is automatically invoked by
+     *       UniquePtr when the freelist goes out of scope.
+     * 
+     * @see Heap() Creates freelist with owned DYNAMIC arena (arena will be freed)
+     * @see WithArena() Creates freelist with borrowed arena (arena not touched)
+     * @see Stack() Creates freelist with owned STATIC arena (destructor only)
+     * @see ~FreeListAllocator() Freelist destructor called before arena cleanup
+     */
+    inline void FreeListDeleter::operator()(FreeListAllocator* freelist) const noexcept {
+        if (!freelist) return;
+        
+        bool owns_arena = freelist->owns_arena_;
+        ArenaAllocator* arena = freelist->arena_;
+        MemType mem_type = static_cast<MemType>(freelist->mem_type_);
+        
+        // Call freelist destructor
+        freelist->~FreeListAllocator();
+        
+        // Only delete arena if:
+        // 1. Freelist owns it AND
+        // 2. It's DYNAMIC (heap-allocated)
+        // For STATIC arenas (Stack freelists), the arena is in the user buffer
+        if (owns_arena && arena && mem_type == DYNAMIC) {
+            ArenaDeleter{}(arena);
+        }
+        // For STATIC freelists, we still need to call arena destructor
+        // but NOT delete it, since it's in the user buffer
+        else if (owns_arena && arena && mem_type == STATIC) {
+            arena->~ArenaAllocator();
+        }
+    }
+// ================================================================================ 
+// ================================================================================
 } /* cslt namespace */
 // ================================================================================ 
 // ================================================================================ 

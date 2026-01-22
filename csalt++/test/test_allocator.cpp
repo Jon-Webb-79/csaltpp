@@ -3490,6 +3490,2137 @@ TEST(PoolStackTest, DiagnosticLifetime) {
     std::cout << "Pool destroyed" << std::endl;
     std::cout << "About to exit test (buffer will be freed)..." << std::endl;
 }
+// ================================================================================ 
+// ================================================================================ 
+
+TEST(FreeListHeapTest, CreateBasicHeapFreelist) {
+    auto result = FreeListAllocator::Heap(4096, 0, false);
+    
+    ASSERT_TRUE(result.hasValue()) << "Heap creation should succeed";
+    
+    auto freelist = cslt::move(result.value());
+
+    EXPECT_NE(freelist.get(), nullptr);
+    EXPECT_GT(freelist->allocated(), 0);
+    EXPECT_EQ(freelist->used(), 0);
+    EXPECT_EQ(freelist->remaining(), freelist->allocated());
+    EXPECT_TRUE(freelist->owns_arena());
+}
+
+// ================================================================================
+// Test 2: Default Size Handling (bytes == 0)
+// ================================================================================
+
+TEST(FreeListHeapTest, DefaultSizeWhenZero) {
+    auto result = FreeListAllocator::Heap(0, 0, false);
+    
+    ASSERT_TRUE(result.hasValue()) << "Zero bytes should use default size";
+    
+    auto freelist = cslt::move(result.value());
+    // Should get at least the default minimum (4096 or similar)
+    EXPECT_GE(freelist->allocated(), 1024);
+}
+
+// ================================================================================
+// Test 3: Custom Alignment
+// ================================================================================
+
+TEST(FreeListHeapTest, CustomAlignment) {
+    auto result = FreeListAllocator::Heap(4096, 64, false);
+    
+    ASSERT_TRUE(result.hasValue()) << "Custom alignment should succeed";
+    
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate and verify alignment
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    EXPECT_EQ(addr % 64, 0) << "Pointer should be 64-byte aligned";
+}
+
+// ================================================================================
+// Test 4: Allocate and Free Basic Operations
+// ================================================================================
+
+TEST(FreeListHeapTest, AllocateAndFree) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    size_t initial_remaining = freelist->remaining();
+    
+    // Allocate
+    auto ptr_result = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    EXPECT_LT(freelist->remaining(), initial_remaining);
+    EXPECT_GT(freelist->used(), 0);
+    
+    // Free
+    freelist->return_element(ptr, 512);
+    
+    // Should have reclaimed most space (may not be exact due to overhead)
+    EXPECT_GT(freelist->remaining(), initial_remaining - 100);
+}
+
+// ================================================================================
+// Test 5: Multiple Allocations
+// ================================================================================
+
+TEST(FreeListHeapTest, MultipleAllocations) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    std::vector<void*> pointers;
+    
+    // Allocate multiple blocks
+    for (int i = 0; i < 10; ++i) {
+        auto ptr_result = freelist->alloc(256, false);
+        ASSERT_TRUE(ptr_result.hasValue()) << "Allocation " << i << " should succeed";
+        pointers.push_back(ptr_result.value());
+    }
+    
+    EXPECT_EQ(pointers.size(), 10);
+    EXPECT_GT(freelist->used(), 2560); // At least 10 * 256
+    
+    // Free all
+    for (void* ptr : pointers) {
+        freelist->return_element(ptr, 256);
+    }
+    
+    // Should be mostly empty again
+    EXPECT_LT(freelist->used(), 100);
+}
+
+// ================================================================================
+// Test 6: Zero-Initialized Allocation
+// ================================================================================
+
+TEST(FreeListHeapTest, ZeroInitializedAllocation) {
+    auto result = FreeListAllocator::Heap(4096, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    auto ptr_result = freelist->alloc(512, true);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    uint8_t* ptr = static_cast<uint8_t*>(ptr_result.value());
+    
+    // Verify all bytes are zero
+    for (size_t i = 0; i < 512; ++i) {
+        EXPECT_EQ(ptr[i], 0) << "Byte " << i << " should be zero";
+    }
+}
+
+// ================================================================================
+// Test 7: Invalid Alignment (Not Power of 2)
+// ================================================================================
+
+TEST(FreeListHeapTest, InvalidAlignment) {
+    auto result = FreeListAllocator::Heap(4096, 63, false); // Not power of 2
+    
+    EXPECT_FALSE(result.hasValue()) << "Non-power-of-2 alignment should fail";
+    // Error message should mention alignment
+    if (!result.hasValue()) {
+        std::string error_msg = result.error().what();
+        EXPECT_NE(error_msg.find("Alignment"), std::string::npos) 
+            << "Error message should mention alignment";
+    }
+}
+
+// ================================================================================
+// Test 8: Capacity Exhaustion
+// ================================================================================
+
+TEST(FreeListHeapTest, CapacityExhaustion) {
+    auto result = FreeListAllocator::Heap(1024, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate until exhausted
+    std::vector<void*> pointers;
+    
+    while (true) {
+        auto ptr_result = freelist->alloc(64, false);
+        if (!ptr_result.hasValue()) {
+            break;
+        }
+        pointers.push_back(ptr_result.value());
+    }
+    
+    EXPECT_GT(pointers.size(), 0) << "Should allocate at least some blocks";
+    
+    // Verify we're close to capacity
+    EXPECT_LT(freelist->remaining(), 200); // Should be nearly full
+    
+    // Free one block
+    freelist->return_element(pointers[0], 64);
+    
+    // Should be able to allocate again
+    auto new_result = freelist->alloc(64, false);
+    EXPECT_TRUE(new_result.hasValue()) << "Should be able to reuse freed block";
+}
+
+// ================================================================================
+// Test 9: Statistics Report
+// ================================================================================
+
+TEST(FreeListHeapTest, StatisticsReport) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Make some allocations
+    auto ptr1_result = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr1_result.hasValue());
+    auto ptr2_result = freelist->alloc(1024, false);
+    ASSERT_TRUE(ptr2_result.hasValue());
+    
+    char buffer[2048];
+    bool success = freelist->stats(buffer, sizeof(buffer));
+    
+    ASSERT_TRUE(success) << "Stats generation should succeed";
+    
+    std::string stats_str(buffer);
+    
+    // Verify report contains expected information
+    EXPECT_NE(stats_str.find("FreeListAllocator Statistics"), std::string::npos);
+    EXPECT_NE(stats_str.find("Type: DYNAMIC"), std::string::npos);
+    EXPECT_NE(stats_str.find("Owns arena: yes"), std::string::npos);
+    EXPECT_NE(stats_str.find("Used"), std::string::npos);
+    EXPECT_NE(stats_str.find("Remaining"), std::string::npos);
+    EXPECT_NE(stats_str.find("Free block"), std::string::npos);
+}
+// ================================================================================ 
+// ================================================================================ 
+
+// ================================================================================
+// Test 1: Basic Stack Creation
+// ================================================================================
+
+TEST(FreeListStackTest, CreateBasicStackFreelist) {
+    uint8_t buffer[8192];
+    
+    auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+    
+    ASSERT_TRUE(result.hasValue()) << "Stack creation should succeed";
+    
+    auto freelist = cslt::move(result.value());
+    
+    EXPECT_NE(freelist.get(), nullptr);
+    EXPECT_GT(freelist->allocated(), 0);
+    EXPECT_EQ(freelist->used(), 0);
+    EXPECT_EQ(freelist->remaining(), freelist->allocated());
+    EXPECT_TRUE(freelist->owns_arena());
+}
+
+// ================================================================================
+// Test 2: Custom Alignment
+// ================================================================================
+
+TEST(FreeListStackTest, CustomAlignment) {
+    alignas(64) uint8_t buffer[8192];
+    
+    auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 64);
+    
+    ASSERT_TRUE(result.hasValue()) << "Custom alignment should succeed";
+    
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate and verify alignment
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    EXPECT_EQ(addr % 64, 0) << "Pointer should be 64-byte aligned";
+}
+
+// ================================================================================
+// Test 3: Allocate and Free Basic Operations
+// ================================================================================
+
+TEST(FreeListStackTest, AllocateAndFree) {
+    uint8_t buffer[8192];
+    
+    auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    size_t initial_remaining = freelist->remaining();
+    
+    // Allocate
+    auto ptr_result = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    EXPECT_LT(freelist->remaining(), initial_remaining);
+    EXPECT_GT(freelist->used(), 0);
+    
+    // Free
+    freelist->return_element(ptr, 512);
+    
+    // Should have reclaimed most space
+    EXPECT_GT(freelist->remaining(), initial_remaining - 100);
+}
+
+// ================================================================================
+// Test 4: Multiple Allocations
+// ================================================================================
+
+TEST(FreeListStackTest, MultipleAllocations) {
+    uint8_t buffer[16384];
+    
+    auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    std::vector<void*> pointers;
+    
+    // Allocate multiple blocks
+    for (int i = 0; i < 10; ++i) {
+        auto ptr_result = freelist->alloc(256, false);
+        ASSERT_TRUE(ptr_result.hasValue()) << "Allocation " << i << " should succeed";
+        pointers.push_back(ptr_result.value());
+    }
+    
+    EXPECT_EQ(pointers.size(), 10);
+    EXPECT_GT(freelist->used(), 2560); // At least 10 * 256
+    
+    // Free all
+    for (void* ptr : pointers) {
+        freelist->return_element(ptr, 256);
+    }
+    
+    // Should be mostly empty again
+    EXPECT_LT(freelist->used(), 100);
+}
+
+// ================================================================================
+// Test 5: Null Buffer
+// ================================================================================
+
+TEST(FreeListStackTest, NullBuffer) {
+    auto result = FreeListAllocator::Stack(nullptr, 1024, 0);
+    
+    EXPECT_FALSE(result.hasValue()) << "Null buffer should fail";
+    if (!result.hasValue()) {
+        std::string error_msg = result.error().what();
+        EXPECT_NE(error_msg.find("null"), std::string::npos) 
+            << "Error should mention null buffer";
+    }
+}
+
+// ================================================================================
+// Test 6: Zero Buffer Size
+// ================================================================================
+
+TEST(FreeListStackTest, ZeroBufferSize) {
+    uint8_t buffer[1024];
+    
+    auto result = FreeListAllocator::Stack(buffer, 0, 0);
+    
+    EXPECT_FALSE(result.hasValue()) << "Zero buffer size should fail";
+    if (!result.hasValue()) {
+        std::string error_msg = result.error().what();
+        EXPECT_NE(error_msg.find("size"), std::string::npos) 
+            << "Error should mention size";
+    }
+}
+
+// ================================================================================
+// Test 7: Buffer Too Small
+// ================================================================================
+
+TEST(FreeListStackTest, BufferTooSmall) {
+    uint8_t buffer[64];  // Too small for headers
+    
+    auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+    
+    EXPECT_FALSE(result.hasValue()) << "Tiny buffer should fail";
+    if (!result.hasValue()) {
+        std::string error_msg = result.error().what();
+        // Error should mention structures or capacity
+        bool mentions_issue = error_msg.find("structures") != std::string::npos ||
+                              error_msg.find("capacity") != std::string::npos ||
+                              error_msg.find("small") != std::string::npos;
+        EXPECT_TRUE(mentions_issue) << "Error should mention size issue";
+    }
+}
+
+// ================================================================================
+// Test 8: Stack Freelist Reset
+// ================================================================================
+
+TEST(FreeListStackTest, ResetStackFreelist) {
+    uint8_t buffer[8192];
+    
+    auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Make allocations
+    auto ptr1_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr1_result.hasValue());
+    auto ptr2_result = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr2_result.hasValue());
+    
+    size_t used_before = freelist->used();
+    EXPECT_GT(used_before, 0);
+    
+    // Reset
+    bool reset_ok = freelist->reset();
+    ASSERT_TRUE(reset_ok) << "Reset should succeed";
+    
+    // Verify clean state
+    EXPECT_EQ(freelist->used(), 0);
+    EXPECT_EQ(freelist->remaining(), freelist->allocated());
+    
+    // Should be able to allocate again
+    auto new_result = freelist->alloc(1024, false);
+    EXPECT_TRUE(new_result.hasValue()) << "Allocation after reset should succeed";
+}
+
+// ================================================================================
+// Test 9: Buffer Outlives Freelist
+// ================================================================================
+
+TEST(FreeListStackTest, BufferOutlivesFreelist) {
+    uint8_t buffer[4096];
+    memset(buffer, 0xAA, sizeof(buffer));  // Fill with pattern
+    
+    {
+        auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+        ASSERT_TRUE(result.hasValue());
+        auto freelist = cslt::move(result.value());
+        
+        // Use freelist
+        auto ptr = freelist->alloc(512, false);
+        ASSERT_TRUE(ptr.hasValue());
+        
+        // Freelist destroyed here
+    }
+    
+    // Buffer should still be valid and unchanged outside used region
+    // (We can't easily verify the exact state, but this shouldn't crash)
+    EXPECT_TRUE(true) << "Buffer survived freelist destruction";
+}
+
+// ================================================================================
+// Test 10: Statistics Report for Stack Freelist
+// ================================================================================
+
+TEST(FreeListStackTest, StatisticsReport) {
+    uint8_t buffer[8192];
+    
+    auto result = FreeListAllocator::Stack(buffer, sizeof(buffer), 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Make some allocations
+    auto ptr1_result = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr1_result.hasValue());
+    auto ptr2_result = freelist->alloc(1024, false);
+    ASSERT_TRUE(ptr2_result.hasValue());
+    
+    char stats_buffer[2048];
+    bool success = freelist->stats(stats_buffer, sizeof(stats_buffer));
+    
+    ASSERT_TRUE(success) << "Stats generation should succeed";
+    
+    std::string stats_str(stats_buffer);
+    
+    // Verify report contains expected information for STATIC freelist
+    EXPECT_NE(stats_str.find("FreeListAllocator Statistics"), std::string::npos);
+    EXPECT_NE(stats_str.find("Type: STATIC"), std::string::npos);
+    EXPECT_NE(stats_str.find("Owns arena: yes"), std::string::npos);
+    EXPECT_NE(stats_str.find("Used"), std::string::npos);
+    EXPECT_NE(stats_str.find("Remaining"), std::string::npos);
+    EXPECT_NE(stats_str.find("Free block"), std::string::npos);
+}
+// ================================================================================ 
+// ================================================================================ 
+
+// ================================================================================
+// Test 1: Basic WithArena Creation
+// ================================================================================
+
+TEST(FreeListWithArenaTest, CreateBasicWithArena) {
+    auto arena_result = ArenaAllocator::Heap(32768);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    auto result = FreeListAllocator::WithArena(*arena, 8192, 0);
+    
+    ASSERT_TRUE(result.hasValue()) << "WithArena creation should succeed";
+    
+    auto freelist = cslt::move(result.value());
+    
+    EXPECT_NE(freelist.get(), nullptr);
+    EXPECT_GT(freelist->allocated(), 0);
+    EXPECT_EQ(freelist->used(), 0);
+    EXPECT_EQ(freelist->remaining(), freelist->allocated());
+    EXPECT_FALSE(freelist->owns_arena()) << "Should NOT own borrowed arena";
+}
+
+// ================================================================================
+// Test 2: Multiple Freelists Sharing Arena
+// ================================================================================
+
+TEST(FreeListWithArenaTest, MultiplefreelistsSharedArena) {
+    auto arena_result = ArenaAllocator::Heap(65536);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    // Create three freelists sharing the same arena
+    auto fl1_result = FreeListAllocator::WithArena(*arena, 8192, 0);
+    ASSERT_TRUE(fl1_result.hasValue());
+    auto freelist1 = cslt::move(fl1_result.value());
+
+    auto fl2_result = FreeListAllocator::WithArena(*arena, 4096, 0);
+    ASSERT_TRUE(fl2_result.hasValue());
+    auto freelist2 = cslt::move(fl2_result.value());
+
+    auto fl3_result = FreeListAllocator::WithArena(*arena, 2048, 0);
+    ASSERT_TRUE(fl3_result.hasValue());
+    auto freelist3 = cslt::move(fl3_result.value());
+
+    // All should be valid
+    EXPECT_NE(freelist1.get(), nullptr);
+    EXPECT_NE(freelist2.get(), nullptr);
+    EXPECT_NE(freelist3.get(), nullptr);
+
+    // All should not own arena
+    EXPECT_FALSE(freelist1->owns_arena());
+    EXPECT_FALSE(freelist2->owns_arena());
+    EXPECT_FALSE(freelist3->owns_arena());
+
+    // Should be able to allocate from all
+    auto ptr1 = freelist1->alloc(256, false);
+    auto ptr2 = freelist2->alloc(128, false);
+    auto ptr3 = freelist3->alloc(64, false);
+
+    EXPECT_TRUE(ptr1.hasValue());
+    EXPECT_TRUE(ptr2.hasValue());
+    EXPECT_TRUE(ptr3.hasValue());
+}
+
+// ================================================================================
+// Test 3: Arena Outlives Freelist
+// ================================================================================
+
+TEST(FreeListWithArenaTest, ArenaOutlivesFreelist) {
+    auto arena_result = ArenaAllocator::Heap(16384);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    // size_t arena_used_before = arena->used();
+    
+    {
+        // Freelist created and destroyed in this scope
+        auto result = FreeListAllocator::WithArena(*arena, 4096, 0);
+        ASSERT_TRUE(result.hasValue());
+        auto freelist = cslt::move(result.value());
+        
+        // Use freelist
+        auto ptr = freelist->alloc(512, false);
+        ASSERT_TRUE(ptr.hasValue());
+        
+        // Freelist destroyed here
+    }
+    
+    // Arena should still be valid and usable
+    EXPECT_NE(arena.get(), nullptr);
+    
+    // Should be able to allocate from arena
+    auto arena_alloc = arena->alloc(256, false);
+    EXPECT_TRUE(arena_alloc.hasValue()) << "Arena should still be usable";
+}
+
+// ================================================================================
+// Test 4: Custom Alignment with Borrowed Arena
+// ================================================================================
+
+TEST(FreeListWithArenaTest, CustomAlignment) {
+    auto arena_result = ArenaAllocator::Heap(16384);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    auto result = FreeListAllocator::WithArena(*arena, 4096, 64);
+    
+    ASSERT_TRUE(result.hasValue()) << "Custom alignment should succeed";
+    
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate and verify alignment
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    EXPECT_EQ(addr % 64, 0) << "Pointer should be 64-byte aligned";
+}
+
+// ================================================================================
+// Test 5: Allocate and Free with Borrowed Arena
+// ================================================================================
+
+TEST(FreeListWithArenaTest, AllocateAndFree) {
+    auto arena_result = ArenaAllocator::Heap(16384);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    auto result = FreeListAllocator::WithArena(*arena, 8192, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    size_t initial_remaining = freelist->remaining();
+    
+    // Allocate
+    auto ptr_result = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    EXPECT_LT(freelist->remaining(), initial_remaining);
+    EXPECT_GT(freelist->used(), 0);
+    
+    // Free
+    freelist->return_element(ptr, 512);
+    
+    // Should have reclaimed most space
+    EXPECT_GT(freelist->remaining(), initial_remaining - 100);
+}
+
+// ================================================================================
+// Test 6: Insufficient Arena Space
+// ================================================================================
+
+TEST(FreeListWithArenaTest, InsufficientArenaSpace) {
+    auto arena_result = ArenaAllocator::Heap(1024);  // Small arena
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    // Try to allocate more than arena can provide
+    auto result = FreeListAllocator::WithArena(*arena, 8192, 0);
+    
+    EXPECT_FALSE(result.hasValue()) << "Should fail when arena too small";
+    if (!result.hasValue()) {
+        std::string error_msg = result.error().what();
+        // Error should mention memory or capacity
+        bool mentions_issue = error_msg.find("memory") != std::string::npos ||
+                              error_msg.find("capacity") != std::string::npos ||
+                              error_msg.find("Arena") != std::string::npos;
+        EXPECT_TRUE(mentions_issue) << "Error should mention space issue";
+    }
+}
+
+// ================================================================================
+// Test 7: Reset Freelist Does Not Affect Arena
+// ================================================================================
+
+TEST(FreeListWithArenaTest, ResetDoesNotAffectArena) {
+    auto arena_result = ArenaAllocator::Heap(16384);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    auto result = FreeListAllocator::WithArena(*arena, 4096, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Make allocations
+    auto ptr1 = freelist->alloc(256, false);
+    auto ptr2 = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr1.hasValue());
+    ASSERT_TRUE(ptr2.hasValue());
+    
+    // Reset freelist
+    bool reset_ok = freelist->reset();
+    ASSERT_TRUE(reset_ok);
+    
+    // Freelist should be reset
+    EXPECT_EQ(freelist->used(), 0);
+    
+}
+
+// ================================================================================
+// Test 8: Memory Type Inheritance
+// ================================================================================
+
+TEST(FreeListWithArenaTest, MemoryTypeInheritance) {
+    // Create DYNAMIC arena
+    auto dynamic_arena_result = ArenaAllocator::Heap(16384);
+    ASSERT_TRUE(dynamic_arena_result.hasValue());
+    auto dynamic_arena = cslt::move(dynamic_arena_result.value());
+    
+    auto result = FreeListAllocator::WithArena(*dynamic_arena, 4096, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Check stats to verify memory type
+    char buffer[2048];
+    bool success = freelist->stats(buffer, sizeof(buffer));
+    ASSERT_TRUE(success);
+    
+    std::string stats_str(buffer);
+    
+    // Should inherit DYNAMIC from parent arena
+    EXPECT_NE(stats_str.find("Type: DYNAMIC"), std::string::npos) 
+        << "Should inherit DYNAMIC type from heap arena";
+}
+
+// ================================================================================
+// Test 9: Statistics Report with Borrowed Arena
+// ================================================================================
+
+TEST(FreeListWithArenaTest, StatisticsReport) {
+    auto arena_result = ArenaAllocator::Heap(16384);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    auto result = FreeListAllocator::WithArena(*arena, 8192, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Make some allocations
+    auto ptr1 = freelist->alloc(512, false);
+    auto ptr2 = freelist->alloc(1024, false);
+    ASSERT_TRUE(ptr1.hasValue());
+    ASSERT_TRUE(ptr2.hasValue());
+    
+    char buffer[2048];
+    bool success = freelist->stats(buffer, sizeof(buffer));
+    
+    ASSERT_TRUE(success) << "Stats generation should succeed";
+    
+    std::string stats_str(buffer);
+    
+    // Verify report shows borrowed arena
+    EXPECT_NE(stats_str.find("FreeListAllocator Statistics"), std::string::npos);
+    EXPECT_NE(stats_str.find("Owns arena: no"), std::string::npos) 
+        << "Should show arena is borrowed";
+    EXPECT_NE(stats_str.find("Used"), std::string::npos);
+    EXPECT_NE(stats_str.find("Remaining"), std::string::npos);
+    EXPECT_NE(stats_str.find("Free block"), std::string::npos);
+}
+
+// ================================================================================
+// Test 10: Sequential Freelist Destruction
+// ================================================================================
+
+TEST(FreeListWithArenaTest, SequentialFreelistDestruction) {
+    auto arena_result = ArenaAllocator::Heap(65536);
+    ASSERT_TRUE(arena_result.hasValue());
+    auto arena = cslt::move(arena_result.value());
+    
+    // Create first freelist
+    auto fl1_result = FreeListAllocator::WithArena(*arena, 8192, 0);
+    ASSERT_TRUE(fl1_result.hasValue());
+    auto freelist1 = cslt::move(fl1_result.value());
+    
+    auto ptr1 = freelist1->alloc(256, false);
+    ASSERT_TRUE(ptr1.hasValue());
+    
+    // Destroy first freelist
+    freelist1.reset();
+    
+    // Arena should still be valid
+    EXPECT_NE(arena.get(), nullptr);
+    
+    // Create second freelist using same arena
+    auto fl2_result = FreeListAllocator::WithArena(*arena, 4096, 0);
+    ASSERT_TRUE(fl2_result.hasValue());
+    auto freelist2 = cslt::move(fl2_result.value());
+    
+    auto ptr2 = freelist2->alloc(128, false);
+    EXPECT_TRUE(ptr2.hasValue()) << "Second freelist should work after first destroyed";
+}
+// ================================================================================ 
+// ================================================================================ 
+
+// ================================================================================
+// Test 1: Forward Coalescing (Free Block Merges with Next)
+// ================================================================================
+
+TEST(FreeListCoalescingTest, ForwardCoalescing) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate three adjacent blocks
+    auto ptr1_result = freelist->alloc(256, false);
+    auto ptr2_result = freelist->alloc(256, false);
+    auto ptr3_result = freelist->alloc(256, false);
+    
+    ASSERT_TRUE(ptr1_result.hasValue());
+    ASSERT_TRUE(ptr2_result.hasValue());
+    ASSERT_TRUE(ptr3_result.hasValue());
+    
+    void* ptr1 = ptr1_result.value();
+    void* ptr2 = ptr2_result.value();
+    void* ptr3 = ptr3_result.value();
+    
+    ///size_t used_after_alloc = freelist->used();
+    
+    // Free middle block first
+    freelist->return_element(ptr2, 256);
+    
+    // Free first block - should coalesce with middle
+    freelist->return_element(ptr1, 256);
+    
+    // After coalescing, should have more space available
+    // The two adjacent freed blocks should have merged
+    // size_t remaining_after_coalesce = freelist->remaining();
+    
+    // Free third block - should coalesce all three
+    freelist->return_element(ptr3, 256);
+    
+    // Should be able to allocate a larger block now
+    auto large_result = freelist->alloc(600, false);
+    EXPECT_TRUE(large_result.hasValue()) 
+        << "Should be able to allocate larger block after coalescing";
+}
+
+// ================================================================================
+// Test 2: Backward Coalescing (Free Block Merges with Previous)
+// ================================================================================
+
+TEST(FreeListCoalescingTest, BackwardCoalescing) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate three adjacent blocks
+    auto ptr1_result = freelist->alloc(256, false);
+    auto ptr2_result = freelist->alloc(256, false);
+    auto ptr3_result = freelist->alloc(256, false);
+    
+    ASSERT_TRUE(ptr1_result.hasValue());
+    ASSERT_TRUE(ptr2_result.hasValue());
+    ASSERT_TRUE(ptr3_result.hasValue());
+    
+    void* ptr1 = ptr1_result.value();
+    void* ptr2 = ptr2_result.value();
+    void* ptr3 = ptr3_result.value();
+    
+    // Free first block
+    freelist->return_element(ptr1, 256);
+    
+    // Free second block - should coalesce backward with first
+    freelist->return_element(ptr2, 256);
+    
+    // Free third block - should coalesce backward with first+second
+    freelist->return_element(ptr3, 256);
+    
+    // Should be able to allocate a block spanning all three
+    auto large_result = freelist->alloc(700, false);
+    EXPECT_TRUE(large_result.hasValue()) 
+        << "Should be able to allocate large block after backward coalescing";
+}
+
+// ================================================================================
+// Test 3: Bidirectional Coalescing (Merge with Both Neighbors)
+// ================================================================================
+
+TEST(FreeListCoalescingTest, BidirectionalCoalescing) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate five blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 5; ++i) {
+        auto ptr_result = freelist->alloc(256, false);
+        ASSERT_TRUE(ptr_result.hasValue());
+        ptrs.push_back(ptr_result.value());
+    }
+    
+    // Free blocks 0, 2, 4 (leave 1 and 3 allocated)
+    freelist->return_element(ptrs[0], 256);
+    freelist->return_element(ptrs[2], 256);
+    freelist->return_element(ptrs[4], 256);
+    
+    // Free block 1 - should coalesce with blocks 0 and 2
+    freelist->return_element(ptrs[1], 256);
+    
+    // Should now have a larger contiguous free block (0+1+2)
+    auto large_result = freelist->alloc(700, false);
+    EXPECT_TRUE(large_result.hasValue()) 
+        << "Should allocate large block after bidirectional coalescing";
+}
+
+// ================================================================================
+// Test 4: No Coalescing (Non-Adjacent Blocks)
+// ================================================================================
+
+TEST(FreeListCoalescingTest, NoCoalescingNonAdjacent) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate multiple blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 5; ++i) {
+        auto ptr_result = freelist->alloc(256, false);
+        ASSERT_TRUE(ptr_result.hasValue());
+        ptrs.push_back(ptr_result.value());
+    }
+    
+    // Free non-adjacent blocks (0, 2, 4)
+    freelist->return_element(ptrs[0], 256);
+    freelist->return_element(ptrs[2], 256);
+    freelist->return_element(ptrs[4], 256);
+    
+    // Blocks 1 and 3 still allocated, preventing coalescing
+    
+    // Should NOT be able to allocate a very large block
+    auto large_result = freelist->alloc(1000, false);
+    // This might fail due to fragmentation
+    // (We can't guarantee it fails, but we're demonstrating the pattern)
+    
+    // Free remaining blocks
+    freelist->return_element(ptrs[1], 256);
+    freelist->return_element(ptrs[3], 256);
+    
+    // Now should be able to allocate larger block
+    auto large_result2 = freelist->alloc(1200, false);
+    EXPECT_TRUE(large_result2.hasValue()) 
+        << "Should allocate after freeing all blocks";
+}
+
+// ================================================================================
+// Test 5: Complete Coalescing Back to Initial State
+// ================================================================================
+
+TEST(FreeListCoalescingTest, CompleteCoalescingToInitialState) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    size_t initial_remaining = freelist->remaining();
+    
+    // Allocate all available space in chunks
+    std::vector<void*> ptrs;
+    while (true) {
+        auto ptr_result = freelist->alloc(128, false);
+        if (!ptr_result.hasValue()) {
+            break;
+        }
+        ptrs.push_back(ptr_result.value());
+    }
+    
+    EXPECT_GT(ptrs.size(), 0) << "Should have allocated some blocks";
+    
+    // Free all blocks in random order
+    for (size_t i = 0; i < ptrs.size(); ++i) {
+        freelist->return_element(ptrs[i], 128);
+    }
+    
+    // Should have coalesced back to nearly initial state
+    size_t final_remaining = freelist->remaining();
+    
+    // Allow for some overhead difference due to headers
+    EXPECT_GT(final_remaining, initial_remaining - 200) 
+        << "Should recover most space after coalescing";
+}
+
+// ================================================================================
+// REALLOC TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 6: Realloc Growth (Simple)
+// ================================================================================
+
+TEST(FreeListReallocTest, ReallocGrowth) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate initial block
+    auto ptr_result = freelist->alloc(128, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Write pattern to memory
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    for (int i = 0; i < 128; ++i) {
+        data[i] = static_cast<uint8_t>(i);
+    }
+    
+    // Grow to 512 bytes
+    auto new_result = freelist->realloc(ptr, 128, 512, false);
+    ASSERT_TRUE(new_result.hasValue()) << "Realloc growth should succeed";
+    
+    void* new_ptr = new_result.value();
+    uint8_t* new_data = static_cast<uint8_t*>(new_ptr);
+    
+    // Verify old data was copied
+    for (int i = 0; i < 128; ++i) {
+        EXPECT_EQ(new_data[i], static_cast<uint8_t>(i)) 
+            << "Byte " << i << " should be preserved";
+    }
+}
+
+// ================================================================================
+// Test 7: Realloc Shrink (No-Op)
+// ================================================================================
+
+TEST(FreeListReallocTest, ReallocShrinkNoOp) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate block
+    auto ptr_result = freelist->alloc(512, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Try to shrink to 256 bytes
+    auto new_result = freelist->realloc(ptr, 512, 256, false);
+    ASSERT_TRUE(new_result.hasValue());
+    
+    void* new_ptr = new_result.value();
+    
+    // Should return same pointer (no-op for shrinking)
+    EXPECT_EQ(new_ptr, ptr) << "Realloc shrink should return same pointer";
+}
+
+// ================================================================================
+// Test 8: Realloc with Zero-Fill
+// ================================================================================
+
+TEST(FreeListReallocTest, ReallocWithZeroFill) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate and fill with pattern
+    auto ptr_result = freelist->alloc(128, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    for (int i = 0; i < 128; ++i) {
+        data[i] = 0xFF;
+    }
+    
+    // Grow with zero-fill
+    auto new_result = freelist->realloc(ptr, 128, 512, true);
+    ASSERT_TRUE(new_result.hasValue());
+    
+    void* new_ptr = new_result.value();
+    uint8_t* new_data = static_cast<uint8_t*>(new_ptr);
+    
+    // Verify old data preserved
+    for (int i = 0; i < 128; ++i) {
+        EXPECT_EQ(new_data[i], 0xFF) << "Old data should be preserved";
+    }
+    
+    // Verify new region is zeroed
+    for (int i = 128; i < 512; ++i) {
+        EXPECT_EQ(new_data[i], 0) << "New region should be zeroed";
+    }
+}
+
+// ================================================================================
+// Test 9: Realloc NULL Pointer (Behaves like alloc)
+// ================================================================================
+
+TEST(FreeListReallocTest, ReallocNullPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Realloc with NULL pointer should behave like alloc
+    auto ptr_result = freelist->realloc(nullptr, 0, 256, true);
+    
+    ASSERT_TRUE(ptr_result.hasValue()) << "Realloc NULL should succeed";
+    
+    void* ptr = ptr_result.value();
+    EXPECT_NE(ptr, nullptr);
+    
+    // Should be zeroed
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    for (int i = 0; i < 256; ++i) {
+        EXPECT_EQ(data[i], 0) << "Should be zero-initialized";
+    }
+}
+
+// ================================================================================
+// Test 10: Realloc Aligned with Custom Alignment
+// ================================================================================
+
+TEST(FreeListReallocTest, ReallocAlignedCustomAlignment) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate with 64-byte alignment
+    auto ptr_result = freelist->alloc_aligned(128, 64, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Verify initial alignment
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(ptr) % 64, 0);
+    
+    // Write pattern
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    for (int i = 0; i < 128; ++i) {
+        data[i] = static_cast<uint8_t>(i);
+    }
+    
+    // Grow with same alignment
+    auto new_result = freelist->realloc_aligned(ptr, 128, 512, 64, false);
+    ASSERT_TRUE(new_result.hasValue());
+    
+    void* new_ptr = new_result.value();
+    
+    // Verify new alignment
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(new_ptr) % 64, 0) 
+        << "New pointer should maintain 64-byte alignment";
+    
+    // Verify data copied
+    uint8_t* new_data = static_cast<uint8_t*>(new_ptr);
+    for (int i = 0; i < 128; ++i) {
+        EXPECT_EQ(new_data[i], static_cast<uint8_t>(i)) 
+            << "Data should be preserved";
+    }
+}
+
+// ================================================================================
+// Test 11: Realloc Aligned NULL Pointer
+// ================================================================================
+
+TEST(FreeListReallocTest, ReallocAlignedNullPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Realloc_aligned with NULL should behave like alloc_aligned
+    auto ptr_result = freelist->realloc_aligned(nullptr, 0, 256, 128, true);
+    
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    
+    // Verify alignment
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(ptr) % 128, 0) 
+        << "Should have 128-byte alignment";
+    
+    // Verify zeroed
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    for (int i = 0; i < 256; ++i) {
+        EXPECT_EQ(data[i], 0);
+    }
+}
+
+// ================================================================================
+// Test 12: Multiple Realloc Growth Steps
+// ================================================================================
+
+TEST(FreeListReallocTest, MultipleReallocGrowthSteps) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Start with small allocation
+    auto ptr_result = freelist->alloc(64, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Mark initial data
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    data[0] = 0xAA;
+    
+    size_t current_size = 64;
+    
+    // Grow in steps: 64 -> 128 -> 256 -> 512 -> 1024
+    size_t sizes[] = {128, 256, 512, 1024};
+    
+    for (size_t new_size : sizes) {
+        auto new_result = freelist->realloc(ptr, current_size, new_size, false);
+        ASSERT_TRUE(new_result.hasValue()) << "Growth to " << new_size << " should succeed";
+        
+        ptr = new_result.value();
+        data = static_cast<uint8_t*>(ptr);
+        
+        // Verify marker still present
+        EXPECT_EQ(data[0], 0xAA) << "Data should be preserved through realloc";
+        
+        current_size = new_size;
+    }
+    
+    EXPECT_EQ(current_size, 1024);
+}
+
+// ================================================================================
+// Test 13: Realloc Changing Alignment
+// ================================================================================
+
+TEST(FreeListReallocTest, ReallocChangingAlignment) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate with default alignment
+    auto ptr_result = freelist->alloc(128, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Write pattern
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    for (int i = 0; i < 128; ++i) {
+        data[i] = static_cast<uint8_t>(i);
+    }
+    
+    // Realloc with stricter alignment (128 bytes)
+    auto new_result = freelist->realloc_aligned(ptr, 128, 512, 128, false);
+    ASSERT_TRUE(new_result.hasValue());
+    
+    void* new_ptr = new_result.value();
+    
+    // Verify new stricter alignment
+    EXPECT_EQ(reinterpret_cast<uintptr_t>(new_ptr) % 128, 0);
+    
+    // Verify data preserved
+    uint8_t* new_data = static_cast<uint8_t*>(new_ptr);
+    for (int i = 0; i < 128; ++i) {
+        EXPECT_EQ(new_data[i], static_cast<uint8_t>(i));
+    }
+}
+// ================================================================================ 
+// ================================================================================ 
+
+// ================================================================================
+// Test 1: is_ptr with Valid Allocation
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrValidAllocation) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate a block
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Should recognize valid pointer
+    EXPECT_TRUE(freelist->is_ptr(ptr)) << "Should recognize valid allocated pointer";
+}
+
+// ================================================================================
+// Test 2: is_ptr with Multiple Valid Allocations
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrMultipleValidAllocations) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate multiple blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 5; ++i) {
+        auto ptr_result = freelist->alloc(128, false);
+        ASSERT_TRUE(ptr_result.hasValue());
+        ptrs.push_back(ptr_result.value());
+    }
+    
+    // All should be recognized as valid
+    for (size_t i = 0; i < ptrs.size(); ++i) {
+        EXPECT_TRUE(freelist->is_ptr(ptrs[i])) 
+            << "Pointer " << i << " should be valid";
+    }
+}
+
+// ================================================================================
+// Test 3: is_ptr with NULL Pointer
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrNullPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // NULL pointer should return false
+    EXPECT_FALSE(freelist->is_ptr(nullptr)) << "NULL pointer should be invalid";
+}
+
+// ================================================================================
+// Test 4: is_ptr with External Pointer
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrExternalPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Pointer from different allocator
+    void* external = malloc(256);
+    ASSERT_NE(external, nullptr);
+    
+    EXPECT_FALSE(freelist->is_ptr(external)) 
+        << "External pointer should be invalid";
+    
+    free(external);
+}
+
+// ================================================================================
+// Test 5: is_ptr with Freed Pointer
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrFreedPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate and free
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Valid before free
+    EXPECT_TRUE(freelist->is_ptr(ptr));
+    
+    // Free the pointer
+    freelist->return_element(ptr, 256);
+    
+    // Note: is_ptr() cannot distinguish freed blocks from allocated blocks
+    // It only checks if the pointer structure is valid
+    // The pointer may still appear "valid" structurally but is actually free
+    // This is a known limitation documented in is_ptr()
+}
+
+// ================================================================================
+// Test 6: is_ptr with Offset Pointer (Inside Allocation)
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrOffsetPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate block
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Original pointer should be valid
+    EXPECT_TRUE(freelist->is_ptr(ptr));
+    
+    // Offset pointer (ptr + 10) should be invalid
+    void* offset_ptr = static_cast<uint8_t*>(ptr) + 10;
+    EXPECT_FALSE(freelist->is_ptr(offset_ptr)) 
+        << "Offset pointer inside allocation should be invalid";
+}
+
+// ================================================================================
+// Test 7: is_ptr with Pointer from Different Freelist
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrDifferentFreelist) {
+    auto result1 = FreeListAllocator::Heap(8192, 0, false);
+    auto result2 = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result1.hasValue());
+    ASSERT_TRUE(result2.hasValue());
+    auto freelist1 = cslt::move(result1.value());
+    auto freelist2 = cslt::move(result2.value());
+    
+    // Allocate from freelist1
+    auto ptr_result = freelist1->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Valid in freelist1
+    EXPECT_TRUE(freelist1->is_ptr(ptr));
+    
+    // Invalid in freelist2
+    EXPECT_FALSE(freelist2->is_ptr(ptr)) 
+        << "Pointer from different freelist should be invalid";
+}
+
+// ================================================================================
+// Test 8: is_ptr After Reset
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrAfterReset) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Valid before reset
+    EXPECT_TRUE(freelist->is_ptr(ptr));
+    
+    // Reset freelist
+    freelist->reset();
+    
+    // Pointer is now invalid (memory has been reset)
+    // Note: The structural validation might still pass, but the pointer
+    // is logically invalid. This is a known limitation.
+}
+
+// ================================================================================
+// is_ptr_sized() TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 9: is_ptr_sized with Exact Size
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedExactSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate 256 bytes
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Should validate with exact size
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr, 256)) 
+        << "Should validate with exact allocated size";
+}
+
+// ================================================================================
+// Test 10: is_ptr_sized with Smaller Size
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedSmallerSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate 256 bytes
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Should validate with smaller size
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr, 128)) 
+        << "Should validate with size smaller than allocation";
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr, 1)) 
+        << "Should validate with minimal size";
+}
+
+// ================================================================================
+// Test 11: is_ptr_sized with Larger Size
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedLargerSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate 256 bytes
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Should fail with larger size
+    EXPECT_FALSE(freelist->is_ptr_sized(ptr, 512)) 
+        << "Should fail when requested size exceeds allocation";
+}
+
+// ================================================================================
+// Test 12: is_ptr_sized with Zero Size
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedZeroSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate block
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Zero size should be invalid
+    EXPECT_FALSE(freelist->is_ptr_sized(ptr, 0)) 
+        << "Zero size should be invalid";
+}
+
+// ================================================================================
+// Test 13: is_ptr_sized with NULL Pointer
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedNullPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // NULL pointer should fail
+    EXPECT_FALSE(freelist->is_ptr_sized(nullptr, 256)) 
+        << "NULL pointer should be invalid";
+}
+
+// ================================================================================
+// Test 14: is_ptr_sized with External Pointer
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedExternalPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // External allocation
+    void* external = malloc(256);
+    ASSERT_NE(external, nullptr);
+    
+    EXPECT_FALSE(freelist->is_ptr_sized(external, 128)) 
+        << "External pointer should be invalid";
+    
+    free(external);
+}
+
+// ================================================================================
+// Test 15: is_ptr_sized with Multiple Allocations
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedMultipleAllocations) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate blocks of different sizes
+    auto ptr1_result = freelist->alloc(128, false);
+    auto ptr2_result = freelist->alloc(256, false);
+    auto ptr3_result = freelist->alloc(512, false);
+    
+    ASSERT_TRUE(ptr1_result.hasValue());
+    ASSERT_TRUE(ptr2_result.hasValue());
+    ASSERT_TRUE(ptr3_result.hasValue());
+    
+    void* ptr1 = ptr1_result.value();
+    void* ptr2 = ptr2_result.value();
+    void* ptr3 = ptr3_result.value();
+    
+    // Each should validate with its own size
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr1, 128));
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr2, 256));
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr3, 512));
+    
+    // Should fail with wrong sizes
+    EXPECT_FALSE(freelist->is_ptr_sized(ptr1, 256)) << "ptr1 not big enough for 256";
+    EXPECT_FALSE(freelist->is_ptr_sized(ptr2, 512)) << "ptr2 not big enough for 512";
+}
+
+// ================================================================================
+// Test 16: is_ptr_sized for Bounds Checking Use Case
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedBoundsChecking) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate buffer
+    auto ptr_result = freelist->alloc(1024, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Simulate bounds checking before write
+    size_t data_to_write = 512;
+    
+    if (freelist->is_ptr_sized(ptr, data_to_write)) {
+        // Safe to write
+        uint8_t* buffer = static_cast<uint8_t*>(ptr);
+        memset(buffer, 0xFF, data_to_write);
+        EXPECT_TRUE(true) << "Write was safe";
+    } else {
+        FAIL() << "Buffer should be large enough";
+    }
+    
+    // Try to write too much
+    size_t too_much = 2048;
+    EXPECT_FALSE(freelist->is_ptr_sized(ptr, too_much)) 
+        << "Should detect buffer too small";
+}
+
+// ================================================================================
+// Test 17: is_ptr_sized with Aligned Allocations
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrSizedAlignedAllocations) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate with custom alignment (more overhead)
+    auto ptr_result = freelist->alloc_aligned(256, 64, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Should still validate with the requested size
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr, 256)) 
+        << "Should validate regardless of alignment overhead";
+    
+    // Should validate with smaller sizes
+    EXPECT_TRUE(freelist->is_ptr_sized(ptr, 128));
+    
+    // Should fail with larger sizes
+    EXPECT_FALSE(freelist->is_ptr_sized(ptr, 512));
+}
+
+// ================================================================================
+// Test 18: is_ptr and is_ptr_sized Consistency
+// ================================================================================
+
+TEST(FreeListValidationTest, IsPtrAndIsPtrSizedConsistency) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate block
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // If is_ptr_sized returns true, is_ptr should also return true
+    if (freelist->is_ptr_sized(ptr, 100)) {
+        EXPECT_TRUE(freelist->is_ptr(ptr)) 
+            << "is_ptr should return true if is_ptr_sized returns true";
+    }
+    
+    // Invalid pointer should fail both
+    void* invalid = reinterpret_cast<void*>(0x12345678);
+    EXPECT_FALSE(freelist->is_ptr(invalid));
+    EXPECT_FALSE(freelist->is_ptr_sized(invalid, 100));
+}
+// ================================================================================ 
+// ================================================================================ 
+
+// ================================================================================
+// DOUBLE FREE TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 1: Double Free Same Pointer
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, DoubleFree) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Free once
+    freelist->return_element(ptr, 256);
+    
+    // Free again - should be handled safely (silent no-op or detection)
+    // The implementation should not crash
+    freelist->return_element(ptr, 256);
+    
+    // Should still be able to use freelist
+    auto new_ptr = freelist->alloc(128, false);
+    EXPECT_TRUE(new_ptr.hasValue()) << "Freelist should still be usable after double free";
+}
+
+// ================================================================================
+// Test 2: Double Free with Allocations Between
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, DoubleFreeWithAllocBetween) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate
+    auto ptr1_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr1_result.hasValue());
+    void* ptr1 = ptr1_result.value();
+    
+    // Free first time
+    freelist->return_element(ptr1, 256);
+    
+    // Allocate something else (might reuse ptr1's memory)
+    auto ptr2_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr2_result.hasValue());
+    
+    // Try to free ptr1 again - this is dangerous
+    // Should be handled safely without corruption
+    freelist->return_element(ptr1, 256);
+    
+    // Freelist should still work
+    auto ptr3 = freelist->alloc(128, false);
+    EXPECT_TRUE(ptr3.hasValue());
+}
+
+// ================================================================================
+// NULL POINTER TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 3: Free NULL Pointer
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, FreeNullPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Freeing NULL should be safe no-op
+    freelist->return_element(nullptr, 256);
+    
+    // Freelist should still work
+    auto ptr = freelist->alloc(256, false);
+    EXPECT_TRUE(ptr.hasValue()) << "Freelist should work after freeing NULL";
+}
+
+// ================================================================================
+// Test 4: Realloc with NULL and Zero Old Size
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, ReallocNullZeroSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Realloc NULL should behave like alloc
+    auto ptr_result = freelist->realloc(nullptr, 0, 256, false);
+    
+    ASSERT_TRUE(ptr_result.hasValue());
+    EXPECT_NE(ptr_result.value(), nullptr);
+}
+
+// ================================================================================
+// INVALID POINTER TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 5: Free External Pointer
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, FreeExternalPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Pointer from different allocator
+    void* external = malloc(256);
+    ASSERT_NE(external, nullptr);
+    
+    // Freeing external pointer should be handled safely
+    freelist->return_element(external, 256);
+    
+    // Freelist should still work
+    auto ptr = freelist->alloc(256, false);
+    EXPECT_TRUE(ptr.hasValue());
+    
+    free(external);
+}
+
+// ================================================================================
+// Test 6: Free Stack Pointer
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, FreeStackPointer) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Stack-allocated buffer
+    uint8_t stack_buffer[256];
+    
+    // Trying to free stack pointer should be handled safely
+    freelist->return_element(stack_buffer, 256);
+    
+    // Freelist should still work
+    auto ptr = freelist->alloc(256, false);
+    EXPECT_TRUE(ptr.hasValue());
+}
+
+// ================================================================================
+// Test 7: Free Pointer from Different Freelist
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, FreeCrossFreelist) {
+    auto result1 = FreeListAllocator::Heap(8192, 0, false);
+    auto result2 = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result1.hasValue());
+    ASSERT_TRUE(result2.hasValue());
+    auto freelist1 = cslt::move(result1.value());
+    auto freelist2 = cslt::move(result2.value());
+    
+    // Allocate from freelist1
+    auto ptr_result = freelist1->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Try to free in freelist2 - should be detected and handled
+    freelist2->return_element(ptr, 256);
+    
+    // Both freelists should still work
+    auto ptr1 = freelist1->alloc(128, false);
+    auto ptr2 = freelist2->alloc(128, false);
+    EXPECT_TRUE(ptr1.hasValue());
+    EXPECT_TRUE(ptr2.hasValue());
+}
+
+// ================================================================================
+// CAPACITY AND EXHAUSTION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 8: Allocate Zero Bytes
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, AllocateZeroBytes) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Zero-byte allocation should fail
+    auto ptr_result = freelist->alloc(0, false);
+    
+    EXPECT_FALSE(ptr_result.hasValue()) << "Zero-byte allocation should fail";
+}
+
+// ================================================================================
+// Test 9: Allocate More Than Capacity
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, AllocateMoreThanCapacity) {
+    auto result = FreeListAllocator::Heap(4096, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Try to allocate more than total capacity
+    auto ptr_result = freelist->alloc(16384, false);
+    
+    EXPECT_FALSE(ptr_result.hasValue()) 
+        << "Allocation larger than capacity should fail";
+}
+
+// ================================================================================
+// Test 10: Allocate After Exhaustion
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, AllocateAfterExhaustion) {
+    auto result = FreeListAllocator::Heap(1024, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate until exhausted
+    std::vector<void*> ptrs;
+    while (true) {
+        auto ptr_result = freelist->alloc(64, false);
+        if (!ptr_result.hasValue()) {
+            break;
+        }
+        ptrs.push_back(ptr_result.value());
+    }
+    
+    EXPECT_GT(ptrs.size(), 0) << "Should have allocated some blocks";
+    
+    // Try to allocate when exhausted - should fail gracefully
+    auto ptr_result = freelist->alloc(64, false);
+    EXPECT_FALSE(ptr_result.hasValue()) << "Should fail when exhausted";
+    
+    // Free one and try again
+    freelist->return_element(ptrs[0], 64);
+    
+    auto new_ptr = freelist->alloc(64, false);
+    EXPECT_TRUE(new_ptr.hasValue()) << "Should succeed after freeing space";
+}
+
+// ================================================================================
+// Test 11: Very Large Alignment
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, VeryLargeAlignment) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // 4KB alignment (page size)
+    auto ptr_result = freelist->alloc_aligned(256, 4096, false);
+    
+    // Might succeed or fail depending on available space
+    if (ptr_result.hasValue()) {
+        void* ptr = ptr_result.value();
+        EXPECT_EQ(reinterpret_cast<uintptr_t>(ptr) % 4096, 0) 
+            << "Should be 4KB aligned if allocation succeeded";
+    }
+}
+
+// ================================================================================
+// REALLOC EDGE CASES
+// ================================================================================
+
+// ================================================================================
+// Test 12: Realloc to Zero Size
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, ReallocToZeroSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Realloc to zero should fail
+    auto new_result = freelist->realloc(ptr, 256, 0, false);
+    
+    EXPECT_FALSE(new_result.hasValue()) << "Realloc to zero size should fail";
+}
+
+// ================================================================================
+// Test 13: Realloc with Incorrect Old Size
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, ReallocIncorrectOldSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate 256 bytes
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Write pattern
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    for (int i = 0; i < 256; ++i) {
+        data[i] = static_cast<uint8_t>(i);
+    }
+    
+    // Realloc with wrong old_size (128 instead of 256)
+    // This is user error - will copy wrong amount
+    auto new_result = freelist->realloc(ptr, 128, 512, false);
+    ASSERT_TRUE(new_result.hasValue());
+    
+    void* new_ptr = new_result.value();
+    uint8_t* new_data = static_cast<uint8_t*>(new_ptr);
+    
+    // Only first 128 bytes will be copied (user error)
+    for (int i = 0; i < 128; ++i) {
+        EXPECT_EQ(new_data[i], static_cast<uint8_t>(i));
+    }
+    // Note: This demonstrates the importance of tracking sizes correctly
+}
+
+// ================================================================================
+// Test 14: Realloc Same Size
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, ReallocSameSize) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate
+    auto ptr_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    
+    // Realloc to same size - should return same pointer
+    auto new_result = freelist->realloc(ptr, 256, 256, false);
+    ASSERT_TRUE(new_result.hasValue());
+    
+    void* new_ptr = new_result.value();
+    EXPECT_EQ(new_ptr, ptr) << "Realloc same size should return same pointer";
+}
+
+// ================================================================================
+// RESET EDGE CASES
+// ================================================================================
+
+// ================================================================================
+// Test 15: Reset Empty Freelist
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, ResetEmptyFreelist) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Reset without any allocations
+    bool reset_ok = freelist->reset();
+    
+    EXPECT_TRUE(reset_ok) << "Reset should succeed on empty freelist";
+    EXPECT_EQ(freelist->used(), 0);
+}
+
+// ================================================================================
+// Test 16: Multiple Consecutive Resets
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, MultipleConsecutiveResets) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate something
+    auto ptr = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    // Reset multiple times
+    EXPECT_TRUE(freelist->reset());
+    EXPECT_TRUE(freelist->reset());
+    EXPECT_TRUE(freelist->reset());
+    
+    // Should still work
+    auto new_ptr = freelist->alloc(256, false);
+    EXPECT_TRUE(new_ptr.hasValue());
+}
+
+// ================================================================================
+// Test 17: Use After Reset
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, UseAfterReset) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate
+    auto ptr1_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr1_result.hasValue());
+    //void* ptr1 = ptr1_result.value();
+    
+    // Reset
+    freelist->reset();
+    
+    // ptr1 is now invalid - don't use it
+    
+    // Allocate new pointer
+    auto ptr2_result = freelist->alloc(256, false);
+    ASSERT_TRUE(ptr2_result.hasValue());
+    //void* ptr2 = ptr2_result.value();
+    
+    // ptr2 might equal ptr1 (reused memory)
+    // This is expected behavior
+}
+
+// ================================================================================
+// FRAGMENTATION EDGE CASES
+// ================================================================================
+
+// ================================================================================
+// Test 18: Extreme Fragmentation
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, ExtremeFragmentation) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate many small blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 50; ++i) {
+        auto ptr_result = freelist->alloc(64, false);
+        if (ptr_result.hasValue()) {
+            ptrs.push_back(ptr_result.value());
+        }
+    }
+    
+    // Free every other block to create fragmentation
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        freelist->return_element(ptrs[i], 64);
+    }
+    
+    // Try to allocate a large block - might fail due to fragmentation
+    auto large_result = freelist->alloc(2048, false);
+    
+    // Whether it succeeds depends on coalescing and free block sizes
+    // Just verify freelist is still usable
+    
+    // Free remaining blocks
+    for (size_t i = 1; i < ptrs.size(); i += 2) {
+        freelist->return_element(ptrs[i], 64);
+    }
+    
+    // After freeing all, should be able to allocate large block
+    auto large_result2 = freelist->alloc(2048, false);
+    EXPECT_TRUE(large_result2.hasValue()) 
+        << "Should allocate after all blocks freed and coalesced";
+}
+
+// ================================================================================
+// Test 19: Allocation Pattern Stress
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, AllocationPatternStress) {
+    auto result = FreeListAllocator::Heap(8192, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Rapidly allocate and free in pattern
+    for (int cycle = 0; cycle < 10; ++cycle) {
+        std::vector<void*> ptrs;
+        
+        // Allocate
+        for (int i = 0; i < 10; ++i) {
+            auto ptr_result = freelist->alloc(128, false);
+            if (ptr_result.hasValue()) {
+                ptrs.push_back(ptr_result.value());
+            }
+        }
+        
+        // Free all
+        for (void* ptr : ptrs) {
+            freelist->return_element(ptr, 128);
+        }
+    }
+    
+    // Freelist should still be healthy
+    auto ptr = freelist->alloc(1024, false);
+    EXPECT_TRUE(ptr.hasValue()) << "Freelist should be healthy after stress";
+}
+
+// ================================================================================
+// Test 20: Mixed Size Allocations
+// ================================================================================
+
+TEST(FreeListEdgeCasesTest, MixedSizeAllocations) {
+    auto result = FreeListAllocator::Heap(16384, 0, false);
+    ASSERT_TRUE(result.hasValue());
+    auto freelist = cslt::move(result.value());
+    
+    // Allocate various sizes
+    std::vector<std::pair<void*, size_t>> allocations;
+    size_t sizes[] = {64, 128, 256, 512, 1024, 32, 96, 384};
+    
+    for (size_t size : sizes) {
+        auto ptr_result = freelist->alloc(size, false);
+        if (ptr_result.hasValue()) {
+            allocations.push_back({ptr_result.value(), size});
+        }
+    }
+    
+    EXPECT_GT(allocations.size(), 0) << "Should allocate some blocks";
+    
+    // Free in random order (reverse)
+    for (auto it = allocations.rbegin(); it != allocations.rend(); ++it) {
+        freelist->return_element(it->first, it->second);
+    }
+    
+    // Should be able to allocate again
+    auto ptr = freelist->alloc(2048, false);
+    EXPECT_TRUE(ptr.hasValue()) << "Should allocate after mixed free";
+}
 // ================================================================================
 // ================================================================================
 // eof

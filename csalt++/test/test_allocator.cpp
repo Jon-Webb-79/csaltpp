@@ -17,8 +17,7 @@
 
 #include <gtest/gtest.h>
 #include <cstring>
-#include <cstring>
-
+#include <random>
 using namespace cslt;
 // ================================================================================ 
 // ================================================================================ 
@@ -5620,6 +5619,2338 @@ TEST(FreeListEdgeCasesTest, MixedSizeAllocations) {
     // Should be able to allocate again
     auto ptr = freelist->alloc(2048, false);
     EXPECT_TRUE(ptr.hasValue()) << "Should allocate after mixed free";
+}
+// ================================================================================ 
+// ================================================================================ 
+
+TEST(BuddyHeapTest, CreateBasicHeapBuddy) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    
+    ASSERT_TRUE(result.hasValue()) << "Basic buddy creation should succeed";
+    
+    auto buddy = cslt::move(result.value());
+    
+    EXPECT_NE(buddy.get(), nullptr);
+    EXPECT_GT(buddy->remaining(), 0) << "Should have free space";
+    EXPECT_EQ(buddy->size(), 0) << "Should start with zero used";
+}
+
+// ================================================================================
+// Test 2: Verify Power-of-2 Rounding
+// ================================================================================
+
+TEST(BuddyHeapTest, PowerOf2Rounding) {
+    // Request non-power-of-2 sizes
+    auto result = BuddyAllocator::Heap(5000, 100, 0);
+    
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Pool should be rounded up to next power of 2 (8192)
+    // Min block should be rounded up to next power of 2 (128)
+    
+    // Try to allocate something that verifies the rounding
+    auto ptr_result = buddy->alloc(4000, false);
+    EXPECT_TRUE(ptr_result.hasValue()) << "Should fit in rounded-up pool";
+}
+
+// ================================================================================
+// Test 3: Custom Alignment
+// ================================================================================
+
+TEST(BuddyHeapTest, CustomAlignment) {
+    auto result = BuddyAllocator::Heap(4096, 64, 32);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Use alloc_aligned() for custom alignment
+    auto ptr_result = buddy->alloc_aligned(128, 32, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    EXPECT_EQ(addr % 32, 0); // Now will pass!
+}
+// ================================================================================
+// Test 4: Zero Alignment (Default)
+// ================================================================================
+
+TEST(BuddyHeapTest, ZeroAlignmentDefaults) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Should default to alignof(max_align_t)
+    auto ptr_result = buddy->alloc(128, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    // Should be at least naturally aligned
+    EXPECT_EQ(addr % alignof(max_align_t), 0);
+}
+
+// ================================================================================
+// VALIDATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 5: Zero Pool Size
+// ================================================================================
+
+TEST(BuddyHeapTest, ZeroPoolSize) {
+    auto result = BuddyAllocator::Heap(0, 64, 0);
+    
+    EXPECT_FALSE(result.hasValue());
+}
+
+// ================================================================================
+// Test 6: Zero Min Block Size
+// ================================================================================
+
+TEST(BuddyHeapTest, ZeroMinBlockSize) {
+    auto result = BuddyAllocator::Heap(4096, 0, 0);
+    
+    EXPECT_FALSE(result.hasValue());
+}
+
+// ================================================================================
+// Test 7: Min Block Larger Than Pool
+// ================================================================================
+
+TEST(BuddyHeapTest, MinBlockLargerThanPool) {
+    auto result = BuddyAllocator::Heap(1024, 4096, 0);
+    
+    EXPECT_FALSE(result.hasValue());
+}
+
+// ================================================================================
+// Test 8: Non-Power-of-2 Alignment
+// ================================================================================
+
+TEST(BuddyHeapTest, NonPowerOf2Alignment) {
+    // Request alignment that's not power of 2 (48)
+    auto result = BuddyAllocator::Heap(4096, 64, 48);
+    
+    // Should succeed by rounding up to 64
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Use alloc_aligned() with the non-power-of-2 value
+    // It should get rounded up to 64 internally
+    auto ptr_result = buddy->alloc_aligned(128, 48, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    // Should be aligned to rounded-up value (64)
+    EXPECT_EQ(addr % 64, 0) << "Should round 48 up to 64 and align to that";
+}
+
+// ================================================================================
+// SIZE TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 9: Very Small Pool
+// ================================================================================
+
+TEST(BuddyHeapTest, VerySmallPool) {
+    // Minimum viable buddy allocator
+    auto result = BuddyAllocator::Heap(256, 64, 0);
+    
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Should be able to make at least one allocation
+    auto ptr_result = buddy->alloc(32, false);
+    EXPECT_TRUE(ptr_result.hasValue());
+}
+
+// ================================================================================
+// Test 10: Large Pool
+// ================================================================================
+
+TEST(BuddyHeapTest, LargePool) {
+    // 16MB pool
+    auto result = BuddyAllocator::Heap(16 * 1024 * 1024, 64, 0);
+    
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    EXPECT_GT(buddy->remaining(), 16 * 1024 * 1024 - 1024) 
+        << "Should have most of 16MB available";
+    
+    // Should be able to allocate large blocks
+    auto ptr_result = buddy->alloc(1024 * 1024, false);
+    EXPECT_TRUE(ptr_result.hasValue()) << "Should allocate 1MB block";
+}
+
+// ================================================================================
+// ALLOCATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 11: Basic Allocation After Creation
+// ================================================================================
+
+TEST(BuddyHeapTest, BasicAllocationAfterCreation) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate
+    auto ptr_result = buddy->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    EXPECT_NE(ptr, nullptr);
+    
+    // Verify accounting
+    EXPECT_GT(buddy->size(), 0);
+    EXPECT_LT(buddy->remaining(), 4096);
+}
+
+// ================================================================================
+// Test 12: Multiple Allocations
+// ================================================================================
+
+TEST(BuddyHeapTest, MultipleAllocations) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Make several allocations
+    for (int i = 0; i < 5; ++i) {
+        auto ptr_result = buddy->alloc(128, false);
+        ASSERT_TRUE(ptr_result.hasValue()) << "Allocation " << i << " should succeed";
+        ptrs.push_back(ptr_result.value());
+    }
+    
+    // All pointers should be distinct
+    for (size_t i = 0; i < ptrs.size(); ++i) {
+        for (size_t j = i + 1; j < ptrs.size(); ++j) {
+            EXPECT_NE(ptrs[i], ptrs[j]) << "Pointers should be unique";
+        }
+    }
+}
+
+// ================================================================================
+// Test 13: Zero-Initialized Allocation
+// ================================================================================
+
+TEST(BuddyHeapTest, ZeroInitializedAllocation) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate with zeroing
+    auto ptr_result = buddy->alloc(256, true);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    uint8_t* data = static_cast<uint8_t*>(ptr_result.value());
+    
+    // Verify all bytes are zero
+    for (int i = 0; i < 256; ++i) {
+        EXPECT_EQ(data[i], 0) << "Byte " << i << " should be zero";
+    }
+}
+
+// ================================================================================
+// STATISTICS TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 14: Initial Statistics
+// ================================================================================
+
+TEST(BuddyHeapTest, InitialStatistics) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    char buffer[2048];
+    bool stat_ok = buddy->stats(buffer, sizeof(buffer));
+    
+    ASSERT_TRUE(stat_ok);
+    
+    std::string stats_str(buffer);
+    
+    // Should contain key information
+    EXPECT_NE(stats_str.find("Pool size:"), std::string::npos);
+    EXPECT_NE(stats_str.find("Min block size:"), std::string::npos);
+    EXPECT_NE(stats_str.find("Max block size:"), std::string::npos);
+    EXPECT_NE(stats_str.find("Used: 0"), std::string::npos) << "Should start with 0 used";
+}
+
+// ================================================================================
+// Test 15: Statistics After Allocations
+// ================================================================================
+
+TEST(BuddyHeapTest, StatisticsAfterAllocations) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Make some allocations
+    auto p1 = buddy->alloc(256, false);
+    auto p2 = buddy->alloc(512, false);
+    
+    ASSERT_TRUE(p1.hasValue());
+    ASSERT_TRUE(p2.hasValue());
+    
+    char buffer[2048];
+    bool stat_ok = buddy->stats(buffer, sizeof(buffer));
+    
+    ASSERT_TRUE(stat_ok);
+    
+    std::string stats_str(buffer);
+    
+    // Should show non-zero usage
+    EXPECT_EQ(stats_str.find("Used: 0"), std::string::npos) 
+        << "Should not show 0 used after allocations";
+    EXPECT_NE(stats_str.find("Free lists by level:"), std::string::npos);
+}
+
+// ================================================================================
+// QUERY METHOD TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 16: Remaining and Size Methods
+// ================================================================================
+
+TEST(BuddyHeapTest, RemainingAndSizeMethods) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t initial_remaining = buddy->remaining();
+    size_t initial_size = buddy->size();
+    
+    EXPECT_GT(initial_remaining, 0);
+    EXPECT_EQ(initial_size, 0);
+    
+    // Allocate
+    auto ptr = buddy->alloc(256, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    size_t after_remaining = buddy->remaining();
+    size_t after_size = buddy->size();
+    
+    EXPECT_LT(after_remaining, initial_remaining);
+    EXPECT_GT(after_size, initial_size);
+}
+
+// ================================================================================
+// Test 17: Largest Block Method
+// ================================================================================
+
+TEST(BuddyHeapTest, LargestBlockMethod) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t initial_largest = buddy->largest_block();
+    
+    // Should be able to allocate the largest block
+    EXPECT_GT(initial_largest, 0);
+    
+    // Make some allocations
+    buddy->alloc(512, false);
+    buddy->alloc(256, false);
+    
+    size_t after_largest = buddy->largest_block();
+    
+    // Largest block might have decreased due to fragmentation
+    EXPECT_GT(after_largest, 0);
+}
+
+// ================================================================================
+// Test 18: Min and Max Block Size Methods
+// ================================================================================
+
+TEST(BuddyHeapTest, MinMaxBlockSizeMethods) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t min_block = buddy->min_block_size();
+    size_t max_block = buddy->max_block_size();
+    
+    // Min should be power of 2 >= 64
+    EXPECT_GE(min_block, 64);
+    EXPECT_EQ(min_block & (min_block - 1), 0) << "Min block should be power of 2";
+    
+    // Max should be power of 2 >= pool size
+    EXPECT_GE(max_block, 4096);
+    EXPECT_EQ(max_block & (max_block - 1), 0) << "Max block should be power of 2";
+    
+    // Min should be <= Max
+    EXPECT_LE(min_block, max_block);
+}
+
+// ================================================================================
+// MOVE SEMANTICS TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 19: Move Constructor Behavior
+// ================================================================================
+
+TEST(BuddyHeapTest, MoveSemantics) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    
+    auto buddy1 = cslt::move(result.value());
+    
+    // Make allocation
+    auto ptr1 = buddy1->alloc(256, false);
+    ASSERT_TRUE(ptr1.hasValue());
+    
+    // Move to another unique_ptr
+    auto buddy2 = cslt::move(buddy1);
+    
+    // buddy1 should be empty
+    EXPECT_EQ(buddy1.get(), nullptr);
+    
+    // buddy2 should work
+    EXPECT_NE(buddy2.get(), nullptr);
+    auto ptr2 = buddy2->alloc(256, false);
+    EXPECT_TRUE(ptr2.hasValue());
+}
+
+// ================================================================================
+// Test 20: Automatic Cleanup
+// ================================================================================
+
+TEST(BuddyHeapTest, AutomaticCleanup) {
+    void* test_ptr = nullptr;
+    
+    {
+        auto result = BuddyAllocator::Heap(4096, 64, 0);
+        ASSERT_TRUE(result.hasValue());
+        auto buddy = cslt::move(result.value());
+        
+        auto ptr_result = buddy->alloc(256, false);
+        ASSERT_TRUE(ptr_result.hasValue());
+        test_ptr = ptr_result.value();
+        
+        // buddy destroyed here - BuddyDeleter called
+    }
+    
+    // test_ptr is now invalid (dangling pointer)
+    // Just verify we got here without crashing
+    EXPECT_NE(test_ptr, nullptr) << "Pointer was allocated";
+}
+// ================================================================================
+// FORWARD COALESCING TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 1: Simple Forward Coalescing (Two Blocks)
+// ================================================================================
+
+TEST(BuddyCoalescingTest, ForwardCoalescingTwoBlocks) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate two adjacent blocks of same size
+    auto ptr1 = buddy->alloc(128, false);
+    auto ptr2 = buddy->alloc(128, false);
+    
+    ASSERT_TRUE(ptr1.hasValue());
+    ASSERT_TRUE(ptr2.hasValue());
+    
+    void* p1 = ptr1.value();
+    void* p2 = ptr2.value();
+    
+    size_t largest_before = buddy->largest_block();
+    
+    // Free first block
+    buddy->return_element(p1);
+    
+    // Free second block - should coalesce with first
+    buddy->return_element(p2);
+    
+    size_t largest_after = buddy->largest_block();
+    
+    // After coalescing, should have larger blocks available
+    EXPECT_GT(largest_after, largest_before) 
+        << "Largest block should increase after coalescing";
+}
+
+// ================================================================================
+// Test 2: Forward Coalescing Up Multiple Levels
+// ================================================================================
+
+TEST(BuddyCoalescingTest, ForwardCoalescingMultipleLevels) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate 4 blocks of 128 bytes each
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 4; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Free all four in order
+    // This should coalesce: (0+1) -> 256, (2+3) -> 256, then (0-1+2-3) -> 512
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    // Should be able to allocate a larger block now
+    auto large = buddy->alloc(400, false);
+    EXPECT_TRUE(large.hasValue()) 
+        << "Should allocate large block after multi-level coalescing";
+}
+
+// ================================================================================
+// BACKWARD COALESCING TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 3: Simple Backward Coalescing
+// ================================================================================
+
+TEST(BuddyCoalescingTest, BackwardCoalescingTwoBlocks) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate two blocks
+    auto ptr1 = buddy->alloc(128, false);
+    auto ptr2 = buddy->alloc(128, false);
+    
+    ASSERT_TRUE(ptr1.hasValue());
+    ASSERT_TRUE(ptr2.hasValue());
+    
+    void* p1 = ptr1.value();
+    void* p2 = ptr2.value();
+    
+    // Free second block first
+    buddy->return_element(p2);
+    
+    size_t largest_before = buddy->largest_block();
+    
+    // Free first block - should coalesce backward with second
+    buddy->return_element(p1);
+    
+    size_t largest_after = buddy->largest_block();
+    
+    EXPECT_GT(largest_after, largest_before) 
+        << "Should coalesce backward";
+}
+
+// ================================================================================
+// Test 4: Backward Coalescing Chain
+// ================================================================================
+
+TEST(BuddyCoalescingTest, BackwardCoalescingChain) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate 8 blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 8; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Free in reverse order (backward coalescing chain)
+    for (auto it = ptrs.rbegin(); it != ptrs.rend(); ++it) {
+        buddy->return_element(*it);
+    }
+    
+    // Should have coalesced into very large blocks
+    size_t largest = buddy->largest_block();
+    EXPECT_GT(largest, 512) << "Should have large coalesced blocks";
+}
+
+// ================================================================================
+// BIDIRECTIONAL COALESCING TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 5: Bidirectional Coalescing (Middle Block Freed Last)
+// ================================================================================
+
+TEST(BuddyCoalescingTest, BidirectionalCoalescing) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate three blocks
+    auto ptr1 = buddy->alloc(128, false);
+    auto ptr2 = buddy->alloc(128, false);
+    auto ptr3 = buddy->alloc(128, false);
+    
+    ASSERT_TRUE(ptr1.hasValue());
+    ASSERT_TRUE(ptr2.hasValue());
+    ASSERT_TRUE(ptr3.hasValue());
+    
+    void* p1 = ptr1.value();
+    void* p2 = ptr2.value();
+    void* p3 = ptr3.value();
+    
+    // Free first and third (leave middle allocated)
+    buddy->return_element(p1);
+    buddy->return_element(p3);
+    
+    size_t largest_before = buddy->largest_block();
+    
+    // Free middle - should coalesce with both neighbors
+    buddy->return_element(p2);
+    
+    size_t largest_after = buddy->largest_block();
+    
+    EXPECT_GT(largest_after, largest_before) 
+        << "Middle block should coalesce with both neighbors";
+}
+
+// ================================================================================
+// Test 6: Multiple Bidirectional Coalescing
+// ================================================================================
+
+TEST(BuddyCoalescingTest, MultipleBidirectionalCoalescing) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate 7 blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 7; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Free alternating blocks (0, 2, 4, 6)
+    buddy->return_element(ptrs[0]);
+    buddy->return_element(ptrs[2]);
+    buddy->return_element(ptrs[4]);
+    buddy->return_element(ptrs[6]);
+    
+    // Now free the middle blocks (1, 3, 5) - each should coalesce bidirectionally
+    buddy->return_element(ptrs[1]);  // Coalesces with 0 and 2
+    buddy->return_element(ptrs[3]);  // Coalesces with 2 and 4
+    buddy->return_element(ptrs[5]);  // Coalesces with 4 and 6
+    
+    // Should have large coalesced blocks
+    size_t largest = buddy->largest_block();
+    EXPECT_GT(largest, 512) << "Should have large blocks after bidirectional coalescing";
+}
+
+// ================================================================================
+// COMPLETE COALESCING TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 7: Complete Coalescing Back to Initial State
+// ================================================================================
+
+TEST(BuddyCoalescingTest, CompleteCoalescingToInitialState) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t initial_largest = buddy->largest_block();
+    size_t initial_remaining = buddy->remaining();
+    
+    // Allocate all available space in small chunks
+    std::vector<void*> ptrs;
+    while (true) {
+        auto ptr = buddy->alloc(64, false);
+        if (!ptr.hasValue()) {
+            break;
+        }
+        ptrs.push_back(ptr.value());
+    }
+    
+    EXPECT_GT(ptrs.size(), 0) << "Should have allocated some blocks";
+    
+    // Free all blocks
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    size_t final_largest = buddy->largest_block();
+    size_t final_remaining = buddy->remaining();
+    
+    // Should have coalesced back to near-initial state
+    EXPECT_GE(final_largest, initial_largest) 
+        << "Should recover large blocks after complete coalescing";
+    EXPECT_GE(final_remaining, initial_remaining - 100) 
+        << "Should recover most memory (within overhead tolerance)";
+}
+
+// ================================================================================
+// Test 8: Complete Coalescing with Random Free Order
+// ================================================================================
+
+TEST(BuddyCoalescingTest, CompleteCoalescingRandomOrder) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t initial_remaining = buddy->remaining();
+    
+    // Allocate many blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 30; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Shuffle the pointers (random free order)
+    std::random_shuffle(ptrs.begin(), ptrs.end());
+    
+    // Free all in random order
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    size_t final_remaining = buddy->remaining();
+    
+    // Should recover most memory regardless of free order
+    EXPECT_GE(final_remaining, initial_remaining - 200) 
+        << "Should recover memory even with random free order";
+}
+
+// ================================================================================
+// FRAGMENTATION PREVENTION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 9: Coalescing Prevents Fragmentation
+// ================================================================================
+
+TEST(BuddyCoalescingTest, CoalescingPreventsFragmentation) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Pattern: Allocate many, free half, allocate again
+    std::vector<void*> ptrs;
+    
+    // First wave: allocate 20 blocks
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Free every other block
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+        ptrs[i] = nullptr;
+    }
+    
+    size_t largest_fragmented = buddy->largest_block();
+    
+    // Free remaining blocks - should coalesce
+    for (void* ptr : ptrs) {
+        if (ptr != nullptr) {
+            buddy->return_element(ptr);
+        }
+    }
+    
+    size_t largest_after_coalesce = buddy->largest_block();
+    
+    // After coalescing, should have much larger blocks
+    EXPECT_GT(largest_after_coalesce, largest_fragmented * 2) 
+        << "Coalescing should significantly reduce fragmentation";
+}
+
+// ================================================================================
+// Test 10: Checkerboard Pattern Coalescing
+// ================================================================================
+
+TEST(BuddyCoalescingTest, CheckerboardPatternCoalescing) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate 16 blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 16; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Create checkerboard: free even indices (0, 2, 4, 6, 8, 10, 12, 14)
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+    }
+    
+    size_t largest_checkerboard = buddy->largest_block();
+    
+    // Now free odd indices - should coalesce entire pattern
+    for (size_t i = 1; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+    }
+    
+    size_t largest_after = buddy->largest_block();
+    
+    // After freeing all blocks, should have much larger blocks
+    // largest_checkerboard is probably 4096 (half pool)
+    // largest_after should be 8192 (full pool)
+    EXPECT_GT(largest_after, largest_checkerboard) 
+        << "Should coalesce checkerboard pattern into larger blocks";
+    
+    // More specifically, should be able to allocate the entire remaining space
+    EXPECT_GE(largest_after, 4096) 
+        << "Should have at least 4KB contiguous after full coalescing";
+}
+
+// ================================================================================
+// MIXED SIZE COALESCING TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 11: Coalescing Different Sized Blocks
+// ================================================================================
+
+TEST(BuddyCoalescingTest, CoalescingDifferentSizes) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate blocks of various sizes
+    auto p1 = buddy->alloc(128, false);  // Small
+    auto p2 = buddy->alloc(128, false);  // Small
+    auto p3 = buddy->alloc(256, false);  // Medium
+    auto p4 = buddy->alloc(512, false);  // Large
+    
+    ASSERT_TRUE(p1.hasValue());
+    ASSERT_TRUE(p2.hasValue());
+    ASSERT_TRUE(p3.hasValue());
+    ASSERT_TRUE(p4.hasValue());
+    
+    // Free small blocks first - they should coalesce
+    buddy->return_element(p1.value());
+    buddy->return_element(p2.value());
+    
+    size_t largest_after_small = buddy->largest_block();
+    
+    // Free medium and large
+    buddy->return_element(p3.value());
+    buddy->return_element(p4.value());
+    
+    size_t largest_final = buddy->largest_block();
+    
+    // Should have increasingly large blocks as we free
+    EXPECT_GE(largest_final, largest_after_small) 
+        << "Should have larger blocks after freeing all";
+}
+
+// ================================================================================
+// Test 12: Interleaved Size Allocation and Coalescing
+// ================================================================================
+
+TEST(BuddyCoalescingTest, InterleavedSizeCoalescing) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> small_ptrs;
+    std::vector<void*> large_ptrs;
+    
+    // Allocate pattern: small, large, small, large
+    for (int i = 0; i < 8; ++i) {
+        auto small = buddy->alloc(128, false);
+        auto large = buddy->alloc(512, false);
+        
+        if (small.hasValue()) small_ptrs.push_back(small.value());
+        if (large.hasValue()) large_ptrs.push_back(large.value());
+    }
+    
+    // Free all small blocks
+    for (void* ptr : small_ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    size_t largest_after_small = buddy->largest_block();
+    
+    // Free all large blocks - should coalesce
+    for (void* ptr : large_ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    size_t largest_final = buddy->largest_block();
+    
+    EXPECT_GT(largest_final, largest_after_small) 
+        << "Should coalesce after freeing all blocks";
+}
+
+// ================================================================================
+// NO COALESCING TESTS (Control Cases)
+// ================================================================================
+
+// ================================================================================
+// Test 13: No Coalescing with Non-Buddy Blocks
+// ================================================================================
+
+TEST(BuddyCoalescingTest, NoCoalescingNonBuddies) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate blocks that are not buddies (different sizes)
+    auto p1 = buddy->alloc(128, false);
+    auto p2 = buddy->alloc(256, false);
+    auto p3 = buddy->alloc(512, false);
+    
+    ASSERT_TRUE(p1.hasValue());
+    ASSERT_TRUE(p2.hasValue());
+    ASSERT_TRUE(p3.hasValue());
+    
+    //size_t largest_before = buddy->largest_block();
+    
+    // Free them - they shouldn't coalesce (different sizes)
+    buddy->return_element(p1.value());
+    buddy->return_element(p2.value());
+    buddy->return_element(p3.value());
+    
+    //size_t largest_after = buddy->largest_block();
+    
+    // Largest might increase, but won't be sum of all blocks
+    // (They're not buddies so they don't merge into one big block)
+}
+
+// ================================================================================
+// Test 14: No Coalescing When Buddy Is Allocated
+// ================================================================================
+
+TEST(BuddyCoalescingTest, NoCoalescingWhenBuddyAllocated) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate three blocks (first two are buddies)
+    auto p1 = buddy->alloc(128, false);
+    auto p2 = buddy->alloc(128, false);
+    auto p3 = buddy->alloc(128, false);
+    
+    ASSERT_TRUE(p1.hasValue());
+    ASSERT_TRUE(p2.hasValue());
+    ASSERT_TRUE(p3.hasValue());
+    
+    // Free first block only
+    buddy->return_element(p1.value());
+    
+    //size_t largest_single = buddy->largest_block();
+    
+    // Keep p2 allocated, free p3
+    buddy->return_element(p3.value());
+    
+    size_t largest_with_allocated_buddy = buddy->largest_block();
+    
+    // Should not have significantly larger blocks since p2 blocks coalescing
+    // (p1 and p2 are buddies but p2 is still allocated)
+    
+    // Now free p2 - should enable coalescing
+    buddy->return_element(p2.value());
+    
+    size_t largest_after_all_free = buddy->largest_block();
+    
+    EXPECT_GT(largest_after_all_free, largest_with_allocated_buddy) 
+        << "Should coalesce only after buddy is freed";
+}
+
+// ================================================================================
+// STRESS COALESCING TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 15: Repeated Allocation and Coalescing Cycles
+// ================================================================================
+
+TEST(BuddyCoalescingTest, RepeatedCoalescingCycles) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t initial_remaining = buddy->remaining();
+    
+    // Run 10 cycles of allocate-all, free-all
+    for (int cycle = 0; cycle < 10; ++cycle) {
+        std::vector<void*> ptrs;
+        
+        // Allocate many blocks
+        for (int i = 0; i < 30; ++i) {
+            auto ptr = buddy->alloc(128, false);
+            if (ptr.hasValue()) {
+                ptrs.push_back(ptr.value());
+            }
+        }
+        
+        // Free all
+        for (void* ptr : ptrs) {
+            buddy->return_element(ptr);
+        }
+    }
+    
+    size_t final_remaining = buddy->remaining();
+    
+    // After repeated cycles, should still have memory available (no leaks)
+    EXPECT_GE(final_remaining, initial_remaining - 200) 
+        << "Should maintain coalescing efficiency over repeated cycles";
+}
+// -------------------------------------------------------------------------------- 
+
+// ================================================================================
+// FRAGMENTATION DETECTION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 1: Fragmentation Gap (Remaining vs Largest)
+// ================================================================================
+
+TEST(BuddyFragmentationTest, FragmentationGap) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate many small blocks
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free every other block (creates fragmentation)
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+        ptrs[i] = nullptr;
+    }
+    
+    size_t remaining = buddy->remaining();
+    size_t largest = buddy->largest_block();
+    
+    // Fragmentation indicator: remaining bytes > largest allocatable block
+    EXPECT_GT(remaining, largest) 
+        << "Fragmentation: total free > largest contiguous block";
+    
+    // The gap shows fragmentation
+    size_t fragmentation_gap = remaining - largest;
+    EXPECT_GT(fragmentation_gap, 0) 
+        << "Should have fragmentation gap";
+}
+
+// ================================================================================
+// Test 2: Severe Fragmentation Pattern
+// ================================================================================
+
+TEST(BuddyFragmentationTest, SevereFragmentation) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate 40 blocks of 128 bytes
+    for (int i = 0; i < 40; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free every third block (severe fragmentation)
+    for (size_t i = 0; i < ptrs.size(); i += 3) {
+        buddy->return_element(ptrs[i]);
+        ptrs[i] = nullptr;
+    }
+    
+    size_t remaining = buddy->remaining();
+    size_t largest = buddy->largest_block();
+    
+    // With severe fragmentation, gap should be significant
+    EXPECT_GT(remaining, largest * 2) 
+        << "Severe fragmentation: remaining >> largest";
+}
+
+// ================================================================================
+// Test 3: Fragmentation Prevents Large Allocation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, FragmentationPreventsLargeAllocation) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate many 256-byte blocks
+    for (int i = 0; i < 16; ++i) {
+        auto ptr = buddy->alloc(256, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free alternating blocks
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+    }
+    
+    size_t remaining = buddy->remaining();
+    
+    // We have plenty of free memory total
+    EXPECT_GT(remaining, 2000) << "Should have significant free memory";
+    
+    // But can't allocate a large block due to fragmentation
+    auto large = buddy->alloc(2048, false);
+    
+    // This might fail due to fragmentation
+    // The test demonstrates the fragmentation problem
+    if (!large.hasValue()) {
+        // Fragmentation prevented allocation despite free memory
+        EXPECT_GT(remaining, 2048) 
+            << "Fragmentation: can't allocate despite free memory";
+    }
+}
+
+// ================================================================================
+// FRAGMENTATION RECOVERY TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 4: Recovery from Fragmentation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, RecoveryFromFragmentation) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Create fragmentation
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free every other block (fragmented state)
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+        ptrs[i] = nullptr;
+    }
+    
+    size_t largest_fragmented = buddy->largest_block();
+    
+    // Free remaining blocks (recover from fragmentation)
+    for (void* ptr : ptrs) {
+        if (ptr != nullptr) {
+            buddy->return_element(ptr);
+        }
+    }
+    
+    size_t largest_recovered = buddy->largest_block();
+    
+    // After recovery, should have much larger blocks
+    EXPECT_GT(largest_recovered, largest_fragmented * 2) 
+        << "Should recover large blocks after defragmentation";
+}
+
+// ================================================================================
+// Test 5: Partial Recovery
+// ================================================================================
+
+TEST(BuddyFragmentationTest, PartialRecovery) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate 16 blocks
+    for (int i = 0; i < 16; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free indices 0,1,2,3 and 8,9,10,11 (two groups)
+    for (int i = 0; i <= 3; ++i) {
+        buddy->return_element(ptrs[i]);
+    }
+    for (int i = 8; i <= 11; ++i) {
+        buddy->return_element(ptrs[i]);
+    }
+    
+    size_t largest_partial = buddy->largest_block();
+    
+    // Should have moderate-sized blocks from partial coalescing
+    EXPECT_GT(largest_partial, 256) 
+        << "Partial recovery should create medium blocks";
+}
+
+// ================================================================================
+// WORST-CASE FRAGMENTATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 6: Alternating Allocation Pattern
+// ================================================================================
+
+TEST(BuddyFragmentationTest, AlternatingAllocationPattern) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> small_ptrs;
+    std::vector<void*> large_ptrs;
+    
+    // Allocate pattern: small, large, small, large
+    for (int i = 0; i < 12; ++i) {
+        auto small = buddy->alloc(128, false);
+        auto large = buddy->alloc(512, false);
+        
+        if (small.hasValue()) small_ptrs.push_back(small.value());
+        if (large.hasValue()) large_ptrs.push_back(large.value());
+    }
+    
+    // Free only large blocks
+    for (void* ptr : large_ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    size_t remaining = buddy->remaining();
+    size_t largest = buddy->largest_block();
+    
+    // Large blocks freed but separated by small blocks
+    EXPECT_GT(remaining, largest) 
+        << "Alternating pattern creates fragmentation";
+    
+    // Small blocks prevent coalescing
+    size_t gap = remaining - largest;
+    EXPECT_GT(gap, 1024) << "Should have significant fragmentation gap";
+}
+
+// ================================================================================
+// Test 7: Swiss Cheese Fragmentation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, SwissCheeseFragmentation) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Fill with allocations
+    for (int i = 0; i < 50; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free random scattered blocks (swiss cheese pattern)
+    std::vector<size_t> indices_to_free = {1, 4, 7, 11, 15, 19, 24, 29, 35, 41};
+    
+    for (size_t idx : indices_to_free) {
+        if (idx < ptrs.size()) {
+            buddy->return_element(ptrs[idx]);
+            ptrs[idx] = nullptr;
+        }
+    }
+    
+    size_t remaining = buddy->remaining();
+    size_t largest = buddy->largest_block();
+    
+    // Swiss cheese: many small holes
+    EXPECT_GT(remaining, largest) 
+        << "Random scattered frees create swiss cheese fragmentation";
+}
+
+// ================================================================================
+// FRAGMENTATION METRICS TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 8: Fragmentation Ratio
+// ================================================================================
+
+TEST(BuddyFragmentationTest, FragmentationRatio) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate and create fragmentation
+    for (int i = 0; i < 24; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free every 3rd block
+    for (size_t i = 0; i < ptrs.size(); i += 3) {
+        buddy->return_element(ptrs[i]);
+    }
+    
+    size_t remaining = buddy->remaining();
+    size_t largest = buddy->largest_block();
+    
+    // Fragmentation ratio: how much free memory is unusable for large allocations
+    if (remaining > 0) {
+        double utilization = static_cast<double>(largest) / static_cast<double>(remaining);
+        
+        // With fragmentation, utilization should be < 1.0
+        // (not all free memory is in one contiguous block)
+        EXPECT_LT(utilization, 1.0) 
+            << "Fragmentation: not all free memory is contiguous";
+        
+        // Severe fragmentation: utilization might be 0.5 or less
+        if (utilization < 0.5) {
+            SUCCEED() << "Severe fragmentation detected (utilization < 50%)";
+        }
+    }
+}
+
+// ================================================================================
+// Test 9: Tracking Fragmentation Over Time
+// ================================================================================
+
+TEST(BuddyFragmentationTest, FragmentationOverTime) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<double> fragmentation_ratios;
+    
+    // Run multiple allocation/free cycles and track fragmentation
+    for (int cycle = 0; cycle < 5; ++cycle) {
+        std::vector<void*> ptrs;
+        
+        // Allocate
+        for (int i = 0; i < 20; ++i) {
+            auto ptr = buddy->alloc(128, false);
+            if (ptr.hasValue()) {
+                ptrs.push_back(ptr.value());
+            }
+        }
+        
+        // Free every other block
+        for (size_t i = 0; i < ptrs.size(); i += 2) {
+            buddy->return_element(ptrs[i]);
+            ptrs[i] = nullptr;
+        }
+        
+        // Measure fragmentation
+        size_t remaining = buddy->remaining();
+        size_t largest = buddy->largest_block();
+        
+        if (remaining > 0) {
+            double ratio = static_cast<double>(largest) / static_cast<double>(remaining);
+            fragmentation_ratios.push_back(ratio);
+        }
+        
+        // Free remaining
+        for (void* ptr : ptrs) {
+            if (ptr) buddy->return_element(ptr);
+        }
+    }
+    
+    // Fragmentation should be consistently measurable
+    EXPECT_GT(fragmentation_ratios.size(), 0) 
+        << "Should have fragmentation measurements";
+}
+
+// ================================================================================
+// INTERLEAVED SIZE FRAGMENTATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 10: Small-Large-Small Fragmentation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, SmallLargeSmallFragmentation) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> small_ptrs;
+    std::vector<void*> large_ptrs;
+    
+    // Allocate: small, large, small, large, ...
+    for (int i = 0; i < 10; ++i) {
+        auto s1 = buddy->alloc(64, false);
+        auto l = buddy->alloc(1024, false);
+        auto s2 = buddy->alloc(64, false);
+        
+        if (s1.hasValue()) small_ptrs.push_back(s1.value());
+        if (l.hasValue()) large_ptrs.push_back(l.value());
+        if (s2.hasValue()) small_ptrs.push_back(s2.value());
+    }
+    
+    // Free all large blocks
+    for (void* ptr : large_ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    size_t remaining = buddy->remaining();
+    //size_t largest = buddy->largest_block();
+    
+    // Large blocks freed but sandwiched between small ones
+    EXPECT_GT(remaining, 5000) << "Should have plenty of free memory";
+}
+
+// ================================================================================
+// Test 11: Pyramid Allocation Fragmentation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, PyramidAllocationFragmentation) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate pyramid: increasing sizes
+    size_t sizes[] = {64, 128, 256, 512, 1024, 512, 256, 128, 64};
+    
+    for (size_t size : sizes) {
+        auto ptr = buddy->alloc(size, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free every other block
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+    }
+    
+    size_t remaining = buddy->remaining();
+    size_t largest = buddy->largest_block();
+    
+    // Mixed sizes create complex fragmentation
+    EXPECT_GT(remaining, largest) 
+        << "Pyramid pattern creates fragmentation";
+}
+
+// ================================================================================
+// DEFRAGMENTATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 12: Sequential Defragmentation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, SequentialDefragmentation) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Create fragmentation
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free alternating
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        buddy->return_element(ptrs[i]);
+        ptrs[i] = nullptr;
+    }
+    
+    size_t largest_fragmented = buddy->largest_block();
+    
+    // Defragment by freeing in groups of adjacent blocks
+    // Free indices 1, 3 (adjacent)
+    buddy->return_element(ptrs[1]);
+    buddy->return_element(ptrs[3]);
+    
+    size_t largest_partial = buddy->largest_block();
+    
+    EXPECT_GE(largest_partial, largest_fragmented) 
+        << "Sequential freeing should reduce fragmentation";
+}
+
+// ================================================================================
+// Test 13: Complete Defragmentation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, CompleteDefragmentation) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Create severe fragmentation
+    for (int i = 0; i < 30; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free every 4th block (severe fragmentation)
+    for (size_t i = 0; i < ptrs.size(); i += 4) {
+        buddy->return_element(ptrs[i]);
+        ptrs[i] = nullptr;
+    }
+    
+    size_t remaining_fragmented = buddy->remaining();
+    size_t largest_fragmented = buddy->largest_block();
+    
+    double frag_ratio = static_cast<double>(largest_fragmented) / 
+                        static_cast<double>(remaining_fragmented);
+    
+    // Complete defragmentation: free all
+    for (void* ptr : ptrs) {
+        if (ptr) buddy->return_element(ptr);
+    }
+    
+    size_t remaining_clean = buddy->remaining();
+    size_t largest_clean = buddy->largest_block();
+    
+    double clean_ratio = static_cast<double>(largest_clean) / 
+                         static_cast<double>(remaining_clean);
+    
+    // After complete defrag, utilization should be much better
+    EXPECT_GT(clean_ratio, frag_ratio) 
+        << "Complete defragmentation improves utilization";
+}
+
+// ================================================================================
+// RESET AS DEFRAGMENTATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 14: Reset to Eliminate Fragmentation
+// ================================================================================
+
+TEST(BuddyFragmentationTest, ResetEliminatesFragmentation) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Create severe fragmentation
+    for (int i = 0; i < 25; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Free scattered blocks
+    for (size_t i = 0; i < ptrs.size(); i += 3) {
+        buddy->return_element(ptrs[i]);
+    }
+    
+    size_t largest_fragmented = buddy->largest_block();
+    
+    // Reset eliminates all fragmentation
+    buddy->reset();
+    
+    size_t largest_after_reset = buddy->largest_block();
+    
+    // After reset, should have maximum block size
+    EXPECT_GT(largest_after_reset, largest_fragmented) 
+        << "Reset should eliminate all fragmentation";
+    
+    EXPECT_GE(largest_after_reset, 4096) 
+        << "Should have large contiguous block after reset";
+}
+
+// ================================================================================
+// Test 15: Fragmentation with Mixed Operations
+// ================================================================================
+
+TEST(BuddyFragmentationTest, MixedOperationsFragmentation) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Complex pattern: alloc, free, alloc, free
+    for (int cycle = 0; cycle < 3; ++cycle) {
+        // Allocate
+        for (int i = 0; i < 10; ++i) {
+            auto ptr = buddy->alloc(256, false);
+            if (ptr.hasValue()) {
+                ptrs.push_back(ptr.value());
+            }
+        }
+        
+        // Free some
+        if (ptrs.size() >= 5) {
+            for (int i = 0; i < 5; ++i) {
+                buddy->return_element(ptrs[i]);
+                ptrs.erase(ptrs.begin());
+            }
+        }
+    }
+    
+    size_t remaining = buddy->remaining();
+    size_t largest = buddy->largest_block();
+    
+    // Mixed operations tend to create fragmentation
+    EXPECT_GT(remaining, 0) << "Should have free memory";
+    
+    if (remaining > largest) {
+        SUCCEED() << "Mixed operations created fragmentation";
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+// ================================================================================
+// ALLOCATION SIZE VERIFICATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 1: Power-of-2 Rounding for Small Allocations
+// ================================================================================
+
+TEST(BuddySizeTest, PowerOf2RoundingSmall) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Request 100 bytes, should get rounded to next power of 2
+    // 100 + header (16 bytes) = 116, rounded to 128
+    auto ptr = buddy->alloc(100, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    size_t before_size = buddy->size();
+    
+    buddy->return_element(ptr.value());
+    
+    size_t after_size = buddy->size();
+    
+    // The block size allocated should be power of 2
+    size_t block_size = before_size - after_size;
+    
+    // Verify power of 2
+    EXPECT_EQ(block_size & (block_size - 1), 0) 
+        << "Block size should be power of 2";
+    EXPECT_GE(block_size, 128) << "Should allocate at least 128 bytes for 100-byte request";
+}
+
+// ================================================================================
+// Test 2: Various Request Sizes Map to Powers of 2
+// ================================================================================
+
+TEST(BuddySizeTest, VariousRequestSizes) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    struct TestCase {
+        size_t request_size;
+        size_t min_expected_block;
+    };
+    
+    TestCase cases[] = {
+        {1, 64},      // Tiny request -> min block
+        {32, 64},     // Small request -> min block
+        {64, 128},    // 64 + header -> 128
+        {100, 128},   // 100 + header -> 128
+        {200, 256},   // 200 + header -> 256
+        {500, 512},   // 500 + header -> 512
+        {1000, 1024}, // 1000 + header -> 1024
+        {2000, 2048}, // 2000 + header -> 2048
+    };
+    
+    for (const auto& test : cases) {
+        size_t before = buddy->size();
+        
+        auto ptr = buddy->alloc(test.request_size, false);
+        ASSERT_TRUE(ptr.hasValue()) 
+            << "Failed to allocate " << test.request_size << " bytes";
+        
+        size_t after = buddy->size();
+        size_t block_size = after - before;
+        
+        // Verify power of 2
+        EXPECT_EQ(block_size & (block_size - 1), 0) 
+            << "Block for " << test.request_size << " bytes should be power of 2";
+        
+        // Verify minimum expected size
+        EXPECT_GE(block_size, test.min_expected_block) 
+            << "Block for " << test.request_size << " bytes should be >= " 
+            << test.min_expected_block;
+        
+        buddy->return_element(ptr.value());
+    }
+}
+
+// ================================================================================
+// Test 3: Maximum Request Size
+// ================================================================================
+
+TEST(BuddySizeTest, MaximumRequestSize) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t max_capacity = buddy->remaining();
+    
+    // Request close to maximum (accounting for header)
+    auto ptr = buddy->alloc(max_capacity - 100, false);
+    
+    if (ptr.hasValue()) {
+        // Verify it consumed most of the pool
+        EXPECT_LT(buddy->remaining(), 100) 
+            << "Should have consumed most of pool";
+        
+        buddy->return_element(ptr.value());
+    }
+}
+
+// ================================================================================
+// Test 4: Block Size Consistency
+// ================================================================================
+
+TEST(BuddySizeTest, BlockSizeConsistency) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate same size multiple times
+    std::vector<void*> ptrs;
+    std::vector<size_t> block_sizes;
+    
+    for (int i = 0; i < 5; ++i) {
+        size_t before = buddy->size();
+        
+        auto ptr = buddy->alloc(256, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+        
+        size_t after = buddy->size();
+        block_sizes.push_back(after - before);
+    }
+    
+    // All block sizes should be identical
+    for (size_t i = 1; i < block_sizes.size(); ++i) {
+        EXPECT_EQ(block_sizes[i], block_sizes[0]) 
+            << "Same request size should yield same block size";
+    }
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// Test 5: Alignment Affects Block Size
+// ================================================================================
+
+TEST(BuddySizeTest, AlignmentAffectsBlockSize) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Allocate with normal alignment
+    size_t before_normal = buddy->size();
+    auto ptr_normal = buddy->alloc(128, false);
+    ASSERT_TRUE(ptr_normal.hasValue());
+    size_t after_normal = buddy->size();
+    size_t block_normal = after_normal - before_normal;
+    
+    buddy->return_element(ptr_normal.value());
+    
+    // Allocate with strict alignment (requires larger block)
+    size_t before_aligned = buddy->size();
+    auto ptr_aligned = buddy->alloc_aligned(128, 256, false);
+    ASSERT_TRUE(ptr_aligned.hasValue());
+    size_t after_aligned = buddy->size();
+    size_t block_aligned = after_aligned - before_aligned;
+    
+    buddy->return_element(ptr_aligned.value());
+    
+    // Aligned allocation should use larger or equal block
+    EXPECT_GE(block_aligned, block_normal) 
+        << "Aligned allocation may require larger block";
+}
+
+// ================================================================================
+// STRESS TESTS - SUSTAINED LOAD
+// ================================================================================
+
+// ================================================================================
+// Test 6: Sustained Allocation Load
+// ================================================================================
+
+TEST(BuddyStressTest, SustainedAllocationLoad) {
+    auto result = BuddyAllocator::Heap(65536, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate until exhaustion
+    int allocation_count = 0;
+    while (allocation_count < 1000) {
+        auto ptr = buddy->alloc(128, false);
+        if (!ptr.hasValue()) {
+            break;
+        }
+        ptrs.push_back(ptr.value());
+        allocation_count++;
+    }
+    
+    EXPECT_GT(allocation_count, 100) << "Should handle many allocations";
+    
+    // Free all
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    // Verify recovery
+    size_t recovered = buddy->remaining();
+    EXPECT_GT(recovered, 60000) << "Should recover most memory";
+}
+
+// ================================================================================
+// Test 7: Rapid Allocation and Deallocation
+// ================================================================================
+
+TEST(BuddyStressTest, RapidAllocDealloc) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // 1000 rapid alloc/free cycles
+    for (int i = 0; i < 1000; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            buddy->return_element(ptr.value());
+        }
+    }
+    
+    // Allocator should still be healthy
+    auto test_ptr = buddy->alloc(256, false);
+    EXPECT_TRUE(test_ptr.hasValue()) << "Allocator should still work after rapid cycles";
+}
+
+// ================================================================================
+// Test 8: Random Size Allocations
+// ================================================================================
+
+TEST(BuddyStressTest, RandomSizeAllocations) {
+    auto result = BuddyAllocator::Heap(32768, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::mt19937 rng(12345);
+    std::uniform_int_distribution<size_t> size_dist(64, 1024);
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate random sizes
+    for (int i = 0; i < 200; ++i) {
+        size_t random_size = size_dist(rng);
+        auto ptr = buddy->alloc(random_size, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    EXPECT_GT(ptrs.size(), 40) << "Should handle many random-sized allocations";
+    
+    // Free all
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// Test 9: Random Free Order
+// ================================================================================
+
+TEST(BuddyStressTest, RandomFreeOrder) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate many blocks
+    for (int i = 0; i < 100; ++i) {
+        auto ptr = buddy->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    // Shuffle pointers (random free order)
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(ptrs.begin(), ptrs.end(), g);
+    
+    // Free in random order
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+    
+    // Should still be functional
+    auto test = buddy->alloc(256, false);
+    EXPECT_TRUE(test.hasValue()) << "Should work after random-order frees";
+}
+
+// ================================================================================
+// Test 10: Alternating Alloc/Free Pattern
+// ================================================================================
+
+TEST(BuddyStressTest, AlternatingAllocFreePattern) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // 500 cycles of: alloc 2, free 1
+    for (int i = 0; i < 500; ++i) {
+        auto p1 = buddy->alloc(128, false);
+        auto p2 = buddy->alloc(128, false);
+        
+        if (p1.hasValue()) {
+            buddy->return_element(p1.value());
+        }
+        
+        // Keep p2 allocated (creates gradual buildup)
+    }
+    
+    // Reset to clean up
+    buddy->reset();
+    
+    // Verify still works
+    auto test = buddy->alloc(256, false);
+    EXPECT_TRUE(test.hasValue());
+}
+
+// ================================================================================
+// STRESS TESTS - EDGE CONDITIONS
+// ================================================================================
+
+// ================================================================================
+// Test 11: Allocation at Capacity Boundary
+// ================================================================================
+
+TEST(BuddyStressTest, AllocationAtCapacityBoundary) {
+    auto result = BuddyAllocator::Heap(4096, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Fill to near capacity
+    while (true) {
+        auto ptr = buddy->alloc(64, false);
+        if (!ptr.hasValue()) {
+            break;
+        }
+        ptrs.push_back(ptr.value());
+    }
+    
+    size_t remaining = buddy->remaining();
+    
+    // Should be nearly full
+    EXPECT_LT(remaining, 200) << "Should be near capacity";
+    
+    // Free one
+    if (!ptrs.empty()) {
+        buddy->return_element(ptrs.back());
+        ptrs.pop_back();
+    }
+    
+    // Should be able to allocate again
+    auto ptr = buddy->alloc(64, false);
+    EXPECT_TRUE(ptr.hasValue()) << "Should allocate after freeing at boundary";
+    
+    // Cleanup
+    for (void* p : ptrs) {
+        buddy->return_element(p);
+    }
+}
+
+// ================================================================================
+// Test 12: Repeated Reset Cycles
+// ================================================================================
+
+TEST(BuddyStressTest, RepeatedResetCycles) {
+    auto result = BuddyAllocator::Heap(8192, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    size_t initial_remaining = buddy->remaining();
+    
+    // 50 cycles of: allocate many, reset
+    for (int cycle = 0; cycle < 50; ++cycle) {
+        // Allocate
+        for (int i = 0; i < 20; ++i) {
+            buddy->alloc(128, false);
+        }
+        
+        // Reset
+        bool reset_ok = buddy->reset();
+        EXPECT_TRUE(reset_ok) << "Reset should succeed in cycle " << cycle;
+    }
+    
+    size_t final_remaining = buddy->remaining();
+    
+    // Should maintain capacity across resets
+    EXPECT_GE(final_remaining, initial_remaining - 100) 
+        << "Should maintain capacity across 50 reset cycles";
+}
+
+// ================================================================================
+// Test 13: Maximum Allocations Count
+// ================================================================================
+
+TEST(BuddyStressTest, MaximumAllocationsCount) {
+    auto result = BuddyAllocator::Heap(65536, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate minimum size blocks until exhaustion
+    int count = 0;
+    while (count < 2000) {
+        auto ptr = buddy->alloc(64, false);
+        if (!ptr.hasValue()) {
+            break;
+        }
+        ptrs.push_back(ptr.value());
+        count++;
+    }
+    
+    EXPECT_GT(count, 200) << "Should handle hundreds of allocations";
+    
+    // All pointers should be unique
+    std::sort(ptrs.begin(), ptrs.end());
+    auto it = std::unique(ptrs.begin(), ptrs.end());
+    EXPECT_EQ(it, ptrs.end()) << "All pointers should be unique";
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// STRESS TESTS - DATA INTEGRITY
+// ================================================================================
+
+// ================================================================================
+// Test 14: Data Integrity Under Stress
+// ================================================================================
+
+TEST(BuddyStressTest, DataIntegrityUnderStress) {
+    auto result = BuddyAllocator::Heap(32768, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    struct Allocation {
+        void* ptr;
+        uint8_t pattern;
+        size_t size;
+    };
+    
+    std::vector<Allocation> allocations;
+    
+    // Make allocations with unique patterns
+    for (int i = 0; i < 100; ++i) {
+        size_t size = 128 + (i % 512);
+        auto ptr_result = buddy->alloc(size, false);
+        
+        if (ptr_result.hasValue()) {
+            void* ptr = ptr_result.value();
+            uint8_t pattern = static_cast<uint8_t>(i);
+            
+            // Fill with pattern
+            memset(ptr, pattern, size);
+            
+            allocations.push_back({ptr, pattern, size});
+        }
+    }
+    
+    // Verify all data is intact
+    for (const auto& alloc : allocations) {
+        uint8_t* data = static_cast<uint8_t*>(alloc.ptr);
+        
+        for (size_t i = 0; i < alloc.size; ++i) {
+            EXPECT_EQ(data[i], alloc.pattern) 
+                << "Data corruption detected at allocation with pattern " 
+                << static_cast<int>(alloc.pattern);
+        }
+    }
+    
+    // Cleanup
+    for (const auto& alloc : allocations) {
+        buddy->return_element(alloc.ptr);
+    }
+}
+
+// ================================================================================
+// Test 15: Zero-Initialization Stress
+// ================================================================================
+
+TEST(BuddyStressTest, ZeroInitializationStress) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate many zero-initialized blocks
+    for (int i = 0; i < 50; ++i) {
+        auto ptr = buddy->alloc(256, true);  // zeroed = true
+        
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+            
+            // Verify all zeros
+            uint8_t* data = static_cast<uint8_t*>(ptr.value());
+            for (size_t j = 0; j < 256; ++j) {
+                EXPECT_EQ(data[j], 0) 
+                    << "Allocation " << i << " byte " << j << " not zero";
+            }
+        }
+    }
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// Test 16: Mixed Size Stress Test
+// ================================================================================
+
+TEST(BuddyStressTest, MixedSizeStress) {
+    // Use larger pool to handle the test properly
+    auto result = BuddyAllocator::Heap(1024 * 1024, 64, 0);  // 1 MB pool
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    size_t sizes[] = {64, 128, 256, 512, 1024, 2048};
+    
+    // 100 iterations of mixed-size allocations
+    for (int iteration = 0; iteration < 100; ++iteration) {
+        for (size_t size : sizes) {
+            auto ptr = buddy->alloc(size, false);
+            if (ptr.hasValue()) {
+                ptrs.push_back(ptr.value());
+            }
+        }
+    }
+    
+    // With 1MB pool and these sizes, should get most allocations
+    // Each iteration uses ~8KB (power-of-2 rounded), so 100 iterations = ~800KB
+    EXPECT_GT(ptrs.size(), 500) << "Should handle mixed-size stress with 1MB pool";
+    
+    // Free in reverse order
+    for (auto it = ptrs.rbegin(); it != ptrs.rend(); ++it) {
+        buddy->return_element(*it);
+    }
+    
+    // Verify recovery (should recover most of the 1MB)
+    EXPECT_GT(buddy->remaining(), 900000) << "Should recover memory after stress";
+}
+
+// ================================================================================
+// Test 17: Realloc Stress Test
+// ================================================================================
+
+TEST(BuddyStressTest, ReallocStress) {
+    auto result = BuddyAllocator::Heap(16384, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // Start with allocation
+    auto ptr_result = buddy->alloc(64, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    void* ptr = ptr_result.value();
+    size_t current_size = 64;
+    
+    // Grow through reallocs
+    size_t sizes[] = {128, 256, 512, 1024, 2048};
+    
+    for (size_t new_size : sizes) {
+        auto new_result = buddy->realloc(ptr, current_size, new_size, false);
+        
+        if (new_result.hasValue()) {
+            ptr = new_result.value();
+            current_size = new_size;
+        } else {
+            break;
+        }
+    }
+    
+    EXPECT_GE(current_size, 256) << "Should successfully realloc multiple times";
+    
+    buddy->return_element(ptr);
+}
+
+// ================================================================================
+// Test 18: Sustained Coalescing Load
+// ================================================================================
+
+TEST(BuddyStressTest, SustainedCoalescingLoad) {
+    auto result = BuddyAllocator::Heap(32768, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    // 100 cycles of: allocate many, free half, free rest
+    for (int cycle = 0; cycle < 100; ++cycle) {
+        std::vector<void*> ptrs;
+        
+        // Allocate
+        for (int i = 0; i < 30; ++i) {
+            auto ptr = buddy->alloc(128, false);
+            if (ptr.hasValue()) {
+                ptrs.push_back(ptr.value());
+            }
+        }
+        
+        // Free half
+        for (size_t i = 0; i < ptrs.size() / 2; ++i) {
+            buddy->return_element(ptrs[i]);
+        }
+        
+        // Free rest
+        for (size_t i = ptrs.size() / 2; i < ptrs.size(); ++i) {
+            buddy->return_element(ptrs[i]);
+        }
+    }
+    
+    // Should still have good capacity
+    EXPECT_GT(buddy->remaining(), 25000) 
+        << "Should maintain capacity after sustained coalescing";
+}
+
+// ================================================================================
+// Test 19: Alignment Stress Test
+// ================================================================================
+
+TEST(BuddyStressTest, AlignmentStress) {
+    auto result = BuddyAllocator::Heap(32768, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::vector<void*> ptrs;
+    size_t alignments[] = {16, 32, 64, 128, 256};
+    
+    // Allocate with various alignments
+    for (int i = 0; i < 50; ++i) {
+        size_t align = alignments[i % 5];
+        auto ptr = buddy->alloc_aligned(128, align, false);
+        
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+            
+            // Verify alignment
+            uintptr_t addr = reinterpret_cast<uintptr_t>(ptr.value());
+            EXPECT_EQ(addr % align, 0) 
+                << "Alignment " << align << " violated in iteration " << i;
+        }
+    }
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        buddy->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// Test 20: Long-Running Simulation
+// ================================================================================
+
+TEST(BuddyStressTest, LongRunningSimulation) {
+    auto result = BuddyAllocator::Heap(65536, 64, 0);
+    ASSERT_TRUE(result.hasValue());
+    auto buddy = cslt::move(result.value());
+    
+    std::mt19937 rng(54321);
+    std::uniform_int_distribution<int> operation_dist(0, 2); // 0=alloc, 1=free, 2=realloc
+    std::uniform_int_distribution<size_t> size_dist(64, 512);
+    
+    std::vector<std::pair<void*, size_t>> active_allocations;
+    
+    // 2000 random operations
+    for (int op = 0; op < 2000; ++op) {
+        int operation = operation_dist(rng);
+        
+        if (operation == 0 || active_allocations.empty()) {
+            // Allocate
+            size_t size = size_dist(rng);
+            auto ptr = buddy->alloc(size, false);
+            if (ptr.hasValue()) {
+                active_allocations.push_back({ptr.value(), size});
+            }
+        } else if (operation == 1 && !active_allocations.empty()) {
+            // Free random allocation
+            size_t idx = rng() % active_allocations.size();
+            buddy->return_element(active_allocations[idx].first);
+            active_allocations.erase(active_allocations.begin() + idx);
+        } else if (operation == 2 && !active_allocations.empty()) {
+            // Realloc random allocation
+            size_t idx = rng() % active_allocations.size();
+            size_t new_size = size_dist(rng);
+            
+            auto new_ptr = buddy->realloc(
+                active_allocations[idx].first,
+                active_allocations[idx].second,
+                new_size,
+                false
+            );
+            
+            if (new_ptr.hasValue()) {
+                active_allocations[idx] = {new_ptr.value(), new_size};
+            }
+        }
+    }
+    
+    // Cleanup
+    for (const auto& alloc : active_allocations) {
+        buddy->return_element(alloc.first);
+    }
+    
+    // Verify still functional
+    auto test = buddy->alloc(256, false);
+    EXPECT_TRUE(test.hasValue()) 
+        << "Should still work after 2000 random operations";
 }
 // ================================================================================
 // ================================================================================

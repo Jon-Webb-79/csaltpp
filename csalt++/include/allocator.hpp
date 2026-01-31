@@ -5293,6 +5293,164 @@ namespace cslt {
         }
     }
 // ================================================================================ 
+// ================================================================================ 
+
+    class BuddyAllocator;
+
+    struct BuddyDeleter {
+        void operator()(BuddyAllocator* buddy) const noexcept;
+    };
+// ================================================================================ 
+
+    class BuddyAllocator : public Allocator {
+    private:
+        struct BuddyBlock {
+            BuddyBlock* next;    ///< Next block in free list
+        };
+
+        struct BuddyHeader {
+            uint32_t order;       ///< log2(block_size)
+            size_t   block_offset; ///< Offset from pool base
+        };
+
+        // Member variables
+        void*         base_;           ///< OS-backed memory pool
+        BuddyBlock**  free_lists_;     ///< Array of free lists by level
+        size_t        pool_size_;      ///< Total pool size (power of 2)
+        size_t        base_align_;     ///< Minimum alignment guarantee
+        size_t        user_offset_;    ///< Offset from block to user pointer
+        uint32_t      min_order_;      ///< log2(min_block_size)
+        uint32_t      max_order_;      ///< log2(pool_size)
+        uint32_t      num_levels_;     ///< Number of free list levels
+
+        // Private constructor (use factory methods)
+        BuddyAllocator();
+
+        // Helper methods
+        static uint32_t ilog2(size_t x);
+// -------------------------------------------------------------------------------- 
+
+        static size_t next_pow2(size_t x);
+// -------------------------------------------------------------------------------- 
+
+        uint32_t order_to_level(uint32_t order) const;
+// -------------------------------------------------------------------------------- 
+
+        uint32_t level_to_order(uint32_t level) const;
+// -------------------------------------------------------------------------------- 
+
+        int32_t find_nonempty_level(uint32_t desired_level) const;
+// -------------------------------------------------------------------------------- 
+
+        void freelist_push(BuddyBlock** head, BuddyBlock* block);
+// -------------------------------------------------------------------------------- 
+
+        bool freelist_remove(BuddyBlock** head, BuddyBlock* block);
+// -------------------------------------------------------------------------------- 
+
+        BuddyBlock* freelist_find(BuddyBlock* head, void* addr) const;
+// -------------------------------------------------------------------------------- 
+
+        static void* os_alloc(size_t size);
+// -------------------------------------------------------------------------------- 
+
+        static void os_free(void* ptr, size_t size);
+// ================================================================================ 
+
+    public:
+        // Destructor
+        ~BuddyAllocator() noexcept override;
+// -------------------------------------------------------------------------------- 
+
+        BuddyAllocator(const BuddyAllocator&) = delete;
+        BuddyAllocator& operator=(const BuddyAllocator&) = delete;
+        BuddyAllocator(BuddyAllocator&&) = delete;
+        BuddyAllocator& operator=(BuddyAllocator&&) = delete;
+// -------------------------------------------------------------------------------- 
+
+        static Expected<UniquePtr<BuddyAllocator, BuddyDeleter>>
+        Heap(size_t pool_size,
+             size_t min_block_size,
+             size_t base_align = 0);
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> alloc(size_t bytes, bool zeroed) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> alloc_aligned(size_t bytes, size_t alignment, bool zeroed) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes,
+                                     size_t alignment, bool zeroed) override;
+// -------------------------------------------------------------------------------- 
+
+        void return_element(void* ptr, size_t bytes = 0, size_t alignment = 0) override;
+// -------------------------------------------------------------------------------- 
+
+        bool reset(bool trim = false) override;
+// -------------------------------------------------------------------------------- 
+
+        bool is_ptr(void* ptr) const override;
+// -------------------------------------------------------------------------------- 
+
+        bool is_ptr_sized(void* ptr, size_t bytes) const override;
+// -------------------------------------------------------------------------------- 
+
+        bool stats(char* buffer, size_t buffer_size) const override;
+// -------------------------------------------------------------------------------- 
+
+        size_t remaining() const noexcept override;
+// -------------------------------------------------------------------------------- 
+
+        void* save() const override { return nullptr; }
+// -------------------------------------------------------------------------------- 
+
+        bool restore(void* checkpoint) override {
+            (void)checkpoint;
+            return false;
+        }
+// -------------------------------------------------------------------------------- 
+
+        size_t largest_block() const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        size_t min_block_size() const noexcept {
+            return (size_t)1 << min_order_;
+        }
+// -------------------------------------------------------------------------------- 
+
+        size_t max_block_size() const noexcept {
+            return (size_t)1 << max_order_;
+        }
+
+        friend struct BuddyDeleter;
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    inline void BuddyDeleter::operator()(BuddyAllocator* buddy) const noexcept {
+        if (!buddy) return;
+        
+        // Free OS-backed memory pool
+        if (buddy->base_ && buddy->pool_size_) {
+            BuddyAllocator::os_free(buddy->base_, buddy->pool_size_);
+        }
+        
+        // Free free-lists array
+        if (buddy->free_lists_) {
+            delete[] buddy->free_lists_;
+        }
+        
+        // Call destructor
+        buddy->~BuddyAllocator();
+        
+        // Free the BuddyAllocator structure itself
+        ::operator delete(buddy);
+    }
+// ================================================================================ 
 // ================================================================================
 } /* cslt namespace */
 // ================================================================================ 

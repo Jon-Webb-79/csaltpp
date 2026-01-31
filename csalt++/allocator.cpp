@@ -3164,6 +3164,1052 @@ namespace cslt {
     }
 // ================================================================================ 
 // ================================================================================ 
+
+// Platform-specific includes
+#ifdef _WIN32
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
+#else
+    #include <sys/mman.h>
+    #include <unistd.h>
+#endif
+
+// ================================================================================
+// OS Memory Allocation (Platform-Specific)
+// ================================================================================
+
+#ifdef _WIN32
+    void* BuddyAllocator::os_alloc(size_t size) {
+        return VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
+    }
+// -------------------------------------------------------------------------------- 
+
+    void BuddyAllocator::os_free(void* ptr, size_t size) {
+        (void)size;
+        if (ptr) {
+            VirtualFree(ptr, 0, MEM_RELEASE);
+        }
+    }
+#else
+// -------------------------------------------------------------------------------- 
+
+    void* BuddyAllocator::os_alloc(size_t size) {
+        void* p = mmap(NULL, size, PROT_READ | PROT_WRITE,
+                       MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
+        return (p == MAP_FAILED) ? nullptr : p;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void BuddyAllocator::os_free(void* ptr, size_t size) {
+        if (ptr && size) {
+            munmap(ptr, size);
+        }
+    }
+#endif
+// ================================================================================
+// Helper Functions
+// ================================================================================
+
+    uint32_t BuddyAllocator::ilog2(size_t x) {
+        uint32_t r = 0;
+        while (x > 1) {
+            x >>= 1;
+            r++;
+        }
+        return r;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t BuddyAllocator::next_pow2(size_t x) {
+        if (x == 0) return 0;
+        if ((x & (x - 1)) == 0) return x;  // Already power of 2
+        
+        // Find position of highest set bit
+        size_t power = 1;
+        while (power < x) {
+            if (power > SIZE_MAX / 2) return 0;  // Overflow
+            power <<= 1;
+        }
+        return power;
+    }
+// -------------------------------------------------------------------------------- 
+
+    uint32_t BuddyAllocator::order_to_level(uint32_t order) const {
+        return order - min_order_;
+    }
+// -------------------------------------------------------------------------------- 
+
+    uint32_t BuddyAllocator::level_to_order(uint32_t level) const {
+        return min_order_ + level;
+    }
+// -------------------------------------------------------------------------------- 
+
+    int32_t BuddyAllocator::find_nonempty_level(uint32_t desired_level) const {
+        for (uint32_t lvl = desired_level; lvl < num_levels_; ++lvl) {
+            if (free_lists_[lvl] != nullptr) {
+                return static_cast<int32_t>(lvl);
+            }
+        }
+        return -1;  // None available
+    }
+// -------------------------------------------------------------------------------- 
+
+    void BuddyAllocator::freelist_push(BuddyBlock** head, BuddyBlock* block) {
+        block->next = *head;
+        *head = block;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool BuddyAllocator::freelist_remove(BuddyBlock** head, BuddyBlock* block) {
+        BuddyBlock* prev = nullptr;
+        BuddyBlock* cur = *head;
+        
+        while (cur) {
+            if (cur == block) {
+                if (prev) {
+                    prev->next = cur->next;
+                } else {
+                    *head = cur->next;
+                }
+                return true;
+            }
+            prev = cur;
+            cur = cur->next;
+        }
+        return false;
+    }
+// -------------------------------------------------------------------------------- 
+
+    BuddyAllocator::BuddyBlock* BuddyAllocator::freelist_find(BuddyBlock* head, void* addr) const {
+        while (head) {
+            if (static_cast<void*>(head) == addr) {
+                return head;
+            }
+            head = head->next;
+        }
+        return nullptr;
+    }
+// ================================================================================
+// Constructor/Destructor
+// ================================================================================
+
+    BuddyAllocator::BuddyAllocator()
+        : base_(nullptr)
+        , free_lists_(nullptr)
+        , pool_size_(0)
+        , base_align_(0)
+        , user_offset_(0)
+        , min_order_(0)
+        , max_order_(0)
+        , num_levels_(0)
+    {
+    }
+// -------------------------------------------------------------------------------- 
+
+    BuddyAllocator::~BuddyAllocator() noexcept {
+        // Cleanup is handled by BuddyDeleter
+    }
+// ================================================================================
+// Factory Method: Heap
+// ================================================================================
+
+    Expected<UniquePtr<BuddyAllocator, BuddyDeleter>>
+    BuddyAllocator::Heap(size_t pool_size,
+                         size_t min_block_size,
+                         size_t base_align) {
+        Expected<UniquePtr<BuddyAllocator, BuddyDeleter>> result;
+        
+        // Validate inputs
+        if (pool_size == 0 || min_block_size == 0) {
+            result.setError(ArgumentError("Pool size and min block size must be non-zero"));
+            return result;
+        }
+        
+        // Allocate BuddyAllocator structure
+        void* mem = ::operator new(sizeof(BuddyAllocator), std::nothrow);
+        if (!mem) {
+            result.setError(MemoryError("Failed to allocate BuddyAllocator structure"));
+            return result;
+        }
+        
+        BuddyAllocator* buddy = new (mem) BuddyAllocator();
+        
+        // Normalize base alignment
+        if (base_align == 0) {
+            base_align = alignof(max_align_t);
+        }
+        
+        // Round up to power of 2
+        if ((base_align & (base_align - 1)) != 0) {
+            size_t next = next_pow2(base_align);
+            if (next == 0) {
+                buddy->~BuddyAllocator();
+                ::operator delete(mem);
+                result.setError(CapacityOverflowError("Alignment too large"));
+                return result;
+            }
+            base_align = next;
+        }
+        
+        // Validate alignment
+        if (base_align == 0 || (base_align & (base_align - 1)) != 0) {
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(AlignmentError("Invalid alignment"));
+            return result;
+        }
+        
+        // Compute header-aligned user offset
+        size_t header_size = sizeof(BuddyHeader);
+        
+        // Overflow guard
+        if (header_size > SIZE_MAX - (base_align - 1)) {
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(CapacityOverflowError("User offset calculation overflow"));
+            return result;
+        }
+        
+        size_t user_offset = (header_size + (base_align - 1)) & ~(base_align - 1);
+        
+        // Ensure min_block_size can hold header + alignment
+        if (min_block_size < user_offset) {
+            min_block_size = user_offset;
+        }
+        
+        // Round sizes up to powers of two
+        size_t min_blk = next_pow2(min_block_size);
+        if (min_blk == 0) {
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(CapacityOverflowError("Min block size too large"));
+            return result;
+        }
+        
+        size_t pool = next_pow2(pool_size);
+        if (pool == 0) {
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(CapacityOverflowError("Pool size too large"));
+            return result;
+        }
+        
+        // Validate min block <= pool
+        if (min_blk > pool) {
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(ArgumentError("Min block size exceeds pool size"));
+            return result;
+        }
+        
+        uint32_t min_order = ilog2(min_blk);
+        uint32_t max_order = ilog2(pool);
+        uint32_t num_levels = (max_order - min_order) + 1;
+        
+        if (num_levels == 0) {
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(ArgumentError("Invalid order range"));
+            return result;
+        }
+        
+        // Allocate backing pool from OS
+        void* base = os_alloc(pool);
+        if (!base) {
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(MemoryError("Failed to allocate OS memory pool"));
+            return result;
+        }
+        
+        // Allocate free-lists array
+        BuddyBlock** free_lists = new (std::nothrow) BuddyBlock*[num_levels];
+        if (!free_lists) {
+            os_free(base, pool);
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(MemoryError("Failed to allocate free-lists array"));
+            return result;
+        }
+        
+        // Initialize free-lists to nullptr
+        for (uint32_t i = 0; i < num_levels; ++i) {
+            free_lists[i] = nullptr;
+        }
+        
+        // Populate buddy structure
+        buddy->base_ = base;
+        buddy->pool_size_ = pool;
+        buddy->min_order_ = min_order;
+        buddy->max_order_ = max_order;
+        buddy->num_levels_ = num_levels;
+        buddy->free_lists_ = free_lists;
+        buddy->base_align_ = base_align;
+        buddy->user_offset_ = user_offset;
+        
+        // Base class initialization
+        buddy->default_alignment_ = base_align;
+        buddy->mem_type_ = static_cast<uint8_t>(DYNAMIC);
+        buddy->owns_memory_ = static_cast<uint8_t>(true);
+        buddy->size_ = 0;
+        buddy->alloc_ = pool;
+        
+        // Calculate total_alloc: pool + free_lists + BuddyAllocator struct
+        size_t total = pool;
+        size_t lists_bytes = num_levels * sizeof(BuddyBlock*);
+        
+        // Overflow guards
+        if (total > SIZE_MAX - lists_bytes) {
+            os_free(base, pool);
+            delete[] free_lists;
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(CapacityOverflowError("Total allocation size overflow"));
+            return result;
+        }
+        total += lists_bytes;
+        
+        if (total > SIZE_MAX - sizeof(BuddyAllocator)) {
+            os_free(base, pool);
+            delete[] free_lists;
+            buddy->~BuddyAllocator();
+            ::operator delete(mem);
+            result.setError(CapacityOverflowError("Total allocation size overflow"));
+            return result;
+        }
+        total += sizeof(BuddyAllocator);
+        
+        buddy->total_alloc_ = total;
+        
+        // Seed top free list with one large block
+        BuddyBlock* initial_block = static_cast<BuddyBlock*>(base);
+        initial_block->next = nullptr;
+        
+        uint32_t top_level = buddy->order_to_level(max_order);
+        buddy->free_lists_[top_level] = initial_block;
+        
+        // Create UniquePtr and return
+        UniquePtr<BuddyAllocator, BuddyDeleter> ptr(buddy, BuddyDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> BuddyAllocator::alloc(size_t bytes, bool zeroed) {
+        Expected<void*> result;
+        
+        if (bytes == 0) {
+            result.setError(ArgumentError("Allocation size must be non-zero"));
+            return result;
+        }
+        
+        // Total = user payload + header (guard overflow)
+        if (bytes > SIZE_MAX - sizeof(BuddyHeader)) {
+            result.setError(CapacityOverflowError("Size too large"));
+            return result;
+        }
+        size_t total = bytes + sizeof(BuddyHeader);
+        
+        // Ensure at least min block size
+        size_t min_block = (size_t)1 << min_order_;
+        if (total < min_block) {
+            total = min_block;
+        } else {
+            total = next_pow2(total);
+            if (total == 0) {
+                result.setError(CapacityOverflowError("Size overflow during rounding"));
+                return result;
+            }
+        }
+        
+        // Request cannot exceed pool
+        if (total > pool_size_) {
+            result.setError(MemoryError("Request exceeds pool capacity"));
+            return result;
+        }
+        
+        // Compute order for total (defensive clamp)
+        uint32_t order = ilog2(total);
+        if (order < min_order_) order = min_order_;
+        if (order > max_order_) {
+            result.setError(MemoryError("Request too large"));
+            return result;
+        }
+        
+        // Find a free block
+        uint32_t desired_level = order_to_level(order);
+        int32_t lvl = find_nonempty_level(desired_level);
+        if (lvl < 0) {
+            result.setError(MemoryError("No free blocks available"));
+            return result;
+        }
+        
+        // Pop a block from level 'lvl'
+        BuddyBlock* block = free_lists_[lvl];
+        free_lists_[lvl] = block->next;
+        block->next = nullptr;
+        
+        uint32_t current_order = level_to_order(static_cast<uint32_t>(lvl));
+        size_t current_size = (size_t)1 << current_order;
+        
+        // Split down until we reach the desired order
+        while (current_order > order) {
+            current_order--;
+            current_size >>= 1;
+            
+            BuddyBlock* split_block = 
+                reinterpret_cast<BuddyBlock*>(reinterpret_cast<uint8_t*>(block) + current_size);
+            split_block->next = nullptr;
+            
+            uint32_t split_level = order_to_level(current_order);
+            freelist_push(&free_lists_[split_level], split_block);
+        }
+        
+        // Final block is size 2^order
+        uint8_t* block_bytes = reinterpret_cast<uint8_t*>(block);
+        
+        // Write header
+        BuddyHeader* hdr = reinterpret_cast<BuddyHeader*>(block_bytes);
+        hdr->order = order;
+        hdr->block_offset = static_cast<size_t>(block_bytes - static_cast<uint8_t*>(base_));
+        
+        size_t block_size = (size_t)1 << order;
+        
+        // Defensive: ensure accounting cannot overflow
+        if (block_size > SIZE_MAX - size_) {
+            result.setError(CapacityOverflowError("Accounting overflow"));
+            return result;
+        }
+        size_ += block_size;  // Base class accounting
+        
+        // User pointer starts after header
+        uint8_t* user_ptr = block_bytes + sizeof(BuddyHeader);
+        
+        // Zero-initialize if requested
+        if (zeroed) {
+            memset(user_ptr, 0, block_size - sizeof(BuddyHeader));
+        }
+        
+        result.setValue(static_cast<void*>(user_ptr));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> BuddyAllocator::alloc_aligned(size_t bytes, size_t alignment, bool zeroed) {
+        Expected<void*> result;
+        
+        if (bytes == 0) {
+            result.setError(ArgumentError("Allocation size must be non-zero"));
+            return result;
+        }
+        
+        // Normalize alignment: 0 -> natural alignment
+        if (alignment == 0) {
+            alignment = alignof(max_align_t);
+        }
+        
+        // Require power-of-two alignment; round up if needed
+        if ((alignment & (alignment - 1)) != 0) {
+            alignment = next_pow2(alignment);
+            if (alignment == 0) {
+                result.setError(AlignmentError("Alignment too large"));
+                return result;
+            }
+        }
+        
+        // Validate alignment
+        if (alignment == 0) {
+            result.setError(AlignmentError("Invalid alignment"));
+            return result;
+        }
+        
+        // Guard: total = size + header + (align-1)
+        if (bytes > SIZE_MAX - sizeof(BuddyHeader) - (alignment - 1)) {
+            result.setError(CapacityOverflowError("Size too large with alignment"));
+            return result;
+        }
+        
+        size_t total = bytes + sizeof(BuddyHeader) + (alignment - 1);
+        
+        // Ensure at least min block size
+        size_t min_block = (size_t)1 << min_order_;
+        if (total < min_block) {
+            total = min_block;
+        } else {
+            total = next_pow2(total);
+            if (total == 0) {
+                result.setError(CapacityOverflowError("Size overflow during rounding"));
+                return result;
+            }
+        }
+        
+        if (total > pool_size_) {
+            result.setError(MemoryError("Request exceeds pool capacity"));
+            return result;
+        }
+        
+        uint32_t order = ilog2(total);
+        if (order < min_order_) order = min_order_;
+        if (order > max_order_) {
+            result.setError(MemoryError("Request too large"));
+            return result;
+        }
+        
+        // Find a free block
+        uint32_t desired_level = order_to_level(order);
+        int32_t lvl = find_nonempty_level(desired_level);
+        if (lvl < 0) {
+            result.setError(MemoryError("No free blocks available"));
+            return result;
+        }
+        
+        // Take a block from level 'lvl'
+        BuddyBlock* block = free_lists_[lvl];
+        free_lists_[lvl] = block->next;
+        block->next = nullptr;
+        
+        uint32_t current_order = level_to_order(static_cast<uint32_t>(lvl));
+        size_t current_size = (size_t)1 << current_order;
+        
+        // Split down until we reach the desired order
+        while (current_order > order) {
+            current_order--;
+            current_size >>= 1;
+            
+            BuddyBlock* split_block = 
+                reinterpret_cast<BuddyBlock*>(reinterpret_cast<uint8_t*>(block) + current_size);
+            split_block->next = nullptr;
+            
+            uint32_t split_level = order_to_level(current_order);
+            freelist_push(&free_lists_[split_level], split_block);
+        }
+        
+        size_t block_size = (size_t)1 << order;
+        uint8_t* block_bytes = reinterpret_cast<uint8_t*>(block);
+        
+        // Find an aligned user pointer inside this block
+        uintptr_t block_addr = reinterpret_cast<uintptr_t>(block_bytes);
+        
+        // min_user = block_addr + sizeof(header)
+        if (static_cast<uintptr_t>(sizeof(BuddyHeader)) > (UINTPTR_MAX - block_addr)) {
+            // Should never happen; treat as overflow and undo allocation
+            uint32_t lvl_final = order_to_level(order);
+            freelist_push(&free_lists_[lvl_final], block);
+            result.setError(CapacityOverflowError("Pointer arithmetic overflow"));
+            return result;
+        }
+        uintptr_t min_user = block_addr + static_cast<uintptr_t>(sizeof(BuddyHeader));
+        
+        // aligned_user = align_up(min_user, align)
+        uintptr_t aligned_user = (min_user + static_cast<uintptr_t>(alignment - 1)) & 
+                                 ~static_cast<uintptr_t>(alignment - 1);
+        
+        // Ensure aligned_user + size <= block_addr + block_size
+        uintptr_t block_end = block_addr + static_cast<uintptr_t>(block_size);
+        if (static_cast<uintptr_t>(bytes) > (UINTPTR_MAX - aligned_user) || 
+            (aligned_user + static_cast<uintptr_t>(bytes)) > block_end) {
+            // Defensive: return block to free list
+            uint32_t lvl_final = order_to_level(order);
+            freelist_push(&free_lists_[lvl_final], block);
+            result.setError(MemoryError("Insufficient space for alignment"));
+            return result;
+        }
+        
+        uint8_t* user_ptr = reinterpret_cast<uint8_t*>(aligned_user);
+        
+        // Header lives immediately before user_ptr
+        BuddyHeader* hdr = reinterpret_cast<BuddyHeader*>(user_ptr - sizeof(BuddyHeader));
+        hdr->order = order;
+        hdr->block_offset = static_cast<size_t>(block_bytes - static_cast<uint8_t*>(base_));
+        
+        size_ += block_size;  // Base class accounting
+        
+        if (zeroed) {
+            // Zero the usable payload region from user_ptr to end-of-block
+            size_t payload_bytes = static_cast<size_t>((block_bytes + block_size) - user_ptr);
+            memset(user_ptr, 0, payload_bytes);
+        }
+        
+        result.setValue(static_cast<void*>(user_ptr));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> BuddyAllocator::realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed) {
+        Expected<void*> result;
+        
+        // realloc(NULL, n) => alloc(n)
+        if (!ptr) {
+            if (new_bytes == 0) {
+                result.setError(ArgumentError("Cannot realloc NULL to zero size"));
+                return result;
+            }
+            return alloc(new_bytes, zeroed);
+        }
+        
+        // realloc(ptr, 0) => free(ptr), return NULL
+        if (new_bytes == 0) {
+            return_element(ptr, old_bytes);
+            result.setValue(nullptr);
+            return result;
+        }
+        
+        // Caller must provide meaningful old_bytes when ptr != NULL
+        if (old_bytes == 0) {
+            result.setError(ArgumentError("old_bytes must be non-zero when ptr is non-NULL"));
+            return result;
+        }
+        
+        // Determine usable capacity behind old_ptr (based on header order)
+        BuddyHeader* hdr = reinterpret_cast<BuddyHeader*>(
+            static_cast<uint8_t*>(ptr) - sizeof(BuddyHeader));
+        
+        uint32_t order = hdr->order;
+        
+        // Defensive: order must be within allocator range
+        if (order < min_order_ || order > max_order_) {
+            result.setError(ArgumentError("Invalid block header"));
+            return result;
+        }
+        
+        size_t block_size = (size_t)1 << order;
+        if (block_size < sizeof(BuddyHeader)) {
+            result.setError(CapacityOverflowError("Invalid block size"));
+            return result;
+        }
+        
+        size_t usable_old = block_size - sizeof(BuddyHeader);
+        
+        // If it fits, keep same pointer (no shrink; optional zero tail)
+        if (new_bytes <= usable_old) {
+            if (zeroed && new_bytes > old_bytes) {
+                // Clamp old_bytes to usable_old to avoid writing past block
+                size_t logical_old = (old_bytes < usable_old) ? old_bytes : usable_old;
+                size_t extra = new_bytes - logical_old;
+                memset(static_cast<uint8_t*>(ptr) + logical_old, 0, extra);
+            }
+            result.setValue(ptr);
+            return result;
+        }
+        
+        // Need a bigger block
+        Expected<void*> new_expect = alloc(new_bytes, zeroed);
+        if (!new_expect.hasValue()) {
+            // old_ptr remains valid
+            return new_expect;
+        }
+        
+        void* new_ptr = new_expect.value();
+        
+        // Copy min(old_bytes, usable_old) bytes
+        size_t copy_bytes = (old_bytes < usable_old) ? old_bytes : usable_old;
+        memcpy(new_ptr, ptr, copy_bytes);
+        
+        // Return old block
+        return_element(ptr, old_bytes);
+        
+        result.setValue(new_ptr);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> BuddyAllocator::realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes,
+                                                     size_t alignment, bool zeroed) {
+        Expected<void*> result;
+        
+        // realloc(NULL, 0) => success with NULL (no-op)
+        if (!ptr) {
+            if (new_bytes == 0) {
+                result.setValue(nullptr);
+                return result;
+            }
+            return alloc_aligned(new_bytes, alignment, zeroed);
+        }
+        
+        // realloc(p, 0) => free(p), success with NULL
+        if (new_bytes == 0) {
+            return_element(ptr, old_bytes);
+            result.setValue(nullptr);
+            return result;
+        }
+        
+        // Caller claims old_bytes==0 but passed a pointer
+        if (old_bytes == 0) {
+            result.setError(ArgumentError("old_bytes must be non-zero when ptr is non-NULL"));
+            return result;
+        }
+        
+        // Normalize requested alignment: 0 -> natural; non-pow2 -> round up
+        size_t eff_align = (alignment != 0) ? alignment : alignof(max_align_t);
+        if ((eff_align & (eff_align - 1)) != 0) {
+            eff_align = next_pow2(eff_align);
+            if (eff_align == 0) {
+                result.setError(AlignmentError("Alignment too large"));
+                return result;
+            }
+        }
+        
+        // Introspect old block header
+        BuddyHeader* hdr = reinterpret_cast<BuddyHeader*>(
+            static_cast<uint8_t*>(ptr) - sizeof(BuddyHeader));
+        uint32_t order = hdr->order;
+        
+        // Defensive: shifting by >= word bits is UB; sanity-check order
+        if (order > max_order_) {
+            result.setError(ArgumentError("Invalid block header"));
+            return result;
+        }
+        
+        size_t block_size = (size_t)1 << order;
+        
+        // Usable space behind old_ptr
+        if (block_size < sizeof(BuddyHeader)) {
+            result.setError(ArgumentError("Invalid block size"));
+            return result;
+        }
+        size_t usable_old = block_size - sizeof(BuddyHeader);
+        
+        // If it fits and pointer already satisfies requested alignment, reuse
+        if (new_bytes <= usable_old &&
+            ((reinterpret_cast<uintptr_t>(ptr) & (eff_align - 1)) == 0))
+        {
+            if (zeroed && new_bytes > old_bytes) {
+                memset(static_cast<uint8_t*>(ptr) + old_bytes, 0, new_bytes - old_bytes);
+            }
+            result.setValue(ptr);
+            return result;
+        }
+        
+        // Need a new block with (possibly stricter) alignment
+        Expected<void*> new_expect = alloc_aligned(new_bytes, eff_align, zeroed);
+        if (!new_expect.hasValue()) {
+            // Old pointer remains valid; propagate error
+            return new_expect;
+        }
+        
+        void* new_ptr = new_expect.value();
+        
+        // Copy min(logical old size, old usable capacity)
+        size_t copy_bytes = (old_bytes < usable_old) ? old_bytes : usable_old;
+        memcpy(new_ptr, ptr, copy_bytes);
+        
+        return_element(ptr, old_bytes);
+        
+        result.setValue(new_ptr);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void BuddyAllocator::return_element(void* ptr, size_t bytes, size_t alignment) {
+        // bytes and alignment parameters ignored (interface compatibility)
+        (void)bytes;
+        (void)alignment;
+        
+        if (!ptr) {
+            // Like free(NULL): no-op, success
+            return;
+        }
+        
+        uint8_t* user = static_cast<uint8_t*>(ptr);
+        
+        // Header is immediately before the user pointer
+        BuddyHeader* hdr = reinterpret_cast<BuddyHeader*>(user - sizeof(BuddyHeader));
+        
+        uint32_t order = hdr->order;
+        if (order < min_order_ || order > max_order_) {
+            // Invalid header - silent failure
+            return;
+        }
+        
+        size_t block_size = (size_t)1 << order;
+        
+        // Block start is base + block_offset
+        uint8_t* base = static_cast<uint8_t*>(base_);
+        size_t off = hdr->block_offset;
+        if (off + block_size > pool_size_) {
+            // Invalid offset - silent failure
+            return;
+        }
+        
+        BuddyBlock* block = reinterpret_cast<BuddyBlock*>(base + off);
+        
+        if (size_ >= block_size) {
+            size_ -= block_size;  // Base class accounting
+        } else {
+            size_ = 0;
+        }
+        
+        // Coalesce with buddy blocks
+        size_t cur_off = off;
+        uint32_t cur_order = order;
+        
+        while (cur_order < max_order_) {
+            size_t buddy_off = cur_off ^ ((size_t)1 << cur_order);
+            uint8_t* buddy_addr = base + buddy_off;
+            
+            uint32_t lvl = order_to_level(cur_order);
+            
+            BuddyBlock* buddy_in_list = freelist_find(free_lists_[lvl], 
+                                                       static_cast<void*>(buddy_addr));
+            
+            if (!buddy_in_list) {
+                // Buddy not free, stop coalescing
+                break;
+            }
+            
+            // Remove buddy from free list
+            freelist_remove(&free_lists_[lvl], buddy_in_list);
+            
+            // New merged block starts at the lower address
+            if (buddy_off < cur_off) {
+                cur_off = buddy_off;
+                block = reinterpret_cast<BuddyBlock*>(base + cur_off);
+            }
+            
+            cur_order++;
+        }
+        
+        // Insert final (possibly coalesced) block into appropriate free list
+        uint32_t final_level = order_to_level(cur_order);
+        freelist_push(&free_lists_[final_level], block);
+        
+        return;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool BuddyAllocator::reset(bool trim) {
+        // trim parameter ignored for buddy allocators (no resizing)
+        (void)trim;
+        
+        if (!base_ || pool_size_ == 0 || num_levels_ == 0 || max_order_ < min_order_) {
+            return false;
+        }
+        
+        // Clear all free lists
+        for (uint32_t i = 0; i < num_levels_; ++i) {
+            free_lists_[i] = nullptr;
+        }
+        
+        // Single big free block spanning the whole pool
+        BuddyBlock* initial_block = static_cast<BuddyBlock*>(base_);
+        initial_block->next = nullptr;
+        
+        uint32_t top_level = order_to_level(max_order_);
+        free_lists_[top_level] = initial_block;
+        
+        // No bytes "in use" from the pool any more
+        size_ = 0;  // Base class accounting
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool BuddyAllocator::is_ptr(void* ptr) const {
+        if (!ptr) {
+            return false;
+        }
+        
+        const uint8_t* p = static_cast<const uint8_t*>(ptr);
+        const uint8_t* pool_start = static_cast<const uint8_t*>(base_);
+        const uint8_t* pool_end = pool_start + pool_size_;
+        
+        // Step 0: ptr must lie inside the buddy pool's user range
+        if (p < pool_start + sizeof(BuddyHeader) || p >= pool_end) {
+            return false;
+        }
+        
+        // Now it's safe to look at the header
+        const BuddyHeader* hdr = reinterpret_cast<const BuddyHeader*>(p - sizeof(BuddyHeader));
+        
+        // Step 2: order must be valid
+        if (hdr->order < min_order_ || hdr->order > max_order_) {
+            return false;
+        }
+        
+        size_t block_size = (size_t)1 << hdr->order;
+        
+        // Step 3: block_offset must be within pool
+        if (hdr->block_offset + block_size > pool_size_) {
+            return false;
+        }
+        
+        // Step 4: the block must be aligned correctly
+        if (hdr->block_offset & (block_size - 1)) {
+            return false;
+        }
+        
+        // Step 5: user pointer must lie inside the block
+        const uint8_t* block_start = pool_start + hdr->block_offset;
+        const uint8_t* block_end = block_start + block_size;
+        
+        if (p < block_start + sizeof(BuddyHeader) || p >= block_end) {
+            return false;
+        }
+        
+        // Everything checks out
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool BuddyAllocator::is_ptr_sized(void* ptr, size_t bytes) const {
+        if (!is_ptr(ptr)) {
+            return false;
+        }
+        
+        const BuddyHeader* hdr = reinterpret_cast<const BuddyHeader*>(
+            static_cast<const uint8_t*>(ptr) - sizeof(BuddyHeader));
+        
+        size_t block_size = (size_t)1 << hdr->order;
+        size_t usable = block_size - sizeof(BuddyHeader);
+        
+        if (bytes > usable) {
+            return false;
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool BuddyAllocator::stats(char* buffer, size_t buffer_size) const {
+        size_t offset = 0;
+        
+        if (!buffer || buffer_size == 0) {
+            return false;
+        }
+        
+        if (!base_) {
+            if (!_buf_appendf(buffer, buffer_size, &offset, "%s", "Buddy: NULL\n")) {
+                return false;
+            }
+            return true;
+        }
+        
+        // Header
+        if (!_buf_appendf(buffer, buffer_size, &offset, "%s", "Buddy Statistics:\n")) {
+            return false;
+        }
+        
+        // Basic capacity/usage numbers
+        size_t const pool = pool_size_;
+        size_t const used = size_;
+        size_t const remaining = (pool > used) ? (pool - used) : 0;
+        size_t const total_overhead = total_alloc_;
+        
+        size_t const min_block = (size_t)1 << min_order_;
+        size_t const max_block = (size_t)1 << max_order_;
+        size_t const largest = largest_block();
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Pool size: %zu bytes\n", pool)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Min block size: %zu bytes\n", min_block)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Max block size: %zu bytes\n", max_block)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Used: %zu bytes\n", used)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Remaining: %zu bytes\n", remaining)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Total (with overhead): %zu bytes\n", total_overhead)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Largest free block: %zu bytes\n", largest)) {
+            return false;
+        }
+        
+        // Utilization with divide-by-zero guard
+        if (pool == 0) {
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                              "%s", "  Utilization: N/A (pool size is 0)\n")) {
+                return false;
+            }
+        } else {
+            double const util = (100.0 * static_cast<double>(used)) / static_cast<double>(pool);
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                              "  Utilization: %.1f%%\n", util)) {
+                return false;
+            }
+        }
+        
+        // Per-level free list stats
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "%s", "  Free lists by level:\n")) {
+            return false;
+        }
+        
+        size_t total_free_bytes_from_lists = 0;
+        
+        for (uint32_t level = 0; level < num_levels_; ++level) {
+            uint32_t const order = min_order_ + level;
+            size_t const block_size = (size_t)1 << order;
+            
+            size_t count = 0;
+            for (BuddyBlock* blk = free_lists_[level]; blk != nullptr; blk = blk->next) {
+                count++;
+            }
+            
+            size_t level_free_bytes = count * block_size;
+            total_free_bytes_from_lists += level_free_bytes;
+            
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                              "    Level %u (order %u, block %zu bytes): "
+                              "%zu blocks, %zu bytes free\n",
+                              level, order, block_size,
+                              count, level_free_bytes)) {
+                return false;
+            }
+        }
+        
+        // Optional cross-check of free bytes vs remaining
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Free bytes (sum of free lists): %zu bytes\n",
+                          total_free_bytes_from_lists)) {
+            return false;
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t BuddyAllocator::remaining() const noexcept {
+        if (pool_size_ > size_) {
+            return pool_size_ - size_;
+        }
+        return 0;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t BuddyAllocator::largest_block() const noexcept {
+        // Scan from highest order (largest blocks) down to smallest
+        for (int32_t lvl = static_cast<int32_t>(num_levels_) - 1; lvl >= 0; --lvl) {
+            if (free_lists_[lvl] != nullptr) {
+                // This level has at least one free block
+                uint32_t order = min_order_ + static_cast<uint32_t>(lvl);
+                return (size_t)1 << order;
+            }
+        }
+        
+        return 0;
+    }
+// ================================================================================ 
+// ================================================================================ 
 } /* cslt namespace */
 // ================================================================================
 // ================================================================================

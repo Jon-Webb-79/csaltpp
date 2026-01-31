@@ -5302,6 +5302,124 @@ namespace cslt {
     };
 // ================================================================================ 
 
+    /**
+     * @class BuddyAllocator
+     * @brief Binary buddy memory allocator with power-of-two block management
+     * 
+     * @details BuddyAllocator implements the binary buddy memory allocation algorithm,
+     *          which organizes memory into power-of-two sized blocks. When a block is
+     *          freed, it attempts to coalesce (merge) with its "buddy" block to form
+     *          larger free blocks, reducing fragmentation.
+     * 
+     *          All allocations are rounded up to the nearest power-of-two size
+     *          (including a 16-byte header). Memory is obtained directly from the OS
+     *          via mmap() (POSIX) or VirtualAlloc() (Windows). The pool size is fixed
+     *          at creation time.
+     * 
+     *          Two blocks are "buddies" if they have the same size, are adjacent in
+     *          memory, and their combined offset satisfies: offset XOR (2^order).
+     *          When both buddies are free, they merge into a larger block, potentially
+     *          triggering recursive coalescing up the size hierarchy.
+     * 
+     *          Performance: O(log n) for allocation, deallocation, and coalescing,
+     *          where n is the number of size levels. Memory overhead is ~16 bytes per
+     *          allocation for the header.
+     * 
+     * @note BuddyAllocator is not thread-safe. External synchronization required.
+     * @note Pool size is fixed at creation - use reset() to clear or recreate for
+     *       a different size.
+     * @note alloc() does not guarantee custom alignment - use alloc_aligned() for
+     *       specific alignment requirements.
+     * 
+     * @warning Do not mix pointers from different allocators.
+     * @warning All allocations become invalid when BuddyAllocator is destroyed.
+     * 
+     * @par Basic Usage:
+     * @code{.cpp}
+     * // Create a 64KB buddy allocator with 64-byte minimum blocks
+     * auto buddy = BuddyAllocator::Heap(65536, 64, 0).value();
+     * 
+     * // Allocate 256 bytes
+     * auto ptr = buddy->alloc(256, false).value();
+     * 
+     * // Use memory
+     * memset(ptr, 0, 256);
+     * 
+     * // Free (automatic coalescing)
+     * buddy->return_element(ptr);
+     * 
+     * // Allocator destroyed automatically when buddy goes out of scope
+     * @endcode
+     * 
+     * @par Aligned Allocation:
+     * @code{.cpp}
+     * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+     * 
+     * // Allocate 512 bytes with 256-byte alignment, zero-initialized
+     * auto ptr = buddy->alloc_aligned(512, 256, true).value();
+     * 
+     * // Verify alignment
+     * assert(reinterpret_cast<uintptr_t>(ptr) % 256 == 0);
+     * 
+     * // Grow allocation
+     * auto new_ptr = buddy->realloc_aligned(ptr, 512, 1024, 256, false);
+     * if (new_ptr.hasValue()) {
+     *     buddy->return_element(new_ptr.value());
+     * }
+     * @endcode
+     * 
+     * @par Monitoring:
+     * @code{.cpp}
+     * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+     * 
+     * // Make allocations
+     * auto p1 = buddy->alloc(128, false).value();
+     * auto p2 = buddy->alloc(256, false).value();
+     * 
+     * // Query state
+     * size_t used = buddy->size();              // Currently allocated
+     * size_t free = buddy->remaining();         // Available
+     * size_t max = buddy->largest_block();      // Largest contiguous
+     * 
+     * // Detect fragmentation
+     * if (free > max) {
+     *     std::cout << "Fragmented: " << (free - max) << " bytes\n";
+     * }
+     * 
+     * // Generate report
+     * char buffer[2048];
+     * buddy->stats(buffer, sizeof(buffer));
+     * std::cout << buffer;
+     * 
+     * buddy->return_element(p1);
+     * buddy->return_element(p2);
+     * @endcode
+     * 
+     * @par Coalescing:
+     * @code{.cpp}
+     * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+     * 
+     * // Allocate adjacent blocks
+     * auto p1 = buddy->alloc(128, false).value();
+     * auto p2 = buddy->alloc(128, false).value();
+     * auto p3 = buddy->alloc(128, false).value();
+     * 
+     * // Free in order - blocks coalesce automatically
+     * buddy->return_element(p1);
+     * buddy->return_element(p2);
+     * buddy->return_element(p3);
+     * 
+     * // Largest block increased due to coalescing
+     * @endcode
+     * 
+     * @see Heap() Primary factory method
+     * @see alloc() Basic allocation
+     * @see alloc_aligned() Aligned allocation
+     * @see realloc() Resize allocation
+     * @see return_element() Free and coalesce
+     * @see reset() Bulk cleanup
+     * @see stats() Diagnostics
+     */ 
     class BuddyAllocator : public Allocator {
     private:
         struct BuddyBlock {
@@ -5355,10 +5473,35 @@ namespace cslt {
 // -------------------------------------------------------------------------------- 
 
         static void os_free(void* ptr, size_t size);
+// -------------------------------------------------------------------------------- 
+
+        bool ptr_in_pool_(const void* p) const noexcept;
 // ================================================================================ 
 
     public:
-        // Destructor
+        /**
+         * @brief Destructor for BuddyAllocator
+         * 
+         * @details The destructor is intentionally minimal and does NOT free the OS-backed
+         *          memory pool or free-lists array. Cleanup is handled by the custom
+         *          BuddyDeleter when the UniquePtr goes out of scope.
+         * 
+         *          BuddyAllocator instances are always managed via UniquePtr with
+         *          BuddyDeleter, which performs the actual resource cleanup in this order:
+         *          1. Free OS-backed memory pool (via os_free)
+         *          2. Free free-lists array (via delete[])
+         *          3. Call this destructor
+         *          4. Free BuddyAllocator structure (via ::operator delete)
+         * 
+         * @note Users never call this destructor directly. The BuddyDeleter handles all
+         *       cleanup automatically when the UniquePtr is destroyed or reset.
+         * 
+         * @note All outstanding allocations become invalid when the BuddyAllocator is
+         *       destroyed. Accessing freed pointers results in undefined behavior.
+         * 
+         * @see BuddyDeleter Custom deleter that performs resource cleanup
+         * @see Heap() Factory method that creates the UniquePtr with BuddyDeleter
+         */
         ~BuddyAllocator() noexcept override;
 // -------------------------------------------------------------------------------- 
 
@@ -5368,60 +5511,1494 @@ namespace cslt {
         BuddyAllocator& operator=(BuddyAllocator&&) = delete;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Create an OS-backed buddy allocator with specified pool and block sizes
+         * 
+         * @param pool_size Total memory pool size in bytes (will be rounded up to power of 2)
+         * @param min_block_size Minimum allocation block size in bytes (will be rounded up to power of 2)
+         * @param base_align Default alignment for allocations (0 = alignof(max_align_t), will be rounded up to power of 2)
+         * 
+         * @return Expected containing UniquePtr<BuddyAllocator, BuddyDeleter> on success,
+         *         or error on failure
+         * 
+         * @details Creates a buddy allocator with memory obtained directly from the operating
+         *          system via mmap() on POSIX systems or VirtualAlloc() on Windows.
+         * 
+         *          **Initialization Process:**
+         *          1. Validates and normalizes parameters (rounds to powers of 2)
+         *          2. Allocates OS memory pool
+         *          3. Initializes free-list array (one per size level)
+         *          4. Places initial large free block at top level
+         *          5. Returns UniquePtr with BuddyDeleter for automatic cleanup
+         * 
+         *          **Parameter Normalization:**
+         *          - pool_size: Rounded up to next power of 2 (e.g., 5000 → 8192)
+         *          - min_block_size: Rounded up to next power of 2 (e.g., 100 → 128)
+         *          - base_align: Rounded up to next power of 2 (e.g., 48 → 64)
+         *          - min_block_size adjusted to hold header + alignment if needed
+         * 
+         *          **Size Levels:**
+         *          The number of free-list levels is: log2(pool_size) - log2(min_block_size) + 1
+         *          Example: pool=4096, min=64 → log2(4096) - log2(64) + 1 = 12 - 6 + 1 = 7 levels
+         * 
+         *          **Memory Overhead:**
+         *          - OS pool: pool_size bytes
+         *          - Free-lists array: num_levels * sizeof(void*)
+         *          - BuddyAllocator structure: ~128 bytes
+         * 
+         * @throws ArgumentError If pool_size or min_block_size is zero
+         * @throws ArgumentError If min_block_size > pool_size (after rounding)
+         * @throws AlignmentError If base_align is invalid after normalization
+         * @throws MemoryError If OS memory allocation fails
+         * @throws CapacityOverflowError If arithmetic overflow occurs during initialization
+         * 
+         * @note The returned allocator is wrapped in a UniquePtr with BuddyDeleter, which
+         *       automatically frees all resources (OS memory, free-lists, structure) when
+         *       the UniquePtr is destroyed.
+         * 
+         * @note The pool size is fixed for the lifetime of the allocator. It cannot be
+         *       resized. Use reset() to clear allocations or destroy and recreate for a
+         *       different size.
+         * 
+         * @note base_align affects the minimum block size calculation but does NOT guarantee
+         *       that alloc() returns aligned pointers. Use alloc_aligned() for specific
+         *       alignment requirements.
+         * 
+         * @warning All parameters must be representable as size_t. Extremely large values
+         *          may cause overflow errors.
+         * 
+         * @par Basic Example:
+         * @code{.cpp}
+         * // Create 64KB allocator with 64-byte minimum blocks
+         * auto result = BuddyAllocator::Heap(65536, 64, 0);
+         * 
+         * if (!result.hasValue()) {
+         *     std::cerr << "Error: " << result.error().message() << "\n";
+         *     return 1;
+         * }
+         * 
+         * auto buddy = cslt::move(result.value());
+         * 
+         * // Use allocator...
+         * auto ptr = buddy->alloc(256, false);
+         * 
+         * // Automatic cleanup when buddy goes out of scope
+         * @endcode
+         * 
+         * @par Power-of-2 Rounding Example:
+         * @code{.cpp}
+         * // Request non-power-of-2 sizes
+         * auto buddy = BuddyAllocator::Heap(5000, 100, 48).value();
+         * 
+         * // Actual sizes after rounding:
+         * // pool_size: 5000 → 8192 (next power of 2)
+         * // min_block_size: 100 → 128 (next power of 2)
+         * // base_align: 48 → 64 (next power of 2)
+         * 
+         * // Verify actual sizes
+         * size_t min = buddy->min_block_size();  // 128
+         * size_t max = buddy->max_block_size();  // 8192
+         * @endcode
+         * 
+         * @par Error Handling Example:
+         * @code{.cpp}
+         * // Invalid: min_block_size > pool_size
+         * auto result1 = BuddyAllocator::Heap(1024, 4096, 0);
+         * EXPECT_FALSE(result1.hasValue());
+         * 
+         * // Invalid: zero pool size
+         * auto result2 = BuddyAllocator::Heap(0, 64, 0);
+         * EXPECT_FALSE(result2.hasValue());
+         * 
+         * // Invalid: zero min_block_size
+         * auto result3 = BuddyAllocator::Heap(4096, 0, 0);
+         * EXPECT_FALSE(result3.hasValue());
+         * 
+         * // Valid: all parameters will be normalized
+         * auto result4 = BuddyAllocator::Heap(3000, 50, 12);
+         * EXPECT_TRUE(result4.hasValue());
+         * @endcode
+         * 
+         * @par Large Allocator Example:
+         * @code{.cpp}
+         * // Create 16MB allocator with 256-byte minimum blocks
+         * auto buddy = BuddyAllocator::Heap(16 * 1024 * 1024, 256, 0).value();
+         * 
+         * // Can allocate up to ~16MB (minus overhead)
+         * auto large = buddy->alloc(8 * 1024 * 1024, false);
+         * EXPECT_TRUE(large.hasValue());
+         * 
+         * buddy->return_element(large.value());
+         * @endcode
+         * 
+         * @see BuddyDeleter Custom deleter for automatic resource cleanup
+         * @see min_block_size() Query minimum block size
+         * @see max_block_size() Query maximum block size
+         * @see reset() Clear all allocations
+         */
         static Expected<UniquePtr<BuddyAllocator, BuddyDeleter>>
         Heap(size_t pool_size,
              size_t min_block_size,
              size_t base_align = 0);
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Allocate memory from the buddy allocator
+         * 
+         * @param bytes Number of bytes to allocate (must be > 0)
+         * @param zeroed If true, zero-initialize the allocated memory
+         * 
+         * @return Expected containing pointer to allocated memory on success, or error on failure
+         * 
+         * @details Allocates memory using the buddy allocation algorithm. The actual block
+         *          size will be rounded up to the nearest power of 2 that can accommodate
+         *          both the requested bytes and the internal 16-byte BuddyHeader.
+         * 
+         *          **Allocation Process:**
+         *          1. Calculate total size needed: bytes + sizeof(BuddyHeader)
+         *          2. Round to next power of 2 (minimum: min_block_size)
+         *          3. Find free block of appropriate size (or larger)
+         *          4. Split larger blocks if necessary (recursive division by 2)
+         *          5. Place header at block start, return pointer after header
+         *          6. Optionally zero-initialize the user portion
+         * 
+         *          **Block Sizing Example:**
+         *          - Request 100 bytes → 100 + 16 (header) = 116 → rounds to 128 bytes
+         *          - Request 256 bytes → 256 + 16 (header) = 272 → rounds to 512 bytes
+         *          - Request 1000 bytes → 1000 + 16 (header) = 1016 → rounds to 1024 bytes
+         * 
+         *          **Alignment:**
+         *          The returned pointer has natural alignment based on block position in
+         *          the pool. It is NOT guaranteed to match base_align from Heap().
+         *          Use alloc_aligned() for specific alignment requirements.
+         * 
+         *          **Internal Fragmentation:**
+         *          Power-of-2 rounding creates internal fragmentation. A 100-byte request
+         *          wastes ~12 bytes within the 128-byte block (after accounting for header).
+         * 
+         * @note The returned pointer is NOT the start of the block. The block starts
+         *       16 bytes earlier with the BuddyHeader.
+         * 
+         * @note The actual usable space may be larger than requested due to power-of-2
+         *       rounding, but you should only use the requested number of bytes.
+         * 
+         * @throws ArgumentError If bytes is zero
+         * @throws CapacityOverflowError If bytes + header causes arithmetic overflow
+         * @throws MemoryError If no free blocks available or request exceeds pool capacity
+         * 
+         * @par Basic Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * // Allocate 256 bytes (will use 512-byte block: 256 + 16 header → rounds to 512)
+         * auto ptr_result = buddy->alloc(256, false);
+         * 
+         * if (ptr_result.hasValue()) {
+         *     void* ptr = ptr_result.value();
+         *     
+         *     // Use memory
+         *     memset(ptr, 42, 256);
+         *     
+         *     // Free when done
+         *     buddy->return_element(ptr);
+         * } else {
+         *     std::cerr << "Allocation failed: " << ptr_result.error().message() << "\n";
+         * }
+         * @endcode
+         * 
+         * @par Zero-Initialization Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+         * 
+         * // Allocate 512 bytes, zero-initialized
+         * auto ptr = buddy->alloc(512, true).value();
+         * 
+         * // All bytes are guaranteed to be zero
+         * uint8_t* data = static_cast<uint8_t*>(ptr);
+         * assert(data[0] == 0);
+         * assert(data[511] == 0);
+         * 
+         * buddy->return_element(ptr);
+         * @endcode
+         * 
+         * @par Multiple Allocations:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16384, 64, 0).value();
+         * 
+         * std::vector<void*> ptrs;
+         * 
+         * // Allocate until exhaustion
+         * for (int i = 0; i < 100; ++i) {
+         *     auto ptr = buddy->alloc(128, false);
+         *     if (!ptr.hasValue()) {
+         *         break;  // Pool exhausted
+         *     }
+         *     ptrs.push_back(ptr.value());
+         * }
+         * 
+         * std::cout << "Allocated " << ptrs.size() << " blocks\n";
+         * 
+         * // Free all
+         * for (void* ptr : ptrs) {
+         *     buddy->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @see alloc_aligned() Allocation with specific alignment
+         * @see realloc() Resize existing allocation
+         * @see return_element() Free allocated memory
+         * @see largest_block() Check maximum allocatable size
+         */
         Expected<void*> alloc(size_t bytes, bool zeroed) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Allocate aligned memory from the buddy allocator
+         * 
+         * @param bytes Number of bytes to allocate (must be > 0)
+         * @param alignment Required alignment in bytes (0 = alignof(max_align_t), will be rounded up to power of 2)
+         * @param zeroed If true, zero-initialize the allocated memory
+         * 
+         * @return Expected containing pointer to aligned memory on success, or error on failure
+         * 
+         * @details Allocates memory with a specific alignment guarantee. The allocation
+         *          process is similar to alloc(), but allocates a larger block to ensure
+         *          the user pointer can be positioned at the requested alignment.
+         * 
+         *          **Allocation Process:**
+         *          1. Normalize alignment to power of 2 (e.g., 48 → 64)
+         *          2. Calculate total: bytes + header + (alignment - 1) for worst-case padding
+         *          3. Round to next power of 2 (minimum: min_block_size)
+         *          4. Find and allocate block (with splitting if needed)
+         *          5. Find aligned position within block
+         *          6. Place header immediately before aligned position
+         *          7. Return aligned pointer
+         * 
+         *          **Alignment Guarantee:**
+         *          The returned pointer is GUARANTEED to satisfy:
+         *          reinterpret_cast<uintptr_t>(ptr) % alignment == 0
+         * 
+         *          **Block Sizing with Alignment:**
+         *          - Request 256 bytes, 64-byte align → 256 + 16 + 63 = 335 → 512 bytes
+         *          - Request 512 bytes, 256-byte align → 512 + 16 + 255 = 783 → 1024 bytes
+         * 
+         *          **Overhead:**
+         *          Aligned allocations use more memory than alloc() due to:
+         *          - Larger block size to accommodate alignment padding
+         *          - Potential unused space before and after user data
+         * 
+         * @note alignment=0 uses the platform's natural alignment (alignof(max_align_t))
+         * 
+         * @note Non-power-of-2 alignments are automatically rounded up. For example,
+         *       requesting 48-byte alignment will be rounded to 64 bytes.
+         * 
+         * @note The header is placed immediately before the aligned user pointer, NOT
+         *       at the block start (unlike alloc()).
+         * 
+         * @throws ArgumentError If bytes is zero
+         * @throws AlignmentError If alignment is invalid after normalization
+         * @throws CapacityOverflowError If bytes + header + alignment causes overflow
+         * @throws MemoryError If no free blocks available, insufficient space for alignment,
+         *                     or request exceeds pool capacity
+         * 
+         * @par Basic Alignment Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16384, 64, 0).value();
+         * 
+         * // Allocate 512 bytes with 256-byte alignment
+         * auto ptr_result = buddy->alloc_aligned(512, 256, false);
+         * 
+         * if (ptr_result.hasValue()) {
+         *     void* ptr = ptr_result.value();
+         *     
+         *     // Verify alignment
+         *     uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+         *     assert(addr % 256 == 0);
+         *     
+         *     // Use memory
+         *     memcpy(ptr, data, 512);
+         *     
+         *     buddy->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @par SIMD/Cache-Line Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(32768, 64, 0).value();
+         * 
+         * // Allocate for SIMD operations (32-byte alignment)
+         * auto simd_ptr = buddy->alloc_aligned(1024, 32, true).value();
+         * 
+         * // Safe for AVX operations
+         * __m256* vec = reinterpret_cast<__m256*>(simd_ptr);
+         * // ... SIMD code ...
+         * 
+         * // Allocate for cache-line alignment (64 bytes)
+         * auto cache_ptr = buddy->alloc_aligned(2048, 64, false).value();
+         * 
+         * buddy->return_element(simd_ptr);
+         * buddy->return_element(cache_ptr);
+         * @endcode
+         * 
+         * @par Page Alignment Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Allocate page-aligned memory (4096 bytes)
+         * auto page_ptr = buddy->alloc_aligned(8192, 4096, false);
+         * 
+         * if (page_ptr.hasValue()) {
+         *     void* ptr = page_ptr.value();
+         *     
+         *     // Guaranteed page-aligned
+         *     assert(reinterpret_cast<uintptr_t>(ptr) % 4096 == 0);
+         *     
+         *     // Useful for memory mapping, DMA, etc.
+         *     
+         *     buddy->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @par Non-Power-of-2 Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * // Request 48-byte alignment (not power of 2)
+         * auto ptr = buddy->alloc_aligned(256, 48, false).value();
+         * 
+         * // Actual alignment will be 64 (next power of 2)
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+         * assert(addr % 64 == 0);
+         * 
+         * buddy->return_element(ptr);
+         * @endcode
+         * 
+         * @par Zero-Initialization with Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16384, 64, 0).value();
+         * 
+         * // Allocate aligned and zeroed
+         * auto ptr = buddy->alloc_aligned(1024, 128, true).value();
+         * 
+         * // Both alignment AND zero-initialization guaranteed
+         * assert(reinterpret_cast<uintptr_t>(ptr) % 128 == 0);
+         * 
+         * uint8_t* data = static_cast<uint8_t*>(ptr);
+         * for (size_t i = 0; i < 1024; ++i) {
+         *     assert(data[i] == 0);
+         * }
+         * 
+         * buddy->return_element(ptr);
+         * @endcode
+         * 
+         * @see alloc() Basic allocation without alignment guarantee
+         * @see realloc_aligned() Resize with alignment preserved
+         * @see return_element() Free allocated memory
+         */
         Expected<void*> alloc_aligned(size_t bytes, size_t alignment, bool zeroed) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Resize an existing allocation
+         * 
+         * @param ptr Pointer to existing allocation (or nullptr)
+         * @param old_bytes Current size of the allocation in bytes
+         * @param new_bytes Desired new size in bytes
+         * @param zeroed If true, zero-initialize any newly allocated space (when growing)
+         * 
+         * @return Expected containing pointer to resized allocation on success, or error on failure
+         * 
+         * @details Resizes an existing allocation to a new size. The behavior depends on
+         *          whether the allocation is growing, shrinking, or being created/freed.
+         * 
+         *          **Special Cases:**
+         *          - realloc(nullptr, 0, n) → Equivalent to alloc(n)
+         *          - realloc(ptr, old, 0) → Frees ptr, returns nullptr (success)
+         *          - realloc(ptr, 0, n) → Error (old_bytes must be non-zero with valid ptr)
+         * 
+         *          **Shrinking (new_bytes <= current block capacity):**
+         *          - Returns same pointer (no reallocation)
+         *          - Block is NOT split or resized (buddy system doesn't support shrinking)
+         *          - If zeroed=true and new_bytes > old_bytes, zeros the extra space
+         *          - Very fast (O(1)) - no memory movement
+         * 
+         *          **Growing (new_bytes > current block capacity):**
+         *          - Allocates new larger block via alloc()
+         *          - Copies min(old_bytes, usable_old) bytes to new block
+         *          - Frees old block (triggers coalescing)
+         *          - Returns new pointer (old pointer becomes invalid)
+         *          - If new allocation fails, old pointer remains valid
+         * 
+         *          **Block Capacity:**
+         *          The usable capacity of a block is determined by its order (power-of-2 size)
+         *          minus the header. For example, a block with order=8 (256 bytes) has
+         *          240 bytes usable (256 - 16 byte header).
+         * 
+         *          **Data Preservation:**
+         *          When growing, all data from the old allocation is copied to the new one.
+         *          The copy size is min(old_bytes, actual_usable_capacity) to prevent
+         *          reading beyond the old allocation.
+         * 
+         * @note The returned pointer may be different from the input pointer, even when
+         *       shrinking. Always use the returned pointer.
+         * 
+         * @note When growing fails, the old pointer remains valid and unchanged. This
+         *       provides transactional semantics - the operation either succeeds completely
+         *       or leaves the allocation in its original state.
+         * 
+         * @note old_bytes is used to determine how much data to preserve when growing.
+         *       Providing an incorrect value may result in data loss or reading invalid memory.
+         * 
+         * @throws ArgumentError If ptr is non-null but old_bytes is zero
+         * @throws ArgumentError If ptr is nullptr and new_bytes is zero
+         * @throws CapacityOverflowError If new_bytes causes arithmetic overflow
+         * @throws MemoryError If growing and no free blocks available
+         * 
+         * @par Growing Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * // Initial allocation: 128 bytes
+         * auto ptr = buddy->alloc(128, false).value();
+         * memset(ptr, 42, 128);
+         * 
+         * // Grow to 512 bytes
+         * auto new_ptr_result = buddy->realloc(ptr, 128, 512, false);
+         * 
+         * if (new_ptr_result.hasValue()) {
+         *     void* new_ptr = new_ptr_result.value();
+         *     
+         *     // Data preserved (first 128 bytes still contain 42)
+         *     uint8_t* data = static_cast<uint8_t*>(new_ptr);
+         *     assert(data[0] == 42);
+         *     assert(data[127] == 42);
+         *     
+         *     // New space available (bytes 128-511)
+         *     memset(data + 128, 0, 384);
+         *     
+         *     buddy->return_element(new_ptr);
+         * } else {
+         *     // Old pointer still valid on failure
+         *     buddy->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @par Shrinking Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+         * 
+         * // Allocate 512 bytes (gets a power-of-2 block)
+         * auto ptr = buddy->alloc(512, false).value();
+         * 
+         * // Shrink to 256 bytes
+         * auto result = buddy->realloc(ptr, 512, 256, false);
+         * 
+         * // Returns same pointer (no reallocation needed)
+         * assert(result.value() == ptr);
+         * 
+         * // Still using same block, just treating it as smaller
+         * buddy->return_element(result.value());
+         * @endcode
+         * 
+         * @par Realloc from nullptr:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+         * 
+         * void* ptr = nullptr;
+         * 
+         * // Realloc from nullptr acts as alloc
+         * auto result = buddy->realloc(ptr, 0, 256, true);
+         * 
+         * if (result.hasValue()) {
+         *     ptr = result.value();
+         *     
+         *     // Memory is zero-initialized
+         *     uint8_t* data = static_cast<uint8_t*>(ptr);
+         *     assert(data[0] == 0);
+         *     
+         *     buddy->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @par Realloc to Zero (Free):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+         * 
+         * auto ptr = buddy->alloc(256, false).value();
+         * 
+         * // Realloc to zero frees the memory
+         * auto result = buddy->realloc(ptr, 256, 0, false);
+         * 
+         * // Returns nullptr (success), ptr is now invalid
+         * assert(result.hasValue());
+         * assert(result.value() == nullptr);
+         * @endcode
+         * 
+         * @par Growth with Zero-Fill:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * auto ptr = buddy->alloc(128, false).value();
+         * memset(ptr, 'A', 128);
+         * 
+         * // Grow to 512 with zero-fill
+         * auto new_ptr = buddy->realloc(ptr, 128, 512, true).value();
+         * 
+         * uint8_t* data = static_cast<uint8_t*>(new_ptr);
+         * 
+         * // Old data preserved
+         * assert(data[0] == 'A');
+         * assert(data[127] == 'A');
+         * 
+         * // New space zeroed
+         * assert(data[128] == 0);
+         * assert(data[511] == 0);
+         * 
+         * buddy->return_element(new_ptr);
+         * @endcode
+         * 
+         * @see alloc() Initial allocation
+         * @see realloc_aligned() Realloc with alignment preserved
+         * @see return_element() Free memory
+         */
         Expected<void*> realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Resize an existing allocation while preserving alignment
+         * 
+         * @param ptr Pointer to existing allocation (or nullptr)
+         * @param old_bytes Current size of the allocation in bytes
+         * @param new_bytes Desired new size in bytes
+         * @param alignment Required alignment in bytes (0 = alignof(max_align_t), will be rounded up to power of 2)
+         * @param zeroed If true, zero-initialize any newly allocated space (when growing)
+         * 
+         * @return Expected containing pointer to resized aligned allocation on success, or error on failure
+         * 
+         * @details Resizes an existing allocation while maintaining alignment guarantees.
+         *          Behaves similarly to realloc() but with additional alignment handling.
+         * 
+         *          **Special Cases:**
+         *          - realloc_aligned(nullptr, 0, n, a) → Equivalent to alloc_aligned(n, a)
+         *          - realloc_aligned(ptr, old, 0, a) → Frees ptr, returns nullptr (success)
+         *          - realloc_aligned(ptr, 0, n, a) → Error (old_bytes must be non-zero)
+         * 
+         *          **In-Place Reuse (no reallocation):**
+         *          Occurs when ALL of these conditions are met:
+         *          - new_bytes fits in current block capacity
+         *          - ptr already satisfies the requested alignment
+         *          Returns same pointer, very fast (O(1))
+         * 
+         *          **Reallocation Required:**
+         *          Occurs when ANY of these is true:
+         *          - new_bytes exceeds current block capacity
+         *          - ptr doesn't satisfy requested alignment (alignment changed)
+         *          Allocates new block with alloc_aligned(), copies data, frees old block
+         * 
+         *          **Alignment Changes:**
+         *          You can change alignment during realloc. For example, reallocating
+         *          from 32-byte to 64-byte alignment will trigger a new allocation even
+         *          if the size fits in the current block.
+         * 
+         *          **Data Preservation:**
+         *          When reallocating, copies min(old_bytes, actual_usable_capacity) bytes
+         *          to preserve all data from the old allocation.
+         * 
+         * @note alignment is normalized to a power of 2. Requesting 48 will be rounded to 64.
+         * 
+         * @note The returned pointer may be different from the input pointer. Always use
+         *       the returned pointer and consider the old pointer invalid.
+         * 
+         * @note When growing fails, the old pointer remains valid and unchanged.
+         * 
+         * @note Changing alignment (even to a less strict value) may trigger reallocation.
+         * 
+         * @throws ArgumentError If ptr is non-null but old_bytes is zero
+         * @throws AlignmentError If alignment is invalid after normalization
+         * @throws CapacityOverflowError If new_bytes + alignment causes overflow
+         * @throws MemoryError If growing and no free blocks available or insufficient space for alignment
+         * 
+         * @par Growing with Same Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16384, 64, 0).value();
+         * 
+         * // Allocate 256 bytes with 128-byte alignment
+         * auto ptr = buddy->alloc_aligned(256, 128, false).value();
+         * memset(ptr, 'X', 256);
+         * 
+         * // Grow to 1024 bytes, keep 128-byte alignment
+         * auto new_ptr_result = buddy->realloc_aligned(ptr, 256, 1024, 128, false);
+         * 
+         * if (new_ptr_result.hasValue()) {
+         *     void* new_ptr = new_ptr_result.value();
+         *     
+         *     // Alignment preserved
+         *     assert(reinterpret_cast<uintptr_t>(new_ptr) % 128 == 0);
+         *     
+         *     // Data preserved
+         *     uint8_t* data = static_cast<uint8_t*>(new_ptr);
+         *     assert(data[0] == 'X');
+         *     
+         *     buddy->return_element(new_ptr);
+         * }
+         * @endcode
+         * 
+         * @par In-Place Reuse:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * // Allocate with 64-byte alignment (gets larger block for padding)
+         * auto ptr = buddy->alloc_aligned(256, 64, false).value();
+         * 
+         * // Shrink with same alignment
+         * auto result = buddy->realloc_aligned(ptr, 256, 128, 64, false);
+         * 
+         * // Same pointer returned (in-place reuse)
+         * if (result.hasValue()) {
+         *     assert(result.value() == ptr);
+         *     buddy->return_element(result.value());
+         * }
+         * @endcode
+         * 
+         * @par Changing Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16384, 64, 0).value();
+         * 
+         * // Start with 32-byte alignment
+         * auto ptr = buddy->alloc_aligned(512, 32, false).value();
+         * memset(ptr, 'A', 512);
+         * 
+         * // Change to 256-byte alignment (same size)
+         * auto new_ptr = buddy->realloc_aligned(ptr, 512, 512, 256, false).value();
+         * 
+         * // Different pointer (reallocation occurred due to alignment change)
+         * // But data is preserved
+         * uint8_t* data = static_cast<uint8_t*>(new_ptr);
+         * assert(data[0] == 'A');
+         * assert(reinterpret_cast<uintptr_t>(new_ptr) % 256 == 0);
+         * 
+         * buddy->return_element(new_ptr);
+         * @endcode
+         * 
+         * @par Realloc SIMD Buffer:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(32768, 64, 0).value();
+         * 
+         * // Start with AVX alignment (32 bytes)
+         * auto ptr = buddy->alloc_aligned(1024, 32, true).value();
+         * 
+         * // Process data with AVX...
+         * __m256* vec = reinterpret_cast<__m256*>(ptr);
+         * // ... SIMD operations ...
+         * 
+         * // Grow buffer for AVX-512 (64-byte alignment)
+         * auto new_ptr = buddy->realloc_aligned(ptr, 1024, 2048, 64, false).value();
+         * 
+         * // Now suitable for AVX-512
+         * __m512* vec512 = reinterpret_cast<__m512*>(new_ptr);
+         * // ... AVX-512 operations ...
+         * 
+         * buddy->return_element(new_ptr);
+         * @endcode
+         * 
+         * @par Growth with Zero-Fill and Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16384, 64, 0).value();
+         * 
+         * auto ptr = buddy->alloc_aligned(256, 128, false).value();
+         * memset(ptr, 'B', 256);
+         * 
+         * // Grow to 1024 bytes with zero-fill, maintain alignment
+         * auto new_ptr = buddy->realloc_aligned(ptr, 256, 1024, 128, true).value();
+         * 
+         * uint8_t* data = static_cast<uint8_t*>(new_ptr);
+         * 
+         * // Old data preserved
+         * assert(data[0] == 'B');
+         * assert(data[255] == 'B');
+         * 
+         * // New space zeroed (implementation zeros from new_bytes onward in new block)
+         * // Note: Exact zeroing behavior may vary based on block positioning
+         * 
+         * // Alignment maintained
+         * assert(reinterpret_cast<uintptr_t>(new_ptr) % 128 == 0);
+         * 
+         * buddy->return_element(new_ptr);
+         * @endcode
+         * 
+         * @par Realloc from nullptr with Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * void* ptr = nullptr;
+         * 
+         * // Acts as alloc_aligned
+         * auto result = buddy->realloc_aligned(ptr, 0, 512, 256, true);
+         * 
+         * if (result.hasValue()) {
+         *     ptr = result.value();
+         *     
+         *     // Aligned and zeroed
+         *     assert(reinterpret_cast<uintptr_t>(ptr) % 256 == 0);
+         *     
+         *     buddy->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @see alloc_aligned() Initial aligned allocation
+         * @see realloc() Realloc without alignment requirements
+         * @see return_element() Free memory
+         */
         Expected<void*> realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes,
                                      size_t alignment, bool zeroed) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Free an allocated block and trigger buddy coalescing
+         * 
+         * @param ptr Pointer to free (returned from alloc, alloc_aligned, realloc, or realloc_aligned)
+         * @param bytes Ignored (present for interface compatibility)
+         * @param alignment Ignored (present for interface compatibility)
+         * 
+         * @details Frees a previously allocated block and attempts to coalesce (merge) it
+         *          with its buddy block to form larger free blocks. This is the core
+         *          deallocation mechanism of the buddy allocator.
+         * 
+         *          **Deallocation Process:**
+         *          1. Validate pointer is not null (null is silently ignored)
+         *          2. Read BuddyHeader located 16 bytes before the user pointer
+         *          3. Validate header (order within valid range, offset within pool)
+         *          4. Calculate block start from header's block_offset
+         *          5. Update accounting (decrease size_)
+         *          6. Begin coalescing process
+         * 
+         *          **Coalescing Algorithm:**
+         *          The allocator recursively merges blocks with their buddies:
+         *          1. Calculate buddy offset: current_offset XOR (2^current_order)
+         *          2. Check if buddy is in the free list at this level
+         *          3. If buddy is free:
+         *             - Remove buddy from free list
+         *             - Merge with current block (use lower address)
+         *             - Increase order (double the size)
+         *             - Repeat at next level
+         *          4. If buddy is NOT free (still allocated):
+         *             - Stop coalescing
+         *             - Insert current block into appropriate free list
+         * 
+         *          **Coalescing Example:**
+         *          @code
+         *          Pool: 1024 bytes (order 10)
+         *          
+         *          Free block at offset 0, order 7 (128 bytes):
+         *            Buddy at offset: 0 XOR 128 = 128
+         *            If buddy at 128 is free:
+         *              Merge → 256-byte block at offset 0, order 8
+         *              
+         *            New buddy at: 0 XOR 256 = 256
+         *            If buddy at 256 is free:
+         *              Merge → 512-byte block at offset 0, order 9
+         *              
+         *            Continue until buddy not free or reach max_order
+         *          @endcode
+         * 
+         *          **Performance:**
+         *          O(log n) where n is the number of size levels, due to recursive
+         *          coalescing up the buddy tree.
+         * 
+         * @note The bytes and alignment parameters are ignored by BuddyAllocator.
+         *       They exist only for base class interface compatibility. The allocator
+         *       determines block size from the internal header.
+         * 
+         * @note Passing nullptr is safe and does nothing (similar to free(nullptr)).
+         * 
+         * @note Invalid pointers (wrong allocator, already freed, corrupted header)
+         *       are handled silently. The function returns without error but may not
+         *       free the memory correctly.
+         * 
+         * @note Double-free results in undefined behavior. The allocator may detect
+         *       some cases via header validation but cannot catch all scenarios.
+         * 
+         * @note After this call, ptr becomes invalid. Accessing it results in
+         *       undefined behavior.
+         * 
+         * @warning Do not free pointers from a different BuddyAllocator instance.
+         *          Each allocator manages its own distinct pool.
+         * 
+         * @warning Do not modify the memory before the returned pointer. The header
+         *          region must remain intact for proper deallocation.
+         * 
+         * @par Basic Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+         * 
+         * auto ptr = buddy->alloc(256, false).value();
+         * 
+         * // Use memory...
+         * memset(ptr, 0, 256);
+         * 
+         * // Free when done (automatic coalescing)
+         * buddy->return_element(ptr);
+         * 
+         * // ptr is now invalid - do not use!
+         * @endcode
+         * 
+         * @par Coalescing Demonstration:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+         * 
+         * // Allocate three adjacent blocks
+         * auto p1 = buddy->alloc(128, false).value();
+         * auto p2 = buddy->alloc(128, false).value();
+         * auto p3 = buddy->alloc(128, false).value();
+         * 
+         * size_t largest_before = buddy->largest_block();
+         * 
+         * // Free all three - they coalesce into larger block
+         * buddy->return_element(p1);
+         * buddy->return_element(p2);
+         * buddy->return_element(p3);
+         * 
+         * size_t largest_after = buddy->largest_block();
+         * 
+         * // Largest block increased due to coalescing
+         * assert(largest_after > largest_before);
+         * @endcode
+         * 
+         * @par Free Order Doesn't Matter:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * // Allocate four blocks
+         * auto p1 = buddy->alloc(128, false).value();
+         * auto p2 = buddy->alloc(128, false).value();
+         * auto p3 = buddy->alloc(128, false).value();
+         * auto p4 = buddy->alloc(128, false).value();
+         * 
+         * // Free in random order - coalescing still works
+         * buddy->return_element(p3);
+         * buddy->return_element(p1);
+         * buddy->return_element(p4);
+         * buddy->return_element(p2);
+         * 
+         * // All blocks coalesced back
+         * @endcode
+         * 
+         * @par NULL Pointer Handling:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 64, 0).value();
+         * 
+         * void* ptr = nullptr;
+         * 
+         * // Safe - does nothing
+         * buddy->return_element(ptr);
+         * 
+         * // Conditional freeing is safe
+         * auto maybe_ptr = buddy->alloc(256, false);
+         * if (maybe_ptr.hasValue()) {
+         *     ptr = maybe_ptr.value();
+         *     // ... use ptr ...
+         * }
+         * 
+         * // Safe even if allocation failed (ptr is nullptr)
+         * buddy->return_element(ptr);
+         * @endcode
+         * 
+         * @par Fragmentation Reduction:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * // Allocate many blocks (creates fragmentation)
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 30; ++i) {
+         *     auto ptr = buddy->alloc(128, false);
+         *     if (ptr.hasValue()) {
+         *         ptrs.push_back(ptr.value());
+         *     }
+         * }
+         * 
+         * // Free every other block
+         * for (size_t i = 0; i < ptrs.size(); i += 2) {
+         *     buddy->return_element(ptrs[i]);
+         * }
+         * 
+         * size_t fragmented = buddy->largest_block();
+         * 
+         * // Free remaining blocks - coalescing reduces fragmentation
+         * for (size_t i = 1; i < ptrs.size(); i += 2) {
+         *     buddy->return_element(ptrs[i]);
+         * }
+         * 
+         * size_t after_coalesce = buddy->largest_block();
+         * 
+         * // Fragmentation reduced through coalescing
+         * assert(after_coalesce > fragmented);
+         * @endcode
+         * 
+         * @see alloc() Allocate memory
+         * @see alloc_aligned() Allocate aligned memory
+         * @see reset() Bulk deallocation of all blocks
+         * @see largest_block() Check largest free block after coalescing
+         */
         void return_element(void* ptr, size_t bytes = 0, size_t alignment = 0) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Reset allocator to initial state, freeing all allocations
+         * 
+         * @param trim Ignored (present for interface compatibility)
+         * 
+         * @return true on success, false if allocator is not properly initialized
+         * 
+         * @details Resets the buddy allocator to its pristine initial state by clearing
+         *          all free lists and placing a single large free block spanning the
+         *          entire pool at the top level.
+         * 
+         *          **Reset Process:**
+         *          1. Validate allocator is initialized (base, pool_size, num_levels valid)
+         *          2. Clear all free lists (set all levels to nullptr)
+         *          3. Create initial free block at pool base
+         *          4. Place block in top-level free list (max_order)
+         *          5. Reset accounting (size_ = 0)
+         * 
+         *          **Effect:**
+         *          - All previous allocations become invalid
+         *          - Memory pool returns to single large free block
+         *          - All fragmentation eliminated
+         *          - Allocator ready for reuse
+         * 
+         *          **Performance:**
+         *          O(n) where n is the number of free list levels, but typically very fast
+         *          since it just clears an array and sets a few pointers.
+         * 
+         *          **Use Cases:**
+         *          - Bulk cleanup faster than freeing individually
+         *          - Per-frame allocations in game engines
+         *          - Request/response cycle allocations in servers
+         *          - Temporary computation scratch space
+         *          - Test cleanup between test cases
+         * 
+         * @note The trim parameter is ignored by BuddyAllocator. The pool size is fixed
+         *       and cannot be trimmed. The parameter exists for interface compatibility.
+         * 
+         * @note All outstanding pointers become invalid after reset(). Accessing them
+         *       results in undefined behavior.
+         * 
+         * @note The OS-backed memory pool is NOT freed. reset() only clears the internal
+         *       free list structure. To free OS memory, destroy the BuddyAllocator.
+         * 
+         * @note reset() is much faster than individually freeing many allocations,
+         *       especially when there are hundreds or thousands of active allocations.
+         * 
+         * @warning After reset(), ALL pointers obtained from this allocator become invalid.
+         *          Ensure no code will access these pointers after calling reset().
+         * 
+         * @par Basic Reset:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         * 
+         * // Make many allocations
+         * for (int i = 0; i < 50; ++i) {
+         *     buddy->alloc(128, false);
+         * }
+         * 
+         * size_t used_before = buddy->size();
+         * assert(used_before > 0);
+         * 
+         * // Reset to initial state
+         * bool ok = buddy->reset();
+         * assert(ok);
+         * 
+         * // All allocations gone
+         * size_t used_after = buddy->size();
+         * assert(used_after == 0);
+         * 
+         * // Allocator ready for reuse
+         * auto ptr = buddy->alloc(256, false);
+         * assert(ptr.hasValue());
+         * @endcode
+         * 
+         * @par Per-Frame Allocations:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * while (game_running) {
+         *     // Frame start - allocator is clean
+         *     
+         *     // Allocate temporary data for this frame
+         *     auto render_data = buddy->alloc(10000, false).value();
+         *     auto physics_data = buddy->alloc(5000, false).value();
+         *     auto ai_data = buddy->alloc(8000, false).value();
+         *     
+         *     // Process frame...
+         *     render_frame(render_data);
+         *     update_physics(physics_data);
+         *     update_ai(ai_data);
+         *     
+         *     // Frame end - bulk cleanup
+         *     buddy->reset();
+         *     
+         *     // All frame allocations invalidated
+         *     // Ready for next frame
+         * }
+         * @endcode
+         * 
+         * @par Request/Response Cycle:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(256 * 1024, 64, 0).value();
+         * 
+         * void handle_request(const Request& req) {
+         *     // Parse request (may allocate parsing buffers)
+         *     auto parsed = parse_request(buddy, req);
+         *     
+         *     // Process request (may allocate temporary structures)
+         *     auto response = process(buddy, parsed);
+         *     
+         *     // Send response
+         *     send_response(response);
+         *     
+         *     // Cleanup all request-scoped allocations
+         *     buddy->reset();
+         *     
+         *     // Ready for next request
+         * }
+         * @endcode
+         * 
+         * @par Reset vs Individual Frees:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16384, 64, 0).value();
+         * 
+         * std::vector<void*> ptrs;
+         * 
+         * // Allocate 500 blocks
+         * for (int i = 0; i < 500; ++i) {
+         *     auto ptr = buddy->alloc(128, false);
+         *     if (ptr.hasValue()) {
+         *         ptrs.push_back(ptr.value());
+         *     }
+         * }
+         * 
+         * // Option 1: Free individually (slow - 500 operations with coalescing)
+         * // for (void* ptr : ptrs) {
+         * //     buddy->return_element(ptr);
+         * // }
+         * 
+         * // Option 2: Reset (fast - O(levels) operation)
+         * buddy->reset();
+         * 
+         * // reset() is MUCH faster for bulk cleanup
+         * @endcode
+         * 
+         * @par Test Cleanup:
+         * @code{.cpp}
+         * class BuddyTest : public ::testing::Test {
+         * protected:
+         *     UniquePtr<BuddyAllocator, BuddyDeleter> buddy;
+         *     
+         *     void SetUp() override {
+         *         buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         *     }
+         *     
+         *     void TearDown() override {
+         *         // Clean up between tests
+         *         buddy->reset();
+         *     }
+         * };
+         * 
+         * TEST_F(BuddyTest, Test1) {
+         *     auto ptr = buddy->alloc(256, false);
+         *     // Test logic...
+         *     // No need to manually free - TearDown resets
+         * }
+         * 
+         * TEST_F(BuddyTest, Test2) {
+         *     // Starts with clean allocator thanks to reset()
+         *     auto ptr = buddy->alloc(512, false);
+         *     // Test logic...
+         * }
+         * @endcode
+         * 
+         * @par Temporary Computation Space:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(512 * 1024, 64, 0).value();
+         * 
+         * void matrix_multiply(Matrix& result, const Matrix& a, const Matrix& b) {
+         *     // Allocate temporary workspace
+         *     auto temp = buddy->alloc(a.rows * b.cols * sizeof(double), true).value();
+         *     
+         *     // Perform computation using temp buffer
+         *     // ...
+         *     
+         *     // Copy result
+         *     memcpy(result.data, temp, result.size);
+         *     
+         *     // Cleanup all temporary allocations
+         *     buddy->reset();
+         * }
+         * @endcode
+         * 
+         * @see return_element() Free individual allocation
+         * @see size() Check current usage
+         * @see remaining() Check available space
+         */
         bool reset(bool trim = false) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Check whether a pointer refers to a valid allocation from this allocator
+         *
+         * @param ptr Pointer to validate
+         *
+         * @return true if @p ptr is a valid user pointer returned by this BuddyAllocator,
+         *         false otherwise
+         *
+         * @details Performs a non-throwing validation of a pointer against this allocator's
+         *          internal state. The function verifies that:
+         *
+         *          - @p ptr is non-null
+         *          - @p ptr lies within the allocator's managed memory pool
+         *          - The internal BuddyHeader immediately preceding @p ptr is readable
+         *          - The header encodes a valid block order for this allocator
+         *          - The block offset and size are consistent with the pool boundaries
+         *          - @p ptr lies within the bounds of the referenced allocation block
+         *
+         *          This function is designed to be **memory-safe**: it first performs a
+         *          range check to ensure that reading the internal header cannot cause
+         *          undefined behavior or a segmentation fault, even if @p ptr is invalid
+         *          or foreign.
+         *
+         * @note This function does NOT check whether the block is currently allocated or
+         *       free; it only validates that the pointer is structurally consistent with
+         *       a block that could have been allocated by this allocator.
+         *
+         * @note Passing a pointer obtained from a different allocator instance will
+         *       return false.
+         *
+         * @note Passing an interior pointer (i.e., not the original user pointer returned
+         *       by alloc/alloc_aligned/realloc*) will return false.
+         *
+         * @note The function is intentionally side-effect free and does not modify
+         *       allocator state.
+         *
+         * @warning A return value of true does not guarantee that the pointer has not
+         *          already been freed or that the underlying memory has not been reused.
+         *          Use-after-free remains undefined behavior.
+         *
+         * @par Typical Usage:
+         * @code{.cpp}
+         * void* p = buddy->alloc(256, false).value();
+         *
+         * assert(buddy->is_ptr(p));          // valid
+         * assert(!buddy->is_ptr(p + 8));     // interior pointer
+         *
+         * buddy->return_element(p);
+         * assert(buddy->is_ptr(p));          // may still return true (use-after-free!)
+         * @endcode
+         *
+         * @see is_ptr_sized() Pointer validation with size constraint
+         * @see return_element() Free memory previously allocated by this allocator
+         */
         bool is_ptr(void* ptr) const override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Check whether a pointer refers to a valid allocation of at least a given size
+         *
+         * @param ptr Pointer to validate
+         * @param bytes Minimum required usable size in bytes
+         *
+         * @return true if @p ptr is a valid user pointer returned by this BuddyAllocator
+         *         and the underlying allocation can accommodate at least @p bytes,
+         *         false otherwise
+         *
+         * @details Extends is_ptr() by additionally verifying that the allocation
+         *          referenced by @p ptr has sufficient usable capacity for @p bytes.
+         *
+         *          Validation steps include:
+         *          - All structural checks performed by is_ptr()
+         *          - Determination of the allocation block size from the internal header
+         *          - Verification that @p bytes does not exceed the block's usable payload
+         *            (block size minus header)
+         *
+         *          This function is **memory-safe** and will not dereference invalid
+         *          memory, even if @p ptr is foreign, corrupted, or out of bounds.
+         *
+         * @note The @p bytes parameter represents a *logical size requirement* and is
+         *       not required to match the size originally requested during allocation.
+         *
+         * @note As with is_ptr(), this function does NOT detect use-after-free. A pointer
+         *       that was previously freed may still return true if its header remains
+         *       intact and has not been reused.
+         *
+         * @note Passing @p bytes = 0 will return true for any valid pointer.
+         *
+         * @par Typical Usage:
+         * @code{.cpp}
+         * auto p = buddy->alloc(256, false).value();
+         *
+         * assert(buddy->is_ptr_sized(p, 128));   // fits
+         * assert(buddy->is_ptr_sized(p, 256));   // fits
+         * assert(!buddy->is_ptr_sized(p, 512));  // exceeds block capacity
+         *
+         * buddy->return_element(p);
+         * @endcode
+         *
+         * @see is_ptr() Basic pointer validation
+         * @see alloc() Allocate memory
+         * @see alloc_aligned() Allocate aligned memory
+         */
         bool is_ptr_sized(void* ptr, size_t bytes) const override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Generate a human-readable summary of allocator state
+         *
+         * @param buffer Destination buffer to receive the formatted statistics text
+         * @param buffer_size Size of @p buffer in bytes
+         *
+         * @return true if statistics were successfully written to @p buffer,
+         *         false if an error occurred (e.g., invalid buffer or insufficient space)
+         *
+         * @details Writes a textual report describing the current state of the
+         *          BuddyAllocator into the user-provided buffer. The report includes:
+         *
+         *          - Total pool size
+         *          - Minimum and maximum block sizes
+         *          - Currently allocated bytes
+         *          - Remaining free capacity
+         *          - Largest available free block
+         *          - Overall utilization percentage
+         *          - Per-level free list statistics (block count and free bytes)
+         *
+         *          The output is intended for diagnostics, debugging, and monitoring.
+         *          The exact formatting is implementation-defined but stable enough
+         *          for human consumption.
+         *
+         *          This function performs no allocations and does not modify allocator
+         *          state.
+         *
+         * @note If @p buffer is null or @p buffer_size is zero, the function returns
+         *       false and no output is produced.
+         *
+         * @note If the buffer is too small to hold the full report, the function
+         *       returns false. Partial output may have been written to @p buffer.
+         *
+         * @note The statistics represent a snapshot at the time of the call and may
+         *       become stale immediately in multi-threaded environments.
+         *
+         * @par Typical Usage:
+         * @code{.cpp}
+         * char buf[2048];
+         *
+         * if (buddy->stats(buf, sizeof(buf))) {
+         *     std::puts(buf);
+         * } else {
+         *     std::cerr << "Failed to generate allocator stats\n";
+         * }
+         * @endcode
+         *
+         * @see remaining() Query available capacity
+         * @see largest_block() Query largest contiguous free block
+         */
         bool stats(char* buffer, size_t buffer_size) const override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Query the number of bytes currently available for allocation
+         *
+         * @return Number of free bytes remaining in the allocator's memory pool
+         *
+         * @details Returns the difference between the total pool size and the number
+         *          of bytes currently allocated. This represents the *aggregate*
+         *          free capacity and does NOT account for fragmentation.
+         *
+         *          As a result, it is possible for remaining() to return a non-zero
+         *          value even when a large allocation cannot be satisfied due to
+         *          fragmentation.
+         *
+         *          This function is constant-time and does not modify allocator state.
+         *
+         * @note To determine the maximum single allocation that can currently succeed,
+         *       use largest_block() instead.
+         *
+         * @par Example:
+         * @code{.cpp}
+         * auto used = buddy->size();
+         * auto free = buddy->remaining();
+         *
+         * std::cout << "Used: " << used
+         *           << ", Remaining: " << free << '\n';
+         * @endcode
+         *
+         * @see size() Query currently allocated bytes
+         * @see largest_block() Query largest contiguous free block
+         */
         size_t remaining() const noexcept override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Save allocator state (unsupported for BuddyAllocator)
+         *
+         * @return Always returns nullptr
+         *
+         * @details This function is part of the Allocator base-class interface but is
+         *          intentionally unsupported by BuddyAllocator.
+         *
+         *          Buddy allocators manage complex free-list and coalescing state that
+         *          is not trivially serializable or restorable without significant
+         *          overhead. As a result, checkpointing is not provided.
+         *
+         * @note Calling this function always returns nullptr and has no side effects.
+         *
+         * @note Code that relies on save()/restore() semantics should not use
+         *       BuddyAllocator.
+         *
+         * @see restore() Corresponding restore operation (also unsupported)
+         */
         void* save() const override { return nullptr; }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Restore allocator state from a checkpoint (unsupported for BuddyAllocator)
+         *
+         * @param checkpoint Ignored
+         *
+         * @return Always returns false
+         *
+         * @details This function is part of the Allocator base-class interface but is
+         *          intentionally unsupported by BuddyAllocator.
+         *
+         *          Because save() does not produce a valid checkpoint, restore() always
+         *          fails and performs no action.
+         *
+         * @note The allocator state is unchanged by this call.
+         *
+         * @note Code that requires allocator checkpointing should use an allocator
+         *       that explicitly supports save/restore semantics (e.g., arena allocators).
+         *
+         * @see save() Corresponding save operation (unsupported)
+         * @see reset() Clear all allocations and return allocator to initial state
+         */
         bool restore(void* checkpoint) override {
             (void)checkpoint;
             return false;
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Query the size of the largest contiguous free block
+         *
+         * @return Size in bytes of the largest currently available free block,
+         *         or 0 if no free blocks are available
+         *
+         * @details Scans the allocator's free lists from the largest block size
+         *          down to the smallest and returns the size of the first non-empty
+         *          free list encountered.
+         *
+         *          This value represents the **maximum single allocation** that can
+         *          currently succeed (ignoring internal header and alignment overhead).
+         *
+         *          Unlike remaining(), which reports total free capacity, this function
+         *          accounts for **fragmentation**. A large remaining() value does not
+         *          guarantee that a large allocation can succeed if free memory is
+         *          split across smaller blocks.
+         *
+         *          The function runs in O(L) time, where L is the number of size levels
+         *          (log₂(pool_size / min_block_size)).
+         *
+         * @note The returned size is the raw block size managed by the buddy system.
+         *       The actual maximum allocatable user payload may be smaller due to
+         *       internal headers and alignment requirements.
+         *
+         * @note The result may change immediately after any allocation or deallocation.
+         *
+         * @par Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(8192, 64, 0).value();
+         *
+         * auto p1 = buddy->alloc(128, false);
+         * auto p2 = buddy->alloc(128, false);
+         *
+         * size_t largest = buddy->largest_block();
+         *
+         * if (largest < 1024) {
+         *     std::cout << "Fragmentation limits large allocations\n";
+         * }
+         * @endcode
+         *
+         * @see remaining() Total free capacity
+         * @see alloc() Allocation behavior
+         * @see stats() Detailed free-list diagnostics
+         */
         size_t largest_block() const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Query the minimum block size managed by the allocator
+         *
+         * @return Minimum allocation block size in bytes
+         *
+         * @details Returns the smallest block size (in bytes) that this BuddyAllocator
+         *          can manage internally. All allocations are rounded up to at least
+         *          this size (after accounting for internal headers and alignment).
+         *
+         *          The value is determined during allocator creation and is always
+         *          a power of two.
+         *
+         *          Requests smaller than this size will still consume at least one
+         *          block of this size.
+         *
+         * @note The minimum block size may be larger than the value originally
+         *       requested at creation time, due to rounding to a power of two and
+         *       ensuring space for internal headers and alignment.
+         *
+         * @par Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(4096, 100, 0).value();
+         *
+         * // Requested min block size: 100 bytes
+         * // Actual min block size (rounded): 128 bytes
+         * assert(buddy->min_block_size() == 128);
+         * @endcode
+         *
+         * @see max_block_size() Maximum possible block size
+         * @see Heap() Allocator creation and normalization rules
+         */
         size_t min_block_size() const noexcept {
             return (size_t)1 << min_order_;
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Query the maximum block size managed by the allocator
+         *
+         * @return Maximum allocation block size in bytes
+         *
+         * @details Returns the size of the largest block that the allocator can manage,
+         *          which corresponds to the full memory pool size.
+         *
+         *          This value represents the theoretical upper bound for a single
+         *          allocation before considering fragmentation, headers, and alignment
+         *          overhead.
+         *
+         *          The value is always a power of two and is fixed for the lifetime of
+         *          the allocator.
+         *
+         * @note A request of exactly max_block_size() bytes may not succeed if
+         *       internal headers or alignment padding are required. Use largest_block()
+         *       to determine the maximum allocation that can succeed at a given moment.
+         *
+         * @par Example:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(5000, 64, 0).value();
+         *
+         * // Pool rounded up: 5000 -> 8192
+         * assert(buddy->max_block_size() == 8192);
+         * @endcode
+         *
+         * @see min_block_size() Minimum allocation block size
+         * @see largest_block() Largest currently available block
+         * @see remaining() Aggregate free capacity
+         */
         size_t max_block_size() const noexcept {
             return (size_t)1 << max_order_;
         }
@@ -5431,6 +7008,51 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
+    /**
+     * @brief Custom deleter for BuddyAllocator UniquePtr cleanup
+     *
+     * @param buddy Pointer to BuddyAllocator to delete. May be nullptr.
+     *
+     * @details This custom deleter is invoked when a
+     *          UniquePtr<BuddyAllocator, BuddyDeleter> goes out of scope or is
+     *          explicitly reset. It performs complete and ordered cleanup of all
+     *          resources owned by a BuddyAllocator instance.
+     *
+     *          BuddyAllocator always owns all of its internal resources. Unlike
+     *          other allocator types, it does not support borrowed memory pools
+     *          or user-provided backing storage. As a result, cleanup behavior
+     *          is unconditional and uniform.
+     *
+     *          **Cleanup sequence:**
+     *          1. Release the OS-backed memory pool used for allocations
+     *             (via BuddyAllocator::os_free)
+     *          2. Free the free-lists array allocated during initialization
+     *          3. Invoke the BuddyAllocator destructor
+     *          4. Free the BuddyAllocator object itself (via ::operator delete)
+     *
+     *          This ordering guarantees that all allocator-internal state remains
+     *          valid for the duration of the destructor and that no memory leaks
+     *          occur.
+     *
+     * @note This deleter is noexcept and never throws exceptions during cleanup.
+     *
+     * @note Passing a null pointer is safe and results in an immediate no-op.
+     *
+     * @note All outstanding allocations become invalid once this deleter is
+     *       invoked. Accessing previously allocated memory after destruction
+     *       results in undefined behavior.
+     *
+     * @note Users must not call this function directly. It is automatically
+     *       invoked by UniquePtr when the BuddyAllocator goes out of scope or
+     *       is reset.
+     *
+     * @warning Pointers returned by this BuddyAllocator must not be freed or
+     *          accessed after the allocator has been destroyed.
+     *
+     * @see Heap() Factory method that creates a BuddyAllocator wrapped in a
+     *      UniquePtr with BuddyDeleter
+     * @see ~BuddyAllocator() Destructor invoked as part of cleanup
+     */
     inline void BuddyDeleter::operator()(BuddyAllocator* buddy) const noexcept {
         if (!buddy) return;
         

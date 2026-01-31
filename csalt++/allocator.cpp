@@ -3289,6 +3289,16 @@ namespace cslt {
         }
         return nullptr;
     }
+// -------------------------------------------------------------------------------- 
+
+    bool BuddyAllocator::ptr_in_pool_(const void* p) const noexcept {
+        if (!base_ || pool_size_ == 0) return false;
+        auto b = static_cast<const uint8_t*>(base_);
+        auto x = static_cast<const uint8_t*>(p);
+        // Ensure header-at-(p-Header) lies in pool
+        return (x >= b + sizeof(BuddyHeader)) && (x < b + pool_size_);
+    }
+
 // ================================================================================
 // Constructor/Destructor
 // ================================================================================
@@ -4008,6 +4018,7 @@ namespace cslt {
         if (!ptr) {
             return false;
         }
+        if (!ptr_in_pool_(ptr)) return false;
         
         const uint8_t* p = static_cast<const uint8_t*>(ptr);
         const uint8_t* pool_start = static_cast<const uint8_t*>(base_);

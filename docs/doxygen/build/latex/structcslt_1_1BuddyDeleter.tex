@@ -1,0 +1,68 @@
+\hypertarget{structcslt_1_1BuddyDeleter}{}\doxysection{cslt\+::Buddy\+Deleter Struct Reference}
+\label{structcslt_1_1BuddyDeleter}\index{cslt::BuddyDeleter@{cslt::BuddyDeleter}}
+
+
+{\ttfamily \#include $<$allocator.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{structcslt_1_1BuddyDeleter_a137fb0e64ce5ebbee9a34e2080cdd445}{operator()}} (\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} $\ast$buddy) const noexcept
+\begin{DoxyCompactList}\small\item\em Custom deleter for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} cleanup. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{structcslt_1_1BuddyDeleter_a137fb0e64ce5ebbee9a34e2080cdd445}\label{structcslt_1_1BuddyDeleter_a137fb0e64ce5ebbee9a34e2080cdd445}} 
+\index{cslt::BuddyDeleter@{cslt::BuddyDeleter}!operator()@{operator()}}
+\index{operator()@{operator()}!cslt::BuddyDeleter@{cslt::BuddyDeleter}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily void cslt\+::\+Buddy\+Deleter\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} $\ast$}]{buddy }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Custom deleter for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} cleanup. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buddy} & Pointer to \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} to delete. May be nullptr.\\
+\hline
+\end{DoxyParams}
+This custom deleter is invoked when a Unique\+Ptr$<$\+Buddy\+Allocator, Buddy\+Deleter$>$ goes out of scope or is explicitly reset. It performs complete and ordered cleanup of all resources owned by a \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} instance.
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} always owns all of its internal resources. Unlike other allocator types, it does not support borrowed memory pools or user-\/provided backing storage. As a result, cleanup behavior is unconditional and uniform.
+
+{\bfseries{Cleanup sequence\+:}}
+\begin{DoxyEnumerate}
+\item Release the OS-\/backed memory pool used for allocations (via Buddy\+Allocator\+::os\+\_\+free)
+\item Free the free-\/lists array allocated during initialization
+\item Invoke the \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} destructor
+\item Free the \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} object itself (via \+::operator delete)
+\end{DoxyEnumerate}
+
+This ordering guarantees that all allocator-\/internal state remains valid for the duration of the destructor and that no memory leaks occur.
+
+\begin{DoxyNote}{Note}
+This deleter is noexcept and never throws exceptions during cleanup.
+
+Passing a null pointer is safe and results in an immediate no-\/op.
+
+All outstanding allocations become invalid once this deleter is invoked. Accessing previously allocated memory after destruction results in undefined behavior.
+
+Users must not call this function directly. It is automatically invoked by \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} when the \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} goes out of scope or is reset.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Pointers returned by this \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} must not be freed or accessed after the allocator has been destroyed.
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+Heap() Factory method that creates a \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} wrapped in a \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} with \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} 
+
+$\sim$\+Buddy\+Allocator() Destructor invoked as part of cleanup 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\end{DoxyCompactItemize}

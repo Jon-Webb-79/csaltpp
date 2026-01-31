@@ -3,6 +3,7 @@
   <compounddef id="classcslt_1_1Allocator" kind="class" language="C++" prot="public" abstract="yes">
     <compoundname>cslt::Allocator</compoundname>
     <derivedcompoundref refid="classcslt_1_1ArenaAllocator" prot="public" virt="non-virtual">cslt::ArenaAllocator</derivedcompoundref>
+    <derivedcompoundref refid="classcslt_1_1BuddyAllocator" prot="public" virt="non-virtual">cslt::BuddyAllocator</derivedcompoundref>
     <derivedcompoundref refid="classcslt_1_1FreeListAllocator" prot="public" virt="non-virtual">cslt::FreeListAllocator</derivedcompoundref>
     <derivedcompoundref refid="classcslt_1_1HeapAllocator" prot="public" virt="non-virtual">cslt::HeapAllocator</derivedcompoundref>
     <derivedcompoundref refid="classcslt_1_1PoolAllocator" prot="public" virt="non-virtual">cslt::PoolAllocator</derivedcompoundref>
@@ -213,6 +214,7 @@ Initializes the allocator with the specified parameters. The total_alloc paramet
         <definition>virtual Expected&lt;void*&gt; cslt::Allocator::alloc</definition>
         <argsstring>(size_t bytes, bool zeroed=false)=0</argsstring>
         <name>alloc</name>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624">alloc</reimplementedby>
         <reimplementedby refid="classcslt_1_1HeapAllocator_1a1fad90e150abc4f14cccaa2a9899dcde">alloc</reimplementedby>
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a00688da293e6682906b33dc0bd955389">alloc</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1ad0bc8ae3b4e0dfba9bd1fc249871e1ad">alloc</reimplementedby>
@@ -273,6 +275,7 @@ Initializes the allocator with the specified parameters. The total_alloc paramet
         <definition>virtual Expected&lt;void*&gt; cslt::Allocator::alloc_aligned</definition>
         <argsstring>(size_t bytes, size_t alignment, bool zeroed=false)=0</argsstring>
         <name>alloc_aligned</name>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265">alloc_aligned</reimplementedby>
         <reimplementedby refid="classcslt_1_1HeapAllocator_1a8d1cea2c096a86dda84a7f46e6c750f9">alloc_aligned</reimplementedby>
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1ab0c53e0a43ba95fc09b75ded7d926554">alloc_aligned</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1ad7120090b154102a0487eceeb314c266">alloc_aligned</reimplementedby>
@@ -346,6 +349,7 @@ Allocates memory aligned to the specified boundary. The alignment must be a powe
         <definition>virtual Expected&lt;void*&gt; cslt::Allocator::realloc</definition>
         <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, bool zeroed=false)=0</argsstring>
         <name>realloc</name>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a6d08026be9b991bc1f142b37c7476a1b">realloc</reimplementedby>
         <reimplementedby refid="classcslt_1_1HeapAllocator_1a8da5b4e9dc6e8d13020a66d384835363">realloc</reimplementedby>
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a60a6b8aa87cf0cb7f9a83451acb45b15">realloc</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1a255488b39d1deab13ee70cba9d654497">realloc</reimplementedby>
@@ -433,6 +437,7 @@ Resizes an existing allocation. The existing data is preserved up to min(old_byt
         <definition>virtual Expected&lt;void*&gt; cslt::Allocator::realloc_aligned</definition>
         <argsstring>(void *ptr, size_t old_bytes, size_t new_bytes, size_t alignment, bool zeroed=false)=0</argsstring>
         <name>realloc_aligned</name>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a409bb66d1e09136816216cbb96f3bd21">realloc_aligned</reimplementedby>
         <reimplementedby refid="classcslt_1_1HeapAllocator_1adeb125664bb070ffb9522604fe753aa1">realloc_aligned</reimplementedby>
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a7ae9f73f0df57cab73cf2b9fe3c3f9b1">realloc_aligned</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1a7714e34698f34991e086dcf4250ed7b2">realloc_aligned</reimplementedby>
@@ -534,6 +539,7 @@ Like <ref refid="classcslt_1_1Allocator_1ad83899b3087ecbf56883ef775048e81a" kind
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a7fe8fbcdba4b1e2ee15c850ca12549e7">return_element</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1ae06d33c7738ae591c06cff4ab777ce5a">return_element</reimplementedby>
         <reimplementedby refid="classcslt_1_1FreeListAllocator_1a92297e3568123854b9c2ea7398f4058f">return_element</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a4293ba9f8f0cbd4fb55ea860ddafb05a">return_element</reimplementedby>
         <param>
           <type>void *</type>
           <declname>ptr</declname>
@@ -632,6 +638,7 @@ Returns whether this allocator uses static or dynamic memory. STATIC = fixed buf
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1ab128304aeae005b402dbf4fbc105df3f">stats</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1aded567137597d76ef1d5385157170008">stats</reimplementedby>
         <reimplementedby refid="classcslt_1_1FreeListAllocator_1a11d836fb3a2b2d22257999cabdf9756f">stats</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1aed85f994879d6e6b7a1f4c7166da4b55">stats</reimplementedby>
         <param>
           <type>char *</type>
           <declname>buffer</declname>
@@ -744,8 +751,9 @@ Returns the amount of memory currently in use. For allocators that don&apos;t tr
         <definition>virtual size_t cslt::Allocator::remaining</definition>
         <argsstring>() const noexcept</argsstring>
         <name>remaining</name>
-        <reimplementedby refid="classcslt_1_1FreeListAllocator_1a39de8c58f2d2f9df4631a696adbf30f9">remaining</reimplementedby>
+        <reimplementedby refid="classcslt_1_1FreeListAllocator_1a59626d72b6725ad3012c06bc9b1069e4">remaining</reimplementedby>
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a13698c33d4b6e47073bf0ca823e7d94c">remaining</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a1a05d4c28353926c6029ecd0f9f2080d">remaining</reimplementedby>
         <briefdescription>
 <para>Get remaining available bytes. </para>
         </briefdescription>
@@ -848,6 +856,7 @@ Returns the total memory allocation size including any internal overhead. This i
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1ac709ae6498290a5a4c12eeb65034969e">is_ptr</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1a40b37c013a8f0b135259c3a60bb5a6f1">is_ptr</reimplementedby>
         <reimplementedby refid="classcslt_1_1FreeListAllocator_1a79163fc9aea930755f26d0652e105529">is_ptr</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a460c8ef9bfaeaeaa9669f00ee002cc2e">is_ptr</reimplementedby>
         <param>
           <type>void *</type>
           <declname>ptr</declname>
@@ -897,6 +906,7 @@ Checks if the given pointer was allocated by this allocator. Default implementat
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a29fe5661a722f554829c480ee040ebd5">is_ptr_sized</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1a5863352d0f96684741cdf182aafe8ad7">is_ptr_sized</reimplementedby>
         <reimplementedby refid="classcslt_1_1FreeListAllocator_1a90a7d9f260434769fefd96bffc592fc2">is_ptr_sized</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1ac4f166211e89a427db128ae66dd7b800">is_ptr_sized</reimplementedby>
         <param>
           <type>void *</type>
           <declname>ptr</declname>
@@ -955,6 +965,7 @@ Checks if the pointer was allocated by this allocator AND if it has the specifie
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a1b7407a444c6ca47d4ba995e9335a77b">save</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1a9e6ee76c7b903bc5b686dcbf9ccc62b3">save</reimplementedby>
         <reimplementedby refid="classcslt_1_1FreeListAllocator_1a76c322f65fcfc52b7424bbc11f152677">save</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a57fc74c816952a5da82de3471d5a2e97">save</reimplementedby>
         <briefdescription>
 <para>Save allocator state checkpoint. </para>
         </briefdescription>
@@ -990,6 +1001,7 @@ Saves the current state of the allocator for later restoration. Useful for imple
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1af1b43a92fa1c3bf0e77e1284eab4f7c8">restore</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1aedaddd14dee2b0cf12a5ae7b30606703">restore</reimplementedby>
         <reimplementedby refid="classcslt_1_1FreeListAllocator_1a7f22b04d167f05865cfa7dfd1f6ca8cf">restore</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1a6f9ddce102a19221c35757842a00979b">restore</reimplementedby>
         <param>
           <type>void *</type>
           <declname>checkpoint</declname>
@@ -1034,6 +1046,7 @@ Restores allocator state to a previous checkpoint, effectively freeing all alloc
         <argsstring>(bool trim_extra_chunks=false)</argsstring>
         <name>reset</name>
         <reimplementedby refid="classcslt_1_1FreeListAllocator_1a51baa0c6eb9df1a576b63237ad226bf3">reset</reimplementedby>
+        <reimplementedby refid="classcslt_1_1BuddyAllocator_1aa923e1e70ca1361b07780e973d0bc298">reset</reimplementedby>
         <reimplementedby refid="classcslt_1_1HeapAllocator_1afd627e0b4b4edef30d8b90db649a6a25">reset</reimplementedby>
         <reimplementedby refid="classcslt_1_1ArenaAllocator_1a33e3302b97aed2d9c6bd764ca028e191">reset</reimplementedby>
         <reimplementedby refid="classcslt_1_1PoolAllocator_1af5664d161af7b55ce3c22d23c745b917">reset</reimplementedby>
@@ -1103,18 +1116,24 @@ Restores allocator state to a previous checkpoint, effectively freeing all alloc
     </detaileddescription>
     <inheritancegraph>
       <node id="3">
+        <label>cslt::BuddyAllocator</label>
+        <link refid="classcslt_1_1BuddyAllocator"/>
+        <childnode refid="1" relation="public-inheritance">
+        </childnode>
+      </node>
+      <node id="4">
         <label>cslt::FreeListAllocator</label>
         <link refid="classcslt_1_1FreeListAllocator"/>
         <childnode refid="1" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="4">
+      <node id="5">
         <label>cslt::HeapAllocator</label>
         <link refid="classcslt_1_1HeapAllocator"/>
         <childnode refid="1" relation="public-inheritance">
         </childnode>
       </node>
-      <node id="5">
+      <node id="6">
         <label>cslt::PoolAllocator</label>
         <link refid="classcslt_1_1PoolAllocator"/>
         <childnode refid="1" relation="public-inheritance">

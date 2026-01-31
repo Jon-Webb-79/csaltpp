@@ -1,0 +1,2140 @@
+\hypertarget{classcslt_1_1BuddyAllocator}{}\doxysection{cslt\+::Buddy\+Allocator Class Reference}
+\label{classcslt_1_1BuddyAllocator}\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+
+
+Binary buddy memory allocator with power-\/of-\/two block management.  
+
+
+
+
+{\ttfamily \#include $<$allocator.\+hpp$>$}
+
+
+
+Inheritance diagram for cslt\+::Buddy\+Allocator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classcslt_1_1BuddyAllocator__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for cslt\+::Buddy\+Allocator\+:
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=194pt]{classcslt_1_1BuddyAllocator__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a19051ba1bef638b5069726ae8b81b21a}{$\sim$\+Buddy\+Allocator}} () noexcept override
+\begin{DoxyCompactList}\small\item\em Destructor for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_af1c2aea58832ef55381a9a595c814eef}{Buddy\+Allocator}} (const \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&)=delete
+\item 
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \& \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa8b18aef07e5ee5faad7a4bd57b9dc36}{operator=}} (const \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&)=delete
+\item 
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a9484436822b1824a841aa002d14d5955}{Buddy\+Allocator}} (\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&\&)=delete
+\item 
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \& \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a952f260ad17922dbb7ef3b6a57385c9f}{operator=}} (\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&\&)=delete
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc}} (size\+\_\+t bytes, bool zeroed) override
+\begin{DoxyCompactList}\small\item\em Allocate memory from the buddy allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned}} (size\+\_\+t bytes, size\+\_\+t alignment, bool zeroed) override
+\begin{DoxyCompactList}\small\item\em Allocate aligned memory from the buddy allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}{realloc}} (void $\ast$ptr, size\+\_\+t old\+\_\+bytes, size\+\_\+t new\+\_\+bytes, bool zeroed) override
+\begin{DoxyCompactList}\small\item\em Resize an existing allocation. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a409bb66d1e09136816216cbb96f3bd21}{realloc\+\_\+aligned}} (void $\ast$ptr, size\+\_\+t old\+\_\+bytes, size\+\_\+t new\+\_\+bytes, size\+\_\+t alignment, bool zeroed) override
+\begin{DoxyCompactList}\small\item\em Resize an existing allocation while preserving alignment. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element}} (void $\ast$ptr, size\+\_\+t bytes=0, size\+\_\+t alignment=0) override
+\begin{DoxyCompactList}\small\item\em Free an allocated block and trigger buddy coalescing. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset}} (bool trim=false) override
+\begin{DoxyCompactList}\small\item\em Reset allocator to initial state, freeing all allocations. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}{is\+\_\+ptr}} (void $\ast$ptr) const override
+\begin{DoxyCompactList}\small\item\em Check whether a pointer refers to a valid allocation from this allocator. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1BuddyAllocator_ac4f166211e89a427db128ae66dd7b800}{is\+\_\+ptr\+\_\+sized}} (void $\ast$ptr, size\+\_\+t bytes) const override
+\begin{DoxyCompactList}\small\item\em Check whether a pointer refers to a valid allocation of at least a given size. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aed85f994879d6e6b7a1f4c7166da4b55}{stats}} (char $\ast$buffer, size\+\_\+t buffer\+\_\+size) const override
+\begin{DoxyCompactList}\small\item\em Generate a human-\/readable summary of allocator state. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining}} () const noexcept override
+\begin{DoxyCompactList}\small\item\em Query the number of bytes currently available for allocation. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a57fc74c816952a5da82de3471d5a2e97}{save}} () const override
+\begin{DoxyCompactList}\small\item\em Save allocator state (unsupported for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}) \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6f9ddce102a19221c35757842a00979b}{restore}} (void $\ast$checkpoint) override
+\begin{DoxyCompactList}\small\item\em Restore allocator state from a checkpoint (unsupported for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}) \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Query the size of the largest contiguous free block. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}{min\+\_\+block\+\_\+size}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Query the minimum block size managed by the allocator. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a294bb228c89b3534204d287775aa3bd6}{max\+\_\+block\+\_\+size}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Query the maximum block size managed by the allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}, \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} $>$ $>$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{Heap}} (size\+\_\+t pool\+\_\+size, size\+\_\+t \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}{min\+\_\+block\+\_\+size}}, size\+\_\+t base\+\_\+align=0)
+\begin{DoxyCompactList}\small\item\em Create an OS-\/backed buddy allocator with specified pool and block sizes. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{classcslt_1_1BuddyAllocator_ab1324f8665b378d17c18336c2262808e}{Buddy\+Deleter}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+Binary buddy memory allocator with power-\/of-\/two block management. 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} implements the binary buddy memory allocation algorithm, which organizes memory into power-\/of-\/two sized blocks. When a block is freed, it attempts to coalesce (merge) with its \char`\"{}buddy\char`\"{} block to form larger free blocks, reducing fragmentation.
+
+All allocations are rounded up to the nearest power-\/of-\/two size (including a 16-\/byte header). Memory is obtained directly from the OS via mmap() (POSIX) or Virtual\+Alloc() (Windows). The pool size is fixed at creation time.
+
+Two blocks are \char`\"{}buddies\char`\"{} if they have the same size, are adjacent in memory, and their combined offset satisfies\+: offset XOR (2$^\wedge$order). When both buddies are free, they merge into a larger block, potentially triggering recursive coalescing up the size hierarchy.
+
+Performance\+: O(log n) for allocation, deallocation, and coalescing, where n is the number of size levels. Memory overhead is $\sim$16 bytes per allocation for the header.
+
+\begin{DoxyNote}{Note}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} is not thread-\/safe. External synchronization required. 
+
+Pool size is fixed at creation -\/ use \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} to clear or recreate for a different size. 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} does not guarantee custom alignment -\/ use \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} for specific alignment requirements.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Do not mix pointers from different allocators. 
+
+All allocations become invalid when \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} is destroyed.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create a 64KB buddy allocator with 64-\/byte minimum blocks}}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(65536, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 256 bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use memory}}
+\DoxyCodeLine{memset(ptr, 0, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free (automatic coalescing)}}
+\DoxyCodeLine{buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocator destroyed automatically when buddy goes out of scope}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Aligned Allocation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 512 bytes with 256-\/byte alignment, zero-\/initialized}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(512, 256, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Verify alignment}}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 256 == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow allocation}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = buddy-\/>realloc\_aligned(ptr, 512, 1024, 256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (new\_ptr.hasValue()) \{}
+\DoxyCodeLine{    buddy-\/>return\_element(new\_ptr.value());}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Monitoring\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Make allocations}}
+\DoxyCodeLine{\textcolor{keyword}{auto} p1 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p2 = buddy-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Query state}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} used = buddy-\/>size();              \textcolor{comment}{// Currently allocated}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} free = buddy-\/>remaining();         \textcolor{comment}{// Available}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} max = buddy-\/>largest\_block();      \textcolor{comment}{// Largest contiguous}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Detect fragmentation}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (free > max) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Fragmented: "{}} << (free -\/ max) << \textcolor{stringliteral}{"{} bytes\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Generate report}}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[2048];}
+\DoxyCodeLine{buddy-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{std::cout << buffer;}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(p1);}
+\DoxyCodeLine{buddy-\/>return\_element(p2);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Coalescing\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate adjacent blocks}}
+\DoxyCodeLine{\textcolor{keyword}{auto} p1 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p2 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p3 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free in order -\/ blocks coalesce automatically}}
+\DoxyCodeLine{buddy-\/>return\_element(p1);}
+\DoxyCodeLine{buddy-\/>return\_element(p2);}
+\DoxyCodeLine{buddy-\/>return\_element(p3);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Largest block increased due to coalescing}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{Heap()}} Primary factory method 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} Basic allocation 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} Aligned allocation 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}{realloc()}} Resize allocation 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element()}} Free and coalesce 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} Bulk cleanup 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aed85f994879d6e6b7a1f4c7166da4b55}{stats()}} Diagnostics 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a19051ba1bef638b5069726ae8b81b21a}\label{classcslt_1_1BuddyAllocator_a19051ba1bef638b5069726ae8b81b21a}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!````~BuddyAllocator@{$\sim$BuddyAllocator}}
+\index{````~BuddyAllocator@{$\sim$BuddyAllocator}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{$\sim$BuddyAllocator()}{~BuddyAllocator()}}
+{\footnotesize\ttfamily cslt\+::\+Buddy\+Allocator\+::$\sim$\+Buddy\+Allocator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [noexcept]}}
+
+
+
+Destructor for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}. 
+
+The destructor is intentionally minimal and does NOT free the OS-\/backed memory pool or free-\/lists array. Cleanup is handled by the custom \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} when the \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} goes out of scope.
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} instances are always managed via \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} with \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}}, which performs the actual resource cleanup in this order\+:
+\begin{DoxyEnumerate}
+\item Free OS-\/backed memory pool (via os\+\_\+free)
+\item Free free-\/lists array (via delete\mbox{[}\mbox{]})
+\item Call this destructor
+\item Free \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} structure (via \+::operator delete)
+\end{DoxyEnumerate}
+
+\begin{DoxyNote}{Note}
+Users never call this destructor directly. The \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} handles all cleanup automatically when the \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} is destroyed or reset.
+
+All outstanding allocations become invalid when the \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} is destroyed. Accessing freed pointers results in undefined behavior.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} Custom deleter that performs resource cleanup 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{Heap()}} Factory method that creates the \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} with \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_af1c2aea58832ef55381a9a595c814eef}\label{classcslt_1_1BuddyAllocator_af1c2aea58832ef55381a9a595c814eef}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!BuddyAllocator@{BuddyAllocator}}
+\index{BuddyAllocator@{BuddyAllocator}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{BuddyAllocator()}{BuddyAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily cslt\+::\+Buddy\+Allocator\+::\+Buddy\+Allocator (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a9484436822b1824a841aa002d14d5955}\label{classcslt_1_1BuddyAllocator_a9484436822b1824a841aa002d14d5955}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!BuddyAllocator@{BuddyAllocator}}
+\index{BuddyAllocator@{BuddyAllocator}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{BuddyAllocator()}{BuddyAllocator()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily cslt\+::\+Buddy\+Allocator\+::\+Buddy\+Allocator (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}\label{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!alloc@{alloc}}
+\index{alloc@{alloc}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{alloc()}{alloc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Buddy\+Allocator\+::alloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{bool}]{zeroed }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Allocate memory from the buddy allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Number of bytes to allocate (must be $>$ 0) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer to allocated memory on success, or error on failure
+\end{DoxyReturn}
+Allocates memory using the buddy allocation algorithm. The actual block size will be rounded up to the nearest power of 2 that can accommodate both the requested bytes and the internal 16-\/byte Buddy\+Header.
+
+{\bfseries{Allocation Process\+:}}
+\begin{DoxyEnumerate}
+\item Calculate total size needed\+: bytes + sizeof(\+Buddy\+Header)
+\item Round to next power of 2 (minimum\+: min\+\_\+block\+\_\+size)
+\item Find free block of appropriate size (or larger)
+\item Split larger blocks if necessary (recursive division by 2)
+\item Place header at block start, return pointer after header
+\item Optionally zero-\/initialize the user portion
+\end{DoxyEnumerate}
+
+{\bfseries{Block Sizing Example\+:}}
+\begin{DoxyItemize}
+\item Request 100 bytes → 100 + 16 (header) = 116 → rounds to 128 bytes
+\item Request 256 bytes → 256 + 16 (header) = 272 → rounds to 512 bytes
+\item Request 1000 bytes → 1000 + 16 (header) = 1016 → rounds to 1024 bytes
+\end{DoxyItemize}
+
+{\bfseries{Alignment\+:}} The returned pointer has natural alignment based on block position in the pool. It is NOT guaranteed to match base\+\_\+align from \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{Heap()}}. Use \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} for specific alignment requirements.
+
+{\bfseries{Internal Fragmentation\+:}} Power-\/of-\/2 rounding creates internal fragmentation. A 100-\/byte request wastes $\sim$12 bytes within the 128-\/byte block (after accounting for header).
+
+\begin{DoxyNote}{Note}
+The returned pointer is NOT the start of the block. The block starts 16 bytes earlier with the Buddy\+Header.
+
+The actual usable space may be larger than requested due to power-\/of-\/2 rounding, but you should only use the requested number of bytes.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If bytes is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1CapacityOverflowError}{Capacity\+Overflow\+Error}}} & If bytes + header causes arithmetic overflow \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If no free blocks available or request exceeds pool capacity\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Basic Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 256 bytes (will use 512-\/byte block: 256 + 16 header → rounds to 512)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr\_result = buddy-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (ptr\_result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = ptr\_result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Use memory}}
+\DoxyCodeLine{    memset(ptr, 42, 256);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Free when done}}
+\DoxyCodeLine{    buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Allocation failed: "{}} << ptr\_result.error().message() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Zero-\/\+Initialization Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 512 bytes, zero-\/initialized}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(512, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All bytes are guaranteed to be zero}}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{assert(data[0] == 0);}
+\DoxyCodeLine{assert(data[511] == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Multiple Allocations\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16384, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate until exhaustion}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = buddy-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (!ptr.hasValue()) \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{break};  \textcolor{comment}{// Pool exhausted}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    ptrs.push\_back(ptr.value());}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Allocated "{}} << ptrs.size() << \textcolor{stringliteral}{"{} blocks\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free all}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{void}* ptr : ptrs) \{}
+\DoxyCodeLine{    buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} Allocation with specific alignment 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}{realloc()}} Resize existing allocation 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element()}} Free \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} memory 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block()}} Check maximum allocatable \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}} 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_adb93a70659ab65af421bf3f8043418e3}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}\label{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!alloc\_aligned@{alloc\_aligned}}
+\index{alloc\_aligned@{alloc\_aligned}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{alloc\_aligned()}{alloc\_aligned()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Buddy\+Allocator\+::alloc\+\_\+aligned (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment,  }\item[{bool}]{zeroed }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Allocate aligned memory from the buddy allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Number of bytes to allocate (must be $>$ 0) \\
+\hline
+{\em alignment} & Required alignment in bytes (0 = alignof(max\+\_\+align\+\_\+t), will be rounded up to power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer to aligned memory on success, or error on failure
+\end{DoxyReturn}
+Allocates memory with a specific alignment guarantee. The allocation process is similar to \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}}, but allocates a larger block to ensure the user pointer can be positioned at the requested alignment.
+
+{\bfseries{Allocation Process\+:}}
+\begin{DoxyEnumerate}
+\item Normalize alignment to power of 2 (e.\+g., 48 → 64)
+\item Calculate total\+: bytes + header + (alignment -\/ 1) for worst-\/case padding
+\item Round to next power of 2 (minimum\+: min\+\_\+block\+\_\+size)
+\item Find and allocate block (with splitting if needed)
+\item Find aligned position within block
+\item Place header immediately before aligned position
+\item Return aligned pointer
+\end{DoxyEnumerate}
+
+{\bfseries{Alignment Guarantee\+:}} The returned pointer is GUARANTEED to satisfy\+: reinterpret\+\_\+cast$<$uintptr\+\_\+t$>$(ptr) \% alignment == 0
+
+{\bfseries{Block Sizing with Alignment\+:}}
+\begin{DoxyItemize}
+\item Request 256 bytes, 64-\/byte align → 256 + 16 + 63 = 335 → 512 bytes
+\item Request 512 bytes, 256-\/byte align → 512 + 16 + 255 = 783 → 1024 bytes
+\end{DoxyItemize}
+
+{\bfseries{Overhead\+:}} Aligned allocations use more memory than \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} due to\+:
+\begin{DoxyItemize}
+\item Larger block size to accommodate alignment padding
+\item Potential unused space before and after user data
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+alignment=0 uses the platform\textquotesingle{}s natural alignment (alignof(max\+\_\+align\+\_\+t))
+
+Non-\/power-\/of-\/2 alignments are automatically rounded up. For example, requesting 48-\/byte alignment will be rounded to 64 bytes.
+
+The header is placed immediately before the aligned user pointer, NOT at the block start (unlike \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}}).
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If bytes is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1AlignmentError}{Alignment\+Error}}} & If alignment is invalid after normalization \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1CapacityOverflowError}{Capacity\+Overflow\+Error}}} & If bytes + header + alignment causes overflow \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If no free blocks available, insufficient space for alignment, or request exceeds pool capacity\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Basic Alignment Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16384, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 512 bytes with 256-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr\_result = buddy-\/>alloc\_aligned(512, 256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (ptr\_result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = ptr\_result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Verify alignment}}
+\DoxyCodeLine{    uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{    assert(addr \% 256 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Use memory}}
+\DoxyCodeLine{    memcpy(ptr, data, 512);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{SIMD/\+Cache-\/\+Line Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(32768, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate for SIMD operations (32-\/byte alignment)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} simd\_ptr = buddy-\/>alloc\_aligned(1024, 32, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe for AVX operations}}
+\DoxyCodeLine{\_\_m256* vec = \textcolor{keyword}{reinterpret\_cast<}\_\_m256*\textcolor{keyword}{>}(simd\_ptr);}
+\DoxyCodeLine{\textcolor{comment}{// ... SIMD code ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate for cache-\/line alignment (64 bytes)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} cache\_ptr = buddy-\/>alloc\_aligned(2048, 64, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(simd\_ptr);}
+\DoxyCodeLine{buddy-\/>return\_element(cache\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Page Alignment Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate page-\/aligned memory (4096 bytes)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} page\_ptr = buddy-\/>alloc\_aligned(8192, 4096, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (page\_ptr.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = page\_ptr.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Guaranteed page-\/aligned}}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 4096 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Useful for memory mapping, DMA, etc.}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Non-\/\+Power-\/of-\/2 Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Request 48-\/byte alignment (not power of 2)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(256, 48, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Actual alignment will be 64 (next power of 2)}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{assert(addr \% 64 == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Zero-\/\+Initialization with Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16384, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate aligned and zeroed}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(1024, 128, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Both alignment AND zero-\/initialization guaranteed}}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 128 == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < 1024; ++i) \{}
+\DoxyCodeLine{    assert(data[i] == 0);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} Basic allocation without alignment guarantee 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a409bb66d1e09136816216cbb96f3bd21}{realloc\+\_\+aligned()}} Resize with alignment preserved 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element()}} Free \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} memory 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a518d804fc4eb66096f2534fc922c1ac4}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}\label{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!Heap@{Heap}}
+\index{Heap@{Heap}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{Heap()}{Heap()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}, \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} $>$ $>$ cslt\+::\+Buddy\+Allocator\+::\+Heap (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{pool\+\_\+size,  }\item[{size\+\_\+t}]{min\+\_\+block\+\_\+size,  }\item[{size\+\_\+t}]{base\+\_\+align = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Create an OS-\/backed buddy allocator with specified pool and block sizes. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pool\+\_\+size} & Total memory pool size in bytes (will be rounded up to power of 2) \\
+\hline
+{\em min\+\_\+block\+\_\+size} & Minimum allocation block size in bytes (will be rounded up to power of 2) \\
+\hline
+{\em base\+\_\+align} & Default alignment for allocations (0 = alignof(max\+\_\+align\+\_\+t), will be rounded up to power of 2)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing Unique\+Ptr$<$\+Buddy\+Allocator, Buddy\+Deleter$>$ on success, or error on failure
+\end{DoxyReturn}
+Creates a buddy allocator with memory obtained directly from the operating system via mmap() on POSIX systems or Virtual\+Alloc() on Windows.
+
+{\bfseries{Initialization Process\+:}}
+\begin{DoxyEnumerate}
+\item Validates and normalizes parameters (rounds to powers of 2)
+\item Allocates OS memory pool
+\item Initializes free-\/list array (one per size level)
+\item Places initial large free block at top level
+\item Returns \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} with \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} for automatic cleanup
+\end{DoxyEnumerate}
+
+{\bfseries{Parameter Normalization\+:}}
+\begin{DoxyItemize}
+\item pool\+\_\+size\+: Rounded up to next power of 2 (e.\+g., 5000 → 8192)
+\item min\+\_\+block\+\_\+size\+: Rounded up to next power of 2 (e.\+g., 100 → 128)
+\item base\+\_\+align\+: Rounded up to next power of 2 (e.\+g., 48 → 64)
+\item min\+\_\+block\+\_\+size adjusted to hold header + alignment if needed
+\end{DoxyItemize}
+
+{\bfseries{Size Levels\+:}} The number of free-\/list levels is\+: log2(pool\+\_\+size) -\/ log2(min\+\_\+block\+\_\+size) + 1 Example\+: pool=4096, min=64 → log2(4096) -\/ log2(64) + 1 = 12 -\/ 6 + 1 = 7 levels
+
+{\bfseries{Memory Overhead\+:}}
+\begin{DoxyItemize}
+\item OS pool\+: pool\+\_\+size bytes
+\item Free-\/lists array\+: num\+\_\+levels $\ast$ sizeof(void$\ast$)
+\item \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} structure\+: $\sim$128 bytes
+\end{DoxyItemize}
+
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If pool\+\_\+size or min\+\_\+block\+\_\+size is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If min\+\_\+block\+\_\+size $>$ pool\+\_\+size (after rounding) \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1AlignmentError}{Alignment\+Error}}} & If base\+\_\+align is invalid after normalization \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If OS memory allocation fails \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1CapacityOverflowError}{Capacity\+Overflow\+Error}}} & If arithmetic overflow occurs during initialization\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyNote}{Note}
+The returned allocator is wrapped in a \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} with \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}}, which automatically frees all resources (OS memory, free-\/lists, structure) when the \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} is destroyed.
+
+The pool size is fixed for the lifetime of the allocator. It cannot be resized. Use \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} to clear allocations or destroy and recreate for a different size.
+
+base\+\_\+align affects the minimum block size calculation but does NOT guarantee that \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} returns aligned pointers. Use \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} for specific alignment requirements.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+All parameters must be representable as size\+\_\+t. Extremely large values may cause overflow errors.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Basic Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create 64KB allocator with 64-\/byte minimum blocks}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(65536, 64, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!result.hasValue()) \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Error: "{}} << result.error().message() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} 1;}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(result.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use allocator...}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Automatic cleanup when buddy goes out of scope}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Power-\/of-\/2 Rounding Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Request non-\/power-\/of-\/2 sizes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(5000, 100, 48).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Actual sizes after rounding:}}
+\DoxyCodeLine{\textcolor{comment}{// pool\_size: 5000 → 8192 (next power of 2)}}
+\DoxyCodeLine{\textcolor{comment}{// min\_block\_size: 100 → 128 (next power of 2)}}
+\DoxyCodeLine{\textcolor{comment}{// base\_align: 48 → 64 (next power of 2)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Verify actual sizes}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} min = buddy-\/>min\_block\_size();  \textcolor{comment}{// 128}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} max = buddy-\/>max\_block\_size();  \textcolor{comment}{// 8192}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error Handling Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Invalid: min\_block\_size > pool\_size}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result1 = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(1024, 4096, 0);}
+\DoxyCodeLine{EXPECT\_FALSE(result1.hasValue());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Invalid: zero pool size}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result2 = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(0, 64, 0);}
+\DoxyCodeLine{EXPECT\_FALSE(result2.hasValue());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Invalid: zero min\_block\_size}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result3 = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 0, 0);}
+\DoxyCodeLine{EXPECT\_FALSE(result3.hasValue());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Valid: all parameters will be normalized}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result4 = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(3000, 50, 12);}
+\DoxyCodeLine{EXPECT\_TRUE(result4.hasValue());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Large Allocator Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create 16MB allocator with 256-\/byte minimum blocks}}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16 * 1024 * 1024, 256, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Can allocate up to \string~16MB (minus overhead)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} large = buddy-\/>alloc(8 * 1024 * 1024, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_TRUE(large.hasValue());}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(large.value());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}} Custom deleter for automatic resource cleanup 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}{min\+\_\+block\+\_\+size()}} Query minimum block \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}} 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a294bb228c89b3534204d287775aa3bd6}{max\+\_\+block\+\_\+size()}} Query maximum block \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}} 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} Clear all allocations 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}\label{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!is\_ptr@{is\_ptr}}
+\index{is\_ptr@{is\_ptr}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{is\_ptr()}{is\_ptr()}}
+{\footnotesize\ttfamily bool cslt\+::\+Buddy\+Allocator\+::is\+\_\+ptr (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Check whether a pointer refers to a valid allocation from this allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to validate\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if {\ttfamily ptr} is a valid user pointer returned by this \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}, false otherwise
+\end{DoxyReturn}
+Performs a non-\/throwing validation of a pointer against this allocator\textquotesingle{}s internal state. The function verifies that\+:
+
+
+\begin{DoxyItemize}
+\item {\ttfamily ptr} is non-\/null
+\item {\ttfamily ptr} lies within the allocator\textquotesingle{}s managed memory pool
+\item The internal Buddy\+Header immediately preceding {\ttfamily ptr} is readable
+\item The header encodes a valid block order for this allocator
+\item The block offset and size are consistent with the pool boundaries
+\item {\ttfamily ptr} lies within the bounds of the referenced allocation block
+\end{DoxyItemize}
+
+This function is designed to be {\bfseries{memory-\/safe}}\+: it first performs a range check to ensure that reading the internal header cannot cause undefined behavior or a segmentation fault, even if {\ttfamily ptr} is invalid or foreign.
+
+\begin{DoxyNote}{Note}
+This function does NOT check whether the block is currently allocated or free; it only validates that the pointer is structurally consistent with a block that could have been allocated by this allocator.
+
+Passing a pointer obtained from a different allocator instance will return false.
+
+Passing an interior pointer (i.\+e., not the original user pointer returned by alloc/alloc\+\_\+aligned/realloc$\ast$) will return false.
+
+The function is intentionally side-\/effect free and does not modify allocator state.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+A return value of true does not guarantee that the pointer has not already been freed or that the underlying memory has not been reused. Use-\/after-\/free remains undefined behavior.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Typical Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* p = buddy-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{assert(buddy-\/>is\_ptr(p));          \textcolor{comment}{// valid}}
+\DoxyCodeLine{assert(!buddy-\/>is\_ptr(p + 8));     \textcolor{comment}{// interior pointer}}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(p);}
+\DoxyCodeLine{assert(buddy-\/>is\_ptr(p));          \textcolor{comment}{// may still return true (use-\/after-\/free!)}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_ac4f166211e89a427db128ae66dd7b800}{is\+\_\+ptr\+\_\+sized()}} Pointer validation with \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}} constraint 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element()}} Free memory previously \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} by this allocator 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a8b9fcb5da49538257f1272d2a11b832c}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_ac4f166211e89a427db128ae66dd7b800}\label{classcslt_1_1BuddyAllocator_ac4f166211e89a427db128ae66dd7b800}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!is\_ptr\_sized@{is\_ptr\_sized}}
+\index{is\_ptr\_sized@{is\_ptr\_sized}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{is\_ptr\_sized()}{is\_ptr\_sized()}}
+{\footnotesize\ttfamily bool cslt\+::\+Buddy\+Allocator\+::is\+\_\+ptr\+\_\+sized (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Check whether a pointer refers to a valid allocation of at least a given size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to validate \\
+\hline
+{\em bytes} & Minimum required usable size in bytes\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if {\ttfamily ptr} is a valid user pointer returned by this \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} and the underlying allocation can accommodate at least {\ttfamily bytes}, false otherwise
+\end{DoxyReturn}
+Extends \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}{is\+\_\+ptr()}} by additionally verifying that the allocation referenced by {\ttfamily ptr} has sufficient usable capacity for {\ttfamily bytes}.
+
+Validation steps include\+:
+\begin{DoxyItemize}
+\item All structural checks performed by \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}{is\+\_\+ptr()}}
+\item Determination of the allocation block size from the internal header
+\item Verification that {\ttfamily bytes} does not exceed the block\textquotesingle{}s usable payload (block size minus header)
+\end{DoxyItemize}
+
+This function is {\bfseries{memory-\/safe}} and will not dereference invalid memory, even if {\ttfamily ptr} is foreign, corrupted, or out of bounds.
+
+\begin{DoxyNote}{Note}
+The {\ttfamily bytes} parameter represents a {\itshape logical size requirement} and is not required to match the size originally requested during allocation.
+
+As with \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}{is\+\_\+ptr()}}, this function does NOT detect use-\/after-\/free. A pointer that was previously freed may still return true if its header remains intact and has not been reused.
+
+Passing {\ttfamily bytes} = 0 will return true for any valid pointer.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Typical Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} p = buddy-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{assert(buddy-\/>is\_ptr\_sized(p, 128));   \textcolor{comment}{// fits}}
+\DoxyCodeLine{assert(buddy-\/>is\_ptr\_sized(p, 256));   \textcolor{comment}{// fits}}
+\DoxyCodeLine{assert(!buddy-\/>is\_ptr\_sized(p, 512));  \textcolor{comment}{// exceeds block capacity}}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(p);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}{is\+\_\+ptr()}} Basic pointer validation 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} Allocate memory 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} Allocate aligned memory 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a9174d07a2777d286188e0221558505dc}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}\label{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!largest\_block@{largest\_block}}
+\index{largest\_block@{largest\_block}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{largest\_block()}{largest\_block()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Buddy\+Allocator\+::largest\+\_\+block (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Query the size of the largest contiguous free block. 
+
+\begin{DoxyReturn}{Returns}
+Size in bytes of the largest currently available free block, or 0 if no free blocks are available
+\end{DoxyReturn}
+Scans the allocator\textquotesingle{}s free lists from the largest block size down to the smallest and returns the size of the first non-\/empty free list encountered.
+
+This value represents the {\bfseries{maximum single allocation}} that can currently succeed (ignoring internal header and alignment overhead).
+
+Unlike \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining()}}, which reports total free capacity, this function accounts for {\bfseries{fragmentation}}. A large \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining()}} value does not guarantee that a large allocation can succeed if free memory is split across smaller blocks.
+
+The function runs in O(\+L) time, where L is the number of size levels (log₂(pool\+\_\+size / min\+\_\+block\+\_\+size)).
+
+\begin{DoxyNote}{Note}
+The returned size is the raw block size managed by the buddy system. The actual maximum allocatable user payload may be smaller due to internal headers and alignment requirements.
+
+The result may change immediately after any allocation or deallocation.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} p1 = buddy-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keyword}{auto} p2 = buddy-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} largest = buddy-\/>largest\_block();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (largest < 1024) \{}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Fragmentation limits large allocations\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining()}} Total free capacity 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} Allocation behavior 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aed85f994879d6e6b7a1f4c7166da4b55}{stats()}} Detailed free-\/list diagnostics 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a294bb228c89b3534204d287775aa3bd6}\label{classcslt_1_1BuddyAllocator_a294bb228c89b3534204d287775aa3bd6}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!max\_block\_size@{max\_block\_size}}
+\index{max\_block\_size@{max\_block\_size}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{max\_block\_size()}{max\_block\_size()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Buddy\+Allocator\+::max\+\_\+block\+\_\+size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Query the maximum block size managed by the allocator. 
+
+\begin{DoxyReturn}{Returns}
+Maximum allocation block size in bytes
+\end{DoxyReturn}
+Returns the size of the largest block that the allocator can manage, which corresponds to the full memory pool size.
+
+This value represents the theoretical upper bound for a single allocation before considering fragmentation, headers, and alignment overhead.
+
+The value is always a power of two and is fixed for the lifetime of the allocator.
+
+\begin{DoxyNote}{Note}
+A request of exactly \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a294bb228c89b3534204d287775aa3bd6}{max\+\_\+block\+\_\+size()}} bytes may not succeed if internal headers or alignment padding are required. Use \mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block()}} to determine the maximum allocation that can succeed at a given moment.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(5000, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Pool rounded up: 5000 -\/> 8192}}
+\DoxyCodeLine{assert(buddy-\/>max\_block\_size() == 8192);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}{min\+\_\+block\+\_\+size()}} Minimum allocation block \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}} 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block()}} Largest currently available block 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining()}} Aggregate free capacity 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}\label{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!min\_block\_size@{min\_block\_size}}
+\index{min\_block\_size@{min\_block\_size}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{min\_block\_size()}{min\_block\_size()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Buddy\+Allocator\+::min\+\_\+block\+\_\+size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Query the minimum block size managed by the allocator. 
+
+\begin{DoxyReturn}{Returns}
+Minimum allocation block size in bytes
+\end{DoxyReturn}
+Returns the smallest block size (in bytes) that this \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} can manage internally. All allocations are rounded up to at least this size (after accounting for internal headers and alignment).
+
+The value is determined during allocator creation and is always a power of two.
+
+Requests smaller than this size will still consume at least one block of this size.
+
+\begin{DoxyNote}{Note}
+The minimum block size may be larger than the value originally requested at creation time, due to rounding to a power of two and ensuring space for internal headers and alignment.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 100, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Requested min block size: 100 bytes}}
+\DoxyCodeLine{\textcolor{comment}{// Actual min block size (rounded): 128 bytes}}
+\DoxyCodeLine{assert(buddy-\/>min\_block\_size() == 128);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a294bb228c89b3534204d287775aa3bd6}{max\+\_\+block\+\_\+size()}} Maximum possible block \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}} 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{Heap()}} \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} creation and normalization rules 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a952f260ad17922dbb7ef3b6a57385c9f}\label{classcslt_1_1BuddyAllocator_a952f260ad17922dbb7ef3b6a57385c9f}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!operator=@{operator=}}
+\index{operator=@{operator=}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}\& cslt\+::\+Buddy\+Allocator\+::operator= (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&\&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_aa8b18aef07e5ee5faad7a4bd57b9dc36}\label{classcslt_1_1BuddyAllocator_aa8b18aef07e5ee5faad7a4bd57b9dc36}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!operator=@{operator=}}
+\index{operator=@{operator=}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{operator=()}{operator=()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}\& cslt\+::\+Buddy\+Allocator\+::operator= (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [delete]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}\label{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!realloc@{realloc}}
+\index{realloc@{realloc}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{realloc()}{realloc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Buddy\+Allocator\+::realloc (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{old\+\_\+bytes,  }\item[{size\+\_\+t}]{new\+\_\+bytes,  }\item[{bool}]{zeroed }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Resize an existing allocation. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to existing allocation (or nullptr) \\
+\hline
+{\em old\+\_\+bytes} & Current size of the allocation in bytes \\
+\hline
+{\em new\+\_\+bytes} & Desired new size in bytes \\
+\hline
+{\em zeroed} & If true, zero-\/initialize any newly allocated space (when growing)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer to resized allocation on success, or error on failure
+\end{DoxyReturn}
+Resizes an existing allocation to a new size. The behavior depends on whether the allocation is growing, shrinking, or being created/freed.
+
+{\bfseries{Special Cases\+:}}
+\begin{DoxyItemize}
+\item realloc(nullptr, 0, n) → Equivalent to alloc(n)
+\item realloc(ptr, old, 0) → Frees ptr, returns nullptr (success)
+\item realloc(ptr, 0, n) → \mbox{\hyperlink{classcslt_1_1Error}{Error}} (old\+\_\+bytes must be non-\/zero with valid ptr)
+\end{DoxyItemize}
+
+{\bfseries{Shrinking (new\+\_\+bytes $<$= current block capacity)\+:}}
+\begin{DoxyItemize}
+\item Returns same pointer (no reallocation)
+\item Block is NOT split or resized (buddy system doesn\textquotesingle{}t support shrinking)
+\item If zeroed=true and new\+\_\+bytes $>$ old\+\_\+bytes, zeros the extra space
+\item Very fast (O(1)) -\/ no memory movement
+\end{DoxyItemize}
+
+{\bfseries{Growing (new\+\_\+bytes $>$ current block capacity)\+:}}
+\begin{DoxyItemize}
+\item Allocates new larger block via \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}}
+\item Copies min(old\+\_\+bytes, usable\+\_\+old) bytes to new block
+\item Frees old block (triggers coalescing)
+\item Returns new pointer (old pointer becomes invalid)
+\item If new allocation fails, old pointer remains valid
+\end{DoxyItemize}
+
+{\bfseries{Block Capacity\+:}} The usable capacity of a block is determined by its order (power-\/of-\/2 size) minus the header. For example, a block with order=8 (256 bytes) has 240 bytes usable (256 -\/ 16 byte header).
+
+{\bfseries{Data Preservation\+:}} When growing, all data from the old allocation is copied to the new one. The copy size is min(old\+\_\+bytes, actual\+\_\+usable\+\_\+capacity) to prevent reading beyond the old allocation.
+
+\begin{DoxyNote}{Note}
+The returned pointer may be different from the input pointer, even when shrinking. Always use the returned pointer.
+
+When growing fails, the old pointer remains valid and unchanged. This provides transactional semantics -\/ the operation either succeeds completely or leaves the allocation in its original state.
+
+old\+\_\+bytes is used to determine how much data to preserve when growing. Providing an incorrect value may result in data loss or reading invalid memory.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If ptr is non-\/null but old\+\_\+bytes is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If ptr is nullptr and new\+\_\+bytes is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1CapacityOverflowError}{Capacity\+Overflow\+Error}}} & If new\+\_\+bytes causes arithmetic overflow \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If growing and no free blocks available\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Growing Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Initial allocation: 128 bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(ptr, 42, 128);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow to 512 bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr\_result = buddy-\/>realloc(ptr, 128, 512, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (new\_ptr\_result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = new\_ptr\_result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Data preserved (first 128 bytes still contain 42)}}
+\DoxyCodeLine{    uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{    assert(data[0] == 42);}
+\DoxyCodeLine{    assert(data[127] == 42);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// New space available (bytes 128-\/511)}}
+\DoxyCodeLine{    memset(data + 128, 0, 384);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    buddy-\/>return\_element(new\_ptr);}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    \textcolor{comment}{// Old pointer still valid on failure}}
+\DoxyCodeLine{    buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Shrinking Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 512 bytes (gets a power-\/of-\/2 block)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(512, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Shrink to 256 bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = buddy-\/>realloc(ptr, 512, 256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Returns same pointer (no reallocation needed)}}
+\DoxyCodeLine{assert(result.value() == ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Still using same block, just treating it as smaller}}
+\DoxyCodeLine{buddy-\/>return\_element(result.value());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Realloc from nullptr\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Realloc from nullptr acts as alloc}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = buddy-\/>realloc(ptr, 0, 256, \textcolor{keyword}{true});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    ptr = result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Memory is zero-\/initialized}}
+\DoxyCodeLine{    uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{    assert(data[0] == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Realloc to Zero (Free)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Realloc to zero frees the memory}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = buddy-\/>realloc(ptr, 256, 0, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Returns nullptr (success), ptr is now invalid}}
+\DoxyCodeLine{assert(result.hasValue());}
+\DoxyCodeLine{assert(result.value() == \textcolor{keyword}{nullptr});}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Growth with Zero-\/\+Fill\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(ptr, \textcolor{charliteral}{'A'}, 128);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow to 512 with zero-\/fill}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = buddy-\/>realloc(ptr, 128, 512, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Old data preserved}}
+\DoxyCodeLine{assert(data[0] == \textcolor{charliteral}{'A'});}
+\DoxyCodeLine{assert(data[127] == \textcolor{charliteral}{'A'});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// New space zeroed}}
+\DoxyCodeLine{assert(data[128] == 0);}
+\DoxyCodeLine{assert(data[511] == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(new\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} Initial allocation 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a409bb66d1e09136816216cbb96f3bd21}{realloc\+\_\+aligned()}} Realloc with alignment preserved 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element()}} Free memory 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_ad83899b3087ecbf56883ef775048e81a}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a409bb66d1e09136816216cbb96f3bd21}\label{classcslt_1_1BuddyAllocator_a409bb66d1e09136816216cbb96f3bd21}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!realloc\_aligned@{realloc\_aligned}}
+\index{realloc\_aligned@{realloc\_aligned}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{realloc\_aligned()}{realloc\_aligned()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ cslt\+::\+Buddy\+Allocator\+::realloc\+\_\+aligned (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{old\+\_\+bytes,  }\item[{size\+\_\+t}]{new\+\_\+bytes,  }\item[{size\+\_\+t}]{alignment,  }\item[{bool}]{zeroed }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Resize an existing allocation while preserving alignment. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to existing allocation (or nullptr) \\
+\hline
+{\em old\+\_\+bytes} & Current size of the allocation in bytes \\
+\hline
+{\em new\+\_\+bytes} & Desired new size in bytes \\
+\hline
+{\em alignment} & Required alignment in bytes (0 = alignof(max\+\_\+align\+\_\+t), will be rounded up to power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize any newly allocated space (when growing)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer to resized aligned allocation on success, or error on failure
+\end{DoxyReturn}
+Resizes an existing allocation while maintaining alignment guarantees. Behaves similarly to \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}{realloc()}} but with additional alignment handling.
+
+{\bfseries{Special Cases\+:}}
+\begin{DoxyItemize}
+\item realloc\+\_\+aligned(nullptr, 0, n, a) → Equivalent to alloc\+\_\+aligned(n, a)
+\item realloc\+\_\+aligned(ptr, old, 0, a) → Frees ptr, returns nullptr (success)
+\item realloc\+\_\+aligned(ptr, 0, n, a) → \mbox{\hyperlink{classcslt_1_1Error}{Error}} (old\+\_\+bytes must be non-\/zero)
+\end{DoxyItemize}
+
+{\bfseries{In-\/\+Place Reuse (no reallocation)\+:}} Occurs when ALL of these conditions are met\+:
+\begin{DoxyItemize}
+\item new\+\_\+bytes fits in current block capacity
+\item ptr already satisfies the requested alignment Returns same pointer, very fast (O(1))
+\end{DoxyItemize}
+
+{\bfseries{Reallocation Required\+:}} Occurs when ANY of these is true\+:
+\begin{DoxyItemize}
+\item new\+\_\+bytes exceeds current block capacity
+\item ptr doesn\textquotesingle{}t satisfy requested alignment (alignment changed) Allocates new block with \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}}, copies data, frees old block
+\end{DoxyItemize}
+
+{\bfseries{Alignment Changes\+:}} You can change alignment during realloc. For example, reallocating from 32-\/byte to 64-\/byte alignment will trigger a new allocation even if the size fits in the current block.
+
+{\bfseries{Data Preservation\+:}} When reallocating, copies min(old\+\_\+bytes, actual\+\_\+usable\+\_\+capacity) bytes to preserve all data from the old allocation.
+
+\begin{DoxyNote}{Note}
+alignment is normalized to a power of 2. Requesting 48 will be rounded to 64.
+
+The returned pointer may be different from the input pointer. Always use the returned pointer and consider the old pointer invalid.
+
+When growing fails, the old pointer remains valid and unchanged.
+
+Changing alignment (even to a less strict value) may trigger reallocation.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If ptr is non-\/null but old\+\_\+bytes is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1AlignmentError}{Alignment\+Error}}} & If alignment is invalid after normalization \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1CapacityOverflowError}{Capacity\+Overflow\+Error}}} & If new\+\_\+bytes + alignment causes overflow \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If growing and no free blocks available or insufficient space for alignment\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Growing with Same Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16384, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 256 bytes with 128-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(256, 128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(ptr, \textcolor{charliteral}{'X'}, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow to 1024 bytes, keep 128-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr\_result = buddy-\/>realloc\_aligned(ptr, 256, 1024, 128, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (new\_ptr\_result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = new\_ptr\_result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Alignment preserved}}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr) \% 128 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Data preserved}}
+\DoxyCodeLine{    uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{    assert(data[0] == \textcolor{charliteral}{'X'});}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    buddy-\/>return\_element(new\_ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{In-\/\+Place Reuse\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate with 64-\/byte alignment (gets larger block for padding)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(256, 64, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Shrink with same alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = buddy-\/>realloc\_aligned(ptr, 256, 128, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Same pointer returned (in-\/place reuse)}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    assert(result.value() == ptr);}
+\DoxyCodeLine{    buddy-\/>return\_element(result.value());}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Changing Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16384, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Start with 32-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(512, 32, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(ptr, \textcolor{charliteral}{'A'}, 512);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Change to 256-\/byte alignment (same size)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = buddy-\/>realloc\_aligned(ptr, 512, 512, 256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Different pointer (reallocation occurred due to alignment change)}}
+\DoxyCodeLine{\textcolor{comment}{// But data is preserved}}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{assert(data[0] == \textcolor{charliteral}{'A'});}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr) \% 256 == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(new\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Realloc SIMD Buffer\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(32768, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Start with AVX alignment (32 bytes)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(1024, 32, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Process data with AVX...}}
+\DoxyCodeLine{\_\_m256* vec = \textcolor{keyword}{reinterpret\_cast<}\_\_m256*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{\textcolor{comment}{// ... SIMD operations ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow buffer for AVX-\/512 (64-\/byte alignment)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = buddy-\/>realloc\_aligned(ptr, 1024, 2048, 64, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now suitable for AVX-\/512}}
+\DoxyCodeLine{\_\_m512* vec512 = \textcolor{keyword}{reinterpret\_cast<}\_\_m512*\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{\textcolor{comment}{// ... AVX-\/512 operations ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(new\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Growth with Zero-\/\+Fill and Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16384, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc\_aligned(256, 128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(ptr, \textcolor{charliteral}{'B'}, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Grow to 1024 bytes with zero-\/fill, maintain alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = buddy-\/>realloc\_aligned(ptr, 256, 1024, 128, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Old data preserved}}
+\DoxyCodeLine{assert(data[0] == \textcolor{charliteral}{'B'});}
+\DoxyCodeLine{assert(data[255] == \textcolor{charliteral}{'B'});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// New space zeroed (implementation zeros from new\_bytes onward in new block)}}
+\DoxyCodeLine{\textcolor{comment}{// Note: Exact zeroing behavior may vary based on block positioning}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Alignment maintained}}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr) \% 128 == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{buddy-\/>return\_element(new\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Realloc from nullptr with Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Acts as alloc\_aligned}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = buddy-\/>realloc\_aligned(ptr, 0, 512, 256, \textcolor{keyword}{true});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    ptr = result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Aligned and zeroed}}
+\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 256 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} Initial aligned allocation 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}{realloc()}} Realloc without alignment requirements 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element()}} Free memory 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a7c5678c95eddff0fb5ae06a09492fb7c}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}\label{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!remaining@{remaining}}
+\index{remaining@{remaining}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{remaining()}{remaining()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Buddy\+Allocator\+::remaining (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Query the number of bytes currently available for allocation. 
+
+\begin{DoxyReturn}{Returns}
+Number of free bytes remaining in the allocator\textquotesingle{}s memory pool
+\end{DoxyReturn}
+Returns the difference between the total pool size and the number of bytes currently allocated. This represents the {\itshape aggregate} free capacity and does NOT account for fragmentation.
+
+As a result, it is possible for \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining()}} to return a non-\/zero value even when a large allocation cannot be satisfied due to fragmentation.
+
+This function is constant-\/time and does not modify allocator state.
+
+\begin{DoxyNote}{Note}
+To determine the maximum single allocation that can currently succeed, use \mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block()}} instead.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Example\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} used = buddy-\/>size();}
+\DoxyCodeLine{\textcolor{keyword}{auto} free = buddy-\/>remaining();}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Used: "{}} << used}
+\DoxyCodeLine{          << \textcolor{stringliteral}{"{}, Remaining: "{}} << free << \textcolor{charliteral}{'\(\backslash\)n'};}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}} Query currently \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} bytes 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block()}} Query largest contiguous free block 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a1b34a9c4860a9e28255745b1d1e7cb62}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}\label{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!reset@{reset}}
+\index{reset@{reset}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily bool cslt\+::\+Buddy\+Allocator\+::reset (\begin{DoxyParamCaption}\item[{bool}]{trim = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Reset allocator to initial state, freeing all allocations. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trim} & Ignored (present for interface compatibility)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success, false if allocator is not properly initialized
+\end{DoxyReturn}
+Resets the buddy allocator to its pristine initial state by clearing all free lists and placing a single large free block spanning the entire pool at the top level.
+
+{\bfseries{Reset Process\+:}}
+\begin{DoxyEnumerate}
+\item Validate allocator is initialized (base, pool\+\_\+size, num\+\_\+levels valid)
+\item Clear all free lists (set all levels to nullptr)
+\item Create initial free block at pool base
+\item Place block in top-\/level free list (max\+\_\+order)
+\item Reset accounting (size\+\_\+ = 0)
+\end{DoxyEnumerate}
+
+{\bfseries{Effect\+:}}
+\begin{DoxyItemize}
+\item All previous allocations become invalid
+\item Memory pool returns to single large free block
+\item All fragmentation eliminated
+\item \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} ready for reuse
+\end{DoxyItemize}
+
+{\bfseries{Performance\+:}} O(n) where n is the number of free list levels, but typically very fast since it just clears an array and sets a few pointers.
+
+{\bfseries{Use Cases\+:}}
+\begin{DoxyItemize}
+\item Bulk cleanup faster than freeing individually
+\item Per-\/frame allocations in game engines
+\item Request/response cycle allocations in servers
+\item Temporary computation scratch space
+\item Test cleanup between test cases
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+The trim parameter is ignored by \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}. The pool size is fixed and cannot be trimmed. The parameter exists for interface compatibility.
+
+All outstanding pointers become invalid after \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}}. Accessing them results in undefined behavior.
+
+The OS-\/backed memory pool is NOT freed. \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} only clears the internal free list structure. To free OS memory, destroy the \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}.
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} is much faster than individually freeing many allocations, especially when there are hundreds or thousands of active allocations.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+After \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}}, ALL pointers obtained from this allocator become invalid. Ensure no code will access these pointers after calling \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}}.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Basic Reset\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Make many allocations}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{    buddy-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} used\_before = buddy-\/>size();}
+\DoxyCodeLine{assert(used\_before > 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Reset to initial state}}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ok = buddy-\/>reset();}
+\DoxyCodeLine{assert(ok);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All allocations gone}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} used\_after = buddy-\/>size();}
+\DoxyCodeLine{assert(used\_after == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocator ready for reuse}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{assert(ptr.hasValue());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Per-\/\+Frame Allocations\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (game\_running) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Frame start -\/ allocator is clean}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Allocate temporary data for this frame}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} render\_data = buddy-\/>alloc(10000, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{    \textcolor{keyword}{auto} physics\_data = buddy-\/>alloc(5000, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ai\_data = buddy-\/>alloc(8000, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Process frame...}}
+\DoxyCodeLine{    render\_frame(render\_data);}
+\DoxyCodeLine{    update\_physics(physics\_data);}
+\DoxyCodeLine{    update\_ai(ai\_data);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Frame end -\/ bulk cleanup}}
+\DoxyCodeLine{    buddy-\/>reset();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// All frame allocations invalidated}}
+\DoxyCodeLine{    \textcolor{comment}{// Ready for next frame}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Request/\+Response Cycle\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(256 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} handle\_request(\textcolor{keyword}{const} Request\& req) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Parse request (may allocate parsing buffers)}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} parsed = parse\_request(buddy, req);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Process request (may allocate temporary structures)}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} response = process(buddy, parsed);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Send response}}
+\DoxyCodeLine{    send\_response(response);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Cleanup all request-\/scoped allocations}}
+\DoxyCodeLine{    buddy-\/>reset();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Ready for next request}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Reset vs Individual Frees\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(16384, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 500 blocks}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 500; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = buddy-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (ptr.hasValue()) \{}
+\DoxyCodeLine{        ptrs.push\_back(ptr.value());}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Option 1: Free individually (slow -\/ 500 operations with coalescing)}}
+\DoxyCodeLine{\textcolor{comment}{// for (void* ptr : ptrs) \{}}
+\DoxyCodeLine{\textcolor{comment}{//     buddy-\/>return\_element(ptr);}}
+\DoxyCodeLine{\textcolor{comment}{// \}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Option 2: Reset (fast -\/ O(levels) operation)}}
+\DoxyCodeLine{buddy-\/>reset();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// reset() is MUCH faster for bulk cleanup}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Test Cleanup\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }BuddyTest : \textcolor{keyword}{public} ::testing::Test \{}
+\DoxyCodeLine{\textcolor{keyword}{protected}:}
+\DoxyCodeLine{    UniquePtr<BuddyAllocator, BuddyDeleter> buddy;}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordtype}{void} SetUp()\textcolor{keyword}{ override }\{}
+\DoxyCodeLine{        buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordtype}{void} TearDown()\textcolor{keyword}{ override }\{}
+\DoxyCodeLine{        \textcolor{comment}{// Clean up between tests}}
+\DoxyCodeLine{        buddy-\/>reset();}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{test__allocator_8cpp_a83ea3704e3289c30e52cf7784c02c5a7}{TEST\_F}}(BuddyTest, Test1) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = buddy-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{comment}{// Test logic...}}
+\DoxyCodeLine{    \textcolor{comment}{// No need to manually free -\/ TearDown resets}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{test__allocator_8cpp_a83ea3704e3289c30e52cf7784c02c5a7}{TEST\_F}}(BuddyTest, Test2) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Starts with clean allocator thanks to reset()}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = buddy-\/>alloc(512, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{comment}{// Test logic...}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Temporary Computation Space\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(512 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} matrix\_multiply(Matrix\& result, \textcolor{keyword}{const} Matrix\& a, \textcolor{keyword}{const} Matrix\& b) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Allocate temporary workspace}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} temp = buddy-\/>alloc(a.rows * b.cols * \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{double}), \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Perform computation using temp buffer}}
+\DoxyCodeLine{    \textcolor{comment}{// ...}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Copy result}}
+\DoxyCodeLine{    memcpy(result.data, temp, result.size);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Cleanup all temporary allocations}}
+\DoxyCodeLine{    buddy-\/>reset();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\+\_\+element()}} Free individual allocation 
+
+\mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}} Check current usage 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining()}} Check available space 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a63cbbfc6cfeb46e51a14a91f8f5c48ea}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a6f9ddce102a19221c35757842a00979b}\label{classcslt_1_1BuddyAllocator_a6f9ddce102a19221c35757842a00979b}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!restore@{restore}}
+\index{restore@{restore}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{restore()}{restore()}}
+{\footnotesize\ttfamily bool cslt\+::\+Buddy\+Allocator\+::restore (\begin{DoxyParamCaption}\item[{void $\ast$}]{checkpoint }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Restore allocator state from a checkpoint (unsupported for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em checkpoint} & Ignored\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Always returns false
+\end{DoxyReturn}
+This function is part of the \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} base-\/class interface but is intentionally unsupported by \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}.
+
+Because \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a57fc74c816952a5da82de3471d5a2e97}{save()}} does not produce a valid checkpoint, \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6f9ddce102a19221c35757842a00979b}{restore()}} always fails and performs no action.
+
+\begin{DoxyNote}{Note}
+The allocator state is unchanged by this call.
+
+Code that requires allocator checkpointing should use an allocator that explicitly supports save/restore semantics (e.\+g., arena allocators).
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a57fc74c816952a5da82de3471d5a2e97}{save()}} Corresponding \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a57fc74c816952a5da82de3471d5a2e97}{save}} operation (unsupported) 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} Clear all allocations and return allocator to initial state 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_ab96e7b76511d29b505c5da81fb8b3cba}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}\label{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!return\_element@{return\_element}}
+\index{return\_element@{return\_element}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{return\_element()}{return\_element()}}
+{\footnotesize\ttfamily void cslt\+::\+Buddy\+Allocator\+::return\+\_\+element (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes = {\ttfamily 0},  }\item[{size\+\_\+t}]{alignment = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Free an allocated block and trigger buddy coalescing. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to free (returned from alloc, alloc\+\_\+aligned, realloc, or realloc\+\_\+aligned) \\
+\hline
+{\em bytes} & Ignored (present for interface compatibility) \\
+\hline
+{\em alignment} & Ignored (present for interface compatibility)\\
+\hline
+\end{DoxyParams}
+Frees a previously allocated block and attempts to coalesce (merge) it with its buddy block to form larger free blocks. This is the core deallocation mechanism of the buddy allocator.
+
+{\bfseries{Deallocation Process\+:}}
+\begin{DoxyEnumerate}
+\item Validate pointer is not null (null is silently ignored)
+\item Read Buddy\+Header located 16 bytes before the user pointer
+\item Validate header (order within valid range, offset within pool)
+\item Calculate block start from header\textquotesingle{}s block\+\_\+offset
+\item Update accounting (decrease size\+\_\+)
+\item Begin coalescing process
+\end{DoxyEnumerate}
+
+{\bfseries{Coalescing Algorithm\+:}} The allocator recursively merges blocks with their buddies\+:
+\begin{DoxyEnumerate}
+\item Calculate buddy offset\+: current\+\_\+offset XOR (2$^\wedge$current\+\_\+order)
+\item Check if buddy is in the free list at this level
+\item If buddy is free\+:
+\begin{DoxyItemize}
+\item Remove buddy from free list
+\item Merge with current block (use lower address)
+\item Increase order (double the size)
+\item Repeat at next level
+\end{DoxyItemize}
+\item If buddy is NOT free (still allocated)\+:
+\begin{DoxyItemize}
+\item Stop coalescing
+\item Insert current block into appropriate free list
+\end{DoxyItemize}
+\end{DoxyEnumerate}
+
+{\bfseries{Coalescing Example\+:}} 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Pool: 1024 bytes (order 10)}
+\DoxyCodeLine{}
+\DoxyCodeLine{Free block at offset 0, order 7 (128 bytes):}
+\DoxyCodeLine{  Buddy at offset: 0 XOR 128 = 128}
+\DoxyCodeLine{  If buddy at 128 is free:}
+\DoxyCodeLine{    Merge → 256-\/\textcolor{keywordtype}{byte} block at offset 0, order 8}
+\DoxyCodeLine{    }
+\DoxyCodeLine{  New buddy at: 0 XOR 256 = 256}
+\DoxyCodeLine{  If buddy at 256 is free:}
+\DoxyCodeLine{    Merge → 512-\/\textcolor{keywordtype}{byte} block at offset 0, order 9}
+\DoxyCodeLine{    }
+\DoxyCodeLine{  Continue until buddy not free or reach max\_order}
+
+\end{DoxyCode}
+
+
+{\bfseries{Performance\+:}} O(log n) where n is the number of size levels, due to recursive coalescing up the buddy tree.
+
+\begin{DoxyNote}{Note}
+The bytes and alignment parameters are ignored by \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}. They exist only for base class interface compatibility. The allocator determines block size from the internal header.
+
+Passing nullptr is safe and does nothing (similar to free(nullptr)).
+
+Invalid pointers (wrong allocator, already freed, corrupted header) are handled silently. The function returns without error but may not free the memory correctly.
+
+Double-\/free results in undefined behavior. The allocator may detect some cases via header validation but cannot catch all scenarios.
+
+After this call, ptr becomes invalid. Accessing it results in undefined behavior.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Do not free pointers from a different \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} instance. Each allocator manages its own distinct pool.
+
+Do not modify the memory before the returned pointer. The header region must remain intact for proper deallocation.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = buddy-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use memory...}}
+\DoxyCodeLine{memset(ptr, 0, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free when done (automatic coalescing)}}
+\DoxyCodeLine{buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// ptr is now invalid -\/ do not use!}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Coalescing Demonstration\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate three adjacent blocks}}
+\DoxyCodeLine{\textcolor{keyword}{auto} p1 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p2 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p3 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} largest\_before = buddy-\/>largest\_block();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free all three -\/ they coalesce into larger block}}
+\DoxyCodeLine{buddy-\/>return\_element(p1);}
+\DoxyCodeLine{buddy-\/>return\_element(p2);}
+\DoxyCodeLine{buddy-\/>return\_element(p3);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} largest\_after = buddy-\/>largest\_block();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Largest block increased due to coalescing}}
+\DoxyCodeLine{assert(largest\_after > largest\_before);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Free Order Doesn\textquotesingle{}t Matter\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate four blocks}}
+\DoxyCodeLine{\textcolor{keyword}{auto} p1 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p2 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p3 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} p4 = buddy-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free in random order -\/ coalescing still works}}
+\DoxyCodeLine{buddy-\/>return\_element(p3);}
+\DoxyCodeLine{buddy-\/>return\_element(p1);}
+\DoxyCodeLine{buddy-\/>return\_element(p4);}
+\DoxyCodeLine{buddy-\/>return\_element(p2);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All blocks coalesced back}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{NULL Pointer Handling\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(4096, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe -\/ does nothing}}
+\DoxyCodeLine{buddy-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Conditional freeing is safe}}
+\DoxyCodeLine{\textcolor{keyword}{auto} maybe\_ptr = buddy-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (maybe\_ptr.hasValue()) \{}
+\DoxyCodeLine{    ptr = maybe\_ptr.value();}
+\DoxyCodeLine{    \textcolor{comment}{// ... use ptr ...}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe even if allocation failed (ptr is nullptr)}}
+\DoxyCodeLine{buddy-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Fragmentation Reduction\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{BuddyAllocator::Heap}}(8192, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many blocks (creates fragmentation)}}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 30; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = buddy-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (ptr.hasValue()) \{}
+\DoxyCodeLine{        ptrs.push\_back(ptr.value());}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free every other block}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < ptrs.size(); i += 2) \{}
+\DoxyCodeLine{    buddy-\/>return\_element(ptrs[i]);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} fragmented = buddy-\/>largest\_block();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free remaining blocks -\/ coalescing reduces fragmentation}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 1; i < ptrs.size(); i += 2) \{}
+\DoxyCodeLine{    buddy-\/>return\_element(ptrs[i]);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} after\_coalesce = buddy-\/>largest\_block();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Fragmentation reduced through coalescing}}
+\DoxyCodeLine{assert(after\_coalesce > fragmented);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc()}} Allocate memory 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\+\_\+aligned()}} Allocate aligned memory 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset()}} Bulk deallocation of all blocks 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block()}} Check largest free block after coalescing 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_a57fc74c816952a5da82de3471d5a2e97}\label{classcslt_1_1BuddyAllocator_a57fc74c816952a5da82de3471d5a2e97}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!save@{save}}
+\index{save@{save}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily void$\ast$ cslt\+::\+Buddy\+Allocator\+::save (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Save allocator state (unsupported for \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}) 
+
+\begin{DoxyReturn}{Returns}
+Always returns nullptr
+\end{DoxyReturn}
+This function is part of the \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} base-\/class interface but is intentionally unsupported by \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}.
+
+Buddy allocators manage complex free-\/list and coalescing state that is not trivially serializable or restorable without significant overhead. As a result, checkpointing is not provided.
+
+\begin{DoxyNote}{Note}
+Calling this function always returns nullptr and has no side effects.
+
+Code that relies on \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a57fc74c816952a5da82de3471d5a2e97}{save()}}/restore() semantics should not use \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}.
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6f9ddce102a19221c35757842a00979b}{restore()}} Corresponding \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6f9ddce102a19221c35757842a00979b}{restore}} operation (also unsupported) 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a59fcf1ce582d5cf99d942a941af5e107}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_aed85f994879d6e6b7a1f4c7166da4b55}\label{classcslt_1_1BuddyAllocator_aed85f994879d6e6b7a1f4c7166da4b55}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!stats@{stats}}
+\index{stats@{stats}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{stats()}{stats()}}
+{\footnotesize\ttfamily bool cslt\+::\+Buddy\+Allocator\+::stats (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer,  }\item[{size\+\_\+t}]{buffer\+\_\+size }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Generate a human-\/readable summary of allocator state. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Destination buffer to receive the formatted statistics text \\
+\hline
+{\em buffer\+\_\+size} & Size of {\ttfamily buffer} in bytes\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if statistics were successfully written to {\ttfamily buffer}, false if an error occurred (e.\+g., invalid buffer or insufficient space)
+\end{DoxyReturn}
+Writes a textual report describing the current state of the \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} into the user-\/provided buffer. The report includes\+:
+
+
+\begin{DoxyItemize}
+\item Total pool size
+\item Minimum and maximum block sizes
+\item Currently allocated bytes
+\item Remaining free capacity
+\item Largest available free block
+\item Overall utilization percentage
+\item Per-\/level free list statistics (block count and free bytes)
+\end{DoxyItemize}
+
+The output is intended for diagnostics, debugging, and monitoring. The exact formatting is implementation-\/defined but stable enough for human consumption.
+
+This function performs no allocations and does not modify allocator state.
+
+\begin{DoxyNote}{Note}
+If {\ttfamily buffer} is null or {\ttfamily buffer\+\_\+size} is zero, the function returns false and no output is produced.
+
+If the buffer is too small to hold the full report, the function returns false. Partial output may have been written to {\ttfamily buffer}.
+
+The statistics represent a snapshot at the time of the call and may become stale immediately in multi-\/threaded environments.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Typical Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buf[2048];}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (buddy-\/>stats(buf, \textcolor{keyword}{sizeof}(buf))) \{}
+\DoxyCodeLine{    std::puts(buf);}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Failed to generate allocator stats\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining()}} Query available capacity 
+
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\+\_\+block()}} Query largest contiguous free block 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a794cb0fe500dc3a698015474ad8a7c86}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1BuddyAllocator_ab1324f8665b378d17c18336c2262808e}\label{classcslt_1_1BuddyAllocator_ab1324f8665b378d17c18336c2262808e}} 
+\index{cslt::BuddyAllocator@{cslt::BuddyAllocator}!BuddyDeleter@{BuddyDeleter}}
+\index{BuddyDeleter@{BuddyDeleter}!cslt::BuddyAllocator@{cslt::BuddyAllocator}}
+\doxysubsubsection{\texorpdfstring{BuddyDeleter}{BuddyDeleter}}
+{\footnotesize\ttfamily friend struct \mbox{\hyperlink{structcslt_1_1BuddyDeleter}{Buddy\+Deleter}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/\mbox{\hyperlink{allocator_8cpp}{allocator.\+cpp}}\end{DoxyCompactItemize}

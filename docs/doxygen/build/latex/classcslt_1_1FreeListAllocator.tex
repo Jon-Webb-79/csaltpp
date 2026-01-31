@@ -58,10 +58,8 @@ bool \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a90a7d9f260434769fefd96bffc
 \begin{DoxyCompactList}\small\item\em Validate pointer and verify it has at least the requested size. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a11d836fb3a2b2d22257999cabdf9756f}{stats}} (char $\ast$buffer, size\+\_\+t buffer\+\_\+size) const override
 \begin{DoxyCompactList}\small\item\em Generate diagnostic statistics report for the freelist. \end{DoxyCompactList}\item 
-size\+\_\+t \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining}} () const
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining}} () const noexcept
 \begin{DoxyCompactList}\small\item\em Get the number of bytes available for new allocations. \end{DoxyCompactList}\item 
-size\+\_\+t \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} () const
-\begin{DoxyCompactList}\small\item\em Get the total usable capacity of the freelist region. \end{DoxyCompactList}\item 
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used}} () const
 \begin{DoxyCompactList}\small\item\em Get the number of bytes currently consumed by allocations. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a3b2f9e190bc3751d679d1c75f1d5b8f5}{owns\+\_\+arena}} () const
@@ -232,7 +230,7 @@ The actual memory consumed may exceed \textquotesingle{}bytes\textquotesingle{} 
 Allocated blocks must be returned via \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a92297e3568123854b9c2ea7398f4058f}{return\+\_\+element()}} for reuse. Adjacent freed blocks are automatically coalesced to reduce fragmentation.
 \end{DoxyNote}
 \begin{DoxyWarning}{Warning}
-Passing bytes larger than available capacity will fail. Check \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} before large allocations if needed.
+Passing bytes larger than available capacity will fail. Check \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining()}} before large allocations if needed.
 \end{DoxyWarning}
 \begin{DoxyParagraph}{Example -\/ Basic allocation}
 
@@ -302,7 +300,7 @@ Passing bytes larger than available capacity will fail. Check \mbox{\hyperlink{c
 
 \mbox{\hyperlink{classcslt_1_1FreeListAllocator_af100ec762c3ebda5e255af32e4ba594d}{realloc()}} To resize existing allocations 
 
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} To check available \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} 
+\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining()}} To check available capacity 
 \end{DoxySeeAlso}
 
 
@@ -462,40 +460,6 @@ Requesting alignment stricter than the freelist\textquotesingle{}s base alignmen
 
 Implements \mbox{\hyperlink{classcslt_1_1Allocator_a518d804fc4eb66096f2534fc922c1ac4}{cslt\+::\+Allocator}}.
 
-\begin{Desc}
-\item[Examples]\par
-\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
-\mbox{\Hypertarget{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}\label{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}} 
-\index{cslt::FreeListAllocator@{cslt::FreeListAllocator}!capacity@{capacity}}
-\index{capacity@{capacity}!cslt::FreeListAllocator@{cslt::FreeListAllocator}}
-\doxysubsubsection{\texorpdfstring{capacity()}{capacity()}}
-{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Free\+List\+Allocator\+::capacity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const}
-
-
-
-Get the total usable capacity of the freelist region. 
-
-\begin{DoxyReturn}{Returns}
-Total number of bytes in the usable freelist region
-\end{DoxyReturn}
-Returns the total size of the freelist\textquotesingle{}s managed memory region, excluding the \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} header but including space that may be used for allocation headers and padding.
-
-This value is constant for the lifetime of the freelist and represents the maximum amount of space that can be consumed by allocations plus their internal metadata and padding. It is established at freelist creation based on the requested size and available arena space.
-
-The relationship\+: \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used()}} + \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} == \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity()}} always holds.
-
-\begin{DoxyNote}{Note}
-This does not include the \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} control structure overhead, only the usable region for allocations.
-
-This value never changes after initialization (freelists do not grow).
-\end{DoxyNote}
-\begin{DoxySeeAlso}{See also}
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} For available bytes 
-
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used()}} For consumed bytes 
-
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a11d836fb3a2b2d22257999cabdf9756f}{stats()}} For detailed \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} breakdown 
-\end{DoxySeeAlso}
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
@@ -928,16 +892,16 @@ Passing incorrect old\+\_\+bytes can corrupt data or crash. The freelist cannot 
 \DoxyCodeLine{\textcolor{keyword}{auto} freelist = \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa2f748bf100ae9f46a7927f890709857}{cslt::FreeListAllocator::Heap}}(16384, 0, \textcolor{keyword}{false}).value();}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keywordtype}{void}* array = \textcolor{keyword}{nullptr};}
-\DoxyCodeLine{\textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} = 0;}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} capacity = 0;}
 \DoxyCodeLine{\textcolor{keywordtype}{size\_t} count = 0;}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{comment}{// Add elements, growing as needed}}
 \DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
-\DoxyCodeLine{    \textcolor{keywordflow}{if} (count >= \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}}) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (count >= capacity) \{}
 \DoxyCodeLine{        \textcolor{comment}{// Grow by 2x}}
-\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} new\_capacity = \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} == 0 ? 16 : \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} * 2;}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} new\_capacity = capacity == 0 ? 16 : capacity * 2;}
 \DoxyCodeLine{        \textcolor{keywordtype}{size\_t} new\_bytes = new\_capacity * \textcolor{keyword}{sizeof}(int);}
-\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} old\_bytes = \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} * \textcolor{keyword}{sizeof}(int);}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} old\_bytes = capacity * \textcolor{keyword}{sizeof}(int);}
 \DoxyCodeLine{        }
 \DoxyCodeLine{        \textcolor{keyword}{auto} result = freelist-\/>realloc(array, old\_bytes, new\_bytes, \textcolor{keyword}{false});}
 \DoxyCodeLine{        \textcolor{keywordflow}{if} (!result.hasValue()) \{}
@@ -945,7 +909,7 @@ Passing incorrect old\+\_\+bytes can corrupt data or crash. The freelist cannot 
 \DoxyCodeLine{        \}}
 \DoxyCodeLine{        }
 \DoxyCodeLine{        array = result.value();}
-\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} = new\_capacity;}
+\DoxyCodeLine{        capacity = new\_capacity;}
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{    }
 \DoxyCodeLine{    \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{int}*\textcolor{keyword}{>}(array)[count++] = i;}
@@ -953,7 +917,7 @@ Passing incorrect old\+\_\+bytes can corrupt data or crash. The freelist cannot 
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{comment}{// Cleanup}}
 \DoxyCodeLine{\textcolor{keywordflow}{if} (array) \{}
-\DoxyCodeLine{    freelist-\/>return\_element(array, \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} * \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
+\DoxyCodeLine{    freelist-\/>return\_element(array, capacity * \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{int}));}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}
@@ -1167,11 +1131,11 @@ Implements \mbox{\hyperlink{classcslt_1_1Allocator_a7c5678c95eddff0fb5ae06a09492
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
-\mbox{\Hypertarget{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}\label{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}} 
+\mbox{\Hypertarget{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}\label{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}} 
 \index{cslt::FreeListAllocator@{cslt::FreeListAllocator}!remaining@{remaining}}
 \index{remaining@{remaining}!cslt::FreeListAllocator@{cslt::FreeListAllocator}}
 \doxysubsubsection{\texorpdfstring{remaining()}{remaining()}}
-{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Free\+List\+Allocator\+::remaining (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Free\+List\+Allocator\+::remaining (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [virtual]}, {\ttfamily [noexcept]}}
 
 
 
@@ -1192,10 +1156,10 @@ Note that the actual usable space for a new allocation may be less than this val
 \begin{DoxyNote}{Note}
 This is a logical capacity measure, not a guarantee that an allocation of this size will succeed. Use \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a90a7d9f260434769fefd96bffc592fc2}{is\+\_\+ptr\+\_\+sized()}} to validate actual allocation feasibility.
 
-The value equals \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity()}} immediately after construction or \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset()}}.
+The value equals capacity() immediately after construction or \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset()}}.
 \end{DoxyNote}
 \begin{DoxySeeAlso}{See also}
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity()}} For total usable \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} 
+capacity() For total usable capacity 
 
 \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used()}} For currently consumed bytes 
 \end{DoxySeeAlso}
@@ -1384,7 +1348,7 @@ Invalidates ALL outstanding pointers. Ensure no code holds pointers across a \mb
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a92297e3568123854b9c2ea7398f4058f}{return\+\_\+element()}} To free individual blocks 
 
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} To check available \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} after \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset}} 
+\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining()}} To check available capacity after \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset}} 
 
 \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used()}} To verify \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset}} cleared allocations (should be 0) 
 \end{DoxySeeAlso}
@@ -1993,11 +1957,11 @@ Large freelists with many free blocks may produce output exceeding typical buffe
 
 \end{DoxyParagraph}
 \begin{DoxySeeAlso}{See also}
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} For just available \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} 
+\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining()}} For just available capacity 
 
 \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used()}} For just current usage 
 
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity()}} For just total \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} 
+capacity() For just total capacity 
 \end{DoxySeeAlso}
 
 
@@ -2035,12 +1999,12 @@ This is the total block size consumed, not just user-\/visible bytes. It include
 
 Returns 0 immediately after construction or \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset()}}.
 
-The relationship\+: \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used()}} + \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} == \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity()}} always holds.
+The relationship\+: \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used()}} + \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining()}} == capacity() always holds.
 \end{DoxyNote}
 \begin{DoxySeeAlso}{See also}
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a39de8c58f2d2f9df4631a696adbf30f9}{remaining()}} For available bytes 
+\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining()}} For available bytes 
 
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity()}} For total \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ac7345105cbb984778026bf1cc8349c84}{capacity}} 
+capacity() For total capacity 
 
 \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a11d836fb3a2b2d22257999cabdf9756f}{stats()}} For detailed usage breakdown 
 \end{DoxySeeAlso}

@@ -1,22 +1,22 @@
-// ================================================================================
-// ================================================================================
-// - File:    allocator.hpp
-// - Purpose: This file contains the prototypes for custom allocators as part of the 
-//            cslt namespace
-//
-// Source Metadata
-// - Author:  Jonathan A. Webb
-// - Date:    December 28, 2025
-// - Version: 1.0
-// - Copyright: Copyright 2022, Jon Webb Inc.
-// ================================================================================
-// ================================================================================
-// Include modules here
+    // ================================================================================
+    // ================================================================================
+    // - File:    allocator.hpp
+    // - Purpose: This file contains the prototypes for custom allocators as part of the 
+    //            cslt namespace
+    //
+    // Source Metadata
+    // - Author:  Jonathan A. Webb
+    // - Date:    December 28, 2025
+    // - Version: 1.0
+    // - Copyright: Copyright 2022, Jon Webb Inc.
+    // ================================================================================
+    // ================================================================================
+    // Include modules here
 
 #ifndef allocator_HPP
 #define allocator_HPP
 
-// Compile for static or dynamic memory allocation for MISRA compliance
+    // Compile for static or dynamic memory allocation for MISRA compliance
 #ifndef ARENA_ENABLE_DYNAMIC
 #  ifdef STATIC_ONLY
 #    define ARENA_ENABLE_DYNAMIC 0
@@ -34,7 +34,7 @@
 
 #include <iostream>
 #include <cstddef>
-// ================================================================================ 
+    // ================================================================================ 
 // ================================================================================ 
 
 namespace cslt {
@@ -1410,7 +1410,9 @@ namespace cslt {
     }
 // ================================================================================ 
 // ================================================================================ 
-
+#if ARENA_ENABLE_DYNAMIC
+    class BuddyAllocator;
+#endif 
     class ArenaAllocator;
 
     struct ArenaDeleter {
@@ -1494,6 +1496,7 @@ namespace cslt {
      * @endcode
      */
     class ArenaAllocator : public Allocator {
+        friend struct ArenaDeleter;
     private:
         /**
          * @brief Internal memory chunk structure for arena allocation
@@ -1521,14 +1524,57 @@ namespace cslt {
         Chunk* tail_;        ///< Pointer to the tail of memory chunks
         size_t min_chunk_;   ///< The minimum chunk size in bytes
         uint8_t resize_;     ///< Allows resizing if true with mem_type == DYNAMIC 
+                        
+        BuddyAllocator* buddy_owner_ = nullptr;  ///< Non-null only for WithBuddy arenas
+        size_t          backing_bytes_ = 0;
 // -------------------------------------------------------------------------------- 
 
         /**
-         * @brief Find a chunk in the arena's chunk list
-         * 
-         * @param target Chunk to find
-         * @param out_prev Output parameter for previous chunk (can be nullptr)
-         * @return Pointer to found chunk, or nullptr if not found
+         * @brief Locate a chunk within the arena's chunk chain
+         *
+         * @param target Pointer to the chunk to locate
+         * @param out_prev Optional output parameter that receives the previous chunk
+         *                 in the chain (nullptr if target is the head or not found)
+         *
+         * @return Pointer to the matching chunk if found, nullptr otherwise
+         *
+         * @details Searches the arena's internal linked list of chunks for the specified
+         *          @p target chunk. If found, returns the matching chunk pointer and,
+         *          if @p out_prev is provided, also returns the preceding chunk in the
+         *          chain.
+         *
+         *          This function performs a linear walk starting from the head chunk
+         *          and compares chunk addresses directly. It does not modify allocator
+         *          state and does not perform any memory allocation.
+         *
+         *          This helper is primarily used for:
+         *          - Validating checkpoint integrity during restore()
+         *          - Determining whether a saved checkpoint refers to a still-live chunk
+         *          - Safely unlinking and freeing chunks beyond a checkpoint
+         *
+         *          If the target chunk is not part of the current arena chain (e.g.,
+         *          corrupted checkpoint, stale pointer, or foreign chunk), the function
+         *          returns nullptr and no state is modified.
+         *
+         * @note Passing a null @p target always returns nullptr.
+         *
+         * @note This function is for internal use only and assumes the arena's chunk
+         *       list is well-formed (acyclic, properly linked).
+         *
+         * @par Example (internal usage in restore):
+         * @code{.cpp}
+         * Chunk* prev = nullptr;
+         * Chunk* hit = find_chunk_in_chain(cp->chunk, &prev);
+         *
+         * if (!hit) {
+         *     // Checkpoint refers to a chunk no longer owned by this arena
+         *     return false;
+         * }
+         * @endcode
+         *
+         * @see restore() Uses this function to validate checkpoints
+         * @see reset() May rely on chunk chain structure
+         * @internal
          */
         Chunk* find_chunk_in_chain(Chunk* target, Chunk** out_prev = nullptr) const;
 // -------------------------------------------------------------------------------- 
@@ -1803,6 +1849,46 @@ namespace cslt {
         SubArena(ArenaAllocator& parent,
                  size_t bytes,
                  size_t base_align_in = alignof(max_align_t));
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Create a fixed-capacity arena backed by a BuddyAllocator allocation
+         *
+         * @param buddy Buddy allocator to allocate the arena region from (must not be nullptr)
+         * @param bytes Total bytes to request from the buddy allocator for the entire arena region
+         * @param base_align_in Per-arena base alignment for allocations (0 = default)
+         *
+         * @return Expected containing UniquePtr to arena on success, or error on failure
+         *
+         * @details Performs a single allocation from @p buddy and constructs the ArenaAllocator
+         *          in-place at the returned base pointer. The arena is fixed-capacity:
+         *          - No resizing/growth (resize disabled)
+         *          - The buddy allocator retains ownership of the backing region
+         *          - Destruction returns the entire region back to the buddy allocator
+         *
+         *          Layout within the buddy allocation:
+         *          [ArenaAllocator][padding][Chunk][padding][data...]
+         *
+         *          - ArenaAllocator is placed at the beginning of the buddy region.
+         *          - Chunk header is aligned to alignof(Chunk).
+         *          - Data region is aligned to base_align (>= alignof(max_align_t), pow2).
+         *
+         * @retval Expected with UniquePtr on success
+         * @retval Expected with ArgumentError if buddy is null or bytes too small
+         * @retval Expected with MemoryError if buddy allocation fails
+         * @retval Expected with AlignmentError if alignment normalization fails
+         * @retval Expected with LengthOverflowError on overflow in address arithmetic
+         *
+         * @warning The returned arena lives inside buddy-owned memory. Never free it with
+         *          ::operator delete. Always use ArenaDeleter / UniquePtr cleanup.
+         *
+         * @see ArenaDeleter Returns memory to buddy for WithBuddy arenas
+         */
+        static Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>>
+        WithBuddy(BuddyAllocator& buddy,
+                  size_t bytes,
+                  size_t base_align_in = alignof(max_align_t));
+
 // -------------------------------------------------------------------------------- 
 
         /**
@@ -2692,60 +2778,6 @@ namespace cslt {
     };
 // ================================================================================ 
 // ================================================================================
-
-    /**
-     * @struct ArenaDeleter
-     * @brief Custom deleter for ArenaAllocator unique pointers
-     * 
-     * @details This deleter properly cleans up ArenaAllocator instances created by
-     *          factory methods (Heap, Stack, SubArena). It:
-     *          1. Calls the arena's destructor (frees additional chunks)
-     *          2. Frees the base memory only if the arena owns it (DYNAMIC only)
-     *          
-     *          Memory ownership:
-     *          - DYNAMIC (Heap): Owns memory → frees with ::operator delete
-     *          - STATIC (Stack): User owns buffer → doesn't free
-     *          - SUB (SubArena): Parent owns memory → doesn't free
-     * 
-     * @example Automatic via UniquePtr
-     * @code
-     * {
-     *     auto arena = cslt::move(cslt::ArenaAllocator::Heap(4096).value());
-     *     // Use arena...
-     * } // ArenaDeleter automatically called here
-     * @endcode
-     * 
-     * @example Manual construction (not typical)
-     * @code
-     * ArenaAllocator* raw_arena = // ... created via factory ...;
-     * cslt::UniquePtr<ArenaAllocator, ArenaDeleter> arena(raw_arena, ArenaDeleter{});
-     * // Automatic cleanup when arena goes out of scope
-     * @endcode
-     * 
-     * @warning Never call ::operator delete directly on an ArenaAllocator created
-     *          by a factory method. Always use ArenaDeleter or let UniquePtr handle it.
-     * 
-     * @see ArenaAllocator::Heap()
-     * @see ArenaAllocator::Stack()
-     * @see ArenaAllocator::SubArena()
-     */
-    inline void ArenaDeleter::operator()(ArenaAllocator* arena) const noexcept {
-        if (!arena) return;
-        
-        MemType type = arena->memory_type();
-        bool owns = arena->owns_memory();
-        void* base = arena;
-        
-        // Call destructor
-        arena->~ArenaAllocator();
-        
-        // Only free if DYNAMIC *and* owns the memory
-        if (type == DYNAMIC && owns) {
-            ::operator delete(base);
-        }
-    }
-// ================================================================================ 
-// ================================================================================ 
 
     /**
      * @class PoolAllocator
@@ -5295,7 +5327,7 @@ namespace cslt {
 // ================================================================================ 
 // ================================================================================ 
 
-    class BuddyAllocator;
+#if ARENA_ENABLE_DYNAMIC
 
     struct BuddyDeleter {
         void operator()(BuddyAllocator* buddy) const noexcept;
@@ -7072,6 +7104,69 @@ namespace cslt {
         // Free the BuddyAllocator structure itself
         ::operator delete(buddy);
     }
+
+    /**
+     * @struct ArenaDeleter
+     * @brief Custom deleter for ArenaAllocator unique pointers
+     * 
+     * @details This deleter properly cleans up ArenaAllocator instances created by
+     *          factory methods (Heap, Stack, SubArena). It:
+     *          1. Calls the arena's destructor (frees additional chunks)
+     *          2. Frees the base memory only if the arena owns it (DYNAMIC only)
+     *          
+     *          Memory ownership:
+     *          - DYNAMIC (Heap): Owns memory → frees with ::operator delete
+     *          - STATIC (Stack): User owns buffer → doesn't free
+     *          - SUB (SubArena): Parent owns memory → doesn't free
+     * 
+     * @example Automatic via UniquePtr
+     * @code
+     * {
+     *     auto arena = cslt::move(cslt::ArenaAllocator::Heap(4096).value());
+     *     // Use arena...
+     * } // ArenaDeleter automatically called here
+     * @endcode
+     * 
+     * @example Manual construction (not typical)
+     * @code
+     * ArenaAllocator* raw_arena = // ... created via factory ...;
+     * cslt::UniquePtr<ArenaAllocator, ArenaDeleter> arena(raw_arena, ArenaDeleter{});
+     * // Automatic cleanup when arena goes out of scope
+     * @endcode
+     * 
+     * @warning Never call ::operator delete directly on an ArenaAllocator created
+     *          by a factory method. Always use ArenaDeleter or let UniquePtr handle it.
+     * 
+     * @see ArenaAllocator::Heap()
+     * @see ArenaAllocator::Stack()
+     * @see ArenaAllocator::SubArena()
+     */
+    inline void ArenaDeleter::operator()(ArenaAllocator* arena) const noexcept {
+            if (!arena) return;
+
+            // Capture teardown metadata BEFORE destructor
+            BuddyAllocator* buddy = arena->buddy_owner_;
+            size_t backing_bytes  = arena->backing_bytes_;
+
+            MemType type = arena->memory_type();
+            bool owns    = arena->owns_memory();
+
+            // Run destructor first (frees extra chunks if any)
+            arena->~ArenaAllocator();
+
+            // Buddy-backed arena: return entire region to buddy, NOT operator delete
+            if (buddy && backing_bytes) {
+                buddy->return_element(arena, backing_bytes, alignof(ArenaAllocator));
+                return;
+            }
+
+            // Heap arena: free base allocation
+            if (type == DYNAMIC && owns) {
+                ::operator delete(static_cast<void*>(arena));
+            }
+        }
+
+#endif /* ARENA_ENABLE_DYNAMIC */
 // ================================================================================ 
 // ================================================================================
 } /* cslt namespace */

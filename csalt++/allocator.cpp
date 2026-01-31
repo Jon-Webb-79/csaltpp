@@ -702,6 +702,131 @@ namespace cslt {
     }
 // -------------------------------------------------------------------------------- 
 
+#if ARENA_ENABLE_DYNAMIC
+    Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>>
+    ArenaAllocator::WithBuddy(BuddyAllocator& buddy,
+                              size_t bytes,
+                              size_t base_align_in)
+    {
+        Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>> result;
+
+        if (bytes == 0) {
+            result.setError(ArgumentError("WithBuddy: bytes cannot be 0"));
+            return result;
+        }
+
+        // Normalize base alignment; enforce ABI floor
+        size_t base_align = base_align_in ? base_align_in : alignof(max_align_t);
+        if (!is_pow2(base_align)) {
+            base_align = next_pow2(base_align);
+            if (!base_align) {
+                result.setError(AlignmentError("WithBuddy: alignment normalization failed"));
+                return result;
+            }
+        }
+        if (base_align < alignof(max_align_t)) {
+            base_align = alignof(max_align_t);
+        }
+
+        // Ensure base_align can accommodate ArenaAllocator itself
+        size_t arena_align = alignof(ArenaAllocator);
+        if (base_align < arena_align) {
+            base_align = arena_align;
+        }
+
+        // Single allocation from buddy for entire arena region
+        // Prefer aligned allocation if buddy supports it; otherwise alloc().
+        auto buf_expect = buddy.alloc_aligned(bytes, arena_align, false);
+        if (!buf_expect.hasValue()) {
+            result.setError(buf_expect.error());
+            return result;
+        }
+        void* buffer = buf_expect.value();
+
+        uintptr_t const b     = reinterpret_cast<uintptr_t>(buffer);
+        uintptr_t const b_end = b + bytes;
+        if (b_end < b) {
+            buddy.return_element(buffer, bytes, arena_align);
+            result.setError(LengthOverflowError("WithBuddy: overflow in b + bytes"));
+            return result;
+        }
+
+        // Must fit arena + chunk at minimum
+        if ((b_end - b) < (sizeof(ArenaAllocator) + sizeof(Chunk))) {
+            buddy.return_element(buffer, bytes, arena_align);
+            result.setError(ArgumentError("WithBuddy: region too small for arena + chunk"));
+            return result;
+        }
+
+        // Layout: [ArenaAllocator][Chunk][data...]
+        uintptr_t p_arena   = b;
+        uintptr_t arena_end = p_arena + sizeof(ArenaAllocator);
+        if (arena_end < p_arena || arena_end > b_end) {
+            buddy.return_element(buffer, bytes, arena_align);
+            result.setError(LengthOverflowError("WithBuddy: overflow placing arena"));
+            return result;
+        }
+
+        // Chunk aligned to alignof(Chunk)
+        uintptr_t p_chunk   = _align_up_uintptr(arena_end, alignof(Chunk));
+        uintptr_t chunk_end = p_chunk + sizeof(Chunk);
+        if (chunk_end < p_chunk || chunk_end > b_end) {
+            buddy.return_element(buffer, bytes, arena_align);
+            result.setError(LengthOverflowError("WithBuddy: overflow placing chunk"));
+            return result;
+        }
+
+        // Data aligned to base_align
+        uintptr_t p_data = _align_up_uintptr(chunk_end, base_align);
+        if (p_data > b_end) {
+            buddy.return_element(buffer, bytes, arena_align);
+            result.setError(AlignmentError("WithBuddy: data alignment exceeds region"));
+            return result;
+        }
+
+        size_t usable = static_cast<size_t>(b_end - p_data);
+        if (!usable) {
+            buddy.return_element(buffer, bytes, arena_align);
+            result.setError(MemoryError("WithBuddy: no usable space"));
+            return result;
+        }
+
+        // In-place stitch
+        Chunk* h = reinterpret_cast<Chunk*>(p_chunk);
+        h->chunk = reinterpret_cast<uint8_t*>(p_data);
+        h->len   = 0;
+        h->alloc = usable;
+        h->next  = nullptr;
+
+        ArenaAllocator* arena = new (buffer) ArenaAllocator();
+
+        arena->head_ = h;
+        arena->tail_ = h;
+        arena->cur_  = reinterpret_cast<uint8_t*>(p_data);
+
+        arena->min_chunk_ = 0;
+        arena->resize_    = 0;
+
+        arena->size_            = 0;
+        arena->alloc_           = usable;
+        arena->total_alloc_     = bytes;
+        arena->default_alignment_ = base_align;
+
+        // Memory is ultimately dynamic, but NOT owned by arena
+        arena->mem_type_     = static_cast<uint8_t>(DYNAMIC);
+        arena->owns_memory_  = static_cast<uint8_t>(false);
+
+        // NEW: record buddy ownership so the deleter can return it
+        arena->buddy_owner_   = &buddy;
+        arena->backing_bytes_ = bytes;
+
+        UniquePtr<ArenaAllocator, ArenaDeleter> ptr(arena, ArenaDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+#endif /* ARENA_ENABLE_DYNAMIC */
+// -------------------------------------------------------------------------------- 
+
     Expected<void*> ArenaAllocator::alloc(size_t bytes, bool zeroed) {
         Expected<void*> result;
         
@@ -3178,6 +3303,9 @@ namespace cslt {
 // OS Memory Allocation (Platform-Specific)
 // ================================================================================
 
+
+#if ARENA_ENABLE_DYNAMIC 
+
 #ifdef _WIN32
     void* BuddyAllocator::os_alloc(size_t size) {
         return VirtualAlloc(NULL, size, MEM_RESERVE | MEM_COMMIT, PAGE_READWRITE);
@@ -4219,6 +4347,8 @@ namespace cslt {
         
         return 0;
     }
+
+#endif /* ARENA_ENABLE_DYNAMIC */
 // ================================================================================ 
 // ================================================================================ 
 } /* cslt namespace */

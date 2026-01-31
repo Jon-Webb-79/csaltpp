@@ -16,25 +16,25 @@ Returns the alignment value that will be used for allocations when no specific a
 
 
 \begin{DoxyCodeInclude}{0}
-\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
-\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
-\DoxyCodeLine{\textcolor{comment}{// -\/ File:    allocator.hpp}}
-\DoxyCodeLine{\textcolor{comment}{// -\/ Purpose: This file contains the prototypes for custom allocators as part of the }}
-\DoxyCodeLine{\textcolor{comment}{//            cslt namespace}}
-\DoxyCodeLine{\textcolor{comment}{//}}
-\DoxyCodeLine{\textcolor{comment}{// Source Metadata}}
-\DoxyCodeLine{\textcolor{comment}{// -\/ Author:  Jonathan A. Webb}}
-\DoxyCodeLine{\textcolor{comment}{// -\/ Date:    December 28, 2025}}
-\DoxyCodeLine{\textcolor{comment}{// -\/ Version: 1.0}}
-\DoxyCodeLine{\textcolor{comment}{// -\/ Copyright: Copyright 2022, Jon Webb Inc.}}
-\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
-\DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
-\DoxyCodeLine{\textcolor{comment}{// Include modules here}}
+\DoxyCodeLine{    \textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{    \textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/ File:    allocator.hpp}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/ Purpose: This file contains the prototypes for custom allocators as part of the }}
+\DoxyCodeLine{    \textcolor{comment}{//            cslt namespace}}
+\DoxyCodeLine{    \textcolor{comment}{//}}
+\DoxyCodeLine{    \textcolor{comment}{// Source Metadata}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/ Author:  Jonathan A. Webb}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/ Date:    December 28, 2025}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/ Version: 1.0}}
+\DoxyCodeLine{    \textcolor{comment}{// -\/ Copyright: Copyright 2022, Jon Webb Inc.}}
+\DoxyCodeLine{    \textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{    \textcolor{comment}{// ================================================================================}}
+\DoxyCodeLine{    \textcolor{comment}{// Include modules here}}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{preprocessor}{\#ifndef allocator\_HPP}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#define allocator\_HPP}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Compile for static or dynamic memory allocation for MISRA compliance}}
+\DoxyCodeLine{    \textcolor{comment}{// Compile for static or dynamic memory allocation for MISRA compliance}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#ifndef ARENA\_ENABLE\_DYNAMIC}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#  ifdef STATIC\_ONLY}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#    define ARENA\_ENABLE\_DYNAMIC 0}}
@@ -52,7 +52,7 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <iostream>}}
 \DoxyCodeLine{\textcolor{preprocessor}{\#include <cstddef>}}
-\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{    \textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{keyword}{namespace }\mbox{\hyperlink{namespacecslt}{cslt}} \{}
@@ -258,7 +258,9 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
-\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{    \textcolor{keyword}{class }BuddyAllocator;}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif }}
 \DoxyCodeLine{    \textcolor{keyword}{class }ArenaAllocator;}
 \DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{struct }ArenaDeleter \{}
@@ -268,6 +270,7 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{class }ArenaAllocator : \textcolor{keyword}{public} Allocator \{}
+\DoxyCodeLine{        \textcolor{keyword}{friend} \textcolor{keyword}{struct }\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a3643101e7551d3473848a0441a7b99e5}{ArenaDeleter}};}
 \DoxyCodeLine{    \textcolor{keyword}{private}:}
 \DoxyCodeLine{        \textcolor{keyword}{struct }Chunk \{}
 \DoxyCodeLine{            uint8\_t *chunk;     }
@@ -287,6 +290,9 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{        Chunk* tail\_;        }
 \DoxyCodeLine{        \textcolor{keywordtype}{size\_t} min\_chunk\_;   }
 \DoxyCodeLine{        uint8\_t resize\_;     }
+\DoxyCodeLine{                        }
+\DoxyCodeLine{        BuddyAllocator* buddy\_owner\_ = \textcolor{keyword}{nullptr};  }
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t}          backing\_bytes\_ = 0;}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{        Chunk* find\_chunk\_in\_chain(Chunk* target, Chunk** out\_prev = \textcolor{keyword}{nullptr}) \textcolor{keyword}{const};}
@@ -338,6 +344,13 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}{SubArena}}(ArenaAllocator\& parent,}
 \DoxyCodeLine{                 \textcolor{keywordtype}{size\_t} bytes,}
 \DoxyCodeLine{                 \textcolor{keywordtype}{size\_t} base\_align\_in = \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a218dae6e91beccf470a18aa49dfef5ee}{WithBuddy}}(BuddyAllocator\& buddy,}
+\DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} bytes,}
+\DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} base\_align\_in = \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}{alloc}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
@@ -397,24 +410,6 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{    \};}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
-\DoxyCodeLine{}
-\DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{ArenaDeleter::operator()}}(ArenaAllocator* arena) \textcolor{keyword}{const} noexcept \{}
-\DoxyCodeLine{        \textcolor{keywordflow}{if} (!arena) \textcolor{keywordflow}{return};}
-\DoxyCodeLine{        }
-\DoxyCodeLine{        \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} type = arena-\/>memory\_type();}
-\DoxyCodeLine{        \textcolor{keywordtype}{bool} owns = arena-\/>owns\_memory();}
-\DoxyCodeLine{        \textcolor{keywordtype}{void}* base = arena;}
-\DoxyCodeLine{        }
-\DoxyCodeLine{        \textcolor{comment}{// Call destructor}}
-\DoxyCodeLine{        arena-\/>\string~ArenaAllocator();}
-\DoxyCodeLine{        }
-\DoxyCodeLine{        \textcolor{comment}{// Only free if DYNAMIC *and* owns the memory}}
-\DoxyCodeLine{        \textcolor{keywordflow}{if} (type == \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}} \&\& owns) \{}
-\DoxyCodeLine{            ::operator \textcolor{keyword}{delete}(base);}
-\DoxyCodeLine{        \}}
-\DoxyCodeLine{    \}}
-\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
-\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{class }PoolAllocator;}
 \DoxyCodeLine{}
@@ -749,7 +744,7 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{    \textcolor{keyword}{class }BuddyAllocator;}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if ARENA\_ENABLE\_DYNAMIC}}
 \DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{struct }BuddyDeleter \{}
 \DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1BuddyDeleter_a137fb0e64ce5ebbee9a34e2080cdd445}{operator()}}(BuddyAllocator* buddy) \textcolor{keyword}{const} noexcept;}
@@ -825,21 +820,21 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{        \textcolor{keyword}{static} Expected<UniquePtr<BuddyAllocator, BuddyDeleter>>}
-\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{Heap}}(\textcolor{keywordtype}{size\_t} pool\_size,}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{Heap}}(\textcolor{keywordtype}{size\_t} pool\_size,}
 \DoxyCodeLine{             \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}{min\_block\_size}},}
 \DoxyCodeLine{             \textcolor{keywordtype}{size\_t} base\_align = 0);}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{bool} zeroed) \textcolor{keyword}{override};}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_ad73ade6bd9d847cf670eef2acb1a5258}{alloc}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{bool} zeroed) \textcolor{keyword}{override};}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{size\_t} alignment, \textcolor{keywordtype}{bool} zeroed) \textcolor{keyword}{override};}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a80193b4cc99ced2e692cf324df4f994b}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{size\_t} alignment, \textcolor{keywordtype}{bool} zeroed) \textcolor{keyword}{override};}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}{realloc}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} old\_bytes, \textcolor{keywordtype}{size\_t} new\_bytes, \textcolor{keywordtype}{bool} zeroed) \textcolor{keyword}{override};}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa30b5019edd20f34bd42c46cd27bb6b9}{realloc}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} old\_bytes, \textcolor{keywordtype}{size\_t} new\_bytes, \textcolor{keywordtype}{bool} zeroed) \textcolor{keyword}{override};}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a409bb66d1e09136816216cbb96f3bd21}{realloc\_aligned}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} old\_bytes, \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a99a84691e3dff68d06e8e41b07a4a56e}{realloc\_aligned}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} old\_bytes, \textcolor{keywordtype}{size\_t} new\_bytes,}
 \DoxyCodeLine{                                     \textcolor{keywordtype}{size\_t} alignment, \textcolor{keywordtype}{bool} zeroed) \textcolor{keyword}{override};}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
@@ -906,6 +901,33 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{        \textcolor{comment}{// Free the BuddyAllocator structure itself}}
 \DoxyCodeLine{        ::operator \textcolor{keyword}{delete}(buddy);}
 \DoxyCodeLine{    \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{ArenaDeleter::operator()}}(ArenaAllocator* arena) \textcolor{keyword}{const} noexcept \{}
+\DoxyCodeLine{            \textcolor{keywordflow}{if} (!arena) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{}
+\DoxyCodeLine{            \textcolor{comment}{// Capture teardown metadata BEFORE destructor}}
+\DoxyCodeLine{            BuddyAllocator* buddy = arena-\/>buddy\_owner\_;}
+\DoxyCodeLine{            \textcolor{keywordtype}{size\_t} backing\_bytes  = arena-\/>backing\_bytes\_;}
+\DoxyCodeLine{}
+\DoxyCodeLine{            \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} type = arena-\/>memory\_type();}
+\DoxyCodeLine{            \textcolor{keywordtype}{bool} owns    = arena-\/>owns\_memory();}
+\DoxyCodeLine{}
+\DoxyCodeLine{            \textcolor{comment}{// Run destructor first (frees extra chunks if any)}}
+\DoxyCodeLine{            arena-\/>\string~ArenaAllocator();}
+\DoxyCodeLine{}
+\DoxyCodeLine{            \textcolor{comment}{// Buddy-\/backed arena: return entire region to buddy, NOT operator delete}}
+\DoxyCodeLine{            \textcolor{keywordflow}{if} (buddy \&\& backing\_bytes) \{}
+\DoxyCodeLine{                buddy-\/>return\_element(arena, backing\_bytes, \textcolor{keyword}{alignof}(ArenaAllocator));}
+\DoxyCodeLine{                \textcolor{keywordflow}{return};}
+\DoxyCodeLine{            \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{            \textcolor{comment}{// Heap arena: free base allocation}}
+\DoxyCodeLine{            \textcolor{keywordflow}{if} (type == \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}} \&\& owns) \{}
+\DoxyCodeLine{                ::operator \textcolor{keyword}{delete}(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(arena));}
+\DoxyCodeLine{            \}}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif }\textcolor{comment}{/* ARENA\_ENABLE\_DYNAMIC */}\textcolor{preprocessor}{}}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================}}
 \DoxyCodeLine{\} \textcolor{comment}{/* cslt namespace */}}

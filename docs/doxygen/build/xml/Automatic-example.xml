@@ -3,13 +3,13 @@
   <compounddef id="Automatic-example" kind="example">
     <compoundname>Automatic</compoundname>
     <briefdescription>
-<para>via UniquePtr </para>
+<para>via UniquePtr (typical usage) </para>
     </briefdescription>
     <detaileddescription>
-<para>via UniquePtr <programlisting><codeline><highlight class="normal">{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(4096).value());</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Use<sp/>arena...</highlight></codeline>
-<codeline><highlight class="normal">}<sp/>//<sp/>ArenaDeleter<sp/>automatically<sp/>called<sp/>here</highlight></codeline>
+<para>via UniquePtr (typical usage) <programlisting><codeline><highlight class="normal">{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>pool<sp/>=<sp/>cslt::move(cslt::PoolAllocator::Heap(256,<sp/>32).value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Use<sp/>pool...</highlight></codeline>
+<codeline><highlight class="normal">}<sp/>//<sp/>PoolDeleter<sp/>automatically<sp/>called<sp/>here,<sp/>cleans<sp/>up<sp/>pool<sp/>and<sp/>arena</highlight></codeline>
 </programlisting> <programlisting filename="Automatic"></programlisting> </para>
     </detaileddescription>
     <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>

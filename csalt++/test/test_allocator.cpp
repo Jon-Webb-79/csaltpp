@@ -5623,12 +5623,115 @@ TEST(FreeListEdgeCasesTest, MixedSizeAllocations) {
 // ================================================================================ 
 // ================================================================================ 
 
+TEST(ArenaWithBuddy, CreatesArenaFromBuddyAndAllocates) {
+    constexpr size_t pool_size       = 1u << 20;  // 1 MiB
+    constexpr size_t min_block_size  = 64;
+    constexpr size_t base_align      = alignof(std::max_align_t);
+
+    auto buddy_res = BuddyAllocator::Heap(pool_size, min_block_size, base_align);
+    ASSERT_TRUE(buddy_res.hasValue());
+    auto buddy = cslt::move(buddy_res.value());
+    ASSERT_NE(buddy.get(), nullptr);
+
+    const size_t buddy_rem_before     = buddy->remaining();
+    const size_t buddy_largest_before = buddy->largest_block();
+
+    constexpr size_t arena_bytes = 64 * 1024;
+
+    auto arena_res = ArenaAllocator::WithBuddy(*buddy, arena_bytes, base_align);
+    ASSERT_TRUE(arena_res.hasValue());
+    auto arena = cslt::move(arena_res.value());
+    ASSERT_NE(arena.get(), nullptr);
+
+    // Arena sanity allocs
+    auto p1r = arena->alloc(256);
+    ASSERT_TRUE(p1r.hasValue());
+    ASSERT_NE(p1r.value(), nullptr);
+
+    auto p2r = arena->alloc(1024, true);
+    ASSERT_TRUE(p2r.hasValue());
+    ASSERT_NE(p2r.value(), nullptr);
+
+    // Buddy should generally have less available while arena is alive
+    EXPECT_LE(buddy->remaining(), buddy_rem_before);
+    EXPECT_LE(buddy->largest_block(), buddy_largest_before);
+}
+
+TEST(ArenaWithBuddy, DestroyingArenaReturnsBlockToBuddy) {
+    constexpr size_t pool_size       = 1u << 20;  // 1 MiB
+    constexpr size_t min_block_size  = 64;
+    constexpr size_t base_align      = alignof(std::max_align_t);
+    constexpr size_t arena_bytes     = 64 * 1024;
+
+    auto buddy_res = BuddyAllocator::Heap(pool_size, min_block_size, base_align);
+    ASSERT_TRUE(buddy_res.hasValue());
+    auto buddy = cslt::move(buddy_res.value());
+
+    const size_t rem_before     = buddy->remaining();
+    const size_t largest_before = buddy->largest_block();
+
+    {
+        auto arena_res = ArenaAllocator::WithBuddy(*buddy, arena_bytes, base_align);
+        ASSERT_TRUE(arena_res.hasValue());
+        auto arena = cslt::move(arena_res.value());
+
+        auto pr = arena->alloc(512);
+        ASSERT_TRUE(pr.hasValue());
+        ASSERT_NE(pr.value(), nullptr);
+
+        // while alive, buddy typically decreases
+        EXPECT_LE(buddy->remaining(), rem_before);
+    } // arena destroyed here -> should return buddy allocation
+
+    // After destruction, buddy should be at least as free as before
+    // (exact equality can be too strict due to rounding/metadata)
+    std::cout << buddy->remaining() << "\n";
+    EXPECT_GE(buddy->remaining(), rem_before);
+    EXPECT_GE(buddy->largest_block(), largest_before);
+}
+
+TEST(ArenaWithBuddy, RejectsZeroArenaBytes) {
+    constexpr size_t pool_size       = 1u << 20;
+    constexpr size_t min_block_size  = 64;
+    constexpr size_t base_align      = alignof(std::max_align_t);
+
+    auto buddy_res = BuddyAllocator::Heap(pool_size, min_block_size, base_align);
+    ASSERT_TRUE(buddy_res.hasValue());
+    auto buddy = cslt::move(buddy_res.value());
+
+    auto arena_res = ArenaAllocator::WithBuddy(*buddy, 0, base_align);
+    EXPECT_FALSE(arena_res.hasValue());
+}
+
+TEST(ArenaWithBuddy, FailsWithoutLeakingBuddyCapacityWhenRequestTooLarge) {
+    // Small pool so arena request definitely fails
+    constexpr size_t pool_size       = 8 * 1024;
+    constexpr size_t min_block_size  = 64;
+    constexpr size_t base_align      = alignof(std::max_align_t);
+
+    auto buddy_res = BuddyAllocator::Heap(pool_size, min_block_size, base_align);
+    ASSERT_TRUE(buddy_res.hasValue());
+    auto buddy = cslt::move(buddy_res.value());
+
+    const size_t rem_before     = buddy->remaining();
+    const size_t largest_before = buddy->largest_block();
+
+    // Request more than pool
+    auto arena_res = ArenaAllocator::WithBuddy(*buddy, pool_size * 2, base_align);
+    EXPECT_FALSE(arena_res.hasValue());
+
+    // Buddy should not lose capacity on failed init
+    EXPECT_EQ(buddy->remaining(), rem_before);
+    EXPECT_EQ(buddy->largest_block(), largest_before);
+}
+
+// -------------------------------------------------------------------------------- 
 TEST(BuddyHeapTest, CreateBasicHeapBuddy) {
     auto result = BuddyAllocator::Heap(4096, 64, 0);
     
     ASSERT_TRUE(result.hasValue()) << "Basic buddy creation should succeed";
     
-    auto buddy = cslt::move(result.value());
+    auto buddy = move(result.value());
     
     EXPECT_NE(buddy.get(), nullptr);
     EXPECT_GT(buddy->remaining(), 0) << "Should have free space";

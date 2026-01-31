@@ -6,17 +6,21 @@
 <para>construction (not typical) </para>
     </briefdescription>
     <detaileddescription>
-<para>construction (not typical) <programlisting><codeline><highlight class="normal">ArenaAllocator*<sp/>raw_arena<sp/>=<sp/>//<sp/>...<sp/>created<sp/>via<sp/>factory<sp/>...;</highlight></codeline>
-<codeline><highlight class="normal">cslt::UniquePtr&lt;ArenaAllocator,<sp/>ArenaDeleter&gt;<sp/>arena(raw_arena,<sp/>ArenaDeleter{});</highlight></codeline>
-<codeline><highlight class="normal">//<sp/>Automatic<sp/>cleanup<sp/>when<sp/>arena<sp/>goes<sp/>out<sp/>of<sp/>scope</highlight></codeline>
+<para>construction (not typical) <programlisting><codeline><highlight class="normal">PoolAllocator*<sp/>raw_pool<sp/>=<sp/>//<sp/>...<sp/>created<sp/>via<sp/>factory<sp/>...;</highlight></codeline>
+<codeline><highlight class="normal">cslt::UniquePtr&lt;PoolAllocator,<sp/>PoolDeleter&gt;<sp/>pool(raw_pool,<sp/>PoolDeleter{});</highlight></codeline>
+<codeline><highlight class="normal">//<sp/>Automatic<sp/>cleanup<sp/>when<sp/>pool<sp/>goes<sp/>out<sp/>of<sp/>scope</highlight></codeline>
 </programlisting></para>
-<para><simplesect kind="warning"><para>Never call ::operator delete directly on an ArenaAllocator created by a factory method. Always use ArenaDeleter or let UniquePtr handle it.</para>
+<para><simplesect kind="warning"><para>Never call ::operator delete directly on a PoolAllocator created by a factory method. Always use PoolDeleter or let UniquePtr handle it.</para>
 </simplesect>
-<simplesect kind="see"><para>ArenaAllocator::Heap() </para>
+<simplesect kind="warning"><para>For Stack pools, ensure the buffer outlives the pool. The deleter doesn&apos;t free the buffer (user owns it), but the pool must be destroyed before the buffer goes out of scope.</para>
 </simplesect>
-<simplesect kind="see"><para>ArenaAllocator::Stack() </para>
+<simplesect kind="see"><para>PoolAllocator::Heap() Creates pool with owned arena </para>
 </simplesect>
-<simplesect kind="see"><para>ArenaAllocator::SubArena() <programlisting filename="Manual"></programlisting> </para>
+<simplesect kind="see"><para>PoolAllocator::WithArena() Creates pool with borrowed arena </para>
+</simplesect>
+<simplesect kind="see"><para>PoolAllocator::Stack() Creates pool with owned arena in user buffer </para>
+</simplesect>
+<simplesect kind="see"><para>ArenaDeleter For arena cleanup details <programlisting filename="Manual"></programlisting> </para>
 </simplesect>
 </para>
     </detaileddescription>

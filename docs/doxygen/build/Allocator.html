@@ -107,6 +107,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt14ArenaAllocator7restoreEPv"><code class="docutils literal notranslate"><span class="pre">restore()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt14ArenaAllocator9remainingEv"><code class="docutils literal notranslate"><span class="pre">remaining()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt14ArenaAllocator5statsEPc6size_t"><code class="docutils literal notranslate"><span class="pre">stats()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt14ArenaAllocator9WithBuddyER14BuddyAllocator6size_t6size_t"><code class="docutils literal notranslate"><span class="pre">WithBuddy()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#arenadeleter">ArenaDeleter</a><ul>
@@ -1618,6 +1619,59 @@ Writes human-readable statistics about the allocator to the provided buffer. Ret
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>true if statistics were written successfully, false otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt14ArenaAllocator9WithBuddyER14BuddyAllocator6size_t6size_t">
+<span id="_CPPv3N4cslt14ArenaAllocator9WithBuddyER14BuddyAllocator6size_t6size_t"></span><span id="_CPPv2N4cslt14ArenaAllocator9WithBuddyER14BuddyAllocator6size_t6size_t"></span><span id="cslt::ArenaAllocator::WithBuddy__BuddyAllocatorR.s.s"></span><span class="target" id="classcslt_1_1ArenaAllocator_1a218dae6e91beccf470a18aa49dfef5ee"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">cslt</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">UniquePtr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N4cslt14ArenaAllocatorE" title="cslt::ArenaAllocator"><span class="n"><span class="pre">ArenaAllocator</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt12ArenaDeleterE" title="cslt::ArenaDeleter"><span class="n"><span class="pre">ArenaDeleter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">WithBuddy</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4N4cslt14BuddyAllocatorE" title="cslt::BuddyAllocator"><span class="n"><span class="pre">BuddyAllocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">buddy</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">base_align_in</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">alignof</span></span><span class="p"><span class="pre">(</span></span><span class="n"><span class="pre">max_align_t</span></span><span class="p"><span class="pre">)</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt14ArenaAllocator9WithBuddyER14BuddyAllocator6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a fixed-capacity arena backed by a <a class="reference internal" href="#classcslt_1_1BuddyAllocator"><span class="std std-ref">BuddyAllocator</span></a> allocation. </p>
+<p>
+Performs a single allocation from <code class="docutils literal notranslate"><span class="pre">buddy</span></code> and constructs the <a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">ArenaAllocator</span></a> in-place at the returned base pointer. The arena is fixed-capacity:<ul class="simple">
+<li><p>No resizing/growth (resize disabled)</p></li>
+<li><p>The buddy allocator retains ownership of the backing region</p></li>
+<li><p>Destruction returns the entire region back to the buddy allocator</p></li>
+</ul>
+</p>
+<p>Layout within the buddy allocation: [<a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">ArenaAllocator</span></a>][padding][Chunk][padding][data…]</p>
+<p><ul class="simple">
+<li><p><a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">ArenaAllocator</span></a> is placed at the beginning of the buddy region.</p></li>
+<li><p>Chunk header is aligned to alignof(Chunk).</p></li>
+<li><p>Data region is aligned to base_align (&gt;= alignof(max_align_t), pow2).</p></li>
+</ul>
+</p>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#structcslt_1_1ArenaDeleter"><span class="std std-ref">ArenaDeleter</span></a> Returns memory to buddy for <a class="reference internal" href="#classcslt_1_1ArenaAllocator_1a218dae6e91beccf470a18aa49dfef5ee"><span class="std std-ref">WithBuddy</span></a> arenas </p>
+</div>
+</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The returned arena lives inside buddy-owned memory. Never free it with ::operator delete. Always use <a class="reference internal" href="#structcslt_1_1ArenaDeleter"><span class="std std-ref">ArenaDeleter</span></a> / UniquePtr cleanup.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buddy</strong> – Buddy allocator to allocate the arena region from (must not be nullptr) </p></li>
+<li><p><strong>bytes</strong> – Total bytes to request from the buddy allocator for the entire arena region </p></li>
+<li><p><strong>base_align_in</strong> – Per-arena base alignment for allocations (0 = default)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> containing UniquePtr to arena on success, or error on failure</p>
+</dd>
+<dt class="field-odd">Return values<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>Expected</strong> – with UniquePtr on success </p></li>
+<li><p><strong>Expected</strong> – with <a class="reference internal" href="Error.html#classcslt_1_1ArgumentError"><span class="std std-ref">ArgumentError</span></a> if buddy is null or bytes too small </p></li>
+<li><p><strong>Expected</strong> – with <a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a> if buddy allocation fails </p></li>
+<li><p><strong>Expected</strong> – with <a class="reference internal" href="Error.html#classcslt_1_1AlignmentError"><span class="std std-ref">AlignmentError</span></a> if alignment normalization fails </p></li>
+<li><p><strong>Expected</strong> – with <a class="reference internal" href="Error.html#classcslt_1_1LengthOverflowError"><span class="std std-ref">LengthOverflowError</span></a> on overflow in address arithmetic</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -4044,19 +4098,19 @@ This custom deleter is invoked when a UniquePtr&lt;FreeListAllocator&gt; goes ou
 <p>Performance: O(log n) for allocation, deallocation, and coalescing, where n is the number of size levels. Memory overhead is ~16 bytes per allocation for the header.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a> Primary factory method </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a8b41015908b893bd2138d38399d86d3d"><span class="std std-ref">Heap()</span></a> Primary factory method </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> Basic allocation </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> Basic allocation </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> Aligned allocation </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> Aligned allocation </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a6d08026be9b991bc1f142b37c7476a1b"><span class="std std-ref">realloc()</span></a> Resize allocation </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aa30b5019edd20f34bd42c46cd27bb6b9"><span class="std std-ref">realloc()</span></a> Resize allocation </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -4157,7 +4211,7 @@ This custom deleter is invoked when a UniquePtr&lt;FreeListAllocator&gt; goes ou
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> does not guarantee custom alignment - use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> does not guarantee custom alignment - use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -4187,7 +4241,7 @@ This custom deleter is invoked when a UniquePtr&lt;FreeListAllocator&gt; goes ou
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a> Factory method that creates the UniquePtr with <a class="reference internal" href="#structcslt_1_1BuddyDeleter"><span class="std std-ref">BuddyDeleter</span></a></p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a8b41015908b893bd2138d38399d86d3d"><span class="std std-ref">Heap()</span></a> Factory method that creates the UniquePtr with <a class="reference internal" href="#structcslt_1_1BuddyDeleter"><span class="std std-ref">BuddyDeleter</span></a></p>
 </div>
 </p>
 <div class="admonition note">
@@ -4202,7 +4256,7 @@ This custom deleter is invoked when a UniquePtr&lt;FreeListAllocator&gt; goes ou
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt14BuddyAllocator5allocE6size_tb">
-<span id="_CPPv3N4cslt14BuddyAllocator5allocE6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator5allocE6size_tb"></span><span id="cslt::BuddyAllocator::alloc__s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator5allocE6size_tb" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt14BuddyAllocator5allocE6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator5allocE6size_tb"></span><span id="cslt::BuddyAllocator::alloc__s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator5allocE6size_tb" title="Link to this definition"></a><br /></dt>
 <dd><p>Allocate memory from the buddy allocator. </p>
 <p>
 Allocates memory using the buddy allocation algorithm. The actual block size will be rounded up to the nearest power of 2 that can accommodate both the requested bytes and the internal 16-byte BuddyHeader.</p>
@@ -4221,15 +4275,15 @@ Allocates memory using the buddy allocation algorithm. The actual block size wil
 <li><p>Request 1000 bytes → 1000 + 16 (header) = 1016 → rounds to 1024 bytes</p></li>
 </ul>
 </p>
-<p><strong>Alignment:</strong> The returned pointer has natural alignment based on block position in the pool. It is NOT guaranteed to match base_align from <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a>. Use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
+<p><strong>Alignment:</strong> The returned pointer has natural alignment based on block position in the pool. It is NOT guaranteed to match base_align from <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a8b41015908b893bd2138d38399d86d3d"><span class="std std-ref">Heap()</span></a>. Use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
 <p><strong>Internal Fragmentation:</strong> Power-of-2 rounding creates internal fragmentation. A 100-byte request wastes ~12 bytes within the 128-byte block (after accounting for header).</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> Allocation with specific alignment </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> Allocation with specific alignment </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a6d08026be9b991bc1f142b37c7476a1b"><span class="std std-ref">realloc()</span></a> Resize existing allocation </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aa30b5019edd20f34bd42c46cd27bb6b9"><span class="std std-ref">realloc()</span></a> Resize existing allocation </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -4327,10 +4381,10 @@ Allocates memory using the buddy allocation algorithm. The actual block size wil
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt14BuddyAllocator13alloc_alignedE6size_t6size_tb">
-<span id="_CPPv3N4cslt14BuddyAllocator13alloc_alignedE6size_t6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator13alloc_alignedE6size_t6size_tb"></span><span id="cslt::BuddyAllocator::alloc_aligned__s.s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc_aligned</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator13alloc_alignedE6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt14BuddyAllocator13alloc_alignedE6size_t6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator13alloc_alignedE6size_t6size_tb"></span><span id="cslt::BuddyAllocator::alloc_aligned__s.s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">alloc_aligned</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator13alloc_alignedE6size_t6size_tb" title="Link to this definition"></a><br /></dt>
 <dd><p>Allocate aligned memory from the buddy allocator. </p>
 <p>
-Allocates memory with a specific alignment guarantee. The allocation process is similar to <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a>, but allocates a larger block to ensure the user pointer can be positioned at the requested alignment.</p>
+Allocates memory with a specific alignment guarantee. The allocation process is similar to <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a>, but allocates a larger block to ensure the user pointer can be positioned at the requested alignment.</p>
 <p><strong>Allocation Process:</strong><ol class="lowerroman simple">
 <li><p>Normalize alignment to power of 2 (e.g., 48 → 64)</p></li>
 <li><p>Calculate total: bytes + header + (alignment - 1) for worst-case padding</p></li>
@@ -4347,18 +4401,18 @@ Allocates memory with a specific alignment guarantee. The allocation process is 
 <li><p>Request 512 bytes, 256-byte align → 512 + 16 + 255 = 783 → 1024 bytes</p></li>
 </ul>
 </p>
-<p><strong>Overhead:</strong> Aligned allocations use more memory than <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> due to:<ul class="simple">
+<p><strong>Overhead:</strong> Aligned allocations use more memory than <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> due to:<ul class="simple">
 <li><p>Larger block size to accommodate alignment padding</p></li>
 <li><p>Potential unused space before and after user data</p></li>
 </ul>
 </p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> Basic allocation without alignment guarantee </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> Basic allocation without alignment guarantee </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a409bb66d1e09136816216cbb96f3bd21"><span class="std std-ref">realloc_aligned()</span></a> Resize with alignment preserved </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a99a84691e3dff68d06e8e41b07a4a56e"><span class="std std-ref">realloc_aligned()</span></a> Resize with alignment preserved </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -4462,7 +4516,7 @@ Allocates memory with a specific alignment guarantee. The allocation process is 
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The header is placed immediately before the aligned user pointer, NOT at the block start (unlike <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a>).</p>
+<p>The header is placed immediately before the aligned user pointer, NOT at the block start (unlike <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a>).</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -4488,7 +4542,7 @@ Allocates memory with a specific alignment guarantee. The allocation process is 
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt14BuddyAllocator7reallocEPv6size_t6size_tb">
-<span id="_CPPv3N4cslt14BuddyAllocator7reallocEPv6size_t6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator7reallocEPv6size_t6size_tb"></span><span id="cslt::BuddyAllocator::realloc__voidP.s.s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1a6d08026be9b991bc1f142b37c7476a1b"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator7reallocEPv6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt14BuddyAllocator7reallocEPv6size_t6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator7reallocEPv6size_t6size_tb"></span><span id="cslt::BuddyAllocator::realloc__voidP.s.s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1aa30b5019edd20f34bd42c46cd27bb6b9"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator7reallocEPv6size_t6size_tb" title="Link to this definition"></a><br /></dt>
 <dd><p>Resize an existing allocation. </p>
 <p>
 Resizes an existing allocation to a new size. The behavior depends on whether the allocation is growing, shrinking, or being created/freed.</p>
@@ -4506,7 +4560,7 @@ Resizes an existing allocation to a new size. The behavior depends on whether th
 </ul>
 </p>
 <p><strong>Growing (new_bytes &gt; current block capacity):</strong><ul class="simple">
-<li><p>Allocates new larger block via <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a></p></li>
+<li><p>Allocates new larger block via <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a></p></li>
 <li><p>Copies min(old_bytes, usable_old) bytes to new block</p></li>
 <li><p>Frees old block (triggers coalescing)</p></li>
 <li><p>Returns new pointer (old pointer becomes invalid)</p></li>
@@ -4517,11 +4571,11 @@ Resizes an existing allocation to a new size. The behavior depends on whether th
 <p><strong>Data Preservation:</strong> When growing, all data from the old allocation is copied to the new one. The copy size is min(old_bytes, actual_usable_capacity) to prevent reading beyond the old allocation.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> Initial allocation </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> Initial allocation </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a409bb66d1e09136816216cbb96f3bd21"><span class="std std-ref">realloc_aligned()</span></a> Realloc with alignment preserved </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a99a84691e3dff68d06e8e41b07a4a56e"><span class="std std-ref">realloc_aligned()</span></a> Realloc with alignment preserved </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -4665,10 +4719,10 @@ Resizes an existing allocation to a new size. The behavior depends on whether th
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt14BuddyAllocator15realloc_alignedEPv6size_t6size_t6size_tb">
-<span id="_CPPv3N4cslt14BuddyAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="cslt::BuddyAllocator::realloc_aligned__voidP.s.s.s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1a409bb66d1e09136816216cbb96f3bd21"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc_aligned</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator15realloc_alignedEPv6size_t6size_t6size_tb" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt14BuddyAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="_CPPv2N4cslt14BuddyAllocator15realloc_alignedEPv6size_t6size_t6size_tb"></span><span id="cslt::BuddyAllocator::realloc_aligned__voidP.s.s.s.b"></span><span class="target" id="classcslt_1_1BuddyAllocator_1a99a84691e3dff68d06e8e41b07a4a56e"></span><span class="k"><span class="pre">virtual</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">void</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">realloc_aligned</span></span></span><span class="sig-paren">(</span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">old_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">new_bytes</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">alignment</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">zeroed</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">override</span></span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator15realloc_alignedEPv6size_t6size_t6size_tb" title="Link to this definition"></a><br /></dt>
 <dd><p>Resize an existing allocation while preserving alignment. </p>
 <p>
-Resizes an existing allocation while maintaining alignment guarantees. Behaves similarly to <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a6d08026be9b991bc1f142b37c7476a1b"><span class="std std-ref">realloc()</span></a> but with additional alignment handling.</p>
+Resizes an existing allocation while maintaining alignment guarantees. Behaves similarly to <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aa30b5019edd20f34bd42c46cd27bb6b9"><span class="std std-ref">realloc()</span></a> but with additional alignment handling.</p>
 <p><strong>Special Cases:</strong><ul class="simple">
 <li><p>realloc_aligned(nullptr, 0, n, a) → Equivalent to alloc_aligned(n, a)</p></li>
 <li><p>realloc_aligned(ptr, old, 0, a) → Frees ptr, returns nullptr (success)</p></li>
@@ -4682,18 +4736,18 @@ Resizes an existing allocation while maintaining alignment guarantees. Behaves s
 </p>
 <p><strong>Reallocation Required:</strong> Occurs when ANY of these is true:<ul class="simple">
 <li><p>new_bytes exceeds current block capacity</p></li>
-<li><p>ptr doesn’t satisfy requested alignment (alignment changed) Allocates new block with <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a>, copies data, frees old block</p></li>
+<li><p>ptr doesn’t satisfy requested alignment (alignment changed) Allocates new block with <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a>, copies data, frees old block</p></li>
 </ul>
 </p>
 <p><strong>Alignment Changes:</strong> You can change alignment during realloc. For example, reallocating from 32-byte to 64-byte alignment will trigger a new allocation even if the size fits in the current block.</p>
 <p><strong>Data Preservation:</strong> When reallocating, copies min(old_bytes, actual_usable_capacity) bytes to preserve all data from the old allocation.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> Initial aligned allocation </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> Initial aligned allocation </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a6d08026be9b991bc1f142b37c7476a1b"><span class="std std-ref">realloc()</span></a> Realloc without alignment requirements </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aa30b5019edd20f34bd42c46cd27bb6b9"><span class="std std-ref">realloc()</span></a> Realloc without alignment requirements </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -4913,11 +4967,11 @@ Free block at offset 0, order 7 (128 bytes):
 <p><strong>Performance:</strong> O(log n) where n is the number of size levels, due to recursive coalescing up the buddy tree.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> Allocate memory </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> Allocate memory </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> Allocate aligned memory </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> Allocate aligned memory </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -5370,11 +5424,11 @@ Extends <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a460c8
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> Allocate memory </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> Allocate memory </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> Allocate aligned memory </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> Allocate aligned memory </p>
 </div>
 <dl>
 <dt><strong>Typical Usage:</strong></dt><dd><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">buddy</span><span class="o">-&gt;</span><span class="n">alloc</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">).</span><span class="n">value</span><span class="p">();</span>
@@ -5592,7 +5646,7 @@ Scans the allocator’s free lists from the largest block size down to the small
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> Allocation behavior </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> Allocation behavior </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -5643,7 +5697,7 @@ Returns the smallest block size (in bytes) that this <a class="reference interna
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a> <a class="reference internal" href="#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> creation and normalization rules </p>
+<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a8b41015908b893bd2138d38399d86d3d"><span class="std std-ref">Heap()</span></a> <a class="reference internal" href="#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> creation and normalization rules </p>
 </div>
 <dl>
 <dt><strong>Example:</strong></dt><dd><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">buddy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BuddyAllocator</span><span class="o">::</span><span class="n">Heap</span><span class="p">(</span><span class="mi">4096</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">).</span><span class="n">value</span><span class="p">();</span>
@@ -5713,7 +5767,7 @@ Returns the size of the largest block that the allocator can manage, which corre
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt14BuddyAllocator4HeapE6size_t6size_t6size_t">
-<span id="_CPPv3N4cslt14BuddyAllocator4HeapE6size_t6size_t6size_t"></span><span id="_CPPv2N4cslt14BuddyAllocator4HeapE6size_t6size_t6size_t"></span><span id="cslt::BuddyAllocator::Heap__s.s.s"></span><span class="target" id="classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">UniquePtr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N4cslt14BuddyAllocatorE" title="cslt::BuddyAllocator"><span class="n"><span class="pre">BuddyAllocator</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt12BuddyDeleterE" title="cslt::BuddyDeleter"><span class="n"><span class="pre">BuddyDeleter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Heap</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pool_size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">min_block_size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">base_align</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator4HeapE6size_t6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt14BuddyAllocator4HeapE6size_t6size_t6size_t"></span><span id="_CPPv2N4cslt14BuddyAllocator4HeapE6size_t6size_t6size_t"></span><span id="cslt::BuddyAllocator::Heap__s.s.s"></span><span class="target" id="classcslt_1_1BuddyAllocator_1a8b41015908b893bd2138d38399d86d3d"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">UniquePtr</span></span><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4N4cslt14BuddyAllocatorE" title="cslt::BuddyAllocator"><span class="n"><span class="pre">BuddyAllocator</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt12BuddyDeleterE" title="cslt::BuddyDeleter"><span class="n"><span class="pre">BuddyDeleter</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Heap</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">pool_size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">min_block_size</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">base_align</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt14BuddyAllocator4HeapE6size_t6size_t6size_t" title="Link to this definition"></a><br /></dt>
 <dd><p>Create an OS-backed buddy allocator with specified pool and block sizes. </p>
 <p>
 Creates a buddy allocator with memory obtained directly from the operating system via mmap() on POSIX systems or VirtualAlloc() on Windows.</p>
@@ -5828,7 +5882,7 @@ Creates a buddy allocator with memory obtained directly from the operating syste
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>base_align affects the minimum block size calculation but does NOT guarantee that <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624"><span class="std std-ref">alloc()</span></a> returns aligned pointers. Use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
+<p>base_align affects the minimum block size calculation but does NOT guarantee that <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258"><span class="std std-ref">alloc()</span></a> returns aligned pointers. Use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>

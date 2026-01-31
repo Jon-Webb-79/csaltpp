@@ -1,22 +1,26 @@
 \hypertarget{Manual-example}{}\doxysection{Manual}
 construction (not typical) 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{ArenaAllocator* raw\_arena = \textcolor{comment}{// ... created via factory ...;}}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<ArenaAllocator, ArenaDeleter>}} arena(raw\_arena, ArenaDeleter\{\});}
-\DoxyCodeLine{\textcolor{comment}{// Automatic cleanup when arena goes out of scope}}
+\DoxyCodeLine{PoolAllocator* raw\_pool = \textcolor{comment}{// ... created via factory ...;}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<PoolAllocator, PoolDeleter>}} pool(raw\_pool, PoolDeleter\{\});}
+\DoxyCodeLine{\textcolor{comment}{// Automatic cleanup when pool goes out of scope}}
 
 \end{DoxyCode}
 
 
 \begin{DoxyWarning}{Warning}
-Never call \+::operator delete directly on an Arena\+Allocator created by a factory method. Always use Arena\+Deleter or let Unique\+Ptr handle it.
+Never call \+::operator delete directly on a Pool\+Allocator created by a factory method. Always use Pool\+Deleter or let Unique\+Ptr handle it.
+
+For Stack pools, ensure the buffer outlives the pool. The deleter doesn\textquotesingle{}t free the buffer (user owns it), but the pool must be destroyed before the buffer goes out of scope.
 \end{DoxyWarning}
 \begin{DoxySeeAlso}{See also}
-Arena\+Allocator\+::\+Heap() 
+Pool\+Allocator\+::\+Heap() Creates pool with owned arena 
 
-Arena\+Allocator\+::\+Stack() 
+Pool\+Allocator\+::\+With\+Arena() Creates pool with borrowed arena 
 
-Arena\+Allocator\+::\+Sub\+Arena()
+Pool\+Allocator\+::\+Stack() Creates pool with owned arena in user buffer 
+
+Arena\+Deleter For arena cleanup details
 \end{DoxySeeAlso}
 
 \begin{DoxyCodeInclude}{0}

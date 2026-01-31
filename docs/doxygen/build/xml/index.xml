@@ -37,11 +37,14 @@
     <member refid="classcslt_1_1AlreadyInitializedError_1acd18e1df0ecb441dbf795ef935620da6" kind="function"><name>AlreadyInitializedError</name></member>
   </compound>
   <compound refid="classcslt_1_1ArenaAllocator" kind="class"><name>cslt::ArenaAllocator</name>
+    <member refid="classcslt_1_1ArenaAllocator_1a3643101e7551d3473848a0441a7b99e5" kind="friend"><name>ArenaDeleter</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a2e69c14646e771e58094e130829b2317" kind="variable"><name>cur_</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a8a07aaf6432c397462442d46e932e93a" kind="variable"><name>head_</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a7738375f52101368f147ece0ba2e4dbe" kind="variable"><name>tail_</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a2a9fcc058b64af33075b4c19e2187293" kind="variable"><name>min_chunk_</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1ae07bd15b220ac4fc392f8f3e6b5e575c" kind="variable"><name>resize_</name></member>
+    <member refid="classcslt_1_1ArenaAllocator_1a4bf132aa68d426dd52c062d37a3c5a61" kind="variable"><name>buddy_owner_</name></member>
+    <member refid="classcslt_1_1ArenaAllocator_1aa8a239c55b1030ea0cfaa75f6fb58002" kind="variable"><name>backing_bytes_</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a13aa36c712c22a149d8d80f284a8998d" kind="function"><name>find_chunk_in_chain</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a56f0fa590cb706d34445e4b947a15ebd" kind="function"><name>ArenaAllocator</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a91150136502502b877a6deb7abf95e82" kind="function"><name>~ArenaAllocator</name></member>
@@ -63,6 +66,7 @@
     <member refid="classcslt_1_1ArenaAllocator_1a322c802722e6491f4b1112d0893660a3" kind="function"><name>Heap</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1a6d245f99bc1ba17a2785f66c43a61e95" kind="function"><name>Stack</name></member>
     <member refid="classcslt_1_1ArenaAllocator_1ae44d42c85dbd78b7a424e7a76c3fce32" kind="function"><name>SubArena</name></member>
+    <member refid="classcslt_1_1ArenaAllocator_1a218dae6e91beccf470a18aa49dfef5ee" kind="function"><name>WithBuddy</name></member>
   </compound>
   <compound refid="classArenaAllocatorHeapTest" kind="class"><name>ArenaAllocatorHeapTest</name>
     <member refid="classArenaAllocatorHeapTest_1ad338651658add1e598e78f754d20a935" kind="function"><name>SetUp</name></member>
@@ -106,21 +110,21 @@
     <member refid="classcslt_1_1BuddyAllocator_1a7970a011ff9f0ba856284cf3088ca103" kind="function"><name>find_nonempty_level</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a32c7f63bf251ba06b926731f8f43237a" kind="function"><name>freelist_push</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a047e64d263b1d075ce0b43d1d9665c27" kind="function"><name>freelist_remove</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1aabd3ffc422786c0abb48a6c84a7ec2bf" kind="function"><name>freelist_find</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1a778e61f8cf6f66869dc33031b7df71d7" kind="function"><name>freelist_find</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1add06089e6621187085c276825ff88575" kind="function"><name>ptr_in_pool_</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1a0c3b82f4acb83978af1b341929df3d32" kind="function"><name>ilog2</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1a69098eb1a1dbf8986ce91eb5871b2a28" kind="function"><name>next_pow2</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1aac71de380cf4a88e642815ab47a60e67" kind="function"><name>os_alloc</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1ab8bdc80be333403cd73a94220c0e6421" kind="function"><name>os_free</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1ac7a9115f0c89472abbebceffa984f234" kind="function"><name>ilog2</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1a86a5351beaa05ea157cc7262ba71ece4" kind="function"><name>next_pow2</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1ac229b4410fba9dea12e619eb3823a355" kind="function"><name>os_alloc</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1a0101f1405da7ed79c58172d57120ca58" kind="function"><name>os_free</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a19051ba1bef638b5069726ae8b81b21a" kind="function"><name>~BuddyAllocator</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1af1c2aea58832ef55381a9a595c814eef" kind="function"><name>BuddyAllocator</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1aa8b18aef07e5ee5faad7a4bd57b9dc36" kind="function"><name>operator=</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a9484436822b1824a841aa002d14d5955" kind="function"><name>BuddyAllocator</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a952f260ad17922dbb7ef3b6a57385c9f" kind="function"><name>operator=</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624" kind="function"><name>alloc</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265" kind="function"><name>alloc_aligned</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1a6d08026be9b991bc1f142b37c7476a1b" kind="function"><name>realloc</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1a409bb66d1e09136816216cbb96f3bd21" kind="function"><name>realloc_aligned</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1ad73ade6bd9d847cf670eef2acb1a5258" kind="function"><name>alloc</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1a80193b4cc99ced2e692cf324df4f994b" kind="function"><name>alloc_aligned</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1aa30b5019edd20f34bd42c46cd27bb6b9" kind="function"><name>realloc</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1a99a84691e3dff68d06e8e41b07a4a56e" kind="function"><name>realloc_aligned</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a4293ba9f8f0cbd4fb55ea860ddafb05a" kind="function"><name>return_element</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1aa923e1e70ca1361b07780e973d0bc298" kind="function"><name>reset</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a460c8ef9bfaeaeaa9669f00ee002cc2e" kind="function"><name>is_ptr</name></member>
@@ -132,7 +136,7 @@
     <member refid="classcslt_1_1BuddyAllocator_1abd0fddad8adb07f77464d53c39ba41d7" kind="function"><name>largest_block</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a350ccd54381a41e1e2987c2cda330d54" kind="function"><name>min_block_size</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a294bb228c89b3534204d287775aa3bd6" kind="function"><name>max_block_size</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5" kind="function"><name>Heap</name></member>
+    <member refid="classcslt_1_1BuddyAllocator_1a8b41015908b893bd2138d38399d86d3d" kind="function"><name>Heap</name></member>
   </compound>
   <compound refid="structcslt_1_1BuddyAllocator_1_1BuddyBlock" kind="struct"><name>cslt::BuddyAllocator::BuddyBlock</name>
     <member refid="structcslt_1_1BuddyAllocator_1_1BuddyBlock_1ac36517f593af71ad2f2bd44a0a3bfe5d" kind="variable"><name>next</name></member>
@@ -1183,6 +1187,10 @@
     <member refid="test__allocator_8cpp_1abad19c714d88af288272bb059be45acf" kind="function"><name>TEST</name></member>
     <member refid="test__allocator_8cpp_1af788cc953863491a4f85aa77aef22f76" kind="function"><name>TEST</name></member>
     <member refid="test__allocator_8cpp_1a03b29566016a4014d7916801e080fcf1" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a99388f53b0f1704d80e055b795e2b018" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1aecba463ae41bbdfa906afed7fd8745f3" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a76da040f49d74146bee8a8db5d7159a0" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a1fde737a276151df215a952da7e4b7f2" kind="function"><name>TEST</name></member>
     <member refid="test__allocator_8cpp_1a01ba08e34f0e1beccde76ca96ba6add5" kind="function"><name>TEST</name></member>
     <member refid="test__allocator_8cpp_1a27436a21e4d7354d2c168f888aa3bfed" kind="function"><name>TEST</name></member>
     <member refid="test__allocator_8cpp_1a2f69e783119e9fdade88599ac0f0e6df" kind="function"><name>TEST</name></member>
@@ -1981,14 +1989,14 @@
   </compound>
   <compound refid="Enforce-example" kind="example"><name>Enforce</name>
   </compound>
-  <compound refid="Automatic-example" kind="example"><name>Automatic</name>
-  </compound>
-  <compound refid="Manual-example" kind="example"><name>Manual</name>
-  </compound>
   <compound refid="Resizable-example" kind="example"><name>Resizable</name>
   </compound>
   <compound refid="Stack-based-example" kind="example"><name>Stack-based</name>
   </compound>
+  <compound refid="Automatic-example" kind="example"><name>Automatic</name>
+  </compound>
   <compound refid="WithArena-example" kind="example"><name>WithArena</name>
+  </compound>
+  <compound refid="Manual-example" kind="example"><name>Manual</name>
   </compound>
 </doxygenindex>

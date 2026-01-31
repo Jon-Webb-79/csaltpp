@@ -1,10 +1,10 @@
 \hypertarget{Automatic-example}{}\doxysection{Automatic}
-via Unique\+Ptr 
+via Unique\+Ptr (typical usage) 
 \begin{DoxyCode}{0}
 \DoxyCodeLine{\{}
-\DoxyCodeLine{    \textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(4096).value());}
-\DoxyCodeLine{    \textcolor{comment}{// Use arena...}}
-\DoxyCodeLine{\} \textcolor{comment}{// ArenaDeleter automatically called here}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} pool = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{cslt::PoolAllocator::Heap}}(256, 32).value());}
+\DoxyCodeLine{    \textcolor{comment}{// Use pool...}}
+\DoxyCodeLine{\} \textcolor{comment}{// PoolDeleter automatically called here, cleans up pool and arena}}
 
 \end{DoxyCode}
 

@@ -1399,14 +1399,26 @@ namespace cslt {
      * assert(cslt::next_pow2(0) == 0);
      * @endcode
      */
-    inline size_t next_pow2(size_t x) {
-        if (x <= 1) return x ? 1 : 0;
-        if (x > (SIZE_MAX >> 1)) return 0;
-        x--;
-        for (size_t s = 1; s < 8 * sizeof(size_t); s <<= 1) {
-            x |= x >> s;
+    inline size_t next_pow2(size_t x) noexcept {
+        if (x == 0) return 0;
+        if (is_pow2(x)) return x;
+        
+        // Check if x is too large to round up to a power of 2
+        // The largest power of 2 that fits in size_t is SIZE_MAX / 2 + 1
+        // (which is 0x8000... with only the high bit set)
+        if (x > (SIZE_MAX / 2 + 1)) {
+            return 0;  // Overflow - no power of 2 can represent this
         }
-        return x + 1;
+        
+        size_t power = 1;
+        while (power < x) {
+            // Check overflow before shifting
+            if (power > SIZE_MAX / 2) {
+                return 0;  // Would overflow on next shift
+            }
+            power <<= 1;
+        }
+        return power;
     }
 // ================================================================================ 
 // ================================================================================ 
@@ -5480,7 +5492,7 @@ namespace cslt {
         static uint32_t ilog2(size_t x);
 // -------------------------------------------------------------------------------- 
 
-        static size_t next_pow2(size_t x);
+        //static size_t next_pow2(size_t x);
 // -------------------------------------------------------------------------------- 
 
         uint32_t order_to_level(uint32_t order) const;
@@ -7142,30 +7154,158 @@ namespace cslt {
      * @see ArenaAllocator::SubArena()
      */
     inline void ArenaDeleter::operator()(ArenaAllocator* arena) const noexcept {
-            if (!arena) return;
+        if (!arena) return;
 
-            // Capture teardown metadata BEFORE destructor
-            BuddyAllocator* buddy = arena->buddy_owner_;
-            size_t backing_bytes  = arena->backing_bytes_;
+        // Capture teardown metadata BEFORE destructor
+        BuddyAllocator* buddy = arena->buddy_owner_;
+        size_t backing_bytes  = arena->backing_bytes_;
 
-            MemType type = arena->memory_type();
-            bool owns    = arena->owns_memory();
+        MemType type = arena->memory_type();
+        bool owns    = arena->owns_memory();
 
-            // Run destructor first (frees extra chunks if any)
-            arena->~ArenaAllocator();
+        // Run destructor first (frees extra chunks if any)
+        arena->~ArenaAllocator();
 
-            // Buddy-backed arena: return entire region to buddy, NOT operator delete
-            if (buddy && backing_bytes) {
-                buddy->return_element(arena, backing_bytes, alignof(ArenaAllocator));
-                return;
-            }
-
-            // Heap arena: free base allocation
-            if (type == DYNAMIC && owns) {
-                ::operator delete(static_cast<void*>(arena));
-            }
+        // Buddy-backed arena: return entire region to buddy, NOT operator delete
+        if (buddy && backing_bytes) {
+            buddy->return_element(arena, backing_bytes, alignof(ArenaAllocator));
+            return;
         }
 
+        // Heap arena: free base allocation
+        if (type == DYNAMIC && owns) {
+            ::operator delete(static_cast<void*>(arena));
+        }
+    }
+// ================================================================================ 
+// ================================================================================ 
+
+    class SlabAllocator;
+
+    struct SlabDeleter {
+        void operator()(SlabAllocator* slab) const noexcept;
+    };
+
+    class SlabAllocator : public Allocator {
+        friend struct SlabDeleter;
+    private:
+        BuddyAllocator* buddy_;               // backing buddy allocator (non-owning)
+
+        size_t obj_size_;                     // user-visible object size
+        size_t slot_size_;                    // internal stride >= obj_size and >= sizeof(Slot)
+        size_t align_;                        // slot alignment (pow2)
+
+        size_t slab_bytes_;                   // per-page allocation size
+        size_t page_hdr_bytes_;               // aligned sizeof(Page)
+        size_t objs_per_slab_;                // slots per page
+
+        // Tracking
+        size_t len_bytes_;                    // logical payload bytes in use (obj_size * live objects)
+
+        struct Slot { Slot* next; };          // intrusive freelist node
+        struct Page { Page* next; };          // page header at beginning of each page
+                                              
+        Page* pages_;
+        Slot* free_list_;
+// -------------------------------------------------------------------------------- 
+
+        explicit SlabAllocator(BuddyAllocator& buddy) noexcept;
+// -------------------------------------------------------------------------------- 
+
+        static size_t align_up(size_t x, size_t a) noexcept;
+// -------------------------------------------------------------------------------- 
+
+        bool grow_();                         // allocate a page and populate free list
+// -------------------------------------------------------------------------------- 
+
+        Page* find_page_(const void* ptr) const noexcept;
+// ================================================================================ 
+    public:
+        ~SlabAllocator() noexcept override;
+// -------------------------------------------------------------------------------- 
+
+        static Expected<cslt::UniquePtr<SlabAllocator, SlabDeleter>>
+        WithBuddy(BuddyAllocator& buddy,
+                  size_t obj_size,
+                  size_t align = 0,
+                  size_t slab_bytes_hint = 0);  // FIXED: size_t not slize_t
+// -------------------------------------------------------------------------------- 
+ 
+        Expected<void*> alloc(size_t bytes, bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> alloc_aligned(size_t bytes, size_t alignment, bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        Expected<void*> realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes,
+                                        size_t alignment, bool zeroed = false) override;
+// -------------------------------------------------------------------------------- 
+
+        void return_element(void* ptr, size_t bytes = 0, size_t alignment = 0) override;  // FIXED: defaults
+// -------------------------------------------------------------------------------- 
+
+        bool stats(char* buffer, size_t buffer_size) const override;
+// -------------------------------------------------------------------------------- 
+
+        bool reset(bool trim = false) override;  // FIXED: consistent naming
+// -------------------------------------------------------------------------------- 
+
+        void* save() const override { return nullptr; }
+// -------------------------------------------------------------------------------- 
+
+        bool restore(void* checkpoint) override { 
+            (void)checkpoint; 
+            return false; 
+        }
+// -------------------------------------------------------------------------------- 
+
+        bool is_ptr(void* ptr) const override;
+// -------------------------------------------------------------------------------- 
+
+        bool is_ptr_sized(void* ptr, size_t bytes) const override;
+// -------------------------------------------------------------------------------- 
+
+        size_t remaining() const noexcept override;  // ADDED: base class requirement
+// -------------------------------------------------------------------------------- 
+
+        size_t stride() const noexcept { return slot_size_; }
+// -------------------------------------------------------------------------------- 
+
+        size_t total_blocks() const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        size_t free_blocks() const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        size_t in_use_blocks() const noexcept;
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    inline void SlabDeleter::operator()(SlabAllocator* slab) const noexcept {
+        if (!slab) return;
+        
+        // Save the buddy pointer before calling destructor
+        BuddyAllocator* buddy = slab->buddy_;
+        
+        // Calculate the size that was allocated for the slab structure
+        size_t slab_struct_bytes = SlabAllocator::align_up(sizeof(SlabAllocator), 
+                                                            alignof(max_align_t));
+        
+        // Call destructor to free pages
+        slab->~SlabAllocator();
+        
+        // Now free the SlabAllocator structure itself back to buddy
+        // CRITICAL: Use return_element, NOT operator delete!
+        if (buddy) {
+            buddy->return_element(static_cast<void*>(slab), 
+                                 slab_struct_bytes, 
+                                 alignof(max_align_t));
+        }
+    } 
 #endif /* ARENA_ENABLE_DYNAMIC */
 // ================================================================================ 
 // ================================================================================

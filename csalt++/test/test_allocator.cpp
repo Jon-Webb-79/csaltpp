@@ -8055,6 +8055,592 @@ TEST(BuddyStressTest, LongRunningSimulation) {
     EXPECT_TRUE(test.hasValue()) 
         << "Should still work after 2000 random operations";
 }
+// ================================================================================ 
+// ================================================================================ 
+
+// ================================================================================
+// BASIC CREATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 1: Basic Creation with Valid Parameters
+// ================================================================================
+
+TEST(SlabWithBuddyTest, BasicCreation) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create slab for 256-byte objects
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Verify slab was created
+    EXPECT_NE(slab.get(), nullptr);
+}
+
+// ================================================================================
+// Test 2: Object Size Stored Correctly
+// ================================================================================
+
+TEST(SlabWithBuddyTest, ObjectSizeStored) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create slab for 128-byte objects
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate should only accept 128 bytes
+    auto valid = slab->alloc(128, false);
+    EXPECT_TRUE(valid.hasValue());
+    
+    auto invalid = slab->alloc(256, false);
+    EXPECT_FALSE(invalid.hasValue());
+}
+
+// ================================================================================
+// Test 3: Default Alignment
+// ================================================================================
+
+TEST(SlabWithBuddyTest, DefaultAlignment) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create with align=0 (should use alignof(max_align_t))
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Should succeed (default alignment applied)
+    EXPECT_NE(slab.get(), nullptr);
+}
+
+// ================================================================================
+// Test 4: Custom Alignment
+// ================================================================================
+
+TEST(SlabWithBuddyTest, CustomAlignment) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create with 64-byte alignment
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 64, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate and verify alignment
+    auto ptr_result = slab->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    EXPECT_EQ(addr % 64, 0) << "Pointer should be 64-byte aligned";
+}
+
+// ================================================================================
+// Test 5: Default Page Size (4KB heuristic)
+// ================================================================================
+
+TEST(SlabWithBuddyTest, DefaultPageSize) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create with slab_bytes_hint=0 (use default heuristic)
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 64, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Should use default (4KB or 64 objects, whichever larger)
+    // With 64-byte objects, 64 objects = 4KB, so should be ~4KB
+    
+    // Allocate first object (triggers page allocation)
+    auto ptr = slab->alloc(64, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    // Should have capacity for many objects in first page
+    size_t total = slab->total_blocks();
+    EXPECT_GT(total, 10) << "Should have multiple slots per page";
+}
+
+// ================================================================================
+// Test 6: Custom Page Size
+// ================================================================================
+
+TEST(SlabWithBuddyTest, CustomPageSize) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create with 8KB pages
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 8192);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate first object (triggers page allocation)
+    auto ptr = slab->alloc(128, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    // Should have room for many objects
+    size_t total = slab->total_blocks();
+    EXPECT_GT(total, 20) << "8KB page should hold many 128-byte objects";
+}
+
+// ================================================================================
+// PARAMETER VALIDATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 7: Zero Object Size (Error)
+// ================================================================================
+
+TEST(SlabWithBuddyTest, ZeroObjectSizeError) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // obj_size=0 should fail
+    auto result = SlabAllocator::WithBuddy(*buddy, 0, 0, 0);
+    
+    EXPECT_FALSE(result.hasValue());
+}
+
+// ================================================================================
+// Test 8: Very Small Object Size
+// ================================================================================
+
+TEST(SlabWithBuddyTest, VerySmallObjectSize) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // 1-byte objects should work (slot_size will be larger for free list linkage)
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 1, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    EXPECT_NE(slab.get(), nullptr);
+    
+    // Should be able to allocate
+    auto ptr = slab->alloc(1, false);
+    EXPECT_TRUE(ptr.hasValue());
+}
+
+// ================================================================================
+// Test 9: Large Object Size
+// ================================================================================
+
+TEST(SlabWithBuddyTest, LargeObjectSize) {
+    auto buddy_result = BuddyAllocator::Heap(16 * 1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // 4KB objects
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 4096, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    EXPECT_NE(slab.get(), nullptr);
+    
+    // Should be able to allocate
+    auto ptr = slab->alloc(4096, false);
+    EXPECT_TRUE(ptr.hasValue());
+}
+
+// ================================================================================
+// ALIGNMENT NORMALIZATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 10: Non-Power-of-2 Alignment Rounded Up
+// ================================================================================
+
+TEST(SlabWithBuddyTest, NonPowerOf2AlignmentRounded) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Request 48-byte alignment (not power of 2)
+    // Should be rounded to 64
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 48, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    EXPECT_NE(slab.get(), nullptr);
+    
+    // Allocate and check alignment (should be 64, not 48)
+    auto ptr_result = slab->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    // Should be aligned to 64 (next power of 2 after 48)
+    EXPECT_EQ(addr % 64, 0);
+}
+
+// ================================================================================
+// Test 11: Power-of-2 Alignment Preserved
+// ================================================================================
+
+TEST(SlabWithBuddyTest, PowerOf2AlignmentPreserved) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Request 128-byte alignment (already power of 2)
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 128, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    EXPECT_NE(slab.get(), nullptr);
+    
+    // Allocate and check alignment
+    auto ptr_result = slab->alloc(256, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    EXPECT_EQ(addr % 128, 0);
+}
+
+// ================================================================================
+// Test 12: Extremely Large Alignment (Overflow Check)
+// ================================================================================
+
+TEST(SlabWithBuddyTest, ExtremeLargeAlignment) {
+    auto buddy_result = BuddyAllocator::Heap(16 * 1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    size_t huge_align = SIZE_MAX / 2 + 1;  // CHANGE THIS (was + 2)
+    
+    auto result = SlabAllocator::WithBuddy(*buddy, 256, huge_align, 0);
+    
+    EXPECT_FALSE(result.hasValue());  // Should now fail correctly
+}
+// ================================================================================
+// SLOT SIZE CALCULATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 13: Slot Size for Tiny Objects
+// ================================================================================
+
+TEST(SlabWithBuddyTest, SlotSizeForTinyObjects) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // 8-byte object (smaller than free list linkage)
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 8, 8, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // stride() returns slot_size_
+    size_t stride = slab->stride();
+    
+    // Should be at least sizeof(Slot) which is sizeof(void*)
+    EXPECT_GE(stride, sizeof(void*));
+}
+
+// ================================================================================
+// Test 14: Slot Size Respects Alignment
+// ================================================================================
+
+TEST(SlabWithBuddyTest, SlotSizeRespectsAlignment) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // 100-byte object with 64-byte alignment
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 100, 64, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    size_t stride = slab->stride();
+    
+    // Stride should be multiple of 64
+    EXPECT_EQ(stride % 64, 0);
+    
+    // Stride should be >= 100
+    EXPECT_GE(stride, 100);
+}
+
+// ================================================================================
+// PAGE GEOMETRY TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 15: Minimum Page Size (At Least One Slot)
+// ================================================================================
+
+TEST(SlabWithBuddyTest, MinimumPageSize) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Request tiny page size (smaller than header + one slot)
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 64);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Should adjust to fit at least one slot
+    auto ptr = slab->alloc(256, false);
+    EXPECT_TRUE(ptr.hasValue());
+}
+
+// ================================================================================
+// Test 16: Page Size Adjusted for No Tail Fragment
+// ================================================================================
+
+TEST(SlabWithBuddyTest, NoTailFragment) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create slab with specific page size
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 4096);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Page size should be adjusted so slots fit evenly
+    // (no wasted space at end of page)
+    
+    auto ptr = slab->alloc(256, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    // Total blocks should be reasonable
+    size_t total = slab->total_blocks();
+    EXPECT_GT(total, 0);
+}
+
+// ================================================================================
+// Test 17: Multiple Different Slabs from Same Buddy
+// ================================================================================
+
+TEST(SlabWithBuddyTest, MultipleDifferentSlabs) {
+    auto buddy_result = BuddyAllocator::Heap(16 * 1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Create multiple slabs with different object sizes
+    auto slab128_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab128_result.hasValue());
+    auto slab128 = cslt::move(slab128_result.value());
+    
+    auto slab256_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab256_result.hasValue());
+    auto slab256 = cslt::move(slab256_result.value());
+    
+    auto slab512_result = SlabAllocator::WithBuddy(*buddy, 512, 0, 0);
+    ASSERT_TRUE(slab512_result.hasValue());
+    auto slab512 = cslt::move(slab512_result.value());
+    
+    // All should succeed
+    EXPECT_NE(slab128.get(), nullptr);
+    EXPECT_NE(slab256.get(), nullptr);
+    EXPECT_NE(slab512.get(), nullptr);
+    
+    // Each should allocate its own size
+    auto ptr128 = slab128->alloc(128, false);
+    auto ptr256 = slab256->alloc(256, false);
+    auto ptr512 = slab512->alloc(512, false);
+    
+    EXPECT_TRUE(ptr128.hasValue());
+    EXPECT_TRUE(ptr256.hasValue());
+    EXPECT_TRUE(ptr512.hasValue());
+}
+
+// ================================================================================
+// INITIAL STATE TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 18: Initial State - No Pages Allocated
+// ================================================================================
+
+TEST(SlabWithBuddyTest, InitialStateNoPages) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Initially, no pages should be allocated
+    EXPECT_EQ(slab->total_blocks(), 0) << "No pages allocated yet";
+    EXPECT_EQ(slab->free_blocks(), 0) << "No free blocks yet";
+    EXPECT_EQ(slab->in_use_blocks(), 0) << "Nothing in use";
+}
+
+// ================================================================================
+// Test 19: Initial State - Zero Usage
+// ================================================================================
+
+TEST(SlabWithBuddyTest, InitialStateZeroUsage) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Usage should be zero
+    EXPECT_EQ(slab->size(), 0) << "No bytes in use";
+    EXPECT_EQ(slab->in_use_blocks(), 0) << "No blocks in use";
+}
+
+// ================================================================================
+// Test 20: First Allocation Triggers grow_()
+// ================================================================================
+
+TEST(SlabWithBuddyTest, FirstAllocationTriggersGrow) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // No pages initially
+    EXPECT_EQ(slab->total_blocks(), 0);
+    
+    // First allocation should trigger grow_()
+    auto ptr = slab->alloc(256, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    // Now should have pages
+    EXPECT_GT(slab->total_blocks(), 0);
+    EXPECT_EQ(slab->in_use_blocks(), 1);
+    EXPECT_EQ(slab->free_blocks(), slab->total_blocks() - 1);
+}
+
+// ================================================================================
+// MOVE SEMANTICS TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 21: Move Semantics
+// ================================================================================
+
+TEST(SlabWithBuddyTest, MoveSemantics) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab1_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab1_result.hasValue());
+    auto slab1 = cslt::move(slab1_result.value());
+    
+    // Move to slab2
+    auto slab2 = cslt::move(slab1);
+    
+    // slab1 should be empty
+    EXPECT_EQ(slab1.get(), nullptr);
+    
+    // slab2 should work
+    EXPECT_NE(slab2.get(), nullptr);
+    
+    auto ptr = slab2->alloc(256, false);
+    EXPECT_TRUE(ptr.hasValue());
+}
+
+// ================================================================================
+// STATS AFTER CREATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 22: Stats After Creation (Before First Allocation)
+// ================================================================================
+
+TEST(SlabWithBuddyTest, StatsAfterCreation) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 64, 4096);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    char buffer[2048];
+    bool ok = slab->stats(buffer, sizeof(buffer));
+    
+    ASSERT_TRUE(ok);
+    
+    // Should contain basic info
+    std::string stats_str(buffer);
+    EXPECT_NE(stats_str.find("Object size: 256"), std::string::npos);
+    EXPECT_NE(stats_str.find("Alignment: 64"), std::string::npos);
+    EXPECT_NE(stats_str.find("Pages: 0"), std::string::npos); // No pages yet
+}
+
+// ================================================================================
+// BUDDY LIFETIME TESTS
+// ================================================================================
+
+// ================================================================================
+// ALIGNMENT EDGE CASES
+// ================================================================================
+
+// ================================================================================
+// Test 24: Alignment Larger Than Object Size
+// ================================================================================
+
+TEST(SlabWithBuddyTest, AlignmentLargerThanObjectSize) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // 64-byte object with 256-byte alignment
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 64, 256, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    EXPECT_NE(slab.get(), nullptr);
+    
+    auto ptr_result = slab->alloc(64, false);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+    
+    EXPECT_EQ(addr % 256, 0) << "Should respect 256-byte alignment";
+}
+
+// ================================================================================
+// Test 25: Page Size Hint Smaller Than Needed
+// ================================================================================
+
+TEST(SlabWithBuddyTest, PageSizeHintTooSmall) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Request 128-byte page (too small for 256-byte objects)
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 128);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Should adjust page size automatically
+    EXPECT_NE(slab.get(), nullptr);
+    
+    // Should still be able to allocate
+    auto ptr = slab->alloc(256, false);
+    EXPECT_TRUE(ptr.hasValue());
+}
 // ================================================================================
 // ================================================================================
 // eof

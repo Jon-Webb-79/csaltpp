@@ -3348,20 +3348,6 @@ namespace cslt {
     }
 // -------------------------------------------------------------------------------- 
 
-    size_t BuddyAllocator::next_pow2(size_t x) {
-        if (x == 0) return 0;
-        if ((x & (x - 1)) == 0) return x;  // Already power of 2
-        
-        // Find position of highest set bit
-        size_t power = 1;
-        while (power < x) {
-            if (power > SIZE_MAX / 2) return 0;  // Overflow
-            power <<= 1;
-        }
-        return power;
-    }
-// -------------------------------------------------------------------------------- 
-
     uint32_t BuddyAllocator::order_to_level(uint32_t order) const {
         return order - min_order_;
     }
@@ -4343,6 +4329,805 @@ namespace cslt {
                 uint32_t order = min_order_ + static_cast<uint32_t>(lvl);
                 return (size_t)1 << order;
             }
+        }
+        
+        return 0;
+    }
+// ================================================================================ 
+// ================================================================================ 
+
+    SlabAllocator::SlabAllocator(BuddyAllocator& buddy) noexcept
+        : buddy_(&buddy)
+        , obj_size_(0)
+        , slot_size_(0)
+        , align_(0)
+        , slab_bytes_(0)
+        , page_hdr_bytes_(0)
+        , objs_per_slab_(0)
+        , len_bytes_(0)
+        , pages_(nullptr)
+        , free_list_(nullptr)
+    {
+        // Base class initialization
+        mem_type_ = static_cast<uint8_t>(DYNAMIC);
+        owns_memory_ = static_cast<uint8_t>(false);  // Buddy owns the pages
+        size_ = 0;
+        alloc_ = 0;
+        default_alignment_ = 0;
+        total_alloc_ = 0;
+    }
+// -------------------------------------------------------------------------------- 
+
+    SlabAllocator::~SlabAllocator() noexcept {
+        // The SlabDeleter will handle the actual cleanup sequence:
+        // 1. Free all pages back to buddy allocator
+        // 2. Call this destructor
+        // 3. Free the SlabAllocator structure itself
+        
+        // Walk the pages list and free each page back to the buddy allocator
+        Page* current = pages_;
+        
+        while (current != nullptr) {
+            Page* next = current->next;
+            
+            // Free this page back to buddy allocator
+            // The page was allocated with buddy_->alloc_aligned(slab_bytes_, align_, false)
+            // So we free it with return_element()
+            if (buddy_) {
+                buddy_->return_element(current, slab_bytes_, align_);
+            }
+            
+            current = next;
+        }
+        
+        // Note: We do NOT delete buddy_ - it's non-owning
+        // The user is responsible for the buddy allocator's lifetime
+        
+        // Clear pointers for safety (though destructor is ending)
+        pages_ = nullptr;
+        free_list_ = nullptr;
+        buddy_ = nullptr;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t SlabAllocator::align_up(size_t x, size_t a) noexcept {
+        return (x + (a - 1u)) & ~(a - 1u);
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool SlabAllocator::grow_() {
+        if (!buddy_) {
+            return false;
+        }
+        
+        // Allocate one slab page from the buddy allocator
+        auto expect = buddy_->alloc_aligned(slab_bytes_, align_, false);
+        
+        if (!expect.hasValue()) {
+            return false;
+        }
+        
+        void* mem = expect.value();
+        
+        uint8_t* raw = static_cast<uint8_t*>(mem);
+        Page* page = reinterpret_cast<Page*>(raw);
+        
+        // Link page into page list
+        page->next = pages_;
+        pages_ = page;
+        
+        // Slots start after the (aligned) page header
+        uint8_t* slots_base = raw + page_hdr_bytes_;
+        
+        // Carve page into slots and push them on the global free-list
+        uint8_t* p = slots_base;
+        for (size_t i = 0; i < objs_per_slab_; ++i) {
+            Slot* slot = reinterpret_cast<Slot*>(p);
+            slot->next = free_list_;
+            free_list_ = slot;
+            
+            p += slot_size_;
+        }
+        
+        // Update capacity tracking
+        alloc_ += slab_bytes_;
+        total_alloc_ += slab_bytes_;
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    SlabAllocator::Page* SlabAllocator::find_page_(const void* ptr) const noexcept {
+        if (!ptr) {
+            return nullptr;
+        }
+        
+        const uint8_t* p = static_cast<const uint8_t*>(ptr);
+        
+        for (Page* page = pages_; page != nullptr; page = page->next) {
+            uint8_t* base = reinterpret_cast<uint8_t*>(page);  // Page starts at header
+            uint8_t* end = base + slab_bytes_;                  // We only use slab_bytes_
+            
+            if (p >= base && p < end) {
+                return page;
+            }
+        }
+        
+        return nullptr;
+    }
+// ================================================================================ 
+
+    Expected<UniquePtr<SlabAllocator, SlabDeleter>>
+    SlabAllocator::WithBuddy(BuddyAllocator& buddy,
+                             size_t obj_size,
+                             size_t align,
+                             size_t slab_bytes_hint)
+    {
+        Expected<UniquePtr<SlabAllocator, SlabDeleter>> result;
+        
+        // Validate parameters
+        if (obj_size == 0) {
+            result.setError(ArgumentError("Object size must be non-zero"));
+            return result;
+        }
+        
+        // Normalize alignment
+        if (align == 0) {
+            align = alignof(max_align_t);
+        }
+        
+        if (!is_pow2(align)) {
+            align = next_pow2(align);
+            if (align == 0) {
+                result.setError(AlignmentError("Alignment too large"));
+                return result;
+            }
+        }
+
+        if (align > (SIZE_MAX / 2)) {
+            result.setError(AlignmentError("Alignment exceeds maximum supported value"));
+            return result;
+        }
+        
+        // Allocate the SlabAllocator structure from the buddy allocator
+        size_t slab_struct_bytes = align_up(sizeof(SlabAllocator), alignof(max_align_t));
+        
+        auto struct_expect = buddy.alloc_aligned(slab_struct_bytes, 
+                                                  alignof(max_align_t), 
+                                                  true);  // Zero-initialized
+        
+        if (!struct_expect.hasValue()) {
+            result.setError(struct_expect.error());
+            return result;
+        }
+        
+        void* mem = struct_expect.value();
+        
+        // Placement new to construct SlabAllocator
+        SlabAllocator* slab = new (mem) SlabAllocator(buddy);
+        
+        // Initialize slab parameters
+        slab->obj_size_ = obj_size;
+        slab->align_ = align;
+        
+        // Determine slot size: must hold object and Slot linkage
+        size_t slot_size = align_up(obj_size, align);
+        if (slot_size < sizeof(Slot)) {
+            slot_size = align_up(sizeof(Slot), align);
+        }
+        slab->slot_size_ = slot_size;
+        
+        // Determine page header bytes (aligned)
+        size_t page_hdr_bytes = align_up(sizeof(Page), align);
+        slab->page_hdr_bytes_ = page_hdr_bytes;
+        
+        // Choose slab page size
+        size_t slab_bytes = slab_bytes_hint;
+        
+        if (slab_bytes == 0) {
+            // Default: at least 4 KiB or enough for 64 objects, plus header
+            size_t min_slots_bytes = slot_size * 64;
+            size_t min_total = page_hdr_bytes + min_slots_bytes;
+            size_t default_min = 4096;
+            
+            if (min_total < default_min) {
+                min_total = default_min;
+            }
+            slab_bytes = min_total;
+        }
+        
+        // Ensure we can fit at least one slot
+        if (slab_bytes < page_hdr_bytes + slot_size) {
+            slab_bytes = page_hdr_bytes + slot_size;
+        }
+        
+        // Make slab_bytes a multiple of slot_size after header, so no tail fragment
+        size_t usable_for_slots = slab_bytes - page_hdr_bytes;
+        size_t objs_per_slab = usable_for_slots / slot_size;
+        
+        if (objs_per_slab == 0) {
+            objs_per_slab = 1;
+            usable_for_slots = slot_size;
+            slab_bytes = page_hdr_bytes + usable_for_slots;
+        } else {
+            usable_for_slots = objs_per_slab * slot_size;
+            slab_bytes = page_hdr_bytes + usable_for_slots;
+        }
+        
+        slab->slab_bytes_ = slab_bytes;
+        slab->objs_per_slab_ = objs_per_slab;
+        
+        // Initialize tracking
+        slab->len_bytes_ = 0;
+        slab->pages_ = nullptr;
+        slab->free_list_ = nullptr;
+        
+        // Base class initialization
+        slab->default_alignment_ = align;
+        slab->size_ = 0;  // Currently used (in bytes)
+        slab->alloc_ = 0;  // Total capacity (will grow with pages)
+        
+        // Total overhead includes the slab structure itself
+        slab->total_alloc_ = slab_struct_bytes;
+        
+        // Create UniquePtr with SlabDeleter
+        UniquePtr<SlabAllocator, SlabDeleter> ptr(slab, SlabDeleter{});
+        result.setValue(cslt::move(ptr));
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> SlabAllocator::alloc(size_t bytes, bool zeroed) {
+        Expected<void*> result;
+        
+        // Validate request size matches object size
+        if (bytes != obj_size_) {
+            result.setError(ArgumentError("Slab allocator: requested size must match object size"));
+            return result;
+        }
+        
+        // Grow if no free slots
+        if (free_list_ == nullptr) {
+            bool grew = grow_();
+            if (!grew) {
+                result.setError(MemoryError("Failed to grow slab allocator"));
+                return result;
+            }
+            
+            // Defensive: grow should populate free_list
+            if (free_list_ == nullptr) {
+                result.setError(MemoryError("Grow succeeded but free list still empty"));
+                return result;
+            }
+        }
+        
+        // Pop from global free list
+        Slot* slot = free_list_;
+        free_list_ = slot->next;
+        
+        void* user_ptr = static_cast<void*>(slot);
+        
+        // Zero-initialize if requested
+        if (zeroed) {
+            memset(user_ptr, 0, obj_size_);
+        }
+        
+        // Track payload bytes currently in use
+        len_bytes_ += obj_size_;
+        size_ += obj_size_;  // Base class accounting
+        
+        result.setValue(user_ptr);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> SlabAllocator::alloc_aligned(size_t bytes, size_t alignment, bool zeroed) {
+        Expected<void*> result;
+        
+        // Validate request size matches object size
+        if (bytes != obj_size_) {
+            result.setError(ArgumentError("Slab allocator: requested size must match object size"));
+            return result;
+        }
+        
+        // Normalize alignment
+        size_t requested_align = alignment;
+        if (requested_align == 0) {
+            requested_align = alignof(max_align_t);
+        }
+        
+        // Round to power of 2 if needed
+        if (!is_pow2(requested_align)) {
+            requested_align = next_pow2(requested_align);
+            if (requested_align == 0) {
+                result.setError(AlignmentError("Alignment too large"));
+                return result;
+            }
+        }
+        
+        // Check if slab's alignment satisfies the request
+        if (requested_align > align_) {
+            result.setError(AlignmentError(
+                "Slab allocator: requested alignment exceeds slab alignment. "
+                "Create slab with higher alignment or use alloc()"));
+            return result;
+        }
+        
+        // Slab allocator pre-aligns all slots, so we can just use alloc()
+        // All slots are already aligned to align_
+        return alloc(bytes, zeroed);
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> SlabAllocator::realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed) {
+        Expected<void*> result;
+        
+        // realloc(nullptr, 0, n) => alloc(n)
+        if (!ptr) {
+            if (new_bytes == 0) {
+                result.setError(ArgumentError("Cannot realloc nullptr to zero size"));
+                return result;
+            }
+            return alloc(new_bytes, zeroed);
+        }
+        
+        // realloc(ptr, old, 0) => free, return nullptr
+        if (new_bytes == 0) {
+            return_element(ptr, old_bytes);
+            result.setValue(nullptr);
+            return result;
+        }
+        
+        // Validate old_bytes
+        if (old_bytes == 0) {
+            result.setError(ArgumentError("old_bytes must be non-zero when ptr is non-null"));
+            return result;
+        }
+        
+        // Slab allocator constraint: both sizes must match obj_size_
+        if (old_bytes != obj_size_ || new_bytes != obj_size_) {
+            result.setError(ArgumentError(
+                "Slab allocator: realloc only supported when old_bytes == new_bytes == obj_size. "
+                "Slab allocator cannot resize objects."));
+            return result;
+        }
+        
+        // Same size: return same pointer
+        // Optionally zero-fill if growing (but size is same, so no new space to zero)
+        if (zeroed && new_bytes > old_bytes) {
+            // In slab context, new_bytes == old_bytes == obj_size_, so this is a no-op
+            // But for completeness, we'd zero the extra space
+            size_t extra = new_bytes - old_bytes;
+            memset(static_cast<uint8_t*>(ptr) + old_bytes, 0, extra);
+        }
+        
+        result.setValue(ptr);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<void*> SlabAllocator::realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes,
+                                                    size_t alignment, bool zeroed) {
+        Expected<void*> result;
+        
+        // realloc(nullptr, 0, n, a) => alloc_aligned(n, a)
+        if (!ptr) {
+            if (new_bytes == 0) {
+                result.setValue(nullptr);
+                return result;
+            }
+            return alloc_aligned(new_bytes, alignment, zeroed);
+        }
+        
+        // realloc(ptr, old, 0, a) => free, return nullptr
+        if (new_bytes == 0) {
+            return_element(ptr, old_bytes);
+            result.setValue(nullptr);
+            return result;
+        }
+        
+        // Validate old_bytes
+        if (old_bytes == 0) {
+            result.setError(ArgumentError("old_bytes must be non-zero when ptr is non-null"));
+            return result;
+        }
+        
+        // Normalize alignment
+        size_t requested_align = alignment;
+        if (requested_align == 0) {
+            requested_align = alignof(max_align_t);
+        }
+        
+        if (!is_pow2(requested_align)) {
+            requested_align = next_pow2(requested_align);
+            if (requested_align == 0) {
+                result.setError(AlignmentError("Alignment too large"));
+                return result;
+            }
+        }
+        
+        // Check alignment compatibility
+        if (requested_align > align_) {
+            result.setError(AlignmentError(
+                "Slab allocator: requested alignment exceeds slab alignment"));
+            return result;
+        }
+        
+        // Slab allocator constraint: both sizes must match obj_size_
+        if (old_bytes != obj_size_ || new_bytes != obj_size_) {
+            result.setError(ArgumentError(
+                "Slab allocator: realloc only supported when old_bytes == new_bytes == obj_size. "
+                "Slab allocator cannot resize objects."));
+            return result;
+        }
+        
+        // Check if pointer already satisfies alignment
+        uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+        if ((addr & (requested_align - 1)) != 0) {
+            // Pointer doesn't satisfy requested alignment
+            // In slab context, this shouldn't happen if requested_align <= align_
+            // But if it does, we'd need to allocate new and copy
+            
+            result.setError(AlignmentError(
+                "Slab allocator: existing pointer doesn't satisfy requested alignment. "
+                "Realignment not supported - free and allocate new object."));
+            return result;
+        }
+        
+        // Same size, same alignment: return same pointer
+        result.setValue(ptr);
+        return result;
+    }
+// -------------------------------------------------------------------------------- 
+
+    void SlabAllocator::return_element(void* ptr, size_t bytes, size_t alignment) {
+        // bytes and alignment parameters ignored (interface compatibility)
+        (void)bytes;
+        (void)alignment;
+        
+        if (!ptr) {
+            // Like free(NULL): no-op
+            return;
+        }
+        
+        // Find which page this pointer belongs to
+        Page* page = find_page_(ptr);
+        if (!page) {
+            // Pointer not from this slab allocator - silent failure
+            return;
+        }
+        
+        uint8_t* page_base = reinterpret_cast<uint8_t*>(page);  // Header is at base
+        uint8_t* slots_start = page_base + page_hdr_bytes_;
+        uint8_t* slots_end = page_base + slab_bytes_;
+        
+        uint8_t* p = static_cast<uint8_t*>(ptr);
+        
+        // Must be within the slots region
+        if (p < slots_start || p >= slots_end) {
+            // Pointer in header region or beyond page - invalid
+            return;
+        }
+        
+        size_t offset = static_cast<size_t>(p - slots_start);
+        
+        // Must be aligned on a slot boundary
+        if ((offset % slot_size_) != 0) {
+            // Not aligned to slot - invalid
+            return;
+        }
+        
+        // Return to free list
+        Slot* slot = reinterpret_cast<Slot*>(ptr);
+        slot->next = free_list_;
+        free_list_ = slot;
+        
+        // Update accounting
+        if (len_bytes_ >= obj_size_) {
+            len_bytes_ -= obj_size_;
+        } else {
+            len_bytes_ = 0;  // Defensive
+        }
+        
+        if (size_ >= obj_size_) {
+            size_ -= obj_size_;  // Base class accounting
+        } else {
+            size_ = 0;  // Defensive
+        }
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool SlabAllocator::stats(char* buffer, size_t buffer_size) const {
+        size_t offset = 0;
+        
+        if (!buffer || buffer_size == 0) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset, "%s", "Slab Statistics:\n")) {
+            return false;
+        }
+        
+        // Count pages
+        size_t page_count = 0;
+        for (const Page* p = pages_; p != nullptr; p = p->next) {
+            ++page_count;
+        }
+        
+        // Capacity / usage in bytes
+        size_t capacity_bytes = page_count * slab_bytes_;
+        size_t used_bytes = len_bytes_;
+        size_t remaining = (capacity_bytes > used_bytes) ? (capacity_bytes - used_bytes) : 0;
+        
+        // Total footprint including slab structure itself
+        size_t slab_struct_bytes = align_up(sizeof(SlabAllocator), alignof(max_align_t));
+        size_t total_overhead = slab_struct_bytes + capacity_bytes;
+        
+        // Blocks info
+        size_t total_blocks = page_count * objs_per_slab_;
+        size_t in_use_blocks = (obj_size_ != 0) ? (len_bytes_ / obj_size_) : 0;
+        size_t free_blocks_geom = (total_blocks > in_use_blocks) ? 
+                                  (total_blocks - in_use_blocks) : 0;
+        
+        // Free blocks counted from the free list (cross-check)
+        size_t free_blocks_list = 0;
+        for (const Slot* slot = free_list_; slot != nullptr; slot = slot->next) {
+            ++free_blocks_list;
+        }
+        
+        // Basic geometry info
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Object size: %zu bytes\n", obj_size_)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Slot stride: %zu bytes\n", slot_size_)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Alignment: %zu bytes\n", align_)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Page size: %zu bytes\n", slab_bytes_)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Page header bytes: %zu\n", page_hdr_bytes_)) {
+            return false;
+        }
+        
+        // Capacity / usage summary
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Pages: %zu\n", page_count)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Blocks per page: %zu\n", objs_per_slab_)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Total blocks: %zu\n", total_blocks)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  In-use blocks: %zu\n", in_use_blocks)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Free blocks (geom): %zu\n", free_blocks_geom)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Free blocks (free list): %zu\n", free_blocks_list)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Used: %zu bytes\n", used_bytes)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Capacity: %zu bytes\n", capacity_bytes)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Remaining: %zu bytes\n", remaining)) {
+            return false;
+        }
+        
+        if (!_buf_appendf(buffer, buffer_size, &offset,
+                          "  Total (with overhead): %zu bytes\n", total_overhead)) {
+            return false;
+        }
+        
+        // Utilization with divide-by-zero guard
+        if (capacity_bytes == 0) {
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                              "%s", "  Utilization: N/A (capacity is 0)\n")) {
+                return false;
+            }
+        } else {
+            double util = (100.0 * static_cast<double>(used_bytes)) / 
+                          static_cast<double>(capacity_bytes);
+            if (!_buf_appendf(buffer, buffer_size, &offset,
+                              "  Utilization: %.1f%%\n", util)) {
+                return false;
+            }
+        }
+        
+        // Per-page listing
+        {
+            size_t page_index = 0;
+            const Page* current = pages_;
+            
+            while (current != nullptr) {
+                ++page_index;
+                
+                if (!_buf_appendf(buffer, buffer_size, &offset,
+                                  "  Page %zu: %zu bytes, %zu blocks\n",
+                                  page_index,
+                                  slab_bytes_,
+                                  objs_per_slab_)) {
+                    return false;
+                }
+                
+                current = current->next;
+            }
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool SlabAllocator::reset(bool trim) {
+        // trim parameter ignored (interface compatibility)
+        (void)trim;
+        
+        // Basic sanity checks on geometry
+        if (obj_size_ == 0 ||
+            slot_size_ == 0 ||
+            slab_bytes_ < page_hdr_bytes_ + slot_size_) {
+            return false;
+        }
+        
+        // After reset, nothing is in use and free_list is rebuilt
+        len_bytes_ = 0;
+        size_ = 0;  // Base class accounting
+        free_list_ = nullptr;
+        
+        // Walk all pages and re-carve them into free slots
+        for (Page* page = pages_; page != nullptr; page = page->next) {
+            uint8_t* page_base = reinterpret_cast<uint8_t*>(page);  // Header at base
+            uint8_t* slots_start = page_base + page_hdr_bytes_;
+            uint8_t* slots_end = page_base + slab_bytes_;
+            
+            // Carve the slots region into slot_size_ chunks
+            for (uint8_t* p = slots_start; 
+                 p + slot_size_ <= slots_end; 
+                 p += slot_size_) {
+                
+                Slot* slot = reinterpret_cast<Slot*>(p);
+                slot->next = free_list_;
+                free_list_ = slot;
+            }
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool SlabAllocator::is_ptr(void* ptr) const {
+        if (!ptr) {
+            return false;
+        }
+        
+        uint8_t* p = static_cast<uint8_t*>(ptr);
+        
+        // Step 1: Find which page this pointer belongs to
+        for (Page* page = pages_; page != nullptr; page = page->next) {
+            
+            uint8_t* page_base = reinterpret_cast<uint8_t*>(page);  // Header at base
+            uint8_t* slots_start = page_base + page_hdr_bytes_;
+            uint8_t* page_end = page_base + slab_bytes_;
+            
+            // Step 2: Check if it lies in the page at all
+            if (p < page_base || p >= page_end) {
+                continue;  // Not in this page, try next
+            }
+            
+            // Step 3: Reject pointers inside the header region
+            if (p < slots_start) {
+                return false;  // In header - invalid
+            }
+            
+            // Step 4: Must be aligned to slot boundaries
+            size_t offset = static_cast<size_t>(p - slots_start);
+            
+            if ((offset % slot_size_) != 0) {
+                return false;  // Not aligned to slot - invalid
+            }
+            
+            // Pointer is valid
+            return true;
+        }
+        
+        // Pointer not found in any page
+        return false;
+    }
+// -------------------------------------------------------------------------------- 
+
+    bool SlabAllocator::is_ptr_sized(void* ptr, size_t bytes) const {
+        // First check if pointer is valid
+        if (!is_ptr(ptr)) {
+            return false;
+        }
+        
+        // Slab allocator: all objects are the same size
+        // The pointer can hold 'bytes' if bytes <= obj_size_
+        if (bytes > obj_size_) {
+            return false;
+        }
+        
+        return true;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t SlabAllocator::total_blocks() const noexcept {
+        // Count pages and multiply by objs_per_slab_: total capacity in slots
+        size_t page_count = 0;
+        for (const Page* p = pages_; p != nullptr; p = p->next) {
+            ++page_count;
+        }
+        
+        return page_count * objs_per_slab_;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t SlabAllocator::free_blocks() const noexcept {
+        size_t count = 0;
+        const Slot* slot = free_list_;
+        
+        while (slot) {
+            ++count;
+            slot = slot->next;
+        }
+        
+        return count;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t SlabAllocator::in_use_blocks() const noexcept {
+        if (obj_size_ == 0) {
+            return 0;
+        }
+        
+        return len_bytes_ / obj_size_;
+    }
+// -------------------------------------------------------------------------------- 
+
+    size_t SlabAllocator::remaining() const noexcept {
+        // Count pages to get total capacity
+        size_t page_count = 0;
+        for (const Page* p = pages_; p != nullptr; p = p->next) {
+            ++page_count;
+        }
+        
+        size_t capacity_bytes = page_count * slab_bytes_;
+        
+        if (capacity_bytes > len_bytes_) {
+            return capacity_bytes - len_bytes_;
         }
         
         return 0;

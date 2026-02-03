@@ -8641,6 +8641,946 @@ TEST(SlabWithBuddyTest, PageSizeHintTooSmall) {
     auto ptr = slab->alloc(256, false);
     EXPECT_TRUE(ptr.hasValue());
 }
+// ================================================================================ 
+// ================================================================================ 
+
+// ================================================================================
+// ALLOCATION AND DEALLOCATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 1: Basic Allocation and Free
+// ================================================================================
+
+TEST(SlabAllocatorTest, BasicAllocAndFree) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate
+    auto ptr = slab->alloc(256, false);
+    ASSERT_TRUE(ptr.hasValue());
+    
+    EXPECT_EQ(slab->in_use_blocks(), 1);
+    EXPECT_EQ(slab->size(), 256);
+    
+    // Free
+    slab->return_element(ptr.value());
+    
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+    EXPECT_EQ(slab->size(), 0);
+}
+
+// ================================================================================
+// Test 2: Multiple Allocations from Same Page
+// ================================================================================
+
+TEST(SlabAllocatorTest, MultipleAllocationsOnePage) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate multiple objects
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 10; ++i) {
+        auto ptr = slab->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 10);
+    EXPECT_EQ(slab->size(), 10 * 128);
+    
+    // Free all
+    for (void* ptr : ptrs) {
+        slab->return_element(ptr);
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+}
+
+// ================================================================================
+// Test 3: Allocation Triggers Multiple Pages
+// ================================================================================
+
+TEST(SlabAllocatorTest, MultiplePageGrowth) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Small page size to force multiple pages
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 1024);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate enough to need multiple pages
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = slab->alloc(256, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Should have grown multiple pages
+    EXPECT_GT(slab->total_blocks(), 10);
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        slab->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// Test 4: Interleaved Alloc and Free
+// ================================================================================
+
+TEST(SlabAllocatorTest, InterleavedAllocFree) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate 5
+    for (int i = 0; i < 5; ++i) {
+        auto ptr = slab->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 5);
+    
+    // Free 3
+    for (int i = 0; i < 3; ++i) {
+        slab->return_element(ptrs[i]);
+    }
+    ptrs.erase(ptrs.begin(), ptrs.begin() + 3);
+    
+    EXPECT_EQ(slab->in_use_blocks(), 2);
+    
+    // Allocate 4 more
+    for (int i = 0; i < 4; ++i) {
+        auto ptr = slab->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 6);
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        slab->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// Test 5: Free in Reverse Order
+// ================================================================================
+
+TEST(SlabAllocatorTest, FreeReverseOrder) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate
+    for (int i = 0; i < 10; ++i) {
+        auto ptr = slab->alloc(256, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Free in reverse order
+    for (int i = ptrs.size() - 1; i >= 0; --i) {
+        slab->return_element(ptrs[i]);
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+}
+
+// ================================================================================
+// Test 6: Free in Random Order
+// ================================================================================
+
+TEST(SlabAllocatorTest, FreeRandomOrder) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = slab->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    // Shuffle
+    std::random_device rd;
+    std::mt19937 g(rd());
+    std::shuffle(ptrs.begin(), ptrs.end(), g);
+    
+    // Free in random order
+    for (void* ptr : ptrs) {
+        slab->return_element(ptr);
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+}
+
+// ================================================================================
+// ZERO INITIALIZATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 7: Zero Initialization
+// ================================================================================
+
+TEST(SlabAllocatorTest, ZeroInitialization) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate with zero initialization
+    auto ptr_result = slab->alloc(256, true);
+    ASSERT_TRUE(ptr_result.hasValue());
+    
+    void* ptr = ptr_result.value();
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    
+    // Check all bytes are zero
+    for (size_t i = 0; i < 256; ++i) {
+        EXPECT_EQ(data[i], 0) << "Byte " << i << " not zero";
+    }
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// Test 8: Non-Zero Then Zero
+// ================================================================================
+
+TEST(SlabAllocatorTest, NonZeroThenZero) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate without zero
+    auto ptr1 = slab->alloc(128, false).value();
+    
+    // Write pattern
+    uint8_t* data1 = static_cast<uint8_t*>(ptr1);
+    for (size_t i = 0; i < 128; ++i) {
+        data1[i] = 0xFF;
+    }
+    
+    // Free
+    slab->return_element(ptr1);
+    
+    // Allocate same slot with zero
+    auto ptr2 = slab->alloc(128, true).value();
+    
+    // Should be zeroed even though it was 0xFF before
+    uint8_t* data2 = static_cast<uint8_t*>(ptr2);
+    for (size_t i = 0; i < 128; ++i) {
+        EXPECT_EQ(data2[i], 0);
+    }
+    
+    slab->return_element(ptr2);
+}
+
+// ================================================================================
+// DATA INTEGRITY TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 9: Data Integrity Single Object
+// ================================================================================
+
+TEST(SlabAllocatorTest, DataIntegritySingle) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    auto ptr = slab->alloc(256, false).value();
+    uint8_t* data = static_cast<uint8_t*>(ptr);
+    
+    // Write pattern
+    for (size_t i = 0; i < 256; ++i) {
+        data[i] = static_cast<uint8_t>(i);
+    }
+    
+    // Verify pattern
+    for (size_t i = 0; i < 256; ++i) {
+        EXPECT_EQ(data[i], static_cast<uint8_t>(i));
+    }
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// Test 10: Data Integrity Multiple Objects
+// ================================================================================
+
+TEST(SlabAllocatorTest, DataIntegrityMultiple) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate and write unique patterns
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = slab->alloc(128, false).value();
+        uint8_t* data = static_cast<uint8_t*>(ptr);
+        
+        // Write unique pattern for this object
+        uint8_t pattern = static_cast<uint8_t>(i + 1);
+        for (size_t j = 0; j < 128; ++j) {
+            data[j] = pattern;
+        }
+        
+        ptrs.push_back(ptr);
+    }
+    
+    // Verify all patterns are intact
+    for (size_t i = 0; i < ptrs.size(); ++i) {
+        uint8_t* data = static_cast<uint8_t*>(ptrs[i]);
+        uint8_t expected = static_cast<uint8_t>(i + 1);
+        
+        for (size_t j = 0; j < 128; ++j) {
+            EXPECT_EQ(data[j], expected) << "Object " << i << " corrupted";
+        }
+    }
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        slab->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// Test 11: Data Survives Interleaved Operations
+// ================================================================================
+
+TEST(SlabAllocatorTest, DataSurvivesInterleavedOps) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    std::vector<void*> ptrs;
+    std::vector<uint8_t> patterns;
+    
+    // Allocate 10 objects with patterns
+    for (int i = 0; i < 10; ++i) {
+        auto ptr = slab->alloc(256, false).value();
+        uint8_t* data = static_cast<uint8_t*>(ptr);
+        uint8_t pattern = static_cast<uint8_t>(i + 10);
+        
+        memset(data, pattern, 256);
+        
+        ptrs.push_back(ptr);
+        patterns.push_back(pattern);
+    }
+    
+    // Free every other object
+    for (int i = 1; i < 10; i += 2) {
+        slab->return_element(ptrs[i]);
+        ptrs[i] = nullptr;
+    }
+    
+    // Verify remaining objects
+    for (size_t i = 0; i < ptrs.size(); i += 2) {
+        if (ptrs[i]) {
+            uint8_t* data = static_cast<uint8_t*>(ptrs[i]);
+            for (size_t j = 0; j < 256; ++j) {
+                EXPECT_EQ(data[j], patterns[i]);
+            }
+        }
+    }
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        if (ptr) slab->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// SIZE VALIDATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 12: Wrong Size Allocation Rejected
+// ================================================================================
+
+TEST(SlabAllocatorTest, WrongSizeRejected) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Try to allocate wrong sizes
+    auto too_small = slab->alloc(128, false);
+    EXPECT_FALSE(too_small.hasValue());
+    
+    auto too_large = slab->alloc(512, false);
+    EXPECT_FALSE(too_large.hasValue());
+    
+    // Correct size should work
+    auto correct = slab->alloc(256, false);
+    EXPECT_TRUE(correct.hasValue());
+    
+    slab->return_element(correct.value());
+}
+
+// ================================================================================
+// Test 13: alloc_aligned Size Validation
+// ================================================================================
+
+TEST(SlabAllocatorTest, AllocAlignedSizeValidation) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 64, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Wrong size with alignment
+    auto wrong = slab->alloc_aligned(128, 64, false);
+    EXPECT_FALSE(wrong.hasValue());
+    
+    // Correct size with alignment
+    auto correct = slab->alloc_aligned(256, 64, false);
+    EXPECT_TRUE(correct.hasValue());
+    
+    // Verify alignment
+    uintptr_t addr = reinterpret_cast<uintptr_t>(correct.value());
+    EXPECT_EQ(addr % 64, 0);
+    
+    slab->return_element(correct.value());
+}
+
+// ================================================================================
+// ALIGNMENT TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 14: Alignment Satisfied for All Allocations
+// ================================================================================
+
+TEST(SlabAllocatorTest, AlignmentSatisfied) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 128, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate many objects
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = slab->alloc(256, false);
+        ASSERT_TRUE(ptr.hasValue());
+        
+        uintptr_t addr = reinterpret_cast<uintptr_t>(ptr.value());
+        EXPECT_EQ(addr % 128, 0) << "Allocation " << i << " not aligned";
+        
+        slab->return_element(ptr.value());
+    }
+}
+
+// ================================================================================
+// Test 15: alloc_aligned Exceeds Slab Alignment
+// ================================================================================
+
+TEST(SlabAllocatorTest, AllocAlignedExceedsSlab) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Slab with 64-byte alignment
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 64, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Request 128-byte alignment (exceeds slab's 64)
+    auto result = slab->alloc_aligned(256, 128, false);
+    
+    EXPECT_FALSE(result.hasValue());
+}
+
+// ================================================================================
+// Test 16: alloc_aligned Within Slab Alignment
+// ================================================================================
+
+TEST(SlabAllocatorTest, AllocAlignedWithinSlab) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    // Slab with 128-byte alignment
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 128, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Request 64-byte alignment (within slab's 128)
+    auto result = slab->alloc_aligned(256, 64, false);
+    
+    EXPECT_TRUE(result.hasValue());
+    
+    uintptr_t addr = reinterpret_cast<uintptr_t>(result.value());
+    EXPECT_EQ(addr % 64, 0);
+    
+    slab->return_element(result.value());
+}
+
+// ================================================================================
+// RESET TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 17: Reset Clears All Allocations
+// ================================================================================
+
+TEST(SlabAllocatorTest, ResetClearsAll) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate many
+    for (int i = 0; i < 20; ++i) {
+        auto ptr = slab->alloc(128, false);
+        ASSERT_TRUE(ptr.hasValue());
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 20);
+    EXPECT_GT(slab->total_blocks(), 0);
+    
+    // Reset
+    bool ok = slab->reset();
+    EXPECT_TRUE(ok);
+    
+    // Everything should be freed
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+    EXPECT_EQ(slab->size(), 0);
+    
+    // Free list should be rebuilt
+    EXPECT_EQ(slab->free_blocks(), slab->total_blocks());
+}
+
+// ================================================================================
+// Test 18: Allocate After Reset
+// ================================================================================
+
+TEST(SlabAllocatorTest, AllocateAfterReset) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate
+    auto ptr1 = slab->alloc(256, false);
+    ASSERT_TRUE(ptr1.hasValue());
+    
+    // Reset
+    slab->reset();
+    
+    // Should be able to allocate again
+    auto ptr2 = slab->alloc(256, false);
+    EXPECT_TRUE(ptr2.hasValue());
+    
+    slab->return_element(ptr2.value());
+}
+
+// ================================================================================
+// Test 19: Multiple Reset Cycles
+// ================================================================================
+
+TEST(SlabAllocatorTest, MultipleResetCycles) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    for (int cycle = 0; cycle < 5; ++cycle) {
+        // Allocate
+        for (int i = 0; i < 10; ++i) {
+            auto ptr = slab->alloc(128, false);
+            ASSERT_TRUE(ptr.hasValue());
+        }
+        
+        EXPECT_EQ(slab->in_use_blocks(), 10);
+        
+        // Reset
+        slab->reset();
+        
+        EXPECT_EQ(slab->in_use_blocks(), 0);
+    }
+}
+
+// ================================================================================
+// POINTER VALIDATION TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 20: is_ptr Valid Pointer
+// ================================================================================
+
+TEST(SlabAllocatorTest, IsPtrValid) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    auto ptr = slab->alloc(256, false).value();
+    
+    EXPECT_TRUE(slab->is_ptr(ptr));
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// Test 21: is_ptr Invalid Pointers
+// ================================================================================
+
+TEST(SlabAllocatorTest, IsPtrInvalid) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // NULL pointer
+    EXPECT_FALSE(slab->is_ptr(nullptr));
+    
+    // External pointer
+    void* external = malloc(256);
+    EXPECT_FALSE(slab->is_ptr(external));
+    free(external);
+    
+    // Allocate a valid pointer
+    auto ptr = slab->alloc(256, false).value();
+    
+    // Misaligned pointer (offset into object)
+    uint8_t* misaligned = static_cast<uint8_t*>(ptr) + 10;
+    EXPECT_FALSE(slab->is_ptr(misaligned));
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// Test 22: is_ptr_sized Valid
+// ================================================================================
+
+TEST(SlabAllocatorTest, IsPtrSizedValid) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    auto ptr = slab->alloc(256, false).value();
+    
+    // Exact size
+    EXPECT_TRUE(slab->is_ptr_sized(ptr, 256));
+    
+    // Smaller size (fits)
+    EXPECT_TRUE(slab->is_ptr_sized(ptr, 128));
+    EXPECT_TRUE(slab->is_ptr_sized(ptr, 1));
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// Test 23: is_ptr_sized Too Large
+// ================================================================================
+
+TEST(SlabAllocatorTest, IsPtrSizedTooLarge) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    auto ptr = slab->alloc(256, false).value();
+    
+    // Size exceeds object size
+    EXPECT_FALSE(slab->is_ptr_sized(ptr, 257));
+    EXPECT_FALSE(slab->is_ptr_sized(ptr, 512));
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// STATS TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 24: Stats After Allocations
+// ================================================================================
+
+TEST(SlabAllocatorTest, StatsAfterAllocations) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 64, 4096);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Allocate some objects
+    std::vector<void*> ptrs;
+    for (int i = 0; i < 5; ++i) {
+        auto ptr = slab->alloc(256, false);
+        ASSERT_TRUE(ptr.hasValue());
+        ptrs.push_back(ptr.value());
+    }
+    
+    char buffer[4096];
+    bool ok = slab->stats(buffer, sizeof(buffer));
+    ASSERT_TRUE(ok);
+    
+    std::string stats_str(buffer);
+    
+    // Should show object size
+    EXPECT_NE(stats_str.find("Object size: 256"), std::string::npos);
+    
+    // Should show alignment
+    EXPECT_NE(stats_str.find("Alignment: 64"), std::string::npos);
+    
+    // Should show in-use blocks
+    EXPECT_NE(stats_str.find("In-use blocks: 5"), std::string::npos);
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        slab->return_element(ptr);
+    }
+}
+
+// ================================================================================
+// REALLOC TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 25: Realloc Same Size Returns Same Pointer
+// ================================================================================
+
+TEST(SlabAllocatorTest, ReallocSameSize) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    auto ptr = slab->alloc(256, false).value();
+    
+    // Realloc same size
+    auto new_ptr_result = slab->realloc(ptr, 256, 256, false);
+    ASSERT_TRUE(new_ptr_result.hasValue());
+    
+    // Should return same pointer
+    EXPECT_EQ(new_ptr_result.value(), ptr);
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// Test 26: Realloc Different Size Rejected
+// ================================================================================
+
+TEST(SlabAllocatorTest, ReallocDifferentSizeRejected) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    auto ptr = slab->alloc(256, false).value();
+    
+    // Try to grow
+    auto grow = slab->realloc(ptr, 256, 512, false);
+    EXPECT_FALSE(grow.hasValue());
+    
+    // Try to shrink
+    auto shrink = slab->realloc(ptr, 256, 128, false);
+    EXPECT_FALSE(shrink.hasValue());
+    
+    slab->return_element(ptr);
+}
+
+// ================================================================================
+// Test 27: Realloc from nullptr
+// ================================================================================
+
+TEST(SlabAllocatorTest, ReallocFromNullptr) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Realloc from nullptr acts as alloc
+    auto ptr = slab->realloc(nullptr, 0, 256, false);
+    EXPECT_TRUE(ptr.hasValue());
+    
+    slab->return_element(ptr.value());
+}
+
+// ================================================================================
+// Test 28: Realloc to Zero (Free)
+// ================================================================================
+
+TEST(SlabAllocatorTest, ReallocToZero) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    auto ptr = slab->alloc(256, false).value();
+    
+    EXPECT_EQ(slab->in_use_blocks(), 1);
+    
+    // Realloc to zero (free)
+    auto result = slab->realloc(ptr, 256, 0, false);
+    EXPECT_TRUE(result.hasValue());
+    EXPECT_EQ(result.value(), nullptr);
+    
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+}
+
+// ================================================================================
+// STRESS TESTS
+// ================================================================================
+
+// ================================================================================
+// Test 29: Stress Test - Many Allocations
+// ================================================================================
+
+TEST(SlabAllocatorTest, StressManyAllocations) {
+    auto buddy_result = BuddyAllocator::Heap(16 * 1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 128, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    std::vector<void*> ptrs;
+    
+    // Allocate many objects
+    for (int i = 0; i < 1000; ++i) {
+        auto ptr = slab->alloc(128, false);
+        if (ptr.hasValue()) {
+            ptrs.push_back(ptr.value());
+        }
+    }
+    
+    EXPECT_GT(ptrs.size(), 500) << "Should allocate at least 500 objects";
+    
+    // Cleanup
+    for (void* ptr : ptrs) {
+        slab->return_element(ptr);
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+}
+
+// ================================================================================
+// Test 30: Stress Test - Rapid Alloc/Free
+// ================================================================================
+
+TEST(SlabAllocatorTest, StressRapidAllocFree) {
+    auto buddy_result = BuddyAllocator::Heap(1024 * 1024, 64, 0);
+    ASSERT_TRUE(buddy_result.hasValue());
+    auto buddy = cslt::move(buddy_result.value());
+    
+    auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+    ASSERT_TRUE(slab_result.hasValue());
+    auto slab = cslt::move(slab_result.value());
+    
+    // Rapid cycles
+    for (int i = 0; i < 1000; ++i) {
+        auto ptr = slab->alloc(256, false);
+        ASSERT_TRUE(ptr.hasValue());
+        slab->return_element(ptr.value());
+    }
+    
+    EXPECT_EQ(slab->in_use_blocks(), 0);
+}
 // ================================================================================
 // ================================================================================
 // eof

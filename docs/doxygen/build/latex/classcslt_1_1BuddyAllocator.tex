@@ -92,7 +92,7 @@ All allocations are rounded up to the nearest power-\/of-\/two size (including a
 
 Two blocks are \char`\"{}buddies\char`\"{} if they have the same size, are adjacent in memory, and their combined offset satisfies\+: offset XOR (2$^\wedge$order). When both buddies are free, they merge into a larger block, potentially triggering recursive coalescing up the size hierarchy.
 
-Performance\+: O(log n) for allocation, deallocation, and coalescing, where n is the number of size levels. Memory overhead is $\sim$16 bytes per allocation for the header.
+Performance\+: O(log n) for allocation, deallocation, and coalescing, where n is the number of size levels. Memory overhead is $\sim$16 bytes per allocation for the header. This allocator is implemented on the heap. In order to drive compliance with MISRA standards, this class can be ommitted from compilation with the {\ttfamily STATIC ONLY} flag.
 
 \begin{DoxyNote}{Note}
 \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} is not thread-\/safe. External synchronization required. 

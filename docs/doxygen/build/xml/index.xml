@@ -113,7 +113,6 @@
     <member refid="classcslt_1_1BuddyAllocator_1a778e61f8cf6f66869dc33031b7df71d7" kind="function"><name>freelist_find</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1add06089e6621187085c276825ff88575" kind="function"><name>ptr_in_pool_</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1ac7a9115f0c89472abbebceffa984f234" kind="function"><name>ilog2</name></member>
-    <member refid="classcslt_1_1BuddyAllocator_1a86a5351beaa05ea157cc7262ba71ece4" kind="function"><name>next_pow2</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1ac229b4410fba9dea12e619eb3823a355" kind="function"><name>os_alloc</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a0101f1405da7ed79c58172d57120ca58" kind="function"><name>os_free</name></member>
     <member refid="classcslt_1_1BuddyAllocator_1a19051ba1bef638b5069726ae8b81b21a" kind="function"><name>~BuddyAllocator</name></member>
@@ -526,6 +525,9 @@
     <member refid="classcslt_1_1OutOfMemoryError_1aea5dfdccb63b212ea427771464ae0c93" kind="function"><name>OutOfMemoryError</name></member>
     <member refid="classcslt_1_1OutOfMemoryError_1a4bbad0dbbc64920f013f1863b4a72cbf" kind="function"><name>OutOfMemoryError</name></member>
   </compound>
+  <compound refid="structcslt_1_1SlabAllocator_1_1Page" kind="struct"><name>cslt::SlabAllocator::Page</name>
+    <member refid="structcslt_1_1SlabAllocator_1_1Page_1a9fb3c3c0138edc6df2377f548f7a6846" kind="variable"><name>next</name></member>
+  </compound>
   <compound refid="classcslt_1_1ParsingFailedError" kind="class"><name>cslt::ParsingFailedError</name>
     <member refid="classcslt_1_1ParsingFailedError_1a6290640a39e139281d75abb221d3920b" kind="function"><name>ParsingFailedError</name></member>
     <member refid="classcslt_1_1ParsingFailedError_1ac8566cba27addd4b091600c212b650b7" kind="function"><name>ParsingFailedError</name></member>
@@ -668,6 +670,47 @@
   <compound refid="classcslt_1_1SizeMismatchError" kind="class"><name>cslt::SizeMismatchError</name>
     <member refid="classcslt_1_1SizeMismatchError_1ac1960b5d41b26e2a67ecc22027d31e1c" kind="function"><name>SizeMismatchError</name></member>
     <member refid="classcslt_1_1SizeMismatchError_1a6990b702f1e1d91d355a70d530bb8bd8" kind="function"><name>SizeMismatchError</name></member>
+  </compound>
+  <compound refid="classcslt_1_1SlabAllocator" kind="class"><name>cslt::SlabAllocator</name>
+    <member refid="classcslt_1_1SlabAllocator_1ab69b104653fffd31c3dbad0d2b021888" kind="friend"><name>SlabDeleter</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a739db7c849a5bb08e65e22828968c329" kind="variable"><name>buddy_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a327089aada9dd1b02203cbd5c1354e26" kind="variable"><name>obj_size_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a9fc5895dbd80715b1de0597ecb984f5a" kind="variable"><name>slot_size_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a9bc5828a44b7e666a4056fe945b77322" kind="variable"><name>align_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a010b34c762a7a9bc88a559668e9013d3" kind="variable"><name>slab_bytes_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a1930f2b3c32330c7b0dbbe841446e68e" kind="variable"><name>page_hdr_bytes_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1aab0bba87105cff8075c01d022c2c74b5" kind="variable"><name>objs_per_slab_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1aa0f2c01b08dbd7f9efa053a4b8092aad" kind="variable"><name>len_bytes_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a585381b2ae76f402cbdafd9e2e284a6e" kind="variable"><name>pages_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a1c1a0825dec2c01793790b2fbee6a0e3" kind="variable"><name>free_list_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1aae505c9f315fc5ab01be1f3f3735e409" kind="function"><name>SlabAllocator</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a97c020ca8713fcf8fe029461d5ae851e" kind="function"><name>grow_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1aa0164cd4528bcf43430f85066be7f7ae" kind="function"><name>find_page_</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1ae2d1bc8ab63cb210e77159f55ef7a823" kind="function"><name>align_up</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a9bdbc421069a66ffa2507d3b2c6036aa" kind="function"><name>~SlabAllocator</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a7217a0b0f80ca4c303670442e3178030" kind="function"><name>alloc</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1ab7d9bc327bb65e0f038d2483e9a7bef3" kind="function"><name>alloc_aligned</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1abf0f0a5c09931dede33c88279cc06f55" kind="function"><name>realloc</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1ad9baaf5d6726bbb33a3986b57e91b7be" kind="function"><name>realloc_aligned</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a5428a1eeb7110ad52a5c69ae1e79057d" kind="function"><name>return_element</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a2b1dc0c2ce12e87b6043471987bcb18a" kind="function"><name>stats</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a1da4e13544b8c601bb44ecd65de9ea1c" kind="function"><name>reset</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a63abdf25352d257aea1918a784cc7d02" kind="function"><name>save</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a8be2184622f6278b44b1ad64a095014a" kind="function"><name>restore</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a4b3e556caeaf0593c2b20e22c6c341d4" kind="function"><name>is_ptr</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a8c89fc6f199a228390361a74f687e252" kind="function"><name>is_ptr_sized</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1aefe8cd35779be22199fd242f3bf5c7b5" kind="function"><name>remaining</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a822fe0c63c76f2fb7a7543dd6a7f77b7" kind="function"><name>stride</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a57709b8ad1a9f7b4c2d0df1943800e96" kind="function"><name>total_blocks</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1ab60bb66048fcb808efb8d45c9fe72ed6" kind="function"><name>free_blocks</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a1f67d338b5051f57bd9c5ea98734f2a9" kind="function"><name>in_use_blocks</name></member>
+    <member refid="classcslt_1_1SlabAllocator_1a87b551070634b6fc3e44b3ac0b53c11c" kind="function"><name>WithBuddy</name></member>
+  </compound>
+  <compound refid="structcslt_1_1SlabDeleter" kind="struct"><name>cslt::SlabDeleter</name>
+    <member refid="structcslt_1_1SlabDeleter_1afd2842a50068f47e3d8a5eda3ae0bb14" kind="function"><name>operator()</name></member>
+  </compound>
+  <compound refid="structcslt_1_1SlabAllocator_1_1Slot" kind="struct"><name>cslt::SlabAllocator::Slot</name>
+    <member refid="structcslt_1_1SlabAllocator_1_1Slot_1a8e095c378bca71bd48f1c519427c1205" kind="variable"><name>next</name></member>
   </compound>
   <compound refid="classcslt_1_1StateCorruptError" kind="class"><name>cslt::StateCorruptError</name>
     <member refid="classcslt_1_1StateCorruptError_1ac8f6798c392574e1d810e5f177b9d280" kind="function"><name>StateCorruptError</name></member>
@@ -840,7 +883,7 @@
     <member refid="namespacecslt_1a5fda297689c673027737544d24c21927" kind="typedef"><name>EnableIfT</name></member>
     <member refid="namespacecslt_1a4ec7e90836050cc1616ba87b82f322f5" kind="variable"><name>DEFAULT_FREELIST_SIZE</name></member>
     <member refid="namespacecslt_1adb04c13835953770d190921376af439f" kind="function"><name>is_pow2</name></member>
-    <member refid="namespacecslt_1acb97e0e477a841d7b9cc6d2982f3e78d" kind="function"><name>next_pow2</name></member>
+    <member refid="namespacecslt_1a82dac9d13bcd6ec525fdf92686383736" kind="function"><name>next_pow2</name></member>
     <member refid="namespacecslt_1ad5e0362c774ef1c0474fa5fb0b9f0dac" kind="function"><name>swap</name></member>
     <member refid="namespacecslt_1ab6ede81b849eb381dd4fdf71d32ade65" kind="function"><name>swap</name></member>
     <member refid="namespacecslt_1a149d003ebb3088979f8af459bed4d56e" kind="function"><name>operator==</name></member>
@@ -1261,6 +1304,60 @@
     <member refid="test__allocator_8cpp_1afeb32cd53f5c09500cecef051c4c7537" kind="function"><name>TEST</name></member>
     <member refid="test__allocator_8cpp_1a2f5cc7d547a589aa7e5f7821ddeff5f1" kind="function"><name>TEST</name></member>
     <member refid="test__allocator_8cpp_1aa1958c4b50fccb3bc2e0b5027ab95c98" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a07ce14de8da6f05bb97d9142e5470d54" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1abb3d7966aa17c6a3d61d2a133a5ed57e" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a2ea48259d7c54e2af46724af998041df" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a65a1406540e980a10a22d4b7c6a6fac8" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a51948290b0de661a57d3401f8266af56" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1accc7179a39ea9e38aa51ce0272e0fcab" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1adb484a7f62af7ca86836dffba694dfdd" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1afc5cbae4830ca79878d651063cbbccb3" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1af3f7930a3e0e9add3f49f8c1f3e191f1" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a0d2c8ac7b8e3b6b3f26c7777cd5ced1c" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1aefd4f76f1d7c27824f614a7552e25ac3" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a20004c68c5aef5b88473ba73cdc1ea84" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a6ffd2aa147ba71ce5889fb1ddcaae0a3" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a59a89c38bc4ef28fe37ec728eefefdaa" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a8020c7ee3ed7dd23e1415fa721d4c924" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a2fc6d7ae03cef52242a33cc8749d18d3" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ae4762047d4a5afe2092630210e8c64ec" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ac02993dbf4628e159f6abdb53a365deb" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a69c05b92979637240da42416c7762fd5" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a5a8157e696c1ed5bf63329a14e5e0a59" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1adc672d2b3dcf5948e0d9f2e0578e56e5" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1aee0b343cc1d010da4c5037e35325ad40" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a635b7e3545768ff91a12e037b2628a82" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ab65e544792b3f8c310e7825dbf39283a" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a632b86a8bac50fc1631c5200c8b405da" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1abae3b29b43ae228cf93428adc3a43ba3" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1accfbff4c8b7ad16ed1f3f92fb85e075d" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1afef787fcfd065e158770c5e97f34cece" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1abf95eadffa917cae5a07be913629a45c" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a0da331e03e3e5e3d43e360a1ad8b9f5a" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ab66c217893e3bc219498056f16eca53b" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1afaa7e01348f54d13f7cf6b48068c1df6" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a4ca9c9b2506742130683b55c90b119db" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1aaf873c85222587010f913044293812e6" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a294303a948091241112c26019770980e" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a8dd4a702226064705693e006284371a6" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a4078089f14b42f8b7d9a869e578e21b5" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a27440766d1b309d0a13896dac7a4367b" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a9c92142f9e31cf89ef1e0f8b8ae93cf9" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ad79f2c6e210b0eb0a8c4961b4c9438e5" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1accef486ec8e594852ff2986d4ad207aa" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ac1740d35893fff336e72973e4bc31fed" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a41a53ebc6c7e4c673c98c4ab7b6d4851" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a1ab7b75fadf16633b831d3b6d205c259" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a7ff6527627f6a45aaa80248838bfee8b" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a52dd24003265571637b08fd797fdadac" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1aa8e97ea7b79e36ab904d0767a5242bef" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a9152d95efcb5be32b936e2a7c6888940" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1af5c6540a1846aa38f2bfe8eef05d2831" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ad131cf4e829fa5a60248457c0e688af6" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a4f7307439e77a8102677c917e1c57873" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1a8b8a1b2fb040e74491278bbf8f2a30ca" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ae495c20d492ffeb1b56872f48418774f" kind="function"><name>TEST</name></member>
+    <member refid="test__allocator_8cpp_1ab846ac4c1d65d4567aa6fe7e70569e62" kind="function"><name>TEST</name></member>
   </compound>
   <compound refid="test__error_8cpp" kind="file"><name>test_error.cpp</name>
     <member refid="test__error_8cpp_1a60b17a5af017e5a3ec391b92b476450c" kind="function"><name>TEST_F</name></member>

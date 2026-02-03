@@ -1440,7 +1440,7 @@ namespace cslt {
      * @details ArenaAllocator is a memory allocator that uses "arena" or "region" allocation
      *          strategy. It allocates memory sequentially from large chunks and does not
      *          support individual deallocation. All memory is freed together when the arena
-     *          is reset or destroyed.
+     *          is reset or destroyed.  
      * 
      *          Key characteristics:
      *          - Very fast allocation (just pointer bumping)
@@ -5367,7 +5367,9 @@ namespace cslt {
      * 
      *          Performance: O(log n) for allocation, deallocation, and coalescing,
      *          where n is the number of size levels. Memory overhead is ~16 bytes per
-     *          allocation for the header.
+     *          allocation for the header.  This allocator is implemented on the heap. 
+     *          In order to drive compliance with MISRA standards, this class can be 
+     *          ommitted from compilation with the ``STATIC ONLY`` flag.
      * 
      * @note BuddyAllocator is not thread-safe. External synchronization required.
      * @note Pool size is fixed at creation - use reset() to clear or recreate for
@@ -7186,6 +7188,153 @@ namespace cslt {
         void operator()(SlabAllocator* slab) const noexcept;
     };
 
+    /**
+     * @class SlabAllocator
+     * @brief Fixed-size object allocator using slab allocation with buddy backing
+     * 
+     * SlabAllocator provides O(1) allocation and deallocation for fixed-size objects
+     * by pre-carving memory pages (slabs) into equally-sized slots. All slots within
+     * a slab have identical size and alignment, making it ideal for allocating many
+     * instances of the same type. This allocator is implemented on the heap. 
+     * In order to drive compliance with MISRA standards, this class can be 
+     * ommitted from compilation with the ``STATIC ONLY`` flag. 
+     * 
+     * @note This class is conditionally compiled. If STATIC_ONLY is defined, 
+     *       SlabAllocator will not be available.
+     * 
+     * **Key Features:**
+     * - O(1) allocation and deallocation (pop/push from free list)
+     * - Zero fragmentation (all objects same size)
+     * - Configurable alignment support
+     * - Lazy page allocation (grows on demand)
+     * - Backed by BuddyAllocator for page management
+     * 
+     * **Limitations:**
+     * - Only supports single fixed size per allocator instance
+     * - Cannot resize objects (realloc only works for same size)
+     * - Not thread-safe
+     * - Slab must be destroyed before backing buddy allocator
+     * 
+     * **Use Cases:**
+     * - Allocating many instances of the same struct/class
+     * - Object pools (e.g., particle systems, network packets)
+     * - Cache-friendly data structures (same-sized objects)
+     * - Reducing fragmentation for uniform allocations
+     * 
+     * @par Basic Usage:
+     * @code{.cpp}
+     * // Create buddy allocator
+     * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+     * 
+     * // Create slab for 256-byte objects
+     * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+     * 
+     * // Allocate objects (all must be 256 bytes)
+     * auto obj1 = slab->alloc(256, false).value();
+     * auto obj2 = slab->alloc(256, false).value();
+     * 
+     * // Free objects
+     * slab->return_element(obj1);
+     * slab->return_element(obj2);
+     * 
+     * // Slab destroyed before buddy (correct order)
+     * @endcode
+     * 
+     * @par Aligned Allocation:
+     * @code{.cpp}
+     * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+     * 
+     * // Create slab with 64-byte alignment for SIMD data
+     * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+     * 
+     * // All allocations are automatically 64-byte aligned
+     * auto obj = slab->alloc(256, false).value();
+     * assert(reinterpret_cast<uintptr_t>(obj) % 64 == 0);
+     * 
+     * slab->return_element(obj);
+     * @endcode
+     * 
+     * @par Bulk Operations with Reset:
+     * @code{.cpp}
+     * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+     * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+     * 
+     * // Per-frame allocation pattern
+     * while (game_running) {
+     *     // Allocate temporary objects
+     *     for (int i = 0; i < 50; ++i) {
+     *         auto obj = slab->alloc(128, false).value();
+     *         process_object(obj);
+     *         // Don't free individually
+     *     }
+     *     
+     *     // Bulk free all allocations
+     *     slab->reset();  // Much faster than individual frees
+     * }
+     * @endcode
+     * 
+     * @par Object Pool Pattern:
+     * @code{.cpp}
+     * struct Particle {
+     *     float x, y, z;
+     *     float vx, vy, vz;
+     *     uint32_t color;
+     *     // ... total size 64 bytes
+     * };
+     * 
+     * auto buddy = BuddyAllocator::Heap(10 * 1024 * 1024, 64, 0).value();
+     * auto particle_pool = SlabAllocator::WithBuddy(*buddy, 
+     *                                                sizeof(Particle), 
+     *                                                alignof(Particle), 
+     *                                                0).value();
+     * 
+     * // Allocate particle
+     * auto particle_mem = particle_pool->alloc(sizeof(Particle), true).value();
+     * Particle* p = new (particle_mem) Particle();  // Placement new
+     * 
+     * // Use particle...
+     * p->x = 10.0f;
+     * 
+     * // Return to pool
+     * p->~Particle();  // Explicit destructor
+     * particle_pool->return_element(particle_mem);
+     * @endcode
+     * 
+     * @par Statistics and Monitoring:
+     * @code{.cpp}
+     * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+     * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+     * 
+     * // Allocate some objects
+     * for (int i = 0; i < 10; ++i) {
+     *     slab->alloc(256, false);
+     * }
+     * 
+     * // Check statistics
+     * std::cout << "Total blocks: " << slab->total_blocks() << "\n";
+     * std::cout << "In use: " << slab->in_use_blocks() << "\n";
+     * std::cout << "Free: " << slab->free_blocks() << "\n";
+     * std::cout << "Size: " << slab->size() << " bytes\n";
+     * 
+     * // Detailed report
+     * char buffer[4096];
+     * slab->stats(buffer, sizeof(buffer));
+     * std::cout << buffer;
+     * @endcode
+     * 
+     * @warning Slab must be destroyed before the backing BuddyAllocator. The slab
+     *          stores a non-owning pointer to the buddy and will attempt to return
+     *          pages to it during destruction.
+     * 
+     * @warning All allocations from a slab must be exactly obj_size bytes. Attempting
+     *          to allocate a different size will result in an error.
+     * 
+     * @warning Pointers become invalid after reset() or slab destruction. Accessing
+     *          freed memory results in undefined behavior.
+     * 
+     * @see BuddyAllocator Backing allocator for page management
+     * @see WithBuddy() Factory method for creating slab allocators
+     */
     class SlabAllocator : public Allocator {
         friend struct SlabDeleter;
     private:
@@ -7221,70 +7370,2548 @@ namespace cslt {
         Page* find_page_(const void* ptr) const noexcept;
 // ================================================================================ 
     public:
+        /**
+         * @brief Destructor - Frees all slab pages back to buddy allocator
+         * 
+         * @details Walks the linked list of allocated pages and returns each page to
+         *          the backing buddy allocator. The SlabAllocator structure itself is
+         *          also freed back to buddy via SlabDeleter.
+         * 
+         *          All outstanding allocations become invalid after destruction.
+         * 
+         * @note This destructor is called automatically by SlabDeleter when the
+         *       UniquePtr goes out of scope or is reset.
+         * 
+         * @note The backing BuddyAllocator must still be alive when this destructor runs.
+         *       Always ensure slabs are destroyed before their buddy allocator.
+         * 
+         * @warning All pointers obtained from this slab become invalid. Accessing them
+         *          after destruction results in undefined behavior.
+         * 
+         * @par Correct Lifetime Management:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * {
+         *     auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         *     // Use slab...
+         * }  // slab destroyed here (buddy still alive) - CORRECT
+         * 
+         * // buddy destroyed here
+         * @endcode
+         * 
+         * @par Incorrect Lifetime (Undefined Behavior):
+         * @code{.cpp}
+         * UniquePtr<SlabAllocator, SlabDeleter> slab;
+         * 
+         * {
+         *     auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         *     slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * }  // buddy destroyed first - WRONG!
+         * 
+         * // slab destructor tries to free pages to destroyed buddy - CRASH!
+         * @endcode
+         */
         ~SlabAllocator() noexcept override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Factory method to create a slab allocator backed by a buddy allocator
+         * 
+         * @param buddy Reference to backing BuddyAllocator (non-owning, must outlive slab)
+         * @param obj_size Size of each object in bytes (fixed for lifetime of slab)
+         * @param align Slot alignment in bytes (0 = alignof(max_align_t), rounded to power of 2)
+         * @param slab_bytes_hint Suggested page size in bytes (0 = automatic: 4KB or 64 objects)
+         * 
+         * @return Expected containing UniquePtr to SlabAllocator on success, or error on failure
+         * 
+         * @details Creates a slab allocator that carves fixed-size objects from pages
+         *          allocated from the buddy allocator. The allocator grows lazily - pages
+         *          are only allocated when the free list is exhausted.
+         * 
+         *          **Initialization Process:**
+         *          1. Validate and normalize parameters (obj_size > 0, align to power of 2)
+         *          2. Allocate SlabAllocator structure from buddy
+         *          3. Calculate slot size (max of obj_size and free list pointer size, aligned)
+         *          4. Calculate page geometry (header size, objects per page)
+         *          5. Return empty slab (no pages allocated yet - lazy allocation)
+         * 
+         *          **Parameter Normalization:**
+         *          - align=0 → alignof(max_align_t) (typically 16 bytes)
+         *          - align=non-pow2 → rounded up to next power of 2 (e.g., 48 → 64)
+         *          - slab_bytes_hint=0 → max(4096, obj_size * 64 + page_header)
+         *          - Slot size adjusted to hold both object and free list linkage
+         * 
+         *          **Page Size Calculation:**
+         *          When slab_bytes_hint=0, the default is the larger of:
+         *          - 4096 bytes (1 page)
+         *          - Enough space for 64 objects plus page header
+         *          
+         *          The final page size is adjusted so slots fit evenly with no tail waste.
+         * 
+         *          **Lazy Allocation:**
+         *          No pages are allocated during initialization. The first call to alloc()
+         *          will trigger page allocation via grow_().
+         * 
+         * @note The buddy allocator must outlive the slab allocator. The slab stores a
+         *       non-owning pointer to buddy and will return pages to it during destruction.
+         * 
+         * @note obj_size cannot be changed after creation. To allocate different sizes,
+         *       create separate slab allocators.
+         * 
+         * @note The SlabAllocator structure itself is allocated from the buddy allocator,
+         *       not from the system heap.
+         * 
+         * @throws ArgumentError If obj_size is zero
+         * @throws AlignmentError If alignment is invalid or too large (> SIZE_MAX/2)
+         * @throws MemoryError If buddy allocator cannot allocate the SlabAllocator structure
+         * 
+         * @par Basic Creation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Create slab for 256-byte objects with defaults
+         * auto slab_result = SlabAllocator::WithBuddy(*buddy, 256, 0, 0);
+         * 
+         * if (slab_result.hasValue()) {
+         *     auto slab = cslt::move(slab_result.value());
+         *     // Use slab...
+         * } else {
+         *     std::cerr << "Error: " << slab_result.error().what() << "\n";
+         * }
+         * @endcode
+         * 
+         * @par Custom Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // 64-byte alignment for cache-line aligned structures
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * auto obj = slab->alloc(256, false).value();
+         * assert(reinterpret_cast<uintptr_t>(obj) % 64 == 0);
+         * @endcode
+         * 
+         * @par Custom Page Size:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Use 8KB pages instead of default 4KB
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 8192).value();
+         * 
+         * // First allocation triggers page growth
+         * auto obj = slab->alloc(128, false);
+         * 
+         * // Check how many objects fit per page
+         * std::cout << "Objects per page: " << slab->total_blocks() / 1 << "\n";
+         * @endcode
+         * 
+         * @par Small Objects (Slot Size Adjustment):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // 8-byte objects, but slots will be larger
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 8, 0, 0).value();
+         * 
+         * // stride() returns actual slot size
+         * std::cout << "Object size: 8\n";
+         * std::cout << "Slot size: " << slab->stride() << "\n";  // e.g., 16 (for pointer)
+         * @endcode
+         * 
+         * @par Alignment Normalization:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Request 48-byte alignment (not power of 2)
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 48, 0).value();
+         * 
+         * // Automatically rounded to 64 (next power of 2)
+         * auto obj = slab->alloc(256, false).value();
+         * assert(reinterpret_cast<uintptr_t>(obj) % 64 == 0);
+         * @endcode
+         * 
+         * @par Multiple Slabs from Same Buddy:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(16 * 1024 * 1024, 64, 0).value();
+         * 
+         * // Create slabs for different object sizes
+         * auto particles = SlabAllocator::WithBuddy(*buddy, sizeof(Particle), 0, 0).value();
+         * auto projectiles = SlabAllocator::WithBuddy(*buddy, sizeof(Projectile), 0, 0).value();
+         * auto enemies = SlabAllocator::WithBuddy(*buddy, sizeof(Enemy), 0, 0).value();
+         * 
+         * // Each slab manages its own object size
+         * auto p = particles->alloc(sizeof(Particle), false);
+         * auto proj = projectiles->alloc(sizeof(Projectile), false);
+         * auto e = enemies->alloc(sizeof(Enemy), false);
+         * 
+         * // All slabs share the same buddy allocator for page management
+         * @endcode
+         * 
+         * @par Error Handling:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Invalid: zero object size
+         * auto result1 = SlabAllocator::WithBuddy(*buddy, 0, 0, 0);
+         * if (!result1.hasValue()) {
+         *     std::cerr << result1.error().what() << "\n";  // "Object size must be non-zero"
+         * }
+         * 
+         * // Invalid: alignment too large
+         * auto result2 = SlabAllocator::WithBuddy(*buddy, 256, SIZE_MAX / 2 + 1, 0);
+         * if (!result2.hasValue()) {
+         *     std::cerr << result2.error().what() << "\n";  // "Alignment exceeds maximum"
+         * }
+         * @endcode
+         * 
+         * @par Page Size vs Object Count:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // With 256-byte objects and 4KB default pages:
+         * // - Page header: ~64 bytes (aligned)
+         * // - Usable: 4096 - 64 = 4032 bytes
+         * // - Objects per page: 4032 / 256 = 15 objects
+         * // - Actual page size: 64 + 15*256 = 3904 bytes (no tail waste)
+         * 
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Trigger first page allocation
+         * slab->alloc(256, false);
+         * 
+         * std::cout << "Objects per page: " << slab->total_blocks() << "\n";  // 15
+         * @endcode
+         * 
+         * @see ~SlabAllocator() Destructor that frees pages back to buddy
+         * @see alloc() Allocate a fixed-size object from the slab
+         * @see return_element() Free an object back to the slab
+         * @see reset() Bulk free all allocations
+         */
         static Expected<cslt::UniquePtr<SlabAllocator, SlabDeleter>>
         WithBuddy(BuddyAllocator& buddy,
                   size_t obj_size,
                   size_t align = 0,
-                  size_t slab_bytes_hint = 0);  // FIXED: size_t not slize_t
+                  size_t slab_bytes_hint = 0);
 // -------------------------------------------------------------------------------- 
- 
+
+        /**
+         * @brief Allocate a fixed-size object from the slab
+         * 
+         * @param bytes Size in bytes (must equal obj_size specified at creation)
+         * @param zeroed If true, zero-initialize the allocated memory
+         * 
+         * @return Expected containing pointer to allocated memory on success, or error on failure
+         * 
+         * @details Allocates a fixed-size object by popping a slot from the free list.
+         *          If the free list is empty, a new page is allocated from the backing
+         *          buddy allocator (lazy growth).
+         * 
+         *          **Allocation Process:**
+         *          1. Validate bytes == obj_size (strict size requirement)
+         *          2. If free_list empty, call grow_() to allocate a new page
+         *          3. Pop first slot from free_list (O(1) operation)
+         *          4. Optionally zero-initialize the memory
+         *          5. Update accounting (in_use_blocks, size)
+         * 
+         *          **Performance:**
+         *          - O(1) when free slots available (simple pointer pop)
+         *          - O(log n) when growing (buddy allocator overhead for new page)
+         *          - Average case: O(1) amortized over many allocations
+         * 
+         *          **Size Constraint:**
+         *          Unlike general-purpose allocators, slab allocators only support ONE
+         *          fixed size. The bytes parameter MUST exactly match the obj_size
+         *          specified during WithBuddy() creation.
+         * 
+         *          **Alignment:**
+         *          All slots are pre-aligned to the alignment specified at creation.
+         *          This method does NOT guarantee specific alignment beyond that - use
+         *          alloc_aligned() if you need to verify alignment requirements.
+         * 
+         * @note bytes must EXACTLY equal obj_size. Requesting any other size results
+         *       in an ArgumentError.
+         * 
+         * @note The first allocation from a newly created slab triggers page allocation
+         *       from the buddy allocator (lazy initialization).
+         * 
+         * @note Returned pointers remain valid until freed with return_element() or
+         *       until the slab is reset() or destroyed.
+         * 
+         * @throws ArgumentError If bytes != obj_size
+         * @throws MemoryError If grow() fails (buddy allocator exhausted or page allocation failed)
+         * 
+         * @par Basic Allocation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate a 256-byte object
+         * auto ptr_result = slab->alloc(256, false);
+         * 
+         * if (ptr_result.hasValue()) {
+         *     void* ptr = ptr_result.value();
+         *     
+         *     // Use the memory...
+         *     uint8_t* data = static_cast<uint8_t*>(ptr);
+         *     data[0] = 42;
+         *     
+         *     // Free when done
+         *     slab->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @par Zero Initialization:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate with zero-initialization
+         * auto ptr = slab->alloc(128, true).value();
+         * 
+         * uint8_t* data = static_cast<uint8_t*>(ptr);
+         * 
+         * // All bytes are guaranteed to be zero
+         * for (size_t i = 0; i < 128; ++i) {
+         *     assert(data[i] == 0);
+         * }
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Wrong Size Rejected:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Correct size
+         * auto correct = slab->alloc(256, false);
+         * EXPECT_TRUE(correct.hasValue());
+         * 
+         * // Wrong size - too small
+         * auto too_small = slab->alloc(128, false);
+         * EXPECT_FALSE(too_small.hasValue());  // Error!
+         * 
+         * // Wrong size - too large
+         * auto too_large = slab->alloc(512, false);
+         * EXPECT_FALSE(too_large.hasValue());  // Error!
+         * 
+         * slab->return_element(correct.value());
+         * @endcode
+         * 
+         * @par Multiple Allocations (Growth):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * std::vector<void*> ptrs;
+         * 
+         * // Allocate many objects
+         * for (int i = 0; i < 100; ++i) {
+         *     auto ptr = slab->alloc(128, false);
+         *     if (ptr.hasValue()) {
+         *         ptrs.push_back(ptr.value());
+         *     }
+         * }
+         * 
+         * // Slab automatically grew pages as needed
+         * std::cout << "Allocated: " << ptrs.size() << " objects\n";
+         * std::cout << "Total capacity: " << slab->total_blocks() << " slots\n";
+         * std::cout << "Pages allocated: " << slab->total_blocks() / slab->stride() << "\n";
+         * 
+         * // Cleanup
+         * for (void* ptr : ptrs) {
+         *     slab->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @par Struct Allocation Pattern:
+         * @code{.cpp}
+         * struct GameObject {
+         *     float x, y, z;
+         *     uint32_t id;
+         *     // ... total 64 bytes
+         * };
+         * 
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto objects = SlabAllocator::WithBuddy(*buddy, sizeof(GameObject), 
+         *                                         alignof(GameObject), 0).value();
+         * 
+         * // Allocate memory for object
+         * auto mem = objects->alloc(sizeof(GameObject), true).value();
+         * 
+         * // Use placement new to construct
+         * GameObject* obj = new (mem) GameObject();
+         * obj->x = 10.0f;
+         * obj->y = 20.0f;
+         * obj->id = 123;
+         * 
+         * // Use object...
+         * 
+         * // Explicit destructor
+         * obj->~GameObject();
+         * 
+         * // Return to pool
+         * objects->return_element(mem);
+         * @endcode
+         * 
+         * @see alloc_aligned() Allocate with explicit alignment verification
+         * @see return_element() Free allocated memory
+         * @see reset() Bulk free all allocations
+         */
         Expected<void*> alloc(size_t bytes, bool zeroed = false) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Allocate a fixed-size object with alignment verification
+         * 
+         * @param bytes Size in bytes (must equal obj_size specified at creation)
+         * @param alignment Required alignment in bytes (0 = max_align_t, rounded to power of 2)
+         * @param zeroed If true, zero-initialize the allocated memory
+         * 
+         * @return Expected containing pointer to aligned memory on success, or error on failure
+         * 
+         * @details Allocates a fixed-size object from the slab with explicit alignment
+         *          verification. The slab pre-aligns all slots during page creation, so
+         *          this method validates that the requested alignment is satisfied by the
+         *          slab's alignment.
+         * 
+         *          **Allocation Process:**
+         *          1. Validate bytes == obj_size (strict size requirement)
+         *          2. Normalize alignment (0 → max_align_t, round to power of 2)
+         *          3. Verify requested_align <= slab's align (pre-aligned slots)
+         *          4. Delegate to alloc() to pop from free list
+         *          5. All returned pointers are guaranteed aligned
+         * 
+         *          **Alignment Constraint:**
+         *          The requested alignment CANNOT exceed the slab's alignment specified
+         *          at creation. To allocate with higher alignment, create the slab with
+         *          a larger alignment value in WithBuddy().
+         * 
+         *          **Performance:**
+         *          Same as alloc() - O(1) amortized. The alignment check is just a
+         *          comparison, adding negligible overhead.
+         * 
+         * @note Requested alignment must be <= slab's alignment. If you need higher
+         *       alignment, create a new slab with WithBuddy() using the desired alignment.
+         * 
+         * @note All slots in the slab are pre-aligned, so this method just validates
+         *       the requirement is met - it doesn't perform additional alignment.
+         * 
+         * @note alignment is normalized to a power of 2. Requesting 48 will be rounded
+         *       to 64 before checking against slab alignment.
+         * 
+         * @throws ArgumentError If bytes != obj_size
+         * @throws AlignmentError If alignment is invalid or exceeds slab's alignment
+         * @throws MemoryError If grow() fails (buddy allocator exhausted)
+         * 
+         * @par Basic Aligned Allocation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Create slab with 64-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * // Allocate with 64-byte alignment verification
+         * auto ptr_result = slab->alloc_aligned(256, 64, false);
+         * 
+         * if (ptr_result.hasValue()) {
+         *     void* ptr = ptr_result.value();
+         *     
+         *     // Guaranteed to be 64-byte aligned
+         *     uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+         *     assert(addr % 64 == 0);
+         *     
+         *     slab->return_element(ptr);
+         * }
+         * @endcode
+         * 
+         * @par Alignment Within Slab Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Create slab with 128-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 128, 0).value();
+         * 
+         * // Request 64-byte alignment (less than slab's 128)
+         * auto ptr = slab->alloc_aligned(256, 64, false).value();
+         * 
+         * // Satisfied (128-byte aligned is also 64-byte aligned)
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+         * assert(addr % 64 == 0);
+         * assert(addr % 128 == 0);  // Also true!
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Alignment Exceeds Slab (Error):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Create slab with only 64-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * // Request 128-byte alignment (exceeds slab's 64)
+         * auto result = slab->alloc_aligned(256, 128, false);
+         * 
+         * // Fails - slab cannot satisfy this requirement
+         * EXPECT_FALSE(result.hasValue());
+         * EXPECT_EQ(result.error().type(), ErrorType::ALIGNMENT_ERROR);
+         * 
+         * // Solution: Create slab with 128-byte alignment
+         * auto slab128 = SlabAllocator::WithBuddy(*buddy, 256, 128, 0).value();
+         * auto ptr = slab128->alloc_aligned(256, 128, false);
+         * EXPECT_TRUE(ptr.hasValue());
+         * @endcode
+         * 
+         * @par SIMD Data Allocation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Create slab for SIMD vectors (32-byte alignment for AVX)
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 32, 0).value();
+         * 
+         * // Allocate aligned for SIMD operations
+         * auto ptr = slab->alloc_aligned(256, 32, true).value();
+         * 
+         * // Safe to use with SIMD instructions
+         * __m256* vec = reinterpret_cast<__m256*>(ptr);
+         * *vec = _mm256_set1_ps(1.0f);
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Alignment Normalization:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * // Request 48-byte alignment (not power of 2)
+         * // Automatically rounded to 64
+         * auto ptr = slab->alloc_aligned(256, 48, false).value();
+         * 
+         * // Aligned to 64 (rounded up)
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+         * assert(addr % 64 == 0);
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Cache-Line Aligned Allocation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Create slab for cache-line aligned data (64 bytes)
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 1024, 64, 0).value();
+         * 
+         * // Allocate multiple cache-line aligned blocks
+         * for (int i = 0; i < 10; ++i) {
+         *     auto ptr = slab->alloc_aligned(1024, 64, false);
+         *     ASSERT_TRUE(ptr.hasValue());
+         *     
+         *     uintptr_t addr = reinterpret_cast<uintptr_t>(ptr.value());
+         *     EXPECT_EQ(addr % 64, 0) << "Not cache-line aligned";
+         *     
+         *     slab->return_element(ptr.value());
+         * }
+         * @endcode
+         * 
+         * @par Default Alignment (Zero):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * // alignment=0 means alignof(max_align_t) (typically 16)
+         * auto ptr = slab->alloc_aligned(256, 0, false).value();
+         * 
+         * // Guaranteed at least max_align_t alignment
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+         * assert(addr % alignof(max_align_t) == 0);
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @see alloc() Allocate without explicit alignment verification
+         * @see WithBuddy() Specify slab alignment at creation
+         * @see return_element() Free allocated memory
+         */
         Expected<void*> alloc_aligned(size_t bytes, size_t alignment, bool zeroed = false) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Realloc for slab allocator (limited - same size only)
+         * 
+         * @param ptr Pointer to existing allocation (or nullptr)
+         * @param old_bytes Current size of the allocation in bytes
+         * @param new_bytes Desired new size in bytes
+         * @param zeroed If true, zero-initialize any newly allocated space
+         * 
+         * @return Expected containing pointer on success, or error on failure
+         * 
+         * @details Slab allocators only support fixed-size objects, so realloc has very
+         *          limited functionality compared to general-purpose allocators. The only
+         *          supported operation is "realloc to same size" which simply returns the
+         *          same pointer.
+         * 
+         *          **Special Cases:**
+         *          - realloc(nullptr, 0, n) → Equivalent to alloc(n)
+         *          - realloc(ptr, old, 0) → Frees ptr, returns nullptr (success)
+         *          - realloc(ptr, old, new) where old == new == obj_size → Returns same ptr
+         *          - realloc(ptr, old, new) where old != new → ERROR (cannot resize)
+         * 
+         *          **Why No Resize Support:**
+         *          Slab allocators pre-carve memory into fixed-size slots. There is no
+         *          concept of "growing" or "shrinking" an object. All slots are identical.
+         *          To change object size, you must free the old object and allocate from
+         *          a different slab with the desired size.
+         * 
+         *          **Same Size Behavior:**
+         *          When old_bytes == new_bytes == obj_size, returns the same pointer with
+         *          no reallocation. This is an O(1) no-op.
+         * 
+         * @note Slab allocators CANNOT resize objects. Both old_bytes and new_bytes must
+         *       equal obj_size for the operation to succeed.
+         * 
+         * @note To "resize" an object, you must: (1) Allocate from a slab with the new
+         *       size, (2) Copy data, (3) Free the old object.
+         * 
+         * @note The zeroed parameter has no effect when old_bytes == new_bytes since no
+         *       new space is allocated.
+         * 
+         * @throws ArgumentError If ptr is non-null but old_bytes is zero
+         * @throws ArgumentError If old_bytes != obj_size or new_bytes != obj_size
+         * 
+         * @par Same Size (No-Op):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * memset(ptr, 'A', 256);
+         * 
+         * // Realloc to same size
+         * auto new_ptr_result = slab->realloc(ptr, 256, 256, false);
+         * 
+         * ASSERT_TRUE(new_ptr_result.hasValue());
+         * EXPECT_EQ(new_ptr_result.value(), ptr);  // Same pointer returned
+         * 
+         * // Data preserved
+         * uint8_t* data = static_cast<uint8_t*>(new_ptr_result.value());
+         * EXPECT_EQ(data[0], 'A');
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Resize Rejected:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Try to grow
+         * auto grow = slab->realloc(ptr, 256, 512, false);
+         * EXPECT_FALSE(grow.hasValue());  // ERROR: cannot resize
+         * 
+         * // Try to shrink
+         * auto shrink = slab->realloc(ptr, 256, 128, false);
+         * EXPECT_FALSE(shrink.hasValue());  // ERROR: cannot resize
+         * 
+         * // Original pointer still valid
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Realloc from nullptr (Acts as alloc):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * void* ptr = nullptr;
+         * 
+         * // Realloc from nullptr acts as alloc
+         * auto result = slab->realloc(ptr, 0, 256, true);
+         * 
+         * ASSERT_TRUE(result.hasValue());
+         * ptr = result.value();
+         * 
+         * // Memory is zero-initialized
+         * uint8_t* data = static_cast<uint8_t*>(ptr);
+         * EXPECT_EQ(data[0], 0);
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Realloc to Zero (Free):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 1);
+         * 
+         * // Realloc to zero frees the memory
+         * auto result = slab->realloc(ptr, 256, 0, false);
+         * 
+         * ASSERT_TRUE(result.hasValue());
+         * EXPECT_EQ(result.value(), nullptr);
+         * EXPECT_EQ(slab->in_use_blocks(), 0);  // Freed
+         * @endcode
+         * 
+         * @par Manual Resize Pattern (Different Slabs):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Two slabs for different sizes
+         * auto slab128 = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * auto slab256 = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate 128-byte object
+         * auto old_ptr = slab128->alloc(128, false).value();
+         * memcpy(old_ptr, "data", 4);
+         * 
+         * // "Resize" to 256 bytes - manual process:
+         * // 1. Allocate from larger slab
+         * auto new_ptr = slab256->alloc(256, false).value();
+         * 
+         * // 2. Copy data (up to old size)
+         * memcpy(new_ptr, old_ptr, 128);
+         * 
+         * // 3. Free old object
+         * slab128->return_element(old_ptr);
+         * 
+         * // Now using 256-byte object
+         * slab256->return_element(new_ptr);
+         * @endcode
+         * 
+         * @see alloc() Allocate fixed-size object
+         * @see return_element() Free object
+         * @see realloc_aligned() Realloc with alignment (also limited)
+         */
         Expected<void*> realloc(void* ptr, size_t old_bytes, size_t new_bytes, bool zeroed = false) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Realloc with alignment for slab allocator (limited - same size only)
+         * 
+         * @param ptr Pointer to existing allocation (or nullptr)
+         * @param old_bytes Current size of the allocation in bytes
+         * @param new_bytes Desired new size in bytes
+         * @param alignment Required alignment in bytes (0 = max_align_t, rounded to power of 2)
+         * @param zeroed If true, zero-initialize any newly allocated space
+         * 
+         * @return Expected containing pointer on success, or error on failure
+         * 
+         * @details Similar to realloc(), but with alignment verification. Slab allocators
+         *          only support fixed-size objects, so this can only "realloc" to the same
+         *          size while verifying alignment requirements.
+         * 
+         *          **Special Cases:**
+         *          - realloc_aligned(nullptr, 0, n, a) → Equivalent to alloc_aligned(n, a)
+         *          - realloc_aligned(ptr, old, 0, a) → Frees ptr, returns nullptr (success)
+         *          - realloc_aligned(ptr, old, new, a) where old == new == obj_size → Same ptr
+         *          - realloc_aligned(ptr, old, new, a) where old != new → ERROR (cannot resize)
+         *          - realloc_aligned(ptr, old, old, a) where a > slab_align → ERROR
+         * 
+         *          **Alignment Verification:**
+         *          The requested alignment must not exceed the slab's alignment. If the
+         *          pointer already satisfies the alignment (which it should, since all
+         *          slots are pre-aligned), the same pointer is returned.
+         * 
+         *          **Same Size Behavior:**
+         *          When old_bytes == new_bytes == obj_size and alignment is satisfied,
+         *          returns the same pointer with no reallocation (O(1) no-op).
+         * 
+         * @note Slab allocators CANNOT resize objects. Both old_bytes and new_bytes must
+         *       equal obj_size.
+         * 
+         * @note Requested alignment must not exceed the slab's alignment specified at
+         *       creation.
+         * 
+         * @note All slots are pre-aligned, so this method just validates the requirement
+         *       is met - it doesn't perform additional alignment.
+         * 
+         * @note Changing alignment requirements cannot be satisfied if new alignment exceeds
+         *       slab alignment. Create object in slab with appropriate alignment instead.
+         * 
+         * @throws ArgumentError If ptr is non-null but old_bytes is zero
+         * @throws ArgumentError If old_bytes != obj_size or new_bytes != obj_size
+         * @throws AlignmentError If alignment is invalid or exceeds slab's alignment
+         * 
+         * @par Same Size with Alignment Check:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Slab with 64-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Realloc same size with alignment verification
+         * auto new_ptr = slab->realloc_aligned(ptr, 256, 256, 64, false);
+         * 
+         * ASSERT_TRUE(new_ptr.hasValue());
+         * EXPECT_EQ(new_ptr.value(), ptr);  // Same pointer
+         * 
+         * // Alignment guaranteed
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(new_ptr.value());
+         * EXPECT_EQ(addr % 64, 0);
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Alignment Within Slab Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Slab with 128-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 128, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Request 64-byte alignment (within slab's 128)
+         * auto result = slab->realloc_aligned(ptr, 256, 256, 64, false);
+         * 
+         * ASSERT_TRUE(result.hasValue());
+         * EXPECT_EQ(result.value(), ptr);  // Same pointer, satisfies alignment
+         * @endcode
+         * 
+         * @par Alignment Exceeds Slab (Error):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Slab with only 64-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Request 128-byte alignment (exceeds slab's 64)
+         * auto result = slab->realloc_aligned(ptr, 256, 256, 128, false);
+         * 
+         * EXPECT_FALSE(result.hasValue());  // ERROR: alignment too large
+         * 
+         * // Original pointer still valid
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Resize with Alignment Rejected:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Try to grow with alignment
+         * auto grow = slab->realloc_aligned(ptr, 256, 512, 64, false);
+         * EXPECT_FALSE(grow.hasValue());  // ERROR: cannot resize
+         * 
+         * // Try to shrink with alignment
+         * auto shrink = slab->realloc_aligned(ptr, 256, 128, 64, false);
+         * EXPECT_FALSE(shrink.hasValue());  // ERROR: cannot resize
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Realloc from nullptr with Alignment:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * void* ptr = nullptr;
+         * 
+         * // Realloc from nullptr acts as alloc_aligned
+         * auto result = slab->realloc_aligned(ptr, 0, 256, 64, true);
+         * 
+         * ASSERT_TRUE(result.hasValue());
+         * ptr = result.value();
+         * 
+         * // Aligned and zeroed
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(ptr);
+         * EXPECT_EQ(addr % 64, 0);
+         * 
+         * uint8_t* data = static_cast<uint8_t*>(ptr);
+         * EXPECT_EQ(data[0], 0);
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Manual Resize with Alignment (Different Slabs):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Two slabs with different sizes, both 64-byte aligned
+         * auto slab128 = SlabAllocator::WithBuddy(*buddy, 128, 64, 0).value();
+         * auto slab256 = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * // Allocate 128-byte aligned object
+         * auto old_ptr = slab128->alloc_aligned(128, 64, false).value();
+         * memset(old_ptr, 'A', 128);
+         * 
+         * // "Resize" to 256 bytes with alignment preserved:
+         * // 1. Allocate from larger slab
+         * auto new_ptr = slab256->alloc_aligned(256, 64, false).value();
+         * 
+         * // 2. Copy data
+         * memcpy(new_ptr, old_ptr, 128);
+         * 
+         * // 3. Free old
+         * slab128->return_element(old_ptr);
+         * 
+         * // Verify alignment maintained
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(new_ptr);
+         * EXPECT_EQ(addr % 64, 0);
+         * 
+         * slab256->return_element(new_ptr);
+         * @endcode
+         * 
+         * @par Alignment Change Not Supported:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Slab with 64-byte alignment
+         * auto slab64 = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * auto ptr = slab64->alloc(256, false).value();
+         * 
+         * // Cannot "change" alignment to 128 (exceeds slab alignment)
+         * auto result = slab64->realloc_aligned(ptr, 256, 256, 128, false);
+         * EXPECT_FALSE(result.hasValue());  // ERROR
+         * 
+         * // Solution: Allocate from slab with 128-byte alignment
+         * auto slab128 = SlabAllocator::WithBuddy(*buddy, 256, 128, 0).value();
+         * auto new_ptr = slab128->alloc(256, false).value();
+         * 
+         * // Copy data
+         * memcpy(new_ptr, ptr, 256);
+         * 
+         * // Free old
+         * slab64->return_element(ptr);
+         * 
+         * // Now have 128-byte aligned object
+         * uintptr_t addr = reinterpret_cast<uintptr_t>(new_ptr);
+         * EXPECT_EQ(addr % 128, 0);
+         * 
+         * slab128->return_element(new_ptr);
+         * @endcode
+         * 
+         * @see alloc_aligned() Allocate with alignment
+         * @see realloc() Realloc without alignment check
+         * @see return_element() Free object
+         */
         Expected<void*> realloc_aligned(void* ptr, size_t old_bytes, size_t new_bytes,
                                         size_t alignment, bool zeroed = false) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Free an object back to the slab allocator
+         * 
+         * @param ptr Pointer to free (returned from alloc, alloc_aligned, realloc, or realloc_aligned)
+         * @param bytes Ignored (present for interface compatibility)
+         * @param alignment Ignored (present for interface compatibility)
+         * 
+         * @details Frees a previously allocated object by returning it to the free list.
+         *          The freed slot becomes immediately available for subsequent allocations.
+         * 
+         *          **Deallocation Process:**
+         *          1. Validate pointer is not null (null is silently ignored)
+         *          2. Find which page contains the pointer (walk pages list)
+         *          3. Verify pointer is within slots region (not in page header)
+         *          4. Verify pointer is aligned on slot boundary
+         *          5. Cast pointer to Slot and push onto free list
+         *          6. Update accounting (decrease in_use_blocks, size)
+         * 
+         *          **Performance:**
+         *          O(p) where p is the number of pages (for page lookup), then O(1) to
+         *          push onto free list. Typically O(1) amortized since most slabs have
+         *          few pages.
+         * 
+         *          **No Coalescing:**
+         *          Unlike BuddyAllocator, slabs don't coalesce. Freed slots simply go
+         *          back on the free list and can be immediately reused. Pages remain
+         *          allocated until the slab is destroyed.
+         * 
+         * @note The bytes and alignment parameters are IGNORED by SlabAllocator. They
+         *       exist only for base class interface compatibility. The slab knows the
+         *       object size from its configuration.
+         * 
+         * @note Passing nullptr is safe and does nothing (similar to free(nullptr)).
+         * 
+         * @note Invalid pointers are handled silently - the function returns without
+         *       error if the pointer is not from this slab, is misaligned, or is in
+         *       the header region.
+         * 
+         * @note Double-free results in undefined behavior. The allocator cannot detect
+         *       all double-free scenarios.
+         * 
+         * @note After this call, ptr becomes invalid. Accessing it results in undefined
+         *       behavior.
+         * 
+         * @warning Do not free pointers from a different SlabAllocator instance. Each
+         *          slab manages its own distinct set of pages.
+         * 
+         * @par Basic Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Use memory...
+         * memset(ptr, 0, 256);
+         * 
+         * // Free when done
+         * slab->return_element(ptr);
+         * 
+         * // ptr is now invalid - do not use!
+         * @endcode
+         * 
+         * @par Parameters Ignored:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // All of these are equivalent (bytes and alignment ignored)
+         * slab->return_element(ptr);
+         * slab->return_element(ptr, 256, 0);
+         * slab->return_element(ptr, 0, 0);
+         * slab->return_element(ptr, 999, 123);  // Values don't matter
+         * @endcode
+         * 
+         * @par NULL Pointer Handling:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * void* ptr = nullptr;
+         * 
+         * // Safe - does nothing
+         * slab->return_element(ptr);
+         * 
+         * // Conditional freeing is safe
+         * auto maybe_ptr = slab->alloc(256, false);
+         * if (maybe_ptr.hasValue()) {
+         *     ptr = maybe_ptr.value();
+         *     // ... use ptr ...
+         * }
+         * 
+         * // Safe even if allocation failed (ptr is nullptr)
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Multiple Objects:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate multiple objects
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 20; ++i) {
+         *     auto ptr = slab->alloc(128, false);
+         *     if (ptr.hasValue()) {
+         *         ptrs.push_back(ptr.value());
+         *     }
+         * }
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 20);
+         * 
+         * // Free all
+         * for (void* ptr : ptrs) {
+         *     slab->return_element(ptr);
+         * }
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * 
+         * // All slots are now in free list and can be reused
+         * EXPECT_EQ(slab->free_blocks(), slab->total_blocks());
+         * @endcode
+         * 
+         * @par Free Order Doesn't Matter:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr1 = slab->alloc(256, false).value();
+         * auto ptr2 = slab->alloc(256, false).value();
+         * auto ptr3 = slab->alloc(256, false).value();
+         * 
+         * // Free in any order - doesn't matter for slabs
+         * slab->return_element(ptr2);  // Middle first
+         * slab->return_element(ptr1);  // Then first
+         * slab->return_element(ptr3);  // Then last
+         * 
+         * // All freed, all back in free list
+         * @endcode
+         * 
+         * @par Immediate Reuse:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * auto ptr1 = slab->alloc(128, false).value();
+         * memset(ptr1, 'A', 128);
+         * 
+         * // Free it
+         * slab->return_element(ptr1);
+         * 
+         * // Immediately allocate again - likely gets same slot
+         * auto ptr2 = slab->alloc(128, false).value();
+         * 
+         * // May be same physical slot (LIFO free list)
+         * // But ptr1 is invalid - don't use it!
+         * @endcode
+         * 
+         * @par Invalid Pointer (Silent Failure):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // External pointer (not from this slab)
+         * void* external = malloc(256);
+         * slab->return_element(external);  // Silent no-op (not from slab)
+         * free(external);
+         * 
+         * // Allocate valid pointer
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Misaligned pointer (offset into slot)
+         * uint8_t* misaligned = static_cast<uint8_t*>(ptr) + 10;
+         * slab->return_element(misaligned);  // Silent no-op (misaligned)
+         * 
+         * // Original pointer still valid
+         * slab->return_element(ptr);  // OK
+         * @endcode
+         * 
+         * @see alloc() Allocate memory
+         * @see alloc_aligned() Allocate aligned memory
+         * @see reset() Bulk deallocation of all objects
+         */
         void return_element(void* ptr, size_t bytes = 0, size_t alignment = 0) override;  // FIXED: defaults
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Generate diagnostic statistics report
+         * 
+         * @param buffer Character buffer to write report into
+         * @param buffer_size Size of the buffer in bytes
+         * 
+         * @return true if report generated successfully, false if buffer too small or nullptr
+         * 
+         * @details Generates a comprehensive human-readable report of the slab allocator's
+         *          current state, including geometry, capacity, usage, and per-page details.
+         * 
+         *          **Report Contents:**
+         *          - Object size and slot stride
+         *          - Alignment requirements
+         *          - Page size and header overhead
+         *          - Number of pages and blocks per page
+         *          - Total capacity and current usage (bytes and blocks)
+         *          - Free block count (both geometric and from free list)
+         *          - Utilization percentage
+         *          - Per-page listing
+         * 
+         *          **Cross-Validation:**
+         *          The report includes free block count calculated two ways:
+         *          - Geometric: total_blocks - in_use_blocks
+         *          - Free list: Count by walking free list
+         *          These should always match. Discrepancy indicates corruption.
+         * 
+         *          **Buffer Size:**
+         *          Typical reports are 500-1000 bytes. Recommend 2KB-4KB buffer to
+         *          accommodate slabs with many pages. If buffer is too small, the
+         *          function returns false.
+         * 
+         * @note This is a diagnostic tool for debugging and monitoring. It's not
+         *       intended for production hot paths due to formatting overhead.
+         * 
+         * @note The report is human-readable, not machine-parseable. Don't rely on
+         *       exact format - use the query methods (total_blocks(), size(), etc.)
+         *       for programmatic access.
+         * 
+         * @par Basic Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 64, 4096).value();
+         * 
+         * // Allocate some objects
+         * for (int i = 0; i < 5; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * // Generate report
+         * char buffer[2048];
+         * bool ok = slab->stats(buffer, sizeof(buffer));
+         * 
+         * if (ok) {
+         *     std::cout << buffer;
+         * }
+         * @endcode
+         * 
+         * @par Example Output:
+         * @code
+         * Slab Statistics:
+         *   Object size: 256 bytes
+         *   Slot stride: 256 bytes
+         *   Alignment: 64 bytes
+         *   Page size: 4096 bytes
+         *   Page header bytes: 64
+         *   Pages: 1
+         *   Blocks per page: 15
+         *   Total blocks: 15
+         *   In-use blocks: 5
+         *   Free blocks (geom): 10
+         *   Free blocks (free list): 10
+         *   Used: 1280 bytes
+         *   Capacity: 3840 bytes
+         *   Remaining: 2560 bytes
+         *   Total (with overhead): 4096 bytes
+         *   Utilization: 33.3%
+         *   Page 1: 4096 bytes, 15 blocks
+         * @endcode
+         * 
+         * @par Monitoring Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate many objects
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 50; ++i) {
+         *     auto ptr = slab->alloc(128, false);
+         *     if (ptr.hasValue()) {
+         *         ptrs.push_back(ptr.value());
+         *     }
+         * }
+         * 
+         * // Check statistics
+         * char buffer[4096];
+         * slab->stats(buffer, sizeof(buffer));
+         * 
+         * std::cout << "After 50 allocations:\n" << buffer << "\n";
+         * 
+         * // Free half
+         * for (size_t i = 0; i < ptrs.size() / 2; ++i) {
+         *     slab->return_element(ptrs[i]);
+         * }
+         * 
+         * slab->stats(buffer, sizeof(buffer));
+         * std::cout << "After freeing 25:\n" << buffer << "\n";
+         * @endcode
+         * 
+         * @par Detecting Corruption:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate and free normally
+         * auto ptr1 = slab->alloc(256, false).value();
+         * auto ptr2 = slab->alloc(256, false).value();
+         * slab->return_element(ptr1);
+         * 
+         * char buffer[2048];
+         * slab->stats(buffer, sizeof(buffer));
+         * 
+         * // Check for consistency
+         * std::string report(buffer);
+         * 
+         * // Look for mismatched free counts
+         * // "Free blocks (geom): X" should match "Free blocks (free list): X"
+         * // If different, indicates corruption (double-free, list corruption, etc.)
+         * @endcode
+         * 
+         * @par Buffer Too Small:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * char small_buffer[100];  // Too small
+         * 
+         * bool ok = slab->stats(small_buffer, sizeof(small_buffer));
+         * 
+         * if (!ok) {
+         *     std::cerr << "Buffer too small for statistics report\n";
+         *     
+         *     // Try larger buffer
+         *     char large_buffer[4096];
+         *     ok = slab->stats(large_buffer, sizeof(large_buffer));
+         * }
+         * @endcode
+         * 
+         * @par Empty Slab (No Allocations):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // No allocations yet - no pages allocated
+         * char buffer[2048];
+         * slab->stats(buffer, sizeof(buffer));
+         * 
+         * // Output shows:
+         * //   Pages: 0
+         * //   Total blocks: 0
+         * //   Capacity: 0 bytes
+         * //   Utilization: N/A (capacity is 0)
+         * @endcode
+         * 
+         * @par Multiple Pages:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Small page size to force multiple pages
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 1024).value();
+         * 
+         * // Allocate enough to need multiple pages
+         * for (int i = 0; i < 20; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * char buffer[4096];
+         * slab->stats(buffer, sizeof(buffer));
+         * 
+         * // Output shows multiple pages:
+         * //   Pages: 3
+         * //   Page 1: 1024 bytes, 3 blocks
+         * //   Page 2: 1024 bytes, 3 blocks
+         * //   Page 3: 1024 bytes, 3 blocks
+         * @endcode
+         * 
+         * @par Utilization Tracking:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * auto track_utilization = [&]() {
+         *     char buffer[2048];
+         *     slab->stats(buffer, sizeof(buffer));
+         *     
+         *     std::string report(buffer);
+         *     size_t pos = report.find("Utilization: ");
+         *     if (pos != std::string::npos) {
+         *         std::string util_line = report.substr(pos);
+         *         std::cout << util_line.substr(0, util_line.find('\n')) << "\n";
+         *     }
+         * };
+         * 
+         * // Track utilization over time
+         * for (int i = 0; i < 10; ++i) {
+         *     slab->alloc(128, false);
+         *     track_utilization();
+         * }
+         * @endcode
+         * 
+         * @see total_blocks() Get total capacity programmatically
+         * @see in_use_blocks() Get current usage programmatically
+         * @see free_blocks() Get free block count programmatically
+         * @see size() Get used bytes programmatically
+         * @see remaining() Get available bytes programmatically
+         */
         bool stats(char* buffer, size_t buffer_size) const override;
 // -------------------------------------------------------------------------------- 
 
-        bool reset(bool trim = false) override;  // FIXED: consistent naming
+        /**
+         * @brief Bulk free all allocations and rebuild free list
+         * 
+         * @param trim Ignored (present for interface compatibility - slabs don't trim)
+         * 
+         * @return true if reset successful, false on error
+         * 
+         * @details Performs a bulk deallocation of all objects by clearing accounting
+         *          and rebuilding the free list from scratch. All outstanding allocations
+         *          become invalid. Pages remain allocated (not returned to buddy).
+         * 
+         *          **Reset Process:**
+         *          1. Validate slab geometry (sanity check)
+         *          2. Clear accounting (len_bytes = 0, size = 0)
+         *          3. Clear free list (free_list = nullptr)
+         *          4. Walk all pages and re-carve slots
+         *          5. Rebuild free list with all slots
+         * 
+         *          **Performance:**
+         *          O(pages × objects_per_page) - must walk every slot to rebuild list.
+         *          Much faster than individual frees when deallocating many objects.
+         * 
+         *          **Pages Not Freed:**
+         *          Unlike trim operations in other allocators, reset() keeps all pages.
+         *          The slab maintains its current capacity. Pages are only freed when
+         *          the slab is destroyed.
+         * 
+         *          **Use Cases:**
+         *          - Per-frame allocations (game engines)
+         *          - Request/response cycles (servers)
+         *          - Test cleanup between test cases
+         *          - Temporary scratch space that's bulk-cleared
+         * 
+         * @note The trim parameter is IGNORED. Slab allocators never trim pages back
+         *       to the buddy allocator. Pages persist until slab destruction.
+         * 
+         * @note After reset(), ALL pointers obtained from this slab become invalid.
+         *       Accessing them results in undefined behavior.
+         * 
+         * @note reset() is significantly faster than calling return_element() on each
+         *       allocation individually when you need to free everything.
+         * 
+         * @note The slab retains its full capacity. Subsequent allocations will reuse
+         *       the existing pages without needing to grow.
+         * 
+         * @warning All outstanding allocations become invalid. Do not use any pointers
+         *          obtained before reset() after calling this function.
+         * 
+         * @par Basic Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate many objects
+         * for (int i = 0; i < 100; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 100);
+         * 
+         * // Bulk free everything
+         * bool ok = slab->reset();
+         * EXPECT_TRUE(ok);
+         * 
+         * // All freed
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * EXPECT_EQ(slab->size(), 0);
+         * 
+         * // Free list rebuilt - all slots available
+         * EXPECT_EQ(slab->free_blocks(), slab->total_blocks());
+         * @endcode
+         * 
+         * @par Per-Frame Pattern (Game Engine):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(10 * 1024 * 1024, 64, 0).value();
+         * auto particles = SlabAllocator::WithBuddy(*buddy, sizeof(Particle), 0, 0).value();
+         * 
+         * while (game_running) {
+         *     // Spawn particles this frame
+         *     for (int i = 0; i < 50; ++i) {
+         *         auto mem = particles->alloc(sizeof(Particle), false).value();
+         *         Particle* p = new (mem) Particle();
+         *         p->spawn(position);
+         *         active_particles.push_back(p);
+         *     }
+         *     
+         *     // Update and render...
+         *     
+         *     // Clean up all particles at end of frame
+         *     for (Particle* p : active_particles) {
+         *         p->~Particle();  // Call destructor
+         *     }
+         *     active_particles.clear();
+         *     
+         *     // Bulk free - much faster than individual frees
+         *     particles->reset();
+         * }
+         * @endcode
+         * 
+         * @par Request/Response Pattern (Server):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(10 * 1024 * 1024, 64, 0).value();
+         * auto request_pool = SlabAllocator::WithBuddy(*buddy, 
+         *                                              sizeof(RequestObject), 
+         *                                              0, 0).value();
+         * 
+         * void handle_request(HttpRequest& req) {
+         *     // Allocate temporary objects for this request
+         *     auto obj1 = request_pool->alloc(sizeof(RequestObject), false).value();
+         *     auto obj2 = request_pool->alloc(sizeof(RequestObject), false).value();
+         *     
+         *     // Process request...
+         *     
+         *     // At end of request, bulk free
+         *     request_pool->reset();
+         * }
+         * @endcode
+         * 
+         * @par Test Cleanup Pattern:
+         * @code{.cpp}
+         * class MyTestFixture : public ::testing::Test {
+         * protected:
+         *     UniquePtr<BuddyAllocator, BuddyDeleter> buddy;
+         *     UniquePtr<SlabAllocator, SlabDeleter> slab;
+         *     
+         *     void SetUp() override {
+         *         buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         *         slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         *     }
+         *     
+         *     void TearDown() override {
+         *         // Clean up after each test
+         *         slab->reset();
+         *     }
+         * };
+         * 
+         * TEST_F(MyTestFixture, Test1) {
+         *     auto ptr = slab->alloc(128, false);
+         *     // Test...
+         *     // reset() called automatically in TearDown()
+         * }
+         * @endcode
+         * 
+         * @par Pages Retained (No Trim):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate many - forces multiple page growth
+         * for (int i = 0; i < 100; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * size_t capacity_before = slab->total_blocks();
+         * 
+         * // Reset
+         * slab->reset();
+         * 
+         * // Capacity unchanged - pages retained
+         * EXPECT_EQ(slab->total_blocks(), capacity_before);
+         * 
+         * // But usage is zero
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * @endcode
+         * 
+         * @par Reset vs Individual Frees (Performance):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 1000; ++i) {
+         *     ptrs.push_back(slab->alloc(128, false).value());
+         * }
+         * 
+         * // Option 1: Individual frees - O(n × p) where p = pages
+         * // for (void* ptr : ptrs) {
+         * //     slab->return_element(ptr);  // Each does page lookup
+         * // }
+         * 
+         * // Option 2: Reset - O(p × slots_per_page)
+         * slab->reset();  // Much faster for bulk deallocation!
+         * @endcode
+         * 
+         * @par Multiple Reset Cycles:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Can reset multiple times
+         * for (int cycle = 0; cycle < 10; ++cycle) {
+         *     // Allocate
+         *     for (int i = 0; i < 50; ++i) {
+         *         slab->alloc(256, false);
+         *     }
+         *     
+         *     EXPECT_EQ(slab->in_use_blocks(), 50);
+         *     
+         *     // Reset
+         *     slab->reset();
+         *     
+         *     EXPECT_EQ(slab->in_use_blocks(), 0);
+         * }
+         * @endcode
+         * 
+         * @par Reset Before/After Statistics:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate
+         * for (int i = 0; i < 20; ++i) {
+         *     slab->alloc(128, false);
+         * }
+         * 
+         * char buffer[2048];
+         * slab->stats(buffer, sizeof(buffer));
+         * std::cout << "Before reset:\n" << buffer << "\n";
+         * 
+         * // Reset
+         * slab->reset();
+         * 
+         * slab->stats(buffer, sizeof(buffer));
+         * std::cout << "After reset:\n" << buffer << "\n";
+         * 
+         * // Shows:
+         * //   Before: In-use blocks: 20, Free blocks: X
+         * //   After:  In-use blocks: 0,  Free blocks: total_blocks
+         * @endcode
+         * 
+         * @par Trim Parameter Ignored:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * for (int i = 0; i < 100; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * size_t capacity = slab->total_blocks();
+         * 
+         * // Both are identical - trim has no effect
+         * slab->reset(false);
+         * EXPECT_EQ(slab->total_blocks(), capacity);
+         * 
+         * slab->reset(true);  // trim=true ignored
+         * EXPECT_EQ(slab->total_blocks(), capacity);  // Still same capacity
+         * @endcode
+         * 
+         * @see return_element() Free individual object
+         * @see ~SlabAllocator() Destructor that frees all pages
+         */
+        bool reset(bool trim = false) override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Save allocator state (not supported)
+         * 
+         * @return Always returns nullptr
+         * 
+         * @details SlabAllocator does not support checkpoint/restore functionality.
+         *          This method exists only for base class interface compatibility
+         *          and always returns nullptr.
+         * 
+         *          **Why Not Supported:**
+         *          Slab allocators manage intrusive free lists with pointers embedded
+         *          in freed slots. These pointers cannot be meaningfully saved and
+         *          restored without complex serialization. Additionally, slabs are
+         *          typically used for short-lived allocations where checkpointing
+         *          doesn't provide value.
+         * 
+         *          **Alternatives:**
+         *          - Use reset() for bulk deallocation instead of restore()
+         *          - Manually track allocations if you need to revert state
+         *          - Use BuddyAllocator if you need checkpoint support
+         * 
+         * @note This method always returns nullptr. It exists only to satisfy the
+         *       base Allocator interface.
+         * 
+         * @note Calling this method has no side effects. The slab state is unchanged.
+         * 
+         * @note Do not attempt to pass the return value to restore(). It will always
+         *       be nullptr and restore() will always fail.
+         * 
+         * @par Usage (Always Fails):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate something
+         * auto ptr = slab->alloc(256, false);
+         * 
+         * // Try to save state
+         * void* checkpoint = slab->save();
+         * 
+         * // Always nullptr
+         * EXPECT_EQ(checkpoint, nullptr);
+         * @endcode
+         * 
+         * @par Not Supported Pattern:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate some objects
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 10; ++i) {
+         *     ptrs.push_back(slab->alloc(128, false).value());
+         * }
+         * 
+         * // This pattern doesn't work with slab allocators
+         * void* checkpoint = slab->save();  // Returns nullptr
+         * 
+         * // Allocate more
+         * for (int i = 0; i < 10; ++i) {
+         *     ptrs.push_back(slab->alloc(128, false).value());
+         * }
+         * 
+         * // Cannot restore
+         * bool ok = slab->restore(checkpoint);  // Always fails
+         * EXPECT_FALSE(ok);
+         * @endcode
+         * 
+         * @par Alternative - Manual Tracking:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // If you need to revert state, track allocations manually
+         * std::vector<void*> checkpoint_ptrs;
+         * 
+         * // Phase 1: Initial allocations
+         * for (int i = 0; i < 5; ++i) {
+         *     auto ptr = slab->alloc(256, false).value();
+         *     checkpoint_ptrs.push_back(ptr);
+         * }
+         * 
+         * // Phase 2: Tentative allocations
+         * std::vector<void*> tentative;
+         * for (int i = 0; i < 10; ++i) {
+         *     tentative.push_back(slab->alloc(256, false).value());
+         * }
+         * 
+         * // "Restore" by freeing tentative allocations
+         * for (void* ptr : tentative) {
+         *     slab->return_element(ptr);
+         * }
+         * 
+         * // Back to checkpoint state
+         * @endcode
+         * 
+         * @par Alternative - Use reset():
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Instead of checkpoint/restore, use reset()
+         * 
+         * // Work cycle 1
+         * for (int i = 0; i < 20; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * slab->reset();  // Clear everything
+         * 
+         * // Work cycle 2
+         * for (int i = 0; i < 30; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * slab->reset();  // Clear everything again
+         * @endcode
+         * 
+         * @par Why Checkpointing Doesn't Work:
+         * @code{.cpp}
+         * // Conceptual example of why save/restore is hard for slabs:
+         * 
+         * // State 1: Allocate 3 objects
+         * auto ptr1 = slab->alloc(256, false).value();  // Slot A
+         * auto ptr2 = slab->alloc(256, false).value();  // Slot B
+         * auto ptr3 = slab->alloc(256, false).value();  // Slot C
+         * 
+         * // Free list: Slot D -> Slot E -> ...
+         * 
+         * // Now we want to "checkpoint" - what to save?
+         * // - Which slots are allocated? (ptr1, ptr2, ptr3)
+         * // - Free list structure? (intrusive pointers in freed slots)
+         * // - But slots can be reused, moved around...
+         * 
+         * // Free ptr2
+         * slab->return_element(ptr2);
+         * // Free list: Slot B -> Slot D -> Slot E -> ...
+         * 
+         * // To restore, we'd need to:
+         * // - Know Slot B was freed after checkpoint
+         * // - Reconstruct exact free list state
+         * // - Mark ptr1, ptr3 as allocated
+         * // This is complex and not worth it for slab use cases
+         * @endcode
+         * 
+         * @see restore() Always returns false
+         * @see reset() Bulk deallocation alternative
+         */
         void* save() const override { return nullptr; }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Restore allocator state (not supported)
+         * 
+         * @param checkpoint Ignored (present for interface compatibility)
+         * 
+         * @return Always returns false
+         * 
+         * @details SlabAllocator does not support checkpoint/restore functionality.
+         *          This method exists only for base class interface compatibility
+         *          and always returns false.
+         * 
+         *          **Why Not Supported:**
+         *          Since save() always returns nullptr, there is no valid checkpoint
+         *          to restore. The intrusive free list structure makes meaningful
+         *          checkpointing impractical for slab allocators.
+         * 
+         *          **Behavior:**
+         *          This method does nothing and always returns false, regardless of
+         *          the checkpoint parameter value. The slab state is unchanged.
+         * 
+         * @note This method always returns false. It exists only to satisfy the
+         *       base Allocator interface.
+         * 
+         * @note The checkpoint parameter is completely ignored. Any value (including
+         *       nullptr) will result in the same behavior: no-op and return false.
+         * 
+         * @note Calling this method has no side effects. The slab state is unchanged.
+         * 
+         * @par Usage (Always Fails):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate something
+         * auto ptr = slab->alloc(256, false);
+         * 
+         * // Try to save and restore
+         * void* checkpoint = slab->save();  // Returns nullptr
+         * 
+         * // More allocations...
+         * auto ptr2 = slab->alloc(256, false);
+         * 
+         * // Try to restore
+         * bool ok = slab->restore(checkpoint);
+         * 
+         * // Always fails
+         * EXPECT_FALSE(ok);
+         * 
+         * // State is unchanged - both allocations still valid
+         * EXPECT_EQ(slab->in_use_blocks(), 2);
+         * @endcode
+         * 
+         * @par All Parameter Values Fail:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // All of these fail
+         * EXPECT_FALSE(slab->restore(nullptr));
+         * 
+         * void* fake_checkpoint = reinterpret_cast<void*>(0x12345678);
+         * EXPECT_FALSE(slab->restore(fake_checkpoint));
+         * 
+         * void* some_ptr = slab->alloc(128, false).value();
+         * EXPECT_FALSE(slab->restore(some_ptr));
+         * 
+         * // None of these calls affect the slab state
+         * @endcode
+         * 
+         * @par Not a Replacement for Free:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // This does NOT free the allocation
+         * slab->restore(nullptr);
+         * 
+         * // ptr is still allocated
+         * EXPECT_EQ(slab->in_use_blocks(), 1);
+         * 
+         * // Must use return_element() to free
+         * slab->return_element(ptr);
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * @endcode
+         * 
+         * @par Use reset() Instead:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // If you want to "restore" to empty state, use reset()
+         * 
+         * // Allocate many objects
+         * for (int i = 0; i < 50; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 50);
+         * 
+         * // "Restore" to empty state
+         * slab->reset();
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * @endcode
+         * 
+         * @see save() Always returns nullptr
+         * @see reset() Bulk deallocation
+         */
         bool restore(void* checkpoint) override { 
             (void)checkpoint; 
             return false; 
         }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Check if pointer is a valid allocation from this slab
+         * 
+         * @param ptr Pointer to validate
+         * 
+         * @return true if ptr is a valid slot from this slab, false otherwise
+         * 
+         * @details Validates whether a pointer points to a valid slot in this slab
+         *          allocator by checking if it belongs to one of the slab's pages
+         *          and is properly aligned to a slot boundary.
+         * 
+         *          **Validation Checks:**
+         *          1. Pointer is not null
+         *          2. Pointer belongs to one of this slab's pages
+         *          3. Pointer is not in the page header region
+         *          4. Pointer is aligned on slot boundary (offset % slot_size == 0)
+         * 
+         *          **Limitations:**
+         *          - Cannot detect use-after-free (freed pointer still validates)
+         *          - Cannot detect double-free
+         *          - Cannot detect never-allocated slots
+         *          - Only checks structural validity, not allocation state
+         * 
+         * @note This is a structural check only. A freed pointer will still return
+         *       true if it's a valid slot location.
+         * 
+         * @note Performance is O(pages) due to page lookup.
+         * 
+         * @par Valid Pointer:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * EXPECT_TRUE(slab->is_ptr(ptr));
+         * 
+         * slab->return_element(ptr);
+         * 
+         * // Still valid (structural check only - can't detect freed state)
+         * EXPECT_TRUE(slab->is_ptr(ptr));
+         * @endcode
+         * 
+         * @par Invalid Pointers:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Null
+         * EXPECT_FALSE(slab->is_ptr(nullptr));
+         * 
+         * // External pointer
+         * void* external = malloc(256);
+         * EXPECT_FALSE(slab->is_ptr(external));
+         * free(external);
+         * 
+         * // Misaligned (offset into slot)
+         * auto ptr = slab->alloc(256, false).value();
+         * uint8_t* misaligned = static_cast<uint8_t*>(ptr) + 10;
+         * EXPECT_FALSE(slab->is_ptr(misaligned));
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Cross-Slab Check:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab1 = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * auto slab2 = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr1 = slab1->alloc(256, false).value();
+         * 
+         * // Valid in slab1
+         * EXPECT_TRUE(slab1->is_ptr(ptr1));
+         * 
+         * // Invalid in slab2 (different slab)
+         * EXPECT_FALSE(slab2->is_ptr(ptr1));
+         * 
+         * slab1->return_element(ptr1);
+         * @endcode
+         * 
+         * @see is_ptr_sized() Validate with size check
+         * @see return_element() Free pointer (validates internally)
+         */
         bool is_ptr(void* ptr) const override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Check if pointer can hold an allocation of given size
+         * 
+         * @param ptr Pointer to validate
+         * @param bytes Required size in bytes
+         * 
+         * @return true if ptr is valid and can hold bytes, false otherwise
+         * 
+         * @details Validates both pointer validity (via is_ptr()) and size
+         *          compatibility. Since all slots in a slab are the same size,
+         *          this checks if bytes <= obj_size.
+         * 
+         *          **Validation:**
+         *          1. Validate ptr with is_ptr()
+         *          2. Check bytes <= obj_size
+         * 
+         * @note All slots have the same size (obj_size). Any size <= obj_size fits.
+         * 
+         * @note This is still a structural check - cannot detect if ptr is currently
+         *       allocated or freed.
+         * 
+         * @par Valid Size:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Exact size
+         * EXPECT_TRUE(slab->is_ptr_sized(ptr, 256));
+         * 
+         * // Smaller sizes fit
+         * EXPECT_TRUE(slab->is_ptr_sized(ptr, 128));
+         * EXPECT_TRUE(slab->is_ptr_sized(ptr, 1));
+         * 
+         * // Too large
+         * EXPECT_FALSE(slab->is_ptr_sized(ptr, 257));
+         * EXPECT_FALSE(slab->is_ptr_sized(ptr, 512));
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Invalid Pointer:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * void* external = malloc(256);
+         * 
+         * // Pointer not from slab - always false regardless of size
+         * EXPECT_FALSE(slab->is_ptr_sized(external, 256));
+         * EXPECT_FALSE(slab->is_ptr_sized(external, 128));
+         * 
+         * free(external);
+         * @endcode
+         * 
+         * @par Validation Before Use:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * void* ptr = get_pointer_from_somewhere();
+         * size_t needed = 200;
+         * 
+         * if (slab->is_ptr_sized(ptr, needed)) {
+         *     // Safe to use ptr for 200 bytes
+         *     memset(ptr, 0, needed);
+         * } else {
+         *     // Invalid or too small
+         * }
+         * @endcode
+         * 
+         * @see is_ptr() Validate pointer only
+         */
         bool is_ptr_sized(void* ptr, size_t bytes) const override;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Get remaining capacity in bytes
+         * 
+         * @return Number of bytes available for allocation
+         * 
+         * @details Returns the total available capacity (allocated pages) minus
+         *          bytes currently in use. This represents how much can be allocated
+         *          before needing to grow a new page.
+         * 
+         *          Calculated as: (total_blocks × obj_size) - size()
+         * 
+         * @note This is capacity in allocated pages, not total memory available from
+         *       the buddy allocator. Slab may grow beyond this.
+         * 
+         * @par Basic Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Initially: no pages allocated
+         * EXPECT_EQ(slab->remaining(), 0);
+         * 
+         * // First allocation triggers page growth
+         * auto ptr1 = slab->alloc(256, false).value();
+         * 
+         * // Now has capacity (e.g., 15 slots × 256 = 3840 bytes)
+         * // Minus 1 in use (256 bytes)
+         * size_t avail = slab->remaining();
+         * EXPECT_GT(avail, 0);
+         * 
+         * // Allocate more
+         * auto ptr2 = slab->alloc(256, false).value();
+         * 
+         * // Remaining decreases
+         * EXPECT_EQ(slab->remaining(), avail - 256);
+         * 
+         * slab->return_element(ptr1);
+         * slab->return_element(ptr2);
+         * @endcode
+         * 
+         * @par Capacity Tracking:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * for (int i = 0; i < 100; ++i) {
+         *     size_t before = slab->remaining();
+         *     auto ptr = slab->alloc(128, false);
+         *     
+         *     if (ptr.hasValue()) {
+         *         size_t after = slab->remaining();
+         *         
+         *         if (before > 0) {
+         *             // Used existing capacity
+         *             EXPECT_EQ(after, before - 128);
+         *         } else {
+         *             // Grew new page
+         *             EXPECT_GT(after, 0);
+         *         }
+         *     }
+         * }
+         * @endcode
+         * 
+         * @see size() Get bytes in use
+         * @see total_blocks() Get total slot capacity
+         */
         size_t remaining() const noexcept override;  // ADDED: base class requirement
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Get slot stride (internal slot size)
+         * 
+         * @return Size of each slot in bytes
+         * 
+         * @details Returns the actual internal slot size used by the allocator.
+         *          This is >= obj_size and >= sizeof(void*) to accommodate both
+         *          the object and free list linkage.
+         * 
+         *          Slot size is calculated as:
+         *          max(align_up(obj_size, align), align_up(sizeof(Slot), align))
+         * 
+         *          This is the actual memory consumed per allocation, including
+         *          alignment padding and free list overhead.
+         * 
+         * @note stride() >= obj_size (user-visible size)
+         * @note stride() is a multiple of the slab's alignment
+         * @note stride() >= sizeof(void*) for free list linkage
+         * 
+         * @par Object vs Slot Size:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // 100-byte objects, 64-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 100, 64, 0).value();
+         * 
+         * // obj_size = 100 (user-visible)
+         * // stride = 128 (actual slot size: next multiple of 64 >= 100)
+         * EXPECT_EQ(slab->stride(), 128);
+         * 
+         * // stride is multiple of alignment
+         * EXPECT_EQ(slab->stride() % 64, 0);
+         * @endcode
+         * 
+         * @par Tiny Objects (Free List Overhead):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // 8-byte objects, 8-byte alignment
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 8, 8, 0).value();
+         * 
+         * // obj_size = 8
+         * // But stride >= sizeof(void*) (typically 8 on 64-bit)
+         * // So stride = 8 (satisfies both requirements)
+         * size_t stride = slab->stride();
+         * EXPECT_GE(stride, 8);
+         * EXPECT_GE(stride, sizeof(void*));
+         * @endcode
+         * 
+         * @par Memory Overhead Calculation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 100, 0, 0).value();
+         * 
+         * // Trigger page allocation
+         * slab->alloc(100, false);
+         * 
+         * size_t obj_size = 100;              // User size
+         * size_t stride = slab->stride();     // Actual slot size
+         * size_t overhead_per_obj = stride - obj_size;
+         * 
+         * std::cout << "Overhead per object: " << overhead_per_obj << " bytes\n";
+         * 
+         * size_t total_slots = slab->total_blocks();
+         * size_t total_overhead = overhead_per_obj * total_slots;
+         * 
+         * std::cout << "Total alignment overhead: " << total_overhead << " bytes\n";
+         * @endcode
+         * 
+         * @see total_blocks() Get number of slots
+         */
         size_t stride() const noexcept { return slot_size_; }
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Get total slot capacity (all allocated pages)
+         * 
+         * @return Total number of slots across all pages
+         * 
+         * @details Returns the total number of slots available across all allocated
+         *          pages. This represents the maximum number of objects that can be
+         *          allocated before needing to grow a new page.
+         * 
+         *          Calculated as: page_count × objs_per_slab
+         * 
+         *          This includes both in-use and free slots.
+         * 
+         * @note Returns 0 if no pages allocated yet (lazy allocation)
+         * @note Increases when new pages are allocated (via grow())
+         * @note Never decreases (pages not freed until slab destruction)
+         * 
+         * @par Initial State (No Pages):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // No pages allocated yet
+         * EXPECT_EQ(slab->total_blocks(), 0);
+         * 
+         * // First allocation triggers page growth
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Now has capacity (e.g., 15 slots per page)
+         * EXPECT_GT(slab->total_blocks(), 0);
+         * 
+         * slab->return_element(ptr);
+         * @endcode
+         * 
+         * @par Capacity Growth:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * 
+         * // Small page to demonstrate growth
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 1024).value();
+         * 
+         * EXPECT_EQ(slab->total_blocks(), 0);
+         * 
+         * // First allocation
+         * slab->alloc(256, false);
+         * size_t first_capacity = slab->total_blocks();
+         * EXPECT_GT(first_capacity, 0);  // e.g., 3 slots
+         * 
+         * // Allocate beyond first page capacity
+         * for (int i = 1; i < 10; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * // Should have grown
+         * EXPECT_GT(slab->total_blocks(), first_capacity);
+         * @endcode
+         * 
+         * @par Utilization Calculation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate some objects
+         * for (int i = 0; i < 10; ++i) {
+         *     slab->alloc(128, false);
+         * }
+         * 
+         * size_t total = slab->total_blocks();
+         * size_t in_use = slab->in_use_blocks();
+         * size_t free = slab->free_blocks();
+         * 
+         * // Verify accounting
+         * EXPECT_EQ(total, in_use + free);
+         * 
+         * // Calculate utilization
+         * if (total > 0) {
+         *     double util = 100.0 * in_use / total;
+         *     std::cout << "Utilization: " << util << "%\n";
+         * }
+         * @endcode
+         * 
+         * @par Capacity Never Decreases:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate many
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 100; ++i) {
+         *     ptrs.push_back(slab->alloc(256, false).value());
+         * }
+         * 
+         * size_t capacity_peak = slab->total_blocks();
+         * 
+         * // Free all
+         * for (void* ptr : ptrs) {
+         *     slab->return_element(ptr);
+         * }
+         * 
+         * // Capacity unchanged (pages retained)
+         * EXPECT_EQ(slab->total_blocks(), capacity_peak);
+         * 
+         * // But nothing in use
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * @endcode
+         * 
+         * @see in_use_blocks() Get allocated slots
+         * @see free_blocks() Get available slots
+         * @see stride() Get bytes per slot
+         * @see remaining() Get remaining bytes
+         */
         size_t total_blocks() const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Get number of free (available) slots
+         * 
+         * @return Number of slots currently in the free list
+         * 
+         * @details Returns the count of slots available for allocation by walking
+         *          the free list and counting nodes.
+         * 
+         *          **Performance:** O(free_blocks) - walks entire free list
+         * 
+         *          **Verification:** Should equal (total_blocks - in_use_blocks).
+         *          If not, indicates corruption.
+         * 
+         * @note This is an O(n) operation where n = number of free slots. For
+         *       programmatic use, consider caching the result.
+         * 
+         * @par Basic Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Initially: no pages, no free blocks
+         * EXPECT_EQ(slab->free_blocks(), 0);
+         * 
+         * // First allocation triggers page growth
+         * auto ptr = slab->alloc(256, false).value();
+         * 
+         * // Now has free slots (e.g., 15 total - 1 used = 14 free)
+         * EXPECT_GT(slab->free_blocks(), 0);
+         * 
+         * // Free the allocation
+         * slab->return_element(ptr);
+         * 
+         * // All slots free again
+         * EXPECT_EQ(slab->free_blocks(), slab->total_blocks());
+         * @endcode
+         * 
+         * @par Tracking Free Slots:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate several
+         * std::vector<void*> ptrs;
+         * for (int i = 0; i < 5; ++i) {
+         *     ptrs.push_back(slab->alloc(128, false).value());
+         * }
+         * 
+         * size_t free_after_alloc = slab->free_blocks();
+         * 
+         * // Free 3
+         * for (int i = 0; i < 3; ++i) {
+         *     slab->return_element(ptrs[i]);
+         * }
+         * 
+         * // 3 more free
+         * EXPECT_EQ(slab->free_blocks(), free_after_alloc + 3);
+         * 
+         * // Cleanup
+         * for (int i = 3; i < 5; ++i) {
+         *     slab->return_element(ptrs[i]);
+         * }
+         * @endcode
+         * 
+         * @par Verification (Corruption Detection):
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate some
+         * for (int i = 0; i < 10; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * size_t total = slab->total_blocks();
+         * size_t in_use = slab->in_use_blocks();
+         * size_t free = slab->free_blocks();
+         * 
+         * // Should always hold
+         * EXPECT_EQ(total, in_use + free);
+         * 
+         * // If mismatch, indicates corruption
+         * if (total != in_use + free) {
+         *     std::cerr << "CORRUPTION DETECTED!\n";
+         * }
+         * @endcode
+         * 
+         * @par After Reset:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate many
+         * for (int i = 0; i < 50; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * size_t total = slab->total_blocks();
+         * 
+         * // Some free, some used
+         * EXPECT_LT(slab->free_blocks(), total);
+         * 
+         * // Reset
+         * slab->reset();
+         * 
+         * // All free
+         * EXPECT_EQ(slab->free_blocks(), total);
+         * @endcode
+         * 
+         * @see total_blocks() Get total capacity
+         * @see in_use_blocks() Get allocated slots
+         */
         size_t free_blocks() const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Get number of allocated (in-use) slots
+         * 
+         * @return Number of slots currently allocated to users
+         * 
+         * @details Returns the count of slots currently in use, calculated from
+         *          the tracked byte usage divided by object size.
+         * 
+         *          Calculated as: size() / obj_size
+         * 
+         *          **Performance:** O(1) - simple division of tracked value
+         * 
+         * @note This is O(1) unlike free_blocks() which is O(n).
+         * 
+         * @par Basic Usage:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Initially: nothing allocated
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * 
+         * // Allocate
+         * auto ptr1 = slab->alloc(256, false).value();
+         * EXPECT_EQ(slab->in_use_blocks(), 1);
+         * 
+         * auto ptr2 = slab->alloc(256, false).value();
+         * EXPECT_EQ(slab->in_use_blocks(), 2);
+         * 
+         * // Free one
+         * slab->return_element(ptr1);
+         * EXPECT_EQ(slab->in_use_blocks(), 1);
+         * 
+         * // Free both
+         * slab->return_element(ptr2);
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * @endcode
+         * 
+         * @par Tracking Allocations:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * std::vector<void*> ptrs;
+         * 
+         * // Allocate 20
+         * for (int i = 0; i < 20; ++i) {
+         *     ptrs.push_back(slab->alloc(128, false).value());
+         *     EXPECT_EQ(slab->in_use_blocks(), i + 1);
+         * }
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 20);
+         * 
+         * // Free all
+         * for (void* ptr : ptrs) {
+         *     slab->return_element(ptr);
+         * }
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * @endcode
+         * 
+         * @par Utilization Calculation:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate some
+         * for (int i = 0; i < 10; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * size_t total = slab->total_blocks();
+         * size_t in_use = slab->in_use_blocks();
+         * 
+         * if (total > 0) {
+         *     double utilization = 100.0 * in_use / total;
+         *     std::cout << "Utilization: " << utilization << "%\n";
+         *     
+         *     if (utilization > 90.0) {
+         *         std::cout << "Warning: High utilization\n";
+         *     }
+         * }
+         * @endcode
+         * 
+         * @par Invariants:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 128, 0, 0).value();
+         * 
+         * // Allocate some
+         * for (int i = 0; i < 15; ++i) {
+         *     slab->alloc(128, false);
+         * }
+         * 
+         * size_t in_use = slab->in_use_blocks();
+         * size_t bytes = slab->size();
+         * 
+         * // Invariant: in_use_blocks × obj_size == size()
+         * EXPECT_EQ(in_use * 128, bytes);
+         * 
+         * // Invariant: in_use <= total
+         * EXPECT_LE(in_use, slab->total_blocks());
+         * @endcode
+         * 
+         * @par After Reset:
+         * @code{.cpp}
+         * auto buddy = BuddyAllocator::Heap(1024 * 1024, 64, 0).value();
+         * auto slab = SlabAllocator::WithBuddy(*buddy, 256, 0, 0).value();
+         * 
+         * // Allocate many
+         * for (int i = 0; i < 50; ++i) {
+         *     slab->alloc(256, false);
+         * }
+         * 
+         * EXPECT_EQ(slab->in_use_blocks(), 50);
+         * 
+         * // Reset
+         * slab->reset();
+         * 
+         * // Nothing in use
+         * EXPECT_EQ(slab->in_use_blocks(), 0);
+         * EXPECT_EQ(slab->size(), 0);
+         * @endcode
+         * 
+         * @see total_blocks() Get total capacity
+         * @see free_blocks() Get available slots
+         * @see size() Get bytes in use (in_use_blocks × obj_size)
+         */
         size_t in_use_blocks() const noexcept;
     };
 // ================================================================================ 
 // ================================================================================ 
 
+    /**
+     * @brief Destroy and deallocate a SlabAllocator instance
+     * 
+     * @param slab SlabAllocator to destroy (may be nullptr)
+     * 
+     * @details Implements the custom deletion logic for SlabAllocator:
+     *          1. Saves buddy pointer before destruction
+     *          2. Calls destructor to free pages
+     *          3. Frees slab structure back to buddy allocator
+     * 
+     *          This ensures the SlabAllocator memory is returned to the
+     *          correct allocator (buddy, not operator delete).
+     * 
+     * @note Called automatically by UniquePtr<SlabAllocator, SlabDeleter>
+     *       when the pointer goes out of scope or is reset.
+     */
     inline void SlabDeleter::operator()(SlabAllocator* slab) const noexcept {
         if (!slab) return;
         

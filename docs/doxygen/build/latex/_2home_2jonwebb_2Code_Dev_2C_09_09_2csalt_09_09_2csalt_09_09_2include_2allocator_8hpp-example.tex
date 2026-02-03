@@ -247,14 +247,26 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{namespacecslt_acb97e0e477a841d7b9cc6d2982f3e78d}{next\_pow2}}(\textcolor{keywordtype}{size\_t} x) \{}
-\DoxyCodeLine{        \textcolor{keywordflow}{if} (x <= 1) \textcolor{keywordflow}{return} x ? 1 : 0;}
-\DoxyCodeLine{        \textcolor{keywordflow}{if} (x > (SIZE\_MAX >> 1)) \textcolor{keywordflow}{return} 0;}
-\DoxyCodeLine{        x-\/-\/;}
-\DoxyCodeLine{        \textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} s = 1; s < 8 * \textcolor{keyword}{sizeof}(size\_t); s <<= 1) \{}
-\DoxyCodeLine{            x |= x >> s;}
+\DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{namespacecslt_a82dac9d13bcd6ec525fdf92686383736}{next\_pow2}}(\textcolor{keywordtype}{size\_t} x) noexcept \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (x == 0) \textcolor{keywordflow}{return} 0;}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (\mbox{\hyperlink{namespacecslt_adb04c13835953770d190921376af439f}{is\_pow2}}(x)) \textcolor{keywordflow}{return} x;}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Check if x is too large to round up to a power of 2}}
+\DoxyCodeLine{        \textcolor{comment}{// The largest power of 2 that fits in size\_t is SIZE\_MAX / 2 + 1}}
+\DoxyCodeLine{        \textcolor{comment}{// (which is 0x8000... with only the high bit set)}}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (x > (SIZE\_MAX / 2 + 1)) \{}
+\DoxyCodeLine{            \textcolor{keywordflow}{return} 0;  \textcolor{comment}{// Overflow -\/ no power of 2 can represent this}}
 \DoxyCodeLine{        \}}
-\DoxyCodeLine{        \textcolor{keywordflow}{return} x + 1;}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} power = 1;}
+\DoxyCodeLine{        \textcolor{keywordflow}{while} (power < x) \{}
+\DoxyCodeLine{            \textcolor{comment}{// Check overflow before shifting}}
+\DoxyCodeLine{            \textcolor{keywordflow}{if} (power > SIZE\_MAX / 2) \{}
+\DoxyCodeLine{                \textcolor{keywordflow}{return} 0;  \textcolor{comment}{// Would overflow on next shift}}
+\DoxyCodeLine{            \}}
+\DoxyCodeLine{            power <<= 1;}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{        \textcolor{keywordflow}{return} power;}
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
@@ -779,7 +791,7 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{        \textcolor{keyword}{static} uint32\_t ilog2(\textcolor{keywordtype}{size\_t} x);}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
-\DoxyCodeLine{        \textcolor{keyword}{static} \textcolor{keywordtype}{size\_t} next\_pow2(\textcolor{keywordtype}{size\_t} x);}
+\DoxyCodeLine{        \textcolor{comment}{//static size\_t next\_pow2(size\_t x);}}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{        uint32\_t order\_to\_level(uint32\_t order) \textcolor{keyword}{const};}
@@ -903,30 +915,158 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{ArenaDeleter::operator()}}(ArenaAllocator* arena) \textcolor{keyword}{const} noexcept \{}
-\DoxyCodeLine{            \textcolor{keywordflow}{if} (!arena) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (!arena) \textcolor{keywordflow}{return};}
 \DoxyCodeLine{}
-\DoxyCodeLine{            \textcolor{comment}{// Capture teardown metadata BEFORE destructor}}
-\DoxyCodeLine{            BuddyAllocator* buddy = arena-\/>buddy\_owner\_;}
-\DoxyCodeLine{            \textcolor{keywordtype}{size\_t} backing\_bytes  = arena-\/>backing\_bytes\_;}
+\DoxyCodeLine{        \textcolor{comment}{// Capture teardown metadata BEFORE destructor}}
+\DoxyCodeLine{        BuddyAllocator* buddy = arena-\/>buddy\_owner\_;}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} backing\_bytes  = arena-\/>backing\_bytes\_;}
 \DoxyCodeLine{}
-\DoxyCodeLine{            \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} type = arena-\/>memory\_type();}
-\DoxyCodeLine{            \textcolor{keywordtype}{bool} owns    = arena-\/>owns\_memory();}
+\DoxyCodeLine{        \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}} type = arena-\/>memory\_type();}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} owns    = arena-\/>owns\_memory();}
 \DoxyCodeLine{}
-\DoxyCodeLine{            \textcolor{comment}{// Run destructor first (frees extra chunks if any)}}
-\DoxyCodeLine{            arena-\/>\string~ArenaAllocator();}
+\DoxyCodeLine{        \textcolor{comment}{// Run destructor first (frees extra chunks if any)}}
+\DoxyCodeLine{        arena-\/>\string~ArenaAllocator();}
 \DoxyCodeLine{}
-\DoxyCodeLine{            \textcolor{comment}{// Buddy-\/backed arena: return entire region to buddy, NOT operator delete}}
-\DoxyCodeLine{            \textcolor{keywordflow}{if} (buddy \&\& backing\_bytes) \{}
-\DoxyCodeLine{                buddy-\/>return\_element(arena, backing\_bytes, \textcolor{keyword}{alignof}(ArenaAllocator));}
-\DoxyCodeLine{                \textcolor{keywordflow}{return};}
-\DoxyCodeLine{            \}}
-\DoxyCodeLine{}
-\DoxyCodeLine{            \textcolor{comment}{// Heap arena: free base allocation}}
-\DoxyCodeLine{            \textcolor{keywordflow}{if} (type == \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}} \&\& owns) \{}
-\DoxyCodeLine{                ::operator \textcolor{keyword}{delete}(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(arena));}
-\DoxyCodeLine{            \}}
+\DoxyCodeLine{        \textcolor{comment}{// Buddy-\/backed arena: return entire region to buddy, NOT operator delete}}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (buddy \&\& backing\_bytes) \{}
+\DoxyCodeLine{            buddy-\/>return\_element(arena, backing\_bytes, \textcolor{keyword}{alignof}(ArenaAllocator));}
+\DoxyCodeLine{            \textcolor{keywordflow}{return};}
 \DoxyCodeLine{        \}}
 \DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{comment}{// Heap arena: free base allocation}}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (type == \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}} \&\& owns) \{}
+\DoxyCodeLine{            ::operator \textcolor{keyword}{delete}(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(arena));}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{class }SlabAllocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{struct }SlabDeleter \{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1SlabDeleter_afd2842a50068f47e3d8a5eda3ae0bb14}{operator()}}(SlabAllocator* slab) \textcolor{keyword}{const} noexcept;}
+\DoxyCodeLine{    \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{class }SlabAllocator : \textcolor{keyword}{public} Allocator \{}
+\DoxyCodeLine{        \textcolor{keyword}{friend} \textcolor{keyword}{struct }\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab69b104653fffd31c3dbad0d2b021888}{SlabDeleter}};}
+\DoxyCodeLine{    \textcolor{keyword}{private}:}
+\DoxyCodeLine{        BuddyAllocator* buddy\_;               \textcolor{comment}{// backing buddy allocator (non-\/owning)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} obj\_size\_;                     \textcolor{comment}{// user-\/visible object size}}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} slot\_size\_;                    \textcolor{comment}{// internal stride >= obj\_size and >= sizeof(Slot)}}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} align\_;                        \textcolor{comment}{// slot alignment (pow2)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} slab\_bytes\_;                   \textcolor{comment}{// per-\/page allocation size}}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} page\_hdr\_bytes\_;               \textcolor{comment}{// aligned sizeof(Page)}}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} objs\_per\_slab\_;                \textcolor{comment}{// slots per page}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{comment}{// Tracking}}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} len\_bytes\_;                    \textcolor{comment}{// logical payload bytes in use (obj\_size * live objects)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{struct }Slot \{ Slot* next; \};          \textcolor{comment}{// intrusive freelist node}}
+\DoxyCodeLine{        \textcolor{keyword}{struct }Page \{ Page* next; \};          \textcolor{comment}{// page header at beginning of each page}}
+\DoxyCodeLine{                                              }
+\DoxyCodeLine{        Page* pages\_;}
+\DoxyCodeLine{        Slot* free\_list\_;}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{explicit} SlabAllocator(BuddyAllocator\& buddy) noexcept;}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{static} \textcolor{keywordtype}{size\_t} align\_up(\textcolor{keywordtype}{size\_t} x, \textcolor{keywordtype}{size\_t} a) noexcept;}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} grow\_();                         \textcolor{comment}{// allocate a page and populate free list}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Page* find\_page\_(\textcolor{keyword}{const} \textcolor{keywordtype}{void}* ptr) \textcolor{keyword}{const} noexcept;}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{    \textcolor{keyword}{public}:}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1SlabAllocator_a9bdbc421069a66ffa2507d3b2c6036aa}{\string~SlabAllocator}}() noexcept \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keyword}{static} Expected<cslt::UniquePtr<SlabAllocator, SlabDeleter>>}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{WithBuddy}}(BuddyAllocator\& buddy,}
+\DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} obj\_size,}
+\DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} align = 0,}
+\DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} slab\_bytes\_hint = 0);}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{size\_t} alignment, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1SlabAllocator_abf0f0a5c09931dede33c88279cc06f55}{realloc}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} old\_bytes, \textcolor{keywordtype}{size\_t} new\_bytes, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1SlabAllocator_ad9baaf5d6726bbb33a3986b57e91b7be}{realloc\_aligned}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} old\_bytes, \textcolor{keywordtype}{size\_t} new\_bytes,}
+\DoxyCodeLine{                                        \textcolor{keywordtype}{size\_t} alignment, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\_element}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} bytes = 0, \textcolor{keywordtype}{size\_t} alignment = 0) \textcolor{keyword}{override};  \textcolor{comment}{// FIXED: defaults}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a2b1dc0c2ce12e87b6043471987bcb18a}{stats}}(\textcolor{keywordtype}{char}* buffer, \textcolor{keywordtype}{size\_t} buffer\_size) \textcolor{keyword}{const override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset}}(\textcolor{keywordtype}{bool} trim = \textcolor{keyword}{false}) \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{void}* \mbox{\hyperlink{classcslt_1_1SlabAllocator_a63abdf25352d257aea1918a784cc7d02}{save}}()\textcolor{keyword}{ const override }\{ \textcolor{keywordflow}{return} \textcolor{keyword}{nullptr}; \}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}{restore}}(\textcolor{keywordtype}{void}* checkpoint)\textcolor{keyword}{ override }\{ }
+\DoxyCodeLine{            (void)checkpoint; }
+\DoxyCodeLine{            \textcolor{keywordflow}{return} \textcolor{keyword}{false}; }
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}{is\_ptr}}(\textcolor{keywordtype}{void}* ptr) \textcolor{keyword}{const override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{bool} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8c89fc6f199a228390361a74f687e252}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}* ptr, \textcolor{keywordtype}{size\_t} bytes) \textcolor{keyword}{const override};}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}{remaining}}() \textcolor{keyword}{const} noexcept \textcolor{keyword}{override};  \textcolor{comment}{// ADDED: base class requirement}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}}() \textcolor{keyword}{const} noexcept \{ \textcolor{keywordflow}{return} slot\_size\_; \}}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\_blocks}}() \textcolor{keyword}{const} noexcept;}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}{free\_blocks}}() \textcolor{keyword}{const} noexcept;}
+\DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}{in\_use\_blocks}}() \textcolor{keyword}{const} noexcept;}
+\DoxyCodeLine{    \};}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{inline} \textcolor{keywordtype}{void} \mbox{\hyperlink{structcslt_1_1SlabDeleter_afd2842a50068f47e3d8a5eda3ae0bb14}{SlabDeleter::operator()}}(SlabAllocator* slab) \textcolor{keyword}{const} noexcept \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (!slab) \textcolor{keywordflow}{return};}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Save the buddy pointer before calling destructor}}
+\DoxyCodeLine{        BuddyAllocator* buddy = slab-\/>buddy\_;}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Calculate the size that was allocated for the slab structure}}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} slab\_struct\_bytes = SlabAllocator::align\_up(\textcolor{keyword}{sizeof}(SlabAllocator), }
+\DoxyCodeLine{                                                            \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Call destructor to free pages}}
+\DoxyCodeLine{        slab-\/>\string~SlabAllocator();}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Now free the SlabAllocator structure itself back to buddy}}
+\DoxyCodeLine{        \textcolor{comment}{// CRITICAL: Use return\_element, NOT operator delete!}}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (buddy) \{}
+\DoxyCodeLine{            buddy-\/>return\_element(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(slab), }
+\DoxyCodeLine{                                 slab\_struct\_bytes, }
+\DoxyCodeLine{                                 \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \} }
 \DoxyCodeLine{\textcolor{preprocessor}{\#endif }\textcolor{comment}{/* ARENA\_ENABLE\_DYNAMIC */}\textcolor{preprocessor}{}}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================}}

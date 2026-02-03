@@ -1,0 +1,3289 @@
+\hypertarget{classcslt_1_1SlabAllocator}{}\doxysection{cslt\+::Slab\+Allocator Class Reference}
+\label{classcslt_1_1SlabAllocator}\index{cslt::SlabAllocator@{cslt::SlabAllocator}}
+
+
+Fixed-\/size object allocator using slab allocation with buddy backing.  
+
+
+
+
+{\ttfamily \#include $<$allocator.\+hpp$>$}
+
+
+
+Inheritance diagram for cslt\+::Slab\+Allocator\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{classcslt_1_1SlabAllocator__inherit__graph}
+\end{center}
+\end{figure}
+
+
+Collaboration diagram for cslt\+::Slab\+Allocator\+:\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=184pt]{classcslt_1_1SlabAllocator__coll__graph}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a9bdbc421069a66ffa2507d3b2c6036aa}{$\sim$\+Slab\+Allocator}} () noexcept override
+\begin{DoxyCompactList}\small\item\em Destructor -\/ Frees all slab pages back to buddy allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc}} (size\+\_\+t bytes, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Allocate a fixed-\/size object from the slab. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}{alloc\+\_\+aligned}} (size\+\_\+t bytes, size\+\_\+t alignment, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Allocate a fixed-\/size object with alignment verification. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1SlabAllocator_abf0f0a5c09931dede33c88279cc06f55}{realloc}} (void $\ast$ptr, size\+\_\+t old\+\_\+bytes, size\+\_\+t new\+\_\+bytes, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Realloc for slab allocator (limited -\/ same size only) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ void $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1SlabAllocator_ad9baaf5d6726bbb33a3986b57e91b7be}{realloc\+\_\+aligned}} (void $\ast$ptr, size\+\_\+t old\+\_\+bytes, size\+\_\+t new\+\_\+bytes, size\+\_\+t alignment, bool zeroed=false) override
+\begin{DoxyCompactList}\small\item\em Realloc with alignment for slab allocator (limited -\/ same size only) \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element}} (void $\ast$ptr, size\+\_\+t bytes=0, size\+\_\+t alignment=0) override
+\begin{DoxyCompactList}\small\item\em Free an object back to the slab allocator. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1SlabAllocator_a2b1dc0c2ce12e87b6043471987bcb18a}{stats}} (char $\ast$buffer, size\+\_\+t buffer\+\_\+size) const override
+\begin{DoxyCompactList}\small\item\em Generate diagnostic statistics report. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset}} (bool trim=false) override
+\begin{DoxyCompactList}\small\item\em Bulk free all allocations and rebuild free list. \end{DoxyCompactList}\item 
+void $\ast$ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a63abdf25352d257aea1918a784cc7d02}{save}} () const override
+\begin{DoxyCompactList}\small\item\em Save allocator state (not supported) \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}{restore}} (void $\ast$checkpoint) override
+\begin{DoxyCompactList}\small\item\em Restore allocator state (not supported) \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}{is\+\_\+ptr}} (void $\ast$ptr) const override
+\begin{DoxyCompactList}\small\item\em Check if pointer is a valid allocation from this slab. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8c89fc6f199a228390361a74f687e252}{is\+\_\+ptr\+\_\+sized}} (void $\ast$ptr, size\+\_\+t bytes) const override
+\begin{DoxyCompactList}\small\item\em Check if pointer can hold an allocation of given size. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}{remaining}} () const noexcept override
+\begin{DoxyCompactList}\small\item\em Get remaining capacity in bytes. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get slot stride (internal slot size) \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\+\_\+blocks}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get total slot capacity (all allocated pages) \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}{free\+\_\+blocks}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get number of free (available) slots. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}{in\+\_\+use\+\_\+blocks}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get number of allocated (in-\/use) slots. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}}, \mbox{\hyperlink{structcslt_1_1SlabDeleter}{Slab\+Deleter}} $>$ $>$ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{With\+Buddy}} (\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&buddy, size\+\_\+t obj\+\_\+size, size\+\_\+t align=0, size\+\_\+t slab\+\_\+bytes\+\_\+hint=0)
+\begin{DoxyCompactList}\small\item\em Factory method to create a slab allocator backed by a buddy allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab69b104653fffd31c3dbad0d2b021888}{Slab\+Deleter}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Additional Inherited Members}
+
+
+\doxysubsection{Detailed Description}
+Fixed-\/size object allocator using slab allocation with buddy backing. 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} provides O(1) allocation and deallocation for fixed-\/size objects by pre-\/carving memory pages (slabs) into equally-\/sized slots. All slots within a slab have identical size and alignment, making it ideal for allocating many instances of the same type. This allocator is implemented on the heap. In order to drive compliance with MISRA standards, this class can be ommitted from compilation with the {\ttfamily STATIC ONLY} flag.
+
+\begin{DoxyNote}{Note}
+This class is conditionally compiled. If STATIC\+\_\+\+ONLY is defined, \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} will not be available.
+\end{DoxyNote}
+{\bfseries{Key Features\+:}}
+\begin{DoxyItemize}
+\item O(1) allocation and deallocation (pop/push from free list)
+\item Zero fragmentation (all objects same size)
+\item Configurable alignment support
+\item Lazy page allocation (grows on demand)
+\item Backed by \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} for page management
+\end{DoxyItemize}
+
+{\bfseries{Limitations\+:}}
+\begin{DoxyItemize}
+\item Only supports single fixed size per allocator instance
+\item Cannot resize objects (realloc only works for same size)
+\item Not thread-\/safe
+\item Slab must be destroyed before backing buddy allocator
+\end{DoxyItemize}
+
+{\bfseries{Use Cases\+:}}
+\begin{DoxyItemize}
+\item Allocating many instances of the same struct/class
+\item Object pools (e.\+g., particle systems, network packets)
+\item Cache-\/friendly data structures (same-\/sized objects)
+\item Reducing fragmentation for uniform allocations
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create buddy allocator}}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab for 256-\/byte objects}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate objects (all must be 256 bytes)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} obj1 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} obj2 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free objects}}
+\DoxyCodeLine{slab-\/>return\_element(obj1);}
+\DoxyCodeLine{slab-\/>return\_element(obj2);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Slab destroyed before buddy (correct order)}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Aligned Allocation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab with 64-\/byte alignment for SIMD data}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All allocations are automatically 64-\/byte aligned}}
+\DoxyCodeLine{\textcolor{keyword}{auto} obj = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(obj) \% 64 == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(obj);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Bulk Operations with Reset\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Per-\/frame allocation pattern}}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (game\_running) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Allocate temporary objects}}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{        \textcolor{keyword}{auto} obj = slab-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{        process\_object(obj);}
+\DoxyCodeLine{        \textcolor{comment}{// Don't free individually}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Bulk free all allocations}}
+\DoxyCodeLine{    slab-\/>reset();  \textcolor{comment}{// Much faster than individual frees}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Object Pool Pattern\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }Particle \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{float} x, y, z;}
+\DoxyCodeLine{    \textcolor{keywordtype}{float} vx, vy, vz;}
+\DoxyCodeLine{    uint32\_t color;}
+\DoxyCodeLine{    \textcolor{comment}{// ... total size 64 bytes}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(10 * 1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} particle\_pool = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, }
+\DoxyCodeLine{                                               \textcolor{keyword}{sizeof}(Particle), }
+\DoxyCodeLine{                                               \textcolor{keyword}{alignof}(Particle), }
+\DoxyCodeLine{                                               0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate particle}}
+\DoxyCodeLine{\textcolor{keyword}{auto} particle\_mem = particle\_pool-\/>alloc(\textcolor{keyword}{sizeof}(Particle), \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{Particle* p = \textcolor{keyword}{new} (particle\_mem) Particle();  \textcolor{comment}{// Placement new}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use particle...}}
+\DoxyCodeLine{p-\/>x = 10.0f;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Return to pool}}
+\DoxyCodeLine{p-\/>\string~Particle();  \textcolor{comment}{// Explicit destructor}}
+\DoxyCodeLine{particle\_pool-\/>return\_element(particle\_mem);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Statistics and Monitoring\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate some objects}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Check statistics}}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Total blocks: "{}} << slab-\/>total\_blocks() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}In use: "{}} << slab-\/>in\_use\_blocks() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Free: "{}} << slab-\/>free\_blocks() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Size: "{}} << slab-\/>size() << \textcolor{stringliteral}{"{} bytes\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Detailed report}}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[4096];}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{std::cout << buffer;}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyWarning}{Warning}
+Slab must be destroyed before the backing \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}. The slab stores a non-\/owning pointer to the buddy and will attempt to return pages to it during destruction.
+
+All allocations from a slab must be exactly obj\+\_\+size bytes. Attempting to allocate a different size will result in an error.
+
+Pointers become invalid after \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} or slab destruction. Accessing freed memory results in undefined behavior.
+\end{DoxyWarning}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} Backing allocator for page management 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{With\+Buddy()}} Factory method for creating slab allocators 
+\end{DoxySeeAlso}
+
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a9bdbc421069a66ffa2507d3b2c6036aa}\label{classcslt_1_1SlabAllocator_a9bdbc421069a66ffa2507d3b2c6036aa}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!````~SlabAllocator@{$\sim$SlabAllocator}}
+\index{````~SlabAllocator@{$\sim$SlabAllocator}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{$\sim$SlabAllocator()}{~SlabAllocator()}}
+{\footnotesize\ttfamily cslt\+::\+Slab\+Allocator\+::$\sim$\+Slab\+Allocator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [noexcept]}}
+
+
+
+Destructor -\/ Frees all slab pages back to buddy allocator. 
+
+Walks the linked list of allocated pages and returns each page to the backing buddy allocator. The \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} structure itself is also freed back to buddy via \mbox{\hyperlink{structcslt_1_1SlabDeleter}{Slab\+Deleter}}.
+
+All outstanding allocations become invalid after destruction.
+
+\begin{DoxyNote}{Note}
+This destructor is called automatically by \mbox{\hyperlink{structcslt_1_1SlabDeleter}{Slab\+Deleter}} when the \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} goes out of scope or is reset.
+
+The backing \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} must still be alive when this destructor runs. Always ensure slabs are destroyed before their buddy allocator.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+All pointers obtained from this slab become invalid. Accessing them after destruction results in undefined behavior.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Correct Lifetime Management\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{    \textcolor{comment}{// Use slab...}}
+\DoxyCodeLine{\}  \textcolor{comment}{// slab destroyed here (buddy still alive) -\/ CORRECT}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// buddy destroyed here}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Incorrect Lifetime (Undefined Behavior)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{UniquePtr<SlabAllocator, SlabDeleter> slab;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{    slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{\}  \textcolor{comment}{// buddy destroyed first -\/ WRONG!}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// slab destructor tries to free pages to destroyed buddy -\/ CRASH!}}
+
+\end{DoxyCode}
+ 
+\end{DoxyParagraph}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}\label{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!alloc@{alloc}}
+\index{alloc@{alloc}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{alloc()}{alloc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$void$\ast$$>$ cslt\+::\+Slab\+Allocator\+::alloc (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Allocate a fixed-\/size object from the slab. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Size in bytes (must equal obj\+\_\+size specified at creation) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer to allocated memory on success, or error on failure
+\end{DoxyReturn}
+Allocates a fixed-\/size object by popping a slot from the free list. If the free list is empty, a new page is allocated from the backing buddy allocator (lazy growth).
+
+{\bfseries{Allocation Process\+:}}
+\begin{DoxyEnumerate}
+\item Validate bytes == obj\+\_\+size (strict size requirement)
+\item If free\+\_\+list empty, call grow\+\_\+() to allocate a new page
+\item Pop first slot from free\+\_\+list (O(1) operation)
+\item Optionally zero-\/initialize the memory
+\item Update accounting (in\+\_\+use\+\_\+blocks, size)
+\end{DoxyEnumerate}
+
+{\bfseries{Performance\+:}}
+\begin{DoxyItemize}
+\item O(1) when free slots available (simple pointer pop)
+\item O(log n) when growing (buddy allocator overhead for new page)
+\item Average case\+: O(1) amortized over many allocations
+\end{DoxyItemize}
+
+{\bfseries{Size Constraint\+:}} Unlike general-\/purpose allocators, slab allocators only support ONE fixed size. The bytes parameter MUST exactly match the obj\+\_\+size specified during \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{With\+Buddy()}} creation.
+
+{\bfseries{Alignment\+:}} All slots are pre-\/aligned to the alignment specified at creation. This method does NOT guarantee specific alignment beyond that -\/ use \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}{alloc\+\_\+aligned()}} if you need to verify alignment requirements.
+
+\begin{DoxyNote}{Note}
+bytes must EXACTLY equal obj\+\_\+size. Requesting any other size results in an \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}.
+
+The first allocation from a newly created slab triggers page allocation from the buddy allocator (lazy initialization).
+
+Returned pointers remain valid until freed with \mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} or until the slab is \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} or destroyed.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If bytes != obj\+\_\+size \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If grow() fails (buddy allocator exhausted or page allocation failed)\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Basic Allocation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate a 256-\/byte object}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr\_result = slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (ptr\_result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = ptr\_result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Use the memory...}}
+\DoxyCodeLine{    uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{    data[0] = 42;}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Free when done}}
+\DoxyCodeLine{    slab-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Zero Initialization\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate with zero-\/initialization}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(128, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All bytes are guaranteed to be zero}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < 128; ++i) \{}
+\DoxyCodeLine{    assert(data[i] == 0);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Wrong Size Rejected\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Correct size}}
+\DoxyCodeLine{\textcolor{keyword}{auto} correct = slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_TRUE(correct.hasValue());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Wrong size -\/ too small}}
+\DoxyCodeLine{\textcolor{keyword}{auto} too\_small = slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_FALSE(too\_small.hasValue());  \textcolor{comment}{// Error!}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Wrong size -\/ too large}}
+\DoxyCodeLine{\textcolor{keyword}{auto} too\_large = slab-\/>alloc(512, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_FALSE(too\_large.hasValue());  \textcolor{comment}{// Error!}}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(correct.value());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Multiple Allocations (Growth)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many objects}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (ptr.hasValue()) \{}
+\DoxyCodeLine{        ptrs.push\_back(ptr.value());}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Slab automatically grew pages as needed}}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Allocated: "{}} << ptrs.size() << \textcolor{stringliteral}{"{} objects\(\backslash\)n"{}};}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Total capacity: "{}} << slab-\/>total\_blocks() << \textcolor{stringliteral}{"{} slots\(\backslash\)n"{}};}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Pages allocated: "{}} << slab-\/>total\_blocks() / slab-\/>stride() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Cleanup}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{void}* ptr : ptrs) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Struct Allocation Pattern\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{struct }GameObject \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{float} x, y, z;}
+\DoxyCodeLine{    uint32\_t id;}
+\DoxyCodeLine{    \textcolor{comment}{// ... total 64 bytes}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} objects = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, \textcolor{keyword}{sizeof}(GameObject), }
+\DoxyCodeLine{                                        \textcolor{keyword}{alignof}(GameObject), 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate memory for object}}
+\DoxyCodeLine{\textcolor{keyword}{auto} mem = objects-\/>alloc(\textcolor{keyword}{sizeof}(GameObject), \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use placement new to construct}}
+\DoxyCodeLine{GameObject* obj = \textcolor{keyword}{new} (mem) GameObject();}
+\DoxyCodeLine{obj-\/>x = 10.0f;}
+\DoxyCodeLine{obj-\/>y = 20.0f;}
+\DoxyCodeLine{obj-\/>id = 123;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use object...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Explicit destructor}}
+\DoxyCodeLine{obj-\/>\string~GameObject();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Return to pool}}
+\DoxyCodeLine{objects-\/>return\_element(mem);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}{alloc\+\_\+aligned()}} Allocate with explicit alignment verification 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} Free \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} memory 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} Bulk free all allocations 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_adb93a70659ab65af421bf3f8043418e3}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}\label{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!alloc\_aligned@{alloc\_aligned}}
+\index{alloc\_aligned@{alloc\_aligned}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{alloc\_aligned()}{alloc\_aligned()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$void$\ast$$>$ cslt\+::\+Slab\+Allocator\+::alloc\+\_\+aligned (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{bytes,  }\item[{size\+\_\+t}]{alignment,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Allocate a fixed-\/size object with alignment verification. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em bytes} & Size in bytes (must equal obj\+\_\+size specified at creation) \\
+\hline
+{\em alignment} & Required alignment in bytes (0 = max\+\_\+align\+\_\+t, rounded to power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize the allocated memory\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer to aligned memory on success, or error on failure
+\end{DoxyReturn}
+Allocates a fixed-\/size object from the slab with explicit alignment verification. The slab pre-\/aligns all slots during page creation, so this method validates that the requested alignment is satisfied by the slab\textquotesingle{}s alignment.
+
+{\bfseries{Allocation Process\+:}}
+\begin{DoxyEnumerate}
+\item Validate bytes == obj\+\_\+size (strict size requirement)
+\item Normalize alignment (0 → max\+\_\+align\+\_\+t, round to power of 2)
+\item Verify requested\+\_\+align $<$= slab\textquotesingle{}s align (pre-\/aligned slots)
+\item Delegate to \mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc()}} to pop from free list
+\item All returned pointers are guaranteed aligned
+\end{DoxyEnumerate}
+
+{\bfseries{Alignment Constraint\+:}} The requested alignment CANNOT exceed the slab\textquotesingle{}s alignment specified at creation. To allocate with higher alignment, create the slab with a larger alignment value in \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{With\+Buddy()}}.
+
+{\bfseries{Performance\+:}} Same as \mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc()}} -\/ O(1) amortized. The alignment check is just a comparison, adding negligible overhead.
+
+\begin{DoxyNote}{Note}
+Requested alignment must be $<$= slab\textquotesingle{}s alignment. If you need higher alignment, create a new slab with \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{With\+Buddy()}} using the desired alignment.
+
+All slots in the slab are pre-\/aligned, so this method just validates the requirement is met -\/ it doesn\textquotesingle{}t perform additional alignment.
+
+alignment is normalized to a power of 2. Requesting 48 will be rounded to 64 before checking against slab alignment.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If bytes != obj\+\_\+size \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1AlignmentError}{Alignment\+Error}}} & If alignment is invalid or exceeds slab\textquotesingle{}s alignment \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If grow() fails (buddy allocator exhausted)\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Basic Aligned Allocation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab with 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate with 64-\/byte alignment verification}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr\_result = slab-\/>alloc\_aligned(256, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (ptr\_result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = ptr\_result.value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Guaranteed to be 64-\/byte aligned}}
+\DoxyCodeLine{    uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{    assert(addr \% 64 == 0);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    slab-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alignment Within Slab Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab with 128-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 128, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Request 64-\/byte alignment (less than slab's 128)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc\_aligned(256, 64, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Satisfied (128-\/byte aligned is also 64-\/byte aligned)}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{assert(addr \% 64 == 0);}
+\DoxyCodeLine{assert(addr \% 128 == 0);  \textcolor{comment}{// Also true!}}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alignment Exceeds Slab (Error)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab with only 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Request 128-\/byte alignment (exceeds slab's 64)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = slab-\/>alloc\_aligned(256, 128, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Fails -\/ slab cannot satisfy this requirement}}
+\DoxyCodeLine{EXPECT\_FALSE(result.hasValue());}
+\DoxyCodeLine{EXPECT\_EQ(result.error().type(), ErrorType::ALIGNMENT\_ERROR);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Solution: Create slab with 128-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab128 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 128, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab128-\/>alloc\_aligned(256, 128, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_TRUE(ptr.hasValue());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{SIMD Data Allocation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab for SIMD vectors (32-\/byte alignment for AVX)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 32, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate aligned for SIMD operations}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc\_aligned(256, 32, \textcolor{keyword}{true}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe to use with SIMD instructions}}
+\DoxyCodeLine{\_\_m256* vec = \textcolor{keyword}{reinterpret\_cast<}\_\_m256*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{*vec = \_mm256\_set1\_ps(1.0f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alignment Normalization\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Request 48-\/byte alignment (not power of 2)}}
+\DoxyCodeLine{\textcolor{comment}{// Automatically rounded to 64}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc\_aligned(256, 48, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Aligned to 64 (rounded up)}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{assert(addr \% 64 == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Cache-\/\+Line Aligned Allocation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab for cache-\/line aligned data (64 bytes)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate multiple cache-\/line aligned blocks}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = slab-\/>alloc\_aligned(1024, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{    ASSERT\_TRUE(ptr.hasValue());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr.value());}
+\DoxyCodeLine{    EXPECT\_EQ(addr \% 64, 0) << \textcolor{stringliteral}{"{}Not cache-\/line aligned"{}};}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    slab-\/>return\_element(ptr.value());}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Default Alignment (Zero)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// alignment=0 means alignof(max\_align\_t) (typically 16)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc\_aligned(256, 0, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Guaranteed at least max\_align\_t alignment}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{assert(addr \% \textcolor{keyword}{alignof}(max\_align\_t) == 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc()}} Allocate without explicit alignment verification 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{With\+Buddy()}} Specify slab alignment at creation 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} Free \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} memory 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a518d804fc4eb66096f2534fc922c1ac4}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}\label{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!free\_blocks@{free\_blocks}}
+\index{free\_blocks@{free\_blocks}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{free\_blocks()}{free\_blocks()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Slab\+Allocator\+::free\+\_\+blocks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Get number of free (available) slots. 
+
+\begin{DoxyReturn}{Returns}
+Number of slots currently in the free list
+\end{DoxyReturn}
+Returns the count of slots available for allocation by walking the free list and counting nodes.
+
+{\bfseries{Performance\+:}} O(free\+\_\+blocks) -\/ walks entire free list
+
+{\bfseries{Verification\+:}} Should equal (total\+\_\+blocks -\/ in\+\_\+use\+\_\+blocks). If not, indicates corruption.
+
+\begin{DoxyNote}{Note}
+This is an O(n) operation where n = number of free slots. For programmatic use, consider caching the result.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Initially: no pages, no free blocks}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>free\_blocks(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// First allocation triggers page growth}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now has free slots (e.g., 15 total -\/ 1 used = 14 free)}}
+\DoxyCodeLine{EXPECT\_GT(slab-\/>free\_blocks(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free the allocation}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All slots free again}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>free\_blocks(), slab-\/>total\_blocks());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Tracking Free Slots\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate several}}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 5; ++i) \{}
+\DoxyCodeLine{    ptrs.push\_back(slab-\/>alloc(128, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} free\_after\_alloc = slab-\/>free\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free 3}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 3; ++i) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptrs[i]);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 3 more free}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>free\_blocks(), free\_after\_alloc + 3);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Cleanup}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 3; i < 5; ++i) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptrs[i]);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Verification (Corruption Detection)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate some}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} total = slab-\/>total\_blocks();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} in\_use = slab-\/>in\_use\_blocks();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} free = slab-\/>free\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Should always hold}}
+\DoxyCodeLine{EXPECT\_EQ(total, in\_use + free);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// If mismatch, indicates corruption}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (total != in\_use + free) \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}CORRUPTION DETECTED!\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{After Reset\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} total = slab-\/>total\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Some free, some used}}
+\DoxyCodeLine{EXPECT\_LT(slab-\/>free\_blocks(), total);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Reset}}
+\DoxyCodeLine{slab-\/>reset();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All free}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>free\_blocks(), total);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\+\_\+blocks()}} Get total capacity 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}{in\+\_\+use\+\_\+blocks()}} Get \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} slots 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}\label{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!in\_use\_blocks@{in\_use\_blocks}}
+\index{in\_use\_blocks@{in\_use\_blocks}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{in\_use\_blocks()}{in\_use\_blocks()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Slab\+Allocator\+::in\+\_\+use\+\_\+blocks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Get number of allocated (in-\/use) slots. 
+
+\begin{DoxyReturn}{Returns}
+Number of slots currently allocated to users
+\end{DoxyReturn}
+Returns the count of slots currently in use, calculated from the tracked byte usage divided by object size.
+
+Calculated as\+: \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}} / obj\+\_\+size
+
+{\bfseries{Performance\+:}} O(1) -\/ simple division of tracked value
+
+\begin{DoxyNote}{Note}
+This is O(1) unlike \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}{free\+\_\+blocks()}} which is O(n).
+\end{DoxyNote}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Initially: nothing allocated}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 1);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 2);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free one}}
+\DoxyCodeLine{slab-\/>return\_element(ptr1);}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 1);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free both}}
+\DoxyCodeLine{slab-\/>return\_element(ptr2);}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Tracking Allocations\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 20}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 20; ++i) \{}
+\DoxyCodeLine{    ptrs.push\_back(slab-\/>alloc(128, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{    EXPECT\_EQ(slab-\/>in\_use\_blocks(), i + 1);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 20);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free all}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{void}* ptr : ptrs) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Utilization Calculation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate some}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} total = slab-\/>total\_blocks();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} in\_use = slab-\/>in\_use\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (total > 0) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{double} utilization = 100.0 * in\_use / total;}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Utilization: "{}} << utilization << \textcolor{stringliteral}{"{}\%\(\backslash\)n"{}};}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (utilization > 90.0) \{}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Warning: High utilization\(\backslash\)n"{}};}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Invariants\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate some}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 15; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} in\_use = slab-\/>in\_use\_blocks();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} bytes = slab-\/>size();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Invariant: in\_use\_blocks × obj\_size == size()}}
+\DoxyCodeLine{EXPECT\_EQ(in\_use * 128, bytes);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Invariant: in\_use <= total}}
+\DoxyCodeLine{EXPECT\_LE(in\_use, slab-\/>total\_blocks());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{After Reset\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 50);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Reset}}
+\DoxyCodeLine{slab-\/>reset();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Nothing in use}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>size(), 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\+\_\+blocks()}} Get total capacity 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}{free\+\_\+blocks()}} Get available slots 
+
+\mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}} Get bytes in use (\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}{in\+\_\+use\+\_\+blocks}} × obj\+\_\+size) 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}\label{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!is\_ptr@{is\_ptr}}
+\index{is\_ptr@{is\_ptr}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{is\_ptr()}{is\_ptr()}}
+{\footnotesize\ttfamily bool cslt\+::\+Slab\+Allocator\+::is\+\_\+ptr (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Check if pointer is a valid allocation from this slab. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to validate\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if ptr is a valid slot from this slab, false otherwise
+\end{DoxyReturn}
+Validates whether a pointer points to a valid slot in this slab allocator by checking if it belongs to one of the slab\textquotesingle{}s pages and is properly aligned to a slot boundary.
+
+{\bfseries{Validation Checks\+:}}
+\begin{DoxyEnumerate}
+\item Pointer is not null
+\item Pointer belongs to one of this slab\textquotesingle{}s pages
+\item Pointer is not in the page header region
+\item Pointer is aligned on slot boundary (offset \% slot\+\_\+size == 0)
+\end{DoxyEnumerate}
+
+{\bfseries{Limitations\+:}}
+\begin{DoxyItemize}
+\item Cannot detect use-\/after-\/free (freed pointer still validates)
+\item Cannot detect double-\/free
+\item Cannot detect never-\/allocated slots
+\item Only checks structural validity, not allocation state
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+This is a structural check only. A freed pointer will still return true if it\textquotesingle{}s a valid slot location.
+
+Performance is O(pages) due to page lookup.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Valid Pointer\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_TRUE(slab-\/>is\_ptr(ptr));}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Still valid (structural check only -\/ can't detect freed state)}}
+\DoxyCodeLine{EXPECT\_TRUE(slab-\/>is\_ptr(ptr));}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Invalid Pointers\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Null}}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>is\_ptr(\textcolor{keyword}{nullptr}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// External pointer}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* external = malloc(256);}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>is\_ptr(external));}
+\DoxyCodeLine{free(external);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Misaligned (offset into slot)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{uint8\_t* misaligned = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr) + 10;}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>is\_ptr(misaligned));}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Cross-\/\+Slab Check\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab1 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab2 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = slab1-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Valid in slab1}}
+\DoxyCodeLine{EXPECT\_TRUE(slab1-\/>is\_ptr(ptr1));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Invalid in slab2 (different slab)}}
+\DoxyCodeLine{EXPECT\_FALSE(slab2-\/>is\_ptr(ptr1));}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab1-\/>return\_element(ptr1);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a8c89fc6f199a228390361a74f687e252}{is\+\_\+ptr\+\_\+sized()}} Validate with \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}} check 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} Free pointer (validates internally) 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a8b9fcb5da49538257f1272d2a11b832c}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a8c89fc6f199a228390361a74f687e252}\label{classcslt_1_1SlabAllocator_a8c89fc6f199a228390361a74f687e252}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!is\_ptr\_sized@{is\_ptr\_sized}}
+\index{is\_ptr\_sized@{is\_ptr\_sized}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{is\_ptr\_sized()}{is\_ptr\_sized()}}
+{\footnotesize\ttfamily bool cslt\+::\+Slab\+Allocator\+::is\+\_\+ptr\+\_\+sized (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Check if pointer can hold an allocation of given size. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to validate \\
+\hline
+{\em bytes} & Required size in bytes\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if ptr is valid and can hold bytes, false otherwise
+\end{DoxyReturn}
+Validates both pointer validity (via \mbox{\hyperlink{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}{is\+\_\+ptr()}}) and size compatibility. Since all slots in a slab are the same size, this checks if bytes $<$= obj\+\_\+size.
+
+{\bfseries{Validation\+:}}
+\begin{DoxyEnumerate}
+\item Validate ptr with \mbox{\hyperlink{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}{is\+\_\+ptr()}}
+\item Check bytes $<$= obj\+\_\+size
+\end{DoxyEnumerate}
+
+\begin{DoxyNote}{Note}
+All slots have the same size (obj\+\_\+size). Any size $<$= obj\+\_\+size fits.
+
+This is still a structural check -\/ cannot detect if ptr is currently allocated or freed.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Valid Size\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Exact size}}
+\DoxyCodeLine{EXPECT\_TRUE(slab-\/>is\_ptr\_sized(ptr, 256));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Smaller sizes fit}}
+\DoxyCodeLine{EXPECT\_TRUE(slab-\/>is\_ptr\_sized(ptr, 128));}
+\DoxyCodeLine{EXPECT\_TRUE(slab-\/>is\_ptr\_sized(ptr, 1));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Too large}}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>is\_ptr\_sized(ptr, 257));}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>is\_ptr\_sized(ptr, 512));}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Invalid Pointer\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* external = malloc(256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Pointer not from slab -\/ always false regardless of size}}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>is\_ptr\_sized(external, 256));}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>is\_ptr\_sized(external, 128));}
+\DoxyCodeLine{}
+\DoxyCodeLine{free(external);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Validation Before Use\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = get\_pointer\_from\_somewhere();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} needed = 200;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (slab-\/>is\_ptr\_sized(ptr, needed)) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Safe to use ptr for 200 bytes}}
+\DoxyCodeLine{    memset(ptr, 0, needed);}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    \textcolor{comment}{// Invalid or too small}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}{is\+\_\+ptr()}} Validate pointer only 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a9174d07a2777d286188e0221558505dc}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_abf0f0a5c09931dede33c88279cc06f55}\label{classcslt_1_1SlabAllocator_abf0f0a5c09931dede33c88279cc06f55}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!realloc@{realloc}}
+\index{realloc@{realloc}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{realloc()}{realloc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$void$\ast$$>$ cslt\+::\+Slab\+Allocator\+::realloc (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{old\+\_\+bytes,  }\item[{size\+\_\+t}]{new\+\_\+bytes,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Realloc for slab allocator (limited -\/ same size only) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to existing allocation (or nullptr) \\
+\hline
+{\em old\+\_\+bytes} & Current size of the allocation in bytes \\
+\hline
+{\em new\+\_\+bytes} & Desired new size in bytes \\
+\hline
+{\em zeroed} & If true, zero-\/initialize any newly allocated space\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer on success, or error on failure
+\end{DoxyReturn}
+Slab allocators only support fixed-\/size objects, so realloc has very limited functionality compared to general-\/purpose allocators. The only supported operation is \char`\"{}realloc to same size\char`\"{} which simply returns the same pointer.
+
+{\bfseries{Special Cases\+:}}
+\begin{DoxyItemize}
+\item realloc(nullptr, 0, n) → Equivalent to alloc(n)
+\item realloc(ptr, old, 0) → Frees ptr, returns nullptr (success)
+\item realloc(ptr, old, new) where old == new == obj\+\_\+size → Returns same ptr
+\item realloc(ptr, old, new) where old != new → ERROR (cannot resize)
+\end{DoxyItemize}
+
+{\bfseries{Why No Resize Support\+:}} Slab allocators pre-\/carve memory into fixed-\/size slots. There is no concept of \char`\"{}growing\char`\"{} or \char`\"{}shrinking\char`\"{} an object. All slots are identical. To change object size, you must free the old object and allocate from a different slab with the desired size.
+
+{\bfseries{Same Size Behavior\+:}} When old\+\_\+bytes == new\+\_\+bytes == obj\+\_\+size, returns the same pointer with no reallocation. This is an O(1) no-\/op.
+
+\begin{DoxyNote}{Note}
+Slab allocators CANNOT resize objects. Both old\+\_\+bytes and new\+\_\+bytes must equal obj\+\_\+size for the operation to succeed.
+
+To \char`\"{}resize\char`\"{} an object, you must\+: (1) Allocate from a slab with the new size, (2) Copy data, (3) Free the old object.
+
+The zeroed parameter has no effect when old\+\_\+bytes == new\+\_\+bytes since no new space is allocated.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If ptr is non-\/null but old\+\_\+bytes is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If old\+\_\+bytes != obj\+\_\+size or new\+\_\+bytes != obj\+\_\+size\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Same Size (No-\/\+Op)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(ptr, \textcolor{charliteral}{'A'}, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Realloc to same size}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr\_result = slab-\/>realloc(ptr, 256, 256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{ASSERT\_TRUE(new\_ptr\_result.hasValue());}
+\DoxyCodeLine{EXPECT\_EQ(new\_ptr\_result.value(), ptr);  \textcolor{comment}{// Same pointer returned}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Data preserved}}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(new\_ptr\_result.value());}
+\DoxyCodeLine{EXPECT\_EQ(data[0], \textcolor{charliteral}{'A'});}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Resize Rejected\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Try to grow}}
+\DoxyCodeLine{\textcolor{keyword}{auto} grow = slab-\/>realloc(ptr, 256, 512, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_FALSE(grow.hasValue());  \textcolor{comment}{// ERROR: cannot resize}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Try to shrink}}
+\DoxyCodeLine{\textcolor{keyword}{auto} shrink = slab-\/>realloc(ptr, 256, 128, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_FALSE(shrink.hasValue());  \textcolor{comment}{// ERROR: cannot resize}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Original pointer still valid}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Realloc from nullptr (Acts as alloc)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Realloc from nullptr acts as alloc}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = slab-\/>realloc(ptr, 0, 256, \textcolor{keyword}{true});}
+\DoxyCodeLine{}
+\DoxyCodeLine{ASSERT\_TRUE(result.hasValue());}
+\DoxyCodeLine{ptr = result.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Memory is zero-\/initialized}}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{EXPECT\_EQ(data[0], 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Realloc to Zero (Free)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 1);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Realloc to zero frees the memory}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = slab-\/>realloc(ptr, 256, 0, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{ASSERT\_TRUE(result.hasValue());}
+\DoxyCodeLine{EXPECT\_EQ(result.value(), \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);  \textcolor{comment}{// Freed}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Manual Resize Pattern (Different Slabs)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Two slabs for different sizes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab128 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab256 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 128-\/byte object}}
+\DoxyCodeLine{\textcolor{keyword}{auto} old\_ptr = slab128-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memcpy(old\_ptr, \textcolor{stringliteral}{"{}data"{}}, 4);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// "{}Resize"{} to 256 bytes -\/ manual process:}}
+\DoxyCodeLine{\textcolor{comment}{// 1. Allocate from larger slab}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = slab256-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 2. Copy data (up to old size)}}
+\DoxyCodeLine{memcpy(new\_ptr, old\_ptr, 128);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 3. Free old object}}
+\DoxyCodeLine{slab128-\/>return\_element(old\_ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now using 256-\/byte object}}
+\DoxyCodeLine{slab256-\/>return\_element(new\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc()}} Allocate fixed-\/size object 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} Free object 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_ad9baaf5d6726bbb33a3986b57e91b7be}{realloc\+\_\+aligned()}} Realloc with alignment (also limited) 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_ad83899b3087ecbf56883ef775048e81a}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_ad9baaf5d6726bbb33a3986b57e91b7be}\label{classcslt_1_1SlabAllocator_ad9baaf5d6726bbb33a3986b57e91b7be}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!realloc\_aligned@{realloc\_aligned}}
+\index{realloc\_aligned@{realloc\_aligned}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{realloc\_aligned()}{realloc\_aligned()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$void$\ast$$>$ cslt\+::\+Slab\+Allocator\+::realloc\+\_\+aligned (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{old\+\_\+bytes,  }\item[{size\+\_\+t}]{new\+\_\+bytes,  }\item[{size\+\_\+t}]{alignment,  }\item[{bool}]{zeroed = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Realloc with alignment for slab allocator (limited -\/ same size only) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to existing allocation (or nullptr) \\
+\hline
+{\em old\+\_\+bytes} & Current size of the allocation in bytes \\
+\hline
+{\em new\+\_\+bytes} & Desired new size in bytes \\
+\hline
+{\em alignment} & Required alignment in bytes (0 = max\+\_\+align\+\_\+t, rounded to power of 2) \\
+\hline
+{\em zeroed} & If true, zero-\/initialize any newly allocated space\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing pointer on success, or error on failure
+\end{DoxyReturn}
+Similar to \mbox{\hyperlink{classcslt_1_1SlabAllocator_abf0f0a5c09931dede33c88279cc06f55}{realloc()}}, but with alignment verification. Slab allocators only support fixed-\/size objects, so this can only \char`\"{}realloc\char`\"{} to the same size while verifying alignment requirements.
+
+{\bfseries{Special Cases\+:}}
+\begin{DoxyItemize}
+\item realloc\+\_\+aligned(nullptr, 0, n, a) → Equivalent to alloc\+\_\+aligned(n, a)
+\item realloc\+\_\+aligned(ptr, old, 0, a) → Frees ptr, returns nullptr (success)
+\item realloc\+\_\+aligned(ptr, old, new, a) where old == new == obj\+\_\+size → Same ptr
+\item realloc\+\_\+aligned(ptr, old, new, a) where old != new → ERROR (cannot resize)
+\item realloc\+\_\+aligned(ptr, old, old, a) where a $>$ slab\+\_\+align → ERROR
+\end{DoxyItemize}
+
+{\bfseries{Alignment Verification\+:}} The requested alignment must not exceed the slab\textquotesingle{}s alignment. If the pointer already satisfies the alignment (which it should, since all slots are pre-\/aligned), the same pointer is returned.
+
+{\bfseries{Same Size Behavior\+:}} When old\+\_\+bytes == new\+\_\+bytes == obj\+\_\+size and alignment is satisfied, returns the same pointer with no reallocation (O(1) no-\/op).
+
+\begin{DoxyNote}{Note}
+Slab allocators CANNOT resize objects. Both old\+\_\+bytes and new\+\_\+bytes must equal obj\+\_\+size.
+
+Requested alignment must not exceed the slab\textquotesingle{}s alignment specified at creation.
+
+All slots are pre-\/aligned, so this method just validates the requirement is met -\/ it doesn\textquotesingle{}t perform additional alignment.
+
+Changing alignment requirements cannot be satisfied if new alignment exceeds slab alignment. Create object in slab with appropriate alignment instead.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If ptr is non-\/null but old\+\_\+bytes is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If old\+\_\+bytes != obj\+\_\+size or new\+\_\+bytes != obj\+\_\+size \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1AlignmentError}{Alignment\+Error}}} & If alignment is invalid or exceeds slab\textquotesingle{}s alignment\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Same Size with Alignment Check\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Slab with 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Realloc same size with alignment verification}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = slab-\/>realloc\_aligned(ptr, 256, 256, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{ASSERT\_TRUE(new\_ptr.hasValue());}
+\DoxyCodeLine{EXPECT\_EQ(new\_ptr.value(), ptr);  \textcolor{comment}{// Same pointer}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Alignment guaranteed}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr.value());}
+\DoxyCodeLine{EXPECT\_EQ(addr \% 64, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alignment Within Slab Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Slab with 128-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 128, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Request 64-\/byte alignment (within slab's 128)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = slab-\/>realloc\_aligned(ptr, 256, 256, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{ASSERT\_TRUE(result.hasValue());}
+\DoxyCodeLine{EXPECT\_EQ(result.value(), ptr);  \textcolor{comment}{// Same pointer, satisfies alignment}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alignment Exceeds Slab (Error)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Slab with only 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Request 128-\/byte alignment (exceeds slab's 64)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = slab-\/>realloc\_aligned(ptr, 256, 256, 128, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_FALSE(result.hasValue());  \textcolor{comment}{// ERROR: alignment too large}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Original pointer still valid}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Resize with Alignment Rejected\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Try to grow with alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} grow = slab-\/>realloc\_aligned(ptr, 256, 512, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_FALSE(grow.hasValue());  \textcolor{comment}{// ERROR: cannot resize}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Try to shrink with alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} shrink = slab-\/>realloc\_aligned(ptr, 256, 128, 64, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_FALSE(shrink.hasValue());  \textcolor{comment}{// ERROR: cannot resize}}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Realloc from nullptr with Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Realloc from nullptr acts as alloc\_aligned}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = slab-\/>realloc\_aligned(ptr, 0, 256, 64, \textcolor{keyword}{true});}
+\DoxyCodeLine{}
+\DoxyCodeLine{ASSERT\_TRUE(result.hasValue());}
+\DoxyCodeLine{ptr = result.value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Aligned and zeroed}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{EXPECT\_EQ(addr \% 64, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{uint8\_t* data = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{EXPECT\_EQ(data[0], 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Manual Resize with Alignment (Different Slabs)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Two slabs with different sizes, both 64-\/byte aligned}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab128 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab256 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate 128-\/byte aligned object}}
+\DoxyCodeLine{\textcolor{keyword}{auto} old\_ptr = slab128-\/>alloc\_aligned(128, 64, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(old\_ptr, \textcolor{charliteral}{'A'}, 128);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// "{}Resize"{} to 256 bytes with alignment preserved:}}
+\DoxyCodeLine{\textcolor{comment}{// 1. Allocate from larger slab}}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = slab256-\/>alloc\_aligned(256, 64, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 2. Copy data}}
+\DoxyCodeLine{memcpy(new\_ptr, old\_ptr, 128);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 3. Free old}}
+\DoxyCodeLine{slab128-\/>return\_element(old\_ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Verify alignment maintained}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{EXPECT\_EQ(addr \% 64, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab256-\/>return\_element(new\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alignment Change Not Supported\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Slab with 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab64 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab64-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Cannot "{}change"{} alignment to 128 (exceeds slab alignment)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = slab64-\/>realloc\_aligned(ptr, 256, 256, 128, \textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_FALSE(result.hasValue());  \textcolor{comment}{// ERROR}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Solution: Allocate from slab with 128-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab128 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 128, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} new\_ptr = slab128-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Copy data}}
+\DoxyCodeLine{memcpy(new\_ptr, ptr, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free old}}
+\DoxyCodeLine{slab64-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now have 128-\/byte aligned object}}
+\DoxyCodeLine{uintptr\_t addr = \textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr);}
+\DoxyCodeLine{EXPECT\_EQ(addr \% 128, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab128-\/>return\_element(new\_ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}{alloc\+\_\+aligned()}} Allocate with alignment 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_abf0f0a5c09931dede33c88279cc06f55}{realloc()}} Realloc without alignment check 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} Free object 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a7c5678c95eddff0fb5ae06a09492fb7c}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}\label{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!remaining@{remaining}}
+\index{remaining@{remaining}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{remaining()}{remaining()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Slab\+Allocator\+::remaining (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}, {\ttfamily [noexcept]}}
+
+
+
+Get remaining capacity in bytes. 
+
+\begin{DoxyReturn}{Returns}
+Number of bytes available for allocation
+\end{DoxyReturn}
+Returns the total available capacity (allocated pages) minus bytes currently in use. This represents how much can be allocated before needing to grow a new page.
+
+Calculated as\+: (total\+\_\+blocks × obj\+\_\+size) -\/ \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}}
+
+\begin{DoxyNote}{Note}
+This is capacity in allocated pages, not total memory available from the buddy allocator. Slab may grow beyond this.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Initially: no pages allocated}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>remaining(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// First allocation triggers page growth}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now has capacity (e.g., 15 slots × 256 = 3840 bytes)}}
+\DoxyCodeLine{\textcolor{comment}{// Minus 1 in use (256 bytes)}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} avail = slab-\/>remaining();}
+\DoxyCodeLine{EXPECT\_GT(avail, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate more}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Remaining decreases}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>remaining(), avail -\/ 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr1);}
+\DoxyCodeLine{slab-\/>return\_element(ptr2);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Capacity Tracking\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} before = slab-\/>remaining();}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (ptr.hasValue()) \{}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} after = slab-\/>remaining();}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (before > 0) \{}
+\DoxyCodeLine{            \textcolor{comment}{// Used existing capacity}}
+\DoxyCodeLine{            EXPECT\_EQ(after, before -\/ 128);}
+\DoxyCodeLine{        \} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{            \textcolor{comment}{// Grew new page}}
+\DoxyCodeLine{            EXPECT\_GT(after, 0);}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}} Get bytes in use 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\+\_\+blocks()}} Get total slot capacity 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a1b34a9c4860a9e28255745b1d1e7cb62}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}\label{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!reset@{reset}}
+\index{reset@{reset}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily bool cslt\+::\+Slab\+Allocator\+::reset (\begin{DoxyParamCaption}\item[{bool}]{trim = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Bulk free all allocations and rebuild free list. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em trim} & Ignored (present for interface compatibility -\/ slabs don\textquotesingle{}t trim)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if reset successful, false on error
+\end{DoxyReturn}
+Performs a bulk deallocation of all objects by clearing accounting and rebuilding the free list from scratch. All outstanding allocations become invalid. Pages remain allocated (not returned to buddy).
+
+{\bfseries{Reset Process\+:}}
+\begin{DoxyEnumerate}
+\item Validate slab geometry (sanity check)
+\item Clear accounting (len\+\_\+bytes = 0, size = 0)
+\item Clear free list (free\+\_\+list = nullptr)
+\item Walk all pages and re-\/carve slots
+\item Rebuild free list with all slots
+\end{DoxyEnumerate}
+
+{\bfseries{Performance\+:}} O(pages × objects\+\_\+per\+\_\+page) -\/ must walk every slot to rebuild list. Much faster than individual frees when deallocating many objects.
+
+{\bfseries{Pages Not Freed\+:}} Unlike trim operations in other allocators, \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} keeps all pages. The slab maintains its current capacity. Pages are only freed when the slab is destroyed.
+
+{\bfseries{Use Cases\+:}}
+\begin{DoxyItemize}
+\item Per-\/frame allocations (game engines)
+\item Request/response cycles (servers)
+\item Test cleanup between test cases
+\item Temporary scratch space that\textquotesingle{}s bulk-\/cleared
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+The trim parameter is IGNORED. Slab allocators never trim pages back to the buddy allocator. Pages persist until slab destruction.
+
+After \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}}, ALL pointers obtained from this slab become invalid. Accessing them results in undefined behavior.
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} is significantly faster than calling \mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} on each allocation individually when you need to free everything.
+
+The slab retains its full capacity. Subsequent allocations will reuse the existing pages without needing to grow.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+All outstanding allocations become invalid. Do not use any pointers obtained before \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} after calling this function.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many objects}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 100);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Bulk free everything}}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ok = slab-\/>reset();}
+\DoxyCodeLine{EXPECT\_TRUE(ok);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All freed}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>size(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free list rebuilt -\/ all slots available}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>free\_blocks(), slab-\/>total\_blocks());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Per-\/\+Frame Pattern (Game Engine)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(10 * 1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} particles = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, \textcolor{keyword}{sizeof}(Particle), 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{while} (game\_running) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Spawn particles this frame}}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{        \textcolor{keyword}{auto} mem = particles-\/>alloc(\textcolor{keyword}{sizeof}(Particle), \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{        Particle* p = \textcolor{keyword}{new} (mem) Particle();}
+\DoxyCodeLine{        p-\/>spawn(position);}
+\DoxyCodeLine{        active\_particles.push\_back(p);}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Update and render...}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Clean up all particles at end of frame}}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (Particle* p : active\_particles) \{}
+\DoxyCodeLine{        p-\/>\string~Particle();  \textcolor{comment}{// Call destructor}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    active\_particles.clear();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Bulk free -\/ much faster than individual frees}}
+\DoxyCodeLine{    particles-\/>reset();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Request/\+Response Pattern (Server)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(10 * 1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} request\_pool = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, }
+\DoxyCodeLine{                                             \textcolor{keyword}{sizeof}(RequestObject), }
+\DoxyCodeLine{                                             0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void} handle\_request(HttpRequest\& req) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Allocate temporary objects for this request}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} obj1 = request\_pool-\/>alloc(\textcolor{keyword}{sizeof}(RequestObject), \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{    \textcolor{keyword}{auto} obj2 = request\_pool-\/>alloc(\textcolor{keyword}{sizeof}(RequestObject), \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Process request...}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// At end of request, bulk free}}
+\DoxyCodeLine{    request\_pool-\/>reset();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Test Cleanup Pattern\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{class }MyTestFixture : \textcolor{keyword}{public} ::testing::Test \{}
+\DoxyCodeLine{\textcolor{keyword}{protected}:}
+\DoxyCodeLine{    UniquePtr<BuddyAllocator, BuddyDeleter> buddy;}
+\DoxyCodeLine{    UniquePtr<SlabAllocator, SlabDeleter> slab;}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordtype}{void} SetUp()\textcolor{keyword}{ override }\{}
+\DoxyCodeLine{        buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{        slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordtype}{void} TearDown()\textcolor{keyword}{ override }\{}
+\DoxyCodeLine{        \textcolor{comment}{// Clean up after each test}}
+\DoxyCodeLine{        slab-\/>reset();}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{test__allocator_8cpp_a83ea3704e3289c30e52cf7784c02c5a7}{TEST\_F}}(MyTestFixture, Test1) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{comment}{// Test...}}
+\DoxyCodeLine{    \textcolor{comment}{// reset() called automatically in TearDown()}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Pages Retained (No Trim)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many -\/ forces multiple page growth}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} capacity\_before = slab-\/>total\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Reset}}
+\DoxyCodeLine{slab-\/>reset();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Capacity unchanged -\/ pages retained}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>total\_blocks(), capacity\_before);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// But usage is zero}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Reset vs Individual Frees (Performance)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 1000; ++i) \{}
+\DoxyCodeLine{    ptrs.push\_back(slab-\/>alloc(128, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Option 1: Individual frees -\/ O(n × p) where p = pages}}
+\DoxyCodeLine{\textcolor{comment}{// for (void* ptr : ptrs) \{}}
+\DoxyCodeLine{\textcolor{comment}{//     slab-\/>return\_element(ptr);  // Each does page lookup}}
+\DoxyCodeLine{\textcolor{comment}{// \}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Option 2: Reset -\/ O(p × slots\_per\_page)}}
+\DoxyCodeLine{slab-\/>reset();  \textcolor{comment}{// Much faster for bulk deallocation!}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Multiple Reset Cycles\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Can reset multiple times}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} cycle = 0; cycle < 10; ++cycle) \{}
+\DoxyCodeLine{    \textcolor{comment}{// Allocate}}
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{        slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    EXPECT\_EQ(slab-\/>in\_use\_blocks(), 50);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Reset}}
+\DoxyCodeLine{    slab-\/>reset();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Reset Before/\+After Statistics\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 20; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[2048];}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Before reset:\(\backslash\)n"{}} << buffer << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Reset}}
+\DoxyCodeLine{slab-\/>reset();}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}After reset:\(\backslash\)n"{}} << buffer << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Shows:}}
+\DoxyCodeLine{\textcolor{comment}{//   Before: In-\/use blocks: 20, Free blocks: X}}
+\DoxyCodeLine{\textcolor{comment}{//   After:  In-\/use blocks: 0,  Free blocks: total\_blocks}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Trim Parameter Ignored\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} capacity = slab-\/>total\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Both are identical -\/ trim has no effect}}
+\DoxyCodeLine{slab-\/>reset(\textcolor{keyword}{false});}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>total\_blocks(), capacity);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>reset(\textcolor{keyword}{true});  \textcolor{comment}{// trim=true ignored}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>total\_blocks(), capacity);  \textcolor{comment}{// Still same capacity}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} Free individual object 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a9bdbc421069a66ffa2507d3b2c6036aa}{$\sim$\+Slab\+Allocator()}} Destructor that frees all pages 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a63cbbfc6cfeb46e51a14a91f8f5c48ea}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}\label{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!restore@{restore}}
+\index{restore@{restore}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{restore()}{restore()}}
+{\footnotesize\ttfamily bool cslt\+::\+Slab\+Allocator\+::restore (\begin{DoxyParamCaption}\item[{void $\ast$}]{checkpoint }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Restore allocator state (not supported) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em checkpoint} & Ignored (present for interface compatibility)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Always returns false
+\end{DoxyReturn}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} does not support checkpoint/restore functionality. This method exists only for base class interface compatibility and always returns false.
+
+{\bfseries{Why Not Supported\+:}} Since \mbox{\hyperlink{classcslt_1_1SlabAllocator_a63abdf25352d257aea1918a784cc7d02}{save()}} always returns nullptr, there is no valid checkpoint to restore. The intrusive free list structure makes meaningful checkpointing impractical for slab allocators.
+
+{\bfseries{Behavior\+:}} This method does nothing and always returns false, regardless of the checkpoint parameter value. The slab state is unchanged.
+
+\begin{DoxyNote}{Note}
+This method always returns false. It exists only to satisfy the base \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} interface.
+
+The checkpoint parameter is completely ignored. Any value (including nullptr) will result in the same behavior\+: no-\/op and return false.
+
+Calling this method has no side effects. The slab state is unchanged.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Usage (Always Fails)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate something}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Try to save and restore}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = slab-\/>save();  \textcolor{comment}{// Returns nullptr}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// More allocations...}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Try to restore}}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ok = slab-\/>restore(checkpoint);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Always fails}}
+\DoxyCodeLine{EXPECT\_FALSE(ok);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// State is unchanged -\/ both allocations still valid}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 2);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{All Parameter Values Fail\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All of these fail}}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>restore(\textcolor{keyword}{nullptr}));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* fake\_checkpoint = \textcolor{keyword}{reinterpret\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(0x12345678);}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>restore(fake\_checkpoint));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* some\_ptr = slab-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{EXPECT\_FALSE(slab-\/>restore(some\_ptr));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// None of these calls affect the slab state}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Not a Replacement for Free\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// This does NOT free the allocation}}
+\DoxyCodeLine{slab-\/>restore(\textcolor{keyword}{nullptr});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// ptr is still allocated}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 1);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Must use return\_element() to free}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Use reset() Instead\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// If you want to "{}restore"{} to empty state, use reset()}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many objects}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 50);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// "{}Restore"{} to empty state}}
+\DoxyCodeLine{slab-\/>reset();}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a63abdf25352d257aea1918a784cc7d02}{save()}} Always returns nullptr 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} Bulk deallocation 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_ab96e7b76511d29b505c5da81fb8b3cba}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}\label{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!return\_element@{return\_element}}
+\index{return\_element@{return\_element}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{return\_element()}{return\_element()}}
+{\footnotesize\ttfamily void cslt\+::\+Slab\+Allocator\+::return\+\_\+element (\begin{DoxyParamCaption}\item[{void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes = {\ttfamily 0},  }\item[{size\+\_\+t}]{alignment = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Free an object back to the slab allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to free (returned from alloc, alloc\+\_\+aligned, realloc, or realloc\+\_\+aligned) \\
+\hline
+{\em bytes} & Ignored (present for interface compatibility) \\
+\hline
+{\em alignment} & Ignored (present for interface compatibility)\\
+\hline
+\end{DoxyParams}
+Frees a previously allocated object by returning it to the free list. The freed slot becomes immediately available for subsequent allocations.
+
+{\bfseries{Deallocation Process\+:}}
+\begin{DoxyEnumerate}
+\item Validate pointer is not null (null is silently ignored)
+\item Find which page contains the pointer (walk pages list)
+\item Verify pointer is within slots region (not in page header)
+\item Verify pointer is aligned on slot boundary
+\item Cast pointer to Slot and push onto free list
+\item Update accounting (decrease in\+\_\+use\+\_\+blocks, size)
+\end{DoxyEnumerate}
+
+{\bfseries{Performance\+:}} O(p) where p is the number of pages (for page lookup), then O(1) to push onto free list. Typically O(1) amortized since most slabs have few pages.
+
+{\bfseries{No Coalescing\+:}} Unlike \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}}, slabs don\textquotesingle{}t coalesce. Freed slots simply go back on the free list and can be immediately reused. Pages remain allocated until the slab is destroyed.
+
+\begin{DoxyNote}{Note}
+The bytes and alignment parameters are IGNORED by \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}}. They exist only for base class interface compatibility. The slab knows the object size from its configuration.
+
+Passing nullptr is safe and does nothing (similar to free(nullptr)).
+
+Invalid pointers are handled silently -\/ the function returns without error if the pointer is not from this slab, is misaligned, or is in the header region.
+
+Double-\/free results in undefined behavior. The allocator cannot detect all double-\/free scenarios.
+
+After this call, ptr becomes invalid. Accessing it results in undefined behavior.
+\end{DoxyNote}
+\begin{DoxyWarning}{Warning}
+Do not free pointers from a different \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} instance. Each slab manages its own distinct set of pages.
+\end{DoxyWarning}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use memory...}}
+\DoxyCodeLine{memset(ptr, 0, 256);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free when done}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// ptr is now invalid -\/ do not use!}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Parameters Ignored\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All of these are equivalent (bytes and alignment ignored)}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+\DoxyCodeLine{slab-\/>return\_element(ptr, 256, 0);}
+\DoxyCodeLine{slab-\/>return\_element(ptr, 0, 0);}
+\DoxyCodeLine{slab-\/>return\_element(ptr, 999, 123);  \textcolor{comment}{// Values don't matter}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{NULL Pointer Handling\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe -\/ does nothing}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Conditional freeing is safe}}
+\DoxyCodeLine{\textcolor{keyword}{auto} maybe\_ptr = slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (maybe\_ptr.hasValue()) \{}
+\DoxyCodeLine{    ptr = maybe\_ptr.value();}
+\DoxyCodeLine{    \textcolor{comment}{// ... use ptr ...}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Safe even if allocation failed (ptr is nullptr)}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Multiple Objects\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate multiple objects}}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 20; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (ptr.hasValue()) \{}
+\DoxyCodeLine{        ptrs.push\_back(ptr.value());}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 20);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free all}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{void}* ptr : ptrs) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All slots are now in free list and can be reused}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>free\_blocks(), slab-\/>total\_blocks());}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Free Order Doesn\textquotesingle{}t Matter\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr3 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free in any order -\/ doesn't matter for slabs}}
+\DoxyCodeLine{slab-\/>return\_element(ptr2);  \textcolor{comment}{// Middle first}}
+\DoxyCodeLine{slab-\/>return\_element(ptr1);  \textcolor{comment}{// Then first}}
+\DoxyCodeLine{slab-\/>return\_element(ptr3);  \textcolor{comment}{// Then last}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All freed, all back in free list}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Immediate Reuse\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = slab-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{memset(ptr1, \textcolor{charliteral}{'A'}, 128);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free it}}
+\DoxyCodeLine{slab-\/>return\_element(ptr1);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Immediately allocate again -\/ likely gets same slot}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = slab-\/>alloc(128, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// May be same physical slot (LIFO free list)}}
+\DoxyCodeLine{\textcolor{comment}{// But ptr1 is invalid -\/ don't use it!}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Invalid Pointer (Silent Failure)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// External pointer (not from this slab)}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* external = malloc(256);}
+\DoxyCodeLine{slab-\/>return\_element(external);  \textcolor{comment}{// Silent no-\/op (not from slab)}}
+\DoxyCodeLine{free(external);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate valid pointer}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Misaligned pointer (offset into slot)}}
+\DoxyCodeLine{uint8\_t* misaligned = \textcolor{keyword}{static\_cast<}uint8\_t*\textcolor{keyword}{>}(ptr) + 10;}
+\DoxyCodeLine{slab-\/>return\_element(misaligned);  \textcolor{comment}{// Silent no-\/op (misaligned)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Original pointer still valid}}
+\DoxyCodeLine{slab-\/>return\_element(ptr);  \textcolor{comment}{// OK}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc()}} Allocate memory 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab7d9bc327bb65e0f038d2483e9a7bef3}{alloc\+\_\+aligned()}} Allocate aligned memory 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} Bulk deallocation of all objects 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a63abdf25352d257aea1918a784cc7d02}\label{classcslt_1_1SlabAllocator_a63abdf25352d257aea1918a784cc7d02}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!save@{save}}
+\index{save@{save}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{save()}{save()}}
+{\footnotesize\ttfamily void$\ast$ cslt\+::\+Slab\+Allocator\+::save (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Save allocator state (not supported) 
+
+\begin{DoxyReturn}{Returns}
+Always returns nullptr
+\end{DoxyReturn}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} does not support checkpoint/restore functionality. This method exists only for base class interface compatibility and always returns nullptr.
+
+{\bfseries{Why Not Supported\+:}} Slab allocators manage intrusive free lists with pointers embedded in freed slots. These pointers cannot be meaningfully saved and restored without complex serialization. Additionally, slabs are typically used for short-\/lived allocations where checkpointing doesn\textquotesingle{}t provide value.
+
+{\bfseries{Alternatives\+:}}
+\begin{DoxyItemize}
+\item Use \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} for bulk deallocation instead of \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}{restore()}}
+\item Manually track allocations if you need to revert state
+\item Use \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} if you need checkpoint support
+\end{DoxyItemize}
+
+\begin{DoxyNote}{Note}
+This method always returns nullptr. It exists only to satisfy the base \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} interface.
+
+Calling this method has no side effects. The slab state is unchanged.
+
+Do not attempt to pass the return value to \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}{restore()}}. It will always be nullptr and \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}{restore()}} will always fail.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Usage (Always Fails)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate something}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Try to save state}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = slab-\/>save();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Always nullptr}}
+\DoxyCodeLine{EXPECT\_EQ(checkpoint, \textcolor{keyword}{nullptr});}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Not Supported Pattern\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate some objects}}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    ptrs.push\_back(slab-\/>alloc(128, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// This pattern doesn't work with slab allocators}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = slab-\/>save();  \textcolor{comment}{// Returns nullptr}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate more}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    ptrs.push\_back(slab-\/>alloc(128, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Cannot restore}}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ok = slab-\/>restore(checkpoint);  \textcolor{comment}{// Always fails}}
+\DoxyCodeLine{EXPECT\_FALSE(ok);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alternative -\/ Manual Tracking\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// If you need to revert state, track allocations manually}}
+\DoxyCodeLine{std::vector<void*> checkpoint\_ptrs;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Phase 1: Initial allocations}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 5; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{    checkpoint\_ptrs.push\_back(ptr);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Phase 2: Tentative allocations}}
+\DoxyCodeLine{std::vector<void*> tentative;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    tentative.push\_back(slab-\/>alloc(256, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// "{}Restore"{} by freeing tentative allocations}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{void}* ptr : tentative) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Back to checkpoint state}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alternative -\/ Use reset()\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Instead of checkpoint/restore, use reset()}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Work cycle 1}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 20; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{slab-\/>reset();  \textcolor{comment}{// Clear everything}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Work cycle 2}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 30; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{slab-\/>reset();  \textcolor{comment}{// Clear everything again}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Why Checkpointing Doesn\textquotesingle{}t Work\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Conceptual example of why save/restore is hard for slabs:}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// State 1: Allocate 3 objects}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();  \textcolor{comment}{// Slot A}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();  \textcolor{comment}{// Slot B}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr3 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();  \textcolor{comment}{// Slot C}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free list: Slot D -\/> Slot E -\/> ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now we want to "{}checkpoint"{} -\/ what to save?}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Which slots are allocated? (ptr1, ptr2, ptr3)}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Free list structure? (intrusive pointers in freed slots)}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ But slots can be reused, moved around...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free ptr2}}
+\DoxyCodeLine{slab-\/>return\_element(ptr2);}
+\DoxyCodeLine{\textcolor{comment}{// Free list: Slot B -\/> Slot D -\/> Slot E -\/> ...}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// To restore, we'd need to:}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Know Slot B was freed after checkpoint}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Reconstruct exact free list state}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Mark ptr1, ptr3 as allocated}}
+\DoxyCodeLine{\textcolor{comment}{// This is complex and not worth it for slab use cases}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}{restore()}} Always returns false 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} Bulk deallocation alternative 
+\end{DoxySeeAlso}
+
+
+Reimplemented from \mbox{\hyperlink{classcslt_1_1Allocator_a59fcf1ce582d5cf99d942a941af5e107}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a2b1dc0c2ce12e87b6043471987bcb18a}\label{classcslt_1_1SlabAllocator_a2b1dc0c2ce12e87b6043471987bcb18a}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!stats@{stats}}
+\index{stats@{stats}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{stats()}{stats()}}
+{\footnotesize\ttfamily bool cslt\+::\+Slab\+Allocator\+::stats (\begin{DoxyParamCaption}\item[{char $\ast$}]{buffer,  }\item[{size\+\_\+t}]{buffer\+\_\+size }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [override]}, {\ttfamily [virtual]}}
+
+
+
+Generate diagnostic statistics report. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buffer} & Character buffer to write report into \\
+\hline
+{\em buffer\+\_\+size} & Size of the buffer in bytes\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if report generated successfully, false if buffer too small or nullptr
+\end{DoxyReturn}
+Generates a comprehensive human-\/readable report of the slab allocator\textquotesingle{}s current state, including geometry, capacity, usage, and per-\/page details.
+
+{\bfseries{Report Contents\+:}}
+\begin{DoxyItemize}
+\item Object size and slot stride
+\item Alignment requirements
+\item Page size and header overhead
+\item Number of pages and blocks per page
+\item Total capacity and current usage (bytes and blocks)
+\item Free block count (both geometric and from free list)
+\item Utilization percentage
+\item Per-\/page listing
+\end{DoxyItemize}
+
+{\bfseries{Cross-\/\+Validation\+:}} The report includes free block count calculated two ways\+:
+\begin{DoxyItemize}
+\item Geometric\+: total\+\_\+blocks -\/ in\+\_\+use\+\_\+blocks
+\item Free list\+: Count by walking free list These should always match. Discrepancy indicates corruption.
+\end{DoxyItemize}
+
+{\bfseries{Buffer Size\+:}} Typical reports are 500-\/1000 bytes. Recommend 2KB-\/4\+KB buffer to accommodate slabs with many pages. If buffer is too small, the function returns false.
+
+\begin{DoxyNote}{Note}
+This is a diagnostic tool for debugging and monitoring. It\textquotesingle{}s not intended for production hot paths due to formatting overhead.
+
+The report is human-\/readable, not machine-\/parseable. Don\textquotesingle{}t rely on exact format -\/ use the query methods (\mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\+\_\+blocks()}}, \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}}, etc.) for programmatic access.
+\end{DoxyNote}
+\begin{DoxyParagraph}{Basic Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 4096).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate some objects}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 5; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Generate report}}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[2048];}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ok = slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (ok) \{}
+\DoxyCodeLine{    std::cout << buffer;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Example Output\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Slab Statistics:}
+\DoxyCodeLine{  Object \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}}: 256 bytes}
+\DoxyCodeLine{  Slot \mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}}: 256 bytes}
+\DoxyCodeLine{  Alignment: 64 bytes}
+\DoxyCodeLine{  Page \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}}: 4096 bytes}
+\DoxyCodeLine{  Page header bytes: 64}
+\DoxyCodeLine{  Pages: 1}
+\DoxyCodeLine{  Blocks per page: 15}
+\DoxyCodeLine{  Total blocks: 15}
+\DoxyCodeLine{  In-\/use blocks: 5}
+\DoxyCodeLine{  Free blocks (geom): 10}
+\DoxyCodeLine{  Free blocks (free list): 10}
+\DoxyCodeLine{  Used: 1280 bytes}
+\DoxyCodeLine{  Capacity: 3840 bytes}
+\DoxyCodeLine{  Remaining: 2560 bytes}
+\DoxyCodeLine{  Total (with overhead): 4096 bytes}
+\DoxyCodeLine{  Utilization: 33.3\%}
+\DoxyCodeLine{  Page 1: 4096 bytes, 15 blocks}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Monitoring Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many objects}}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 50; ++i) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (ptr.hasValue()) \{}
+\DoxyCodeLine{        ptrs.push\_back(ptr.value());}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Check statistics}}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[4096];}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}After 50 allocations:\(\backslash\)n"{}} << buffer << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free half}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < ptrs.size() / 2; ++i) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptrs[i]);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}After freeing 25:\(\backslash\)n"{}} << buffer << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Detecting Corruption\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate and free normally}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr1 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr2 = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{slab-\/>return\_element(ptr1);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[2048];}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Check for consistency}}
+\DoxyCodeLine{std::string report(buffer);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Look for mismatched free counts}}
+\DoxyCodeLine{\textcolor{comment}{// "{}Free blocks (geom): X"{} should match "{}Free blocks (free list): X"{}}}
+\DoxyCodeLine{\textcolor{comment}{// If different, indicates corruption (double-\/free, list corruption, etc.)}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Buffer Too Small\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{char} small\_buffer[100];  \textcolor{comment}{// Too small}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{bool} ok = slab-\/>stats(small\_buffer, \textcolor{keyword}{sizeof}(small\_buffer));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!ok) \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Buffer too small for statistics report\(\backslash\)n"{}};}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Try larger buffer}}
+\DoxyCodeLine{    \textcolor{keywordtype}{char} large\_buffer[4096];}
+\DoxyCodeLine{    ok = slab-\/>stats(large\_buffer, \textcolor{keyword}{sizeof}(large\_buffer));}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Empty Slab (No Allocations)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// No allocations yet -\/ no pages allocated}}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[2048];}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Output shows:}}
+\DoxyCodeLine{\textcolor{comment}{//   Pages: 0}}
+\DoxyCodeLine{\textcolor{comment}{//   Total blocks: 0}}
+\DoxyCodeLine{\textcolor{comment}{//   Capacity: 0 bytes}}
+\DoxyCodeLine{\textcolor{comment}{//   Utilization: N/A (capacity is 0)}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Multiple Pages\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Small page size to force multiple pages}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 1024).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate enough to need multiple pages}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 20; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{char} buffer[4096];}
+\DoxyCodeLine{slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Output shows multiple pages:}}
+\DoxyCodeLine{\textcolor{comment}{//   Pages: 3}}
+\DoxyCodeLine{\textcolor{comment}{//   Page 1: 1024 bytes, 3 blocks}}
+\DoxyCodeLine{\textcolor{comment}{//   Page 2: 1024 bytes, 3 blocks}}
+\DoxyCodeLine{\textcolor{comment}{//   Page 3: 1024 bytes, 3 blocks}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Utilization Tracking\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} track\_utilization = [\&]() \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{char} buffer[2048];}
+\DoxyCodeLine{    slab-\/>stats(buffer, \textcolor{keyword}{sizeof}(buffer));}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    std::string report(buffer);}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} pos = report.find(\textcolor{stringliteral}{"{}Utilization: "{}});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (pos != std::string::npos) \{}
+\DoxyCodeLine{        std::string util\_line = report.substr(pos);}
+\DoxyCodeLine{        std::cout << util\_line.substr(0, util\_line.find(\textcolor{charliteral}{'\(\backslash\)n'})) << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Track utilization over time}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{    track\_utilization();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\+\_\+blocks()}} Get total capacity programmatically 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}{in\+\_\+use\+\_\+blocks()}} Get current usage programmatically 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}{free\+\_\+blocks()}} Get free block count programmatically 
+
+\mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size()}} Get used bytes programmatically 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}{remaining()}} Get available bytes programmatically 
+\end{DoxySeeAlso}
+
+
+Implements \mbox{\hyperlink{classcslt_1_1Allocator_a794cb0fe500dc3a698015474ad8a7c86}{cslt\+::\+Allocator}}.
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}\label{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!stride@{stride}}
+\index{stride@{stride}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{stride()}{stride()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Slab\+Allocator\+::stride (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Get slot stride (internal slot size) 
+
+\begin{DoxyReturn}{Returns}
+Size of each slot in bytes
+\end{DoxyReturn}
+Returns the actual internal slot size used by the allocator. This is $>$= obj\+\_\+size and $>$= sizeof(void$\ast$) to accommodate both the object and free list linkage.
+
+Slot size is calculated as\+: max(align\+\_\+up(obj\+\_\+size, align), align\+\_\+up(sizeof(\+Slot), align))
+
+This is the actual memory consumed per allocation, including alignment padding and free list overhead.
+
+\begin{DoxyNote}{Note}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride()}} $>$= obj\+\_\+size (user-\/visible size) 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride()}} is a multiple of the slab\textquotesingle{}s alignment 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride()}} $>$= sizeof(void$\ast$) for free list linkage
+\end{DoxyNote}
+\begin{DoxyParagraph}{Object vs Slot Size\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 100-\/byte objects, 64-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 100, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// obj\_size = 100 (user-\/visible)}}
+\DoxyCodeLine{\textcolor{comment}{// stride = 128 (actual slot size: next multiple of 64 >= 100)}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>stride(), 128);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// stride is multiple of alignment}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>stride() \% 64, 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Tiny Objects (Free List Overhead)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 8-\/byte objects, 8-\/byte alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 8, 8, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// obj\_size = 8}}
+\DoxyCodeLine{\textcolor{comment}{// But stride >= sizeof(void*) (typically 8 on 64-\/bit)}}
+\DoxyCodeLine{\textcolor{comment}{// So stride = 8 (satisfies both requirements)}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}} = slab-\/>stride();}
+\DoxyCodeLine{EXPECT\_GE(\mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}}, 8);}
+\DoxyCodeLine{EXPECT\_GE(\mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}}, \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{void}*));}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Memory Overhead Calculation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 100, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Trigger page allocation}}
+\DoxyCodeLine{slab-\/>alloc(100, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} obj\_size = 100;              \textcolor{comment}{// User size}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} \mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}} = slab-\/>stride();     \textcolor{comment}{// Actual slot size}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} overhead\_per\_obj = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}} -\/ obj\_size;}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Overhead per object: "{}} << overhead\_per\_obj << \textcolor{stringliteral}{"{} bytes\(\backslash\)n"{}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} total\_slots = slab-\/>total\_blocks();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} total\_overhead = overhead\_per\_obj * total\_slots;}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Total alignment overhead: "{}} << total\_overhead << \textcolor{stringliteral}{"{} bytes\(\backslash\)n"{}};}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\+\_\+blocks()}} Get number of slots 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}\label{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!total\_blocks@{total\_blocks}}
+\index{total\_blocks@{total\_blocks}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{total\_blocks()}{total\_blocks()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+Slab\+Allocator\+::total\+\_\+blocks (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Get total slot capacity (all allocated pages) 
+
+\begin{DoxyReturn}{Returns}
+Total number of slots across all pages
+\end{DoxyReturn}
+Returns the total number of slots available across all allocated pages. This represents the maximum number of objects that can be allocated before needing to grow a new page.
+
+Calculated as\+: page\+\_\+count × objs\+\_\+per\+\_\+slab
+
+This includes both in-\/use and free slots.
+
+\begin{DoxyNote}{Note}
+Returns 0 if no pages allocated yet (lazy allocation) 
+
+Increases when new pages are allocated (via grow()) 
+
+Never decreases (pages not freed until slab destruction)
+\end{DoxyNote}
+\begin{DoxyParagraph}{Initial State (No Pages)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// No pages allocated yet}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>total\_blocks(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// First allocation triggers page growth}}
+\DoxyCodeLine{\textcolor{keyword}{auto} ptr = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Now has capacity (e.g., 15 slots per page)}}
+\DoxyCodeLine{EXPECT\_GT(slab-\/>total\_blocks(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{slab-\/>return\_element(ptr);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Capacity Growth\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Small page to demonstrate growth}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 1024).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>total\_blocks(), 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// First allocation}}
+\DoxyCodeLine{slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} first\_capacity = slab-\/>total\_blocks();}
+\DoxyCodeLine{EXPECT\_GT(first\_capacity, 0);  \textcolor{comment}{// e.g., 3 slots}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate beyond first page capacity}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 1; i < 10; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Should have grown}}
+\DoxyCodeLine{EXPECT\_GT(slab-\/>total\_blocks(), first\_capacity);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Utilization Calculation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate some objects}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 10; ++i) \{}
+\DoxyCodeLine{    slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} total = slab-\/>total\_blocks();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} in\_use = slab-\/>in\_use\_blocks();}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} free = slab-\/>free\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Verify accounting}}
+\DoxyCodeLine{EXPECT\_EQ(total, in\_use + free);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Calculate utilization}}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (total > 0) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{double} util = 100.0 * in\_use / total;}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Utilization: "{}} << util << \textcolor{stringliteral}{"{}\%\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Capacity Never Decreases\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Allocate many}}
+\DoxyCodeLine{std::vector<void*> ptrs;}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 100; ++i) \{}
+\DoxyCodeLine{    ptrs.push\_back(slab-\/>alloc(256, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t} capacity\_peak = slab-\/>total\_blocks();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Free all}}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{void}* ptr : ptrs) \{}
+\DoxyCodeLine{    slab-\/>return\_element(ptr);}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Capacity unchanged (pages retained)}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>total\_blocks(), capacity\_peak);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// But nothing in use}}
+\DoxyCodeLine{EXPECT\_EQ(slab-\/>in\_use\_blocks(), 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}{in\+\_\+use\+\_\+blocks()}} Get \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}} slots 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}{free\+\_\+blocks()}} Get available slots 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride()}} Get bytes per slot 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}{remaining()}} Get \mbox{\hyperlink{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}{remaining}} bytes 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}\label{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!WithBuddy@{WithBuddy}}
+\index{WithBuddy@{WithBuddy}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{WithBuddy()}{WithBuddy()}}
+{\footnotesize\ttfamily static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$\mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}}, \mbox{\hyperlink{structcslt_1_1SlabDeleter}{Slab\+Deleter}}$>$ $>$ cslt\+::\+Slab\+Allocator\+::\+With\+Buddy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} \&}]{buddy,  }\item[{size\+\_\+t}]{obj\+\_\+size,  }\item[{size\+\_\+t}]{align = {\ttfamily 0},  }\item[{size\+\_\+t}]{slab\+\_\+bytes\+\_\+hint = {\ttfamily 0} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+Factory method to create a slab allocator backed by a buddy allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em buddy} & Reference to backing \mbox{\hyperlink{classcslt_1_1BuddyAllocator}{Buddy\+Allocator}} (non-\/owning, must outlive slab) \\
+\hline
+{\em obj\+\_\+size} & Size of each object in bytes (fixed for lifetime of slab) \\
+\hline
+{\em align} & Slot alignment in bytes (0 = alignof(max\+\_\+align\+\_\+t), rounded to power of 2) \\
+\hline
+{\em slab\+\_\+bytes\+\_\+hint} & Suggested page size in bytes (0 = automatic\+: 4KB or 64 objects)\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}} containing \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} to \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} on success, or error on failure
+\end{DoxyReturn}
+Creates a slab allocator that carves fixed-\/size objects from pages allocated from the buddy allocator. The allocator grows lazily -\/ pages are only allocated when the free list is exhausted.
+
+{\bfseries{Initialization Process\+:}}
+\begin{DoxyEnumerate}
+\item Validate and normalize parameters (obj\+\_\+size $>$ 0, align to power of 2)
+\item Allocate \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} structure from buddy
+\item Calculate slot size (max of obj\+\_\+size and free list pointer size, aligned)
+\item Calculate page geometry (header size, objects per page)
+\item Return empty slab (no pages allocated yet -\/ lazy allocation)
+\end{DoxyEnumerate}
+
+{\bfseries{Parameter Normalization\+:}}
+\begin{DoxyItemize}
+\item align=0 → alignof(max\+\_\+align\+\_\+t) (typically 16 bytes)
+\item align=non-\/pow2 → rounded up to next power of 2 (e.\+g., 48 → 64)
+\item slab\+\_\+bytes\+\_\+hint=0 → max(4096, obj\+\_\+size $\ast$ 64 + page\+\_\+header)
+\item Slot size adjusted to hold both object and free list linkage
+\end{DoxyItemize}
+
+{\bfseries{Page Size Calculation\+:}} When slab\+\_\+bytes\+\_\+hint=0, the default is the larger of\+:
+\begin{DoxyItemize}
+\item 4096 bytes (1 page)
+\item Enough space for 64 objects plus page header
+\end{DoxyItemize}
+
+The final page size is adjusted so slots fit evenly with no tail waste.
+
+{\bfseries{Lazy Allocation\+:}} No pages are allocated during initialization. The first call to \mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc()}} will trigger page allocation via grow\+\_\+().
+
+\begin{DoxyNote}{Note}
+The buddy allocator must outlive the slab allocator. The slab stores a non-\/owning pointer to buddy and will return pages to it during destruction.
+
+obj\+\_\+size cannot be changed after creation. To allocate different sizes, create separate slab allocators.
+
+The \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} structure itself is allocated from the buddy allocator, not from the system heap.
+\end{DoxyNote}
+
+\begin{DoxyExceptions}{Exceptions}
+{\em \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}} & If obj\+\_\+size is zero \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1AlignmentError}{Alignment\+Error}}} & If alignment is invalid or too large ($>$ SIZE\+\_\+\+MAX/2) \\
+\hline
+{\em \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}}} & If buddy allocator cannot allocate the \mbox{\hyperlink{classcslt_1_1SlabAllocator}{Slab\+Allocator}} structure\\
+\hline
+\end{DoxyExceptions}
+\begin{DoxyParagraph}{Basic Creation\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slab for 256-\/byte objects with defaults}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab\_result = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (slab\_result.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} slab = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(slab\_result.value());}
+\DoxyCodeLine{    \textcolor{comment}{// Use slab...}}
+\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
+\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Error: "{}} << slab\_result.error().what() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Custom Alignment\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 64-\/byte alignment for cache-\/line aligned structures}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} obj = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(obj) \% 64 == 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Custom Page Size\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Use 8KB pages instead of default 4KB}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 128, 0, 8192).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// First allocation triggers page growth}}
+\DoxyCodeLine{\textcolor{keyword}{auto} obj = slab-\/>alloc(128, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Check how many objects fit per page}}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Objects per page: "{}} << slab-\/>total\_blocks() / 1 << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Small Objects (Slot Size Adjustment)\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// 8-\/byte objects, but slots will be larger}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 8, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// stride() returns actual slot size}}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Object size: 8\(\backslash\)n"{}};}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Slot size: "{}} << slab-\/>stride() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};  \textcolor{comment}{// e.g., 16 (for pointer)}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Alignment Normalization\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Request 48-\/byte alignment (not power of 2)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 48, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Automatically rounded to 64 (next power of 2)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} obj = slab-\/>alloc(256, \textcolor{keyword}{false}).value();}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(obj) \% 64 == 0);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Multiple Slabs from Same Buddy\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(16 * 1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Create slabs for different object sizes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} particles = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, \textcolor{keyword}{sizeof}(Particle), 0, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} projectiles = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, \textcolor{keyword}{sizeof}(Projectile), 0, 0).value();}
+\DoxyCodeLine{\textcolor{keyword}{auto} enemies = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, \textcolor{keyword}{sizeof}(Enemy), 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Each slab manages its own object size}}
+\DoxyCodeLine{\textcolor{keyword}{auto} p = particles-\/>alloc(\textcolor{keyword}{sizeof}(Particle), \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keyword}{auto} proj = projectiles-\/>alloc(\textcolor{keyword}{sizeof}(Projectile), \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keyword}{auto} e = enemies-\/>alloc(\textcolor{keyword}{sizeof}(Enemy), \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// All slabs share the same buddy allocator for page management}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error Handling\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Invalid: zero object size}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result1 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 0, 0, 0);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!result1.hasValue()) \{}
+\DoxyCodeLine{    std::cerr << result1.error().what() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};  \textcolor{comment}{// "{}Object size must be non-\/zero"{}}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Invalid: alignment too large}}
+\DoxyCodeLine{\textcolor{keyword}{auto} result2 = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, SIZE\_MAX / 2 + 1, 0);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (!result2.hasValue()) \{}
+\DoxyCodeLine{    std::cerr << result2.error().what() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};  \textcolor{comment}{// "{}Alignment exceeds maximum"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Page Size vs Object Count\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} buddy = \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a8b41015908b893bd2138d38399d86d3d}{BuddyAllocator::Heap}}(1024 * 1024, 64, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// With 256-\/byte objects and 4KB default pages:}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Page header: \string~64 bytes (aligned)}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Usable: 4096 -\/ 64 = 4032 bytes}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Objects per page: 4032 / 256 = 15 objects}}
+\DoxyCodeLine{\textcolor{comment}{// -\/ Actual page size: 64 + 15*256 = 3904 bytes (no tail waste)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} slab = \mbox{\hyperlink{classcslt_1_1SlabAllocator_a87b551070634b6fc3e44b3ac0b53c11c}{SlabAllocator::WithBuddy}}(*buddy, 256, 0, 0).value();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Trigger first page allocation}}
+\DoxyCodeLine{slab-\/>alloc(256, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::cout << \textcolor{stringliteral}{"{}Objects per page: "{}} << slab-\/>total\_blocks() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};  \textcolor{comment}{// 15}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a9bdbc421069a66ffa2507d3b2c6036aa}{$\sim$\+Slab\+Allocator()}} Destructor that frees pages back to buddy 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a7217a0b0f80ca4c303670442e3178030}{alloc()}} Allocate a fixed-\/size object from the slab 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\+\_\+element()}} Free an object back to the slab 
+
+\mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset()}} Bulk free all allocations 
+\end{DoxySeeAlso}
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1SlabAllocator_ab69b104653fffd31c3dbad0d2b021888}\label{classcslt_1_1SlabAllocator_ab69b104653fffd31c3dbad0d2b021888}} 
+\index{cslt::SlabAllocator@{cslt::SlabAllocator}!SlabDeleter@{SlabDeleter}}
+\index{SlabDeleter@{SlabDeleter}!cslt::SlabAllocator@{cslt::SlabAllocator}}
+\doxysubsubsection{\texorpdfstring{SlabDeleter}{SlabDeleter}}
+{\footnotesize\ttfamily friend struct \mbox{\hyperlink{structcslt_1_1SlabDeleter}{Slab\+Deleter}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+\begin{Desc}
+\item[Examples]\par
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\end{DoxyCompactItemize}

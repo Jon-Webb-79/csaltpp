@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="structcslt_1_1SlabDeleter" kind="struct" language="C++" prot="public">
+    <compoundname>cslt::SlabDeleter</compoundname>
+    <includes refid="allocator_8hpp" local="no">allocator.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="structcslt_1_1SlabDeleter_1afd2842a50068f47e3d8a5eda3ae0bb14" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::SlabDeleter::operator()</definition>
+        <argsstring>(SlabAllocator *slab) const noexcept</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="classcslt_1_1SlabAllocator" kindref="compound">SlabAllocator</ref> *</type>
+          <declname>slab</declname>
+        </param>
+        <briefdescription>
+<para>Destroy and deallocate a <ref refid="classcslt_1_1SlabAllocator" kindref="compound">SlabAllocator</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>slab</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1SlabAllocator" kindref="compound">SlabAllocator</ref> to destroy (may be nullptr)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Implements the custom deletion logic for <ref refid="classcslt_1_1SlabAllocator" kindref="compound">SlabAllocator</ref>:<orderedlist>
+<listitem><para>Saves buddy pointer before destruction</para>
+</listitem><listitem><para>Calls destructor to free pages</para>
+</listitem><listitem><para>Frees slab structure back to buddy allocator</para>
+</listitem></orderedlist>
+</para>
+<para>This ensures the <ref refid="classcslt_1_1SlabAllocator" kindref="compound">SlabAllocator</ref> memory is returned to the correct allocator (buddy, not operator delete).</para>
+<para><simplesect kind="note"><para>Called automatically by UniquePtr&lt;SlabAllocator, SlabDeleter&gt; when the pointer goes out of scope or is reset. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="7188" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="9915" bodyend="9935"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+    </briefdescription>
+    <detaileddescription>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="7187" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="7187" bodyend="7189"/>
+    <listofallmembers>
+      <member refid="structcslt_1_1SlabDeleter_1afd2842a50068f47e3d8a5eda3ae0bb14" prot="public" virt="non-virtual"><scope>cslt::SlabDeleter</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

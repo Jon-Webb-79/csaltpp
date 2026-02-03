@@ -3965,6 +3965,161 @@ TEST(ExpectedTest, FunctionReturn) {
     EXPECT_TRUE(err.hasError());
     EXPECT_STREQ("Function error", err.error().what());
 }
+// ================================================================================ 
+// ================================================================================ 
+
+class IsInstanceTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        // Setup code if needed
+    }
+
+    void TearDown() override {
+        // Cleanup code if needed
+    }
+};
+
+// ============================================================================
+// Base Error Class Tests
+// ============================================================================
+
+TEST_F(IsInstanceTest, ErrorIsInstanceOfError) {
+    Error err;
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+TEST_F(IsInstanceTest, ErrorWithMessageIsInstanceOfError) {
+    Error err("Custom error message");
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+// ============================================================================
+// ArgumentError Tests
+// ============================================================================
+
+TEST_F(IsInstanceTest, ArgumentErrorIsInstanceOfArgumentError) {
+    ArgumentError err;
+    EXPECT_TRUE(isinstance<ArgumentError>(err));
+}
+
+TEST_F(IsInstanceTest, ArgumentErrorIsInstanceOfError) {
+    ArgumentError err;
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+TEST_F(IsInstanceTest, ArgumentErrorIsNotInstanceOfMemoryError) {
+    ArgumentError err;
+    EXPECT_FALSE(isinstance<MemoryError>(err));
+}
+
+// ============================================================================
+// Derived ArgumentError Tests
+// ============================================================================
+
+TEST_F(IsInstanceTest, InvalidArgErrorIsInstanceOfInvalidArgError) {
+    InvalidArgError err;
+    EXPECT_TRUE(isinstance<InvalidArgError>(err));
+}
+
+TEST_F(IsInstanceTest, InvalidArgErrorIsInstanceOfArgumentError) {
+    InvalidArgError err;
+    EXPECT_TRUE(isinstance<ArgumentError>(err));
+}
+
+TEST_F(IsInstanceTest, InvalidArgErrorIsInstanceOfError) {
+    InvalidArgError err;
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+TEST_F(IsInstanceTest, InvalidArgErrorIsNotInstanceOfNullPointerError) {
+    InvalidArgError err;
+    EXPECT_FALSE(isinstance<NullPointerError>(err));
+}
+
+TEST_F(IsInstanceTest, NullPointerErrorIsInstanceOfArgumentError) {
+    NullPointerError err;
+    EXPECT_TRUE(isinstance<NullPointerError>(err));
+    EXPECT_TRUE(isinstance<ArgumentError>(err));
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+TEST_F(IsInstanceTest, OutOfBoundsErrorIsInstanceOfArgumentError) {
+    OutOfBoundsError err;
+    EXPECT_TRUE(isinstance<OutOfBoundsError>(err));
+    EXPECT_TRUE(isinstance<ArgumentError>(err));
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+// ============================================================================
+// MemoryError Tests
+// ============================================================================
+
+TEST_F(IsInstanceTest, MemoryErrorIsInstanceOfMemoryError) {
+    MemoryError err;
+    EXPECT_TRUE(isinstance<MemoryError>(err));
+}
+
+TEST_F(IsInstanceTest, MemoryErrorIsInstanceOfError) {
+    MemoryError err;
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+TEST_F(IsInstanceTest, MemoryErrorIsNotInstanceOfArgumentError) {
+    MemoryError err;
+    EXPECT_FALSE(isinstance<ArgumentError>(err));
+}
+
+TEST_F(IsInstanceTest, BadAllocErrorIsInstanceOfMemoryError) {
+    BadAllocError err;
+    EXPECT_TRUE(isinstance<BadAllocError>(err));
+    EXPECT_TRUE(isinstance<MemoryError>(err));
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+TEST_F(IsInstanceTest, OutOfMemoryErrorIsInstanceOfMemoryError) {
+    OutOfMemoryError err;
+    EXPECT_TRUE(isinstance<OutOfMemoryError>(err));
+    EXPECT_TRUE(isinstance<MemoryError>(err));
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+// ============================================================================
+// MathError Tests
+// ============================================================================
+
+TEST_F(IsInstanceTest, MathErrorIsInstanceOfMathError) {
+    MathError err;
+    EXPECT_TRUE(isinstance<MathError>(err));
+}
+
+TEST_F(IsInstanceTest, DivByZeroErrorIsInstanceOfMathError) {
+    DivByZeroError err;
+    EXPECT_TRUE(isinstance<DivByZeroError>(err));
+    EXPECT_TRUE(isinstance<MathError>(err));
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+TEST_F(IsInstanceTest, DivByZeroErrorIsNotInstanceOfMemoryError) {
+    DivByZeroError err;
+    EXPECT_FALSE(isinstance<MemoryError>(err));
+    EXPECT_FALSE(isinstance<ArgumentError>(err));
+}
+
+TEST_F(IsInstanceTest, SingularMatrixErrorIsInstanceOfMathError) {
+    SingularMatrixError err;
+    EXPECT_TRUE(isinstance<SingularMatrixError>(err));
+    EXPECT_TRUE(isinstance<MathError>(err));
+    EXPECT_TRUE(isinstance<Error>(err));
+}
+
+// ============================================================================
+// IOError Tests
+// ============================================================================
+
+TEST_F(IsInstanceTest, IOErrorIsInstanceOfIOError) {
+    IOError err;
+    EXPECT_TRUE(isinstance<IOError>(err));
+}
 // ================================================================================
 // ================================================================================
 // eof

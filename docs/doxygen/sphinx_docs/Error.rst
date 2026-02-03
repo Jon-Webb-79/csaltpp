@@ -707,3 +707,7 @@ error type, and the polymorphic behavior is preserved:
        // but accessible through the Error interface
    }
 
+isInstance Overview
+===================
+
+.. doxygenfunction:: cslt::isinstance

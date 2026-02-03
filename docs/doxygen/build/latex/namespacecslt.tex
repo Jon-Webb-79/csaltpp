@@ -260,6 +260,8 @@ int \mbox{\hyperlink{namespacecslt_adb04c13835953770d190921376af439f}{is\+\_\+po
 \begin{DoxyCompactList}\small\item\em Check if a value is a power of 2. \end{DoxyCompactList}\item 
 size\+\_\+t \mbox{\hyperlink{namespacecslt_a82dac9d13bcd6ec525fdf92686383736}{next\+\_\+pow2}} (size\+\_\+t x) noexcept
 \begin{DoxyCompactList}\small\item\em Round up to next power of 2. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Error\+Type $>$ }\\bool \mbox{\hyperlink{namespacecslt_a9488e6eadb9257122a239928a92e7f94}{isinstance}} (const \mbox{\hyperlink{classcslt_1_1Error}{Error}} \&err)
+\begin{DoxyCompactList}\small\item\em Checks if an error object is an instance of a specific error type. \end{DoxyCompactList}\item 
 {\footnotesize template$<$class T , class D $>$ }\\void \mbox{\hyperlink{namespacecslt_ad5e0362c774ef1c0474fa5fb0b9f0dac}{swap}} (\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&a, \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T, D $>$ \&b) noexcept
 \item 
 {\footnotesize template$<$class T , class D $>$ }\\void \mbox{\hyperlink{namespacecslt_ab6ede81b849eb381dd4fdf71d32ade65}{swap}} (\mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T\mbox{[}$\,$\mbox{]}, D $>$ \&a, \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}}$<$ T\mbox{[}$\,$\mbox{]}, D $>$ \&b) noexcept
@@ -519,6 +521,47 @@ Returns 1 for 1, 2, 4, 8, 16, etc. Returns 0 for 0.
 \begin{Desc}
 \item[Examples]\par
 \mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\Hypertarget{namespacecslt_a9488e6eadb9257122a239928a92e7f94}\label{namespacecslt_a9488e6eadb9257122a239928a92e7f94}} 
+\index{cslt@{cslt}!isinstance@{isinstance}}
+\index{isinstance@{isinstance}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{isinstance()}{isinstance()}}
+{\footnotesize\ttfamily template$<$typename Error\+Type $>$ \\
+bool cslt\+::isinstance (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Error}{Error}} \&}]{err }\end{DoxyParamCaption})}
+
+
+
+Checks if an error object is an instance of a specific error type. 
+
+This function performs runtime type checking to determine if an error is of a specific type or derived from that type. It uses dynamic\+\_\+cast internally, so it works with the polymorphic error hierarchy.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Error\+Type} & The error type to check against (e.\+g., \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}) \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em err} & Reference to the error object to check \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if err is an instance of Error\+Type or derived from it
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Example Usage\+:}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{Expected<int> result = someFunction();}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasError()) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (isinstance<ArgumentError>(result.error())) \{}
+\DoxyCodeLine{        \textcolor{comment}{// Handle argument errors}}
+\DoxyCodeLine{    \} \textcolor{keywordflow}{else} \textcolor{keywordflow}{if} (isinstance<MemoryError>(result.error())) \{}
+\DoxyCodeLine{        \textcolor{comment}{// Handle memory errors}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+\end{DoxyParagraph}
 \mbox{\Hypertarget{namespacecslt_aac66227d6c414e06d60fb4ae0b563c46}\label{namespacecslt_aac66227d6c414e06d60fb4ae0b563c46}} 
 \index{cslt@{cslt}!make\_shared@{make\_shared}}
 \index{make\_shared@{make\_shared}!cslt@{cslt}}

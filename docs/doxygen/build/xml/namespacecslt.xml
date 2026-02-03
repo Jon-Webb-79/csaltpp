@@ -365,6 +365,61 @@ Returns the smallest power of 2 that is &gt;= x. Returns 0 if x is too large and
         </inbodydescription>
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" line="1402" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp" bodystart="1402" bodyend="1422"/>
       </memberdef>
+      <memberdef kind="function" id="namespacecslt_1a9488e6eadb9257122a239928a92e7f94" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename ErrorType</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::isinstance</definition>
+        <argsstring>(const Error &amp;err)</argsstring>
+        <name>isinstance</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Error" kindref="compound">Error</ref> &amp;</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Checks if an error object is an instance of a specific error type. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This function performs runtime type checking to determine if an error is of a specific type or derived from that type. It uses dynamic_cast internally, so it works with the polymorphic error hierarchy.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>ErrorType</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>The error type to check against (e.g., <ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref>) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Reference to the error object to check </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if err is an instance of ErrorType or derived from it</para>
+</simplesect>
+<simplesect kind="par"><title>Example Usage:</title><para><programlisting><codeline><highlight class="normal">Expected&lt;int&gt;<sp/>result<sp/>=<sp/>someFunction();</highlight></codeline>
+<codeline><highlight class="normal">if<sp/>(result.hasError())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>if<sp/>(isinstance&lt;ArgumentError&gt;(result.error()))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Handle<sp/>argument<sp/>errors</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}<sp/>else<sp/>if<sp/>(isinstance&lt;MemoryError&gt;(result.error()))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>//<sp/>Handle<sp/>memory<sp/>errors</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" line="2114" column="10" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp" bodystart="2114" bodyend="2116"/>
+      </memberdef>
       <memberdef kind="function" id="namespacecslt_1ad5e0362c774ef1c0474fa5fb0b9f0dac" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
         <templateparamlist>
           <param>

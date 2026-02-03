@@ -2087,125 +2087,39 @@ namespace cslt {
         }
     };
 
-    // template<typename T>
-    // class Expected {
-    // private:
-    //     bool has_value_;
-    //     T value_;
-    //     Error error_;
-    //
-    // public:
-    //
-    //     /**
-    //      * @brief Default constructor - initializes with no value and generic error.
-    //      */
-    //     Expected() : has_value_(false), value_(), error_("No value") {}
-    //     
-    //     /**
-    //      * @brief Sets the value and marks this as containing a value.
-    //      * 
-    //      * @param val The value to store
-    //      */
-    //     void setValue(const T& val) {
-    //         value_ = val;
-    //         has_value_ = true;
-    //     }
-    //     
-    //     /**
-    //      * @brief Sets the error and marks this as containing an error.
-    //      * 
-    //      * @param err The error to store
-    //      */
-    //     void setError(const Error& err) {
-    //         error_ = err;
-    //         has_value_ = false;
-    //     }
-    //     
-    //     /**
-    //      * @brief Checks if the Expected contains a value.
-    //      * 
-    //      * @return true if contains a value, false if contains an error
-    //      */
-    //     bool hasValue() const {
-    //         return has_value_;
-    //     }
-    //     
-    //     /**
-    //      * @brief Checks if the Expected contains an error.
-    //      * 
-    //      * @return true if contains an error, false if contains a value
-    //      */
-    //     bool hasError() const {
-    //         return !has_value_;
-    //     }
-    //     
-    //     /**
-    //      * @brief Gets the contained value.
-    //      * 
-    //      * Behavior is undefined if the Expected contains an error.
-    //      * Use hasValue() to check before calling this method.
-    //      * 
-    //      * @return Reference to the contained value
-    //      */
-    //     T& value() {
-    //         return value_;
-    //     }
-    //     
-    //     /**
-    //      * @brief Gets the contained value (const version).
-    //      * 
-    //      * Behavior is undefined if the Expected contains an error.
-    //      * Use hasValue() to check before calling this method.
-    //      * 
-    //      * @return Const reference to the contained value
-    //      */
-    //     const T& value() const {
-    //         return value_;
-    //     }
-    //     
-    //     /**
-    //      * @brief Gets the contained error.
-    //      * 
-    //      * Behavior is undefined if the Expected contains a value.
-    //      * Use hasError() to check before calling this method.
-    //      * 
-    //      * @return Reference to the contained error
-    //      */
-    //     Error& error() {
-    //         return error_;
-    //     }
-    //     
-    //     /**
-    //      * @brief Gets the contained error (const version).
-    //      * 
-    //      * Behavior is undefined if the Expected contains a value.
-    //      * Use hasError() to check before calling this method.
-    //      * 
-    //      * @return Const reference to the contained error
-    //      */
-    //     const Error& error() const {
-    //         return error_;
-    //     }
-    //     
-    //     /**
-    //      * @brief Gets the value or a default if error.
-    //      * 
-    //      * @param default_val The default value to return if this contains an error
-    //      * @return The contained value if present, otherwise default_val
-    //      */
-    //     T valueOr(const T& default_val) const {
-    //         return has_value_ ? value_ : default_val;
-    //     }
-    //     
-    //     /**
-    //      * @brief Conversion to bool (checks if has value).
-    //      * 
-    //      * @return true if contains a value, false if contains an error
-    //      */
-    //     explicit operator bool() const {
-    //         return has_value_;
-    //     }
-    // };
+    /**
+     * @brief Checks if an error object is an instance of a specific error type.
+     * 
+     * This function performs runtime type checking to determine if an error
+     * is of a specific type or derived from that type. It uses dynamic_cast
+     * internally, so it works with the polymorphic error hierarchy.
+     * 
+     * @tparam ErrorType The error type to check against (e.g., ArgumentError)
+     * @param err Reference to the error object to check
+     * @return true if err is an instance of ErrorType or derived from it
+     * 
+     * @par Example Usage:
+     * @code
+     * Expected<int> result = someFunction();
+     * if (result.hasError()) {
+     *     if (isinstance<ArgumentError>(result.error())) {
+     *         // Handle argument errors
+     *     } else if (isinstance<MemoryError>(result.error())) {
+     *         // Handle memory errors
+     *     }
+     * }
+     * @endcode
+     */
+    template<typename ErrorType>
+    bool isinstance(const Error& err) {
+        // Check if err is exactly ErrorType or derived from ErrorType
+        const ErrorType* ptr = dynamic_cast<const ErrorType*>(&err);
+        return ptr != nullptr;
+    }
+    // template<typename ErrorType>
+    // bool isinstance(const Error& err) {
+    //     return dynamic_cast<const ErrorType*>(&err);
+    // }
 // ================================================================================
 // ================================================================================ 
 } // namespace cslt

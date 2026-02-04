@@ -1536,8 +1536,9 @@ namespace cslt {
         Chunk* tail_;        ///< Pointer to the tail of memory chunks
         size_t min_chunk_;   ///< The minimum chunk size in bytes
         uint8_t resize_;     ///< Allows resizing if true with mem_type == DYNAMIC 
-                        
+#if ARENA_ENABLE_DYNAMIC                        
         BuddyAllocator* buddy_owner_ = nullptr;  ///< Non-null only for WithBuddy arenas
+#endif
         size_t          backing_bytes_ = 0;
 // -------------------------------------------------------------------------------- 
 
@@ -1862,7 +1863,7 @@ namespace cslt {
                  size_t bytes,
                  size_t base_align_in = alignof(max_align_t));
 // -------------------------------------------------------------------------------- 
-
+#if ARENA_ENABLE_DYNAMIC
         /**
          * @brief Create a fixed-capacity arena backed by a BuddyAllocator allocation
          *
@@ -1900,7 +1901,7 @@ namespace cslt {
         WithBuddy(BuddyAllocator& buddy,
                   size_t bytes,
                   size_t base_align_in = alignof(max_align_t));
-
+#endif
 // -------------------------------------------------------------------------------- 
 
         /**

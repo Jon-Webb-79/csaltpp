@@ -2493,7 +2493,7 @@ namespace cslt {
         }
 
         // Carve a single contiguous region from the arena for everything
-        auto mem_result = arena->alloc(available, false);
+        auto mem_result = arena->alloc(available, true);
         if (!mem_result.hasValue()) {
             result.setError(mem_result.error());
             return result;

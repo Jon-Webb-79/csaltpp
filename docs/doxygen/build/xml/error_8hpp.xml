@@ -5,6 +5,7 @@
     <includes local="no">cstddef</includes>
     <includes refid="utilities_8hpp" local="yes">utilities.hpp</includes>
     <includedby refid="allocator_8hpp" local="yes">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp</includedby>
+    <includedby refid="string_8hpp" local="yes">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp</includedby>
     <includedby refid="error_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp</includedby>
     <includedby refid="test__error_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csalt++/csalt++/test/test_error.cpp</includedby>
     <incdepgraph>
@@ -32,7 +33,11 @@
       </node>
     </incdepgraph>
     <invincdepgraph>
-      <node id="5">
+      <node id="4">
+        <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp</label>
+        <link refid="string_8cpp"/>
+      </node>
+      <node id="8">
         <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/error.cpp</label>
         <link refid="error_8cpp"/>
       </node>
@@ -41,28 +46,46 @@
         <link refid="error_8hpp"/>
         <childnode refid="2" relation="include">
         </childnode>
-        <childnode refid="5" relation="include">
+        <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="6" relation="include">
+        <childnode refid="8" relation="include">
+        </childnode>
+        <childnode refid="9" relation="include">
         </childnode>
       </node>
-      <node id="4">
+      <node id="7">
         <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/test/test_allocator.cpp</label>
         <link refid="test__allocator_8cpp"/>
       </node>
-      <node id="6">
+      <node id="9">
         <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/test/test_error.cpp</label>
         <link refid="test__error_8cpp"/>
+      </node>
+      <node id="5">
+        <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/test/test_string.cpp</label>
+        <link refid="test__string_8cpp"/>
       </node>
       <node id="2">
         <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp</label>
         <link refid="allocator_8hpp"/>
         <childnode refid="3" relation="include">
         </childnode>
-        <childnode refid="4" relation="include">
+        <childnode refid="6" relation="include">
+        </childnode>
+        <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
         </childnode>
       </node>
       <node id="3">
+        <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp</label>
+        <link refid="string_8hpp"/>
+        <childnode refid="4" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
+        </childnode>
+      </node>
+      <node id="6">
         <label>/home/jonwebb/Code_Dev/C++/csalt++/csalt++/allocator.cpp</label>
         <link refid="allocator_8cpp"/>
       </node>
@@ -762,17 +785,23 @@
 <codeline lineno="2089"><highlight class="normal"></highlight></codeline>
 <codeline lineno="2113"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">template</highlight><highlight class="normal">&lt;</highlight><highlight class="keyword">typename</highlight><highlight class="normal"><sp/>ErrorType&gt;</highlight></codeline>
 <codeline lineno="2114" refid="namespacecslt_1a9488e6eadb9257122a239928a92e7f94" refkind="member"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="namespacecslt_1a9488e6eadb9257122a239928a92e7f94" kindref="member">isinstance</ref>(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Error" kindref="compound">Error</ref>&amp;<sp/>err)<sp/>{</highlight></codeline>
-<codeline lineno="2115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="normal">ErrorType*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(&amp;err)<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
-<codeline lineno="2116"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
-<codeline lineno="2117"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2118"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================<sp/></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2119"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cslt</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2120"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================<sp/></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2121"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================<sp/></highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2122"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>error_HPP<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2115"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Check<sp/>if<sp/>err<sp/>is<sp/>exactly<sp/>ErrorType<sp/>or<sp/>derived<sp/>from<sp/>ErrorType</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2116"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>ErrorType*<sp/>ptr<sp/>=<sp/></highlight><highlight class="keyword">dynamic_cast&lt;</highlight><highlight class="keyword">const<sp/></highlight><highlight class="normal">ErrorType*</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(&amp;err);</highlight></codeline>
+<codeline lineno="2117"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>ptr<sp/>!=<sp/></highlight><highlight class="keyword">nullptr</highlight><highlight class="normal">;</highlight></codeline>
+<codeline lineno="2118"><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline lineno="2119"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>template&lt;typename<sp/>ErrorType&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2120"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>bool<sp/>isinstance(const<sp/>Error&amp;<sp/>err)<sp/>{</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2121"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/><sp/><sp/><sp/><sp/>return<sp/>dynamic_cast&lt;const<sp/>ErrorType*&gt;(&amp;err);</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2122"><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>}</highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="2123"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2124"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
-<codeline lineno="2125"><highlight class="normal"></highlight><highlight class="comment">//<sp/>eof</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2124"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2125"><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>namespace<sp/>cslt</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2126"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2127"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================<sp/></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2128"><highlight class="normal"></highlight><highlight class="preprocessor">#endif<sp/></highlight><highlight class="comment">/*<sp/>error_HPP<sp/>*/</highlight><highlight class="preprocessor"></highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2129"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2130"><highlight class="normal"></highlight><highlight class="comment">//<sp/>================================================================================</highlight><highlight class="normal"></highlight></codeline>
+<codeline lineno="2131"><highlight class="normal"></highlight><highlight class="comment">//<sp/>eof</highlight><highlight class="normal"></highlight></codeline>
     </programlisting>
     <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/error.hpp"/>
   </compounddef>

@@ -1606,6 +1606,7 @@ namespace cslt {
 // ================================================================================ 
 
     public:
+
         /**
          * @brief Destructor - frees all arena memory if owned
          * 

@@ -53,6 +53,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib")
 set(CSALTXX_SOURCES
     error.cpp
     allocator.cpp
+    string.cpp
 )
 
 set(CSALTXX_PUBLIC_INCLUDE_DIR  ${CMAKE_CURRENT_SOURCE_DIR}/include)

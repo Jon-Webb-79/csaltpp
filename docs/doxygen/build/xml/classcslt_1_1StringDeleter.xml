@@ -1,0 +1,62 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classcslt_1_1StringDeleter" kind="class" language="C++" prot="public">
+    <compoundname>cslt::StringDeleter</compoundname>
+    <includes refid="string_8hpp" local="no">string.hpp</includes>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1StringDeleter_1a02f19b0c94d5fe3e9eb39fe865ea20ad" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::StringDeleter::operator()</definition>
+        <argsstring>(String *s) const noexcept</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="classcslt_1_1String" kindref="compound">String</ref> *</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+<para>Delete a <ref refid="classcslt_1_1String" kindref="compound">String</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1String" kindref="compound">String</ref> to delete (may be nullptr)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Frees the internal buffer and the <ref refid="classcslt_1_1String" kindref="compound">String</ref> structure using the allocator stored within the <ref refid="classcslt_1_1String" kindref="compound">String</ref>.</para>
+<para>Safe to call with nullptr (no-op). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="279" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="115" bodyend="130"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Custom deleter for <ref refid="classcslt_1_1String" kindref="compound">String</ref> instances. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Implements proper cleanup for <ref refid="classcslt_1_1String" kindref="compound">String</ref> objects by:<orderedlist>
+<listitem><para>Freeing the internal character buffer</para>
+</listitem><listitem><para>Freeing the <ref refid="classcslt_1_1String" kindref="compound">String</ref> object itself Both operations use the allocator stored in the <ref refid="classcslt_1_1String" kindref="compound">String</ref>.</para>
+</listitem></orderedlist>
+</para>
+<para>This deleter is used with <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref> to provide RAII semantics.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;example&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>allocator);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>String<sp/>is<sp/>automatically<sp/>cleaned<sp/>up<sp/>when<sp/>UniquePtr<sp/>goes<sp/>out<sp/>of<sp/>scope</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>str(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>str-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;</highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>Deleter<sp/>called<sp/>here</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="267" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="267" bodyend="280"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1StringDeleter_1a02f19b0c94d5fe3e9eb39fe865ea20ad" prot="public" virt="non-virtual"><scope>cslt::StringDeleter</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

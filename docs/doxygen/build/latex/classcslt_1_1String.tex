@@ -1,0 +1,272 @@
+\hypertarget{classcslt_1_1String}{}\doxysection{cslt\+::String Class Reference}
+\label{classcslt_1_1String}\index{cslt::String@{cslt::String}}
+
+
+Allocator-\/backed string container.  
+
+
+
+
+{\ttfamily \#include $<$string.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+const char $\ast$ \mbox{\hyperlink{classcslt_1_1String_aafb23f3fb1b81ecf14b2c89bd13dfca9}{c\+\_\+str}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get the internal null-\/terminated C string. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}{size}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get the logical length of the string. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a45e6a308d90c30ff3e82fe5daaa47449}{capacity}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get the total allocated buffer size. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} $\ast$ \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Get the allocator used by this string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{init}} (const char $\ast$cstr, size\+\_\+t capacity\+\_\+bytes, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&\mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}}) noexcept
+\begin{DoxyCompactList}\small\item\em Initialize an allocator-\/backed string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}{String\+Deleter}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Allocator-\/backed string container. 
+
+Provides a string container that uses custom allocators for memory management. The string and its internal buffer are both allocated through the provided allocator.
+
+Key features\+:
+\begin{DoxyItemize}
+\item Custom allocator support (heap, arena, buddy, slab, etc.)
+\item Null-\/terminated C-\/string compatibility
+\item Capacity management with optional pre-\/allocation
+\item Safe truncation when capacity is insufficient
+\item RAII-\/based memory management through init factory functions
+\end{DoxyItemize}
+
+Usage pattern\+:
+\begin{DoxyItemize}
+\item Must be initialized via static factory function \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{init()}}
+\item Cannot be constructed directly (private constructor)
+\item Automatically manages both string object and buffer memory
+\item Cleaned up through custom deleter
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Create with heap allocator}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} str\_result = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (str\_result.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(str\_result.value());}
+\DoxyCodeLine{    std::cout << str-\/>c\_str() << std::endl;  \textcolor{comment}{// prints "{}hello"{}}}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}length: "{}} << str-\/>size() << std::endl;}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// String is automatically cleaned up when UniquePtr goes out of scope}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+This class cannot be instantiated directly. Use the \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{init()}} factory function to create instances. 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}\label{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}} 
+\index{cslt::String@{cslt::String}!allocator@{allocator}}
+\index{allocator@{allocator}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{allocator()}{allocator()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}$\ast$ cslt\+::\+String\+::allocator (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Get the allocator used by this string. 
+
+\begin{DoxyReturn}{Returns}
+Pointer to the allocator
+\end{DoxyReturn}
+Returns the allocator that was used to create this string and will be used to free it.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}test"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    Allocator* alloc = s-\/>allocator();}
+\DoxyCodeLine{    \textcolor{comment}{// Can query allocator properties...}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1String_aafb23f3fb1b81ecf14b2c89bd13dfca9}\label{classcslt_1_1String_aafb23f3fb1b81ecf14b2c89bd13dfca9}} 
+\index{cslt::String@{cslt::String}!c\_str@{c\_str}}
+\index{c\_str@{c\_str}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{c\_str()}{c\_str()}}
+{\footnotesize\ttfamily const char$\ast$ cslt\+::\+String\+::c\+\_\+str (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Get the internal null-\/terminated C string. 
+
+\begin{DoxyReturn}{Returns}
+Pointer to null-\/terminated character buffer
+\end{DoxyReturn}
+Returns a pointer to the underlying character buffer. The pointer remains valid until the \mbox{\hyperlink{classcslt_1_1String}{String}} is destroyed.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}example"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{char}* text = s-\/>c\_str();}
+\DoxyCodeLine{    std::cout << text << std::endl;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1String_a45e6a308d90c30ff3e82fe5daaa47449}\label{classcslt_1_1String_a45e6a308d90c30ff3e82fe5daaa47449}} 
+\index{cslt::String@{cslt::String}!capacity@{capacity}}
+\index{capacity@{capacity}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{capacity()}{capacity()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::capacity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Get the total allocated buffer size. 
+
+\begin{DoxyReturn}{Returns}
+Total allocated bytes including the null terminator
+\end{DoxyReturn}
+Returns the number of bytes allocated for the internal buffer, including space reserved for the null terminator.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}test"{}}, 100, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}capacity = "{}} << s-\/>capacity() << std::endl;  \textcolor{comment}{// 101}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}\label{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}} 
+\index{cslt::String@{cslt::String}!init@{init}}
+\index{init@{init}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ cslt\+::\+String\+::init (\begin{DoxyParamCaption}\item[{const char $\ast$}]{cstr,  }\item[{size\+\_\+t}]{capacity\+\_\+bytes,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Initialize an allocator-\/backed string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em cstr} & Null-\/terminated source C string \\
+\hline
+{\em capacity\+\_\+bytes} & Requested payload capacity in characters (excludes null terminator) \\
+\hline
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} to use for memory management\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+String$\ast$$>$ containing pointer to \mbox{\hyperlink{classcslt_1_1String}{String}} or error
+\end{DoxyReturn}
+Creates a new \mbox{\hyperlink{classcslt_1_1String}{String}} instance using the provided allocator.
+
+Capacity semantics\+:
+\begin{DoxyItemize}
+\item If capacity\+\_\+bytes is 0, the allocation defaults to exactly the length of cstr plus space for the null terminator
+\item If capacity\+\_\+bytes is non-\/zero, the container allocates (capacity\+\_\+bytes + 1) bytes to guarantee space for the terminator
+\item If the requested capacity is smaller than the source string length, the stored string is truncated to fit and always null-\/terminated
+\end{DoxyItemize}
+
+Memory allocation\+:
+\begin{DoxyItemize}
+\item Both the \mbox{\hyperlink{classcslt_1_1String}{String}} object and its internal buffer are allocated through the provided allocator
+\item The allocator reference is stored for cleanup
+\item Memory must later be released through the \mbox{\hyperlink{classcslt_1_1StringDeleter}{String\+Deleter}}
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Error conditions\+:}
+
+\begin{DoxyItemize}
+\item \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}} if cstr is nullptr
+\item Propagates any allocation errors from the allocator (typically \mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}})
+\end{DoxyItemize}
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Default capacity (fits exact string)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r1.value());}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}hello"{}}}
+\DoxyCodeLine{    std::cout << s-\/>size() << std::endl;    \textcolor{comment}{// 5}}
+\DoxyCodeLine{    std::cout << s-\/>capacity() << std::endl; \textcolor{comment}{// 6 (includes null)}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Pre-\/allocated capacity}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hi"{}}, 100, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r2.value());}
+\DoxyCodeLine{    std::cout << s-\/>size() << std::endl;     \textcolor{comment}{// 2}}
+\DoxyCodeLine{    std::cout << s-\/>capacity() << std::endl; \textcolor{comment}{// 101 (100 + null)}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Truncation case}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r3 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello world"{}}, 5, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r3.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r3.value());}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}hello"{}}}
+\DoxyCodeLine{    std::cout << s-\/>size() << std::endl;    \textcolor{comment}{// 5 (truncated)}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1StringDeleter}{String\+Deleter}} for cleanup semantics 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}\label{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}} 
+\index{cslt::String@{cslt::String}!size@{size}}
+\index{size@{size}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Get the logical length of the string. 
+
+\begin{DoxyReturn}{Returns}
+Number of characters excluding the null terminator
+\end{DoxyReturn}
+Returns the number of characters stored in the container, not including the null terminator.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}length = "{}} << s-\/>size() << std::endl;  \textcolor{comment}{// 5}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}\label{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}} 
+\index{cslt::String@{cslt::String}!StringDeleter@{StringDeleter}}
+\index{StringDeleter@{StringDeleter}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{StringDeleter}{StringDeleter}}
+{\footnotesize\ttfamily friend class \mbox{\hyperlink{classcslt_1_1StringDeleter}{String\+Deleter}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{string_8hpp}{string.\+hpp}}\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/\mbox{\hyperlink{string_8cpp}{string.\+cpp}}\end{DoxyCompactItemize}

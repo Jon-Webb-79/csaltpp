@@ -13,6 +13,7 @@ add_executable(unit_tests
   test_allocator.cpp
   test_utilities.cpp
   test_pointers.cpp
+  test_string.cpp
   #  test_matrix.cpp
 )
 

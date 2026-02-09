@@ -1,0 +1,67 @@
+\hypertarget{classcslt_1_1StringDeleter}{}\doxysection{cslt\+::String\+Deleter Class Reference}
+\label{classcslt_1_1StringDeleter}\index{cslt::StringDeleter@{cslt::StringDeleter}}
+
+
+Custom deleter for \mbox{\hyperlink{classcslt_1_1String}{String}} instances.  
+
+
+
+
+{\ttfamily \#include $<$string.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{classcslt_1_1StringDeleter_a02f19b0c94d5fe3e9eb39fe865ea20ad}{operator()}} (\mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$s) const noexcept
+\begin{DoxyCompactList}\small\item\em Delete a \mbox{\hyperlink{classcslt_1_1String}{String}} instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Custom deleter for \mbox{\hyperlink{classcslt_1_1String}{String}} instances. 
+
+Implements proper cleanup for \mbox{\hyperlink{classcslt_1_1String}{String}} objects by\+:
+\begin{DoxyEnumerate}
+\item Freeing the internal character buffer
+\item Freeing the \mbox{\hyperlink{classcslt_1_1String}{String}} object itself Both operations use the allocator stored in the \mbox{\hyperlink{classcslt_1_1String}{String}}.
+\end{DoxyEnumerate}
+
+This deleter is used with \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} to provide RAII semantics.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}example"{}}, 0, allocator);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{comment}{// String is automatically cleaned up when UniquePtr goes out of scope}}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(r.value());}
+\DoxyCodeLine{    std::cout << str-\/>c\_str() << std::endl;}
+\DoxyCodeLine{\} \textcolor{comment}{// Deleter called here}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1StringDeleter_a02f19b0c94d5fe3e9eb39fe865ea20ad}\label{classcslt_1_1StringDeleter_a02f19b0c94d5fe3e9eb39fe865ea20ad}} 
+\index{cslt::StringDeleter@{cslt::StringDeleter}!operator()@{operator()}}
+\index{operator()@{operator()}!cslt::StringDeleter@{cslt::StringDeleter}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily void cslt\+::\+String\+Deleter\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$}]{s }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Delete a \mbox{\hyperlink{classcslt_1_1String}{String}} instance. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & \mbox{\hyperlink{classcslt_1_1String}{String}} to delete (may be nullptr)\\
+\hline
+\end{DoxyParams}
+Frees the internal buffer and the \mbox{\hyperlink{classcslt_1_1String}{String}} structure using the allocator stored within the \mbox{\hyperlink{classcslt_1_1String}{String}}.
+
+Safe to call with nullptr (no-\/op). 
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{string_8hpp}{string.\+hpp}}\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/\mbox{\hyperlink{string_8cpp}{string.\+cpp}}\end{DoxyCompactItemize}

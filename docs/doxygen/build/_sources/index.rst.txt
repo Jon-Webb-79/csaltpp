@@ -84,6 +84,7 @@ Typical Use Cases
     Smart Pointers <Pointers>
     Error <Error>
     Allocator <Allocator>
+    String <String>
     
 Indices and tables
 ==================

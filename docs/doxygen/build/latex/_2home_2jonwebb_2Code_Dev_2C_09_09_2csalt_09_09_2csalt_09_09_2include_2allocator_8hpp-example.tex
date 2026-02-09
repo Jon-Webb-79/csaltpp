@@ -302,8 +302,9 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{        Chunk* tail\_;        }
 \DoxyCodeLine{        \textcolor{keywordtype}{size\_t} min\_chunk\_;   }
 \DoxyCodeLine{        uint8\_t resize\_;     }
-\DoxyCodeLine{                        }
+\DoxyCodeLine{\textcolor{preprocessor}{\#if ARENA\_ENABLE\_DYNAMIC                        }}
 \DoxyCodeLine{        BuddyAllocator* buddy\_owner\_ = \textcolor{keyword}{nullptr};  }
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
 \DoxyCodeLine{        \textcolor{keywordtype}{size\_t}          backing\_bytes\_ = 0;}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
@@ -324,6 +325,7 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{\textcolor{comment}{// ================================================================================ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{    \textcolor{keyword}{public}:}
+\DoxyCodeLine{}
 \DoxyCodeLine{         \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}{\string~ArenaAllocator}}() noexcept \textcolor{keyword}{override} \{}
 \DoxyCodeLine{                \textcolor{keywordflow}{if} (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}})) \{}
 \DoxyCodeLine{                    \textcolor{comment}{// Free additional chunks (NOT the head)}}
@@ -357,12 +359,12 @@ Returns the alignment value that will be used for allocations when no specific a
 \DoxyCodeLine{                 \textcolor{keywordtype}{size\_t} bytes,}
 \DoxyCodeLine{                 \textcolor{keywordtype}{size\_t} base\_align\_in = \textcolor{keyword}{alignof}(max\_align\_t));}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
-\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if ARENA\_ENABLE\_DYNAMIC}}
 \DoxyCodeLine{        \textcolor{keyword}{static} Expected<cslt::UniquePtr<ArenaAllocator, ArenaDeleter>>}
 \DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a218dae6e91beccf470a18aa49dfef5ee}{WithBuddy}}(BuddyAllocator\& buddy,}
 \DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} bytes,}
 \DoxyCodeLine{                  \textcolor{keywordtype}{size\_t} base\_align\_in = \textcolor{keyword}{alignof}(max\_align\_t));}
-\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
 \DoxyCodeLine{\textcolor{comment}{// -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/ }}
 \DoxyCodeLine{}
 \DoxyCodeLine{        Expected<void*> \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}{alloc}}(\textcolor{keywordtype}{size\_t} bytes, \textcolor{keywordtype}{bool} zeroed = \textcolor{keyword}{false}) \textcolor{keyword}{override};}

@@ -4,12 +4,23 @@
 {\ttfamily \#include \char`\"{}string.\+hpp\char`\"{}}\newline
 {\ttfamily \#include $<$gtest/gtest.\+h$>$}\newline
 {\ttfamily \#include $<$cstring$>$}\newline
+{\ttfamily \#include $<$random$>$}\newline
 Include dependency graph for test\+\_\+string.\+cpp\+:
-% FIG 0
+\nopagebreak
+\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[width=350pt]{test__string_8cpp__incl}
+\end{center}
+\end{figure}
 \doxysubsection*{Data Structures}
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classStringTest}{String\+Test}}
+\item 
+class \mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}
+\item 
+class \mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}
 \end{DoxyCompactItemize}
 \doxysubsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -65,163 +76,635 @@ class \mbox{\hyperlink{classStringTest}{String\+Test}}
 \mbox{\hyperlink{test__string_8cpp_a3dbb1a4b780eeb8f8b4f84b5e32d2d4c}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringTest}{String\+Test}}, Many\+Small\+Strings)
 \item 
 \mbox{\hyperlink{test__string_8cpp_a92930fc4d90277eb20fc0d526e0372bc}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringTest}{String\+Test}}, Large\+String\+Allocation)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a58665c085fab43d3a2df1f28c6481a3e}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+CString\+Basic)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a7fae7fb16183c8ac50f6572752534653}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+String\+Object\+Basic)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a8dbe4c3922443a14ac2c7eaaa531e7a2}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Empty\+String)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aece96f1ab12ed18006e7a8d070370a8c}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+To\+Empty\+String)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a66a5f0ff2e0ffeb3b1d84e9e4a15973a}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Multiple\+Concatenations)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a5816b17770f7d4442a2b8295b0be5288}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+With\+Sufficient\+Capacity)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a94031de4135da970ccb23db936073691}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Requires\+Growth)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a0a3e4ef34897d03afdedf69bed77d2cc}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Large\+String)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aae27c1b58c769a1b93e4801b27016418}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Null\+CString)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ac2f3b46a1c4fe1f24a0c3f38cbd9b1ad}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Self\+Alias)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a4c43bfe891f75f62504785e861639620}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Self\+Substring)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a4b5a8392d047cacb13fa3e4ec4587edf}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+With\+Special\+Characters)
+\item 
+\mbox{\hyperlink{test__string_8cpp_acf2716c75af9c1440fdf4c5b2bed2687}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Unicode)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a72b643082e6e24c01161f92d7e873f47}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Two\+Strings)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aac55d7c3effc9bf1c0cebd3f73edecfb}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Empty\+String\+Object)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a02c44e5b7db8c5b5c2ebe2deb3a350dd}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Multiple\+String\+Objects)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ad0fc3525355d01918537abcd67415298}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Max\+Length\+String)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a68244eef945e5ef053f6ac7ef6b77d54}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Alternating\+Types)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a6c0202b6989c94cc9005212094bbece0}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Null\+Terminator\+Maintained)
+\item 
+\mbox{\hyperlink{test__string_8cpp_abe13f274db2f10b7d685ed53a081f2e1}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Multiple\+Concat\+\_\+\+Null\+Terminator)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ae1123615e5924d333c8f1711a68e0f0e}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Concat\+Does\+Not\+Leak\+Memory)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ac8282bd28fd3dbd2b273221a4c0c00d0}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Build\+Sentence)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a7475c9e31a13e292fb3479102c9017e6}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Build\+Path)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a0b0fdf26206fec772007f3a9b4665874}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}, Preallocated\+Capacity\+Performance)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aef684189cafdbddead34ac50ca94ccca}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Exactly16\+Bytes\+\_\+\+Equal)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a55309d27d40ca6e774c33206e1f14814}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Exactly16\+Bytes\+\_\+\+Differ\+At\+End)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ac2af23197baeec9d56b6c4843ab58091}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Exactly32\+Bytes\+\_\+\+Equal)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aa8ce8c838aa7e5b881168a0e84c27da0}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Exactly32\+Bytes\+\_\+\+Differ\+At\+Middle)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a4366c86b1c273b0e20376c467fc9f282}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Exactly64\+Bytes\+\_\+\+Equal)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aaec8bceb9d2771145e4c304d756d1ebc}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Exactly64\+Bytes\+\_\+\+Differ\+At\+End)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a7988201ad1bea5925bf9455462d77384}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+15\+Bytes\+\_\+\+Just\+Under16)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ac0913b2b1082cabf2b8c8c228381b73c}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+17\+Bytes\+\_\+\+Just\+Over16)
+\item 
+\mbox{\hyperlink{test__string_8cpp_adee47a97718ceb981c7b534dafc52528}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+31\+Bytes\+\_\+\+Just\+Under32)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a337c8ab4dfabbb5d1548affd6565690e}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+33\+Bytes\+\_\+\+Just\+Over32)
+\item 
+\mbox{\hyperlink{test__string_8cpp_af67088e5fefb0a335fe9649bc9e76aec}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+65\+Bytes\+\_\+\+Just\+Over64)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a308169847876818e5ec760f7e43c6ce2}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte0)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aad549907158c0c7e67fd37e93d5afee9}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte1)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a427e45b7faf53ac7609923c0ac6091ed}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte15)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a22335fcc4efd2da3a55b5bbe05311bef}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte16)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a9a03f36e45a6b68c180626f4ca0d2342}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte31)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ae918e3a555367cb5561aa95b8583624b}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte32)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ab622e1b2855d4e449309af09206369c1}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte63)
+\item 
+\mbox{\hyperlink{test__string_8cpp_afbcd9d88d0e310558fb3d5957f137236}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Differ\+At\+Byte64)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a2d8ec3ded205f4be958d92df10efca2b}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+1\+KB\+\_\+\+Equal)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a10ed0703136f59860ab3626160b1e606}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+1\+KB\+\_\+\+Differ\+At\+End)
+\item 
+\mbox{\hyperlink{test__string_8cpp_af610b7c27ee8fb626359a9f0950f4ccd}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+10\+KB\+\_\+\+Equal)
+\item 
+\mbox{\hyperlink{test__string_8cpp_af17b611ec264295b8a77ea31f048da86}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+10\+KB\+\_\+\+Differ\+At\+Middle)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a2fd9b0174f4d8aa31953e5dd71110a87}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+All\+Byte\+Values)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a53ce2a95e26d68e384cf431853de89f1}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+High\+Byte\+Values)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a3ad18052257e1381d250e4fe969b0085}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Random\+Data\+\_\+\+Large\+Strings)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a9ee2d567c31cb7e4e3c09fd20998cf8a}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Random\+Data\+\_\+\+Differ\+At\+Random\+Position)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a016fe5fb47a86e73984310ac27a865eb}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Unaligned\+Data\+\_\+\+Offset1)
+\item 
+\mbox{\hyperlink{test__string_8cpp_ab718a898ada7b2fc658aba6ae90e0ce7}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Unaligned\+Data\+\_\+\+Offset7)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a49b615da8c963c249515a7ac1583c7df}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Unaligned\+Data\+\_\+\+Offset15)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a523c61da964b13cf84e52a5d498d9381}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Repeating\+Pattern\+\_\+2\+Byte)
+\item 
+\mbox{\hyperlink{test__string_8cpp_afb0b3002e71bff0588ec7c478584be00}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Repeating\+Pattern\+\_\+4\+Byte)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a64b5f6b975cb03a410387d8ce0ea9d3a}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Repeating\+Pattern\+\_\+\+Break\+At\+End)
+\item 
+\mbox{\hyperlink{test__string_8cpp_a3dd91a92c60e61e95ee8b979bbe7713b}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Length\+Diff\+\_\+\+Both\+Large)
+\item 
+\mbox{\hyperlink{test__string_8cpp_aff10b5c08bac80b7f8d6ff2e122d6624}{TEST\+\_\+F}} (\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}, Compare\+\_\+\+Length\+Diff\+\_\+\+Across\+SIMDBoundary)
 \end{DoxyCompactItemize}
 
 
 \doxysubsection{Function Documentation}
+\mbox{\Hypertarget{test__string_8cpp_af17b611ec264295b8a77ea31f048da86}\label{test__string_8cpp_af17b611ec264295b8a77ea31f048da86}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [1/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+10\+KB\+\_\+\+Differ\+At\+Middle}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_af610b7c27ee8fb626359a9f0950f4ccd}\label{test__string_8cpp_af610b7c27ee8fb626359a9f0950f4ccd}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [2/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+10\+KB\+\_\+\+Equal}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a7988201ad1bea5925bf9455462d77384}\label{test__string_8cpp_a7988201ad1bea5925bf9455462d77384}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [3/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+15\+Bytes\+\_\+\+Just\+Under16}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ac0913b2b1082cabf2b8c8c228381b73c}\label{test__string_8cpp_ac0913b2b1082cabf2b8c8c228381b73c}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [4/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+17\+Bytes\+\_\+\+Just\+Over16}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a10ed0703136f59860ab3626160b1e606}\label{test__string_8cpp_a10ed0703136f59860ab3626160b1e606}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [5/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+1\+KB\+\_\+\+Differ\+At\+End}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a2d8ec3ded205f4be958d92df10efca2b}\label{test__string_8cpp_a2d8ec3ded205f4be958d92df10efca2b}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [6/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+1\+KB\+\_\+\+Equal}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_adee47a97718ceb981c7b534dafc52528}\label{test__string_8cpp_adee47a97718ceb981c7b534dafc52528}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [7/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+31\+Bytes\+\_\+\+Just\+Under32}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a337c8ab4dfabbb5d1548affd6565690e}\label{test__string_8cpp_a337c8ab4dfabbb5d1548affd6565690e}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [8/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+33\+Bytes\+\_\+\+Just\+Over32}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_af67088e5fefb0a335fe9649bc9e76aec}\label{test__string_8cpp_af67088e5fefb0a335fe9649bc9e76aec}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [9/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+65\+Bytes\+\_\+\+Just\+Over64}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a2fd9b0174f4d8aa31953e5dd71110a87}\label{test__string_8cpp_a2fd9b0174f4d8aa31953e5dd71110a87}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [10/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+All\+Byte\+Values}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a308169847876818e5ec760f7e43c6ce2}\label{test__string_8cpp_a308169847876818e5ec760f7e43c6ce2}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [11/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte0}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aad549907158c0c7e67fd37e93d5afee9}\label{test__string_8cpp_aad549907158c0c7e67fd37e93d5afee9}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [12/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte1}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a427e45b7faf53ac7609923c0ac6091ed}\label{test__string_8cpp_a427e45b7faf53ac7609923c0ac6091ed}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [13/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte15}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a22335fcc4efd2da3a55b5bbe05311bef}\label{test__string_8cpp_a22335fcc4efd2da3a55b5bbe05311bef}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [14/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte16}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a9a03f36e45a6b68c180626f4ca0d2342}\label{test__string_8cpp_a9a03f36e45a6b68c180626f4ca0d2342}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [15/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte31}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ae918e3a555367cb5561aa95b8583624b}\label{test__string_8cpp_ae918e3a555367cb5561aa95b8583624b}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [16/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte32}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ab622e1b2855d4e449309af09206369c1}\label{test__string_8cpp_ab622e1b2855d4e449309af09206369c1}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [17/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte63}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_afbcd9d88d0e310558fb3d5957f137236}\label{test__string_8cpp_afbcd9d88d0e310558fb3d5957f137236}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [18/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Differ\+At\+Byte64}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a55309d27d40ca6e774c33206e1f14814}\label{test__string_8cpp_a55309d27d40ca6e774c33206e1f14814}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [19/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Exactly16\+Bytes\+\_\+\+Differ\+At\+End}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aef684189cafdbddead34ac50ca94ccca}\label{test__string_8cpp_aef684189cafdbddead34ac50ca94ccca}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [20/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Exactly16\+Bytes\+\_\+\+Equal}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aa8ce8c838aa7e5b881168a0e84c27da0}\label{test__string_8cpp_aa8ce8c838aa7e5b881168a0e84c27da0}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [21/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Exactly32\+Bytes\+\_\+\+Differ\+At\+Middle}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ac2af23197baeec9d56b6c4843ab58091}\label{test__string_8cpp_ac2af23197baeec9d56b6c4843ab58091}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [22/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Exactly32\+Bytes\+\_\+\+Equal}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aaec8bceb9d2771145e4c304d756d1ebc}\label{test__string_8cpp_aaec8bceb9d2771145e4c304d756d1ebc}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [23/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Exactly64\+Bytes\+\_\+\+Differ\+At\+End}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a4366c86b1c273b0e20376c467fc9f282}\label{test__string_8cpp_a4366c86b1c273b0e20376c467fc9f282}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [24/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Exactly64\+Bytes\+\_\+\+Equal}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a53ce2a95e26d68e384cf431853de89f1}\label{test__string_8cpp_a53ce2a95e26d68e384cf431853de89f1}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [25/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+High\+Byte\+Values}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aff10b5c08bac80b7f8d6ff2e122d6624}\label{test__string_8cpp_aff10b5c08bac80b7f8d6ff2e122d6624}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [26/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Length\+Diff\+\_\+\+Across\+SIMDBoundary}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a3dd91a92c60e61e95ee8b979bbe7713b}\label{test__string_8cpp_a3dd91a92c60e61e95ee8b979bbe7713b}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [27/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Length\+Diff\+\_\+\+Both\+Large}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a9ee2d567c31cb7e4e3c09fd20998cf8a}\label{test__string_8cpp_a9ee2d567c31cb7e4e3c09fd20998cf8a}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [28/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Random\+Data\+\_\+\+Differ\+At\+Random\+Position}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a3ad18052257e1381d250e4fe969b0085}\label{test__string_8cpp_a3ad18052257e1381d250e4fe969b0085}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [29/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Random\+Data\+\_\+\+Large\+Strings}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a523c61da964b13cf84e52a5d498d9381}\label{test__string_8cpp_a523c61da964b13cf84e52a5d498d9381}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [30/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Repeating\+Pattern\+\_\+2\+Byte}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_afb0b3002e71bff0588ec7c478584be00}\label{test__string_8cpp_afb0b3002e71bff0588ec7c478584be00}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [31/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Repeating\+Pattern\+\_\+4\+Byte}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a64b5f6b975cb03a410387d8ce0ea9d3a}\label{test__string_8cpp_a64b5f6b975cb03a410387d8ce0ea9d3a}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [32/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Repeating\+Pattern\+\_\+\+Break\+At\+End}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a016fe5fb47a86e73984310ac27a865eb}\label{test__string_8cpp_a016fe5fb47a86e73984310ac27a865eb}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [33/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Unaligned\+Data\+\_\+\+Offset1}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a49b615da8c963c249515a7ac1583c7df}\label{test__string_8cpp_a49b615da8c963c249515a7ac1583c7df}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [34/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Unaligned\+Data\+\_\+\+Offset15}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ab718a898ada7b2fc658aba6ae90e0ce7}\label{test__string_8cpp_ab718a898ada7b2fc658aba6ae90e0ce7}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [35/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringCompareExtendedTest}{String\+Compare\+Extended\+Test}}}]{,  }\item[{Compare\+\_\+\+Unaligned\+Data\+\_\+\+Offset7}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a7475c9e31a13e292fb3479102c9017e6}\label{test__string_8cpp_a7475c9e31a13e292fb3479102c9017e6}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [36/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Build\+Path}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ac8282bd28fd3dbd2b273221a4c0c00d0}\label{test__string_8cpp_ac8282bd28fd3dbd2b273221a4c0c00d0}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [37/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Build\+Sentence}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a68244eef945e5ef053f6ac7ef6b77d54}\label{test__string_8cpp_a68244eef945e5ef053f6ac7ef6b77d54}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [38/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Alternating\+Types}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a58665c085fab43d3a2df1f28c6481a3e}\label{test__string_8cpp_a58665c085fab43d3a2df1f28c6481a3e}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [39/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+CString\+Basic}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ae1123615e5924d333c8f1711a68e0f0e}\label{test__string_8cpp_ae1123615e5924d333c8f1711a68e0f0e}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [40/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Does\+Not\+Leak\+Memory}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a8dbe4c3922443a14ac2c7eaaa531e7a2}\label{test__string_8cpp_a8dbe4c3922443a14ac2c7eaaa531e7a2}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [41/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Empty\+String}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aac55d7c3effc9bf1c0cebd3f73edecfb}\label{test__string_8cpp_aac55d7c3effc9bf1c0cebd3f73edecfb}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [42/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Empty\+String\+Object}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a0a3e4ef34897d03afdedf69bed77d2cc}\label{test__string_8cpp_a0a3e4ef34897d03afdedf69bed77d2cc}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [43/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Large\+String}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ad0fc3525355d01918537abcd67415298}\label{test__string_8cpp_ad0fc3525355d01918537abcd67415298}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [44/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Max\+Length\+String}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a02c44e5b7db8c5b5c2ebe2deb3a350dd}\label{test__string_8cpp_a02c44e5b7db8c5b5c2ebe2deb3a350dd}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [45/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Multiple\+String\+Objects}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aae27c1b58c769a1b93e4801b27016418}\label{test__string_8cpp_aae27c1b58c769a1b93e4801b27016418}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [46/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Null\+CString}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a94031de4135da970ccb23db936073691}\label{test__string_8cpp_a94031de4135da970ccb23db936073691}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [47/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Requires\+Growth}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_ac2f3b46a1c4fe1f24a0c3f38cbd9b1ad}\label{test__string_8cpp_ac2f3b46a1c4fe1f24a0c3f38cbd9b1ad}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [48/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Self\+Alias}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a4c43bfe891f75f62504785e861639620}\label{test__string_8cpp_a4c43bfe891f75f62504785e861639620}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [49/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Self\+Substring}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a7fae7fb16183c8ac50f6572752534653}\label{test__string_8cpp_a7fae7fb16183c8ac50f6572752534653}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [50/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+String\+Object\+Basic}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_aece96f1ab12ed18006e7a8d070370a8c}\label{test__string_8cpp_aece96f1ab12ed18006e7a8d070370a8c}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [51/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+To\+Empty\+String}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a72b643082e6e24c01161f92d7e873f47}\label{test__string_8cpp_a72b643082e6e24c01161f92d7e873f47}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [52/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Two\+Strings}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_acf2716c75af9c1440fdf4c5b2bed2687}\label{test__string_8cpp_acf2716c75af9c1440fdf4c5b2bed2687}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [53/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+Unicode}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a4b5a8392d047cacb13fa3e4ec4587edf}\label{test__string_8cpp_a4b5a8392d047cacb13fa3e4ec4587edf}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [54/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+With\+Special\+Characters}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a5816b17770f7d4442a2b8295b0be5288}\label{test__string_8cpp_a5816b17770f7d4442a2b8295b0be5288}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [55/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Concat\+With\+Sufficient\+Capacity}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_abe13f274db2f10b7d685ed53a081f2e1}\label{test__string_8cpp_abe13f274db2f10b7d685ed53a081f2e1}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [56/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Multiple\+Concat\+\_\+\+Null\+Terminator}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a66a5f0ff2e0ffeb3b1d84e9e4a15973a}\label{test__string_8cpp_a66a5f0ff2e0ffeb3b1d84e9e4a15973a}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [57/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Multiple\+Concatenations}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a6c0202b6989c94cc9005212094bbece0}\label{test__string_8cpp_a6c0202b6989c94cc9005212094bbece0}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [58/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Null\+Terminator\+Maintained}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{test__string_8cpp_a0b0fdf26206fec772007f3a9b4665874}\label{test__string_8cpp_a0b0fdf26206fec772007f3a9b4665874}} 
+\index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [59/85]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringConcatTest}{String\+Concat\+Test}}}]{,  }\item[{Preallocated\+Capacity\+Performance}]{ }\end{DoxyParamCaption})}
+
 \mbox{\Hypertarget{test__string_8cpp_a452a3ee55ddd408da0a9c40cb686a21d}\label{test__string_8cpp_a452a3ee55ddd408da0a9c40cb686a21d}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [1/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [60/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Allocator\+Pointer\+Is\+Correct}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a95da01ca53d675b5144b52234a0326c1}\label{test__string_8cpp_a95da01ca53d675b5144b52234a0326c1}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [2/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [61/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Capacity\+Includes\+Null\+Terminator}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a9573a80b0ebd9f7ac2df335a1630c650}\label{test__string_8cpp_a9573a80b0ebd9f7ac2df335a1630c650}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [3/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [62/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Capacity\+Of\+One}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a1ff60718eda9e2294c5f0038e32268bb}\label{test__string_8cpp_a1ff60718eda9e2294c5f0038e32268bb}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [4/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [63/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{CStr\+Returns\+Valid\+Pointer}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_ae613255ae0c3fcef26f6e61d69f37cd6}\label{test__string_8cpp_ae613255ae0c3fcef26f6e61d69f37cd6}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [5/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [64/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Default\+Capacity}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a5bedeb85696e05cf2eba597851c361f0}\label{test__string_8cpp_a5bedeb85696e05cf2eba597851c361f0}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [6/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [65/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Empty\+String}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a505c424f7f0848ebe2449e61383ccc80}\label{test__string_8cpp_a505c424f7f0848ebe2449e61383ccc80}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [7/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [66/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Exact\+Capacity}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_ac7d8fd977d7a2a07c096154454c4e9b0}\label{test__string_8cpp_ac7d8fd977d7a2a07c096154454c4e9b0}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [8/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [67/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Larger\+Capacity}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a5834bf7193d8a0390da6222f26fef3b9}\label{test__string_8cpp_a5834bf7193d8a0390da6222f26fef3b9}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [9/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [68/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Long\+String}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a819d01bfd1828b82350f8529600207c1}\label{test__string_8cpp_a819d01bfd1828b82350f8529600207c1}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [10/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [69/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Null\+Pointer\+Returns\+Error}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a89b0551a70a7072b7d9c42be508477fd}\label{test__string_8cpp_a89b0551a70a7072b7d9c42be508477fd}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [11/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [70/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Single\+Character}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_af447c86ef0ef0411a7d20c867208cdc1}\label{test__string_8cpp_af447c86ef0ef0411a7d20c867208cdc1}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [12/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [71/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Smaller\+Capacity\+Truncates}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a113659f8684c35f3958dd9bf454a39d3}\label{test__string_8cpp_a113659f8684c35f3958dd9bf454a39d3}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [13/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [72/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Init\+With\+Zero\+Capacity\+And\+Long\+String}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a92930fc4d90277eb20fc0d526e0372bc}\label{test__string_8cpp_a92930fc4d90277eb20fc0d526e0372bc}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [14/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [73/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Large\+String\+Allocation}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a3dbb1a4b780eeb8f8b4f84b5e32d2d4c}\label{test__string_8cpp_a3dbb1a4b780eeb8f8b4f84b5e32d2d4c}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [15/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [74/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Many\+Small\+Strings}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_afc602f6ae54dc43863b094e038b1ec2b}\label{test__string_8cpp_afc602f6ae54dc43863b094e038b1ec2b}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [16/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [75/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Multiple\+Strings\+From\+Same\+Allocator}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a77c50e313c47459212f9f4cf19c9c619}\label{test__string_8cpp_a77c50e313c47459212f9f4cf19c9c619}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [17/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [76/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Null\+Pointer\+Error\+Has\+Descriptive\+Message}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_ad4099216ed058ae10aee06f685f814f6}\label{test__string_8cpp_ad4099216ed058ae10aee06f685f814f6}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [18/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [77/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Size\+And\+Capacity\+Are\+Consistent}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_afa86bebb24c1315789597972e110a647}\label{test__string_8cpp_afa86bebb24c1315789597972e110a647}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [19/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [78/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Size\+Returns\+Correct\+Length}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_ab0a34747f41e8dd8fb74a81cbb8ae299}\label{test__string_8cpp_ab0a34747f41e8dd8fb74a81cbb8ae299}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [20/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [79/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{String\+Is\+Always\+Null\+Terminated}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a290a7547dc41e3a4c6ceaa0f932fae70}\label{test__string_8cpp_a290a7547dc41e3a4c6ceaa0f932fae70}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [21/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [80/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{String\+Is\+Properly\+Deleted\+When\+Unique\+Ptr\+Goes\+Out\+Of\+Scope}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_adb249f99bc030af58328a23dc7385baa}\label{test__string_8cpp_adb249f99bc030af58328a23dc7385baa}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [22/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [81/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{String\+With\+Null\+Byte\+In\+Middle}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_aad2d00252b734c9ce10825c1fe99791a}\label{test__string_8cpp_aad2d00252b734c9ce10825c1fe99791a}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [23/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [82/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{String\+With\+Special\+Characters}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a06eaa23e62db03be37c6e5fe18508da9}\label{test__string_8cpp_a06eaa23e62db03be37c6e5fe18508da9}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [24/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [83/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Truncation\+Ensures\+Null\+Termination}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_aba408980f17632e1efebb644a8eef03d}\label{test__string_8cpp_aba408980f17632e1efebb644a8eef03d}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [25/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [84/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Very\+Large\+Capacity}]{ }\end{DoxyParamCaption})}
 
 \mbox{\Hypertarget{test__string_8cpp_a7a097d08cfb6be6dcb2630db77661f6d}\label{test__string_8cpp_a7a097d08cfb6be6dcb2630db77661f6d}} 
 \index{test\_string.cpp@{test\_string.cpp}!TEST\_F@{TEST\_F}}
 \index{TEST\_F@{TEST\_F}!test\_string.cpp@{test\_string.cpp}}
-\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [26/26]}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [85/85]}}
 {\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classStringTest}{String\+Test}}}]{,  }\item[{Zero\+Capacity\+With\+Empty\+String}]{ }\end{DoxyParamCaption})}
 

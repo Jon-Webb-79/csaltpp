@@ -161,6 +161,7 @@ namespace cslt {
         static Expected<String*> init(const char* cstr, 
                                       size_t capacity_bytes, 
                                       Allocator& allocator) noexcept;
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get the internal null-terminated C string
@@ -180,6 +181,7 @@ namespace cslt {
          * @endcode
          */
         const char* c_str() const noexcept { return str_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get the logical length of the string
@@ -198,6 +200,7 @@ namespace cslt {
          * @endcode
          */
         size_t size() const noexcept { return len_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get the total allocated buffer size
@@ -216,6 +219,7 @@ namespace cslt {
          * @endcode
          */
         size_t capacity() const noexcept { return alloc_; }
+// -------------------------------------------------------------------------------- 
 
         /**
          * @brief Get the allocator used by this string
@@ -235,6 +239,420 @@ namespace cslt {
          * @endcode
          */
         Allocator* allocator() const noexcept { return allocator_; }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Concatenate a C-string to the end of this string
+         * 
+         * @param str Null-terminated C-string to append
+         * @return true if concatenation succeeded, false on failure
+         * 
+         * @details Appends the contents of str to the end of the current string.
+         * The function automatically handles buffer growth when necessary, using
+         * the allocator's realloc() method if available, or falling back to
+         * allocate-copy-free pattern.
+         * 
+         * Key behaviors:
+         * - Always maintains null termination
+         * - Detects and handles self-aliasing (when str points within current buffer)
+         * - Prevents size_t overflow in length calculations
+         * - Returns immediately if str is empty (no-op, returns true)
+         * - Grows buffer capacity as needed
+         * 
+         * Buffer growth strategy:
+         * - If allocator supports realloc(), uses in-place reallocation
+         * - Otherwise, allocates new buffer, copies data, and frees old buffer
+         * - Pre-allocating capacity via init() can reduce reallocations
+         * 
+         * @par Self-aliasing:
+         * The function safely handles cases where str points to a substring of
+         * the current buffer. It detects this condition and creates a temporary
+         * copy before any reallocation occurs.
+         * 
+         * @par Error conditions:
+         * Returns false if:
+         * - str is nullptr
+         * - Internal buffer is null (corrupted String)
+         * - Allocator is null
+         * - Length overflow would occur (len + strlen(str) + 1 > SIZE_MAX)
+         * - Memory allocation fails during buffer growth
+         * 
+         * @par Thread safety:
+         * Not thread-safe. External synchronization required for concurrent access.
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("Hello", 0, allocator);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str(r.value());
+         *     
+         *     // Basic concatenation
+         *     bool success = str->concat(" world");
+         *     if (success) {
+         *         std::cout << str->c_str() << std::endl;  // "Hello world"
+         *         std::cout << str->size() << std::endl;    // 11
+         *     }
+         *     
+         *     // Multiple concatenations
+         *     str->concat("!");
+         *     str->concat(" How are you?");
+         *     std::cout << str->c_str() << std::endl;  // "Hello world! How are you?"
+         *     
+         *     // Self-aliasing example (safe)
+         *     str->concat(str->c_str());  // Doubles the string
+         *     
+         *     // Empty string (no-op)
+         *     str->concat("");  // Returns true, no change
+         * }
+         * @endcode
+         * 
+         * @code{.cpp}
+         * // Pre-allocate capacity to minimize reallocations
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("", 100, allocator);  // 100 bytes capacity
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> path(r.value());
+         *     
+         *     // Multiple appends without reallocation
+         *     path->concat("/usr");
+         *     path->concat("/local");
+         *     path->concat("/bin");
+         *     
+         *     std::cout << path->c_str() << std::endl;  // "/usr/local/bin"
+         *     std::cout << "Size: " << path->size() << std::endl;
+         *     std::cout << "Capacity: " << path->capacity() << std::endl;  // Still 101
+         * }
+         * @endcode
+         * 
+         * @code{.cpp}
+         * // Error handling
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("test", 0, allocator);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str(r.value());
+         *     
+         *     // Null pointer - returns false
+         *     if (!str->concat(nullptr)) {
+         *         std::cerr << "Failed to concat null pointer" << std::endl;
+         *     }
+         *     
+         *     // String unchanged after failure
+         *     std::cout << str->c_str() << std::endl;  // Still "test"
+         * }
+         * @endcode
+         * 
+         * @see concat(const String&) for String-to-String concatenation
+         * @see init() for capacity pre-allocation
+         */
+        bool concat(const char* str) noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Concatenate another String object to the end of this string
+         * 
+         * @param str String object to append
+         * @return true if concatenation succeeded, false on failure
+         * 
+         * @details Convenience overload that appends the contents of another
+         * String object. This method delegates to concat(const char*) internally,
+         * extracting the C-string from the provided String.
+         * 
+         * The source string (str) is not modified and remains independent.
+         * Only the contents are copied, not ownership or allocator references.
+         * 
+         * @par Error conditions:
+         * Returns false if:
+         * - str's internal buffer is null (corrupted String)
+         * - Any condition that would cause concat(const char*) to fail
+         * 
+         * @par Thread safety:
+         * Not thread-safe. External synchronization required for concurrent access
+         * to either string.
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * 
+         * auto r1 = cslt::String::init("Hello", 0, allocator);
+         * auto r2 = cslt::String::init(" world", 0, allocator);
+         * 
+         * if (r1.hasValue() && r2.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str1(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str2(r2.value());
+         *     
+         *     // Concatenate String objects
+         *     bool success = str1->concat(*str2);
+         *     if (success) {
+         *         std::cout << str1->c_str() << std::endl;  // "Hello world"
+         *         std::cout << str2->c_str() << std::endl;  // " world" (unchanged)
+         *     }
+         * }
+         * @endcode
+         * 
+         * @code{.cpp}
+         * // Building a sentence from words
+         * cslt::HeapAllocator allocator;
+         * 
+         * auto r1 = cslt::String::init("The", 50, allocator);
+         * auto r2 = cslt::String::init(" quick", 0, allocator);
+         * auto r3 = cslt::String::init(" brown", 0, allocator);
+         * auto r4 = cslt::String::init(" fox", 0, allocator);
+         * 
+         * if (r1.hasValue() && r2.hasValue() && r3.hasValue() && r4.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> sentence(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> word2(r2.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> word3(r3.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> word4(r4.value());
+         *     
+         *     sentence->concat(*word2);
+         *     sentence->concat(*word3);
+         *     sentence->concat(*word4);
+         *     
+         *     std::cout << sentence->c_str() << std::endl;  // "The quick brown fox"
+         *     std::cout << sentence->size() << std::endl;    // 19
+         * }
+         * @endcode
+         * 
+         * @code{.cpp}
+         * // Mixing C-string and String concatenation
+         * cslt::HeapAllocator allocator;
+         * 
+         * auto r1 = cslt::String::init("Hello", 0, allocator);
+         * auto r2 = cslt::String::init("world", 0, allocator);
+         * 
+         * if (r1.hasValue() && r2.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str1(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str2(r2.value());
+         *     
+         *     str1->concat(" ");        // C-string
+         *     str1->concat(*str2);      // String object
+         *     str1->concat("!");        // C-string
+         *     
+         *     std::cout << str1->c_str() << std::endl;  // "Hello world!"
+         * }
+         * @endcode
+         * 
+         * @code{.cpp}
+         * // Using different allocators (allowed but not common)
+         * cslt::HeapAllocator heap_alloc;
+         * cslt::ArenaAllocator arena_alloc(1024);
+         * 
+         * auto r1 = cslt::String::init("heap: ", 0, heap_alloc);
+         * auto r2 = cslt::String::init("arena", 0, arena_alloc);
+         * 
+         * if (r1.hasValue() && r2.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str1(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str2(r2.value());
+         *     
+         *     // Works fine - only copies content, not allocator
+         *     str1->concat(*str2);
+         *     std::cout << str1->c_str() << std::endl;  // "heap: arena"
+         *     
+         *     // str1 still uses heap_alloc for any growth
+         *     // str2 still uses arena_alloc
+         * }
+         * @endcode
+         * 
+         * @see concat(const char*) for C-string concatenation
+         * @see c_str() to extract the C-string from a String object
+         */
+        bool concat(const String& str) noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Lexicographically compare this string with a C-string
+         * 
+         * @param str Null-terminated C-string to compare against
+         * @return int8_t comparison result:
+         *         - -1 if this string is less than str
+         *         - 0 if strings are equal
+         *         - 1 if this string is greater than str
+         *         - -128 if either string is null (error sentinel)
+         * 
+         * @details Performs lexicographic comparison using unsigned byte values.
+         * The comparison follows standard strcmp semantics but returns a compact
+         * int8_t result with three possible values plus an error sentinel.
+         * 
+         * Comparison semantics:
+         * - Characters are compared as unsigned bytes (0-255)
+         * - Comparison proceeds left-to-right until a difference is found
+         * - If one string is a prefix of the other, the shorter is considered less
+         * - Null terminators are considered for the C-string parameter
+         * - The String's logical length (len_) determines comparison extent
+         * 
+         * Return value interpretation:
+         * - -1: This string sorts before str (this < str)
+         * - 0: Strings are identical in content and length
+         * - 1: This string sorts after str (this > str)
+         * - -128: Error condition (null pointer detected)
+         * 
+         * @par Edge cases:
+         * - Empty strings: Compare as equal if both are empty
+         * - Embedded nulls in String: Comparison stops at logical length, not null
+         * - C-string shorter than String: C-string is considered less
+         * - C-string longer than String: String is considered less
+         * 
+         * @par Error conditions:
+         * Returns -128 if:
+         * - str parameter is nullptr
+         * - Internal buffer (str_) is null (corrupted String)
+         * 
+         * @par Performance:
+         * - O(n) where n = min(this->size(), strlen(str))
+         * - Early termination on first difference
+         * - Single pass, no allocation
+         * 
+         * @par Thread safety:
+         * Thread-safe for concurrent reads if str is not being modified.
+         * Not thread-safe if this String is being modified concurrently.
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("hello", 0, allocator);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str(r.value());
+         *     
+         *     // Basic comparisons
+         *     int8_t cmp1 = str->compare("hello");
+         *     std::cout << "Compare 'hello' vs 'hello': " << (int)cmp1 << std::endl;  // 0
+         *     
+         *     int8_t cmp2 = str->compare("world");
+         *     std::cout << "Compare 'hello' vs 'world': " << (int)cmp2 << std::endl;  // -1
+         *     
+         *     int8_t cmp3 = str->compare("apple");
+         *     std::cout << "Compare 'hello' vs 'apple': " << (int)cmp3 << std::endl;  // 1
+         * }
+         * @endcode
+         * 
+         * @code{.cpp}
+         * // Using for sorting
+         * cslt::HeapAllocator allocator;
+         * 
+         * std::vector<cslt::UniquePtr<cslt::String, cslt::StringDeleter>> strings;
+         * 
+         * auto r1 = cslt::String::init("zebra", 0, allocator);
+         * auto r2 = cslt::String::init("apple", 0, allocator);
+         * auto r3 = cslt::String::init("mango", 0, allocator);
+         * 
+         * if (r1.hasValue() && r2.hasValue() && r3.hasValue()) {
+         *     strings.push_back(cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r1.value()));
+         *     strings.push_back(cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r2.value()));
+         *     strings.push_back(cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r3.value()));
+         *     
+         *     // Sort using compare
+         *     std::sort(strings.begin(), strings.end(),
+         *         [](const auto& a, const auto& b) {
+         *             return a->compare(b->c_str()) < 0;
+         *         });
+         *     
+         *     for (const auto& s : strings) {
+         *         std::cout << s->c_str() << std::endl;
+         *     }
+         *     // Output: apple, mango, zebra
+         * }
+         * @endcode
+         * 
+         * @see compare(const String&) for String-to-String comparison
+         */
+        int8_t compare(const char* str) const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Lexicographically compare this string with another String object
+         * 
+         * @param other String object to compare against
+         * @return int8_t comparison result:
+         *         - -1 if this string is less than other
+         *         - 0 if strings are equal
+         *         - 1 if this string is greater than other
+         *         - -128 if either string's buffer is null (error sentinel)
+         * 
+         * @details Performs lexicographic comparison of two String objects.
+         * This is the preferred method for comparing String instances as it
+         * uses the stored length information for optimization.
+         * 
+         * Comparison algorithm:
+         * - Compares min(this->len_, other.len_) characters byte-by-byte
+         * - Uses unsigned byte comparison (0-255)
+         * - If all common characters match, compares lengths
+         * - Early termination on first difference
+         * 
+         * Return value interpretation:
+         * - -1: This string sorts before other (this < other)
+         * - 0: Strings are identical in content and length
+         * - 1: This string sorts after other (this > other)
+         * - -128: Error condition (null internal buffer)
+         * 
+         * @par Advantages over C-string comparison:
+         * - No need to scan for null terminator in other
+         * - Handles embedded nulls correctly (compares up to logical length)
+         * - More efficient for long strings with early differences
+         * - Type-safe (no risk of comparing with invalid C-string)
+         * 
+         * @par Performance:
+         * - O(n) where n = min(this->size(), other.size())
+         * - No strlen() calls needed
+         * - Early termination on first difference
+         * - Can be SIMD-optimized (see implementation notes)
+         * 
+         * @par Error conditions:
+         * Returns -128 if:
+         * - This String's internal buffer (str_) is null
+         * - Other String's internal buffer is null
+         * 
+         * @par Thread safety:
+         * Thread-safe for concurrent reads if neither string is being modified.
+         * Not thread-safe if either String is being modified concurrently.
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * 
+         * auto r1 = cslt::String::init("apple", 0, allocator);
+         * auto r2 = cslt::String::init("banana", 0, allocator);
+         * 
+         * if (r1.hasValue() && r2.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str1(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str2(r2.value());
+         *     
+         *     int8_t cmp = str1->compare(*str2);
+         *     
+         *     if (cmp < 0) {
+         *         std::cout << "'" << str1->c_str() << "' comes before '" 
+         *                   << str2->c_str() << "'" << std::endl;
+         *         // Output: 'apple' comes before 'banana'
+         *     }
+         * }
+         * @endcode
+         * 
+         * @code{.cpp}
+         * // Equality testing
+         * cslt::HeapAllocator allocator;
+         * 
+         * auto r1 = cslt::String::init("test", 0, allocator);
+         * auto r2 = cslt::String::init("test", 0, allocator);
+         * auto r3 = cslt::String::init("Test", 0, allocator);
+         * 
+         * if (r1.hasValue() && r2.hasValue() && r3.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str1(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str2(r2.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str3(r3.value());
+         *     
+         *     bool equal1 = (str1->compare(*str2) == 0);
+         *     std::cout << "str1 == str2: " << equal1 << std::endl;  // true
+         *     
+         *     bool equal2 = (str1->compare(*str3) == 0);
+         *     std::cout << "str1 == str3: " << equal2 << std::endl;  // false
+         * }
+         * @endcode
+         * 
+         * @note For SIMD-optimized implementation, see string_compare_impl.cpp
+         * @see compare(const char*) for C-string comparison
+         */
+        int8_t compare(const String& other) const noexcept;
+// -------------------------------------------------------------------------------- 
 
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;

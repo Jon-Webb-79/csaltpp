@@ -56,6 +56,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String4sizeEv"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String8capacityEv"><code class="docutils literal notranslate"><span class="pre">capacity()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String9allocatorEv"><code class="docutils literal notranslate"><span class="pre">allocator()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String6concatEPKc"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String6concatERK6String"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String7compareEPKc"><code class="docutils literal notranslate"><span class="pre">compare()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String7compareERK6String"><code class="docutils literal notranslate"><span class="pre">compare()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4initEPKc6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 </ul>
 </li>
@@ -270,6 +274,464 @@ Returns the allocator that was used to create this string and will be used to fr
 <dl class="field-list simple">
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Pointer to the allocator</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt6String6concatEPKc">
+<span id="_CPPv3N4cslt6String6concatEPKc"></span><span id="_CPPv2N4cslt6String6concatEPKc"></span><span id="cslt::String::concat__cCP"></span><span class="target" id="classcslt_1_1String_1aac0bd5318610af25a85a1215f8c6b592"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">concat</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">str</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6String6concatEPKc" title="Link to this definition"></a><br /></dt>
+<dd><p>Concatenate a C-string to the end of this string. </p>
+<p>
+Appends the contents of str to the end of the current string. The function automatically handles buffer growth when necessary, using the allocator’s realloc() method if available, or falling back to allocate-copy-free pattern.</p>
+<p>Key behaviors:<ul class="simple">
+<li><p>Always maintains null termination</p></li>
+<li><p>Detects and handles self-aliasing (when str points within current buffer)</p></li>
+<li><p>Prevents size_t overflow in length calculations</p></li>
+<li><p>Returns immediately if str is empty (no-op, returns true)</p></li>
+<li><p>Grows buffer capacity as needed</p></li>
+</ul>
+</p>
+<p>Buffer growth strategy:<ul class="simple">
+<li><p>If allocator supports realloc(), uses in-place reallocation</p></li>
+<li><p>Otherwise, allocates new buffer, copies data, and frees old buffer</p></li>
+<li><p>Pre-allocating capacity via <a class="reference internal" href="#classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c"><span class="std std-ref">init()</span></a> can reduce reallocations</p></li>
+</ul>
+</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Basic concatenation</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot; world&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;Hello world&quot;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">    </span><span class="c1">// 11</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Multiple concatenations</span>
+<span class="w">    </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot; How are you?&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;Hello world! How are you?&quot;</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Self-aliasing example (safe)</span>
+<span class="w">    </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="n">str</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">());</span><span class="w">  </span><span class="c1">// Doubles the string</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Empty string (no-op)</span>
+<span class="w">    </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// Returns true, no change</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Self-aliasing:</strong></dt><dd><p>The function safely handles cases where str points to a substring of the current buffer. It detects this condition and creates a temporary copy before any reallocation occurs.</p>
+</dd>
+<dt><strong>Error conditions:</strong></dt><dd><p>Returns false if:<ul class="simple">
+<li><p>str is nullptr</p></li>
+<li><p>Internal buffer is null (corrupted <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>)</p></li>
+<li><p><a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> is null</p></li>
+<li><p>Length overflow would occur (len + strlen(str) + 1 &gt; SIZE_MAX)</p></li>
+<li><p>Memory allocation fails during buffer growth</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Thread safety:</strong></dt><dd><p>Not thread-safe. External synchronization required for concurrent access.</p>
+</dd>
+</dl>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Pre-allocate capacity to minimize reallocations</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span><span class="w">  </span><span class="c1">// 100 bytes capacity</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">path</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Multiple appends without reallocation</span>
+<span class="w">    </span><span class="n">path</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;/usr&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">path</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;/local&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">path</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;/bin&quot;</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">path</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;/usr/local/bin&quot;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Size: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">path</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Capacity: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">path</span><span class="o">-&gt;</span><span class="n">capacity</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// Still 101</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Error handling</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Null pointer - returns false</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">str</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="k">nullptr</span><span class="p">))</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Failed to concat null pointer&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// String unchanged after failure</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// Still &quot;test&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1a66cd222863f1288a09b1b4c2304fa91f"><span class="std std-ref">concat(const String&amp;)</span></a> for String-to-String concatenation </p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c"><span class="std std-ref">init()</span></a> for <a class="reference internal" href="#classcslt_1_1String_1a45e6a308d90c30ff3e82fe5daaa47449"><span class="std std-ref">capacity</span></a> pre-allocation </p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>str</strong> – Null-terminated C-string to append </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if concatenation succeeded, false on failure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt6String6concatERK6String">
+<span id="_CPPv3N4cslt6String6concatERK6String"></span><span id="_CPPv2N4cslt6String6concatERK6String"></span><span id="cslt::String::concat__StringCR"></span><span class="target" id="classcslt_1_1String_1a66cd222863f1288a09b1b4c2304fa91f"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">concat</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">str</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6String6concatERK6String" title="Link to this definition"></a><br /></dt>
+<dd><p>Concatenate another <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object to the end of this string. </p>
+<p>
+Convenience overload that appends the contents of another <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object. This method delegates to <a class="reference internal" href="#classcslt_1_1String_1aac0bd5318610af25a85a1215f8c6b592"><span class="std std-ref">concat(const char*)</span></a> internally, extracting the C-string from the provided <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>.</p>
+<p>The source string (str) is not modified and remains independent. Only the contents are copied, not ownership or allocator references.</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot; world&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str1</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str2</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Concatenate String objects</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">success</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">str2</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">success</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;Hello world&quot;</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str2</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot; world&quot; (unchanged)</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Error conditions:</strong></dt><dd><p>Returns false if:<ul class="simple">
+<li><p>str’s internal buffer is null (corrupted <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>)</p></li>
+<li><p>Any condition that would cause <a class="reference internal" href="#classcslt_1_1String_1aac0bd5318610af25a85a1215f8c6b592"><span class="std std-ref">concat(const char*)</span></a> to fail</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Thread safety:</strong></dt><dd><p>Not thread-safe. External synchronization required for concurrent access to either string.</p>
+</dd>
+</dl>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Building a sentence from words</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;The&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">50</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot; quick&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot; brown&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r4</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot; fox&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r3</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r4</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sentence</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">word2</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">word3</span><span class="p">(</span><span class="n">r3</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">word4</span><span class="p">(</span><span class="n">r4</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">sentence</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">word2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sentence</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">word3</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sentence</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">word4</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">sentence</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;The quick brown fox&quot;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">sentence</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">    </span><span class="c1">// 19</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Mixing C-string and String concatenation</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;world&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str1</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str2</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// C-string</span>
+<span class="w">    </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">str2</span><span class="p">);</span><span class="w">      </span><span class="c1">// String object</span>
+<span class="w">    </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="s">&quot;!&quot;</span><span class="p">);</span><span class="w">        </span><span class="c1">// C-string</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;Hello world!&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Using different allocators (allowed but not common)</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">heap_alloc</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">ArenaAllocator</span><span class="w"> </span><span class="nf">arena_alloc</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;heap: &quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">heap_alloc</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;arena&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">arena_alloc</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str1</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str2</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Works fine - only copies content, not allocator</span>
+<span class="w">    </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">str2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;heap: arena&quot;</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// str1 still uses heap_alloc for any growth</span>
+<span class="w">    </span><span class="c1">// str2 still uses arena_alloc</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1aac0bd5318610af25a85a1215f8c6b592"><span class="std std-ref">concat(const char*)</span></a> for C-string concatenation </p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1aafb23f3fb1b81ecf14b2c89bd13dfca9"><span class="std std-ref">c_str()</span></a> to extract the C-string from a <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object </p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>str</strong> – <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object to append </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if concatenation succeeded, false on failure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt6String7compareEPKc">
+<span id="_CPPv3NK4cslt6String7compareEPKc"></span><span id="_CPPv2NK4cslt6String7compareEPKc"></span><span id="cslt::String::compare__cCPC"></span><span class="target" id="classcslt_1_1String_1ab9e603bb5b2f8e9c23a529f85115213d"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">compare</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">str</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String7compareEPKc" title="Link to this definition"></a><br /></dt>
+<dd><p>Lexicographically compare this string with a C-string. </p>
+<p>
+Comparison semantics:<ul class="simple">
+<li><p>Characters are compared as unsigned bytes (0-255)</p></li>
+<li><p>Comparison proceeds left-to-right until a difference is found</p></li>
+<li><p>If one string is a prefix of the other, the shorter is considered less</p></li>
+<li><p>Null terminators are considered for the C-string parameter</p></li>
+<li><p>The <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>’s logical length (len_) determines comparison extent</p></li>
+</ul>
+</p>
+<p>Return value interpretation:<ul class="simple">
+<li><p>-1: This string sorts before str (this &lt; str)</p></li>
+<li><p>0: Strings are identical in content and length</p></li>
+<li><p>1: This string sorts after str (this &gt; str)</p></li>
+<li><p>-128: <a class="reference internal" href="Error.html#classcslt_1_1Error"><span class="std std-ref">Error</span></a> condition (null pointer detected)</p></li>
+</ul>
+</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Basic comparisons</span>
+<span class="w">    </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">cmp1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">compare</span><span class="p">(</span><span class="s">&quot;hello&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Compare &#39;hello&#39; vs &#39;hello&#39;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">cmp1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// 0</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">cmp2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">compare</span><span class="p">(</span><span class="s">&quot;world&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Compare &#39;hello&#39; vs &#39;world&#39;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">cmp2</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// -1</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">cmp3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str</span><span class="o">-&gt;</span><span class="n">compare</span><span class="p">(</span><span class="s">&quot;apple&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;Compare &#39;hello&#39; vs &#39;apple&#39;: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">cmp3</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// 1</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Edge cases:</strong></dt><dd><p><ul class="simple">
+<li><p>Empty strings: Compare as equal if both are empty</p></li>
+<li><p>Embedded nulls in <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>: Comparison stops at logical length, not null</p></li>
+<li><p>C-string shorter than <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>: C-string is considered less</p></li>
+<li><p>C-string longer than <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>: <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> is considered less</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Error conditions:</strong></dt><dd><p>Returns -128 if:<ul class="simple">
+<li><p>str parameter is nullptr</p></li>
+<li><p>Internal buffer (str_) is null (corrupted <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>)</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Performance:</strong></dt><dd><p><ul class="simple">
+<li><p>O(n) where n = min(this-&gt;<a class="reference internal" href="#classcslt_1_1String_1acad01b0064c0fba1f1fbbadc6b2f625d"><span class="std std-ref">size()</span></a>, strlen(str))</p></li>
+<li><p>Early termination on first difference</p></li>
+<li><p>Single pass, no allocation</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Thread safety:</strong></dt><dd><p>Thread-safe for concurrent reads if str is not being modified. Not thread-safe if this <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> is being modified concurrently.</p>
+</dd>
+</dl>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Using for sorting</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">strings</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;zebra&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;apple&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;mango&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r3</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">strings</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">()));</span>
+<span class="w">    </span><span class="n">strings</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">()));</span>
+<span class="w">    </span><span class="n">strings</span><span class="p">.</span><span class="n">push_back</span><span class="p">(</span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="p">(</span><span class="n">r3</span><span class="p">.</span><span class="n">value</span><span class="p">()));</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="c1">// Sort using compare</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">sort</span><span class="p">(</span><span class="n">strings</span><span class="p">.</span><span class="n">begin</span><span class="p">(),</span><span class="w"> </span><span class="n">strings</span><span class="p">.</span><span class="n">end</span><span class="p">(),</span>
+<span class="w">        </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="o">-&gt;</span><span class="n">compare</span><span class="p">(</span><span class="n">b</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">())</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="p">});</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="k">auto</span><span class="o">&amp;</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">strings</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="c1">// Output: apple, mango, zebra</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>compare(const String&amp;) for String-to-String comparison </p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>str</strong> – Null-terminated C-string to compare against </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>int8_t comparison result:<ul>
+<li><p>-1 if this string is less than str</p></li>
+<li><p>0 if strings are equal</p></li>
+<li><p>1 if this string is greater than str</p></li>
+<li><p>-128 if either string is null (error sentinel)</p>
+<p>Performs lexicographic comparison using unsigned byte values. The comparison follows standard strcmp semantics but returns a compact int8_t result with three possible values plus an error sentinel.</p>
+</li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt6String7compareERK6String">
+<span id="_CPPv3NK4cslt6String7compareERK6String"></span><span id="_CPPv2NK4cslt6String7compareERK6String"></span><span id="cslt::String::compare__StringCRC"></span><span class="target" id="classcslt_1_1String_1a03b7a5f843d7f0e39a7f935feda3302c"></span><span class="n"><span class="pre">int8_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">compare</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String7compareERK6String" title="Link to this definition"></a><br /></dt>
+<dd><p>Lexicographically compare this string with another <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object. </p>
+<p>
+Comparison algorithm:<ul class="simple">
+<li><p>Compares min(this-&gt;len_, other.len_) characters byte-by-byte</p></li>
+<li><p>Uses unsigned byte comparison (0-255)</p></li>
+<li><p>If all common characters match, compares lengths</p></li>
+<li><p>Early termination on first difference</p></li>
+</ul>
+</p>
+<p>Return value interpretation:<ul class="simple">
+<li><p>-1: This string sorts before other (this &lt; other)</p></li>
+<li><p>0: Strings are identical in content and length</p></li>
+<li><p>1: This string sorts after other (this &gt; other)</p></li>
+<li><p>-128: <a class="reference internal" href="Error.html#classcslt_1_1Error"><span class="std std-ref">Error</span></a> condition (null internal buffer)</p></li>
+</ul>
+</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;apple&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;banana&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str1</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str2</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kt">int8_t</span><span class="w"> </span><span class="n">cmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">compare</span><span class="p">(</span><span class="o">*</span><span class="n">str2</span><span class="p">);</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">cmp</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;&#39;&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;&#39; comes before &#39;&quot;</span><span class="w"> </span>
+<span class="w">                  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">str2</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;&#39;&quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="c1">// Output: &#39;apple&#39; comes before &#39;banana&#39;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Advantages over C-string comparison:</strong></dt><dd><p><ul class="simple">
+<li><p>No need to scan for null terminator in other</p></li>
+<li><p>Handles embedded nulls correctly (compares up to logical length)</p></li>
+<li><p>More efficient for long strings with early differences</p></li>
+<li><p>Type-safe (no risk of comparing with invalid C-string)</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Performance:</strong></dt><dd><p><ul class="simple">
+<li><p>O(n) where n = min(this-&gt;<a class="reference internal" href="#classcslt_1_1String_1acad01b0064c0fba1f1fbbadc6b2f625d"><span class="std std-ref">size()</span></a>, other.size())</p></li>
+<li><p>No strlen() calls needed</p></li>
+<li><p>Early termination on first difference</p></li>
+<li><p>Can be SIMD-optimized (see implementation notes)</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Error conditions:</strong></dt><dd><p>Returns -128 if:<ul class="simple">
+<li><p>This <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>’s internal buffer (str_) is null</p></li>
+<li><p>Other <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a>’s internal buffer is null</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Thread safety:</strong></dt><dd><p>Thread-safe for concurrent reads if neither string is being modified. Not thread-safe if either <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> is being modified concurrently.</p>
+</dd>
+</dl>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Equality testing</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;test&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r3</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;Test&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r3</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str1</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str2</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">str3</span><span class="p">(</span><span class="n">r3</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">equal1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">compare</span><span class="p">(</span><span class="o">*</span><span class="n">str2</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;str1 == str2: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">equal1</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// true</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">equal2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="n">str1</span><span class="o">-&gt;</span><span class="n">compare</span><span class="p">(</span><span class="o">*</span><span class="n">str3</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">&quot;str1 == str3: &quot;</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">equal2</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// false</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>compare(const char*) for C-string comparison </p>
+</div>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For SIMD-optimized implementation, see string_compare_impl.cpp </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object to compare against </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>int8_t comparison result:<ul>
+<li><p>-1 if this string is less than other</p></li>
+<li><p>0 if strings are equal</p></li>
+<li><p>1 if this string is greater than other</p></li>
+<li><p>-128 if either string’s buffer is null (error sentinel)</p>
+<p>Performs lexicographic comparison of two <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> objects. This is the preferred method for comparing <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> instances as it uses the stored length information for optimization.</p>
+</li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>

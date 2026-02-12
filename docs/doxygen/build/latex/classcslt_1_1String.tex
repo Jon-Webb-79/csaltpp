@@ -19,7 +19,15 @@ size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f62
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a45e6a308d90c30ff3e82fe5daaa47449}{capacity}} () const noexcept
 \begin{DoxyCompactList}\small\item\em Get the total allocated buffer size. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} $\ast$ \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}} () const noexcept
-\begin{DoxyCompactList}\small\item\em Get the allocator used by this string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Get the allocator used by this string. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1String_aac0bd5318610af25a85a1215f8c6b592}{concat}} (const char $\ast$str) noexcept
+\begin{DoxyCompactList}\small\item\em Concatenate a C-\/string to the end of this string. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1String_a66cd222863f1288a09b1b4c2304fa91f}{concat}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&str) noexcept
+\begin{DoxyCompactList}\small\item\em Concatenate another \mbox{\hyperlink{classcslt_1_1String}{String}} object to the end of this string. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{classcslt_1_1String_ab9e603bb5b2f8e9c23a529f85115213d}{compare}} (const char $\ast$str) const noexcept
+\begin{DoxyCompactList}\small\item\em Lexicographically compare this string with a C-\/string. \end{DoxyCompactList}\item 
+int8\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a03b7a5f843d7f0e39a7f935feda3302c}{compare}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&other) const noexcept
+\begin{DoxyCompactList}\small\item\em Lexicographically compare this string with another \mbox{\hyperlink{classcslt_1_1String}{String}} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -151,7 +159,518 @@ Returns the number of bytes allocated for the internal buffer, including space r
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}
- \mbox{\Hypertarget{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}\label{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}} 
+ \mbox{\Hypertarget{classcslt_1_1String_ab9e603bb5b2f8e9c23a529f85115213d}\label{classcslt_1_1String_ab9e603bb5b2f8e9c23a529f85115213d}} 
+\index{cslt::String@{cslt::String}!compare@{compare}}
+\index{compare@{compare}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{compare()}{compare()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily int8\+\_\+t cslt\+::\+String\+::compare (\begin{DoxyParamCaption}\item[{const char $\ast$}]{str }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Lexicographically compare this string with a C-\/string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & Null-\/terminated C-\/string to compare against \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int8\+\_\+t comparison result\+:
+\begin{DoxyItemize}
+\item -\/1 if this string is less than str
+\item 0 if strings are equal
+\item 1 if this string is greater than str
+\item -\/128 if either string is null (error sentinel)
+
+Performs lexicographic comparison using unsigned byte values. The comparison follows standard strcmp semantics but returns a compact int8\+\_\+t result with three possible values plus an error sentinel.
+\end{DoxyItemize}
+\end{DoxyReturn}
+Comparison semantics\+:
+\begin{DoxyItemize}
+\item Characters are compared as unsigned bytes (0-\/255)
+\item Comparison proceeds left-\/to-\/right until a difference is found
+\item If one string is a prefix of the other, the shorter is considered less
+\item Null terminators are considered for the C-\/string parameter
+\item The \mbox{\hyperlink{classcslt_1_1String}{String}}\textquotesingle{}s logical length (len\+\_\+) determines comparison extent
+\end{DoxyItemize}
+
+Return value interpretation\+:
+\begin{DoxyItemize}
+\item -\/1\+: This string sorts before str (this $<$ str)
+\item 0\+: Strings are identical in content and length
+\item 1\+: This string sorts after str (this $>$ str)
+\item -\/128\+: \mbox{\hyperlink{classcslt_1_1Error}{Error}} condition (null pointer detected)
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Edge cases\+:}
+
+\begin{DoxyItemize}
+\item Empty strings\+: Compare as equal if both are empty
+\item Embedded nulls in \mbox{\hyperlink{classcslt_1_1String}{String}}\+: Comparison stops at logical length, not null
+\item C-\/string shorter than \mbox{\hyperlink{classcslt_1_1String}{String}}\+: C-\/string is considered less
+\item C-\/string longer than \mbox{\hyperlink{classcslt_1_1String}{String}}\+: \mbox{\hyperlink{classcslt_1_1String}{String}} is considered less
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error conditions\+:}
+Returns -\/128 if\+:
+\begin{DoxyItemize}
+\item str parameter is nullptr
+\item Internal buffer (str\+\_\+) is null (corrupted \mbox{\hyperlink{classcslt_1_1String}{String}})
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Performance\+:}
+
+\begin{DoxyItemize}
+\item O(n) where n = min(this-\/$>$\mbox{\hyperlink{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}{size()}}, strlen(str))
+\item Early termination on first difference
+\item Single pass, no allocation
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Thread safety\+:}
+Thread-\/safe for concurrent reads if str is not being modified. Not thread-\/safe if this \mbox{\hyperlink{classcslt_1_1String}{String}} is being modified concurrently.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Basic comparisons}}
+\DoxyCodeLine{    int8\_t cmp1 = str-\/>compare(\textcolor{stringliteral}{"{}hello"{}});}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Compare 'hello' vs 'hello': "{}} << (int)cmp1 << std::endl;  \textcolor{comment}{// 0}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    int8\_t cmp2 = str-\/>compare(\textcolor{stringliteral}{"{}world"{}});}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Compare 'hello' vs 'world': "{}} << (int)cmp2 << std::endl;  \textcolor{comment}{// -\/1}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    int8\_t cmp3 = str-\/>compare(\textcolor{stringliteral}{"{}apple"{}});}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Compare 'hello' vs 'apple': "{}} << (int)cmp3 << std::endl;  \textcolor{comment}{// 1}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Using for sorting}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{std::vector<cslt::UniquePtr<cslt::String, cslt::StringDeleter>> strings;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}zebra"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}apple"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r3 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}mango"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue() \&\& r3.hasValue()) \{}
+\DoxyCodeLine{    strings.push\_back(\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}}(r1.value()));}
+\DoxyCodeLine{    strings.push\_back(\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}}(r2.value()));}
+\DoxyCodeLine{    strings.push\_back(\mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}}(r3.value()));}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Sort using compare}}
+\DoxyCodeLine{    std::sort(strings.begin(), strings.end(),}
+\DoxyCodeLine{        [](\textcolor{keyword}{const} \textcolor{keyword}{auto}\& a, \textcolor{keyword}{const} \textcolor{keyword}{auto}\& b) \{}
+\DoxyCodeLine{            return a-\/>compare(b-\/>c\_str()) < 0;}
+\DoxyCodeLine{        \});}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordflow}{for} (\textcolor{keyword}{const} \textcolor{keyword}{auto}\& s : strings) \{}
+\DoxyCodeLine{        std::cout << s-\/>c\_str() << std::endl;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    \textcolor{comment}{// Output: apple, mango, zebra}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+compare(const String\&) for String-\/to-\/\+String comparison 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a03b7a5f843d7f0e39a7f935feda3302c}\label{classcslt_1_1String_a03b7a5f843d7f0e39a7f935feda3302c}} 
+\index{cslt::String@{cslt::String}!compare@{compare}}
+\index{compare@{compare}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{compare()}{compare()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily int8\+\_\+t cslt\+::\+String\+::compare (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Lexicographically compare this string with another \mbox{\hyperlink{classcslt_1_1String}{String}} object. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \mbox{\hyperlink{classcslt_1_1String}{String}} object to compare against \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+int8\+\_\+t comparison result\+:
+\begin{DoxyItemize}
+\item -\/1 if this string is less than other
+\item 0 if strings are equal
+\item 1 if this string is greater than other
+\item -\/128 if either string\textquotesingle{}s buffer is null (error sentinel)
+
+Performs lexicographic comparison of two \mbox{\hyperlink{classcslt_1_1String}{String}} objects. This is the preferred method for comparing \mbox{\hyperlink{classcslt_1_1String}{String}} instances as it uses the stored length information for optimization.
+\end{DoxyItemize}
+\end{DoxyReturn}
+Comparison algorithm\+:
+\begin{DoxyItemize}
+\item Compares min(this-\/$>$len\+\_\+, other.\+len\+\_\+) characters byte-\/by-\/byte
+\item Uses unsigned byte comparison (0-\/255)
+\item If all common characters match, compares lengths
+\item Early termination on first difference
+\end{DoxyItemize}
+
+Return value interpretation\+:
+\begin{DoxyItemize}
+\item -\/1\+: This string sorts before other (this $<$ other)
+\item 0\+: Strings are identical in content and length
+\item 1\+: This string sorts after other (this $>$ other)
+\item -\/128\+: \mbox{\hyperlink{classcslt_1_1Error}{Error}} condition (null internal buffer)
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Advantages over C-\/string comparison\+:}
+
+\begin{DoxyItemize}
+\item No need to scan for null terminator in other
+\item Handles embedded nulls correctly (compares up to logical length)
+\item More efficient for long strings with early differences
+\item Type-\/safe (no risk of comparing with invalid C-\/string)
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Performance\+:}
+
+\begin{DoxyItemize}
+\item O(n) where n = min(this-\/$>$\mbox{\hyperlink{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}{size()}}, other.\+size())
+\item No strlen() calls needed
+\item Early termination on first difference
+\item Can be SIMD-\/optimized (see implementation notes)
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error conditions\+:}
+Returns -\/128 if\+:
+\begin{DoxyItemize}
+\item This \mbox{\hyperlink{classcslt_1_1String}{String}}\textquotesingle{}s internal buffer (str\+\_\+) is null
+\item Other \mbox{\hyperlink{classcslt_1_1String}{String}}\textquotesingle{}s internal buffer is null
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Thread safety\+:}
+Thread-\/safe for concurrent reads if neither string is being modified. Not thread-\/safe if either \mbox{\hyperlink{classcslt_1_1String}{String}} is being modified concurrently.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}apple"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}banana"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str1(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str2(r2.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    int8\_t cmp = str1-\/>compare(*str2);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (cmp < 0) \{}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}'"{}} << str1-\/>c\_str() << \textcolor{stringliteral}{"{}' comes before '"{}} }
+\DoxyCodeLine{                  << str2-\/>c\_str() << \textcolor{stringliteral}{"{}'"{}} << std::endl;}
+\DoxyCodeLine{        \textcolor{comment}{// Output: 'apple' comes before 'banana'}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Equality testing}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}test"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}test"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r3 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}Test"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue() \&\& r3.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str1(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str2(r2.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str3(r3.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordtype}{bool} equal1 = (str1-\/>compare(*str2) == 0);}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}str1 == str2: "{}} << equal1 << std::endl;  \textcolor{comment}{// true}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordtype}{bool} equal2 = (str1-\/>compare(*str3) == 0);}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}str1 == str3: "{}} << equal2 << std::endl;  \textcolor{comment}{// false}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+For SIMD-\/optimized implementation, see string\+\_\+compare\+\_\+impl.\+cpp 
+\end{DoxyNote}
+\begin{DoxySeeAlso}{See also}
+compare(const char$\ast$) for C-\/string comparison 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_aac0bd5318610af25a85a1215f8c6b592}\label{classcslt_1_1String_aac0bd5318610af25a85a1215f8c6b592}} 
+\index{cslt::String@{cslt::String}!concat@{concat}}
+\index{concat@{concat}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{concat()}{concat()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool cslt\+::\+String\+::concat (\begin{DoxyParamCaption}\item[{const char $\ast$}]{str }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Concatenate a C-\/string to the end of this string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & Null-\/terminated C-\/string to append \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if concatenation succeeded, false on failure
+\end{DoxyReturn}
+Appends the contents of str to the end of the current string. The function automatically handles buffer growth when necessary, using the allocator\textquotesingle{}s realloc() method if available, or falling back to allocate-\/copy-\/free pattern.
+
+Key behaviors\+:
+\begin{DoxyItemize}
+\item Always maintains null termination
+\item Detects and handles self-\/aliasing (when str points within current buffer)
+\item Prevents size\+\_\+t overflow in length calculations
+\item Returns immediately if str is empty (no-\/op, returns true)
+\item Grows buffer capacity as needed
+\end{DoxyItemize}
+
+Buffer growth strategy\+:
+\begin{DoxyItemize}
+\item If allocator supports realloc(), uses in-\/place reallocation
+\item Otherwise, allocates new buffer, copies data, and frees old buffer
+\item Pre-\/allocating capacity via \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{init()}} can reduce reallocations
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Self-\/aliasing\+:}
+The function safely handles cases where str points to a substring of the current buffer. It detects this condition and creates a temporary copy before any reallocation occurs.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error conditions\+:}
+Returns false if\+:
+\begin{DoxyItemize}
+\item str is nullptr
+\item Internal buffer is null (corrupted \mbox{\hyperlink{classcslt_1_1String}{String}})
+\item \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} is null
+\item Length overflow would occur (len + strlen(str) + 1 $>$ SIZE\+\_\+\+MAX)
+\item Memory allocation fails during buffer growth
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Thread safety\+:}
+Not thread-\/safe. External synchronization required for concurrent access.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}Hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Basic concatenation}}
+\DoxyCodeLine{    \textcolor{keywordtype}{bool} success = str-\/>concat(\textcolor{stringliteral}{"{} world"{}});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (success) \{}
+\DoxyCodeLine{        std::cout << str-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}Hello world"{}}}
+\DoxyCodeLine{        std::cout << str-\/>size() << std::endl;    \textcolor{comment}{// 11}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Multiple concatenations}}
+\DoxyCodeLine{    str-\/>concat(\textcolor{stringliteral}{"{}!"{}});}
+\DoxyCodeLine{    str-\/>concat(\textcolor{stringliteral}{"{} How are you?"{}});}
+\DoxyCodeLine{    std::cout << str-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}Hello world! How are you?"{}}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Self-\/aliasing example (safe)}}
+\DoxyCodeLine{    str-\/>concat(str-\/>c\_str());  \textcolor{comment}{// Doubles the string}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Empty string (no-\/op)}}
+\DoxyCodeLine{    str-\/>concat(\textcolor{stringliteral}{"{}"{}});  \textcolor{comment}{// Returns true, no change}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Pre-\/allocate capacity to minimize reallocations}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}"{}}, 100, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});  \textcolor{comment}{// 100 bytes capacity}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} path(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Multiple appends without reallocation}}
+\DoxyCodeLine{    path-\/>concat(\textcolor{stringliteral}{"{}/usr"{}});}
+\DoxyCodeLine{    path-\/>concat(\textcolor{stringliteral}{"{}/local"{}});}
+\DoxyCodeLine{    path-\/>concat(\textcolor{stringliteral}{"{}/bin"{}});}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    std::cout << path-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}/usr/local/bin"{}}}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Size: "{}} << path-\/>size() << std::endl;}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Capacity: "{}} << path-\/>capacity() << std::endl;  \textcolor{comment}{// Still 101}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Error handling}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}test"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Null pointer -\/ returns false}}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (!str-\/>concat(\textcolor{keyword}{nullptr})) \{}
+\DoxyCodeLine{        std::cerr << \textcolor{stringliteral}{"{}Failed to concat null pointer"{}} << std::endl;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// String unchanged after failure}}
+\DoxyCodeLine{    std::cout << str-\/>c\_str() << std::endl;  \textcolor{comment}{// Still "{}test"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_a66cd222863f1288a09b1b4c2304fa91f}{concat(const String\&)}} for String-\/to-\/\+String concatenation 
+
+\mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{init()}} for \mbox{\hyperlink{classcslt_1_1String_a45e6a308d90c30ff3e82fe5daaa47449}{capacity}} pre-\/allocation 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a66cd222863f1288a09b1b4c2304fa91f}\label{classcslt_1_1String_a66cd222863f1288a09b1b4c2304fa91f}} 
+\index{cslt::String@{cslt::String}!concat@{concat}}
+\index{concat@{concat}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{concat()}{concat()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool cslt\+::\+String\+::concat (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{str }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Concatenate another \mbox{\hyperlink{classcslt_1_1String}{String}} object to the end of this string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em str} & \mbox{\hyperlink{classcslt_1_1String}{String}} object to append \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if concatenation succeeded, false on failure
+\end{DoxyReturn}
+Convenience overload that appends the contents of another \mbox{\hyperlink{classcslt_1_1String}{String}} object. This method delegates to \mbox{\hyperlink{classcslt_1_1String_aac0bd5318610af25a85a1215f8c6b592}{concat(const char$\ast$)}} internally, extracting the C-\/string from the provided \mbox{\hyperlink{classcslt_1_1String}{String}}.
+
+The source string (str) is not modified and remains independent. Only the contents are copied, not ownership or allocator references.
+
+\begin{DoxyParagraph}{Error conditions\+:}
+Returns false if\+:
+\begin{DoxyItemize}
+\item str\textquotesingle{}s internal buffer is null (corrupted \mbox{\hyperlink{classcslt_1_1String}{String}})
+\item Any condition that would cause \mbox{\hyperlink{classcslt_1_1String_aac0bd5318610af25a85a1215f8c6b592}{concat(const char$\ast$)}} to fail
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Thread safety\+:}
+Not thread-\/safe. External synchronization required for concurrent access to either string.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}Hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{} world"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str1(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str2(r2.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Concatenate String objects}}
+\DoxyCodeLine{    \textcolor{keywordtype}{bool} success = str1-\/>concat(*str2);}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (success) \{}
+\DoxyCodeLine{        std::cout << str1-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}Hello world"{}}}
+\DoxyCodeLine{        std::cout << str2-\/>c\_str() << std::endl;  \textcolor{comment}{// "{} world"{} (unchanged)}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Building a sentence from words}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}The"{}}, 50, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{} quick"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r3 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{} brown"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r4 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{} fox"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue() \&\& r3.hasValue() \&\& r4.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} sentence(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} word2(r2.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} word3(r3.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} word4(r4.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    sentence-\/>concat(*word2);}
+\DoxyCodeLine{    sentence-\/>concat(*word3);}
+\DoxyCodeLine{    sentence-\/>concat(*word4);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    std::cout << sentence-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}The quick brown fox"{}}}
+\DoxyCodeLine{    std::cout << sentence-\/>size() << std::endl;    \textcolor{comment}{// 19}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Mixing C-\/string and String concatenation}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}Hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}world"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str1(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str2(r2.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    str1-\/>concat(\textcolor{stringliteral}{"{} "{}});        \textcolor{comment}{// C-\/string}}
+\DoxyCodeLine{    str1-\/>concat(*str2);      \textcolor{comment}{// String object}}
+\DoxyCodeLine{    str1-\/>concat(\textcolor{stringliteral}{"{}!"{}});        \textcolor{comment}{// C-\/string}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    std::cout << str1-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}Hello world!"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Using different allocators (allowed but not common)}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} heap\_alloc;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} arena\_alloc(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}heap: "{}}, 0, heap\_alloc);}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}arena"{}}, 0, arena\_alloc);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str1(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str2(r2.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Works fine -\/ only copies content, not allocator}}
+\DoxyCodeLine{    str1-\/>concat(*str2);}
+\DoxyCodeLine{    std::cout << str1-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}heap: arena"{}}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// str1 still uses heap\_alloc for any growth}}
+\DoxyCodeLine{    \textcolor{comment}{// str2 still uses arena\_alloc}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_aac0bd5318610af25a85a1215f8c6b592}{concat(const char$\ast$)}} for C-\/string concatenation 
+
+\mbox{\hyperlink{classcslt_1_1String_aafb23f3fb1b81ecf14b2c89bd13dfca9}{c\+\_\+str()}} to extract the C-\/string from a \mbox{\hyperlink{classcslt_1_1String}{String}} object 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}\label{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}} 
 \index{cslt::String@{cslt::String}!init@{init}}
 \index{init@{init}!cslt::String@{cslt::String}}
 \doxysubsubsection{\texorpdfstring{init()}{init()}}

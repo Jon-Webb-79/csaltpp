@@ -447,6 +447,979 @@ TEST_F(StringTest, LargeStringAllocation) {
     EXPECT_EQ('a', str->c_str()[9999]);
 }
 // ================================================================================
+// Test Fixture
+// ================================================================================
+
+class StringConcatTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator allocator;  // Adjust based on your actual allocator type
+    
+    void SetUp() override {
+        // Any setup needed before each test
+    }
+    
+    void TearDown() override {
+        // Any cleanup needed after each test
+    }
+    
+    // Helper to create a string for testing
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> 
+    makeString(const char* str, size_t capacity = 0) {
+        auto result = cslt::String::init(str, capacity, allocator);
+        if (!result.hasValue()) {
+            return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(nullptr);
+        }
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(result.value());
+    }
+};
+
+// ================================================================================
+// Basic Functionality Tests
+// ================================================================================
+
+TEST_F(StringConcatTest, ConcatCStringBasic) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    bool success = str->concat(" world");
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "hello world");
+    EXPECT_EQ(str->size(), 11u);
+}
+
+TEST_F(StringConcatTest, ConcatStringObjectBasic) {
+    auto str1 = makeString("hello");
+    auto str2 = makeString(" world");
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    
+    bool success = str1->concat(*str2);
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str1->c_str(), "hello world");
+    EXPECT_EQ(str1->size(), 11u);
+}
+
+TEST_F(StringConcatTest, ConcatEmptyString) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    size_t original_len = str->size();
+    bool success = str->concat("");
+    
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "hello");
+    EXPECT_EQ(str->size(), original_len);
+}
+
+TEST_F(StringConcatTest, ConcatToEmptyString) {
+    auto str = makeString("");
+    ASSERT_NE(str.get(), nullptr);
+    
+    bool success = str->concat("hello");
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "hello");
+    EXPECT_EQ(str->size(), 5u);
+}
+
+TEST_F(StringConcatTest, MultipleConcatenations) {
+    auto str = makeString("a");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_TRUE(str->concat("b"));
+    EXPECT_STREQ(str->c_str(), "ab");
+    
+    EXPECT_TRUE(str->concat("c"));
+    EXPECT_STREQ(str->c_str(), "abc");
+    
+    EXPECT_TRUE(str->concat("d"));
+    EXPECT_STREQ(str->c_str(), "abcd");
+    
+    EXPECT_EQ(str->size(), 4u);
+}
+
+// ================================================================================
+// Capacity and Growth Tests
+// ================================================================================
+
+TEST_F(StringConcatTest, ConcatWithSufficientCapacity) {
+    // Create string with extra capacity
+    auto str = makeString("hello", 20);
+    ASSERT_NE(str.get(), nullptr);
+    
+    size_t original_capacity = str->capacity();
+    
+    bool success = str->concat(" world");
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "hello world");
+    
+    // Capacity should not have changed
+    EXPECT_EQ(str->capacity(), original_capacity);
+}
+
+TEST_F(StringConcatTest, ConcatRequiresGrowth) {
+    // Create string with exact capacity (no room for growth)
+    auto str = makeString("hello", 0);
+    ASSERT_NE(str.get(), nullptr);
+    
+    size_t original_capacity = str->capacity();
+    
+    bool success = str->concat(" world");
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "hello world");
+    
+    // Capacity should have grown
+    EXPECT_GT(str->capacity(), original_capacity);
+}
+
+TEST_F(StringConcatTest, ConcatLargeString) {
+    auto str = makeString("start");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Create a large string to append
+    std::string large_append(1000, 'x');
+    
+    bool success = str->concat(large_append.c_str());
+    EXPECT_TRUE(success);
+    EXPECT_EQ(str->size(), 5u + 1000u);
+    
+    // Verify content
+    EXPECT_EQ(str->c_str()[0], 's');
+    EXPECT_EQ(str->c_str()[5], 'x');
+    EXPECT_EQ(str->c_str()[1004], 'x');
+}
+
+// ================================================================================
+// Edge Cases and Error Handling
+// ================================================================================
+
+TEST_F(StringConcatTest, ConcatNullCString) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    bool success = str->concat(nullptr);
+    EXPECT_FALSE(success);
+    
+    // Original string should be unchanged
+    EXPECT_STREQ(str->c_str(), "hello");
+    EXPECT_EQ(str->size(), 5u);
+}
+
+TEST_F(StringConcatTest, ConcatSelfAlias) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Concatenate the string with itself (aliasing case)
+    bool success = str->concat(str->c_str());
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "hellohello");
+    EXPECT_EQ(str->size(), 10u);
+}
+
+TEST_F(StringConcatTest, ConcatSelfSubstring) {
+    auto str = makeString("hello world");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Point to a substring within the buffer
+    const char* substr = str->c_str() + 6;  // "world"
+    
+    bool success = str->concat(substr);
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "hello worldworld");
+    EXPECT_EQ(str->size(), 16u);
+}
+
+TEST_F(StringConcatTest, ConcatWithSpecialCharacters) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    bool success = str->concat("\t\n\r");
+    EXPECT_TRUE(success);
+    EXPECT_EQ(str->size(), 8u);
+    
+    // Verify special characters are present
+    EXPECT_EQ(str->c_str()[5], '\t');
+    EXPECT_EQ(str->c_str()[6], '\n');
+    EXPECT_EQ(str->c_str()[7], '\r');
+}
+
+TEST_F(StringConcatTest, ConcatUnicode) {
+    auto str = makeString("Hello ");
+    ASSERT_NE(str.get(), nullptr);
+    
+    bool success = str->concat("世界");  // "world" in Chinese
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str->c_str(), "Hello 世界");
+}
+
+// ================================================================================
+// String-to-String Concatenation Tests
+// ================================================================================
+
+TEST_F(StringConcatTest, ConcatTwoStrings) {
+    auto str1 = makeString("foo");
+    auto str2 = makeString("bar");
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    
+    bool success = str1->concat(*str2);
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str1->c_str(), "foobar");
+    
+    // str2 should be unchanged
+    EXPECT_STREQ(str2->c_str(), "bar");
+}
+
+TEST_F(StringConcatTest, ConcatEmptyStringObject) {
+    auto str1 = makeString("hello");
+    auto str2 = makeString("");
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    
+    bool success = str1->concat(*str2);
+    EXPECT_TRUE(success);
+    EXPECT_STREQ(str1->c_str(), "hello");
+}
+
+TEST_F(StringConcatTest, ConcatMultipleStringObjects) {
+    auto str1 = makeString("a");
+    auto str2 = makeString("b");
+    auto str3 = makeString("c");
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    ASSERT_NE(str3.get(), nullptr);
+    
+    EXPECT_TRUE(str1->concat(*str2));
+    EXPECT_TRUE(str1->concat(*str3));
+    EXPECT_STREQ(str1->c_str(), "abc");
+}
+
+// ================================================================================
+// Boundary and Stress Tests
+// ================================================================================
+
+TEST_F(StringConcatTest, ConcatMaxLengthString) {
+    auto str = makeString("a");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Concatenate many times to test growth
+    for (int i = 0; i < 100; ++i) {
+        bool success = str->concat("x");
+        EXPECT_TRUE(success);
+    }
+    
+    EXPECT_EQ(str->size(), 101u);
+    EXPECT_EQ(str->c_str()[0], 'a');
+    EXPECT_EQ(str->c_str()[100], 'x');
+}
+
+TEST_F(StringConcatTest, ConcatAlternatingTypes) {
+    auto str1 = makeString("start");
+    auto str2 = makeString("-mid-");
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    
+    EXPECT_TRUE(str1->concat(*str2));      // String object
+    EXPECT_TRUE(str1->concat("end"));      // C-string
+    
+    EXPECT_STREQ(str1->c_str(), "start-mid-end");
+}
+
+// ================================================================================
+// Null Terminator Tests
+// ================================================================================
+
+TEST_F(StringConcatTest, NullTerminatorMaintained) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->concat(" world");
+    
+    // Verify null terminator is present
+    EXPECT_EQ(str->c_str()[str->size()], '\0');
+    
+    // Verify strlen matches size
+    EXPECT_EQ(std::strlen(str->c_str()), str->size());
+}
+
+TEST_F(StringConcatTest, MultipleConcat_NullTerminator) {
+    auto str = makeString("");
+    ASSERT_NE(str.get(), nullptr);
+    
+    for (int i = 0; i < 10; ++i) {
+        str->concat("a");
+        EXPECT_EQ(str->c_str()[str->size()], '\0');
+    }
+}
+
+// ================================================================================
+// Memory Management Tests
+// ================================================================================
+
+TEST_F(StringConcatTest, ConcatDoesNotLeakMemory) {
+    // This test relies on your allocator tracking allocations
+    // Adjust based on your allocator's API
+    
+    auto str = makeString("test");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Perform operations that trigger reallocation
+    for (int i = 0; i < 50; ++i) {
+        str->concat("x");
+    }
+    
+    // When str goes out of scope, StringDeleter should clean up
+    // If your allocator tracks allocations, you can verify here
+}
+
+// ================================================================================
+// Integration Tests
+// ================================================================================
+
+TEST_F(StringConcatTest, BuildSentence) {
+    auto str = makeString("The");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_TRUE(str->concat(" quick"));
+    EXPECT_TRUE(str->concat(" brown"));
+    EXPECT_TRUE(str->concat(" fox"));
+    
+    EXPECT_STREQ(str->c_str(), "The quick brown fox");
+    EXPECT_EQ(str->size(), 19u);
+}
+
+TEST_F(StringConcatTest, BuildPath) {
+    auto path = makeString("/usr");
+    ASSERT_NE(path.get(), nullptr);
+    
+    EXPECT_TRUE(path->concat("/local"));
+    EXPECT_TRUE(path->concat("/bin"));
+    
+    EXPECT_STREQ(path->c_str(), "/usr/local/bin");
+}
+
+// ================================================================================
+// Performance Hints Tests (Optional)
+// ================================================================================
+
+TEST_F(StringConcatTest, PreallocatedCapacityPerformance) {
+    // Test that pre-allocating capacity reduces reallocations
+    
+    auto str1 = makeString("", 100);  // Pre-allocated
+    auto str2 = makeString("", 0);     // Minimal allocation
+    
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    
+    size_t capacity1_before = str1->capacity();
+    size_t capacity2_before = str2->capacity();
+    
+    for (int i = 0; i < 10; ++i) {
+        str1->concat("1234567890");
+        str2->concat("1234567890");
+    }
+    
+    // str1 should not have reallocated (or reallocated less)
+    EXPECT_EQ(str1->capacity(), capacity1_before);
+    
+    // str2 likely reallocated multiple times
+    EXPECT_GT(str2->capacity(), capacity2_before);
+}
+// ================================================================================ 
+// ================================================================================ 
+
+
+// #include <gtest/gtest.h>
+// #include "string.hpp"
+// #include "allocator.hpp"
+// #include <vector>
+// #include <algorithm>
+// #include <string>
+#include <random>
+
+// ================================================================================
+// Test Fixture
+// ================================================================================
+
+class StringCompareExtendedTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator allocator;
+    
+    void SetUp() override {
+        // Any setup needed before each test
+    }
+    
+    void TearDown() override {
+        // Any cleanup needed after each test
+    }
+    
+    // Helper to create a string for testing
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> 
+    makeString(const char* str, size_t capacity = 0) {
+        auto result = cslt::String::init(str, capacity, allocator);
+        if (!result.hasValue()) {
+            return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(nullptr);
+        }
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(result.value());
+    }
+    
+    // Helper to create a string from std::string
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> 
+    makeString(const std::string& str, size_t capacity = 0) {
+        return makeString(str.c_str(), capacity);
+    }
+};
+
+// ================================================================================
+// SIMD Boundary Tests (16, 32, 64 byte boundaries)
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_Exactly16Bytes_Equal) {
+    std::string str16(16, 'x');
+    
+    auto s1 = makeString(str16);
+    auto s2 = makeString(str16);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_Exactly16Bytes_DifferAtEnd) {
+    std::string str1(16, 'x');
+    std::string str2 = str1;
+    str2[15] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);  // 'x' < 'y'
+}
+
+TEST_F(StringCompareExtendedTest, Compare_Exactly32Bytes_Equal) {
+    std::string str32(32, 'a');
+    
+    auto s1 = makeString(str32);
+    auto s2 = makeString(str32);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_Exactly32Bytes_DifferAtMiddle) {
+    std::string str1(32, 'a');
+    std::string str2 = str1;
+    str2[16] = 'b';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);  // 'a' < 'b'
+}
+
+TEST_F(StringCompareExtendedTest, Compare_Exactly64Bytes_Equal) {
+    std::string str64(64, 'z');
+    
+    auto s1 = makeString(str64);
+    auto s2 = makeString(str64);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_Exactly64Bytes_DifferAtEnd) {
+    std::string str1(64, 'z');
+    std::string str2 = str1;
+    str2[63] = 'a';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 1);  // 'z' > 'a'
+}
+
+// ================================================================================
+// Tests Crossing SIMD Boundaries
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_15Bytes_JustUnder16) {
+    std::string str(15, 'x');
+    
+    auto s1 = makeString(str);
+    auto s2 = makeString(str);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_17Bytes_JustOver16) {
+    std::string str(17, 'x');
+    
+    auto s1 = makeString(str);
+    auto s2 = makeString(str);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_31Bytes_JustUnder32) {
+    std::string str(31, 'a');
+    
+    auto s1 = makeString(str);
+    auto s2 = makeString(str);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_33Bytes_JustOver32) {
+    std::string str(33, 'a');
+    
+    auto s1 = makeString(str);
+    auto s2 = makeString(str);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_65Bytes_JustOver64) {
+    std::string str(65, 'z');
+    
+    auto s1 = makeString(str);
+    auto s2 = makeString(str);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+// ================================================================================
+// Early Difference Detection Tests
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte0) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[0] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte1) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[1] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte15) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[15] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte16) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[16] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte31) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[31] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte32) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[32] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte63) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[63] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_DifferAtByte64) {
+    std::string str1(100, 'x');
+    std::string str2 = str1;
+    str2[64] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+// ================================================================================
+// Large String Tests (SIMD Performance)
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_1KB_Equal) {
+    std::string str(1024, 'x');
+    
+    auto s1 = makeString(str);
+    auto s2 = makeString(str);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_1KB_DifferAtEnd) {
+    std::string str1(1024, 'x');
+    std::string str2 = str1;
+    str2[1023] = 'y';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_10KB_Equal) {
+    std::string str(10240, 'a');
+    
+    auto s1 = makeString(str);
+    auto s2 = makeString(str);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_10KB_DifferAtMiddle) {
+    std::string str1(10240, 'a');
+    std::string str2 = str1;
+    str2[5120] = 'b';
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+
+// ================================================================================
+// All Byte Values Tests (0-255)
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_AllByteValues) {
+    // Create strings with all possible byte values
+    std::string str1;
+    std::string str2;
+    
+    for (int i = 1; i < 256; ++i) {  // Skip 0 (null terminator)
+        str1.push_back(static_cast<char>(i));
+        str2.push_back(static_cast<char>(i));
+    }
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_HighByteValues) {
+    // Test with high byte values (128-255)
+    std::string str1(100, static_cast<char>(200));
+    std::string str2(100, static_cast<char>(201));
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);  // 200 < 201
+}
+
+// ================================================================================
+// Random Data Tests
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_RandomData_LargeStrings) {
+    std::mt19937 gen(42);  // Fixed seed for reproducibility
+    std::uniform_int_distribution<> dis(1, 255);
+    
+    std::string str1;
+    std::string str2;
+    
+    // Create 1KB random strings
+    for (int i = 0; i < 1024; ++i) {
+        char c = static_cast<char>(dis(gen));
+        str1.push_back(c);
+        str2.push_back(c);
+    }
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_RandomData_DifferAtRandomPosition) {
+    std::mt19937 gen(42);
+    std::uniform_int_distribution<> dis(1, 255);
+    
+    std::string str1;
+    std::string str2;
+    
+    for (int i = 0; i < 1024; ++i) {
+        char c = static_cast<char>(dis(gen));
+        str1.push_back(c);
+        str2.push_back(c);
+    }
+    
+    // Change byte at position 500
+    str2[500] = static_cast<char>((static_cast<unsigned char>(str2[500]) + 1) % 256);
+    if (str2[500] == 0) str2[500] = 1;  // Avoid null
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_NE(cmp, 0);  // Should differ
+}
+
+// ================================================================================
+// Alignment Tests (Unaligned Data)
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_UnalignedData_Offset1) {
+    std::string base(100, 'x');
+    std::string str1 = " " + base;  // Offset by 1
+    std::string str2 = " " + base;
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_UnalignedData_Offset7) {
+    std::string base(100, 'x');
+    std::string str1 = "1234567" + base;  // Offset by 7
+    std::string str2 = "1234567" + base;
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_UnalignedData_Offset15) {
+    std::string base(100, 'x');
+    std::string str1 = "123456789012345" + base;  // Offset by 15
+    std::string str2 = "123456789012345" + base;
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+// ================================================================================
+// Repeated Pattern Tests
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_RepeatingPattern_2Byte) {
+    std::string str1;
+    std::string str2;
+    
+    for (int i = 0; i < 500; ++i) {
+        str1 += "ab";
+        str2 += "ab";
+    }
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_RepeatingPattern_4Byte) {
+    std::string str1;
+    std::string str2;
+    
+    for (int i = 0; i < 250; ++i) {
+        str1 += "test";
+        str2 += "test";
+    }
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, 0);
+}
+
+TEST_F(StringCompareExtendedTest, Compare_RepeatingPattern_BreakAtEnd) {
+    std::string str1;
+    std::string str2;
+    
+    for (int i = 0; i < 100; ++i) {
+        str1 += "pattern";
+        str2 += "pattern";
+    }
+    
+    str1 += "end1";
+    str2 += "end2";
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);  // "end1" < "end2"
+}
+
+// ================================================================================
+// Length Mismatch Tests
+// ================================================================================
+
+TEST_F(StringCompareExtendedTest, Compare_LengthDiff_BothLarge) {
+    std::string str1(1000, 'x');
+    std::string str2(1001, 'x');
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);  // Shorter is less
+}
+
+TEST_F(StringCompareExtendedTest, Compare_LengthDiff_AcrossSIMDBoundary) {
+    std::string str1(63, 'x');
+    std::string str2(65, 'x');
+    
+    auto s1 = makeString(str1);
+    auto s2 = makeString(str2);
+    ASSERT_NE(s1.get(), nullptr);
+    ASSERT_NE(s2.get(), nullptr);
+    
+    int8_t cmp = s1->compare(*s2);
+    EXPECT_EQ(cmp, -1);
+}
+// ================================================================================
+// ================================================================================
+// eof
+// ================================================================================
+// ================================================================================
+// eof
+// ================================================================================
 // ================================================================================
 // eof
 // ================================================================================

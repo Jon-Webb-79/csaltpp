@@ -2359,6 +2359,495 @@ TEST_F(StringCopyOverloadTest, Copy_AfterMultipleOperations) {
     
     EXPECT_STREQ(copy->c_str(), "final");
 }
+// -------------------------------------------------------------------------------- 
+
+class StringIsPtrTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator allocator;
+    
+    void SetUp() override {
+        // Any setup needed before each test
+    }
+    
+    void TearDown() override {
+        // Any cleanup needed after each test
+    }
+    
+    // Helper to create a string for testing
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> 
+    makeString(const char* str, size_t capacity = 0) {
+        auto result = cslt::String::init(str, capacity, allocator);
+        if (!result.hasValue()) {
+            return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(nullptr);
+        }
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(result.value());
+    }
+};
+
+// ================================================================================
+// Basic Pointer Tests - is_ptr(const void*)
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_StartOfBuffer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str();
+    
+    EXPECT_TRUE(str->is_ptr(ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_MiddleOfBuffer) {
+    auto str = makeString("hello world");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 6;  // Points to 'w' in "world"
+    
+    EXPECT_TRUE(str->is_ptr(ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_EndOfString) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + str->size();  // Points to null terminator
+    
+    EXPECT_TRUE(str->is_ptr(ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_LastByteOfBuffer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Point to last byte before one-past-end
+    const void* ptr = str->c_str() + (str->capacity() - 1);
+    
+    EXPECT_TRUE(str->is_ptr(ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_ExternalPointer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const char* external = "external string";
+    
+    EXPECT_FALSE(str->is_ptr(external));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_NullPointer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_FALSE(str->is_ptr(nullptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_BeforeBuffer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Create pointer before buffer
+    const void* ptr = str->c_str() - 1;
+    
+    EXPECT_FALSE(str->is_ptr(ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_OnePastEnd) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // One-past-end should NOT be contained
+    const void* ptr = str->c_str() + str->capacity();
+    
+    EXPECT_FALSE(str->is_ptr(ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_WayAfterBuffer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Point way beyond allocated buffer
+    const void* ptr = str->c_str() + str->capacity() + 100;
+    
+    EXPECT_FALSE(str->is_ptr(ptr));
+}
+
+// ================================================================================
+// Basic Range Tests - is_ptr(const void*, size_t)
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_Range_EntireString) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_TRUE(str->is_ptr(str->c_str(), str->size()));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_EntireBuffer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_TRUE(str->is_ptr(str->c_str(), str->capacity()));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_SingleByte) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 2;
+    
+    EXPECT_TRUE(str->is_ptr(ptr, 1));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_Substring) {
+    auto str = makeString("hello world");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 6;  // "world"
+    
+    EXPECT_TRUE(str->is_ptr(ptr, 5));  // 5 bytes for "world"
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_ZeroBytes) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str();
+    
+    EXPECT_FALSE(str->is_ptr(ptr, 0));  // Zero bytes is invalid
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_ExceedsBuffer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str();
+    size_t too_large = str->capacity() + 10;
+    
+    EXPECT_FALSE(str->is_ptr(ptr, too_large));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_ExceedsFromMiddle) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 3;  // Start at 'l'
+    
+    EXPECT_FALSE(str->is_ptr(ptr, 10));  // 10 bytes would exceed buffer
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_ExactlyAtEnd) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 3;
+    size_t bytes = str->capacity() - 3;  // Exactly fits
+    
+    EXPECT_TRUE(str->is_ptr(ptr, bytes));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_OneByteOver) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 3;
+    size_t bytes = str->capacity() - 3 + 1;  // One byte too many
+    
+    EXPECT_FALSE(str->is_ptr(ptr, bytes));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_NullPointer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_FALSE(str->is_ptr(nullptr, 5));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_ExternalPointer) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const char* external = "external";
+    
+    EXPECT_FALSE(str->is_ptr(external, 5));
+}
+
+// ================================================================================
+// Empty String Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_EmptyString_BufferStart) {
+    auto str = makeString("");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str();
+    
+    EXPECT_TRUE(str->is_ptr(ptr));  // Still has buffer with null terminator
+}
+
+TEST_F(StringIsPtrTest, IsPtr_EmptyString_NullTerminator) {
+    auto str = makeString("");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Even empty string has capacity for null terminator
+    EXPECT_TRUE(str->is_ptr(str->c_str(), 1));  // Just the null terminator
+}
+
+TEST_F(StringIsPtrTest, IsPtr_EmptyString_ExceedsCapacity) {
+    auto str = makeString("");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_FALSE(str->is_ptr(str->c_str(), 100));  // Way more than capacity
+}
+
+// ================================================================================
+// Capacity vs Length Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_WithinCapacity_BeyondLength) {
+    auto str = makeString("hello", 100);  // Large capacity
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Pointer beyond string length but within capacity
+    const void* ptr = str->c_str() + 50;
+    
+    EXPECT_TRUE(str->is_ptr(ptr));  // Within allocated buffer
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_WithinCapacity_BeyondLength) {
+    auto str = makeString("hello", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Range starts beyond length but within capacity
+    const void* ptr = str->c_str() + 10;
+    
+    EXPECT_TRUE(str->is_ptr(ptr, 10));  // Still within buffer
+}
+
+TEST_F(StringIsPtrTest, IsPtr_BeyondCapacity) {
+    auto str = makeString("hello", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Pointer beyond capacity
+    const void* ptr = str->c_str() + 150;
+    
+    EXPECT_FALSE(str->is_ptr(ptr));
+}
+
+// ================================================================================
+// Aliasing Detection Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_DetectSelfAliasing_Start) {
+    auto str = makeString("hello world");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Simulate concat with pointer to own buffer
+    const char* self_ptr = str->c_str();
+    
+    if (str->is_ptr(self_ptr)) {
+        EXPECT_TRUE(true);  // Correctly detected aliasing
+    } else {
+        FAIL() << "Should have detected aliasing";
+    }
+}
+
+TEST_F(StringIsPtrTest, IsPtr_DetectSelfAliasing_Substring) {
+    auto str = makeString("hello world");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Pointer to substring within buffer
+    const char* substring = str->c_str() + 6;  // Points to "world"
+    
+    EXPECT_TRUE(str->is_ptr(substring));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_NoAliasing_ExternalString) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const char* external = "world";
+    
+    EXPECT_FALSE(str->is_ptr(external));  // Not aliased
+}
+
+// ================================================================================
+// Multiple Pointer Checks
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_MultiplePointers_SomeValid_SomeInvalid) {
+    auto str = makeString("hello world");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* p1 = str->c_str();           // Valid - start
+    const void* p2 = str->c_str() + 5;       // Valid - middle
+    const void* p3 = str->c_str() + 11;      // Valid - null terminator
+    const char* p4 = "external";             // Invalid - external
+    const void* p5 = str->c_str() + 100;     // Invalid - beyond buffer
+    
+    EXPECT_TRUE(str->is_ptr(p1));
+    EXPECT_TRUE(str->is_ptr(p2));
+    EXPECT_TRUE(str->is_ptr(p3));
+    EXPECT_FALSE(str->is_ptr(p4));
+    EXPECT_FALSE(str->is_ptr(p5));
+}
+
+// ================================================================================
+// Long String Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_LongString_StartMiddleEnd) {
+    std::string long_str(1000, 'x');
+    auto str = makeString(long_str.c_str());
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* start = str->c_str();
+    const void* middle = str->c_str() + 500;
+    const void* end = str->c_str() + 999;
+    
+    EXPECT_TRUE(str->is_ptr(start));
+    EXPECT_TRUE(str->is_ptr(middle));
+    EXPECT_TRUE(str->is_ptr(end));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_LongString_LargeRange) {
+    std::string long_str(1000, 'x');
+    auto str = makeString(long_str.c_str());
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 100;
+    
+    EXPECT_TRUE(str->is_ptr(ptr, 500));   // 500 bytes from position 100
+    EXPECT_FALSE(str->is_ptr(ptr, 2000)); // Would exceed buffer
+}
+
+// ================================================================================
+// Overflow Safety Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_Range_OverflowSafe_MaxSize) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str() + 3;
+    size_t huge_size = SIZE_MAX;
+    
+    // Should safely detect overflow without crashing
+    EXPECT_FALSE(str->is_ptr(ptr, huge_size));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_OverflowSafe_NearMaxSize) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str();
+    size_t huge_size = SIZE_MAX - 1000;
+    
+    // Should safely detect overflow
+    EXPECT_FALSE(str->is_ptr(ptr, huge_size));
+}
+
+// ================================================================================
+// Integration with Other Methods Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_AfterConcat_OriginalPointerValid) {
+    auto str = makeString("hello", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* original_ptr = str->c_str();
+    
+    str->concat(" world");
+    
+    // Original pointer should still be valid (no reallocation)
+    EXPECT_TRUE(str->is_ptr(original_ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_AfterReset_PointerStillValid) {
+    auto str = makeString("hello", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    const void* ptr = str->c_str();
+    
+    str->reset();
+    
+    // Pointer to buffer should still be valid after reset
+    EXPECT_TRUE(str->is_ptr(ptr));
+}
+
+TEST_F(StringIsPtrTest, IsPtr_AfterCopy_DifferentBuffers) {
+    auto original = makeString("hello");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Pointers from original should NOT be in copy's buffer
+    EXPECT_FALSE(copy->is_ptr(original->c_str()));
+    EXPECT_FALSE(original->is_ptr(copy->c_str()));
+}
+
+// ================================================================================
+// Pointer Arithmetic Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_PointerArithmetic_AllPositions) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Test every position in the buffer
+    for (size_t i = 0; i < str->capacity(); ++i) {
+        const void* ptr = str->c_str() + i;
+        EXPECT_TRUE(str->is_ptr(ptr)) << "Position " << i << " should be valid";
+    }
+}
+
+TEST_F(StringIsPtrTest, IsPtr_Range_AllValidRanges) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Test various valid ranges
+    for (size_t start = 0; start < str->capacity(); ++start) {
+        for (size_t len = 1; len <= str->capacity() - start; ++len) {
+            const void* ptr = str->c_str() + start;
+            EXPECT_TRUE(str->is_ptr(ptr, len)) 
+                << "Range [" << start << ", " << start + len << ") should be valid";
+        }
+    }
+}
+
+// ================================================================================
+// Edge Case: Two Different Strings
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_DifferentStrings_NotAliased) {
+    auto str1 = makeString("hello");
+    auto str2 = makeString("world");
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    
+    // Pointers from str1 should not be in str2's buffer
+    EXPECT_FALSE(str2->is_ptr(str1->c_str()));
+    EXPECT_FALSE(str1->is_ptr(str2->c_str()));
+}
+
+// ================================================================================
+// Const Correctness Tests
+// ================================================================================
+
+TEST_F(StringIsPtrTest, IsPtr_ConstString_CanCallMethod) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    const cslt::String* const_str = str.get();
+    
+    // Should be able to call is_ptr on const String
+    EXPECT_TRUE(const_str->is_ptr(const_str->c_str()));
+}
+// ================================================================================
+// ================================================================================
+// eof
 // ================================================================================
 // ================================================================================
 // eof

@@ -785,6 +785,12 @@ namespace cslt {
         Expected<String*> copy(Allocator& allocator) const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        bool is_ptr(const void* ptr) const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        bool is_ptr(const void* ptr, size_t bytes) const noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

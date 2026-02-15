@@ -348,6 +348,53 @@ namespace cslt {
         
         return result;
     } 
+// -------------------------------------------------------------------------------- 
+
+    bool String::is_ptr(const void* ptr) const noexcept {
+        if (!str_ || !ptr) {
+            return false;
+        }
+        
+        uintptr_t const begin = reinterpret_cast<uintptr_t>(static_cast<const void*>(str_));
+        uintptr_t const end = begin + alloc_;  // one-past-end
+        uintptr_t const addr = reinterpret_cast<uintptr_t>(ptr);
+        
+        // Overflow-safe containment check
+        if (addr < begin) {
+            return false;
+        }
+        if (addr >= end) {
+            return false;
+        }
+        
+        return true;
+    }
+// --------------------------------------------------------------------------------
+
+    bool String::is_ptr(const void* ptr, size_t bytes) const noexcept {
+        if (!str_ || !ptr || bytes == 0u) {
+            return false;
+        }
+        
+        uintptr_t const begin = reinterpret_cast<uintptr_t>(static_cast<const void*>(str_));
+        uintptr_t const end = begin + alloc_;  // one-past-end
+        uintptr_t const p = reinterpret_cast<uintptr_t>(ptr);
+        
+        // ptr must be within [begin, end)
+        if (p < begin || p >= end) {
+            return false;
+        }
+        
+        // Overflow-safe: require bytes <= end - p (equivalent to p + bytes <= end)
+        if (bytes > static_cast<size_t>(end - p)) {
+            return false;
+        }
+        
+        return true;
+    }
+// ================================================================================
+// ================================================================================
+// eof
 // ================================================================================ 
 // ================================================================================ 
 

@@ -27,7 +27,13 @@ bool \mbox{\hyperlink{classcslt_1_1String_a66cd222863f1288a09b1b4c2304fa91f}{con
 int8\+\_\+t \mbox{\hyperlink{classcslt_1_1String_ab9e603bb5b2f8e9c23a529f85115213d}{compare}} (const char $\ast$str) const noexcept
 \begin{DoxyCompactList}\small\item\em Lexicographically compare this string with a C-\/string. \end{DoxyCompactList}\item 
 int8\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a03b7a5f843d7f0e39a7f935feda3302c}{compare}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&other) const noexcept
-\begin{DoxyCompactList}\small\item\em Lexicographically compare this string with another \mbox{\hyperlink{classcslt_1_1String}{String}} object. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Lexicographically compare this string with another \mbox{\hyperlink{classcslt_1_1String}{String}} object. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}{reset}} () noexcept
+\begin{DoxyCompactList}\small\item\em Reset the string to an empty state. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Create a deep copy using this string\textquotesingle{}s allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1String_af50cdb934bab6f41ca8262439cedaa57}{copy}} (\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&\mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}}) const noexcept
+\begin{DoxyCompactList}\small\item\em Create a deep copy using a specified allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -670,6 +676,116 @@ Not thread-\/safe. External synchronization required for concurrent access to ei
 
 \mbox{\hyperlink{classcslt_1_1String_aafb23f3fb1b81ecf14b2c89bd13dfca9}{c\+\_\+str()}} to extract the C-\/string from a \mbox{\hyperlink{classcslt_1_1String}{String}} object 
 \end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}\label{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}} 
+\index{cslt::String@{cslt::String}!copy@{copy}}
+\index{copy@{copy}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{copy()}{copy()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ cslt\+::\+String\+::copy (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Create a deep copy using this string\textquotesingle{}s allocator. 
+
+\begin{DoxyReturn}{Returns}
+Expected$<$\+String$\ast$$>$ containing pointer to new \mbox{\hyperlink{classcslt_1_1String}{String}} or error
+\end{DoxyReturn}
+Creates an independent copy with the same content using the same allocator as the original. The copy has its own buffer and can be modified independently.
+
+Key behaviors\+:
+\begin{DoxyItemize}
+\item Creates new \mbox{\hyperlink{classcslt_1_1String}{String}} object and buffer
+\item Uses this-\/$>$allocator\+\_\+ for the copy
+\item Copy capacity matches original length
+\item O(n) where n is the string length
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} original(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Create a copy}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} copy\_r = original-\/>copy();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (copy\_r.hasValue()) \{}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}}(copy\_r.value());}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Modify copy -\/ original unchanged}}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}}-\/>concat(\textcolor{stringliteral}{"{} world"{}});}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Original: "{}} << original-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}hello"{}}}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Copy: "{}} << \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}}-\/>c\_str() << std::endl;          \textcolor{comment}{// "{}hello world"{}}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+copy(\+Allocator\&) to \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}} using a different \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_af50cdb934bab6f41ca8262439cedaa57}\label{classcslt_1_1String_af50cdb934bab6f41ca8262439cedaa57}} 
+\index{cslt::String@{cslt::String}!copy@{copy}}
+\index{copy@{copy}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{copy()}{copy()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ cslt\+::\+String\+::copy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Create a deep copy using a specified allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} to use for the new \mbox{\hyperlink{classcslt_1_1String}{String}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+String$\ast$$>$ containing pointer to new \mbox{\hyperlink{classcslt_1_1String}{String}} or error
+\end{DoxyReturn}
+Creates an independent copy with the same content using the specified allocator. Useful for copying strings between different allocator contexts.
+
+Key behaviors\+:
+\begin{DoxyItemize}
+\item Creates new \mbox{\hyperlink{classcslt_1_1String}{String}} object and buffer
+\item Uses provided allocator for the copy
+\item Copy capacity matches original length
+\item O(n) where n is the string length
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} heap\_alloc;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1ArenaAllocator}{cslt::ArenaAllocator}} arena\_alloc(1024);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}data"{}}, 0, heap\_alloc);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} heap\_str(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Copy from heap to arena allocator}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} copy\_r = heap\_str-\/>copy(arena\_alloc);}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (copy\_r.hasValue()) \{}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} arena\_str(copy\_r.value());}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Both have same content: "{}} }
+\DoxyCodeLine{                  << (strcmp(heap\_str-\/>c\_str(), arena\_str-\/>c\_str()) == 0) }
+\DoxyCodeLine{                  << std::endl;  \textcolor{comment}{// true}}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Different allocators: "{}} }
+\DoxyCodeLine{                  << (heap\_str-\/>allocator() != arena\_str-\/>allocator()) }
+\DoxyCodeLine{                  << std::endl;  \textcolor{comment}{// true}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy()}} to \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}} using the same \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}} 
+\end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}\label{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}} 
 \index{cslt::String@{cslt::String}!init@{init}}
 \index{init@{init}!cslt::String@{cslt::String}}
@@ -749,6 +865,59 @@ Memory allocation\+:
 
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1StringDeleter}{String\+Deleter}} for cleanup semantics 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}\label{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}} 
+\index{cslt::String@{cslt::String}!reset@{reset}}
+\index{reset@{reset}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{reset()}{reset()}}
+{\footnotesize\ttfamily void cslt\+::\+String\+::reset (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Reset the string to an empty state. 
+
+Sets the string length to zero and null-\/terminates at position 0. The allocated buffer is preserved and can be reused for future operations.
+
+Key behaviors\+:
+\begin{DoxyItemize}
+\item Sets len\+\_\+ to 0
+\item Places \textquotesingle{}\textbackslash{}0\textquotesingle{} at position 0
+\item Preserves allocated capacity
+\item O(1) constant time operation
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Performance\+:}
+O(1) -\/ No memory allocation or deallocation occurs.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello world"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Before: "{}} << str-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}hello world"{}}}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Size: "{}} << str-\/>size() << std::endl;      \textcolor{comment}{// 11}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    str-\/>reset();}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}After: "{}} << str-\/>c\_str() << std::endl;   \textcolor{comment}{// "{}"{}}}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Size: "{}} << str-\/>size() << std::endl;      \textcolor{comment}{// 0}}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Capacity: "{}} << str-\/>capacity() << std::endl;  \textcolor{comment}{// Unchanged}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Reuse the buffer}}
+\DoxyCodeLine{    str-\/>concat(\textcolor{stringliteral}{"{}new content"{}});}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Reused: "{}} << str-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}new content"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+$\sim$\+String() to free the buffer 
+
+\mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{init()}} to create a \mbox{\hyperlink{classcslt_1_1String}{String}} with specific \mbox{\hyperlink{classcslt_1_1String_a45e6a308d90c30ff3e82fe5daaa47449}{capacity}} 
 \end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}\label{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}} 
 \index{cslt::String@{cslt::String}!size@{size}}

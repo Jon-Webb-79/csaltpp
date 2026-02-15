@@ -654,6 +654,137 @@ namespace cslt {
         int8_t compare(const String& other) const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Reset the string to an empty state
+         * 
+         * @details Sets the string length to zero and null-terminates at position 0.
+         * The allocated buffer is preserved and can be reused for future operations.
+         * 
+         * Key behaviors:
+         * - Sets len_ to 0
+         * - Places '\0' at position 0
+         * - Preserves allocated capacity
+         * - O(1) constant time operation
+         * 
+         * @par Performance:
+         * O(1) - No memory allocation or deallocation occurs.
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("hello world", 0, allocator);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str(r.value());
+         *     
+         *     std::cout << "Before: " << str->c_str() << std::endl;  // "hello world"
+         *     std::cout << "Size: " << str->size() << std::endl;      // 11
+         *     
+         *     str->reset();
+         *     
+         *     std::cout << "After: " << str->c_str() << std::endl;   // ""
+         *     std::cout << "Size: " << str->size() << std::endl;      // 0
+         *     std::cout << "Capacity: " << str->capacity() << std::endl;  // Unchanged
+         *     
+         *     // Reuse the buffer
+         *     str->concat("new content");
+         *     std::cout << "Reused: " << str->c_str() << std::endl;  // "new content"
+         * }
+         * @endcode
+         * 
+         * @see ~String() to free the buffer
+         * @see init() to create a String with specific capacity
+         */
+        void reset() noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Create a deep copy using this string's allocator
+         * 
+         * @return Expected<String*> containing pointer to new String or error
+         * 
+         * @details Creates an independent copy with the same content using the same
+         * allocator as the original. The copy has its own buffer and can be modified
+         * independently.
+         * 
+         * Key behaviors:
+         * - Creates new String object and buffer
+         * - Uses this->allocator_ for the copy
+         * - Copy capacity matches original length
+         * - O(n) where n is the string length
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("hello", 0, allocator);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> original(r.value());
+         *     
+         *     // Create a copy
+         *     auto copy_r = original->copy();
+         *     
+         *     if (copy_r.hasValue()) {
+         *         cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+         *         
+         *         // Modify copy - original unchanged
+         *         copy->concat(" world");
+         *         
+         *         std::cout << "Original: " << original->c_str() << std::endl;  // "hello"
+         *         std::cout << "Copy: " << copy->c_str() << std::endl;          // "hello world"
+         *     }
+         * }
+         * @endcode
+         * 
+         * @see copy(Allocator&) to copy using a different allocator
+         */
+        Expected<String*> copy() const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Create a deep copy using a specified allocator
+         * 
+         * @param allocator Allocator to use for the new String
+         * @return Expected<String*> containing pointer to new String or error
+         * 
+         * @details Creates an independent copy with the same content using the
+         * specified allocator. Useful for copying strings between different
+         * allocator contexts.
+         * 
+         * Key behaviors:
+         * - Creates new String object and buffer
+         * - Uses provided allocator for the copy
+         * - Copy capacity matches original length
+         * - O(n) where n is the string length
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator heap_alloc;
+         * cslt::ArenaAllocator arena_alloc(1024);
+         * 
+         * auto r = cslt::String::init("data", 0, heap_alloc);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> heap_str(r.value());
+         *     
+         *     // Copy from heap to arena allocator
+         *     auto copy_r = heap_str->copy(arena_alloc);
+         *     
+         *     if (copy_r.hasValue()) {
+         *         cslt::UniquePtr<cslt::String, cslt::StringDeleter> arena_str(copy_r.value());
+         *         
+         *         std::cout << "Both have same content: " 
+         *                   << (strcmp(heap_str->c_str(), arena_str->c_str()) == 0) 
+         *                   << std::endl;  // true
+         *         std::cout << "Different allocators: " 
+         *                   << (heap_str->allocator() != arena_str->allocator()) 
+         *                   << std::endl;  // true
+         *     }
+         * }
+         * @endcode
+         * 
+         * @see copy() to copy using the same allocator
+         */
+        Expected<String*> copy(Allocator& allocator) const noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

@@ -289,9 +289,68 @@ namespace cslt {
         if (len_ > other.len_) return static_cast<int8_t>(1);
         return static_cast<int8_t>(0);
     }
-    // ============================================================================
-    // StringDeleter Implementation
-    // ============================================================================
+// -------------------------------------------------------------------------------- 
+
+    void String::reset() noexcept {
+        if (!str_) {
+            return;
+        }
+        
+        len_ = 0u;
+        str_[0] = '\0';
+    }
+// -------------------------------------------------------------------------------- 
+
+    Expected<String*> String::copy() const noexcept {
+        Expected<String*> result;
+        
+        if (!str_) {
+            result.setError(ArgumentError("Cannot copy String with null buffer"));
+            return result;
+        }
+        
+        if (!allocator_) {
+            result.setError(ArgumentError("No allocator available"));
+            return result;
+        }
+        
+        // String::init returns Expected<String*>
+        // We need to extract the value or error and put it in our result
+        auto init_result = String::init(str_, len_, *allocator_);
+        
+        if (init_result.hasValue()) {
+            result.setValue(init_result.value());
+        } else {
+            result.setError(init_result.error());
+        }
+        
+        return result;
+    }
+// --------------------------------------------------------------------------------
+
+    Expected<String*> String::copy(Allocator& allocator) const noexcept {
+        Expected<String*> result;
+        
+        if (!str_) {
+            result.setError(ArgumentError("Cannot copy String with null buffer"));
+            return result;
+        }
+        
+        // String::init returns Expected<String*>
+        // We need to extract the value or error and put it in our result
+        auto init_result = String::init(str_, len_, allocator);
+        
+        if (init_result.hasValue()) {
+            result.setValue(init_result.value());
+        } else {
+            result.setError(init_result.error());
+        }
+        
+        return result;
+    } 
+// ================================================================================ 
+// ================================================================================ 
+
 
     void StringDeleter::operator()(String* s) const noexcept {
         if (!s) return;

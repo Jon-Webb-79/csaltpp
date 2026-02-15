@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="658" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="658" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="789" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="789" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -885,6 +885,165 @@ Comparison algorithm:<itemizedlist>
         </inbodydescription>
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="654" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="263" bodyend="291"/>
       </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1adc4b6300e480f5f8dd3f4269ce26cc86" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::String::reset</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>reset</name>
+        <briefdescription>
+<para>Reset the string to an empty state. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Sets the string length to zero and null-terminates at position 0. The allocated buffer is preserved and can be reused for future operations.</para>
+<para>Key behaviors:<itemizedlist>
+<listitem><para>Sets len_ to 0</para>
+</listitem><listitem><para>Places &apos;\0&apos; at position 0</para>
+</listitem><listitem><para>Preserves allocated capacity</para>
+</listitem><listitem><para>O(1) constant time operation</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="par"><title>Performance:</title><para>O(1) - No memory allocation or deallocation occurs.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello<sp/>world&quot;</highlight><highlight class="normal">,<sp/>0,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>str(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Before:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>str-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello<sp/>world&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Size:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>str-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>11</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>str-&gt;reset();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;After:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>str-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Size:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>str-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>0</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Capacity:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>str-&gt;capacity()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>Unchanged</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Reuse<sp/>the<sp/>buffer</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>str-&gt;concat(</highlight><highlight class="stringliteral">&quot;new<sp/>content&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Reused:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>str-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;new<sp/>content&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para>~String() to free the buffer </para>
+</simplesect>
+<simplesect kind="see"><para><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">init()</ref> to create a <ref refid="classcslt_1_1String" kindref="compound">String</ref> with specific <ref refid="classcslt_1_1String_1a45e6a308d90c30ff3e82fe5daaa47449" kindref="member">capacity</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="697" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="294" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
+        <definition>Expected&lt; String * &gt; cslt::String::copy</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>copy</name>
+        <briefdescription>
+<para>Create a deep copy using this string&apos;s allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Expected&lt;String*&gt; containing pointer to new <ref refid="classcslt_1_1String" kindref="compound">String</ref> or error</para>
+</simplesect>
+Creates an independent copy with the same content using the same allocator as the original. The copy has its own buffer and can be modified independently.</para>
+<para>Key behaviors:<itemizedlist>
+<listitem><para>Creates new <ref refid="classcslt_1_1String" kindref="compound">String</ref> object and buffer</para>
+</listitem><listitem><para>Uses this-&gt;allocator_ for the copy</para>
+</listitem><listitem><para>Copy capacity matches original length</para>
+</listitem><listitem><para>O(n) where n is the string length</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello&quot;</highlight><highlight class="normal">,<sp/>0,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>original(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Create<sp/>a<sp/>copy</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>copy_r<sp/>=<sp/>original-&gt;copy();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(copy_r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/><ref refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" kindref="member">copy</ref>(copy_r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Modify<sp/>copy<sp/>-<sp/>original<sp/>unchanged</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" kindref="member">copy</ref>-&gt;concat(</highlight><highlight class="stringliteral">&quot;<sp/>world&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Original:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/>original-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Copy:<sp/>&quot;</highlight><highlight class="normal"><sp/>&lt;&lt;<sp/><ref refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" kindref="member">copy</ref>-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello<sp/>world&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para>copy(Allocator&amp;) to <ref refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" kindref="member">copy</ref> using a different <ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="739" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="304" bodyend="328"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1af50cdb934bab6f41ca8262439cedaa57" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
+        <definition>Expected&lt; String * &gt; cslt::String::copy</definition>
+        <argsstring>(Allocator &amp;allocator) const noexcept</argsstring>
+        <name>copy</name>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Create a deep copy using a specified allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> to use for the new <ref refid="classcslt_1_1String" kindref="compound">String</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;String*&gt; containing pointer to new <ref refid="classcslt_1_1String" kindref="compound">String</ref> or error</para>
+</simplesect>
+Creates an independent copy with the same content using the specified allocator. Useful for copying strings between different allocator contexts.</para>
+<para>Key behaviors:<itemizedlist>
+<listitem><para>Creates new <ref refid="classcslt_1_1String" kindref="compound">String</ref> object and buffer</para>
+</listitem><listitem><para>Uses provided allocator for the copy</para>
+</listitem><listitem><para>Copy capacity matches original length</para>
+</listitem><listitem><para>O(n) where n is the string length</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>heap_alloc;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1ArenaAllocator" kindref="compound">cslt::ArenaAllocator</ref><sp/>arena_alloc(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;data&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>heap_alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>heap_str(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Copy<sp/>from<sp/>heap<sp/>to<sp/>arena<sp/>allocator</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>copy_r<sp/>=<sp/>heap_str-&gt;copy(arena_alloc);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(copy_r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>arena_str(copy_r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Both<sp/>have<sp/>same<sp/>content:<sp/>&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>(strcmp(heap_str-&gt;c_str(),<sp/>arena_str-&gt;c_str())<sp/>==<sp/>0)<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>true</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/></highlight><highlight class="stringliteral">&quot;Different<sp/>allocators:<sp/>&quot;</highlight><highlight class="normal"><sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>(heap_str-&gt;allocator()<sp/>!=<sp/>arena_str-&gt;allocator())<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>true</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" kindref="member">copy()</ref> to <ref refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" kindref="member">copy</ref> using the same <ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="785" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="331" bodyend="350"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Allocator-backed string container. </para>
@@ -922,7 +1081,7 @@ Comparison algorithm:<itemizedlist>
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="69" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="69" bodyend="659"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="69" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="69" bodyend="790"/>
     <listofallmembers>
       <member refid="classcslt_1_1String_1aed2a23a1c540c4caf68f6e43a1d4164a" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>alloc_</name></member>
       <member refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>allocator</name></member>
@@ -933,10 +1092,13 @@ Comparison algorithm:<itemizedlist>
       <member refid="classcslt_1_1String_1a03b7a5f843d7f0e39a7f935feda3302c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>compare</name></member>
       <member refid="classcslt_1_1String_1aac0bd5318610af25a85a1215f8c6b592" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>concat</name></member>
       <member refid="classcslt_1_1String_1a66cd222863f1288a09b1b4c2304fa91f" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>concat</name></member>
+      <member refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>copy</name></member>
+      <member refid="classcslt_1_1String_1af50cdb934bab6f41ca8262439cedaa57" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>copy</name></member>
       <member refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>init</name></member>
       <member refid="classcslt_1_1String_1a204f710bdd00d26c0c017d3d9e12748f" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>len_</name></member>
       <member refid="classcslt_1_1String_1a44851bf726e219fba16bee4223cb7584" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
       <member refid="classcslt_1_1String_1aa878a4aaceeb4c2ad0a8f321d7da6c5b" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1String_1adc4b6300e480f5f8dd3f4269ce26cc86" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>reset</name></member>
       <member refid="classcslt_1_1String_1acad01b0064c0fba1f1fbbadc6b2f625d" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>size</name></member>
       <member refid="classcslt_1_1String_1abc44c53a24452072b8b53bd52c65dc84" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>str_</name></member>
       <member refid="classcslt_1_1String_1aff71c414ce5a4086021220f348c904dd" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>String</name></member>

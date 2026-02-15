@@ -1413,15 +1413,952 @@ TEST_F(StringCompareExtendedTest, Compare_LengthDiff_AcrossSIMDBoundary) {
     int8_t cmp = s1->compare(*s2);
     EXPECT_EQ(cmp, -1);
 }
+// -------------------------------------------------------------------------------- 
+
+
+class StringResetTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator allocator;
+    
+    void SetUp() override {
+        // Any setup needed before each test
+    }
+    
+    void TearDown() override {
+        // Any cleanup needed after each test
+    }
+    
+    // Helper to create a string for testing
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> 
+    makeString(const char* str, size_t capacity = 0) {
+        auto result = cslt::String::init(str, capacity, allocator);
+        if (!result.hasValue()) {
+            return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(nullptr);
+        }
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(result.value());
+    }
+};
+
 // ================================================================================
+// Basic Functionality Tests
 // ================================================================================
-// eof
+
+TEST_F(StringResetTest, Reset_NonEmptyString) {
+    auto str = makeString("hello world");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_EQ(str->size(), 11u);
+    EXPECT_STREQ(str->c_str(), "hello world");
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_STREQ(str->c_str(), "");
+    EXPECT_EQ(str->c_str()[0], '\0');
+}
+
+TEST_F(StringResetTest, Reset_EmptyString) {
+    auto str = makeString("");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_EQ(str->size(), 0u);
+    
+    str->reset();  // Should be safe on empty string
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_STREQ(str->c_str(), "");
+}
+
+TEST_F(StringResetTest, Reset_SingleCharacter) {
+    auto str = makeString("x");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_EQ(str->size(), 1u);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_STREQ(str->c_str(), "");
+}
+
+TEST_F(StringResetTest, Reset_LongString) {
+    std::string long_str(1000, 'x');
+    auto str = makeString(long_str.c_str());
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_EQ(str->size(), 1000u);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_STREQ(str->c_str(), "");
+}
+
 // ================================================================================
+// Capacity Preservation Tests
 // ================================================================================
-// eof
+
+TEST_F(StringResetTest, Reset_PreservesCapacity) {
+    auto str = makeString("hello", 100);  // Pre-allocate 100 bytes
+    ASSERT_NE(str.get(), nullptr);
+    
+    size_t original_capacity = str->capacity();
+    EXPECT_EQ(original_capacity, 101u);  // 100 + null terminator
+    
+    str->reset();
+    
+    EXPECT_EQ(str->capacity(), original_capacity);
+}
+
+TEST_F(StringResetTest, Reset_NoReallocation) {
+    auto str = makeString("initial", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    const char* buffer_ptr = str->c_str();
+    size_t capacity = str->capacity();
+    
+    str->reset();
+    
+    // Buffer pointer should be the same
+    EXPECT_EQ(str->c_str(), buffer_ptr);
+    EXPECT_EQ(str->capacity(), capacity);
+}
+
+TEST_F(StringResetTest, Reset_PreservesAllocator) {
+    auto str = makeString("test", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    cslt::Allocator* alloc_before = str->allocator();
+    
+    str->reset();
+    
+    cslt::Allocator* alloc_after = str->allocator();
+    EXPECT_EQ(alloc_before, alloc_after);
+}
+
 // ================================================================================
+// Buffer Reuse Tests
 // ================================================================================
-// eof
+
+TEST_F(StringResetTest, Reset_AllowsReuse) {
+    auto str = makeString("", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->concat("first message");
+    EXPECT_STREQ(str->c_str(), "first message");
+    
+    str->reset();
+    EXPECT_STREQ(str->c_str(), "");
+    
+    str->concat("second message");
+    EXPECT_STREQ(str->c_str(), "second message");
+}
+
+TEST_F(StringResetTest, MultipleResetReuse) {
+    auto str = makeString("", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    for (int i = 0; i < 10; ++i) {
+        str->reset();
+        str->concat("iteration ");
+        str->concat(std::to_string(i).c_str());
+        
+        EXPECT_GT(str->size(), 0u);
+    }
+    
+    // Should still have original capacity
+    EXPECT_EQ(str->capacity(), 101u);
+}
+
+// ================================================================================
+// Multiple Reset Tests
+// ================================================================================
+
+TEST_F(StringResetTest, MultipleResets) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->reset();
+    EXPECT_EQ(str->size(), 0u);
+    
+    str->reset();
+    EXPECT_EQ(str->size(), 0u);
+    
+    str->reset();
+    EXPECT_EQ(str->size(), 0u);
+}
+
+// ================================================================================
+// Interaction with Other Methods
+// ================================================================================
+
+TEST_F(StringResetTest, Reset_ThenConcat) {
+    auto str = makeString("old data");
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->reset();
+    str->concat("new data");
+    
+    EXPECT_STREQ(str->c_str(), "new data");
+    EXPECT_EQ(str->size(), 8u);
+}
+
+TEST_F(StringResetTest, Concat_ThenReset_ThenConcat) {
+    auto str = makeString("", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->concat("first");
+    EXPECT_STREQ(str->c_str(), "first");
+    
+    str->reset();
+    EXPECT_STREQ(str->c_str(), "");
+    
+    str->concat("second");
+    EXPECT_STREQ(str->c_str(), "second");
+}
+
+TEST_F(StringResetTest, Reset_ThenCompare) {
+    auto str1 = makeString("hello");
+    auto str2 = makeString("");
+    ASSERT_NE(str1.get(), nullptr);
+    ASSERT_NE(str2.get(), nullptr);
+    
+    str1->reset();
+    
+    int8_t cmp = str1->compare(*str2);
+    EXPECT_EQ(cmp, 0);  // Both should be empty
+}
+
+TEST_F(StringResetTest, Reset_ThenSize) {
+    auto str = makeString("test");
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_GT(str->size(), 0u);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+}
+
+// ================================================================================
+// Null Terminator Tests
+// ================================================================================
+
+TEST_F(StringResetTest, Reset_EnsuresNullTerminator) {
+    auto str = makeString("hello");
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->c_str()[0], '\0');
+    EXPECT_EQ(std::strlen(str->c_str()), 0u);
+}
+
+// ================================================================================
+// Performance Pattern Tests
+// ================================================================================
+
+TEST_F(StringResetTest, LoopReusePattern) {
+    auto buffer = makeString("", 1000);
+    ASSERT_NE(buffer.get(), nullptr);
+    
+    size_t original_capacity = buffer->capacity();
+    
+    for (int i = 0; i < 100; ++i) {
+        buffer->reset();
+        
+        buffer->concat("Iteration ");
+        buffer->concat(std::to_string(i).c_str());
+        
+        // Verify contents
+        EXPECT_GT(buffer->size(), 0u);
+    }
+    
+    // Should not have reallocated
+    EXPECT_EQ(buffer->capacity(), original_capacity);
+}
+
+TEST_F(StringResetTest, BuildProcessResetPattern) {
+    auto str = makeString("", 500);
+    ASSERT_NE(str.get(), nullptr);
+    
+    // Pattern: build, process, reset
+    for (int i = 0; i < 50; ++i) {
+        // Build
+        str->concat("data_");
+        str->concat(std::to_string(i).c_str());
+        
+        // Process (verify)
+        EXPECT_GT(str->size(), 0u);
+        
+        // Reset for next iteration
+        str->reset();
+        EXPECT_EQ(str->size(), 0u);
+    }
+}
+
+// ================================================================================
+// Special Characters Tests
+// ================================================================================
+
+TEST_F(StringResetTest, Reset_WithSpecialCharacters) {
+    auto str = makeString("hello\nworld\t!");
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_STREQ(str->c_str(), "");
+}
+
+TEST_F(StringResetTest, Reset_WithHighByteValues) {
+    std::string data;
+    data.push_back(static_cast<char>(200));
+    data.push_back(static_cast<char>(201));
+    data.push_back(static_cast<char>(202));
+    
+    auto str = makeString(data.c_str());
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_EQ(str->c_str()[0], '\0');
+}
+
+// ================================================================================
+// Edge Cases
+// ================================================================================
+
+TEST_F(StringResetTest, Reset_VeryLongString) {
+    std::string long_str(10000, 'x');
+    auto str = makeString(long_str.c_str());
+    ASSERT_NE(str.get(), nullptr);
+    
+    EXPECT_EQ(str->size(), 10000u);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_STREQ(str->c_str(), "");
+}
+
+TEST_F(StringResetTest, Reset_MinimalCapacity) {
+    auto str = makeString("x", 0);  // Minimal allocation
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_GT(str->capacity(), 0u);  // Should still have at least 1 for null
+}
+
+TEST_F(StringResetTest, Reset_MaximalCapacity) {
+    auto str = makeString("", 10000);  // Large pre-allocation
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->concat("small");
+    str->reset();
+    
+    EXPECT_EQ(str->size(), 0u);
+    EXPECT_EQ(str->capacity(), 10001u);  // Should preserve large capacity
+}
+
+// ================================================================================
+// Integration Tests
+// ================================================================================
+
+TEST_F(StringResetTest, ResetInStringBuilder) {
+    auto builder = makeString("", 1000);
+    ASSERT_NE(builder.get(), nullptr);
+    
+    // Build first message
+    builder->concat("Hello, ");
+    builder->concat("World!");
+    EXPECT_STREQ(builder->c_str(), "Hello, World!");
+    
+    // Reset and build second message
+    builder->reset();
+    builder->concat("Goodbye, ");
+    builder->concat("World!");
+    EXPECT_STREQ(builder->c_str(), "Goodbye, World!");
+}
+
+TEST_F(StringResetTest, ResetInDataProcessing) {
+    auto data = makeString("", 200);
+    ASSERT_NE(data.get(), nullptr);
+    
+    std::vector<std::string> results;
+    
+    for (int i = 0; i < 10; ++i) {
+        data->reset();
+        data->concat("Record_");
+        data->concat(std::to_string(i).c_str());
+        
+        // Save result
+        results.push_back(std::string(data->c_str()));
+    }
+    
+    EXPECT_EQ(results.size(), 10u);
+    EXPECT_EQ(results[0], "Record_0");
+    EXPECT_EQ(results[9], "Record_9");
+}
+// -------------------------------------------------------------------------------- 
+
+class StringCopyOverloadTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator allocator;
+    
+    void SetUp() override {
+        // Any setup needed before each test
+    }
+    
+    void TearDown() override {
+        // Any cleanup needed after each test
+    }
+    
+    // Helper to create a string for testing
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> 
+    makeString(const char* str, size_t capacity = 0) {
+        auto result = cslt::String::init(str, capacity, allocator);
+        if (!result.hasValue()) {
+            return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(nullptr);
+        }
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(result.value());
+    }
+};
+
+// ================================================================================
+// Basic Copy Tests - No Argument Version (Uses Same Allocator)
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_BasicString) {
+    auto original = makeString("hello world");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "hello world");
+    EXPECT_EQ(copy->size(), 11u);
+}
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_EmptyString) {
+    auto original = makeString("");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "");
+    EXPECT_EQ(copy->size(), 0u);
+}
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_SingleCharacter) {
+    auto original = makeString("x");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "x");
+    EXPECT_EQ(copy->size(), 1u);
+}
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_LongString) {
+    std::string long_str(1000, 'x');
+    auto original = makeString(long_str.c_str());
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), original->c_str());
+    EXPECT_EQ(copy->size(), 1000u);
+}
+
+// ================================================================================
+// Basic Copy Tests - With Allocator Argument
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_WithAllocator_BasicString) {
+    cslt::HeapAllocator alloc1;
+    cslt::HeapAllocator alloc2;
+    
+    auto r = cslt::String::init("hello world", 0, alloc1);
+    ASSERT_TRUE(r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> original(r.value());
+    
+    auto copy_r = original->copy(alloc2);
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "hello world");
+    EXPECT_EQ(copy->size(), 11u);
+}
+
+TEST_F(StringCopyOverloadTest, Copy_WithAllocator_EmptyString) {
+    cslt::HeapAllocator alloc1;
+    cslt::HeapAllocator alloc2;
+    
+    auto r = cslt::String::init("", 0, alloc1);
+    ASSERT_TRUE(r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> original(r.value());
+    
+    auto copy_r = original->copy(alloc2);
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "");
+    EXPECT_EQ(copy->size(), 0u);
+}
+
+// ================================================================================
+// Independence Tests (Deep Copy Verification)
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_IsIndependent) {
+    auto original = makeString("original");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Buffers should be different
+    EXPECT_NE(original->c_str(), copy->c_str());
+    
+    // But content should match
+    EXPECT_STREQ(original->c_str(), copy->c_str());
+}
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_ModifyOriginal_CopyUnchanged) {
+    auto original = makeString("hello", 100);
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Modify original
+    original->concat(" world");
+    
+    // Copy should be unchanged
+    EXPECT_STREQ(copy->c_str(), "hello");
+    EXPECT_EQ(copy->size(), 5u);
+    
+    // Original should be modified
+    EXPECT_STREQ(original->c_str(), "hello world");
+}
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_ModifyCopy_OriginalUnchanged) {
+    auto original = makeString("hello");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Modify copy
+    copy->concat(" world");
+    
+    // Original should be unchanged
+    EXPECT_STREQ(original->c_str(), "hello");
+    EXPECT_EQ(original->size(), 5u);
+    
+    // Copy should be modified
+    EXPECT_STREQ(copy->c_str(), "hello world");
+}
+
+TEST_F(StringCopyOverloadTest, Copy_WithAllocator_IsIndependent) {
+    cslt::HeapAllocator alloc1;
+    cslt::HeapAllocator alloc2;
+    
+    auto r = cslt::String::init("test", 0, alloc1);
+    ASSERT_TRUE(r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> original(r.value());
+    
+    auto copy_r = original->copy(alloc2);
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Buffers should be different
+    EXPECT_NE(original->c_str(), copy->c_str());
+    
+    // Content should match
+    EXPECT_STREQ(original->c_str(), copy->c_str());
+}
+
+// ================================================================================
+// Allocator Tests
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_SameAllocator) {
+    auto original = makeString("test");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Should use same allocator
+    EXPECT_EQ(original->allocator(), copy->allocator());
+}
+
+TEST_F(StringCopyOverloadTest, Copy_WithAllocator_DifferentAllocator) {
+    cslt::HeapAllocator alloc1;
+    cslt::HeapAllocator alloc2;
+    
+    auto r = cslt::String::init("test", 0, alloc1);
+    ASSERT_TRUE(r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> original(r.value());
+    
+    auto copy_r = original->copy(alloc2);
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Should use different allocator
+    EXPECT_NE(original->allocator(), copy->allocator());
+    EXPECT_EQ(copy->allocator(), &alloc2);
+}
+
+// ================================================================================
+// Multiple Copy Tests
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_MultipleCopies) {
+    auto original = makeString("original");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy1_r = original->copy();
+    auto copy2_r = original->copy();
+    auto copy3_r = original->copy();
+    
+    ASSERT_TRUE(copy1_r.hasValue());
+    ASSERT_TRUE(copy2_r.hasValue());
+    ASSERT_TRUE(copy3_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy1(copy1_r.value());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy2(copy2_r.value());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy3(copy3_r.value());
+    
+    // All copies should match original
+    EXPECT_STREQ(copy1->c_str(), "original");
+    EXPECT_STREQ(copy2->c_str(), "original");
+    EXPECT_STREQ(copy3->c_str(), "original");
+    
+    // All should be independent
+    EXPECT_NE(copy1->c_str(), copy2->c_str());
+    EXPECT_NE(copy2->c_str(), copy3->c_str());
+    EXPECT_NE(copy1->c_str(), copy3->c_str());
+}
+
+TEST_F(StringCopyOverloadTest, Copy_CopyOfCopy) {
+    auto original = makeString("test");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy1_r = original->copy();
+    ASSERT_TRUE(copy1_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy1(copy1_r.value());
+    
+    auto copy2_r = copy1->copy();
+    ASSERT_TRUE(copy2_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy2(copy2_r.value());
+    
+    // Copy of copy should match original
+    EXPECT_STREQ(copy2->c_str(), "test");
+    EXPECT_EQ(copy2->size(), 4u);
+}
+
+TEST_F(StringCopyOverloadTest, Copy_MixedAllocators_MultipleCopies) {
+    cslt::HeapAllocator alloc1;
+    cslt::HeapAllocator alloc2;
+    cslt::HeapAllocator alloc3;
+    
+    auto r = cslt::String::init("test", 0, alloc1);
+    ASSERT_TRUE(r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> original(r.value());
+    
+    // Copy with same allocator
+    auto copy1_r = original->copy();
+    ASSERT_TRUE(copy1_r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy1(copy1_r.value());
+    
+    // Copy with different allocator
+    auto copy2_r = original->copy(alloc2);
+    ASSERT_TRUE(copy2_r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy2(copy2_r.value());
+    
+    // Another copy with different allocator
+    auto copy3_r = original->copy(alloc3);
+    ASSERT_TRUE(copy3_r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy3(copy3_r.value());
+    
+    // All should have same content
+    EXPECT_STREQ(copy1->c_str(), "test");
+    EXPECT_STREQ(copy2->c_str(), "test");
+    EXPECT_STREQ(copy3->c_str(), "test");
+    
+    // But different allocators
+    EXPECT_EQ(copy1->allocator(), &alloc1);
+    EXPECT_EQ(copy2->allocator(), &alloc2);
+    EXPECT_EQ(copy3->allocator(), &alloc3);
+}
+
+// ================================================================================
+// Capacity Tests
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_NoArg_CapacityMatchesLength) {
+    auto original = makeString("hello", 100);  // Large capacity
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Copy capacity should match length, not original capacity
+    EXPECT_EQ(copy->capacity(), original->size() + 1);  // len + null
+    EXPECT_LT(copy->capacity(), original->capacity());
+}
+
+TEST_F(StringCopyOverloadTest, Copy_WithAllocator_CapacityMatchesLength) {
+    cslt::HeapAllocator alloc1;
+    cslt::HeapAllocator alloc2;
+    
+    auto r = cslt::String::init("hello", 100, alloc1);
+    ASSERT_TRUE(r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> original(r.value());
+    
+    auto copy_r = original->copy(alloc2);
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    // Copy capacity should match length, not original capacity
+    EXPECT_EQ(copy->capacity(), original->size() + 1);
+    EXPECT_LT(copy->capacity(), original->capacity());
+}
+
+// ================================================================================
+// Special Content Tests
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_SpecialCharacters) {
+    auto original = makeString("hello\nworld\t!");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "hello\nworld\t!");
+}
+
+TEST_F(StringCopyOverloadTest, Copy_HighByteValues) {
+    std::string data;
+    data.push_back(static_cast<char>(200));
+    data.push_back(static_cast<char>(201));
+    data.push_back(static_cast<char>(202));
+    
+    auto original = makeString(data.c_str());
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_EQ(copy->size(), 3u);
+    EXPECT_EQ(static_cast<unsigned char>(copy->c_str()[0]), 200);
+    EXPECT_EQ(static_cast<unsigned char>(copy->c_str()[1]), 201);
+    EXPECT_EQ(static_cast<unsigned char>(copy->c_str()[2]), 202);
+}
+
+TEST_F(StringCopyOverloadTest, Copy_UnicodeString) {
+    auto original = makeString("Hello 世界");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "Hello 世界");
+}
+
+// ================================================================================
+// Integration with Other Methods
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_ThenConcat) {
+    auto original = makeString("hello");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    copy->concat(" world");
+    
+    EXPECT_STREQ(copy->c_str(), "hello world");
+    EXPECT_STREQ(original->c_str(), "hello");
+}
+
+TEST_F(StringCopyOverloadTest, Copy_ThenCompare) {
+    auto original = makeString("test");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    int8_t cmp = copy->compare(*original);
+    EXPECT_EQ(cmp, 0);  // Should be equal
+}
+
+TEST_F(StringCopyOverloadTest, Copy_ThenReset) {
+    auto original = makeString("data");
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    copy->reset();
+    
+    EXPECT_STREQ(copy->c_str(), "");
+    EXPECT_STREQ(original->c_str(), "data");
+}
+
+// ================================================================================
+// Use Case Tests
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_BackupPattern) {
+    auto data = makeString("important data", 100);
+    ASSERT_NE(data.get(), nullptr);
+    
+    // Create backup using same allocator
+    auto backup_r = data->copy();
+    ASSERT_TRUE(backup_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> backup(backup_r.value());
+    
+    // Modify data
+    data->concat(" - modified");
+    
+    // Can restore from backup
+    data->reset();
+    data->concat(backup->c_str());
+    
+    EXPECT_STREQ(data->c_str(), "important data");
+}
+
+TEST_F(StringCopyOverloadTest, Copy_VersionHistory) {
+    auto str = makeString("version 1", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    std::vector<cslt::UniquePtr<cslt::String, cslt::StringDeleter>> versions;
+    
+    // Save version 1
+    auto v1_r = str->copy();
+    ASSERT_TRUE(v1_r.hasValue());
+    versions.push_back(cslt::UniquePtr<cslt::String, cslt::StringDeleter>(v1_r.value()));
+    
+    // Modify to version 2
+    str->concat(" updated");
+    auto v2_r = str->copy();
+    ASSERT_TRUE(v2_r.hasValue());
+    versions.push_back(cslt::UniquePtr<cslt::String, cslt::StringDeleter>(v2_r.value()));
+    
+    // Modify to version 3
+    str->concat(" again");
+    
+    // Verify versions
+    EXPECT_STREQ(versions[0]->c_str(), "version 1");
+    EXPECT_STREQ(versions[1]->c_str(), "version 1 updated");
+    EXPECT_STREQ(str->c_str(), "version 1 updated again");
+}
+
+// ================================================================================
+// Edge Cases
+// ================================================================================
+
+TEST_F(StringCopyOverloadTest, Copy_VeryLongString) {
+    std::string long_str(10000, 'x');
+    auto original = makeString(long_str.c_str());
+    ASSERT_NE(original.get(), nullptr);
+    
+    auto copy_r = original->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_EQ(copy->size(), 10000u);
+    EXPECT_STREQ(copy->c_str(), original->c_str());
+}
+
+TEST_F(StringCopyOverloadTest, Copy_AfterReset) {
+    auto str = makeString("initial", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->reset();
+    str->concat("new");
+    
+    auto copy_r = str->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "new");
+}
+
+TEST_F(StringCopyOverloadTest, Copy_AfterMultipleOperations) {
+    auto str = makeString("", 100);
+    ASSERT_NE(str.get(), nullptr);
+    
+    str->concat("hello");
+    str->concat(" world");
+    str->reset();
+    str->concat("final");
+    
+    auto copy_r = str->copy();
+    ASSERT_TRUE(copy_r.hasValue());
+    
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> copy(copy_r.value());
+    
+    EXPECT_STREQ(copy->c_str(), "final");
+}
 // ================================================================================
 // ================================================================================
 // eof

@@ -57,6 +57,177 @@ static inline size_t simd_first_diff_u8(const uint8_t* a,
     }
     return n;
 }
+// -------------------------------------------------------------------------------- 
+
+#ifndef SIZE_MAX
+  #define SIZE_MAX ((size_t)-1)
+#endif
+
+#ifndef ITER_DIR_H
+#define ITER_DIR_H
+    typedef enum {
+        FORWARD = 0,
+        REVERSE = 1
+    }direction_t;
+#endif /* ITER_DIR_H*/
+
+/* ------------------------- portable bit scan helpers ------------------------- */
+/* Preconditions: input mask m != 0 */
+static inline unsigned csalt_ctz32_portable_(uint32_t m)
+{
+    unsigned n = 0u;
+    while ((m & 1u) == 0u) {
+        m >>= 1u;
+        ++n;
+    }
+    return n; /* 0..31 */
+}
+
+static inline unsigned csalt_clz32_portable_(uint32_t m)
+{
+    unsigned n = 0u;
+    uint32_t bit = 0x80000000u;
+    while ((m & bit) == 0u) {
+        bit >>= 1u;
+        ++n;
+    }
+    return n; /* 0..31 */
+}
+
+static inline unsigned simd_first_bit_(uint32_t m)
+{
+    /* m != 0 required */
+    return csalt_ctz32_portable_(m);
+}
+
+static inline unsigned simd_last_bit_(uint32_t m)
+{
+    /* last = 31 - clz(m); m != 0 required */
+    return 31u - csalt_clz32_portable_(m);
+}
+
+/* ------------------------------ AVX2 forward -------------------------------- */
+static inline size_t simd_find_substr_u8_forward_(const uint8_t* hay,
+                                                  size_t hay_len,
+                                                  const uint8_t* needle,
+                                                  size_t needle_len)
+{
+    if ((hay == NULL) || (needle == NULL)) { return SIZE_MAX; }
+    if (needle_len == 0u) { return 0u; }
+    if (needle_len > hay_len) { return SIZE_MAX; }
+
+    uint8_t const first = needle[0];
+    __m256i const vfirst = _mm256_set1_epi8((char)first);
+
+    size_t const last_start = hay_len - needle_len;
+    size_t i = 0u;
+
+    while (i <= last_start) {
+        /* Safe to load 32 bytes only if i+32 <= hay_len */
+        if ((i + 32u) <= hay_len) {
+            __m256i v  = _mm256_loadu_si256((const __m256i*)(const void*)(hay + i));
+            __m256i eq = _mm256_cmpeq_epi8(v, vfirst);
+            uint32_t mask = (uint32_t)_mm256_movemask_epi8(eq);
+
+            while (mask != 0u) {
+                unsigned const bit = simd_first_bit_(mask); /* portable */
+                size_t const pos = i + (size_t)bit;
+
+                if (pos <= last_start) {
+                    if (needle_len == 1u) { return pos; }
+                    if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                        return pos;
+                    }
+                }
+
+                mask &= (mask - 1u); /* clear lowest set bit */
+            }
+
+            i += 32u;
+        } else {
+            break;
+        }
+    }
+
+    /* Scalar tail over remaining possible starts */
+    for (; i <= last_start; ++i) {
+        if (hay[i] != first) { continue; }
+        if (needle_len == 1u) { return i; }
+        if (memcmp(hay + i + 1u, needle + 1u, needle_len - 1u) == 0) {
+            return i;
+        }
+    }
+
+    return SIZE_MAX;
+}
+
+/* ------------------------------ AVX2 reverse -------------------------------- */
+static inline size_t simd_find_substr_u8_reverse_(const uint8_t* hay,
+                                                  size_t hay_len,
+                                                  const uint8_t* needle,
+                                                  size_t needle_len)
+{
+    if ((hay == NULL) || (needle == NULL)) { return SIZE_MAX; }
+    if (needle_len == 0u) { return 0u; }
+    if (needle_len > hay_len) { return SIZE_MAX; }
+
+    uint8_t const first = needle[0];
+    __m256i const vfirst = _mm256_set1_epi8((char)first);
+
+    size_t const last_start = hay_len - needle_len;
+    size_t i = last_start;
+
+    while (true) {
+        size_t block_start = (i >= 31u) ? (i - 31u) : 0u;
+
+        __m256i v  = _mm256_loadu_si256((const __m256i*)(const void*)(hay + block_start));
+        __m256i eq = _mm256_cmpeq_epi8(v, vfirst);
+        uint32_t mask = (uint32_t)_mm256_movemask_epi8(eq);
+
+        /* Only candidates <= max_pos are valid within this block */
+        {
+            size_t const block_end = block_start + 31u;
+            size_t const max_pos   = (i < last_start) ? i : last_start;
+
+            if (max_pos < block_end) {
+                unsigned const keep_bits =
+                    (unsigned)(max_pos - block_start + 1u); /* 1..32 */
+
+                if (keep_bits < 32u) {
+                    mask &= ((1u << keep_bits) - 1u);
+                }
+            }
+
+            while (mask != 0u) {
+                unsigned const bit = simd_last_bit_(mask); /* portable */
+                size_t const pos = block_start + (size_t)bit;
+
+                if (needle_len == 1u) { return pos; }
+                if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                    return pos;
+                }
+
+                mask &= ~(1u << bit); /* clear that bit */
+            }
+        }
+
+        if (block_start == 0u) { break; }
+        i = block_start - 1u;
+    }
+
+    return SIZE_MAX;
+}
+
+static inline size_t simd_find_substr_u8(const uint8_t* hay,
+                                         size_t hay_len,
+                                         const uint8_t* needle,
+                                         size_t needle_len,
+                                         direction_t dir)
+{
+    return (dir == REVERSE)
+        ? simd_find_substr_u8_reverse_(hay, hay_len, needle, needle_len)
+        : simd_find_substr_u8_forward_(hay, hay_len, needle, needle_len);
+}
 // ================================================================================ 
 // ================================================================================ 
 

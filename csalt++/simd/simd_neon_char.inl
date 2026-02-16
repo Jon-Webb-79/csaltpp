@@ -59,6 +59,116 @@ static inline size_t simd_first_diff_u8(const uint8_t* a,
 // ================================================================================ 
 // ================================================================================ 
 
+#ifndef SIZE_MAX
+  #define SIZE_MAX ((size_t)-1)
+#endif
+
+#ifndef ITER_DIR_H
+#define ITER_DIR_H
+    typedef enum {
+        FORWARD = 0,
+        REVERSE = 1
+    }direction_t;
+#endif /* ITER_DIR_H*/
+
+static inline size_t simd_find_substr_u8(const uint8_t* hay,
+                                         size_t hay_len,
+                                         const uint8_t* needle,
+                                         size_t needle_len,
+                                         direction_t dir)
+{
+    if ((hay == NULL) || (needle == NULL)) { return SIZE_MAX; }
+    if (needle_len == 0u) { return 0u; }
+    if (needle_len > hay_len) { return SIZE_MAX; }
+
+    const uint8_t first = needle[0];
+    const uint8x16_t vfirst = vdupq_n_u8(first);
+
+    const size_t last_start = hay_len - needle_len;
+
+    /* ================= FORWARD ================= */
+    if (dir == FORWARD) {
+        size_t i = 0u;
+
+        while (i <= last_start) {
+            if ((i + 16u) <= hay_len) {
+                uint8x16_t v  = vld1q_u8(hay + i);
+                uint8x16_t eq = vceqq_u8(v, vfirst);
+
+                uint8_t lanes[16];
+                vst1q_u8(lanes, eq);
+
+                for (unsigned lane = 0u; lane < 16u; ++lane) {
+                    if (lanes[lane] == 0u) { continue; }
+
+                    size_t pos = i + (size_t)lane;
+                    if (pos > last_start) { break; }
+
+                    if (needle_len == 1u) { return pos; }
+                    if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                        return pos;
+                    }
+                }
+
+                i += 16u;
+            } else {
+                break;
+            }
+        }
+
+        for (; i <= last_start; ++i) {
+            if (hay[i] != first) { continue; }
+            if (needle_len == 1u) { return i; }
+            if (memcmp(hay + i + 1u, needle + 1u, needle_len - 1u) == 0) {
+                return i;
+            }
+        }
+
+        return SIZE_MAX;
+    }
+
+    /* ================= REVERSE ================= */
+    {
+        size_t i = last_start;
+
+        while (true) {
+            size_t block_start = (i >= 15u) ? (i - 15u) : 0u;
+
+            uint8x16_t v  = vld1q_u8(hay + block_start);
+            uint8x16_t eq = vceqq_u8(v, vfirst);
+
+            uint8_t lanes[16];
+            vst1q_u8(lanes, eq);
+
+            size_t const max_pos   = (i < last_start) ? i : last_start;
+            unsigned const max_lane = (unsigned)(max_pos - block_start); /* 0..15 */
+
+            for (unsigned lane = max_lane + 1u; lane-- > 0u; ) {
+                if (lanes[lane] == 0u) {
+                    if (lane == 0u) { break; }
+                    continue;
+                }
+
+                size_t pos = block_start + (size_t)lane;
+
+                if (needle_len == 1u) { return pos; }
+                if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                    return pos;
+                }
+
+                if (lane == 0u) { break; }
+            }
+
+            if (block_start == 0u) { break; }
+            i = block_start - 1u;
+        }
+    }
+
+    return SIZE_MAX;
+}
+// ================================================================================ 
+// ================================================================================ 
+
 /* Build a 16-bit movemask from MSBs of each byte */
 static inline uint32_t csalt_neon_movemask_u8(uint8x16_t v) {
     /* MSB -> bit0 per lane */

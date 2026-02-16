@@ -43,6 +43,154 @@ static inline size_t simd_first_diff_u8(const uint8_t* a,
 
     return n;
 }
+// -------------------------------------------------------------------------------- 
+
+#ifndef SIZE_MAX
+  #define SIZE_MAX ((size_t)-1)
+#endif
+
+#ifndef ITER_DIR_H
+#define ITER_DIR_H
+    typedef enum {
+        FORWARD = 0,
+        REVERSE = 1
+    }direction_t;
+#endif /* ITER_DIR_H*/
+
+static inline size_t csalt_pred_first_true_u8(svbool_t pg, size_t lanes)
+{
+    for (size_t j = 0u; j < lanes; ++j) {
+        svbool_t one = svwhilelt_b8((uint64_t)j, (uint64_t)(j + 1u));
+        if (svptest_any(svptrue_b8(), svand_b_z(svptrue_b8(), pg, one))) {
+            return j;
+        }
+    }
+    return lanes;
+}
+
+static inline size_t csalt_pred_last_true_u8(svbool_t pg, size_t lanes)
+{
+    for (size_t jj = 0u; jj < lanes; ++jj) {
+        size_t j = (lanes - 1u) - jj;
+        svbool_t one = svwhilelt_b8((uint64_t)j, (uint64_t)(j + 1u));
+        if (svptest_any(svptrue_b8(), svand_b_z(svptrue_b8(), pg, one))) {
+            return j;
+        }
+    }
+    return lanes;
+}
+
+static inline size_t simd_find_substr_u8(const uint8_t* hay,
+                                         size_t hay_len,
+                                         const uint8_t* needle,
+                                         size_t needle_len,
+                                         direction_t dir)
+{
+    if ((hay == NULL) || (needle == NULL)) { return SIZE_MAX; }
+    if (needle_len == 0u) { return 0u; }
+    if (needle_len > hay_len) { return SIZE_MAX; }
+
+    const uint8_t first = needle[0];
+    const svuint8_t vfirst = svdup_u8(first);
+
+    const size_t last_start = hay_len - needle_len;
+    const size_t VL = svcntb();
+
+    if (dir == FORWARD) {
+        size_t i = 0u;
+
+        while (i <= last_start) {
+            if ((i + VL) <= hay_len) {
+                svbool_t pg = svptrue_b8();
+                svuint8_t v = svld1_u8(pg, hay + i);
+                svbool_t eq = svcmpeq_u8(pg, v, vfirst);
+
+                while (svptest_any(pg, eq)) {
+                    size_t bit = csalt_pred_first_true_u8(eq, VL);
+                    if (bit >= VL) { break; }
+
+                    size_t pos = i + bit;
+                    if (pos <= last_start) {
+                        if (needle_len == 1u) { return pos; }
+                        if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                            return pos;
+                        }
+                    }
+
+                    svbool_t one = svwhilelt_b8((uint64_t)bit, (uint64_t)(bit + 1u));
+                    eq = svand_b_z(pg, eq, svnot_b_z(pg, one));
+                }
+
+                i += VL;
+            } else {
+                break;
+            }
+        }
+
+        for (; i <= last_start; ++i) {
+            if (hay[i] != first) { continue; }
+            if (needle_len == 1u) { return i; }
+            if (memcmp(hay + i + 1u, needle + 1u, needle_len - 1u) == 0) {
+                return i;
+            }
+        }
+
+        return SIZE_MAX;
+    }
+
+    /* REVERSE */
+    {
+        size_t i = last_start;
+
+        while (true) {
+            size_t block_start = (i + 1u >= VL) ? (i + 1u - VL) : 0u;
+
+            if ((block_start + VL) <= hay_len) {
+                svbool_t pg = svptrue_b8();
+                svuint8_t v = svld1_u8(pg, hay + block_start);
+                svbool_t eq = svcmpeq_u8(pg, v, vfirst);
+
+                size_t max_pos = (i < last_start) ? i : last_start;
+                size_t max_in_block = max_pos - block_start;
+                if (max_in_block + 1u < VL) {
+                    svbool_t keep = svwhilele_b8((uint64_t)0, (uint64_t)max_in_block);
+                    eq = svand_b_z(pg, eq, keep);
+                }
+
+                while (svptest_any(pg, eq)) {
+                    size_t bit = csalt_pred_last_true_u8(eq, VL);
+                    if (bit >= VL) { break; }
+
+                    size_t pos = block_start + bit;
+                    if (needle_len == 1u) { return pos; }
+                    if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                        return pos;
+                    }
+
+                    svbool_t one = svwhilelt_b8((uint64_t)bit, (uint64_t)(bit + 1u));
+                    eq = svand_b_z(pg, eq, svnot_b_z(pg, one));
+                }
+            } else {
+                break;
+            }
+
+            if (block_start == 0u) { break; }
+            i = block_start - 1u;
+        }
+
+        for (size_t pos = (i <= last_start ? i : last_start) + 1u; pos-- > 0u; ) {
+            if (pos > last_start) { continue; }
+            if (hay[pos] != first) { continue; }
+            if (needle_len == 1u) { return pos; }
+            if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                return pos;
+            }
+            if (pos == 0u) { break; }
+        }
+
+        return SIZE_MAX;
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 static inline size_t simd_last_index_u8_sve2(const unsigned char* s, size_t n, unsigned char c) {

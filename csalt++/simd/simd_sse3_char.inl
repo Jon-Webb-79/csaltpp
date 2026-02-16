@@ -53,6 +53,134 @@ static inline size_t simd_first_diff_u8(const uint8_t* a,
     }
     return n;
 }
+// -------------------------------------------------------------------------------- 
+
+#ifndef SIZE_MAX
+  #define SIZE_MAX ((size_t)-1)
+#endif
+
+#ifndef ITER_DIR_H
+#define IER_DIR_H
+    typedef enum {
+        FORWARD = 0,
+        REVERSE = 1
+    }direction_t;
+#endif /* ITER_DIR_H*/
+
+/* portable 16-bit bit scan (no builtins) */
+static inline unsigned csalt_ctz16(uint16_t m)
+{
+    unsigned n = 0u;
+    while ((m & 1u) == 0u) { m = (uint16_t)(m >> 1u); ++n; }
+    return n;
+}
+
+static inline unsigned csalt_clz16(uint16_t m)
+{
+    unsigned n = 0u;
+    uint16_t bit = (uint16_t)0x8000u;
+    while ((m & bit) == 0u) { bit = (uint16_t)(bit >> 1u); ++n; }
+    return n;
+}
+
+static inline unsigned csalt_first_bit16(uint16_t m) { return csalt_ctz16(m); }
+static inline unsigned csalt_last_bit16 (uint16_t m) { return 15u - csalt_clz16(m); }
+
+static inline size_t simd_find_substr_u8(const uint8_t* hay,
+                                         size_t hay_len,
+                                         const uint8_t* needle,
+                                         size_t needle_len,
+                                         direction_t dir)
+{
+    if ((hay == NULL) || (needle == NULL)) { return SIZE_MAX; }
+    if (needle_len == 0u) { return 0u; }
+    if (needle_len > hay_len) { return SIZE_MAX; }
+
+    const uint8_t first = needle[0];
+    const __m128i vfirst = _mm_set1_epi8((char)first);
+
+    const size_t last_start = hay_len - needle_len;
+
+    if (dir == FORWARD) {
+        size_t i = 0u;
+
+        while (i <= last_start) {
+            if ((i + 16u) <= hay_len) {
+                __m128i v  = _mm_loadu_si128((const __m128i*)(const void*)(hay + i));
+                __m128i eq = _mm_cmpeq_epi8(v, vfirst);
+                uint16_t mask = (uint16_t)_mm_movemask_epi8(eq);
+
+                while (mask != 0u) {
+                    unsigned bit = csalt_first_bit16(mask);
+                    size_t pos = i + (size_t)bit;
+
+                    if (pos <= last_start) {
+                        if (needle_len == 1u) { return pos; }
+                        if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                            return pos;
+                        }
+                    }
+
+                    mask = (uint16_t)(mask & (uint16_t)(mask - 1u));
+                }
+
+                i += 16u;
+            } else {
+                break;
+            }
+        }
+
+        for (; i <= last_start; ++i) {
+            if (hay[i] != first) { continue; }
+            if (needle_len == 1u) { return i; }
+            if (memcmp(hay + i + 1u, needle + 1u, needle_len - 1u) == 0) {
+                return i;
+            }
+        }
+
+        return SIZE_MAX;
+    }
+
+    /* REVERSE */
+    {
+        size_t i = last_start;
+
+        while (true) {
+            size_t block_start = (i >= 15u) ? (i - 15u) : 0u;
+
+            __m128i v  = _mm_loadu_si128((const __m128i*)(const void*)(hay + block_start));
+            __m128i eq = _mm_cmpeq_epi8(v, vfirst);
+            uint16_t mask = (uint16_t)_mm_movemask_epi8(eq);
+
+            size_t block_end = block_start + 15u;
+            size_t max_pos   = (i < last_start) ? i : last_start;
+
+            if (max_pos < block_end) {
+                unsigned keep = (unsigned)(max_pos - block_start + 1u);
+                if (keep < 16u) {
+                    mask = (uint16_t)(mask & (uint16_t)((1u << keep) - 1u));
+                }
+            }
+
+            while (mask != 0u) {
+                unsigned bit = csalt_last_bit16(mask);
+                size_t pos = block_start + (size_t)bit;
+
+                if (needle_len == 1u) { return pos; }
+                if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                    return pos;
+                }
+
+                mask = (uint16_t)(mask & (uint16_t)~(uint16_t)(1u << bit));
+            }
+
+            if (block_start == 0u) { break; }
+            i = block_start - 1u;
+        }
+    }
+
+    return SIZE_MAX;
+}
 // ================================================================================ 
 // ================================================================================ 
 

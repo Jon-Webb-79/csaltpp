@@ -2845,9 +2845,468 @@ TEST_F(StringIsPtrTest, IsPtr_ConstString_CanCallMethod) {
     // Should be able to call is_ptr on const String
     EXPECT_TRUE(const_str->is_ptr(const_str->c_str()));
 }
+// -------------------------------------------------------------------------------- 
+
+class StringFindTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator allocator;
+    
+    void SetUp() override {
+        // Any setup needed before each test
+    }
+    
+    void TearDown() override {
+        // Any cleanup needed after each test
+    }
+    
+    // Helper to create a string for testing
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> 
+    makeString(const char* str, size_t capacity = 0) {
+        auto result = cslt::String::init(str, capacity, allocator);
+        if (!result.hasValue()) {
+            return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(nullptr);
+        }
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(result.value());
+    }
+};
+
 // ================================================================================
+// Basic Find Tests - String Needle
 // ================================================================================
-// eof
+
+TEST_F(StringFindTest, Find_String_Found_AtStart) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 0u);
+}
+
+TEST_F(StringFindTest, Find_String_Found_InMiddle) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 6u);
+}
+
+TEST_F(StringFindTest, Find_String_Found_AtEnd) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("d");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 10u);
+}
+
+TEST_F(StringFindTest, Find_String_NotFound) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("xyz");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, SIZE_MAX);
+}
+
+TEST_F(StringFindTest, Find_String_EmptyNeedle) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 0u);  // Empty needle found at start
+}
+
+TEST_F(StringFindTest, Find_String_EmptyHaystack) {
+    auto haystack = makeString("");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, SIZE_MAX);  // Can't find in empty string
+}
+
+TEST_F(StringFindTest, Find_String_BothEmpty) {
+    auto haystack = makeString("");
+    auto needle = makeString("");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 0u);  // Empty needle found at start
+}
+
+TEST_F(StringFindTest, Find_String_NeedleLongerThanHaystack) {
+    auto haystack = makeString("hi");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, SIZE_MAX);
+}
+
+TEST_F(StringFindTest, Find_String_MultipleOccurrences_ReturnsFirst) {
+    auto haystack = makeString("hello hello hello");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 0u);  // Returns first occurrence
+}
+
+// ================================================================================
+// Basic Find Tests - C-String Needle
+// ================================================================================
+
+TEST_F(StringFindTest, Find_CString_Found_AtStart) {
+    auto haystack = makeString("hello world");
+    ASSERT_NE(haystack.get(), nullptr);
+    
+    size_t pos = haystack->find("hello");
+    EXPECT_EQ(pos, 0u);
+}
+
+TEST_F(StringFindTest, Find_CString_Found_InMiddle) {
+    auto haystack = makeString("hello world");
+    ASSERT_NE(haystack.get(), nullptr);
+    
+    size_t pos = haystack->find("world");
+    EXPECT_EQ(pos, 6u);
+}
+
+TEST_F(StringFindTest, Find_CString_NotFound) {
+    auto haystack = makeString("hello world");
+    ASSERT_NE(haystack.get(), nullptr);
+    
+    size_t pos = haystack->find("xyz");
+    EXPECT_EQ(pos, SIZE_MAX);
+}
+
+TEST_F(StringFindTest, Find_CString_EmptyNeedle) {
+    auto haystack = makeString("hello world");
+    ASSERT_NE(haystack.get(), nullptr);
+    
+    size_t pos = haystack->find("");
+    EXPECT_EQ(pos, 0u);
+}
+
+TEST_F(StringFindTest, Find_CString_SingleCharacter) {
+    auto haystack = makeString("hello world");
+    ASSERT_NE(haystack.get(), nullptr);
+    
+    size_t pos = haystack->find("o");
+    EXPECT_EQ(pos, 4u);  // First 'o' in "hello"
+}
+
+// ================================================================================
+// Forward vs Reverse Search Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_Forward_MultipleOccurrences) {
+    auto haystack = makeString("hello world hello");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle, nullptr, nullptr, FORWARD);
+    EXPECT_EQ(pos, 0u);  // First occurrence
+}
+
+TEST_F(StringFindTest, Find_Reverse_MultipleOccurrences) {
+    auto haystack = makeString("hello world hello");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle, nullptr, nullptr, REVERSE);
+    EXPECT_EQ(pos, 12u);  // Last occurrence
+}
+
+TEST_F(StringFindTest, Find_Reverse_SingleOccurrence) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle, nullptr, nullptr, REVERSE);
+    EXPECT_EQ(pos, 6u);  // Same as forward for single occurrence
+}
+
+TEST_F(StringFindTest, Find_Reverse_NotFound) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("xyz");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle, nullptr, nullptr, REVERSE);
+    EXPECT_EQ(pos, SIZE_MAX);
+}
+
+// ================================================================================
+// Range-Based Search Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_WithBegin_FindsAfterStart) {
+    auto haystack = makeString("hello world hello");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const void* begin = haystack->c_str() + 1;
+    size_t pos = haystack->find(*needle, begin);
+    EXPECT_EQ(pos, 12u);  // Skips first "hello", finds second
+}
+
+TEST_F(StringFindTest, Find_WithBeginAndEnd_InRange) {
+    auto haystack = makeString("hello world hello");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const void* begin = haystack->c_str() + 5;
+    const void* end = haystack->c_str() + 12;
+    size_t pos = haystack->find(*needle, begin, end);
+    std::cout << pos << "\n";
+    EXPECT_EQ(pos, 6u);  // Found within range
+}
+
+TEST_F(StringFindTest, Find_WithBeginAndEnd_OutsideRange) {
+    auto haystack = makeString("hello world hello");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const void* begin = haystack->c_str() + 1;
+    const void* end = haystack->c_str() + 10;
+    size_t pos = haystack->find(*needle, begin, end);
+    EXPECT_EQ(pos, SIZE_MAX);  // Second "hello" is outside range
+}
+
+TEST_F(StringFindTest, Find_WithEnd_TruncatesSearch) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const void* end = haystack->c_str() + 5;
+    size_t pos = haystack->find(*needle, nullptr, end);
+    EXPECT_EQ(pos, SIZE_MAX);  // "world" is beyond end
+}
+
+TEST_F(StringFindTest, Find_RangeExactlyContainsNeedle) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const void* begin = haystack->c_str() + 6;
+    const void* end = haystack->c_str() + 11;
+    size_t pos = haystack->find(*needle, begin, end);
+    EXPECT_EQ(pos, 6u);
+}
+
+// ================================================================================
+// Invalid Range Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_InvalidRange_BeginAfterEnd) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const void* begin = haystack->c_str() + 10;
+    const void* end = haystack->c_str() + 5;
+    size_t pos = haystack->find(*needle, begin, end);
+    EXPECT_EQ(pos, SIZE_MAX);  // Invalid range
+}
+
+TEST_F(StringFindTest, Find_InvalidRange_BeginOutsideBuffer) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const char* external = "external";
+    size_t pos = haystack->find(*needle, external);
+    EXPECT_EQ(pos, SIZE_MAX);  // Invalid pointer
+}
+
+TEST_F(StringFindTest, Find_InvalidRange_EndOutsideBuffer) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    const char* external = "external";
+    size_t pos = haystack->find(*needle, nullptr, external);
+    EXPECT_EQ(pos, SIZE_MAX);  // Invalid pointer
+}
+
+// ================================================================================
+// Case Sensitivity Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_CaseSensitive) {
+    auto haystack = makeString("Hello World");
+    auto needle = makeString("hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, SIZE_MAX);  // Case sensitive - won't find
+}
+
+TEST_F(StringFindTest, Find_CaseSensitive_ExactMatch) {
+    auto haystack = makeString("Hello World");
+    auto needle = makeString("Hello");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 0u);  // Exact case match
+}
+
+// ================================================================================
+// Special Characters Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_WithNewline) {
+    auto haystack = makeString("hello\nworld");
+    auto needle = makeString("\n");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 5u);
+}
+
+TEST_F(StringFindTest, Find_WithTab) {
+    auto haystack = makeString("hello\tworld");
+    auto needle = makeString("\t");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 5u);
+}
+
+TEST_F(StringFindTest, Find_WithNullInMiddle) {
+    // String with embedded null
+    char buffer[] = {'h', 'e', 'l', 'l', 'o', '\0', 'w', 'o', 'r', 'l', 'd', '\0'};
+    auto haystack = makeString(buffer);  // Will stop at first null
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, SIZE_MAX);  // String is only "hello" due to null terminator
+}
+
+// ================================================================================
+// Long String Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_LongString_Found) {
+    std::string long_str(1000, 'x');
+    long_str += "needle";
+    long_str += std::string(1000, 'y');
+    
+    auto haystack = makeString(long_str.c_str());
+    auto needle = makeString("needle");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 1000u);
+}
+
+TEST_F(StringFindTest, Find_LongString_NotFound) {
+    std::string long_str(10000, 'x');
+    
+    auto haystack = makeString(long_str.c_str());
+    auto needle = makeString("needle");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, SIZE_MAX);
+}
+
+// ================================================================================
+// Overlapping Pattern Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_OverlappingPattern) {
+    auto haystack = makeString("aaaa");
+    auto needle = makeString("aaa");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 0u);  // Returns first match
+}
+
+TEST_F(StringFindTest, Find_RepeatingPattern) {
+    auto haystack = makeString("ababababab");
+    auto needle = makeString("abab");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos = haystack->find(*needle);
+    EXPECT_EQ(pos, 0u);
+}
+
+// ================================================================================
+// Integration Tests
+// ================================================================================
+
+TEST_F(StringFindTest, Find_AfterConcat) {
+    auto haystack = makeString("hello", 100);
+    ASSERT_NE(haystack.get(), nullptr);
+    
+    haystack->concat(" world");
+    
+    size_t pos = haystack->find("world");
+    EXPECT_EQ(pos, 6u);
+}
+
+TEST_F(StringFindTest, Find_AfterReset) {
+    auto haystack = makeString("hello world", 100);
+    ASSERT_NE(haystack.get(), nullptr);
+    
+    haystack->reset();
+    haystack->concat("new content");
+    
+    size_t pos = haystack->find("new");
+    EXPECT_EQ(pos, 0u);
+}
+
+// ================================================================================
+// Comparison: String vs C-String Needle
+// ================================================================================
+
+TEST_F(StringFindTest, Find_StringAndCString_SameResult) {
+    auto haystack = makeString("hello world");
+    auto needle = makeString("world");
+    ASSERT_NE(haystack.get(), nullptr);
+    ASSERT_NE(needle.get(), nullptr);
+    
+    size_t pos1 = haystack->find(*needle);
+    size_t pos2 = haystack->find("world");
+    
+    EXPECT_EQ(pos1, pos2);
+}
 // ================================================================================
 // ================================================================================
 // eof

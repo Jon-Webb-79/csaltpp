@@ -392,6 +392,137 @@ namespace cslt {
         
         return true;
     }
+// -------------------------------------------------------------------------------- 
+
+    size_t String::find(const String& needle,
+                        const void* begin,
+                        const void* end,
+                        direction_t dir) const noexcept {
+        if (!str_ || !needle.str_) {
+            return SIZE_MAX;
+        }
+        
+        const uint8_t* const hs_base = reinterpret_cast<const uint8_t*>(static_cast<const void*>(str_));
+        const uint8_t* const hs_used_end = hs_base + len_;  // exclude terminator
+        
+        // Defaults if begin/end omitted (nullptr)
+        const uint8_t* search_begin = (begin == nullptr) 
+            ? hs_base 
+            : reinterpret_cast<const uint8_t*>(begin);
+        
+        const uint8_t* search_end = (end == nullptr) 
+            ? hs_used_end 
+            : reinterpret_cast<const uint8_t*>(end);
+        
+        // Validate begin and end are within buffer using existing is_ptr()
+        if (!is_ptr(search_begin) || !is_ptr(search_end)) {
+            return SIZE_MAX;
+        }
+        
+        // Check monotonic ordering
+        if (search_begin > search_end) {
+            return SIZE_MAX;
+        }
+        
+        // Clamp to used region (typical string-search semantics)
+        if (search_begin > hs_used_end) {
+            return SIZE_MAX;
+        }
+        if (search_end > hs_used_end) {
+            search_end = hs_used_end;
+        }
+        
+        size_t const region_len = static_cast<size_t>(search_end - search_begin);
+        size_t const nlen = needle.len_;
+        
+        // Empty needle: define as found at start of region (offset 0)
+        if (nlen == 0u) {
+            return 0u;
+        }
+        
+        if (nlen > region_len) {
+            return SIZE_MAX;
+        }
+       
+        size_t offset_from_search_start = simd_find_substr_u8(
+            search_begin, region_len,
+            reinterpret_cast<const uint8_t*>(static_cast<const void*>(needle.str_)), nlen,
+            dir
+        );
+        
+        // Convert to offset from string start
+        if (offset_from_search_start == SIZE_MAX) {
+            return SIZE_MAX;
+        }
+        
+        return (search_begin - hs_base) + offset_from_search_start;
+    }
+// --------------------------------------------------------------------------------
+
+    size_t String::find(const char* needle,
+                        const void* begin,
+                        const void* end,
+                        direction_t dir) const noexcept {
+        if (!str_ || !needle) {
+            return SIZE_MAX;
+        }
+        
+        const uint8_t* const hs_base = reinterpret_cast<const uint8_t*>(static_cast<const void*>(str_));
+        const uint8_t* const hs_used_end = hs_base + len_;
+        
+        // Defaults if begin/end omitted
+        const uint8_t* search_begin = (begin == nullptr) 
+            ? hs_base 
+            : reinterpret_cast<const uint8_t*>(begin);
+        
+        const uint8_t* search_end = (end == nullptr) 
+            ? hs_used_end 
+            : reinterpret_cast<const uint8_t*>(end);
+        
+        // Validate begin and end are within buffer using existing is_ptr()
+        if (!is_ptr(search_begin) || !is_ptr(search_end)) {
+            return SIZE_MAX;
+        }
+        
+        // Check monotonic ordering
+        if (search_begin > search_end) {
+            return SIZE_MAX;
+        }
+        
+        // Clamp to used region
+        if (search_begin > hs_used_end) {
+            return SIZE_MAX;
+        }
+        if (search_end > hs_used_end) {
+            search_end = hs_used_end;
+        }
+        
+        size_t const region_len = static_cast<size_t>(search_end - search_begin);
+        size_t const needle_len = std::strlen(needle);
+        
+        // Empty needle
+        if (needle_len == 0u) {
+            return 0u;
+        }
+        
+        if (needle_len > region_len) {
+            return SIZE_MAX;
+        }
+        
+        // Delegate to SIMD/scalar implementation
+        size_t offset_from_search_start = simd_find_substr_u8(
+            search_begin, region_len,
+            reinterpret_cast<const uint8_t*>(static_cast<const void*>(needle)), needle_len,
+            dir
+        );
+        
+        // Convert to offset from string start
+        if (offset_from_search_start == SIZE_MAX) {
+            return SIZE_MAX;
+        }
+        
+        return (search_begin - hs_base) + offset_from_search_start;
+    }
 // ================================================================================
 // ================================================================================
 // eof

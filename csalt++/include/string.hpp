@@ -26,6 +26,14 @@
 // ================================================================================ 
 // ================================================================================ 
 
+#ifndef ITER_DIR_H
+#define ITER_DIR_H
+    typedef enum {
+        FORWARD = 0,
+        REVERSE = 1
+    }direction_t;
+#endif /* ITER_DIR_H*/
+
 namespace cslt {
 
     /**
@@ -789,6 +797,150 @@ namespace cslt {
 // -------------------------------------------------------------------------------- 
 
         bool is_ptr(const void* ptr, size_t bytes) const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Find substring within this string
+         * 
+         * @param needle String to search for
+         * @param begin Optional start of search range (default: start of string)
+         * @param end Optional end of search range (default: end of string)
+         * @param dir Search direction (default: FORWARD)
+         * @return Offset from beginning of string where needle was found, or SIZE_MAX if not found
+         * 
+         * @details Searches for the first occurrence of needle within the specified range
+         * using SIMD-optimized substring search. Returns the offset from the start of the
+         * string (str_) where the needle begins.
+         * 
+         * Return values:
+         * - Offset (0 to len_-1) if found
+         * - SIZE_MAX if not found or error
+         * - 0 if needle is empty
+         * 
+         * Range parameters:
+         * - nullptr for begin/end uses entire string
+         * - Pointers must be within buffer (validated with is_ptr())
+         * - Range must be monotonic: begin <= end
+         * 
+         * @par Performance:
+         * O(n*m) worst case, but SIMD-optimized for typical cases.
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("hello world hello", 0, allocator);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str(r.value());
+         *     
+         *     auto needle_r = cslt::String::init("hello", 0, allocator);
+         *     if (needle_r.hasValue()) {
+         *         cslt::UniquePtr<cslt::String, cslt::StringDeleter> needle(needle_r.value());
+         *         
+         *         // Find first occurrence
+         *         size_t pos = str->find(*needle);
+         *         std::cout << "Found at: " << pos << std::endl;  // 0
+         *         
+         *         // Find from position 1 onwards
+         *         const void* start = str->c_str() + 1;
+         *         pos = str->find(*needle, start);
+         *         std::cout << "Found at: " << pos << std::endl;  // 12
+         *         
+         *         // Find in reverse (last occurrence)
+         *         pos = str->find(*needle, nullptr, nullptr, REVERSE);
+         *         std::cout << "Last at: " << pos << std::endl;  // 12
+         *         
+         *         // Find within specific range
+         *         const void* begin = str->c_str() + 5;
+         *         const void* end = str->c_str() + 15;
+         *         pos = str->find(*needle, begin, end);
+         *         std::cout << "In range: " << pos << std::endl;  // 12
+         *         
+         *         // Not found
+         *         auto miss_r = cslt::String::init("xyz", 0, allocator);
+         *         if (miss_r.hasValue()) {
+         *             cslt::UniquePtr<cslt::String, cslt::StringDeleter> miss(miss_r.value());
+         *             pos = str->find(*miss);
+         *             if (pos == SIZE_MAX) {
+         *                 std::cout << "Not found" << std::endl;
+         *             }
+         *         }
+         *     }
+         * }
+         * @endcode
+         * 
+         * @see find(const char*, const void*, const void*, direction_t)
+         * @see is_ptr(const void*) for pointer validation
+         */
+        size_t find(const String& needle,
+                    const void* begin = nullptr,
+                    const void* end = nullptr,
+                    direction_t dir = FORWARD) const noexcept;
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Find C-string within this string
+         * 
+         * @param needle C-string to search for (null-terminated)
+         * @param begin Optional start of search range (default: start of string)
+         * @param end Optional end of search range (default: end of string)
+         * @param dir Search direction (default: FORWARD)
+         * @return Offset from beginning of string where needle was found, or SIZE_MAX if not found
+         * 
+         * @details Convenience overload that accepts a C-string needle. Behavior is
+         * identical to find(const String&). Uses strlen() to determine needle length.
+         * 
+         * Return values:
+         * - Offset (0 to len_-1) if found
+         * - SIZE_MAX if not found or error
+         * - 0 if needle is empty
+         * 
+         * @par Performance:
+         * O(n*m) worst case, but SIMD-optimized for typical cases.
+         * 
+         * @code{.cpp}
+         * cslt::HeapAllocator allocator;
+         * auto r = cslt::String::init("The quick brown fox jumps over the lazy dog", 0, allocator);
+         * 
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> str(r.value());
+         *     
+         *     // Simple find
+         *     size_t pos = str->find("fox");
+         *     std::cout << "Found 'fox' at: " << pos << std::endl;  // 16
+         *     
+         *     // Find from middle of string
+         *     const void* start = str->c_str() + 20;
+         *     pos = str->find("the", start);
+         *     std::cout << "Found 'the' at: " << pos << std::endl;  // 31
+         *     
+         *     // Case sensitive - won't find "Fox"
+         *     pos = str->find("Fox");
+         *     if (pos == SIZE_MAX) {
+         *         std::cout << "'Fox' not found (case sensitive)" << std::endl;
+         *     }
+         *     
+         *     // Find last occurrence with REVERSE
+         *     pos = str->find("the", nullptr, nullptr, REVERSE);
+         *     std::cout << "Last 'the' at: " << pos << std::endl;  // 31
+         *     
+         *     // Find in limited range
+         *     const void* begin = str->c_str() + 10;
+         *     const void* end = str->c_str() + 25;
+         *     pos = str->find("brown", begin, end);
+         *     std::cout << "In range [10,25]: " << pos << std::endl;  // 10
+         *     
+         *     // Not found returns SIZE_MAX
+         *     pos = str->find("cat");
+         *     std::cout << "Result: " << (pos == SIZE_MAX ? "Not found" : "Found") << std::endl;
+         * }
+         * @endcode
+         * 
+         * @see find(const String&, const void*, const void*, direction_t)
+         */
+        size_t find(const char* needle,
+                    const void* begin = nullptr,
+                    const void* end = nullptr,
+                    direction_t dir = FORWARD) const noexcept;
 // -------------------------------------------------------------------------------- 
 
         // StringDeleter needs access to private members for cleanup

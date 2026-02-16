@@ -33,7 +33,15 @@ void \mbox{\hyperlink{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}{res
 \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}} () const noexcept
 \begin{DoxyCompactList}\small\item\em Create a deep copy using this string\textquotesingle{}s allocator. \end{DoxyCompactList}\item 
 \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1String_af50cdb934bab6f41ca8262439cedaa57}{copy}} (\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&\mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}}) const noexcept
-\begin{DoxyCompactList}\small\item\em Create a deep copy using a specified allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Create a deep copy using a specified allocator. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}{is\+\_\+ptr}} (const void $\ast$ptr) const noexcept
+\item 
+bool \mbox{\hyperlink{classcslt_1_1String_a42d91a877c9034679dd31693360f0a4b}{is\+\_\+ptr}} (const void $\ast$ptr, size\+\_\+t bytes) const noexcept
+\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a2ac5634536f9f04847bd5770ae447c8c}{find}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&needle, const void $\ast$begin, const void $\ast$end, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}} dir) const noexcept
+\begin{DoxyCompactList}\small\item\em Find substring within this string. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a20abe56251cb38cc9876c76dac0302c0}{find}} (const char $\ast$needle, const void $\ast$begin, const void $\ast$end, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}} dir) const noexcept
+\begin{DoxyCompactList}\small\item\em Find C-\/string within this string. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -786,6 +794,180 @@ Key behaviors\+:
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy()}} to \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}} using the same \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}} 
 \end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a20abe56251cb38cc9876c76dac0302c0}\label{classcslt_1_1String_a20abe56251cb38cc9876c76dac0302c0}} 
+\index{cslt::String@{cslt::String}!find@{find}}
+\index{find@{find}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{find()}{find()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const char $\ast$}]{needle,  }\item[{const void $\ast$}]{begin,  }\item[{const void $\ast$}]{end,  }\item[{\mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}}}]{dir }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Find C-\/string within this string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em needle} & C-\/string to search for (null-\/terminated) \\
+\hline
+{\em begin} & Optional start of search range (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search range (default\+: end of string) \\
+\hline
+{\em dir} & Search direction (default\+: FORWARD) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Offset from beginning of string where needle was found, or SIZE\+\_\+\+MAX if not found
+\end{DoxyReturn}
+Convenience overload that accepts a C-\/string needle. Behavior is identical to find(const String\&). Uses strlen() to determine needle length.
+
+Return values\+:
+\begin{DoxyItemize}
+\item Offset (0 to len\+\_\+-\/1) if found
+\item SIZE\+\_\+\+MAX if not found or error
+\item 0 if needle is empty
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Performance\+:}
+O(n$\ast$m) worst case, but SIMD-\/optimized for typical cases.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}The quick brown fox jumps over the lazy dog"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Simple find}}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} pos = str-\/>find(\textcolor{stringliteral}{"{}fox"{}});}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Found 'fox' at: "{}} << pos << std::endl;  \textcolor{comment}{// 16}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Find from middle of string}}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{void}* start = str-\/>c\_str() + 20;}
+\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}the"{}}, start);}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Found 'the' at: "{}} << pos << std::endl;  \textcolor{comment}{// 31}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Case sensitive -\/ won't find "{}Fox"{}}}
+\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}Fox"{}});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (pos == SIZE\_MAX) \{}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}'Fox' not found (case sensitive)"{}} << std::endl;}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Find last occurrence with REVERSE}}
+\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}the"{}}, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39daaa06e72135096941514e36666872a274}{REVERSE}});}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Last 'the' at: "{}} << pos << std::endl;  \textcolor{comment}{// 31}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Find in limited range}}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{void}* begin = str-\/>c\_str() + 10;}
+\DoxyCodeLine{    \textcolor{keyword}{const} \textcolor{keywordtype}{void}* end = str-\/>c\_str() + 25;}
+\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}brown"{}}, begin, end);}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}In range [10,25]: "{}} << pos << std::endl;  \textcolor{comment}{// 10}}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{comment}{// Not found returns SIZE\_MAX}}
+\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}cat"{}});}
+\DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Result: "{}} << (pos == SIZE\_MAX ? \textcolor{stringliteral}{"{}Not found"{}} : \textcolor{stringliteral}{"{}Found"{}}) << std::endl;}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+find(const String\&, const void$\ast$, const void$\ast$, direction\+\_\+t) 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a2ac5634536f9f04847bd5770ae447c8c}\label{classcslt_1_1String_a2ac5634536f9f04847bd5770ae447c8c}} 
+\index{cslt::String@{cslt::String}!find@{find}}
+\index{find@{find}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{find()}{find()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{needle,  }\item[{const void $\ast$}]{begin,  }\item[{const void $\ast$}]{end,  }\item[{\mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}}}]{dir }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Find substring within this string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em needle} & \mbox{\hyperlink{classcslt_1_1String}{String}} to search for \\
+\hline
+{\em begin} & Optional start of search range (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search range (default\+: end of string) \\
+\hline
+{\em dir} & Search direction (default\+: FORWARD) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Offset from beginning of string where needle was found, or SIZE\+\_\+\+MAX if not found
+\end{DoxyReturn}
+Searches for the first occurrence of needle within the specified range using SIMD-\/optimized substring search. Returns the offset from the start of the string (str\+\_\+) where the needle begins.
+
+Return values\+:
+\begin{DoxyItemize}
+\item Offset (0 to len\+\_\+-\/1) if found
+\item SIZE\+\_\+\+MAX if not found or error
+\item 0 if needle is empty
+\end{DoxyItemize}
+
+Range parameters\+:
+\begin{DoxyItemize}
+\item nullptr for begin/end uses entire string
+\item Pointers must be within buffer (validated with \mbox{\hyperlink{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}{is\+\_\+ptr()}})
+\item Range must be monotonic\+: begin $<$= end
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Performance\+:}
+O(n$\ast$m) worst case, but SIMD-\/optimized for typical cases.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello world hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} str(r.value());}
+\DoxyCodeLine{    }
+\DoxyCodeLine{    \textcolor{keyword}{auto} needle\_r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (needle\_r.hasValue()) \{}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} needle(needle\_r.value());}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Find first occurrence}}
+\DoxyCodeLine{        \textcolor{keywordtype}{size\_t} pos = str-\/>find(*needle);}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Found at: "{}} << pos << std::endl;  \textcolor{comment}{// 0}}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Find from position 1 onwards}}
+\DoxyCodeLine{        \textcolor{keyword}{const} \textcolor{keywordtype}{void}* start = str-\/>c\_str() + 1;}
+\DoxyCodeLine{        pos = str-\/>find(*needle, start);}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Found at: "{}} << pos << std::endl;  \textcolor{comment}{// 12}}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Find in reverse (last occurrence)}}
+\DoxyCodeLine{        pos = str-\/>find(*needle, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39daaa06e72135096941514e36666872a274}{REVERSE}});}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Last at: "{}} << pos << std::endl;  \textcolor{comment}{// 12}}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Find within specific range}}
+\DoxyCodeLine{        \textcolor{keyword}{const} \textcolor{keywordtype}{void}* begin = str-\/>c\_str() + 5;}
+\DoxyCodeLine{        \textcolor{keyword}{const} \textcolor{keywordtype}{void}* end = str-\/>c\_str() + 15;}
+\DoxyCodeLine{        pos = str-\/>find(*needle, begin, end);}
+\DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}In range: "{}} << pos << std::endl;  \textcolor{comment}{// 12}}
+\DoxyCodeLine{        }
+\DoxyCodeLine{        \textcolor{comment}{// Not found}}
+\DoxyCodeLine{        \textcolor{keyword}{auto} miss\_r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}xyz"{}}, 0, \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}});}
+\DoxyCodeLine{        \textcolor{keywordflow}{if} (miss\_r.hasValue()) \{}
+\DoxyCodeLine{            \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} miss(miss\_r.value());}
+\DoxyCodeLine{            pos = str-\/>find(*miss);}
+\DoxyCodeLine{            \textcolor{keywordflow}{if} (pos == SIZE\_MAX) \{}
+\DoxyCodeLine{                std::cout << \textcolor{stringliteral}{"{}Not found"{}} << std::endl;}
+\DoxyCodeLine{            \}}
+\DoxyCodeLine{        \}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+find(const char$\ast$, const void$\ast$, const void$\ast$, direction\+\_\+t) 
+
+is\+\_\+ptr(const void$\ast$) for pointer validation 
+\end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}\label{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}} 
 \index{cslt::String@{cslt::String}!init@{init}}
 \index{init@{init}!cslt::String@{cslt::String}}
@@ -866,6 +1048,18 @@ Memory allocation\+:
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1StringDeleter}{String\+Deleter}} for cleanup semantics 
 \end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}\label{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}} 
+\index{cslt::String@{cslt::String}!is\_ptr@{is\_ptr}}
+\index{is\_ptr@{is\_ptr}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{is\_ptr()}{is\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool cslt\+::\+String\+::is\+\_\+ptr (\begin{DoxyParamCaption}\item[{const void $\ast$}]{ptr }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+\mbox{\Hypertarget{classcslt_1_1String_a42d91a877c9034679dd31693360f0a4b}\label{classcslt_1_1String_a42d91a877c9034679dd31693360f0a4b}} 
+\index{cslt::String@{cslt::String}!is\_ptr@{is\_ptr}}
+\index{is\_ptr@{is\_ptr}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{is\_ptr()}{is\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool cslt\+::\+String\+::is\+\_\+ptr (\begin{DoxyParamCaption}\item[{const void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
 \mbox{\Hypertarget{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}\label{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}} 
 \index{cslt::String@{cslt::String}!reset@{reset}}
 \index{reset@{reset}!cslt::String@{cslt::String}}

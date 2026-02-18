@@ -132,6 +132,30 @@ size_t simd_token_count_u8(const uint8_t* s, size_t n,
     }
     return count;
 }
+// -------------------------------------------------------------------------------- 
+
+void simd_ascii_upper_u8(uint8_t* p, size_t n) {
+    if ((p == NULL) || (n == 0u)) return;
+
+    for (size_t i = 0; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'a') && (c <= (uint8_t)'z')) {
+            p[i] = (uint8_t)(c - 0x20u);
+        }
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+void simd_ascii_lower_u8(uint8_t* p, size_t n) {
+    if ((p == NULL) || (n == 0u)) return;
+
+    for (size_t i = 0; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'A') && (c <= (uint8_t)'Z')) {
+            p[i] = (uint8_t)(c + 0x20u);
+        }
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 #endif /* CSALT_SIMD_AVX2_CHAR_INL */

@@ -241,6 +241,78 @@ size_t simd_token_count_u8(const uint8_t* s, size_t n,
 
     return count;
 }
+// -------------------------------------------------------------------------------- 
+
+static inline __m128i blendv_epi8_sse2(__m128i a, __m128i b, __m128i mask)
+{
+    /* mask: 0xFF -> choose b, 0x00 -> choose a */
+    return _mm_or_si128(_mm_andnot_si128(mask, a),
+                        _mm_and_si128(mask, b));
+}
+
+static inline __m128i ascii_range_mask_sse2(__m128i x, __m128i lo, __m128i hi)
+{
+    const __m128i one = _mm_set1_epi8(1);
+
+    /* x > lo-1 */
+    __m128i ge_lo = _mm_cmpgt_epi8(x, _mm_sub_epi8(lo, one));
+    /* hi+1 > x  <=> x < hi+1 */
+    __m128i le_hi = _mm_cmpgt_epi8(_mm_add_epi8(hi, one), x);
+
+    return _mm_and_si128(ge_lo, le_hi);
+}
+
+void simd_ascii_upper_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+
+    const __m128i lo  = _mm_set1_epi8('a');
+    const __m128i hi  = _mm_set1_epi8('z');
+    const __m128i sub = _mm_set1_epi8(0x20);
+
+    for (; i + 16u <= n; i += 16u) {
+        __m128i v = _mm_loadu_si128((const __m128i*)(const void*)(p + i));
+
+        __m128i mask  = ascii_range_mask_sse2(v, lo, hi);
+        __m128i upper = _mm_sub_epi8(v, sub);
+        __m128i out   = blendv_epi8_sse2(v, upper, mask);
+
+        _mm_storeu_si128((__m128i*)(void*)(p + i), out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'a') && (c <= (uint8_t)'z')) p[i] = (uint8_t)(c - 0x20u);
+    }
+}
+
+void simd_ascii_lower_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+
+    const __m128i lo  = _mm_set1_epi8('A');
+    const __m128i hi  = _mm_set1_epi8('Z');
+    const __m128i add = _mm_set1_epi8(0x20);
+
+    for (; i + 16u <= n; i += 16u) {
+        __m128i v = _mm_loadu_si128((const __m128i*)(const void*)(p + i));
+
+        __m128i mask  = ascii_range_mask_sse2(v, lo, hi);
+        __m128i lower = _mm_add_epi8(v, add);
+        __m128i out   = blendv_epi8_sse2(v, lower, mask);
+
+        _mm_storeu_si128((__m128i*)(void*)(p + i), out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'A') && (c <= (uint8_t)'Z')) p[i] = (uint8_t)(c + 0x20u);
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 

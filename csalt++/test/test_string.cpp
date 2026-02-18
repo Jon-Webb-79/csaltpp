@@ -3750,6 +3750,301 @@ TEST_F(StringTokensTest, BothOverloads_AgreeOnCount_WithRange) {
     EXPECT_EQ(s->tokens(*d, begin, end), s->tokens(" ", begin, end));
     EXPECT_EQ(s->tokens(" ", begin, end), 2u);
 }
+// -------------------------------------------------------------------------------- 
+
+class StringCaseTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator alloc;
+
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter>
+    make(const char* cstr) {
+        auto r = cslt::String::init(cstr, 0, alloc);
+        EXPECT_TRUE(r.hasValue()) << "String::init failed for: " << cstr;
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r.value());
+    }
+};
+
+// ================================================================================
+// uppercase() — nominal
+// ================================================================================
+
+// All lowercase letters become uppercase
+TEST_F(StringCaseTest, Uppercase_AllLower_BecomesAllUpper) {
+    auto s = make("hello world");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "HELLO WORLD");
+}
+
+// Already uppercase — string must be unchanged
+TEST_F(StringCaseTest, Uppercase_AlreadyUpper_Unchanged) {
+    auto s = make("HELLO WORLD");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "HELLO WORLD");
+}
+
+// Mixed case — only lowercase letters are raised
+TEST_F(StringCaseTest, Uppercase_MixedCase) {
+    auto s = make("Hello World");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "HELLO WORLD");
+}
+
+// Non-letter ASCII characters must pass through untouched
+TEST_F(StringCaseTest, Uppercase_NonLetterChars_Untouched) {
+    auto s = make("hello, world! 123");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "HELLO, WORLD! 123");
+}
+
+// Single character
+TEST_F(StringCaseTest, Uppercase_SingleChar) {
+    auto s = make("a");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "A");
+}
+
+// Entire alphabet
+TEST_F(StringCaseTest, Uppercase_FullAlphabet) {
+    auto s = make("abcdefghijklmnopqrstuvwxyz");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+}
+
+// Ranged conversion — only the specified window is affected
+TEST_F(StringCaseTest, Uppercase_RangedConversion_FirstWordOnly) {
+    auto s = make("hello world");
+    // Raise only "hello" (chars 0–4)
+    const void* begin = s->c_str();
+    const void* end   = s->c_str() + 5;
+    s->uppercase(begin, end);
+    EXPECT_STREQ(s->c_str(), "HELLO world");
+}
+
+// Ranged conversion covering the second word only
+TEST_F(StringCaseTest, Uppercase_RangedConversion_SecondWordOnly) {
+    auto s = make("hello world");
+    // Raise only "world" (chars 6–10)
+    const void* begin = s->c_str() + 6;
+    const void* end   = s->c_str() + 11;
+    s->uppercase(begin, end);
+    EXPECT_STREQ(s->c_str(), "hello WORLD");
+}
+
+// String length and content are unchanged after conversion
+TEST_F(StringCaseTest, Uppercase_SizeUnchangedAfterConversion) {
+    auto s = make("hello");
+    size_t len_before = s->size();
+    s->uppercase();
+    EXPECT_EQ(s->size(), len_before);
+}
+
+// ================================================================================
+// uppercase() — off-nominal edge cases
+// ================================================================================
+
+// Null begin pointer — treated as start of string, should succeed
+TEST_F(StringCaseTest, Uppercase_NullBegin_TreatedAsStart) {
+    auto s = make("hello");
+    s->uppercase(nullptr, nullptr);
+    EXPECT_STREQ(s->c_str(), "HELLO");
+}
+
+// begin == end — empty window, string must be unchanged
+TEST_F(StringCaseTest, Uppercase_BeginEqualsEnd_NoOp) {
+    auto s = make("hello");
+    const void* mid = s->c_str() + 2;
+    s->uppercase(mid, mid);
+    EXPECT_STREQ(s->c_str(), "hello");
+}
+
+// Digits-only string — no letters to convert, must be unchanged
+TEST_F(StringCaseTest, Uppercase_DigitsOnly_Unchanged) {
+    auto s = make("1234567890");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "1234567890");
+}
+
+// String of spaces — no letters, must be unchanged
+TEST_F(StringCaseTest, Uppercase_SpacesOnly_Unchanged) {
+    auto s = make("     ");
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "     ");
+}
+
+// Repeated calls are idempotent
+TEST_F(StringCaseTest, Uppercase_Idempotent) {
+    auto s = make("hello");
+    s->uppercase();
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "HELLO");
+}
+
+// Window of exactly one character
+TEST_F(StringCaseTest, Uppercase_SingleCharWindow) {
+    auto s = make("hello");
+    const void* begin = s->c_str() + 1;   // points at 'e'
+    const void* end   = s->c_str() + 2;
+    s->uppercase(begin, end);
+    EXPECT_STREQ(s->c_str(), "hEllo");
+}
+
+// ================================================================================
+// lowercase() — nominal
+// ================================================================================
+
+// All uppercase letters become lowercase
+TEST_F(StringCaseTest, Lowercase_AllUpper_BecomesAllLower) {
+    auto s = make("HELLO WORLD");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Already lowercase — string must be unchanged
+TEST_F(StringCaseTest, Lowercase_AlreadyLower_Unchanged) {
+    auto s = make("hello world");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Mixed case — only uppercase letters are lowered
+TEST_F(StringCaseTest, Lowercase_MixedCase) {
+    auto s = make("Hello World");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Non-letter ASCII characters must pass through untouched
+TEST_F(StringCaseTest, Lowercase_NonLetterChars_Untouched) {
+    auto s = make("HELLO, WORLD! 123");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "hello, world! 123");
+}
+
+// Single character
+TEST_F(StringCaseTest, Lowercase_SingleChar) {
+    auto s = make("A");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "a");
+}
+
+// Entire alphabet
+TEST_F(StringCaseTest, Lowercase_FullAlphabet) {
+    auto s = make("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "abcdefghijklmnopqrstuvwxyz");
+}
+
+// Ranged conversion — only the specified window is affected
+TEST_F(StringCaseTest, Lowercase_RangedConversion_FirstWordOnly) {
+    auto s = make("HELLO WORLD");
+    // Lower only "HELLO" (chars 0–4)
+    const void* begin = s->c_str();
+    const void* end   = s->c_str() + 5;
+    s->lowercase(begin, end);
+    EXPECT_STREQ(s->c_str(), "hello WORLD");
+}
+
+// Ranged conversion covering the second word only
+TEST_F(StringCaseTest, Lowercase_RangedConversion_SecondWordOnly) {
+    auto s = make("HELLO WORLD");
+    // Lower only "WORLD" (chars 6–10)
+    const void* begin = s->c_str() + 6;
+    const void* end   = s->c_str() + 11;
+    s->lowercase(begin, end);
+    EXPECT_STREQ(s->c_str(), "HELLO world");
+}
+
+// String length and content are unchanged after conversion
+TEST_F(StringCaseTest, Lowercase_SizeUnchangedAfterConversion) {
+    auto s = make("HELLO");
+    size_t len_before = s->size();
+    s->lowercase();
+    EXPECT_EQ(s->size(), len_before);
+}
+
+// ================================================================================
+// lowercase() — off-nominal edge cases
+// ================================================================================
+
+// Null begin/end pointers — treated as full string, should succeed
+TEST_F(StringCaseTest, Lowercase_NullBeginEnd_TreatedAsFullString) {
+    auto s = make("HELLO");
+    s->lowercase(nullptr, nullptr);
+    EXPECT_STREQ(s->c_str(), "hello");
+}
+
+// begin == end — empty window, string must be unchanged
+TEST_F(StringCaseTest, Lowercase_BeginEqualsEnd_NoOp) {
+    auto s = make("HELLO");
+    const void* mid = s->c_str() + 2;
+    s->lowercase(mid, mid);
+    EXPECT_STREQ(s->c_str(), "HELLO");
+}
+
+// Digits-only string — no letters to convert, must be unchanged
+TEST_F(StringCaseTest, Lowercase_DigitsOnly_Unchanged) {
+    auto s = make("1234567890");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "1234567890");
+}
+
+// String of spaces — no letters, must be unchanged
+TEST_F(StringCaseTest, Lowercase_SpacesOnly_Unchanged) {
+    auto s = make("     ");
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "     ");
+}
+
+// Repeated calls are idempotent
+TEST_F(StringCaseTest, Lowercase_Idempotent) {
+    auto s = make("HELLO");
+    s->lowercase();
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "hello");
+}
+
+// Window of exactly one character
+TEST_F(StringCaseTest, Lowercase_SingleCharWindow) {
+    auto s = make("HELLO");
+    const void* begin = s->c_str() + 1;   // points at 'E'
+    const void* end   = s->c_str() + 2;
+    s->lowercase(begin, end);
+    EXPECT_STREQ(s->c_str(), "HeLLO");
+}
+
+// ================================================================================
+// Round-trip and cross-function tests
+// ================================================================================
+
+// uppercase() followed by lowercase() restores the all-lower original
+TEST_F(StringCaseTest, RoundTrip_UpperThenLower) {
+    auto s = make("hello world");
+    s->uppercase();
+    s->lowercase();
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// lowercase() followed by uppercase() restores the all-upper original
+TEST_F(StringCaseTest, RoundTrip_LowerThenUpper) {
+    auto s = make("HELLO WORLD");
+    s->lowercase();
+    s->uppercase();
+    EXPECT_STREQ(s->c_str(), "HELLO WORLD");
+}
+
+// Applying uppercase() to one range and lowercase() to a different range
+// must leave each range independently converted and not interfere
+TEST_F(StringCaseTest, RoundTrip_UpperFirstHalf_LowerSecondHalf) {
+    auto s = make("hello world");
+    // Raise "hello" (0–4), lower "world" (6–10) — "world" is already lower
+    const void* first_begin = s->c_str();
+    const void* first_end   = s->c_str() + 5;
+    const void* second_begin = s->c_str() + 6;
+    const void* second_end   = s->c_str() + 11;
+    s->uppercase(first_begin, first_end);
+    s->lowercase(second_begin, second_end);
+    EXPECT_STREQ(s->c_str(), "HELLO world");
+}
 // ================================================================================
 // ================================================================================
 // eof

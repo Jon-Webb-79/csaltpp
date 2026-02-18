@@ -294,6 +294,70 @@ static inline size_t simd_token_count_u8(const uint8_t* p,
 
     return count;
 }
+// -------------------------------------------------------------------------------- 
+
+static inline __m256i _blendv_epi8(__m256i a, __m256i b, __m256i mask)
+{
+    return _mm256_or_si256(_mm256_andnot_si256(mask, a),
+                           _mm256_and_si256(mask, b));
+}
+
+/* mask for (x >= lo) && (x <= hi) for ASCII bytes */
+static inline __m256i _ascii_range_mask(__m256i x, __m256i lo, __m256i hi)
+{
+    const __m256i one = _mm256_set1_epi8(1);
+
+    /* x > lo-1  &&  hi+1 > x  (signed compares ok for ASCII range) */
+    __m256i ge_lo = _mm256_cmpgt_epi8(x, _mm256_sub_epi8(lo, one));
+    __m256i le_hi = _mm256_cmpgt_epi8(_mm256_add_epi8(hi, one), x);
+    return _mm256_and_si256(ge_lo, le_hi);
+}
+
+void simd_ascii_upper_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+    const __m256i lo   = _mm256_set1_epi8('a');
+    const __m256i hi   = _mm256_set1_epi8('z');
+    const __m256i sub  = _mm256_set1_epi8(0x20);
+
+    for (; i + 32u <= n; i += 32u) {
+        __m256i v = _mm256_loadu_si256((const __m256i*)(const void*)(p + i));
+        __m256i mask  = _ascii_range_mask(v, lo, hi);
+        __m256i upper = _mm256_sub_epi8(v, sub);
+        __m256i out   = _blendv_epi8(v, upper, mask);
+        _mm256_storeu_si256((__m256i*)(void*)(p + i), out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'a') && (c <= (uint8_t)'z')) p[i] = (uint8_t)(c - 0x20u);
+    }
+}
+
+void simd_ascii_lower_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+    const __m256i lo   = _mm256_set1_epi8('A');
+    const __m256i hi   = _mm256_set1_epi8('Z');
+    const __m256i add  = _mm256_set1_epi8(0x20);
+
+    for (; i + 32u <= n; i += 32u) {
+        __m256i v = _mm256_loadu_si256((const __m256i*)(const void*)(p + i));
+        __m256i mask  = _ascii_range_mask(v, lo, hi);
+        __m256i lower = _mm256_add_epi8(v, add);
+        __m256i out   = _blendv_epi8(v, lower, mask);
+        _mm256_storeu_si256((__m256i*)(void*)(p + i), out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'A') && (c <= (uint8_t)'Z')) p[i] = (uint8_t)(c + 0x20u);
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 

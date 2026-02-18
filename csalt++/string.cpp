@@ -663,6 +663,62 @@ namespace cslt {
 
         return simd_token_count_u8(search_begin, n, delim, dlen);
     }
+// -------------------------------------------------------------------------------- 
+
+    void String::uppercase(const void* begin, const void* end) noexcept {
+        if (!str_) return;
+
+        uint8_t* const base     = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+        uint8_t* const used_end = base + len_;
+
+        uint8_t* conv_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(begin));
+
+        uint8_t* conv_end = (end == nullptr)
+            ? used_end
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(end));
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(conv_begin) || !is_ptr(conv_end)) return;
+
+        // Clamp to used region
+        if (conv_begin > used_end) return;
+        if (conv_end   > used_end) conv_end = used_end;
+
+        // Empty or inverted window — nothing to do
+        if (conv_begin >= conv_end) return;
+
+        simd_ascii_upper_u8(conv_begin, static_cast<size_t>(conv_end - conv_begin));
+    }
+// --------------------------------------------------------------------------------
+
+    void String::lowercase(const void* begin, const void* end) noexcept {
+        if (!str_) return;
+
+        uint8_t* const base     = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+        uint8_t* const used_end = base + len_;
+
+        uint8_t* conv_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(begin));
+
+        uint8_t* conv_end = (end == nullptr)
+            ? used_end
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(end));
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(conv_begin) || !is_ptr(conv_end)) return;
+
+        // Clamp to used region
+        if (conv_begin > used_end) return;
+        if (conv_end   > used_end) conv_end = used_end;
+
+        // Empty or inverted window — nothing to do
+        if (conv_begin >= conv_end) return;
+
+        simd_ascii_lower_u8(conv_begin, static_cast<size_t>(conv_end - conv_begin));
+    }
 // ================================================================================
 // ================================================================================
 // eof

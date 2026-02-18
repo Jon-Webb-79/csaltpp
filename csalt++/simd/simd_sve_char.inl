@@ -304,6 +304,67 @@ size_t simd_token_count_u8(const uint8_t* s, size_t n,
 
     return count;
 }
+// -------------------------------------------------------------------------------- 
+
+void simd_ascii_upper_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+
+    const svuint8_t vlo  = svdup_n_u8((uint8_t)'a');
+    const svuint8_t vhi  = svdup_n_u8((uint8_t)'z');
+    const svuint8_t vsub = svdup_n_u8(0x20u);
+
+    while (i < n) {
+        svbool_t pg = svwhilelt_b8(i, n);
+
+        svuint8_t v = svld1_u8(pg, p + i);
+
+        /* mask = (v >= 'a') & (v <= 'z')  (unsigned compares) */
+        svbool_t ge_lo = svcmpge_u8(pg, v, vlo);
+        svbool_t le_hi = svcmple_u8(pg, v, vhi);
+        svbool_t m     = svand_b_z(pg, ge_lo, le_hi);
+
+        /* upper = v - 0x20 on masked lanes */
+        svuint8_t upper = svsub_u8_z(pg, v, vsub);
+
+        /* select: m ? upper : v */
+        svuint8_t out = svsel_u8(m, upper, v);
+
+        svst1_u8(pg, p + i, out);
+
+        i += (size_t)svcntb();
+    }
+}
+
+void simd_ascii_lower_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+
+    const svuint8_t vlo  = svdup_n_u8((uint8_t)'A');
+    const svuint8_t vhi  = svdup_n_u8((uint8_t)'Z');
+    const svuint8_t vadd = svdup_n_u8(0x20u);
+
+    while (i < n) {
+        svbool_t pg = svwhilelt_b8(i, n);
+
+        svuint8_t v = svld1_u8(pg, p + i);
+
+        svbool_t ge_lo = svcmpge_u8(pg, v, vlo);
+        svbool_t le_hi = svcmple_u8(pg, v, vhi);
+        svbool_t m     = svand_b_z(pg, ge_lo, le_hi);
+
+        svuint8_t lower = svadd_u8_z(pg, v, vadd);
+        svuint8_t out   = svsel_u8(m, lower, v);
+
+        svst1_u8(pg, p + i, out);
+
+        i += (size_t)svcntb();
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 static inline size_t simd_last_index_u8_sve(const unsigned char* s, size_t n, unsigned char c) {

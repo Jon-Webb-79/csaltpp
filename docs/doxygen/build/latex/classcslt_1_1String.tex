@@ -49,7 +49,11 @@ size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_aa364caed1933542ad226be575806fe
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_ae2eb1fbb34bddad0686bd396b0d88c28}{tokens}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&delim, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
 \begin{DoxyCompactList}\small\item\em Count the number of tokens in this string using a \mbox{\hyperlink{classcslt_1_1String}{String}} delimiter set. \end{DoxyCompactList}\item 
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a18164f5f747701b28ea4ab79d9551db9}{tokens}} (const char $\ast$delim, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
-\begin{DoxyCompactList}\small\item\em Count the number of tokens in this string using a C-\/string delimiter set. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Count the number of tokens in this string using a C-\/string delimiter set. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1String_a92ea4894c00f0ca3ec7aac7b02778f4f}{uppercase}} (const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
+\begin{DoxyCompactList}\small\item\em Convert ASCII letters in this string to uppercase in-\/place. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1String_a40b7c4993607b42bc6216c83f319c6d2}{lowercase}} (const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
+\begin{DoxyCompactList}\small\item\em Convert ASCII letters in this string to lowercase in-\/place. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -1068,6 +1072,60 @@ Memory allocation\+:
 \doxysubsubsection{\texorpdfstring{is\_ptr()}{is\_ptr()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
 {\footnotesize\ttfamily bool cslt\+::\+String\+::is\+\_\+ptr (\begin{DoxyParamCaption}\item[{const void $\ast$}]{ptr,  }\item[{size\+\_\+t}]{bytes }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
 
+\mbox{\Hypertarget{classcslt_1_1String_a40b7c4993607b42bc6216c83f319c6d2}\label{classcslt_1_1String_a40b7c4993607b42bc6216c83f319c6d2}} 
+\index{cslt::String@{cslt::String}!lowercase@{lowercase}}
+\index{lowercase@{lowercase}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{lowercase()}{lowercase()}}
+{\footnotesize\ttfamily void cslt\+::\+String\+::lowercase (\begin{DoxyParamCaption}\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Convert ASCII letters in this string to lowercase in-\/place. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em begin} & Optional start of range to convert (default\+: start of string) \\
+\hline
+{\em end} & Optional end of range to convert (default\+: end of string)\\
+\hline
+\end{DoxyParams}
+Converts every ASCII uppercase letter (A–Z) in the specified window to its lowercase equivalent. Non-\/\+ASCII bytes and non-\/letter characters are left untouched. The operation is performed in-\/place using SIMD-\/accelerated routines where available.
+
+The method is a no-\/op if\+:
+\begin{DoxyItemize}
+\item str\+\_\+ is null
+\item begin and end resolve to an empty or inverted window
+\item Either pointer falls outside the allocation
+\end{DoxyItemize}
+
+Range parameters\+:
+\begin{DoxyItemize}
+\item nullptr for begin/end applies the conversion to the entire string
+\item Pointers must lie within the allocated buffer (validated with \mbox{\hyperlink{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}{is\+\_\+ptr()}})
+\item begin must be $<$= end
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}HELLO WORLD"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    s-\/>lowercase();}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}hello world"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// Convert only the first five characters}}
+\DoxyCodeLine{    s = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}HELLO WORLD"{}}, 0, alloc).value();}
+\DoxyCodeLine{    s-\/>lowercase(s-\/>c\_str(), s-\/>c\_str() + 5);}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}hello WORLD"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_a92ea4894c00f0ca3ec7aac7b02778f4f}{uppercase(const void$\ast$, const void$\ast$)}} 
+\end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}\label{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}} 
 \index{cslt::String@{cslt::String}!reset@{reset}}
 \index{reset@{reset}!cslt::String@{cslt::String}}
@@ -1231,6 +1289,60 @@ Return values\+:
 
 \begin{DoxySeeAlso}{See also}
 tokens(const char$\ast$, const void$\ast$, const void$\ast$) 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a92ea4894c00f0ca3ec7aac7b02778f4f}\label{classcslt_1_1String_a92ea4894c00f0ca3ec7aac7b02778f4f}} 
+\index{cslt::String@{cslt::String}!uppercase@{uppercase}}
+\index{uppercase@{uppercase}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{uppercase()}{uppercase()}}
+{\footnotesize\ttfamily void cslt\+::\+String\+::uppercase (\begin{DoxyParamCaption}\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Convert ASCII letters in this string to uppercase in-\/place. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em begin} & Optional start of range to convert (default\+: start of string) \\
+\hline
+{\em end} & Optional end of range to convert (default\+: end of string)\\
+\hline
+\end{DoxyParams}
+Converts every ASCII lowercase letter (a–z) in the specified window to its uppercase equivalent. Non-\/\+ASCII bytes and non-\/letter characters are left untouched. The operation is performed in-\/place using SIMD-\/accelerated routines where available.
+
+The method is a no-\/op if\+:
+\begin{DoxyItemize}
+\item str\+\_\+ is null
+\item begin and end resolve to an empty or inverted window
+\item Either pointer falls outside the allocation
+\end{DoxyItemize}
+
+Range parameters\+:
+\begin{DoxyItemize}
+\item nullptr for begin/end applies the conversion to the entire string
+\item Pointers must lie within the allocated buffer (validated with \mbox{\hyperlink{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}{is\+\_\+ptr()}})
+\item begin must be $<$= end
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello world"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    s-\/>uppercase();}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}HELLO WORLD"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{comment}{// Convert only the first five characters}}
+\DoxyCodeLine{    s = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello world"{}}, 0, alloc).value();}
+\DoxyCodeLine{    s-\/>uppercase(s-\/>c\_str(), s-\/>c\_str() + 5);}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}HELLO world"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_a40b7c4993607b42bc6216c83f319c6d2}{lowercase(const void$\ast$, const void$\ast$)}} 
 \end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}\label{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}} 
 \index{cslt::String@{cslt::String}!words@{words}}

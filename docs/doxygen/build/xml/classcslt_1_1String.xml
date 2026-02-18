@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1072" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1072" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1156" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1156" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -1600,6 +1600,146 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
         </inbodydescription>
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1066" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="628" bodyend="665"/>
       </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1a92ea4894c00f0ca3ec7aac7b02778f4f" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::String::uppercase</definition>
+        <argsstring>(const void *begin=nullptr, const void *end=nullptr) noexcept</argsstring>
+        <name>uppercase</name>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Convert ASCII letters in this string to uppercase in-place. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of range to convert (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of range to convert (default: end of string)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Converts every ASCII lowercase letter (a–z) in the specified window to its uppercase equivalent. Non-ASCII bytes and non-letter characters are left untouched. The operation is performed in-place using SIMD-accelerated routines where available.</para>
+<para>The method is a no-op if:<itemizedlist>
+<listitem><para>str_ is null</para>
+</listitem><listitem><para>begin and end resolve to an empty or inverted window</para>
+</listitem><listitem><para>Either pointer falls outside the allocation</para>
+</listitem></itemizedlist>
+</para>
+<para>Range parameters:<itemizedlist>
+<listitem><para>nullptr for begin/end applies the conversion to the entire string</para>
+</listitem><listitem><para>Pointers must lie within the allocated buffer (validated with <ref refid="classcslt_1_1String_1a702bea4742b4c1778a85527cd4e534a3" kindref="member">is_ptr()</ref>)</para>
+</listitem><listitem><para>begin must be &lt;= end</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello<sp/>world&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;uppercase();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;HELLO<sp/>WORLD&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Convert<sp/>only<sp/>the<sp/>first<sp/>five<sp/>characters</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello<sp/>world&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc).value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;uppercase(s-&gt;c_str(),<sp/>s-&gt;c_str()<sp/>+<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;HELLO<sp/>world&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1a40b7c4993607b42bc6216c83f319c6d2" kindref="member">lowercase(const void*, const void*)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1109" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="668" bodyend="693"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1a40b7c4993607b42bc6216c83f319c6d2" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::String::lowercase</definition>
+        <argsstring>(const void *begin=nullptr, const void *end=nullptr) noexcept</argsstring>
+        <name>lowercase</name>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Convert ASCII letters in this string to lowercase in-place. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of range to convert (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of range to convert (default: end of string)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Converts every ASCII uppercase letter (A–Z) in the specified window to its lowercase equivalent. Non-ASCII bytes and non-letter characters are left untouched. The operation is performed in-place using SIMD-accelerated routines where available.</para>
+<para>The method is a no-op if:<itemizedlist>
+<listitem><para>str_ is null</para>
+</listitem><listitem><para>begin and end resolve to an empty or inverted window</para>
+</listitem><listitem><para>Either pointer falls outside the allocation</para>
+</listitem></itemizedlist>
+</para>
+<para>Range parameters:<itemizedlist>
+<listitem><para>nullptr for begin/end applies the conversion to the entire string</para>
+</listitem><listitem><para>Pointers must lie within the allocated buffer (validated with <ref refid="classcslt_1_1String_1a702bea4742b4c1778a85527cd4e534a3" kindref="member">is_ptr()</ref>)</para>
+</listitem><listitem><para>begin must be &lt;= end</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;HELLO<sp/>WORLD&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;lowercase();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello<sp/>world&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Convert<sp/>only<sp/>the<sp/>first<sp/>five<sp/>characters</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;HELLO<sp/>WORLD&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc).value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;lowercase(s-&gt;c_str(),<sp/>s-&gt;c_str()<sp/>+<sp/>5);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello<sp/>WORLD&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1a92ea4894c00f0ca3ec7aac7b02778f4f" kindref="member">uppercase(const void*, const void*)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1151" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="696" bodyend="721"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Allocator-backed string container. </para>
@@ -1637,7 +1777,7 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1073"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1157"/>
     <listofallmembers>
       <member refid="classcslt_1_1String_1aed2a23a1c540c4caf68f6e43a1d4164a" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>alloc_</name></member>
       <member refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>allocator</name></member>
@@ -1656,6 +1796,7 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
       <member refid="classcslt_1_1String_1a702bea4742b4c1778a85527cd4e534a3" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>is_ptr</name></member>
       <member refid="classcslt_1_1String_1a42d91a877c9034679dd31693360f0a4b" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>is_ptr</name></member>
       <member refid="classcslt_1_1String_1a204f710bdd00d26c0c017d3d9e12748f" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>len_</name></member>
+      <member refid="classcslt_1_1String_1a40b7c4993607b42bc6216c83f319c6d2" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>lowercase</name></member>
       <member refid="classcslt_1_1String_1a44851bf726e219fba16bee4223cb7584" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
       <member refid="classcslt_1_1String_1aa878a4aaceeb4c2ad0a8f321d7da6c5b" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
       <member refid="classcslt_1_1String_1adc4b6300e480f5f8dd3f4269ce26cc86" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>reset</name></member>
@@ -1667,6 +1808,7 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
       <member refid="classcslt_1_1String_1a689e801650cd38a0341ef5781c508716" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>StringDeleter</name></member>
       <member refid="classcslt_1_1String_1ae2eb1fbb34bddad0686bd396b0d88c28" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>tokens</name></member>
       <member refid="classcslt_1_1String_1a18164f5f747701b28ea4ab79d9551db9" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>tokens</name></member>
+      <member refid="classcslt_1_1String_1a92ea4894c00f0ca3ec7aac7b02778f4f" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>uppercase</name></member>
       <member refid="classcslt_1_1String_1a0a52906a75298894dbeefb3c543df1f4" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>words</name></member>
       <member refid="classcslt_1_1String_1aa364caed1933542ad226be575806fe3d" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>words</name></member>
       <member refid="classcslt_1_1String_1a675f1af6899bff56d3fbd6201497bd1b" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>~String</name></member>

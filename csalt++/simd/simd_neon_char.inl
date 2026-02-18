@@ -232,6 +232,68 @@ size_t simd_token_count_u8(const uint8_t* s, size_t n,
 
     return count;
 }
+// -------------------------------------------------------------------------------- 
+
+void simd_ascii_upper_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+
+    const uint8x16_t lo  = vdupq_n_u8((uint8_t)'a');
+    const uint8x16_t hi  = vdupq_n_u8((uint8_t)'z');
+    const uint8x16_t sub = vdupq_n_u8(0x20u);
+
+    for (; i + 16u <= n; i += 16u) {
+        uint8x16_t v = vld1q_u8(p + i);
+
+        /* mask = (v >= 'a') & (v <= 'z') */
+        uint8x16_t ge_lo = vcgeq_u8(v, lo);
+        uint8x16_t le_hi = vcleq_u8(v, hi);
+        uint8x16_t mask  = vandq_u8(ge_lo, le_hi);
+
+        uint8x16_t upper = vsubq_u8(v, sub);
+
+        /* select: mask ? upper : v */
+        uint8x16_t out = vbslq_u8(mask, upper, v);
+
+        vst1q_u8(p + i, out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'a') && (c <= (uint8_t)'z')) p[i] = (uint8_t)(c - 0x20u);
+    }
+}
+
+void simd_ascii_lower_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+
+    const uint8x16_t lo  = vdupq_n_u8((uint8_t)'A');
+    const uint8x16_t hi  = vdupq_n_u8((uint8_t)'Z');
+    const uint8x16_t add = vdupq_n_u8(0x20u);
+
+    for (; i + 16u <= n; i += 16u) {
+        uint8x16_t v = vld1q_u8(p + i);
+
+        uint8x16_t ge_lo = vcgeq_u8(v, lo);
+        uint8x16_t le_hi = vcleq_u8(v, hi);
+        uint8x16_t mask  = vandq_u8(ge_lo, le_hi);
+
+        uint8x16_t lower = vaddq_u8(v, add);
+        uint8x16_t out   = vbslq_u8(mask, lower, v);
+
+        vst1q_u8(p + i, out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'A') && (c <= (uint8_t)'Z')) p[i] = (uint8_t)(c + 0x20u);
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 

@@ -275,6 +275,68 @@ static inline size_t simd_token_count_u8(const uint8_t* p,
 
     return count;
 }
+// -------------------------------------------------------------------------------- 
+
+static inline __mmask64 ascii_range_mask_512(__m512i x, __m512i lo, __m512i hi)
+{
+    /* Unsigned compare is ideal here. These intrinsics require AVX-512BW. */
+    __mmask64 ge_lo = _mm512_cmpge_epu8_mask(x, lo);
+    __mmask64 le_hi = _mm512_cmple_epu8_mask(x, hi);
+    return (ge_lo & le_hi);
+}
+
+void simd_ascii_upper_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+    const __m512i lo  = _mm512_set1_epi8('a');
+    const __m512i hi  = _mm512_set1_epi8('z');
+    const __m512i sub = _mm512_set1_epi8(0x20);
+
+    for (; i + 64u <= n; i += 64u) {
+        __m512i v = _mm512_loadu_si512((const void*)(p + i));
+
+        __mmask64 m = ascii_range_mask_512(v, lo, hi);
+
+        /* Only subtract on masked lanes */
+        __m512i up = _mm512_sub_epi8(v, sub);
+        __m512i out = _mm512_mask_mov_epi8(v, m, up);
+
+        _mm512_storeu_si512((void*)(p + i), out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'a') && (c <= (uint8_t)'z')) p[i] = (uint8_t)(c - 0x20u);
+    }
+}
+
+void simd_ascii_lower_u8(uint8_t* p, size_t n)
+{
+    if ((p == NULL) || (n == 0u)) return;
+
+    size_t i = 0u;
+    const __m512i lo  = _mm512_set1_epi8('A');
+    const __m512i hi  = _mm512_set1_epi8('Z');
+    const __m512i add = _mm512_set1_epi8(0x20);
+
+    for (; i + 64u <= n; i += 64u) {
+        __m512i v = _mm512_loadu_si512((const void*)(p + i));
+
+        __mmask64 m = ascii_range_mask_512(v, lo, hi);
+
+        __m512i low = _mm512_add_epi8(v, add);
+        __m512i out = _mm512_mask_mov_epi8(v, m, low);
+
+        _mm512_storeu_si512((void*)(p + i), out);
+    }
+
+    for (; i < n; ++i) {
+        uint8_t c = p[i];
+        if ((c >= (uint8_t)'A') && (c <= (uint8_t)'Z')) p[i] = (uint8_t)(c + 0x20u);
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 

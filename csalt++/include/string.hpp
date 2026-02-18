@@ -1068,6 +1068,90 @@ namespace cslt {
                       const void* end   = nullptr) const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Convert ASCII letters in this string to uppercase in-place
+         *
+         * @param begin Optional start of range to convert (default: start of string)
+         * @param end   Optional end of range to convert (default: end of string)
+         *
+         * @details Converts every ASCII lowercase letter (a–z) in the specified
+         * window to its uppercase equivalent. Non-ASCII bytes and non-letter
+         * characters are left untouched. The operation is performed in-place
+         * using SIMD-accelerated routines where available.
+         *
+         * The method is a no-op if:
+         * - str_ is null
+         * - begin and end resolve to an empty or inverted window
+         * - Either pointer falls outside the allocation
+         *
+         * Range parameters:
+         * - nullptr for begin/end applies the conversion to the entire string
+         * - Pointers must lie within the allocated buffer (validated with is_ptr())
+         * - begin must be <= end
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("hello world", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     s->uppercase();
+         *     std::cout << s->c_str() << std::endl;  // "HELLO WORLD"
+         *
+         *     // Convert only the first five characters
+         *     s = cslt::String::init("hello world", 0, alloc).value();
+         *     s->uppercase(s->c_str(), s->c_str() + 5);
+         *     std::cout << s->c_str() << std::endl;  // "HELLO world"
+         * }
+         * @endcode
+         *
+         * @see lowercase(const void*, const void*)
+         */
+        void uppercase(const void* begin = nullptr,
+                       const void* end   = nullptr) noexcept;
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Convert ASCII letters in this string to lowercase in-place
+         *
+         * @param begin Optional start of range to convert (default: start of string)
+         * @param end   Optional end of range to convert (default: end of string)
+         *
+         * @details Converts every ASCII uppercase letter (A–Z) in the specified
+         * window to its lowercase equivalent. Non-ASCII bytes and non-letter
+         * characters are left untouched. The operation is performed in-place
+         * using SIMD-accelerated routines where available.
+         *
+         * The method is a no-op if:
+         * - str_ is null
+         * - begin and end resolve to an empty or inverted window
+         * - Either pointer falls outside the allocation
+         *
+         * Range parameters:
+         * - nullptr for begin/end applies the conversion to the entire string
+         * - Pointers must lie within the allocated buffer (validated with is_ptr())
+         * - begin must be <= end
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("HELLO WORLD", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     s->lowercase();
+         *     std::cout << s->c_str() << std::endl;  // "hello world"
+         *
+         *     // Convert only the first five characters
+         *     s = cslt::String::init("HELLO WORLD", 0, alloc).value();
+         *     s->lowercase(s->c_str(), s->c_str() + 5);
+         *     std::cout << s->c_str() << std::endl;  // "hello WORLD"
+         * }
+         * @endcode
+         *
+         * @see uppercase(const void*, const void*)
+         */
+        void lowercase(const void* begin = nullptr,
+                       const void* end   = nullptr) noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

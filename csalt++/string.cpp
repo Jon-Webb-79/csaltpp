@@ -523,6 +523,66 @@ namespace cslt {
         
         return (search_begin - hs_base) + offset_from_search_start;
     }
+// -------------------------------------------------------------------------------- 
+
+    size_t String::words(const String& word,
+                         const void*   begin,
+                         const void*   end) const noexcept {
+        if (!str_ || !word.str_) return 0u;
+        if (word.len_ == 0u)     return 0u;
+
+        const uint8_t* const base = reinterpret_cast<const uint8_t*>(
+            static_cast<const void*>(str_));
+
+        const uint8_t* cur = (begin != nullptr)
+            ? reinterpret_cast<const uint8_t*>(begin)
+            : base;
+
+        const uint8_t* const win_end = (end != nullptr)
+            ? reinterpret_cast<const uint8_t*>(end)
+            : nullptr;
+
+        size_t count = 0u;
+        for (;;) {
+            size_t pos = find(word, cur, win_end, FORWARD);
+            if (pos == SIZE_MAX) break;
+            ++count;
+            /* Advance past this match (non-overlapping) */
+            cur = base + pos + word.len_;
+            if ((win_end != nullptr) && (cur >= win_end)) break;
+        }
+        return count;
+    }
+// --------------------------------------------------------------------------------
+
+    size_t String::words(const char* word,
+                         const void* begin,
+                         const void* end) const noexcept {
+        if (!str_ || !word) return 0u;
+        const size_t wlen = std::strlen(word);
+        if (wlen == 0u) return 0u;
+
+        const uint8_t* const base = reinterpret_cast<const uint8_t*>(
+            static_cast<const void*>(str_));
+
+        const uint8_t* cur = (begin != nullptr)
+            ? reinterpret_cast<const uint8_t*>(begin)
+            : base;
+
+        const uint8_t* const win_end = (end != nullptr)
+            ? reinterpret_cast<const uint8_t*>(end)
+            : nullptr;
+
+        size_t count = 0u;
+        for (;;) {
+            size_t pos = find(word, cur, win_end, FORWARD);
+            if (pos == SIZE_MAX) break;
+            ++count;
+            cur = base + pos + wlen;
+            if ((win_end != nullptr) && (cur >= win_end)) break;
+        }
+        return count;
+    }
 // ================================================================================
 // ================================================================================
 // eof

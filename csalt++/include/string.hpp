@@ -943,6 +943,66 @@ namespace cslt {
                     direction_t dir = FORWARD) const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Count non-overlapping occurrences of a String within this string
+         *
+         * @param word     The String to search for (case-sensitive)
+         * @param begin    Optional start of search range (default: start of string)
+         * @param end      Optional end of search range (default: end of string)
+         * @return         Number of non-overlapping occurrences; 0 on any error or
+         *                 if word is empty
+         *
+         * @details Counts how many times word appears in this string using the same
+         * non-overlapping, left-to-right semantics as the C word_count() function.
+         * Each match advances the cursor past the matched region before the next
+         * search begins.
+         *
+         * Return value:
+         * - 0  if this string or word is empty/null, or word is not found
+         * - N  number of non-overlapping matches within the optional range
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r1 = cslt::String::init("one fish two fish red fish", 0, alloc);
+         * auto r2 = cslt::String::init("fish", 0, alloc);
+         * if (r1.hasValue() && r2.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> haystack(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> needle(r2.value());
+         *     size_t n = haystack->words(*needle);  // 3
+         * }
+         * @endcode
+         */
+        size_t words(const String& word,
+                     const void*   begin = nullptr,
+                     const void*   end   = nullptr) const noexcept;
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Count non-overlapping occurrences of a C-string within this string
+         *
+         * @param word     Null-terminated C-string to search for (case-sensitive)
+         * @param begin    Optional start of search range (default: start of string)
+         * @param end      Optional end of search range (default: end of string)
+         * @return         Number of non-overlapping occurrences; 0 on any error or
+         *                 if word is empty
+         *
+         * @details Convenience overload accepting a string literal or C-string.
+         * Behaviour is identical to words(const String&).
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("one fish two fish red fish", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     size_t n = s->words("fish");  // 3
+         * }
+         * @endcode
+         */
+        size_t words(const char* word,
+                     const void* begin = nullptr,
+                     const void* end   = nullptr) const noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

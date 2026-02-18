@@ -3307,6 +3307,203 @@ TEST_F(StringFindTest, Find_StringAndCString_SameResult) {
     
     EXPECT_EQ(pos1, pos2);
 }
+// ================================================================================ 
+// ================================================================================ 
+
+/**
+ * @brief Test fixture that provides a shared HeapAllocator and a helper for
+ *        constructing String instances without boilerplate in every test.
+ */
+class StringWordsTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator alloc;
+
+    /**
+     * @brief Construct a String from a C-string literal, asserting on failure.
+     *        Returns an owning UniquePtr so the caller's local variable manages
+     *        lifetime automatically.
+     */
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter>
+    make(const char* cstr) {
+        auto r = cslt::String::init(cstr, 0, alloc);
+        EXPECT_TRUE(r.hasValue()) << "String::init failed for: " << cstr;
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r.value());
+    }
+};
+
+// ================================================================================
+// words(const String&) — String overload
+// ================================================================================
+
+// Single occurrence — word appears exactly once
+TEST_F(StringWordsTest, StringOverload_SingleOccurrence) {
+    auto haystack = make("the quick brown fox");
+    auto needle   = make("fox");
+    EXPECT_EQ(haystack->words(*needle), 1u);
+}
+
+// Multiple non-overlapping occurrences
+TEST_F(StringWordsTest, StringOverload_MultipleOccurrences) {
+    auto haystack = make("one fish two fish red fish blue fish");
+    auto needle   = make("fish");
+    EXPECT_EQ(haystack->words(*needle), 4u);
+}
+
+// Word not present — should return 0
+TEST_F(StringWordsTest, StringOverload_NotFound) {
+    auto haystack = make("hello world");
+    auto needle   = make("cat");
+    EXPECT_EQ(haystack->words(*needle), 0u);
+}
+
+// Search is case-sensitive — uppercase variant must not match lowercase
+TEST_F(StringWordsTest, StringOverload_CaseSensitive) {
+    auto haystack = make("Hello hello HELLO");
+    auto needle   = make("hello");
+    EXPECT_EQ(haystack->words(*needle), 1u);
+}
+
+// Word at the very start of the string
+TEST_F(StringWordsTest, StringOverload_MatchAtStart) {
+    auto haystack = make("fish and chips");
+    auto needle   = make("fish");
+    EXPECT_EQ(haystack->words(*needle), 1u);
+}
+
+// Word at the very end of the string
+TEST_F(StringWordsTest, StringOverload_MatchAtEnd) {
+    auto haystack = make("salt and fish");
+    auto needle   = make("fish");
+    EXPECT_EQ(haystack->words(*needle), 1u);
+}
+
+// Haystack and needle are identical
+TEST_F(StringWordsTest, StringOverload_HaystackEqualsNeedle) {
+    auto haystack = make("fish");
+    auto needle   = make("fish");
+    EXPECT_EQ(haystack->words(*needle), 1u);
+}
+
+// Needle longer than haystack — impossible to match
+TEST_F(StringWordsTest, StringOverload_NeedleLongerThanHaystack) {
+    auto haystack = make("hi");
+    auto needle   = make("hello world");
+    EXPECT_EQ(haystack->words(*needle), 0u);
+}
+
+// Restrict search to a sub-range that contains exactly one of two occurrences
+TEST_F(StringWordsTest, StringOverload_WithRangeOneOfTwo) {
+    auto haystack = make("fish chips fish");
+    auto needle   = make("fish");
+
+    // Range covers only the first five characters ("fish ")
+    const void* begin = haystack->c_str();
+    const void* end   = haystack->c_str() + 5;
+
+    EXPECT_EQ(haystack->words(*needle, begin, end), 1u);
+}
+
+// Restrict search to a sub-range that contains no occurrences
+TEST_F(StringWordsTest, StringOverload_WithRangeNoMatch) {
+    auto haystack = make("fish chips fish");
+    auto needle   = make("fish");
+
+    // Middle section "chips" contains no "fish"
+    const void* begin = haystack->c_str() + 5;
+    const void* end   = haystack->c_str() + 10;
+
+    EXPECT_EQ(haystack->words(*needle, begin, end), 0u);
+}
+
+// ================================================================================
+// words(const char*) — C-string literal overload
+// ================================================================================
+
+// Single occurrence
+TEST_F(StringWordsTest, LiteralOverload_SingleOccurrence) {
+    auto haystack = make("the quick brown fox");
+    EXPECT_EQ(haystack->words("fox"), 1u);
+}
+
+// Multiple non-overlapping occurrences
+TEST_F(StringWordsTest, LiteralOverload_MultipleOccurrences) {
+    auto haystack = make("one fish two fish red fish blue fish");
+    EXPECT_EQ(haystack->words("fish"), 4u);
+}
+
+// Word not present — should return 0
+TEST_F(StringWordsTest, LiteralOverload_NotFound) {
+    auto haystack = make("hello world");
+    EXPECT_EQ(haystack->words("cat"), 0u);
+}
+
+// Search is case-sensitive
+TEST_F(StringWordsTest, LiteralOverload_CaseSensitive) {
+    auto haystack = make("Hello hello HELLO");
+    EXPECT_EQ(haystack->words("hello"), 1u);
+}
+
+// Word at the very start of the string
+TEST_F(StringWordsTest, LiteralOverload_MatchAtStart) {
+    auto haystack = make("fish and chips");
+    EXPECT_EQ(haystack->words("fish"), 1u);
+}
+
+// Word at the very end of the string
+TEST_F(StringWordsTest, LiteralOverload_MatchAtEnd) {
+    auto haystack = make("salt and fish");
+    EXPECT_EQ(haystack->words("fish"), 1u);
+}
+
+// Haystack and needle are identical
+TEST_F(StringWordsTest, LiteralOverload_HaystackEqualsNeedle) {
+    auto haystack = make("fish");
+    EXPECT_EQ(haystack->words("fish"), 1u);
+}
+
+// Needle longer than haystack — impossible to match
+TEST_F(StringWordsTest, LiteralOverload_NeedleLongerThanHaystack) {
+    auto haystack = make("hi");
+    EXPECT_EQ(haystack->words("hello world"), 0u);
+}
+
+// Restrict search to a sub-range that contains exactly one of two occurrences
+TEST_F(StringWordsTest, LiteralOverload_WithRangeOneOfTwo) {
+    auto haystack = make("fish chips fish");
+
+    // Range covers only the first five characters ("fish ")
+    const void* begin = haystack->c_str();
+    const void* end   = haystack->c_str() + 5;
+
+    EXPECT_EQ(haystack->words("fish", begin, end), 1u);
+}
+
+// Restrict search to a sub-range that contains no occurrences
+TEST_F(StringWordsTest, LiteralOverload_WithRangeNoMatch) {
+    auto haystack = make("fish chips fish");
+
+    // Middle section "chips" contains no "fish"
+    const void* begin = haystack->c_str() + 5;
+    const void* end   = haystack->c_str() + 10;
+
+    EXPECT_EQ(haystack->words("fish", begin, end), 0u);
+}
+
+// ================================================================================
+// Cross-overload consistency
+// ================================================================================
+
+// Both overloads must agree on the same haystack
+TEST_F(StringWordsTest, BothOverloads_AgreeOnCount) {
+    auto haystack = make("to be or not to be that is the question");
+    auto needle   = make("be");
+
+    size_t from_string  = haystack->words(*needle);
+    size_t from_literal = haystack->words("be");
+
+    EXPECT_EQ(from_string, from_literal);
+    EXPECT_EQ(from_string, 2u);
+}
 // ================================================================================
 // ================================================================================
 // eof

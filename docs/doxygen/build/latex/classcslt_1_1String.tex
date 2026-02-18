@@ -38,10 +38,14 @@ bool \mbox{\hyperlink{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}{is\
 \item 
 bool \mbox{\hyperlink{classcslt_1_1String_a42d91a877c9034679dd31693360f0a4b}{is\+\_\+ptr}} (const void $\ast$ptr, size\+\_\+t bytes) const noexcept
 \item 
-size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a2ac5634536f9f04847bd5770ae447c8c}{find}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&needle, const void $\ast$begin, const void $\ast$end, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}} dir) const noexcept
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_ab7fcc225d61114773963649405afea6b}{find}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&needle, const void $\ast$begin=nullptr, const void $\ast$end=nullptr, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}} dir=\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}) const noexcept
 \begin{DoxyCompactList}\small\item\em Find substring within this string. \end{DoxyCompactList}\item 
-size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a20abe56251cb38cc9876c76dac0302c0}{find}} (const char $\ast$needle, const void $\ast$begin, const void $\ast$end, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}} dir) const noexcept
-\begin{DoxyCompactList}\small\item\em Find C-\/string within this string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a299d1b577c9847512d8a89408cb134a3}{find}} (const char $\ast$needle, const void $\ast$begin=nullptr, const void $\ast$end=nullptr, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}} dir=\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}) const noexcept
+\begin{DoxyCompactList}\small\item\em Find C-\/string within this string. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a0a52906a75298894dbeefb3c543df1f4}{words}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&word, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
+\begin{DoxyCompactList}\small\item\em Count non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} within this string. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}{words}} (const char $\ast$word, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
+\begin{DoxyCompactList}\small\item\em Count non-\/overlapping occurrences of a C-\/string within this string. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -794,11 +798,11 @@ Key behaviors\+:
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy()}} to \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}} using the same \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}} 
 \end{DoxySeeAlso}
-\mbox{\Hypertarget{classcslt_1_1String_a20abe56251cb38cc9876c76dac0302c0}\label{classcslt_1_1String_a20abe56251cb38cc9876c76dac0302c0}} 
+\mbox{\Hypertarget{classcslt_1_1String_a299d1b577c9847512d8a89408cb134a3}\label{classcslt_1_1String_a299d1b577c9847512d8a89408cb134a3}} 
 \index{cslt::String@{cslt::String}!find@{find}}
 \index{find@{find}!cslt::String@{cslt::String}}
 \doxysubsubsection{\texorpdfstring{find()}{find()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const char $\ast$}]{needle,  }\item[{const void $\ast$}]{begin,  }\item[{const void $\ast$}]{end,  }\item[{\mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}}}]{dir }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const char $\ast$}]{needle,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr},  }\item[{\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}}}]{dir = {\ttfamily \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
 
 
 
@@ -854,7 +858,7 @@ O(n$\ast$m) worst case, but SIMD-\/optimized for typical cases.
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{    }
 \DoxyCodeLine{    \textcolor{comment}{// Find last occurrence with REVERSE}}
-\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}the"{}}, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39daaa06e72135096941514e36666872a274}{REVERSE}});}
+\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}the"{}}, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6ba906b7cc20b42994dda4da492767c1de9}{REVERSE}});}
 \DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Last 'the' at: "{}} << pos << std::endl;  \textcolor{comment}{// 31}}
 \DoxyCodeLine{    }
 \DoxyCodeLine{    \textcolor{comment}{// Find in limited range}}
@@ -874,11 +878,11 @@ O(n$\ast$m) worst case, but SIMD-\/optimized for typical cases.
 \begin{DoxySeeAlso}{See also}
 find(const String\&, const void$\ast$, const void$\ast$, direction\+\_\+t) 
 \end{DoxySeeAlso}
-\mbox{\Hypertarget{classcslt_1_1String_a2ac5634536f9f04847bd5770ae447c8c}\label{classcslt_1_1String_a2ac5634536f9f04847bd5770ae447c8c}} 
+\mbox{\Hypertarget{classcslt_1_1String_ab7fcc225d61114773963649405afea6b}\label{classcslt_1_1String_ab7fcc225d61114773963649405afea6b}} 
 \index{cslt::String@{cslt::String}!find@{find}}
 \index{find@{find}!cslt::String@{cslt::String}}
 \doxysubsubsection{\texorpdfstring{find()}{find()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{needle,  }\item[{const void $\ast$}]{begin,  }\item[{const void $\ast$}]{end,  }\item[{\mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39d}{direction\+\_\+t}}}]{dir }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{needle,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr},  }\item[{\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}}}]{dir = {\ttfamily \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
 
 
 
@@ -939,7 +943,7 @@ O(n$\ast$m) worst case, but SIMD-\/optimized for typical cases.
 \DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Found at: "{}} << pos << std::endl;  \textcolor{comment}{// 12}}
 \DoxyCodeLine{        }
 \DoxyCodeLine{        \textcolor{comment}{// Find in reverse (last occurrence)}}
-\DoxyCodeLine{        pos = str-\/>find(*needle, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{namespacecslt_afc7cedfb5c049a554687deed03a6c39daaa06e72135096941514e36666872a274}{REVERSE}});}
+\DoxyCodeLine{        pos = str-\/>find(*needle, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6ba906b7cc20b42994dda4da492767c1de9}{REVERSE}});}
 \DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Last at: "{}} << pos << std::endl;  \textcolor{comment}{// 12}}
 \DoxyCodeLine{        }
 \DoxyCodeLine{        \textcolor{comment}{// Find within specific range}}
@@ -1134,6 +1138,82 @@ Returns the number of characters stored in the container, not including the null
 \DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
 \DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
 \DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}length = "{}} << s-\/>size() << std::endl;  \textcolor{comment}{// 5}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}\label{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}} 
+\index{cslt::String@{cslt::String}!words@{words}}
+\index{words@{words}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{words()}{words()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::words (\begin{DoxyParamCaption}\item[{const char $\ast$}]{word,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Count non-\/overlapping occurrences of a C-\/string within this string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em word} & Null-\/terminated C-\/string to search for (case-\/sensitive) \\
+\hline
+{\em begin} & Optional start of search range (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search range (default\+: end of string) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Number of non-\/overlapping occurrences; 0 on any error or if word is empty
+\end{DoxyReturn}
+Convenience overload accepting a string literal or C-\/string. Behaviour is identical to words(const String\&).
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one fish two fish red fish"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} n = s-\/>words(\textcolor{stringliteral}{"{}fish"{}});  \textcolor{comment}{// 3}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1String_a0a52906a75298894dbeefb3c543df1f4}\label{classcslt_1_1String_a0a52906a75298894dbeefb3c543df1f4}} 
+\index{cslt::String@{cslt::String}!words@{words}}
+\index{words@{words}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{words()}{words()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::words (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{word,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Count non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} within this string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em word} & The \mbox{\hyperlink{classcslt_1_1String}{String}} to search for (case-\/sensitive) \\
+\hline
+{\em begin} & Optional start of search range (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search range (default\+: end of string) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Number of non-\/overlapping occurrences; 0 on any error or if word is empty
+\end{DoxyReturn}
+Counts how many times word appears in this string using the same non-\/overlapping, left-\/to-\/right semantics as the C word\+\_\+count() function. Each match advances the cursor past the matched region before the next search begins.
+
+Return value\+:
+\begin{DoxyItemize}
+\item 0 if this string or word is empty/null, or word is not found
+\item N number of non-\/overlapping matches within the optional range
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one fish two fish red fish"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}fish"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} haystack(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} needle(r2.value());}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} n = haystack-\/>words(*needle);  \textcolor{comment}{// 3}}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

@@ -181,6 +181,54 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
 
     return SIZE_MAX;
 }
+// -------------------------------------------------------------------------------- 
+
+size_t simd_token_count_u8(const uint8_t* s, size_t n,
+                           const char* delim, size_t dlen) {
+    if ((s == NULL) || (delim == NULL)) return SIZE_MAX;
+    if (n == 0u) return 0u;
+    if (dlen == 0u) return 1u;
+
+    uint8_t lut[256];
+    memset(lut, 0, sizeof(lut));
+    for (size_t j = 0; j < dlen; ++j) {
+        lut[(unsigned char)delim[j]] = 1u;
+    }
+
+    size_t i = 0u;
+    size_t count = 0u;
+    uint32_t prev_is_delim = 1u;
+
+    for (; i + 16u <= n; i += 16u) {
+        __m128i v = _mm_loadu_si128((const __m128i*)(const void*)(s + i));
+        __m128i m = _mm_setzero_si128();
+
+        for (size_t j = 0; j < dlen; ++j) {
+            __m128i dj = _mm_set1_epi8((char)delim[j]);
+            m = _mm_or_si128(m, _mm_cmpeq_epi8(v, dj));
+        }
+
+        uint32_t dm  = (uint32_t)_mm_movemask_epi8(m) & 0xFFFFu;
+        uint32_t non = (~dm) & 0xFFFFu;
+
+        uint32_t starts = non & ((dm << 1) | (prev_is_delim & 1u));
+        count += (size_t)__builtin_popcount(starts);
+
+        prev_is_delim = (dm >> 15) & 1u;
+    }
+
+    bool in_token = (prev_is_delim == 0u);
+    for (; i < n; ++i) {
+        const bool is_delim = (lut[s[i]] != 0u);
+        if (!is_delim) {
+            if (!in_token) { ++count; in_token = true; }
+        } else {
+            in_token = false;
+        }
+    }
+
+    return count;
+}
 // ================================================================================ 
 // ================================================================================ 
 
@@ -284,36 +332,6 @@ static inline size_t simd_last_substr_index_sse3(const unsigned char* s, size_t 
         if (s[j] == pat[0] && memcmp(s + j, pat, m) == 0) return j;
 
     return last;
-}
-static inline size_t simd_token_count_sse3(const char* s, size_t n,
-                                           const char* delim, size_t dlen)
-{
-    size_t i = 0, count = 0;
-    uint32_t prev_is_delim = 1;
-
-    for (; i + 16 <= n; i += 16) {
-        __m128i v = _mm_loadu_si128((const __m128i*)(s + i));
-        __m128i m = _mm_setzero_si128();
-        for (size_t j = 0; j < dlen; ++j) {
-            __m128i dj = _mm_set1_epi8((char)delim[j]);
-            m = _mm_or_si128(m, _mm_cmpeq_epi8(v, dj));
-        }
-        uint32_t dm = (uint32_t)_mm_movemask_epi8(m);
-        uint32_t non = ~dm & 0xFFFFu;
-        uint32_t starts = non & ((dm << 1) | (prev_is_delim & 1));
-        count += (size_t)__builtin_popcount(starts);
-        prev_is_delim = (dm >> 15) & 1u;
-    }
-
-    uint8_t lut[256]; memset(lut, 0, sizeof(lut));
-    for (const unsigned char* p = (const unsigned char*)delim; *p; ++p) lut[*p] = 1;
-    bool in_token = !prev_is_delim;
-    for (; i < n; ++i) {
-        const bool is_delim = lut[(unsigned char)s[i]] != 0;
-        if (!is_delim) { if (!in_token) { ++count; in_token = true; } }
-        else in_token = false;
-    }
-    return count;
 }
 
 #endif /* CSALT_SIMD_SSE3_CHAR_INL */

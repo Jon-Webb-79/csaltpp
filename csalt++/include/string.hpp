@@ -1003,6 +1003,71 @@ namespace cslt {
                      const void* end   = nullptr) const noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Count the number of tokens in this string using a String delimiter set
+         *
+         * @param delim    String whose characters collectively form the delimiter set.
+         *                 Every character in delim is treated as an independent separator
+         *                 (multi-character delimiters are NOT treated as a unit — this
+         *                 mirrors strtok semantics, not strstr semantics).
+         * @param begin    Optional start of search range (default: start of string)
+         * @param end      Optional end of search range (default: end of string)
+         * @return         Number of tokens found, or SIZE_MAX on error
+         *
+         * @details A token is a maximal run of non-delimiter characters. Adjacent
+         * delimiters collapse — they do not produce empty tokens. An empty window
+         * returns 0. If delim is empty the entire window is treated as one token.
+         *
+         * Return values:
+         * - 0        if the window is empty or contains only delimiters
+         * - N        number of tokens
+         * - SIZE_MAX if str_ or delim.str_ is null, or if range pointers are invalid
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r1 = cslt::String::init("one two three", 0, alloc);
+         * auto r2 = cslt::String::init(" ", 0, alloc);
+         * if (r1.hasValue() && r2.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> d(r2.value());
+         *     size_t n = s->tokens(*d);  // 3
+         * }
+         * @endcode
+         *
+         * @see tokens(const char*, const void*, const void*)
+         */
+        size_t tokens(const String& delim,
+                      const void*   begin = nullptr,
+                      const void*   end   = nullptr) const noexcept;
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Count the number of tokens in this string using a C-string delimiter set
+         *
+         * @param delim    Null-terminated C-string whose characters form the delimiter set
+         * @param begin    Optional start of search range (default: start of string)
+         * @param end      Optional end of search range (default: end of string)
+         * @return         Number of tokens found, or SIZE_MAX on error
+         *
+         * @details Convenience overload accepting a string literal or C-string.
+         * Behaviour is identical to tokens(const String&).
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("one two three", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     size_t n = s->tokens(" ");  // 3
+         * }
+         * @endcode
+         *
+         * @see tokens(const String&, const void*, const void*)
+         */
+        size_t tokens(const char* delim,
+                      const void* begin = nullptr,
+                      const void* end   = nullptr) const noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

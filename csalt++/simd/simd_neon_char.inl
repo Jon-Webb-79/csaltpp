@@ -56,8 +56,7 @@ static inline size_t simd_first_diff_u8(const uint8_t* a,
 
     return n;
 }
-// ================================================================================ 
-// ================================================================================ 
+// -------------------------------------------------------------------------------- 
 
 #ifndef SIZE_MAX
   #define SIZE_MAX ((size_t)-1)
@@ -165,6 +164,73 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
     }
 
     return SIZE_MAX;
+}
+// -------------------------------------------------------------------------------- 
+
+size_t simd_token_count_u8(const uint8_t* s, size_t n,
+                           const char* delim, size_t dlen)
+{
+    if ((s == NULL) || (delim == NULL)) return SIZE_MAX;
+    if (n == 0u) return 0u;
+    if (dlen == 0u) return 1u; /* no delimiters => whole window is one token */
+
+    /* LUT for scalar tail */
+    uint8_t lut[256];
+    memset(lut, 0, sizeof(lut));
+    for (size_t j = 0; j < dlen; ++j) {
+        lut[(unsigned char)delim[j]] = 1u;
+    }
+
+    size_t i = 0u;
+    size_t count = 0u;
+    uint32_t prev_is_delim = 1u;
+
+    /* Constants for NEON movemask (8-lane halves) */
+    const uint8x16_t bitweights =
+        (uint8x16_t){ 1u,2u,4u,8u,16u,32u,64u,128u,  1u,2u,4u,8u,16u,32u,64u,128u };
+
+    for (; i + 16u <= n; i += 16u) {
+        uint8x16_t v = vld1q_u8(s + i);
+
+        /* Build per-lane delimiter mask as 0xFF where delim, else 0x00 */
+        uint8x16_t m = vdupq_n_u8(0u);
+        for (size_t j = 0; j < dlen; ++j) {
+            uint8x16_t dj = vdupq_n_u8((uint8_t)(unsigned char)delim[j]);
+            m = vorrq_u8(m, vceqq_u8(v, dj));
+        }
+
+        /* movemask16: compress top-bit of each lane to a 16-bit mask
+           Here we use bitweights + horizontal pairwise sums to produce:
+             low 8 bits in lane0 of sum64[0], high 8 bits in lane0 of sum64[1]. */
+        uint8x16_t weighted = vandq_u8(m, bitweights);
+        uint16x8_t sum16 = vpaddlq_u8(weighted);
+        uint32x4_t sum32 = vpaddlq_u16(sum16);
+        uint64x2_t sum64 = vpaddlq_u32(sum32);
+
+        uint64_t lo = vgetq_lane_u64(sum64, 0);
+        uint64_t hi = vgetq_lane_u64(sum64, 1);
+
+        uint32_t dm = (uint32_t)((lo & 0xFFu) | ((hi & 0xFFu) << 8)); /* 16-bit used */
+
+        uint32_t non = (~dm) & 0xFFFFu;
+        uint32_t starts = non & ((dm << 1) | (prev_is_delim & 1u));
+
+        count += (size_t)__builtin_popcount(starts);
+        prev_is_delim = (dm >> 15) & 1u;
+    }
+
+    /* Scalar tail */
+    bool in_token = (prev_is_delim == 0u);
+    for (; i < n; ++i) {
+        const bool is_delim = (lut[s[i]] != 0u);
+        if (!is_delim) {
+            if (!in_token) { ++count; in_token = true; }
+        } else {
+            in_token = false;
+        }
+    }
+
+    return count;
 }
 // ================================================================================ 
 // ================================================================================ 
@@ -318,47 +384,5 @@ static inline size_t simd_last_substr_index_neon(const unsigned char* s, size_t 
 
     return last;
 }
-static inline size_t simd_token_count_neon(const char* s, size_t n,
-                                           const char* delim, size_t dlen)
-{
-    size_t i = 0, count = 0;
-    uint8_t prev_last = 0xFF; /* virtual delimiter before start */
-
-    for (; i + 16 <= n; i += 16) {
-        uint8x16_t v = vld1q_u8((const uint8_t*)(s + i));
-        uint8x16_t dm = vceqq_u8(v, vdupq_n_u8((uint8_t)delim[0]));
-        for (size_t j = 1; j < dlen; ++j) {
-            dm = vorrq_u8(dm, vceqq_u8(v, vdupq_n_u8((uint8_t)delim[j])));
-        }
-        uint8x16_t non = vmvnq_u8(dm);
-        uint8x16_t prev_fill = vdupq_n_u8(prev_last);
-        /* previous-delim per position: [prev_last, dm[0], dm[1], ... dm[14]] */
-        uint8x16_t prev = vextq_u8(prev_fill, dm, 15);
-        uint8x16_t starts = vandq_u8(non, prev);
-
-        /* convert 0xFF -> 1, 0x00 -> 0, then horizontal sum */
-        uint8x16_t ones = vshrq_n_u8(starts, 7);
-        uint16x8_t  s16  = vpaddlq_u8(ones);
-        uint32x4_t  s32  = vpaddlq_u16(s16);
-        uint64x2_t  s64  = vpaddlq_u32(s32);
-        count += (size_t)(vgetq_lane_u64(s64, 0) + vgetq_lane_u64(s64, 1));
-
-        /* carry last-lane delimiter flag (0xFF or 0x00) */
-        prev_last = (uint8_t)(vgetq_lane_u8(dm, 15) ? 0xFF : 0x00);
-    }
-
-    /* scalar tail */
-    uint8_t lut[256]; memset(lut, 0, sizeof(lut));
-    for (const unsigned char* p = (const unsigned char*)delim; *p; ++p) lut[*p] = 1;
-    bool in_token = (prev_last == 0x00);
-    for (; i < n; ++i) {
-        const bool is_delim = lut[(unsigned char)s[i]] != 0;
-        if (!is_delim) { if (!in_token) { ++count; in_token = true; } }
-        else in_token = false;
-    }
-    return count;
-}
-
-
 #endif /* CSALT_SIMD_NEON_CHAR_INL */
 

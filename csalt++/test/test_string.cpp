@@ -3504,6 +3504,252 @@ TEST_F(StringWordsTest, BothOverloads_AgreeOnCount) {
     EXPECT_EQ(from_string, from_literal);
     EXPECT_EQ(from_string, 2u);
 }
+// -------------------------------------------------------------------------------- 
+
+/**
+ * @brief Test fixture providing a shared HeapAllocator and a make() helper
+ *        that wraps String::init() and asserts on allocation failure.
+ */
+class StringTokensTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator alloc;
+
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter>
+    make(const char* cstr) {
+        auto r = cslt::String::init(cstr, 0, alloc);
+        EXPECT_TRUE(r.hasValue()) << "String::init failed for: " << cstr;
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r.value());
+    }
+};
+
+// ================================================================================
+// tokens(const char*) — C-string literal overload, happy path
+// ================================================================================
+
+// Basic space-separated words
+TEST_F(StringTokensTest, Literal_ThreeSpaceSeparatedWords) {
+    auto s = make("one two three");
+    EXPECT_EQ(s->tokens(" "), 3u);
+}
+
+// Single token, no delimiter present
+TEST_F(StringTokensTest, Literal_SingleToken_NoDelimiterPresent) {
+    auto s = make("hello");
+    EXPECT_EQ(s->tokens(" "), 1u);
+}
+
+// Multiple delimiter characters in the set (comma and space)
+TEST_F(StringTokensTest, Literal_MultipleDelimiterChars_CommaAndSpace) {
+    auto s = make("a, b, c");
+    EXPECT_EQ(s->tokens(", "), 3u);
+}
+
+// Tab-separated values
+TEST_F(StringTokensTest, Literal_TabSeparated) {
+    auto s = make("col1\tcol2\tcol3\tcol4");
+    EXPECT_EQ(s->tokens("\t"), 4u);
+}
+
+// Mixed whitespace (space and newline) as delimiter set
+TEST_F(StringTokensTest, Literal_MixedWhitespaceDelimiter) {
+    auto s = make("alpha beta\ngamma delta");
+    EXPECT_EQ(s->tokens(" \n"), 4u);
+}
+
+// Single character string that is not a delimiter — one token
+TEST_F(StringTokensTest, Literal_SingleCharString_NotDelimiter) {
+    auto s = make("x");
+    EXPECT_EQ(s->tokens(" "), 1u);
+}
+
+// Delimiter appears at start and end — should not produce phantom tokens
+TEST_F(StringTokensTest, Literal_LeadingAndTrailingDelimiters) {
+    auto s = make("  hello world  ");
+    EXPECT_EQ(s->tokens(" "), 2u);
+}
+
+// Multiple consecutive delimiters mid-string collapse into one boundary
+TEST_F(StringTokensTest, Literal_ConsecutiveDelimitersCollapse) {
+    auto s = make("one   two   three");
+    EXPECT_EQ(s->tokens(" "), 3u);
+}
+
+// Slash-delimited path components
+TEST_F(StringTokensTest, Literal_PathDelimitedBySlash) {
+    auto s = make("usr/local/bin/tool");
+    EXPECT_EQ(s->tokens("/"), 4u);
+}
+
+// ================================================================================
+// tokens(const char*) — C-string literal overload, edge cases
+// ================================================================================
+
+// String contains only delimiters — expect 0
+TEST_F(StringTokensTest, Literal_OnlyDelimiters_ReturnsZero) {
+    auto s = make("   ");
+    EXPECT_EQ(s->tokens(" "), 0u);
+}
+
+// Empty delimiter string — whole window is one token
+TEST_F(StringTokensTest, Literal_EmptyDelimiter_WholeStringIsOneToken) {
+    auto s = make("anything");
+    EXPECT_EQ(s->tokens(""), 1u);
+}
+
+// Null delimiter pointer — invalid argument, expect SIZE_MAX
+TEST_F(StringTokensTest, Literal_NullDelimiter_ReturnsSizeMax) {
+    auto s = make("hello");
+    EXPECT_EQ(s->tokens(nullptr), SIZE_MAX);
+}
+
+// Ranged search covering only part of the string
+TEST_F(StringTokensTest, Literal_WithRange_PartialWindow) {
+    auto s = make("one two three four");
+    // Window covers "one two" (first 7 chars)
+    const void* begin = s->c_str();
+    const void* end   = s->c_str() + 7;
+    EXPECT_EQ(s->tokens(" ", begin, end), 2u);
+}
+
+// Ranged search whose window contains only delimiters — expect 0
+TEST_F(StringTokensTest, Literal_WithRange_WindowOnlyDelimiters) {
+    auto s = make("one   two");
+    // Window covers the three spaces between the words
+    const void* begin = s->c_str() + 3;
+    const void* end   = s->c_str() + 6;
+    EXPECT_EQ(s->tokens(" ", begin, end), 0u);
+}
+
+// Ranged search whose window contains exactly one token
+TEST_F(StringTokensTest, Literal_WithRange_SingleTokenInWindow) {
+    auto s = make("one two three");
+    // Window covers "two" (chars 4–6)
+    const void* begin = s->c_str() + 4;
+    const void* end   = s->c_str() + 7;
+    EXPECT_EQ(s->tokens(" ", begin, end), 1u);
+}
+
+// ================================================================================
+// tokens(const String&) — String overload, happy path
+// ================================================================================
+
+// Basic space-separated words
+TEST_F(StringTokensTest, StringOverload_ThreeSpaceSeparatedWords) {
+    auto s = make("one two three");
+    auto d = make(" ");
+    EXPECT_EQ(s->tokens(*d), 3u);
+}
+
+// Single token, no delimiter present
+TEST_F(StringTokensTest, StringOverload_SingleToken_NoDelimiterPresent) {
+    auto s = make("hello");
+    auto d = make(" ");
+    EXPECT_EQ(s->tokens(*d), 1u);
+}
+
+// Multiple delimiter characters in the set
+TEST_F(StringTokensTest, StringOverload_MultipleDelimiterChars) {
+    auto s = make("a, b, c");
+    auto d = make(", ");
+    EXPECT_EQ(s->tokens(*d), 3u);
+}
+
+// Tab-separated values
+TEST_F(StringTokensTest, StringOverload_TabSeparated) {
+    auto s = make("col1\tcol2\tcol3\tcol4");
+    auto d = make("\t");
+    EXPECT_EQ(s->tokens(*d), 4u);
+}
+
+// Delimiter appears at start and end
+TEST_F(StringTokensTest, StringOverload_LeadingAndTrailingDelimiters) {
+    auto s = make("  hello world  ");
+    auto d = make(" ");
+    EXPECT_EQ(s->tokens(*d), 2u);
+}
+
+// Consecutive delimiters collapse
+TEST_F(StringTokensTest, StringOverload_ConsecutiveDelimitersCollapse) {
+    auto s = make("one   two   three");
+    auto d = make(" ");
+    EXPECT_EQ(s->tokens(*d), 3u);
+}
+
+// ================================================================================
+// tokens(const String&) — String overload, edge cases
+// ================================================================================
+
+// String contains only delimiters — expect 0
+TEST_F(StringTokensTest, StringOverload_OnlyDelimiters_ReturnsZero) {
+    auto s = make("   ");
+    auto d = make(" ");
+    EXPECT_EQ(s->tokens(*d), 0u);
+}
+
+// Empty delimiter string — whole window is one token
+TEST_F(StringTokensTest, StringOverload_EmptyDelimiter_WholeStringIsOneToken) {
+    auto s = make("anything");
+    auto d = make("");
+    EXPECT_EQ(s->tokens(*d), 1u);
+}
+
+// Ranged search covering a partial window
+TEST_F(StringTokensTest, StringOverload_WithRange_PartialWindow) {
+    auto s = make("one two three four");
+    auto d = make(" ");
+    // Window covers "one two" (first 7 chars)
+    const void* begin = s->c_str();
+    const void* end   = s->c_str() + 7;
+    EXPECT_EQ(s->tokens(*d, begin, end), 2u);
+}
+
+// Ranged search whose window contains only delimiters — expect 0
+TEST_F(StringTokensTest, StringOverload_WithRange_WindowOnlyDelimiters) {
+    auto s = make("one   two");
+    auto d = make(" ");
+    const void* begin = s->c_str() + 3;
+    const void* end   = s->c_str() + 6;
+    EXPECT_EQ(s->tokens(*d, begin, end), 0u);
+}
+
+// Ranged search whose window contains exactly one token
+TEST_F(StringTokensTest, StringOverload_WithRange_SingleTokenInWindow) {
+    auto s = make("one two three");
+    auto d = make(" ");
+    // Window covers "two" (chars 4–6)
+    const void* begin = s->c_str() + 4;
+    const void* end   = s->c_str() + 7;
+    EXPECT_EQ(s->tokens(*d, begin, end), 1u);
+}
+
+// ================================================================================
+// Cross-overload consistency
+// ================================================================================
+
+// Both overloads must agree on the count for the same input
+TEST_F(StringTokensTest, BothOverloads_AgreeOnCount) {
+    auto s = make("the quick brown fox jumps over the lazy dog");
+    auto d = make(" ");
+
+    size_t from_string  = s->tokens(*d);
+    size_t from_literal = s->tokens(" ");
+
+    EXPECT_EQ(from_string, from_literal);
+    EXPECT_EQ(from_string, 9u);
+}
+
+// Both overloads agree on a ranged search
+TEST_F(StringTokensTest, BothOverloads_AgreeOnCount_WithRange) {
+    auto s = make("one two three four five");
+    auto d = make(" ");
+
+    // Window covers "two three" (chars 4–12)
+    const void* begin = s->c_str() + 4;
+    const void* end   = s->c_str() + 13;
+
+    EXPECT_EQ(s->tokens(*d, begin, end), s->tokens(" ", begin, end));
+    EXPECT_EQ(s->tokens(" ", begin, end), 2u);
+}
 // ================================================================================
 // ================================================================================
 // eof

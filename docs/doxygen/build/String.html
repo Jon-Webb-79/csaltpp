@@ -67,6 +67,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String4findEPKcPKvPKv11direction_t"><code class="docutils literal notranslate"><span class="pre">find()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String5wordsERK6StringPKvPKv"><code class="docutils literal notranslate"><span class="pre">words()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String5wordsEPKcPKvPKv"><code class="docutils literal notranslate"><span class="pre">words()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String6tokensERK6StringPKvPKv"><code class="docutils literal notranslate"><span class="pre">tokens()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String6tokensEPKcPKvPKv"><code class="docutils literal notranslate"><span class="pre">tokens()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4initEPKc6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 </ul>
 </li>
@@ -1112,6 +1114,80 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Number of non-overlapping occurrences; 0 on any error or if word is empty</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt6String6tokensERK6StringPKvPKv">
+<span id="_CPPv3NK4cslt6String6tokensERK6StringPKvPKv"></span><span id="_CPPv2NK4cslt6String6tokensERK6StringPKvPKv"></span><span id="cslt::String::tokens__StringCR.voidCP.voidCPC"></span><span class="target" id="classcslt_1_1String_1ae2eb1fbb34bddad0686bd396b0d88c28"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tokens</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">delim</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">begin</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">end</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String6tokensERK6StringPKvPKv" title="Link to this definition"></a><br /></dt>
+<dd><p>Count the number of tokens in this string using a <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> delimiter set. </p>
+<p>
+A token is a maximal run of non-delimiter characters. Adjacent delimiters collapse — they do not produce empty tokens. An empty window returns 0. If delim is empty the entire window is treated as one token.</p>
+<p>Return values:<ul class="simple">
+<li><p>0 if the window is empty or contains only delimiters</p></li>
+<li><p>N number of tokens</p></li>
+<li><p>SIZE_MAX if str_ or delim.str_ is null, or if range pointers are invalid</p></li>
+</ul>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;one two three&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">tokens</span><span class="p">(</span><span class="o">*</span><span class="n">d</span><span class="p">);</span><span class="w">  </span><span class="c1">// 3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>tokens(const char*, const void*, const void*) </p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delim</strong> – <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> whose characters collectively form the delimiter set. Every character in delim is treated as an independent separator (multi-character delimiters are NOT treated as a unit — this mirrors strtok semantics, not strstr semantics). </p></li>
+<li><p><strong>begin</strong> – Optional start of search range (default: start of string) </p></li>
+<li><p><strong>end</strong> – Optional end of search range (default: end of string) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of tokens found, or SIZE_MAX on error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt6String6tokensEPKcPKvPKv">
+<span id="_CPPv3NK4cslt6String6tokensEPKcPKvPKv"></span><span id="_CPPv2NK4cslt6String6tokensEPKcPKvPKv"></span><span id="cslt::String::tokens__cCP.voidCP.voidCPC"></span><span class="target" id="classcslt_1_1String_1a18164f5f747701b28ea4ab79d9551db9"></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">tokens</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">delim</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">begin</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">end</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String6tokensEPKcPKvPKv" title="Link to this definition"></a><br /></dt>
+<dd><p>Count the number of tokens in this string using a C-string delimiter set. </p>
+<p>
+Convenience overload accepting a string literal or C-string. Behaviour is identical to tokens(const String&amp;).</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;one two three&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">tokens</span><span class="p">(</span><span class="s">&quot; &quot;</span><span class="p">);</span><span class="w">  </span><span class="c1">// 3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p>tokens(const String&amp;, const void*, const void*) </p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>delim</strong> – Null-terminated C-string whose characters form the delimiter set </p></li>
+<li><p><strong>begin</strong> – Optional start of search range (default: start of string) </p></li>
+<li><p><strong>end</strong> – Optional end of search range (default: end of string) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Number of tokens found, or SIZE_MAX on error</p>
 </dd>
 </dl>
 </dd></dl>

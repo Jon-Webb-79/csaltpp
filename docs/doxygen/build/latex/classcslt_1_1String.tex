@@ -45,7 +45,11 @@ size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a299d1b577c9847512d8a89408cb134
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a0a52906a75298894dbeefb3c543df1f4}{words}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&word, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
 \begin{DoxyCompactList}\small\item\em Count non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} within this string. \end{DoxyCompactList}\item 
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}{words}} (const char $\ast$word, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
-\begin{DoxyCompactList}\small\item\em Count non-\/overlapping occurrences of a C-\/string within this string. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Count non-\/overlapping occurrences of a C-\/string within this string. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_ae2eb1fbb34bddad0686bd396b0d88c28}{tokens}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&delim, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
+\begin{DoxyCompactList}\small\item\em Count the number of tokens in this string using a \mbox{\hyperlink{classcslt_1_1String}{String}} delimiter set. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a18164f5f747701b28ea4ab79d9551db9}{tokens}} (const char $\ast$delim, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
+\begin{DoxyCompactList}\small\item\em Count the number of tokens in this string using a C-\/string delimiter set. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -1141,7 +1145,94 @@ Returns the number of characters stored in the container, not including the null
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}
- \mbox{\Hypertarget{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}\label{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}} 
+ \mbox{\Hypertarget{classcslt_1_1String_a18164f5f747701b28ea4ab79d9551db9}\label{classcslt_1_1String_a18164f5f747701b28ea4ab79d9551db9}} 
+\index{cslt::String@{cslt::String}!tokens@{tokens}}
+\index{tokens@{tokens}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{tokens()}{tokens()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::tokens (\begin{DoxyParamCaption}\item[{const char $\ast$}]{delim,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Count the number of tokens in this string using a C-\/string delimiter set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em delim} & Null-\/terminated C-\/string whose characters form the delimiter set \\
+\hline
+{\em begin} & Optional start of search range (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search range (default\+: end of string) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Number of tokens found, or SIZE\+\_\+\+MAX on error
+\end{DoxyReturn}
+Convenience overload accepting a string literal or C-\/string. Behaviour is identical to tokens(const String\&).
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one two three"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} n = s-\/>tokens(\textcolor{stringliteral}{"{} "{}});  \textcolor{comment}{// 3}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+tokens(const String\&, const void$\ast$, const void$\ast$) 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_ae2eb1fbb34bddad0686bd396b0d88c28}\label{classcslt_1_1String_ae2eb1fbb34bddad0686bd396b0d88c28}} 
+\index{cslt::String@{cslt::String}!tokens@{tokens}}
+\index{tokens@{tokens}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{tokens()}{tokens()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::tokens (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{delim,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Count the number of tokens in this string using a \mbox{\hyperlink{classcslt_1_1String}{String}} delimiter set. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em delim} & \mbox{\hyperlink{classcslt_1_1String}{String}} whose characters collectively form the delimiter set. Every character in delim is treated as an independent separator (multi-\/character delimiters are NOT treated as a unit — this mirrors strtok semantics, not strstr semantics). \\
+\hline
+{\em begin} & Optional start of search range (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search range (default\+: end of string) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Number of tokens found, or SIZE\+\_\+\+MAX on error
+\end{DoxyReturn}
+A token is a maximal run of non-\/delimiter characters. Adjacent delimiters collapse — they do not produce empty tokens. An empty window returns 0. If delim is empty the entire window is treated as one token.
+
+Return values\+:
+\begin{DoxyItemize}
+\item 0 if the window is empty or contains only delimiters
+\item N number of tokens
+\item SIZE\+\_\+\+MAX if str\+\_\+ or delim.\+str\+\_\+ is null, or if range pointers are invalid
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one two three"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{} "{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} d(r2.value());}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} n = s-\/>tokens(*d);  \textcolor{comment}{// 3}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+tokens(const char$\ast$, const void$\ast$, const void$\ast$) 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}\label{classcslt_1_1String_aa364caed1933542ad226be575806fe3d}} 
 \index{cslt::String@{cslt::String}!words@{words}}
 \index{words@{words}!cslt::String@{cslt::String}}
 \doxysubsubsection{\texorpdfstring{words()}{words()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}

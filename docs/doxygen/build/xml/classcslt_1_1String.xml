@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1007" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1007" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1072" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1072" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -1460,6 +1460,146 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
         </inbodydescription>
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1001" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="558" bodyend="585"/>
       </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1ae2eb1fbb34bddad0686bd396b0d88c28" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::String::tokens</definition>
+        <argsstring>(const String &amp;delim, const void *begin=nullptr, const void *end=nullptr) const noexcept</argsstring>
+        <name>tokens</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1String" kindref="compound">String</ref> &amp;</type>
+          <declname>delim</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Count the number of tokens in this string using a <ref refid="classcslt_1_1String" kindref="compound">String</ref> delimiter set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>delim</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1String" kindref="compound">String</ref> whose characters collectively form the delimiter set. Every character in delim is treated as an independent separator (multi-character delimiters are NOT treated as a unit — this mirrors strtok semantics, not strstr semantics). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of search range (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of search range (default: end of string) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of tokens found, or SIZE_MAX on error</para>
+</simplesect>
+A token is a maximal run of non-delimiter characters. Adjacent delimiters collapse — they do not produce empty tokens. An empty window returns 0. If delim is empty the entire window is treated as one token.</para>
+<para>Return values:<itemizedlist>
+<listitem><para>0 if the window is empty or contains only delimiters</para>
+</listitem><listitem><para>N number of tokens</para>
+</listitem><listitem><para>SIZE_MAX if str_ or delim.str_ is null, or if range pointers are invalid</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r1<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one<sp/>two<sp/>three&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r2<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r1.hasValue()<sp/>&amp;&amp;<sp/>r2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r1.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>d(r2.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>s-&gt;tokens(*d);<sp/><sp/></highlight><highlight class="comment">//<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para>tokens(const char*, const void*, const void*) </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1039" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="588" bodyend="625"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1a18164f5f747701b28ea4ab79d9551db9" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::String::tokens</definition>
+        <argsstring>(const char *delim, const void *begin=nullptr, const void *end=nullptr) const noexcept</argsstring>
+        <name>tokens</name>
+        <param>
+          <type>const char *</type>
+          <declname>delim</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Count the number of tokens in this string using a C-string delimiter set. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>delim</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated C-string whose characters form the delimiter set </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of search range (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of search range (default: end of string) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Number of tokens found, or SIZE_MAX on error</para>
+</simplesect>
+Convenience overload accepting a string literal or C-string. Behaviour is identical to tokens(const String&amp;).</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one<sp/>two<sp/>three&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>s-&gt;tokens(</highlight><highlight class="stringliteral">&quot;<sp/>&quot;</highlight><highlight class="normal">);<sp/><sp/></highlight><highlight class="comment">//<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para>tokens(const String&amp;, const void*, const void*) </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1066" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="628" bodyend="665"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Allocator-backed string container. </para>
@@ -1497,7 +1637,7 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1008"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1073"/>
     <listofallmembers>
       <member refid="classcslt_1_1String_1aed2a23a1c540c4caf68f6e43a1d4164a" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>alloc_</name></member>
       <member refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>allocator</name></member>
@@ -1525,6 +1665,8 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
       <member refid="classcslt_1_1String_1ad65d747327441df6ed27e322208215b9" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>String</name></member>
       <member refid="classcslt_1_1String_1a7e91af71efcd95478ec7f2b083a5963a" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>String</name></member>
       <member refid="classcslt_1_1String_1a689e801650cd38a0341ef5781c508716" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>StringDeleter</name></member>
+      <member refid="classcslt_1_1String_1ae2eb1fbb34bddad0686bd396b0d88c28" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>tokens</name></member>
+      <member refid="classcslt_1_1String_1a18164f5f747701b28ea4ab79d9551db9" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>tokens</name></member>
       <member refid="classcslt_1_1String_1a0a52906a75298894dbeefb3c543df1f4" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>words</name></member>
       <member refid="classcslt_1_1String_1aa364caed1933542ad226be575806fe3d" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>words</name></member>
       <member refid="classcslt_1_1String_1a675f1af6899bff56d3fbd6201497bd1b" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>~String</name></member>

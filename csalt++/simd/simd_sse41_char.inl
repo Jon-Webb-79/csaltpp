@@ -100,38 +100,65 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
 
     const size_t last_start = hay_len - needle_len;
 
+    /* For very small haystacks, a vector load would overread.
+       Handle entirely in scalar to guarantee no OOB reads. */
+    if (hay_len < 16u) {
+        if (dir == FORWARD) {
+            for (size_t i = 0u; i <= last_start; ++i) {
+                if (hay[i] != first) continue;
+                if (needle_len == 1u) return i;
+                if (memcmp(hay + i + 1u, needle + 1u, needle_len - 1u) == 0) {
+                    return i;
+                }
+            }
+            return SIZE_MAX;
+        } else { /* REVERSE */
+            for (size_t i = last_start + 1u; i-- > 0u; ) {
+                if (hay[i] != first) continue;
+                if (needle_len == 1u) return i;
+                if (memcmp(hay + i + 1u, needle + 1u, needle_len - 1u) == 0) {
+                    return i;
+                }
+                if (i == 0u) break;
+            }
+            return SIZE_MAX;
+        }
+    }
+
+    /* hay_len >= 16 from here on */
+
     if (dir == FORWARD) {
         size_t i = 0u;
 
-        while (i <= last_start) {
-            if ((i + 16u) <= hay_len) {
-                __m128i v  = _mm_loadu_si128((const __m128i*)(const void*)(hay + i));
-                __m128i eq = _mm_cmpeq_epi8(v, vfirst);
-                uint16_t mask = (uint16_t)_mm_movemask_epi8(eq);
+        /* Only load at positions i where i+16 <= hay_len */
+        const size_t vec_end = hay_len - 16u;
 
-                while (mask != 0u) {
-                    unsigned bit = csalt_first_bit16(mask);
-                    size_t pos = i + (size_t)bit;
+        while (i <= last_start && i <= vec_end) {
+            __m128i v  = _mm_loadu_si128((const __m128i*)(const void*)(hay + i));
+            __m128i eq = _mm_cmpeq_epi8(v, vfirst);
+            uint16_t mask = (uint16_t)_mm_movemask_epi8(eq);
 
-                    if (pos <= last_start) {
-                        if (needle_len == 1u) { return pos; }
-                        if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
-                            return pos;
-                        }
+            while (mask != 0u) {
+                unsigned bit = csalt_first_bit16(mask);
+                size_t pos = i + (size_t)bit;
+
+                if (pos <= last_start) {
+                    if (needle_len == 1u) { return pos; }
+                    if (memcmp(hay + pos + 1u, needle + 1u, needle_len - 1u) == 0) {
+                        return pos;
                     }
-
-                    mask = (uint16_t)(mask & (uint16_t)(mask - 1u));
                 }
 
-                i += 16u;
-            } else {
-                break;
+                mask = (uint16_t)(mask & (uint16_t)(mask - 1u));
             }
+
+            i += 16u;
         }
 
+        /* Scalar tail for remaining start positions */
         for (; i <= last_start; ++i) {
-            if (hay[i] != first) { continue; }
-            if (needle_len == 1u) { return i; }
+            if (hay[i] != first) continue;
+            if (needle_len == 1u) return i;
             if (memcmp(hay + i + 1u, needle + 1u, needle_len - 1u) == 0) {
                 return i;
             }
@@ -144,18 +171,24 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
     {
         size_t i = last_start;
 
-        while (true) {
+        for (;;) {
+            /* Choose a block that contains i but also stays safe for a 16B load */
             size_t block_start = (i >= 15u) ? (i - 15u) : 0u;
+
+            /* Ensure block_start+16 <= hay_len (safe load) */
+            if (block_start + 16u > hay_len) {
+                block_start = hay_len - 16u; /* safe because hay_len >= 16 */
+            }
 
             __m128i v  = _mm_loadu_si128((const __m128i*)(const void*)(hay + block_start));
             __m128i eq = _mm_cmpeq_epi8(v, vfirst);
             uint16_t mask = (uint16_t)_mm_movemask_epi8(eq);
 
-            size_t block_end = block_start + 15u;
-            size_t max_pos   = (i < last_start) ? i : last_start;
+            /* Only keep candidate positions <= max_pos within this block */
+            size_t max_pos = (i < last_start) ? i : last_start;
 
-            if (max_pos < block_end) {
-                unsigned keep = (unsigned)(max_pos - block_start + 1u);
+            if (max_pos < block_start + 15u) {
+                unsigned keep = (unsigned)(max_pos - block_start + 1u); /* 1..16 */
                 if (keep < 16u) {
                     mask = (uint16_t)(mask & (uint16_t)((1u << keep) - 1u));
                 }
@@ -179,6 +212,54 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
     }
 
     return SIZE_MAX;
+}
+// -------------------------------------------------------------------------------- 
+
+size_t simd_token_count_u8(const uint8_t* s, size_t n,
+                           const char* delim, size_t dlen) {
+    if ((s == NULL) || (delim == NULL)) return SIZE_MAX;
+    if (n == 0u) return 0u;
+    if (dlen == 0u) return 1u;
+
+    uint8_t lut[256];
+    memset(lut, 0, sizeof(lut));
+    for (size_t j = 0; j < dlen; ++j) {
+        lut[(unsigned char)delim[j]] = 1u;
+    }
+
+    size_t i = 0u;
+    size_t count = 0u;
+    uint32_t prev_is_delim = 1u;
+
+    for (; i + 16u <= n; i += 16u) {
+        __m128i v = _mm_loadu_si128((const __m128i*)(const void*)(s + i));
+        __m128i m = _mm_setzero_si128();
+
+        for (size_t j = 0; j < dlen; ++j) {
+            __m128i dj = _mm_set1_epi8((char)delim[j]);
+            m = _mm_or_si128(m, _mm_cmpeq_epi8(v, dj));
+        }
+
+        uint32_t dm  = (uint32_t)_mm_movemask_epi8(m) & 0xFFFFu;
+        uint32_t non = (~dm) & 0xFFFFu;
+
+        uint32_t starts = non & ((dm << 1) | (prev_is_delim & 1u));
+        count += (size_t)__builtin_popcount(starts);
+
+        prev_is_delim = (dm >> 15) & 1u;
+    }
+
+    bool in_token = (prev_is_delim == 0u);
+    for (; i < n; ++i) {
+        const bool is_delim = (lut[s[i]] != 0u);
+        if (!is_delim) {
+            if (!in_token) { ++count; in_token = true; }
+        } else {
+            in_token = false;
+        }
+    }
+
+    return count;
 }
 // ================================================================================ 
 // ================================================================================ 
@@ -252,36 +333,6 @@ static inline size_t simd_last_substr_index_sse41(const unsigned char* s, size_t
         if (s[j] == pat[0] && memcmp(s + j, pat, m) == 0) return j;
 
     return last;
-}
-static inline size_t simd_token_count_sse41(const char* s, size_t n,
-                                           const char* delim, size_t dlen)
-{
-    size_t i = 0, count = 0;
-    uint32_t prev_is_delim = 1;
-
-    for (; i + 16 <= n; i += 16) {
-        __m128i v = _mm_loadu_si128((const __m128i*)(s + i));
-        __m128i m = _mm_setzero_si128();
-        for (size_t j = 0; j < dlen; ++j) {
-            __m128i dj = _mm_set1_epi8((char)delim[j]);
-            m = _mm_or_si128(m, _mm_cmpeq_epi8(v, dj));
-        }
-        uint32_t dm = (uint32_t)_mm_movemask_epi8(m);
-        uint32_t non = ~dm & 0xFFFFu;
-        uint32_t starts = non & ((dm << 1) | (prev_is_delim & 1));
-        count += (size_t)__builtin_popcount(starts);
-        prev_is_delim = (dm >> 15) & 1u;
-    }
-
-    uint8_t lut[256]; memset(lut, 0, sizeof(lut));
-    for (const unsigned char* p = (const unsigned char*)delim; *p; ++p) lut[*p] = 1;
-    bool in_token = !prev_is_delim;
-    for (; i < n; ++i) {
-        const bool is_delim = lut[(unsigned char)s[i]] != 0;
-        if (!is_delim) { if (!in_token) { ++count; in_token = true; } }
-        else in_token = false;
-    }
-    return count;
 }
 
 #endif /* CSALT_SIMD_SSE41_CHAR_INL */

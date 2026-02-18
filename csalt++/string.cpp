@@ -583,6 +583,86 @@ namespace cslt {
         }
         return count;
     }
+// -------------------------------------------------------------------------------- 
+
+    size_t String::tokens(const String& delim,
+                          const void*   begin,
+                          const void*   end) const noexcept {
+        if (!str_ || !delim.str_) return SIZE_MAX;
+
+        const uint8_t* const base     = reinterpret_cast<const uint8_t*>(
+                                            static_cast<const void*>(str_));
+        const uint8_t* const used_end = base + len_;
+
+        const uint8_t* search_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<const uint8_t*>(begin);
+
+        const uint8_t* search_end = (end == nullptr)
+            ? used_end
+            : reinterpret_cast<const uint8_t*>(end);
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(search_begin) || !is_ptr(search_end)) return SIZE_MAX;
+
+        // Monotonic ordering required
+        if (search_begin > search_end) return SIZE_MAX;
+
+        // Clamp to used region
+        if (search_begin > used_end) return SIZE_MAX;
+        if (search_end   > used_end) search_end = used_end;
+
+        // Empty window
+        if (search_begin >= search_end) return 0u;
+
+        size_t const n    = static_cast<size_t>(search_end - search_begin);
+        size_t const dlen = delim.len_;
+
+        // No delimiters — entire window is one token
+        if (dlen == 0u) return 1u;
+
+        return simd_token_count_u8(search_begin, n, delim.str_, dlen);
+    }
+// --------------------------------------------------------------------------------
+
+    size_t String::tokens(const char* delim,
+                          const void* begin,
+                          const void* end) const noexcept {
+        if (!str_ || !delim) return SIZE_MAX;
+
+        const uint8_t* const base     = reinterpret_cast<const uint8_t*>(
+                                            static_cast<const void*>(str_));
+        const uint8_t* const used_end = base + len_;
+
+        const uint8_t* search_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<const uint8_t*>(begin);
+
+        const uint8_t* search_end = (end == nullptr)
+            ? used_end
+            : reinterpret_cast<const uint8_t*>(end);
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(search_begin) || !is_ptr(search_end)) return SIZE_MAX;
+
+        // Monotonic ordering required
+        if (search_begin > search_end) return SIZE_MAX;
+
+        // Clamp to used region
+        if (search_begin > used_end) return SIZE_MAX;
+        if (search_end   > used_end) search_end = used_end;
+
+        // Empty window
+        if (search_begin >= search_end) return 0u;
+
+        size_t const n    = static_cast<size_t>(search_end - search_begin);
+        size_t const dlen = std::strlen(delim);
+
+        // No delimiters — entire window is one token
+        if (dlen == 0u) return 1u;
+
+        return simd_token_count_u8(search_begin, n, delim, dlen);
+    }
 // ================================================================================
 // ================================================================================
 // eof

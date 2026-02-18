@@ -220,6 +220,61 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
         ? simd512_find_substr_u8_reverse_(hay, hay_len, needle, needle_len)
         : simd512_find_substr_u8_forward_(hay, hay_len, needle, needle_len);
 }
+// -------------------------------------------------------------------------------- 
+
+static inline size_t simd_token_count_u8(const uint8_t* p,
+                                         size_t n,
+                                         const char* delim,
+                                         size_t dlen) {
+    if ((p == NULL) || (delim == NULL)) return SIZE_MAX;
+    if (n == 0u) return 0u;
+    if (dlen == 0u) return 1u;
+
+    uint8_t lut[256];
+    memset(lut, 0, sizeof(lut));
+    for (size_t j = 0; j < dlen; ++j) {
+        lut[(unsigned char)delim[j]] = 1u;
+    }
+
+    size_t i = 0u;
+    size_t count = 0u;
+    uint32_t prev_is_delim = 1u;
+
+    for (; i + 64u <= n; i += 64u) {
+        __m512i v = _mm512_loadu_si512((const void*)(p + i));
+
+        /* dm bit k = 1 if v[k] is delimiter */
+        __mmask64 dm = 0;
+        for (size_t j = 0; j < dlen; ++j) {
+            __m512i dj = _mm512_set1_epi8((char)delim[j]);
+            dm |= _mm512_cmpeq_epi8_mask(v, dj);
+        }
+
+        /* starts where current is non-delim and previous is delim */
+        __mmask64 non = ~dm;
+
+        /* Shift dm left by 1 bit for “previous lane delim”, and inject carry-in */
+        uint64_t dm_u = (uint64_t)dm;
+        uint64_t prev_delim_u = (dm_u << 1) | (uint64_t)(prev_is_delim & 1u);
+
+        uint64_t starts_u = ((uint64_t)non) & prev_delim_u;
+
+        count += (size_t)__builtin_popcountll(starts_u);
+        prev_is_delim = (uint32_t)((dm_u >> 63) & 1u);
+    }
+
+    bool in_token = (prev_is_delim == 0u);
+    for (; i < n; ++i) {
+        const bool is_delim = (lut[p[i]] != 0u);
+        if (!is_delim) {
+            if (!in_token) { ++count; in_token = true; }
+        } else {
+            in_token = false;
+        }
+    }
+
+    return count;
+}
 // ================================================================================ 
 // ================================================================================ 
 
@@ -322,39 +377,6 @@ static inline size_t simd_last_substr_index_avx512bw(const unsigned char* s, siz
 
     return last;
 }
-static inline size_t simd_token_count_avx512bw(const char* s, size_t n,
-                                               const char* delim, size_t dlen)
-{
-    size_t i = 0, count = 0;
-    /* treat virtual byte before s[0] as delimiter */
-    uint64_t prev_is_delim = 1;
-
-    for (; i + 64 <= n; i += 64) {
-        __m512i v = _mm512_loadu_si512((const void*)(s + i));
-        __mmask64 dm = 0;
-        for (size_t j = 0; j < dlen; ++j) {
-            __m512i dj = _mm512_set1_epi8((char)delim[j]);
-            dm |= _mm512_cmpeq_epi8_mask(v, dj);
-        }
-        __mmask64 non = ~dm;
-        /* starts = non & (dm << 1 | prev) */
-        __mmask64 starts = non & ((dm << 1) | (prev_is_delim & 1));
-        count += (size_t)_mm_popcnt_u64(starts);
-        prev_is_delim = (dm >> 63) & 1u;
-    }
-
-    /* scalar tail with LUT */
-    uint8_t lut[256]; memset(lut, 0, sizeof(lut));
-    for (const unsigned char* p = (const unsigned char*)delim; *p; ++p) lut[*p] = 1;
-    bool in_token = !prev_is_delim;
-    for (; i < n; ++i) {
-        const bool is_delim = lut[(unsigned char)s[i]] != 0;
-        if (!is_delim) { if (!in_token) { ++count; in_token = true; } }
-        else in_token = false;
-    }
-    return count;
-}
-
 
 #endif /* CSALT_SIMD_AVX512_CHAR_INL */
 

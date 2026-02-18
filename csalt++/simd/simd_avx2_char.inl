@@ -228,6 +228,72 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
         ? simd_find_substr_u8_reverse_(hay, hay_len, needle, needle_len)
         : simd_find_substr_u8_forward_(hay, hay_len, needle, needle_len);
 }
+// -------------------------------------------------------------------------------- 
+
+static inline size_t simd_token_count_u8(const uint8_t* p,
+                                         size_t n,
+                                         const char* delim,
+                                         size_t dlen) {
+    if ((p == NULL) || (delim == NULL)) return SIZE_MAX;
+
+    if (n == 0u) return 0u;
+    if (dlen == 0u) return 1u; /* no delimiters => whole window is one token */
+
+    /* LUT for scalar tail and for optional scalar checks */
+    uint8_t lut[256];
+    memset(lut, 0, sizeof(lut));
+    for (size_t j = 0; j < dlen; ++j) {
+        lut[(unsigned char)delim[j]] = 1u;
+    }
+
+    size_t i = 0u;
+    size_t count = 0u;
+
+    /* Treat start-of-window as delimiter boundary */
+    uint32_t prev_is_delim = 1u;
+
+    for (; i + 32u <= n; i += 32u) {
+        __m256i v = _mm256_loadu_si256((const __m256i*)(const void*)(p + i));
+
+        /* Build delimiter mask for this 32B block:
+           dm bit k = 1 if v[k] is a delimiter */
+        __m256i m = _mm256_setzero_si256();
+        for (size_t j = 0; j < dlen; ++j) {
+            __m256i dj = _mm256_set1_epi8((char)delim[j]);
+            m = _mm256_or_si256(m, _mm256_cmpeq_epi8(v, dj));
+        }
+
+        uint32_t dm = (uint32_t)_mm256_movemask_epi8(m); /* 32-bit mask */
+        uint32_t non = ~dm;
+
+        /* Token start where current is non-delim AND previous is delim.
+           Previous for lane 0 comes from prev_is_delim. */
+        uint32_t prev_delim_mask = (dm << 1) | (prev_is_delim & 1u);
+        uint32_t starts = non & prev_delim_mask;
+
+        count += (size_t)__builtin_popcount(starts);
+
+        /* Carry last lane delimiter state */
+        prev_is_delim = (dm >> 31) & 1u;
+    }
+
+    /* Scalar tail */
+    bool in_token = (prev_is_delim == 0u);
+
+    for (; i < n; ++i) {
+        const bool is_delim = (lut[p[i]] != 0u);
+        if (!is_delim) {
+            if (!in_token) {
+                ++count;
+                in_token = true;
+            }
+        } else {
+            in_token = false;
+        }
+    }
+
+    return count;
+}
 // ================================================================================ 
 // ================================================================================ 
 
@@ -340,36 +406,5 @@ static inline size_t simd_last_substr_index_avx2(const unsigned char* s, size_t 
 
     return last;
 }
-static inline size_t simd_token_count_avx2(const char* s, size_t n,
-                                           const char* delim, size_t dlen)
-{
-    size_t i = 0, count = 0;
-    uint32_t prev_is_delim = 1;
-
-    for (; i + 32 <= n; i += 32) {
-        __m256i v = _mm256_loadu_si256((const __m256i*)(s + i));
-        __m256i m = _mm256_setzero_si256();
-        for (size_t j = 0; j < dlen; ++j) {
-            __m256i dj = _mm256_set1_epi8((char)delim[j]);
-            m = _mm256_or_si256(m, _mm256_cmpeq_epi8(v, dj));
-        }
-        uint32_t dm = (uint32_t)_mm256_movemask_epi8(m);
-        uint32_t non = ~dm;
-        uint32_t starts = non & ((dm << 1) | (prev_is_delim & 1));
-        count += (size_t)__builtin_popcount(starts);
-        prev_is_delim = (dm >> 31) & 1u;
-    }
-
-    uint8_t lut[256]; memset(lut, 0, sizeof(lut));
-    for (const unsigned char* p = (const unsigned char*)delim; *p; ++p) lut[*p] = 1;
-    bool in_token = !prev_is_delim;
-    for (; i < n; ++i) {
-        const bool is_delim = lut[(unsigned char)s[i]] != 0;
-        if (!is_delim) { if (!in_token) { ++count; in_token = true; } }
-        else in_token = false;
-    }
-    return count;
-}
-
 #endif /* CSALT_SIMD_AVX2_CHAR_INL */
 

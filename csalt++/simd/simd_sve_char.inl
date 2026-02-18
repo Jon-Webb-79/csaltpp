@@ -218,6 +218,92 @@ static inline size_t simd_find_substr_u8(const uint8_t* hay,
         return SIZE_MAX;
     }
 }
+// -------------------------------------------------------------------------------- 
+
+size_t simd_token_count_u8(const uint8_t* s, size_t n,
+                           const char* delim, size_t dlen) {
+    if ((s == NULL) || (delim == NULL)) return SIZE_MAX;
+    if (n == 0u) return 0u;
+    if (dlen == 0u) return 1u;
+
+    uint8_t lut[256];
+    memset(lut, 0, sizeof(lut));
+    for (size_t j = 0; j < dlen; ++j) {
+        lut[(unsigned char)delim[j]] = 1u;
+    }
+
+    size_t count = 0u;
+    uint32_t prev_is_delim = 1u; /* start-of-window boundary */
+
+    size_t i = 0u;
+    while (i < n) {
+        svbool_t pg = svwhilelt_b8(i, n);
+        svuint8_t v = svld1_u8(pg, s + i);
+
+        /* Build delimiter predicate dm: lane true where v == delim[j] */
+        svbool_t dm = svdup_b8(false);
+        for (size_t j = 0; j < dlen; ++j) {
+            svuint8_t dj = svdup_n_u8((uint8_t)(unsigned char)delim[j]);
+            dm = svorr_b_z(pg, dm, svcmpeq_u8(pg, v, dj));
+        }
+
+        /* non-delim predicate */
+        svbool_t non = svnot_b_z(pg, dm);
+
+        /* Token starts = non && previous is delim.
+           We compute starts lane-by-lane using predicate iteration to avoid
+           relying on optional mask-to-integer intrinsics. */
+        svbool_t starts = svdup_b8(false);
+
+        /* Iterate active lanes in increasing index order */
+        svbool_t it = pg;
+        bool prev = (prev_is_delim != 0u);
+
+        while (svptest_any(svptrue_b8(), it)) {
+            /* index of next active lane */
+            uint64_t idx = svclastb_u64(svptrue_b8(), svcompact_u64(it, svindex_u64(0, 1)));
+
+            /* Read lane flags using svpextract-like pattern:
+               Make a predicate for that single lane. */
+            svbool_t lane = svdup_b8(false);
+            lane = svsetq_lane_b8(true, lane, (uint32_t)idx);
+
+            bool is_non = svptest_any(svptrue_b8(), svand_b_z(pg, non, lane));
+            bool is_del = svptest_any(svptrue_b8(), svand_b_z(pg, dm, lane));
+
+            if (is_non && prev) {
+                starts = svorr_b_z(pg, starts, lane);
+            }
+
+            /* update prev based on current lane */
+            prev = is_del;
+
+            /* clear this lane from iterator */
+            it = svand_b_z(pg, it, svnot_b_z(pg, lane));
+        }
+
+        /* Count starts */
+        count += (size_t)svcntp_b8(pg, starts);
+
+        /* Carry last-lane delimiter state to next chunk:
+           Determine last active lane in this chunk and query dm there. */
+        {
+            /* last active byte lane index is (i + active_count - 1) relative, but easier:
+               build reverse index and find last true lane. */
+            uint32_t active = (uint32_t)svcntp_b8(pg, pg);
+            if (active != 0u) {
+                uint32_t last_lane = active - 1u;
+                svbool_t lastp = svdup_b8(false);
+                lastp = svsetq_lane_b8(true, lastp, last_lane);
+                prev_is_delim = svptest_any(svptrue_b8(), svand_b_z(pg, dm, lastp)) ? 1u : 0u;
+            }
+        }
+
+        i += (size_t)svcntb();
+    }
+
+    return count;
+}
 // ================================================================================ 
 // ================================================================================ 
 static inline size_t simd_last_index_u8_sve(const unsigned char* s, size_t n, unsigned char c) {

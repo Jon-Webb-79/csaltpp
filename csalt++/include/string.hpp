@@ -1152,6 +1152,77 @@ namespace cslt {
                        const void* end   = nullptr) noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Remove all non-overlapping occurrences of a substring from this
+         *        string in-place, optionally consuming one trailing space after
+         *        each match
+         *
+         * @param substring C-string needle to search for and remove
+         * @param begin     Optional start of search window (default: start of string)
+         * @param end       Optional end of search window (default: end of string)
+         *
+         * @details Scans the window in reverse order (rightmost match first) and
+         * removes each occurrence by shifting the suffix left with memmove. After
+         * each removal the logical length (size()) is reduced accordingly and the
+         * window end is clamped to the new used region before the next search.
+         *
+         * Trailing-space elision: if the character immediately following a match
+         * is an ASCII space, that space is consumed along with the match. This
+         * keeps word-list strings tidy when a word is dropped from the middle.
+         *
+         * The method is a no-op if:
+         * - str_ or substring is null
+         * - substring is empty
+         * - The window is empty or inverted
+         * - Either range pointer falls outside the allocation
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("one fish two fish red fish", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     s->drop("fish");
+         *     std::cout << s->c_str() << std::endl;  // "one two red"
+         * }
+         * @endcode
+         *
+         * @see drop(const String&, const void*, const void*)
+         */
+        void drop(const char* substring,
+                  const void* begin = nullptr,
+                  const void* end   = nullptr) noexcept;
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Remove all non-overlapping occurrences of a String substring
+         *        from this string in-place, optionally consuming one trailing space
+         *
+         * @param substring String needle to search for and remove
+         * @param begin     Optional start of search window (default: start of string)
+         * @param end       Optional end of search window (default: end of string)
+         *
+         * @details Behaviour is identical to drop(const char*). See that overload
+         * for full semantics including trailing-space elision and window clamping.
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r1 = cslt::String::init("one fish two fish red fish", 0, alloc);
+         * auto r2 = cslt::String::init("fish", 0, alloc);
+         * if (r1.hasValue() && r2.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r1.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> needle(r2.value());
+         *     s->drop(*needle);
+         *     std::cout << s->c_str() << std::endl;  // "one two red"
+         * }
+         * @endcode
+         *
+         * @see drop(const char*, const void*, const void*)
+         */
+        void drop(const String& substring,
+                  const void*   begin = nullptr,
+                  const void*   end   = nullptr) noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

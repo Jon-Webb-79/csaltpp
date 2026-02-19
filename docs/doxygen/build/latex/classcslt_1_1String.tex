@@ -53,7 +53,11 @@ size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a18164f5f747701b28ea4ab79d9551d
 void \mbox{\hyperlink{classcslt_1_1String_a92ea4894c00f0ca3ec7aac7b02778f4f}{uppercase}} (const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
 \begin{DoxyCompactList}\small\item\em Convert ASCII letters in this string to uppercase in-\/place. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classcslt_1_1String_a40b7c4993607b42bc6216c83f319c6d2}{lowercase}} (const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
-\begin{DoxyCompactList}\small\item\em Convert ASCII letters in this string to lowercase in-\/place. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Convert ASCII letters in this string to lowercase in-\/place. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1String_ab42b5d7efa2838a28bf18aada634858c}{drop}} (const char $\ast$substring, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
+\begin{DoxyCompactList}\small\item\em Remove all non-\/overlapping occurrences of a substring from this string in-\/place, optionally consuming one trailing space after each match. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1String_ab29f156a3630ee6f06d2194a1764eae6}{drop}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&substring, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
+\begin{DoxyCompactList}\small\item\em Remove all non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} substring from this string in-\/place, optionally consuming one trailing space. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -805,6 +809,92 @@ Key behaviors\+:
 
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy()}} to \mbox{\hyperlink{classcslt_1_1String_a655e65ff6340cefabf99ef005fd8e18e}{copy}} using the same \mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_ab42b5d7efa2838a28bf18aada634858c}\label{classcslt_1_1String_ab42b5d7efa2838a28bf18aada634858c}} 
+\index{cslt::String@{cslt::String}!drop@{drop}}
+\index{drop@{drop}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{drop()}{drop()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily void cslt\+::\+String\+::drop (\begin{DoxyParamCaption}\item[{const char $\ast$}]{substring,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Remove all non-\/overlapping occurrences of a substring from this string in-\/place, optionally consuming one trailing space after each match. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em substring} & C-\/string needle to search for and remove \\
+\hline
+{\em begin} & Optional start of search window (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search window (default\+: end of string)\\
+\hline
+\end{DoxyParams}
+Scans the window in reverse order (rightmost match first) and removes each occurrence by shifting the suffix left with memmove. After each removal the logical length (\mbox{\hyperlink{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}{size()}}) is reduced accordingly and the window end is clamped to the new used region before the next search.
+
+Trailing-\/space elision\+: if the character immediately following a match is an ASCII space, that space is consumed along with the match. This keeps word-\/list strings tidy when a word is dropped from the middle.
+
+The method is a no-\/op if\+:
+\begin{DoxyItemize}
+\item str\+\_\+ or substring is null
+\item substring is empty
+\item The window is empty or inverted
+\item Either range pointer falls outside the allocation
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one fish two fish red fish"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    s-\/>drop(\textcolor{stringliteral}{"{}fish"{}});}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}one two red"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_ab29f156a3630ee6f06d2194a1764eae6}{drop(const String\&, const void$\ast$, const void$\ast$)}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_ab29f156a3630ee6f06d2194a1764eae6}\label{classcslt_1_1String_ab29f156a3630ee6f06d2194a1764eae6}} 
+\index{cslt::String@{cslt::String}!drop@{drop}}
+\index{drop@{drop}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{drop()}{drop()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily void cslt\+::\+String\+::drop (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{substring,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Remove all non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} substring from this string in-\/place, optionally consuming one trailing space. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em substring} & \mbox{\hyperlink{classcslt_1_1String}{String}} needle to search for and remove \\
+\hline
+{\em begin} & Optional start of search window (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search window (default\+: end of string)\\
+\hline
+\end{DoxyParams}
+Behaviour is identical to drop(const char$\ast$). See that overload for full semantics including trailing-\/space elision and window clamping.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r1 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one fish two fish red fish"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}fish"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r1.hasValue() \&\& r2.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r1.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} needle(r2.value());}
+\DoxyCodeLine{    s-\/>drop(*needle);}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}one two red"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_ab42b5d7efa2838a28bf18aada634858c}{drop(const char$\ast$, const void$\ast$, const void$\ast$)}} 
 \end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_a299d1b577c9847512d8a89408cb134a3}\label{classcslt_1_1String_a299d1b577c9847512d8a89408cb134a3}} 
 \index{cslt::String@{cslt::String}!find@{find}}

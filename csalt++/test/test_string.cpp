@@ -4045,6 +4045,298 @@ TEST_F(StringCaseTest, RoundTrip_UpperFirstHalf_LowerSecondHalf) {
     s->lowercase(second_begin, second_end);
     EXPECT_STREQ(s->c_str(), "HELLO world");
 }
+// -------------------------------------------------------------------------------- 
+
+class StringDropTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator alloc;
+
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter>
+    make(const char* cstr) {
+        auto r = cslt::String::init(cstr, 0, alloc);
+        EXPECT_TRUE(r.hasValue()) << "String::init failed for: " << cstr;
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r.value());
+    }
+};
+
+// ================================================================================
+// drop(const char*) — nominal
+// ================================================================================
+
+// Single occurrence removed, trailing space consumed
+TEST_F(StringDropTest, Literal_SingleOccurrence_TrailingSpaceConsumed) {
+    auto s = make("one fish two");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "one two");
+    EXPECT_EQ(s->size(), 7u);
+}
+
+// Multiple occurrences all removed
+TEST_F(StringDropTest, Literal_MultipleOccurrences_AllRemoved) {
+    auto s = make("one fish two fish red fish");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "one two red ");
+    EXPECT_EQ(s->size(), 12u);
+}
+
+// Needle at the very start of the string
+TEST_F(StringDropTest, Literal_MatchAtStart) {
+    auto s = make("fish two three");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "two three");
+}
+
+// Needle at the very end — no trailing space to consume
+TEST_F(StringDropTest, Literal_MatchAtEnd_NoTrailingSpace) {
+    auto s = make("one two fish");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "one two ");
+}
+
+// Needle is the entire string — result should be empty
+TEST_F(StringDropTest, Literal_NeedleIsEntireString_BecomesEmpty) {
+    auto s = make("fish");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "");
+    EXPECT_EQ(s->size(), 0u);
+}
+
+// Needle not present — string must be unchanged
+TEST_F(StringDropTest, Literal_NeedleNotPresent_Unchanged) {
+    auto s = make("one two three");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "one two three");
+    EXPECT_EQ(s->size(), 13u);
+}
+
+// No trailing space after match — only the needle itself is removed
+TEST_F(StringDropTest, Literal_NoTrailingSpace_OnlyNeedleRemoved) {
+    auto s = make("onefishtwo");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "onetwo");
+}
+
+// Multi-word needle
+TEST_F(StringDropTest, Literal_MultiWordNeedle) {
+    auto s = make("the quick brown fox jumps");
+    s->drop("quick brown");
+    EXPECT_STREQ(s->c_str(), "the fox jumps");
+}
+
+// Ranged drop — only occurrence inside window is removed; one outside survives
+TEST_F(StringDropTest, Literal_WithRange_OnlyWindowOccurrenceRemoved) {
+    auto s = make("fish one fish");
+    // Window covers " one fish" (chars 4–12), leaving the leading "fish" intact
+    const void* begin = s->c_str() + 4;
+    const void* end   = s->c_str() + 13;
+    s->drop("fish", begin, end);
+    EXPECT_STREQ(s->c_str(), "fish one ");
+}
+
+// size() reflects the reduced length after all drops
+TEST_F(StringDropTest, Literal_SizeReducedCorrectly) {
+    auto s = make("ab fish cd fish ef");
+    size_t before = s->size();
+    s->drop("fish");
+    // Each "fish " (5 chars) is removed twice → 10 chars shorter
+    EXPECT_EQ(s->size(), before - 10u);
+}
+
+// ================================================================================
+// drop(const char*) — off-nominal edge cases
+// ================================================================================
+
+// Null needle — must be a no-op
+TEST_F(StringDropTest, Literal_NullNeedle_NoOp) {
+    auto s = make("hello world");
+    s->drop(nullptr);
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Empty needle — must be a no-op
+TEST_F(StringDropTest, Literal_EmptyNeedle_NoOp) {
+    auto s = make("hello world");
+    s->drop("");
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Needle longer than the string — no match possible, string unchanged
+TEST_F(StringDropTest, Literal_NeedleLongerThanString_Unchanged) {
+    auto s = make("hi");
+    s->drop("hello world");
+    EXPECT_STREQ(s->c_str(), "hi");
+}
+
+// begin == end — empty window, string must be unchanged
+TEST_F(StringDropTest, Literal_BeginEqualsEnd_NoOp) {
+    auto s = make("one fish two");
+    const void* mid = s->c_str() + 4;
+    s->drop("fish", mid, mid);
+    EXPECT_STREQ(s->c_str(), "one fish two");
+}
+
+// Repeated calls on already-cleaned string are idempotent
+TEST_F(StringDropTest, Literal_RepeatedCalls_Idempotent) {
+    auto s = make("one fish two");
+    s->drop("fish");
+    const char* after_first = s->c_str();
+    std::string snapshot(after_first);
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), snapshot.c_str());
+}
+
+// Case-sensitive — wrong case must not match
+TEST_F(StringDropTest, Literal_CaseSensitive_NoMatch) {
+    auto s = make("one Fish two");
+    s->drop("fish");
+    EXPECT_STREQ(s->c_str(), "one Fish two");
+}
+
+// ================================================================================
+// drop(const String&) — nominal
+// ================================================================================
+
+// Single occurrence removed, trailing space consumed
+TEST_F(StringDropTest, StringOverload_SingleOccurrence_TrailingSpaceConsumed) {
+    auto s = make("one fish two");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "one two");
+    EXPECT_EQ(s->size(), 7u);
+}
+
+// Multiple occurrences all removed
+TEST_F(StringDropTest, StringOverload_MultipleOccurrences_AllRemoved) {
+    auto s = make("one fish two fish red fish");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "one two red ");
+    EXPECT_EQ(s->size(), 12u);
+}
+
+// Needle at the very start
+TEST_F(StringDropTest, StringOverload_MatchAtStart) {
+    auto s = make("fish two three");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "two three");
+}
+
+// Needle at the very end — no trailing space to consume
+TEST_F(StringDropTest, StringOverload_MatchAtEnd_NoTrailingSpace) {
+    auto s = make("one two fish");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "one two ");
+}
+
+// Needle is the entire string — result should be empty
+TEST_F(StringDropTest, StringOverload_NeedleIsEntireString_BecomesEmpty) {
+    auto s = make("fish");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "");
+    EXPECT_EQ(s->size(), 0u);
+}
+
+// Needle not present — string must be unchanged
+TEST_F(StringDropTest, StringOverload_NeedleNotPresent_Unchanged) {
+    auto s = make("one two three");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "one two three");
+}
+
+// No trailing space after match — only needle removed
+TEST_F(StringDropTest, StringOverload_NoTrailingSpace_OnlyNeedleRemoved) {
+    auto s = make("onefishtwo");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "onetwo");
+}
+
+// Ranged drop — only occurrence inside window is removed; one outside survives
+TEST_F(StringDropTest, StringOverload_WithRange_OnlyWindowOccurrenceRemoved) {
+    auto s = make("fish one fish");
+    auto n = make("fish");
+    const void* begin = s->c_str() + 4;
+    const void* end   = s->c_str() + 13;
+    s->drop(*n, begin, end);
+    EXPECT_STREQ(s->c_str(), "fish one ");
+}
+
+// ================================================================================
+// drop(const String&) — off-nominal edge cases
+// ================================================================================
+
+// Empty needle string — must be a no-op
+TEST_F(StringDropTest, StringOverload_EmptyNeedle_NoOp) {
+    auto s = make("hello world");
+    auto n = make("");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Needle longer than the string — no match possible, string unchanged
+TEST_F(StringDropTest, StringOverload_NeedleLongerThanString_Unchanged) {
+    auto s = make("hi");
+    auto n = make("hello world");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "hi");
+}
+
+// begin == end — empty window, string must be unchanged
+TEST_F(StringDropTest, StringOverload_BeginEqualsEnd_NoOp) {
+    auto s = make("one fish two");
+    auto n = make("fish");
+    const void* mid = s->c_str() + 4;
+    s->drop(*n, mid, mid);
+    EXPECT_STREQ(s->c_str(), "one fish two");
+}
+
+// Case-sensitive — wrong case must not match
+TEST_F(StringDropTest, StringOverload_CaseSensitive_NoMatch) {
+    auto s = make("one Fish two");
+    auto n = make("fish");
+    s->drop(*n);
+    EXPECT_STREQ(s->c_str(), "one Fish two");
+}
+
+// ================================================================================
+// Cross-overload consistency
+// ================================================================================
+
+// Both overloads must produce identical results on the same input
+TEST_F(StringDropTest, BothOverloads_AgreeOnResult) {
+    auto s1 = make("one fish two fish red fish");
+    auto s2 = make("one fish two fish red fish");
+    auto n  = make("fish");
+
+    s1->drop("fish");
+    s2->drop(*n);
+
+    EXPECT_STREQ(s1->c_str(), s2->c_str());
+    EXPECT_EQ(s1->size(), s2->size());
+}
+
+// Both overloads agree when a ranged window is supplied
+TEST_F(StringDropTest, BothOverloads_AgreeOnResult_WithRange) {
+    auto s1 = make("fish one fish two fish");
+    auto s2 = make("fish one fish two fish");
+    auto n  = make("fish");
+
+    // Window covers everything after the first word (chars 5–21)
+    const void* begin1 = s1->c_str() + 5;
+    const void* end1   = s1->c_str() + s1->size();
+    const void* begin2 = s2->c_str() + 5;
+    const void* end2   = s2->c_str() + s2->size();
+
+    s1->drop("fish", begin1, end1);
+    s2->drop(*n, begin2, end2);
+
+    EXPECT_STREQ(s1->c_str(), s2->c_str());
+    EXPECT_EQ(s1->size(), s2->size());
+}
 // ================================================================================
 // ================================================================================
 // eof

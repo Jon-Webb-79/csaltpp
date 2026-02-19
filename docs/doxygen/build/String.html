@@ -71,6 +71,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt6String6tokensEPKcPKvPKv"><code class="docutils literal notranslate"><span class="pre">tokens()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String9uppercaseEPKvPKv"><code class="docutils literal notranslate"><span class="pre">uppercase()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String9lowercaseEPKvPKv"><code class="docutils literal notranslate"><span class="pre">lowercase()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4dropEPKcPKvPKv"><code class="docutils literal notranslate"><span class="pre">drop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4dropERK6StringPKvPKv"><code class="docutils literal notranslate"><span class="pre">drop()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4initEPKc6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 </ul>
 </li>
@@ -1283,6 +1285,78 @@ Converts every ASCII uppercase letter (A–Z) in the specified window to its low
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>begin</strong> – Optional start of range to convert (default: start of string) </p></li>
 <li><p><strong>end</strong> – Optional end of range to convert (default: end of string)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt6String4dropEPKcPKvPKv">
+<span id="_CPPv3N4cslt6String4dropEPKcPKvPKv"></span><span id="_CPPv2N4cslt6String4dropEPKcPKvPKv"></span><span id="cslt::String::drop__cCP.voidCP.voidCP"></span><span class="target" id="classcslt_1_1String_1ab42b5d7efa2838a28bf18aada634858c"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">drop</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">substring</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">begin</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">end</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6String4dropEPKcPKvPKv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove all non-overlapping occurrences of a substring from this string in-place, optionally consuming one trailing space after each match. </p>
+<p>
+Scans the window in reverse order (rightmost match first) and removes each occurrence by shifting the suffix left with memmove. After each removal the logical length (<a class="reference internal" href="#classcslt_1_1String_1acad01b0064c0fba1f1fbbadc6b2f625d"><span class="std std-ref">size()</span></a>) is reduced accordingly and the window end is clamped to the new used region before the next search.</p>
+<p>Trailing-space elision: if the character immediately following a match is an ASCII space, that space is consumed along with the match. This keeps word-list strings tidy when a word is dropped from the middle.</p>
+<p>The method is a no-op if:<ul class="simple">
+<li><p>str_ or substring is null</p></li>
+<li><p>substring is empty</p></li>
+<li><p>The window is empty or inverted</p></li>
+<li><p>Either range pointer falls outside the allocation</p></li>
+</ul>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;one fish two fish red fish&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">drop</span><span class="p">(</span><span class="s">&quot;fish&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;one two red&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1ab29f156a3630ee6f06d2194a1764eae6"><span class="std std-ref">drop(const String&amp;, const void*, const void*)</span></a></p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>substring</strong> – C-string needle to search for and remove </p></li>
+<li><p><strong>begin</strong> – Optional start of search window (default: start of string) </p></li>
+<li><p><strong>end</strong> – Optional end of search window (default: end of string)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt6String4dropERK6StringPKvPKv">
+<span id="_CPPv3N4cslt6String4dropERK6StringPKvPKv"></span><span id="_CPPv2N4cslt6String4dropERK6StringPKvPKv"></span><span id="cslt::String::drop__StringCR.voidCP.voidCP"></span><span class="target" id="classcslt_1_1String_1ab29f156a3630ee6f06d2194a1764eae6"></span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">drop</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">substring</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">begin</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">end</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6String4dropERK6StringPKvPKv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove all non-overlapping occurrences of a <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> substring from this string in-place, optionally consuming one trailing space. </p>
+<p>
+Behaviour is identical to drop(const char*). See that overload for full semantics including trailing-space elision and window clamping.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;one fish two fish red fish&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;fish&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">r1</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">needle</span><span class="p">(</span><span class="n">r2</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">drop</span><span class="p">(</span><span class="o">*</span><span class="n">needle</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;one two red&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1ab42b5d7efa2838a28bf18aada634858c"><span class="std std-ref">drop(const char*, const void*, const void*)</span></a></p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>substring</strong> – <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> needle to search for and remove </p></li>
+<li><p><strong>begin</strong> – Optional start of search window (default: start of string) </p></li>
+<li><p><strong>end</strong> – Optional end of search window (default: end of string)</p></li>
 </ul>
 </dd>
 </dl>

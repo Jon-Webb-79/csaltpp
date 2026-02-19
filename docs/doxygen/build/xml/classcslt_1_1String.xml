@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1156" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1156" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1227" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1227" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -1740,6 +1740,146 @@ Converts every ASCII uppercase letter (A–Z) in the specified window to its low
         </inbodydescription>
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1151" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="696" bodyend="721"/>
       </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1ab42b5d7efa2838a28bf18aada634858c" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::String::drop</definition>
+        <argsstring>(const char *substring, const void *begin=nullptr, const void *end=nullptr) noexcept</argsstring>
+        <name>drop</name>
+        <param>
+          <type>const char *</type>
+          <declname>substring</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Remove all non-overlapping occurrences of a substring from this string in-place, optionally consuming one trailing space after each match. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>substring</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>C-string needle to search for and remove </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of search window (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of search window (default: end of string)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Scans the window in reverse order (rightmost match first) and removes each occurrence by shifting the suffix left with memmove. After each removal the logical length (<ref refid="classcslt_1_1String_1acad01b0064c0fba1f1fbbadc6b2f625d" kindref="member">size()</ref>) is reduced accordingly and the window end is clamped to the new used region before the next search.</para>
+<para>Trailing-space elision: if the character immediately following a match is an ASCII space, that space is consumed along with the match. This keeps word-list strings tidy when a word is dropped from the middle.</para>
+<para>The method is a no-op if:<itemizedlist>
+<listitem><para>str_ or substring is null</para>
+</listitem><listitem><para>substring is empty</para>
+</listitem><listitem><para>The window is empty or inverted</para>
+</listitem><listitem><para>Either range pointer falls outside the allocation</para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one<sp/>fish<sp/>two<sp/>fish<sp/>red<sp/>fish&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;drop(</highlight><highlight class="stringliteral">&quot;fish&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;one<sp/>two<sp/>red&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1ab29f156a3630ee6f06d2194a1764eae6" kindref="member">drop(const String&amp;, const void*, const void*)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1191" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="724" bodyend="783"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1ab29f156a3630ee6f06d2194a1764eae6" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::String::drop</definition>
+        <argsstring>(const String &amp;substring, const void *begin=nullptr, const void *end=nullptr) noexcept</argsstring>
+        <name>drop</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1String" kindref="compound">String</ref> &amp;</type>
+          <declname>substring</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Remove all non-overlapping occurrences of a <ref refid="classcslt_1_1String" kindref="compound">String</ref> substring from this string in-place, optionally consuming one trailing space. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>substring</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1String" kindref="compound">String</ref> needle to search for and remove </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of search window (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of search window (default: end of string)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Behaviour is identical to drop(const char*). See that overload for full semantics including trailing-space elision and window clamping.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r1<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one<sp/>fish<sp/>two<sp/>fish<sp/>red<sp/>fish&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r2<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;fish&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r1.hasValue()<sp/>&amp;&amp;<sp/>r2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r1.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>needle(r2.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;drop(*needle);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;one<sp/>two<sp/>red&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1ab42b5d7efa2838a28bf18aada634858c" kindref="member">drop(const char*, const void*, const void*)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1221" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="786" bodyend="845"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Allocator-backed string container. </para>
@@ -1777,7 +1917,7 @@ Converts every ASCII uppercase letter (A–Z) in the specified window to its low
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1157"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1228"/>
     <listofallmembers>
       <member refid="classcslt_1_1String_1aed2a23a1c540c4caf68f6e43a1d4164a" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>alloc_</name></member>
       <member refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>allocator</name></member>
@@ -1790,6 +1930,8 @@ Converts every ASCII uppercase letter (A–Z) in the specified window to its low
       <member refid="classcslt_1_1String_1a66cd222863f1288a09b1b4c2304fa91f" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>concat</name></member>
       <member refid="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>copy</name></member>
       <member refid="classcslt_1_1String_1af50cdb934bab6f41ca8262439cedaa57" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>copy</name></member>
+      <member refid="classcslt_1_1String_1ab42b5d7efa2838a28bf18aada634858c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>drop</name></member>
+      <member refid="classcslt_1_1String_1ab29f156a3630ee6f06d2194a1764eae6" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>drop</name></member>
       <member refid="classcslt_1_1String_1ab7fcc225d61114773963649405afea6b" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>find</name></member>
       <member refid="classcslt_1_1String_1a299d1b577c9847512d8a89408cb134a3" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>find</name></member>
       <member refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>init</name></member>

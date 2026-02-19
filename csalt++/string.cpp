@@ -719,6 +719,130 @@ namespace cslt {
 
         simd_ascii_lower_u8(conv_begin, static_cast<size_t>(conv_end - conv_begin));
     }
+// -------------------------------------------------------------------------------- 
+
+    void String::drop(const char* substring,
+                      const void* begin,
+                      const void* end) noexcept {
+        if (!str_ || !substring) return;
+
+        size_t const n = std::strlen(substring);
+        if (n == 0u) return;  // empty needle — no-op
+
+        uint8_t* const base = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+
+        uint8_t* win_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(begin));
+
+        uint8_t* win_end = (end == nullptr)
+            ? base + len_
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(end));
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(win_begin) || !is_ptr(win_end)) return;
+
+        // Clamp to used region
+        uint8_t* used_end = base + len_;
+        if (win_begin > used_end) return;
+        if (win_end   > used_end) win_end = used_end;
+        if (win_begin >= win_end) return;
+
+        for (;;) {
+            size_t const region_len = static_cast<size_t>(win_end - win_begin);
+            if (region_len < n) break;
+
+            // Search in reverse to minimise memmove distances
+            size_t const hit_off = find(substring, win_begin, win_end, REVERSE);
+            if (hit_off == SIZE_MAX) break;
+
+            // Safety: match must be fully inside current used length
+            if ((hit_off + n) > len_) break;
+
+            size_t drop_len = n;
+
+            // Consume one trailing ASCII space if present
+            if ((hit_off + drop_len) < len_) {
+                if (base[hit_off + drop_len] == static_cast<uint8_t>(' ')) {
+                    drop_len += 1u;
+                }
+            }
+
+            // Shift suffix left, including the null terminator
+            size_t const src_off       = hit_off + drop_len;
+            size_t const bytes_to_move = (len_ + 1u) - src_off;
+            std::memmove(base + hit_off, base + src_off, bytes_to_move);
+
+            len_ -= drop_len;
+
+            // Clamp window end to new used region
+            used_end = base + len_;
+            if (win_end > used_end) win_end = used_end;
+            if (win_begin > win_end) break;
+        }
+    }
+// --------------------------------------------------------------------------------
+
+    void String::drop(const String& substring,
+                      const void*   begin,
+                      const void*   end) noexcept {
+        if (!str_ || !substring.str_) return;
+
+        size_t const n = substring.len_;
+        if (n == 0u) return;  // empty needle — no-op
+
+        uint8_t* const base = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+
+        uint8_t* win_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(begin));
+
+        uint8_t* win_end = (end == nullptr)
+            ? base + len_
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(end));
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(win_begin) || !is_ptr(win_end)) return;
+
+        // Clamp to used region
+        uint8_t* used_end = base + len_;
+        if (win_begin > used_end) return;
+        if (win_end   > used_end) win_end = used_end;
+        if (win_begin >= win_end) return;
+
+        for (;;) {
+            size_t const region_len = static_cast<size_t>(win_end - win_begin);
+            if (region_len < n) break;
+
+            // Search in reverse to minimise memmove distances
+            size_t const hit_off = find(substring, win_begin, win_end, REVERSE);
+            if (hit_off == SIZE_MAX) break;
+
+            // Safety: match must be fully inside current used length
+            if ((hit_off + n) > len_) break;
+
+            size_t drop_len = n;
+
+            // Consume one trailing ASCII space if present
+            if ((hit_off + drop_len) < len_) {
+                if (base[hit_off + drop_len] == static_cast<uint8_t>(' ')) {
+                    drop_len += 1u;
+                }
+            }
+
+            // Shift suffix left, including the null terminator
+            size_t const src_off       = hit_off + drop_len;
+            size_t const bytes_to_move = (len_ + 1u) - src_off;
+            std::memmove(base + hit_off, base + src_off, bytes_to_move);
+
+            len_ -= drop_len;
+
+            // Clamp window end to new used region
+            used_end = base + len_;
+            if (win_end > used_end) win_end = used_end;
+            if (win_begin > win_end) break;
+        }
+    }
 // ================================================================================
 // ================================================================================
 // eof

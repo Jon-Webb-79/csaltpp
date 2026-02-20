@@ -1379,6 +1379,35 @@ namespace cslt {
                               Allocator&  allocator) noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Stream insertion operator — prints the string up to its
+         *        logical length, not the null terminator
+         *
+         * @param os  Output stream to write to
+         * @param s   String to print
+         * @return    Reference to @p os for chaining
+         *
+         * @details Writes exactly len_ characters to the stream using
+         * std::ostream::write() rather than operator<<(const char*), which
+         * would stop at the first embedded null byte. Characters beyond len_
+         * (including the null terminator) are never accessed.
+         *
+         * The operator is a no-op if the internal buffer is null, leaving
+         * the stream in a valid state.
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("hello world", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     std::cout << *s << std::endl;  // prints "hello world"
+         * }
+         * @endcode
+         */
+        friend std::ostream& operator<<(std::ostream& os,
+                                        const String& s) noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

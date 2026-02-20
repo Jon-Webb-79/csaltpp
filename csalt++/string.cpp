@@ -1163,6 +1163,14 @@ namespace cslt {
         result.setValue(out.value());
         return result;
     }
+// -------------------------------------------------------------------------------- 
+
+    std::ostream& operator<<(std::ostream& os, const String& s) noexcept {
+        if (s.str_) {
+            os.write(s.str_, static_cast<std::streamsize>(s.len_));
+        }
+        return os;
+    }
 // ================================================================================
 // ================================================================================
 // eof

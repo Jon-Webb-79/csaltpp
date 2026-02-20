@@ -1297,6 +1297,88 @@ namespace cslt {
                      const void*   end   = nullptr) noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Find the last occurrence of a delimiter String, return everything
+         *        to its right as a new String, and truncate this string to
+         *        everything to its left
+         *
+         * @param token     Delimiter to search for (case-sensitive)
+         * @param allocator Allocator used to create the returned String
+         * @return          Expected<String*> containing the right-hand fragment,
+         *                  or an error if the operation cannot be performed
+         *
+         * @details Locates the last (rightmost) occurrence of @p token using a
+         * reverse search. On success:
+         * - A new String is allocated containing the text that follows the token.
+         * - This string is truncated in-place to the text that precedes the token.
+         * - The token itself is consumed and appears in neither result.
+         *
+         * The caller owns the returned String and must free it via StringDeleter.
+         *
+         * @par Error conditions (returns Expected with error):
+         * - str_ is null
+         * - token.str_ is null or token is empty
+         * - This string is empty
+         * - Token is not found
+         * - Allocation of the result String fails
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto rs = cslt::String::init("one::two::three", 0, alloc);
+         * auto rt = cslt::String::init("::", 0, alloc);
+         * if (rs.hasValue() && rt.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(rs.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> t(rt.value());
+         *
+         *     auto rhs = s->pop(*t, alloc);
+         *     if (rhs.hasValue()) {
+         *         cslt::UniquePtr<cslt::String, cslt::StringDeleter> right(rhs.value());
+         *         // right->c_str() == "three"
+         *         // s->c_str()     == "one::two"
+         *     }
+         * }
+         * @endcode
+         *
+         * @see pop(const char*, Allocator&)
+         */
+        Expected<String*> pop(const String& token,
+                              Allocator&     allocator) noexcept;
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Find the last occurrence of a delimiter C-string, return everything
+         *        to its right as a new String, and truncate this string to
+         *        everything to its left
+         *
+         * @param token     Null-terminated delimiter to search for (case-sensitive)
+         * @param allocator Allocator used to create the returned String
+         * @return          Expected<String*> containing the right-hand fragment,
+         *                  or an error if the operation cannot be performed
+         *
+         * @details Convenience overload accepting a C-string token. Behaviour is
+         * identical to pop(const String&, Allocator&).
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto rs = cslt::String::init("one::two::three", 0, alloc);
+         * if (rs.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(rs.value());
+         *
+         *     auto rhs = s->pop("::", alloc);
+         *     if (rhs.hasValue()) {
+         *         cslt::UniquePtr<cslt::String, cslt::StringDeleter> right(rhs.value());
+         *         // right->c_str() == "three"
+         *         // s->c_str()     == "one::two"
+         *     }
+         * }
+         * @endcode
+         *
+         * @see pop(const String&, Allocator&)
+         */
+        Expected<String*> pop(const char* token,
+                              Allocator&  allocator) noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

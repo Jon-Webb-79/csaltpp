@@ -4690,12 +4690,349 @@ TEST_F(StringReplaceTest, BothOverloads_AgreeOnResult_WithRange) {
     EXPECT_STREQ(s1->c_str(), s2->c_str());
     EXPECT_EQ(s1->size(), s2->size());
 }
+// -------------------------------------------------------------------------------- 
+
+class StringPopTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator alloc;
+
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter>
+    make(const char* cstr) {
+        auto r = cslt::String::init(cstr, 0, alloc);
+        EXPECT_TRUE(r.hasValue()) << "String::init failed for: " << cstr;
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r.value());
+    }
+};
 
 // ================================================================================
+// pop(const char*) — nominal
 // ================================================================================
-// eof
+
+// Basic split: token appears once — left and right fragments are correct
+TEST_F(StringPopTest, Literal_SingleOccurrence_CorrectSplit) {
+    auto s = make("one::two");
+    auto r = s->pop("::", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "two");
+    EXPECT_STREQ(s->c_str(),   "one");
+}
+
+// Multiple occurrences — pop splits on the LAST (rightmost) occurrence
+TEST_F(StringPopTest, Literal_MultipleOccurrences_SplitsOnLast) {
+    auto s = make("one::two::three");
+    auto r = s->pop("::", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "three");
+    EXPECT_STREQ(s->c_str(),   "one::two");
+}
+
+// Token at the very start — left fragment is empty, right is the rest
+TEST_F(StringPopTest, Literal_TokenAtStart_LeftBecomesEmpty) {
+    auto s = make("::two");
+    auto r = s->pop("::", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "two");
+    EXPECT_STREQ(s->c_str(),   "");
+    EXPECT_EQ(s->size(), 0u);
+}
+
+// Token at the very end — right fragment is empty, left is the rest
+TEST_F(StringPopTest, Literal_TokenAtEnd_RightBecomesEmpty) {
+    auto s = make("one::");
+    auto r = s->pop("::", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "");
+    EXPECT_EQ(rhs->size(), 0u);
+    EXPECT_STREQ(s->c_str(), "one");
+}
+
+// Token is the entire string — both fragments are empty
+TEST_F(StringPopTest, Literal_TokenIsEntireString_BothEmpty) {
+    auto s = make("::");
+    auto r = s->pop("::", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "");
+    EXPECT_STREQ(s->c_str(),   "");
+}
+
+// Single-character token
+TEST_F(StringPopTest, Literal_SingleCharToken) {
+    auto s = make("alpha/beta/gamma");
+    auto r = s->pop("/", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "gamma");
+    EXPECT_STREQ(s->c_str(),   "alpha/beta");
+}
+
+// Source string is left with correct size() after pop
+TEST_F(StringPopTest, Literal_SourceSizeUpdatedCorrectly) {
+    auto s = make("hello::world");
+    auto r = s->pop("::", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_EQ(s->size(),   5u);   // "hello"
+    EXPECT_EQ(rhs->size(), 5u);   // "world"
+}
+
+// Returned String is independent — mutating it does not affect the source
+TEST_F(StringPopTest, Literal_ReturnedStringIsIndependent) {
+    auto s = make("foo::bar");
+    auto r = s->pop("::", alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    rhs->uppercase();
+    EXPECT_STREQ(rhs->c_str(), "BAR");
+    EXPECT_STREQ(s->c_str(),   "foo");   // source unchanged
+}
+
+// Successive pops decompose a delimited string step by step
+TEST_F(StringPopTest, Literal_SuccessivePops_DecomposeString) {
+    auto s = make("a::b::c");
+
+    auto r1 = s->pop("::", alloc);
+    ASSERT_TRUE(r1.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> third(r1.value());
+    EXPECT_STREQ(third->c_str(), "c");
+    EXPECT_STREQ(s->c_str(),     "a::b");
+
+    auto r2 = s->pop("::", alloc);
+    ASSERT_TRUE(r2.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> second(r2.value());
+    EXPECT_STREQ(second->c_str(), "b");
+    EXPECT_STREQ(s->c_str(),      "a");
+}
+
 // ================================================================================
+// pop(const char*) — off-nominal edge cases
 // ================================================================================
+
+// Null token — must return an error, source unchanged
+TEST_F(StringPopTest, Literal_NullToken_ReturnsError) {
+    auto s = make("hello::world");
+    auto r = s->pop(nullptr, alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_STREQ(s->c_str(), "hello::world");
+}
+
+// Empty token string — must return an error, source unchanged
+TEST_F(StringPopTest, Literal_EmptyToken_ReturnsError) {
+    auto s = make("hello::world");
+    auto r = s->pop("", alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_STREQ(s->c_str(), "hello::world");
+}
+
+// Token not found — must return an error, source unchanged
+TEST_F(StringPopTest, Literal_TokenNotFound_ReturnsError) {
+    auto s = make("hello world");
+    auto r = s->pop("::", alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Source string is empty — must return an error
+TEST_F(StringPopTest, Literal_EmptySource_ReturnsError) {
+    auto s = make("");
+    auto r = s->pop("::", alloc);
+    EXPECT_FALSE(r.hasValue());
+}
+
+// Token longer than source — impossible match, must return an error
+TEST_F(StringPopTest, Literal_TokenLongerThanSource_ReturnsError) {
+    auto s = make("hi");
+    auto r = s->pop("hello::", alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_STREQ(s->c_str(), "hi");
+}
+
+// On error the source size must be unchanged
+TEST_F(StringPopTest, Literal_OnError_SourceSizeUnchanged) {
+    auto s = make("hello world");
+    size_t before = s->size();
+    auto r = s->pop("::", alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_EQ(s->size(), before);
+}
+
+// ================================================================================
+// pop(const String&) — nominal
+// ================================================================================
+
+// Basic split: token appears once
+TEST_F(StringPopTest, StringOverload_SingleOccurrence_CorrectSplit) {
+    auto s = make("one::two");
+    auto t = make("::");
+    auto r = s->pop(*t, alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "two");
+    EXPECT_STREQ(s->c_str(),   "one");
+}
+
+// Multiple occurrences — splits on the last one
+TEST_F(StringPopTest, StringOverload_MultipleOccurrences_SplitsOnLast) {
+    auto s = make("one::two::three");
+    auto t = make("::");
+    auto r = s->pop(*t, alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "three");
+    EXPECT_STREQ(s->c_str(),   "one::two");
+}
+
+// Token at the very start — left becomes empty
+TEST_F(StringPopTest, StringOverload_TokenAtStart_LeftBecomesEmpty) {
+    auto s = make("::two");
+    auto t = make("::");
+    auto r = s->pop(*t, alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "two");
+    EXPECT_STREQ(s->c_str(),   "");
+}
+
+// Token at the very end — right becomes empty
+TEST_F(StringPopTest, StringOverload_TokenAtEnd_RightBecomesEmpty) {
+    auto s = make("one::");
+    auto t = make("::");
+    auto r = s->pop(*t, alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "");
+    EXPECT_STREQ(s->c_str(),   "one");
+}
+
+// Token is the entire string — both fragments are empty
+TEST_F(StringPopTest, StringOverload_TokenIsEntireString_BothEmpty) {
+    auto s = make("::");
+    auto t = make("::");
+    auto r = s->pop(*t, alloc);
+    ASSERT_TRUE(r.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs(r.value());
+    EXPECT_STREQ(rhs->c_str(), "");
+    EXPECT_STREQ(s->c_str(),   "");
+}
+
+// Successive pops decompose a delimited string step by step
+TEST_F(StringPopTest, StringOverload_SuccessivePops_DecomposeString) {
+    auto s = make("a::b::c");
+    auto t = make("::");
+
+    auto r1 = s->pop(*t, alloc);
+    ASSERT_TRUE(r1.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> third(r1.value());
+    EXPECT_STREQ(third->c_str(), "c");
+    EXPECT_STREQ(s->c_str(),     "a::b");
+
+    auto r2 = s->pop(*t, alloc);
+    ASSERT_TRUE(r2.hasValue());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> second(r2.value());
+    EXPECT_STREQ(second->c_str(), "b");
+    EXPECT_STREQ(s->c_str(),      "a");
+}
+
+// ================================================================================
+// pop(const String&) — off-nominal edge cases
+// ================================================================================
+
+// Empty token String — must return an error, source unchanged
+TEST_F(StringPopTest, StringOverload_EmptyToken_ReturnsError) {
+    auto s = make("hello::world");
+    auto t = make("");
+    auto r = s->pop(*t, alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_STREQ(s->c_str(), "hello::world");
+}
+
+// Token not found — must return an error, source unchanged
+TEST_F(StringPopTest, StringOverload_TokenNotFound_ReturnsError) {
+    auto s = make("hello world");
+    auto t = make("::");
+    auto r = s->pop(*t, alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Source string is empty — must return an error
+TEST_F(StringPopTest, StringOverload_EmptySource_ReturnsError) {
+    auto s = make("");
+    auto t = make("::");
+    auto r = s->pop(*t, alloc);
+    EXPECT_FALSE(r.hasValue());
+}
+
+// Token longer than source — impossible match, must return an error
+TEST_F(StringPopTest, StringOverload_TokenLongerThanSource_ReturnsError) {
+    auto s = make("hi");
+    auto t = make("hello::");
+    auto r = s->pop(*t, alloc);
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_STREQ(s->c_str(), "hi");
+}
+
+// ================================================================================
+// Cross-overload consistency
+// ================================================================================
+
+// Both overloads must produce identical left and right fragments
+TEST_F(StringPopTest, BothOverloads_AgreeOnSplit_SingleOccurrence) {
+    auto s1 = make("one::two::three");
+    auto s2 = make("one::two::three");
+    auto t  = make("::");
+
+    auto r1 = s1->pop("::", alloc);
+    auto r2 = s2->pop(*t,   alloc);
+
+    ASSERT_TRUE(r1.hasValue());
+    ASSERT_TRUE(r2.hasValue());
+
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs1(r1.value());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs2(r2.value());
+
+    EXPECT_STREQ(rhs1->c_str(), rhs2->c_str());
+    EXPECT_STREQ(s1->c_str(),   s2->c_str());
+    EXPECT_EQ(rhs1->size(),     rhs2->size());
+    EXPECT_EQ(s1->size(),       s2->size());
+}
+
+// Both overloads agree when the token appears only once
+TEST_F(StringPopTest, BothOverloads_AgreeOnSplit_MultipleOccurrences) {
+    auto s1 = make("alpha/beta/gamma/delta");
+    auto s2 = make("alpha/beta/gamma/delta");
+    auto t  = make("/");
+
+    auto r1 = s1->pop("/", alloc);
+    auto r2 = s2->pop(*t,  alloc);
+
+    ASSERT_TRUE(r1.hasValue());
+    ASSERT_TRUE(r2.hasValue());
+
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs1(r1.value());
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter> rhs2(r2.value());
+
+    EXPECT_STREQ(rhs1->c_str(), rhs2->c_str());
+    EXPECT_STREQ(s1->c_str(),   s2->c_str());
+}
+
+// Both overloads agree when the token is not found — both must return an error
+TEST_F(StringPopTest, BothOverloads_AgreeOnError_TokenNotFound) {
+    auto s1 = make("hello world");
+    auto s2 = make("hello world");
+    auto t  = make("::");
+
+    auto r1 = s1->pop("::", alloc);
+    auto r2 = s2->pop(*t,   alloc);
+
+    EXPECT_FALSE(r1.hasValue());
+    EXPECT_FALSE(r2.hasValue());
+    EXPECT_STREQ(s1->c_str(), s2->c_str());
+}
 // ================================================================================
 // ================================================================================
 // eof

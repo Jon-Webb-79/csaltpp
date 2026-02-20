@@ -1059,6 +1059,110 @@ namespace cslt {
         str_[len_] = '\0';
         return true;
     }
+// -------------------------------------------------------------------------------- 
+
+    Expected<String*> String::pop(const String& token,
+                                  Allocator&     allocator) noexcept {
+        Expected<String*> result;
+
+        if (!str_) {
+            result.setError(ArgumentError("pop: source string has null buffer"));
+            return result;
+        }
+        if (!token.str_ || token.len_ == 0u) {
+            result.setError(ArgumentError("pop: token is null or empty"));
+            return result;
+        }
+        if (len_ == 0u) {
+            result.setError(ArgumentError("pop: source string is empty"));
+            return result;
+        }
+
+        // Find the last (rightmost) occurrence of token
+        size_t const pos = find(token, nullptr, nullptr, REVERSE);
+        if (pos == SIZE_MAX) {
+            result.setError(ArgumentError("pop: token not found in string"));
+            return result;
+        }
+
+        size_t const rhs_start = pos + token.len_;
+
+        // Defensive: match must not extend past the used region
+        if (rhs_start > len_) {
+            result.setError(ArgumentError("pop: match extends past end of string"));
+            return result;
+        }
+
+        // Build the right-hand fragment (may be empty if token is at the end)
+        size_t      const rhs_len = len_ - rhs_start;
+        const char* const rhs_ptr = str_ + rhs_start;
+
+        auto out = String::init(rhs_ptr, rhs_len, allocator);
+        if (!out.hasValue()) {
+            result.setError(out.error());
+            return result;
+        }
+
+        // Truncate this string to everything left of the token
+        len_      = pos;
+        str_[len_] = '\0';
+
+        result.setValue(out.value());
+        return result;
+    }
+// --------------------------------------------------------------------------------
+
+    Expected<String*> String::pop(const char* token,
+                                  Allocator&  allocator) noexcept {
+        Expected<String*> result;
+
+        if (!str_) {
+            result.setError(ArgumentError("pop: source string has null buffer"));
+            return result;
+        }
+        if (!token || token[0] == '\0') {
+            result.setError(ArgumentError("pop: token is null or empty"));
+            return result;
+        }
+        if (len_ == 0u) {
+            result.setError(ArgumentError("pop: source string is empty"));
+            return result;
+        }
+
+        size_t const tlen = std::strlen(token);
+
+        // Find the last (rightmost) occurrence of token
+        size_t const pos = find(token, nullptr, nullptr, REVERSE);
+        if (pos == SIZE_MAX) {
+            result.setError(ArgumentError("pop: token not found in string"));
+            return result;
+        }
+
+        size_t const rhs_start = pos + tlen;
+
+        // Defensive: match must not extend past the used region
+        if (rhs_start > len_) {
+            result.setError(ArgumentError("pop: match extends past end of string"));
+            return result;
+        }
+
+        // Build the right-hand fragment (may be empty if token is at the end)
+        size_t      const rhs_len = len_ - rhs_start;
+        const char* const rhs_ptr = str_ + rhs_start;
+
+        auto out = String::init(rhs_ptr, rhs_len, allocator);
+        if (!out.hasValue()) {
+            result.setError(out.error());
+            return result;
+        }
+
+        // Truncate this string to everything left of the token
+        len_      = pos;
+        str_[len_] = '\0';
+
+        result.setValue(out.value());
+        return result;
+    }
 // ================================================================================
 // ================================================================================
 // eof

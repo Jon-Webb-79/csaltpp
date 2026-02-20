@@ -1223,6 +1223,80 @@ namespace cslt {
                   const void*   end   = nullptr) noexcept;
 // -------------------------------------------------------------------------------- 
 
+        /**
+         * @brief Replace all non-overlapping occurrences of a pattern with a
+         *        replacement string, in-place
+         *
+         * @param pattern     C-string to search for (case-sensitive)
+         * @param replacement C-string to substitute in place of each match
+         * @param begin       Optional start of search window (default: start of string)
+         * @param end         Optional end of search window (default: end of string)
+         * @return            true on success or if no replacements were needed;
+         *                    false on invalid arguments or allocation failure
+         *
+         * @details Counts all non-overlapping occurrences of @p pattern in the
+         * window first, computes the exact new length, grows the buffer in a
+         * single allocation if necessary, then performs all substitutions using
+         * reverse-order search to minimise memmove distances.
+         *
+         * On allocation failure the string content is left unchanged and false
+         * is returned. An empty pattern is defined as a no-op (returns true).
+         * An empty window (begin >= end) is also a no-op.
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("one two two three", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     s->replace("two", "four");
+         *     std::cout << s->c_str() << std::endl;  // "one four four three"
+         * }
+         * @endcode
+         *
+         * @see replace(const String&, const String&, const void*, const void*)
+         */
+        bool replace(const char* pattern,
+                     const char* replacement,
+                     const void* begin = nullptr,
+                     const void* end   = nullptr) noexcept;
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Replace all non-overlapping occurrences of a pattern with a
+         *        replacement string, in-place
+         *
+         * @param pattern     String to search for (case-sensitive)
+         * @param replacement String to substitute in place of each match
+         * @param begin       Optional start of search window (default: start of string)
+         * @param end         Optional end of search window (default: end of string)
+         * @return            true on success or if no replacements were needed;
+         *                    false on invalid arguments or allocation failure
+         *
+         * @details Convenience overload accepting String objects. Behaviour is
+         * identical to replace(const char*, const char*, ...).
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto rs = cslt::String::init("one two two three", 0, alloc);
+         * auto rp = cslt::String::init("two", 0, alloc);
+         * auto rr = cslt::String::init("four", 0, alloc);
+         * if (rs.hasValue() && rp.hasValue() && rr.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(rs.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> p(rp.value());
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> r(rr.value());
+         *     s->replace(*p, *r);
+         *     std::cout << s->c_str() << std::endl;  // "one four four three"
+         * }
+         * @endcode
+         *
+         * @see replace(const char*, const char*, const void*, const void*)
+         */
+        bool replace(const String& pattern,
+                     const String& replacement,
+                     const void*   begin = nullptr,
+                     const void*   end   = nullptr) noexcept;
+// -------------------------------------------------------------------------------- 
+
         // StringDeleter needs access to private members for cleanup
         friend class StringDeleter;
     };

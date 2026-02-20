@@ -57,7 +57,11 @@ void \mbox{\hyperlink{classcslt_1_1String_a40b7c4993607b42bc6216c83f319c6d2}{low
 void \mbox{\hyperlink{classcslt_1_1String_ab42b5d7efa2838a28bf18aada634858c}{drop}} (const char $\ast$substring, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
 \begin{DoxyCompactList}\small\item\em Remove all non-\/overlapping occurrences of a substring from this string in-\/place, optionally consuming one trailing space after each match. \end{DoxyCompactList}\item 
 void \mbox{\hyperlink{classcslt_1_1String_ab29f156a3630ee6f06d2194a1764eae6}{drop}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&substring, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
-\begin{DoxyCompactList}\small\item\em Remove all non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} substring from this string in-\/place, optionally consuming one trailing space. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Remove all non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} substring from this string in-\/place, optionally consuming one trailing space. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1String_aa33f118a5afaf9d78d89e34fa29a09cd}{replace}} (const char $\ast$pattern, const char $\ast$replacement, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
+\begin{DoxyCompactList}\small\item\em Replace all non-\/overlapping occurrences of a pattern with a replacement string, in-\/place. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1String_a1f97a5f0c2d56436a35da3f6ec43df1e}{replace}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&pattern, const \mbox{\hyperlink{classcslt_1_1String}{String}} \&replacement, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
+\begin{DoxyCompactList}\small\item\em Replace all non-\/overlapping occurrences of a pattern with a replacement string, in-\/place. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -1215,6 +1219,96 @@ Range parameters\+:
 
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1String_a92ea4894c00f0ca3ec7aac7b02778f4f}{uppercase(const void$\ast$, const void$\ast$)}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_aa33f118a5afaf9d78d89e34fa29a09cd}\label{classcslt_1_1String_aa33f118a5afaf9d78d89e34fa29a09cd}} 
+\index{cslt::String@{cslt::String}!replace@{replace}}
+\index{replace@{replace}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{replace()}{replace()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily bool cslt\+::\+String\+::replace (\begin{DoxyParamCaption}\item[{const char $\ast$}]{pattern,  }\item[{const char $\ast$}]{replacement,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Replace all non-\/overlapping occurrences of a pattern with a replacement string, in-\/place. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pattern} & C-\/string to search for (case-\/sensitive) \\
+\hline
+{\em replacement} & C-\/string to substitute in place of each match \\
+\hline
+{\em begin} & Optional start of search window (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search window (default\+: end of string) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success or if no replacements were needed; false on invalid arguments or allocation failure
+\end{DoxyReturn}
+Counts all non-\/overlapping occurrences of {\ttfamily pattern} in the window first, computes the exact new length, grows the buffer in a single allocation if necessary, then performs all substitutions using reverse-\/order search to minimise memmove distances.
+
+On allocation failure the string content is left unchanged and false is returned. An empty pattern is defined as a no-\/op (returns true). An empty window (begin $>$= end) is also a no-\/op.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one two two three"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    s-\/>replace(\textcolor{stringliteral}{"{}two"{}}, \textcolor{stringliteral}{"{}four"{}});}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}one four four three"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_a1f97a5f0c2d56436a35da3f6ec43df1e}{replace(const String\&, const String\&, const void$\ast$, const void$\ast$)}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a1f97a5f0c2d56436a35da3f6ec43df1e}\label{classcslt_1_1String_a1f97a5f0c2d56436a35da3f6ec43df1e}} 
+\index{cslt::String@{cslt::String}!replace@{replace}}
+\index{replace@{replace}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{replace()}{replace()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily bool cslt\+::\+String\+::replace (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{pattern,  }\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{replacement,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Replace all non-\/overlapping occurrences of a pattern with a replacement string, in-\/place. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em pattern} & \mbox{\hyperlink{classcslt_1_1String}{String}} to search for (case-\/sensitive) \\
+\hline
+{\em replacement} & \mbox{\hyperlink{classcslt_1_1String}{String}} to substitute in place of each match \\
+\hline
+{\em begin} & Optional start of search window (default\+: start of string) \\
+\hline
+{\em end} & Optional end of search window (default\+: end of string) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success or if no replacements were needed; false on invalid arguments or allocation failure
+\end{DoxyReturn}
+Convenience overload accepting \mbox{\hyperlink{classcslt_1_1String}{String}} objects. Behaviour is identical to replace(const char$\ast$, const char$\ast$, ...).
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} rs = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one two two three"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keyword}{auto} rp = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}two"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keyword}{auto} rr = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}four"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (rs.hasValue() \&\& rp.hasValue() \&\& rr.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(rs.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} p(rp.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} r(rr.value());}
+\DoxyCodeLine{    s-\/>replace(*p, *r);}
+\DoxyCodeLine{    std::cout << s-\/>c\_str() << std::endl;  \textcolor{comment}{// "{}one four four three"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_aa33f118a5afaf9d78d89e34fa29a09cd}{replace(const char$\ast$, const char$\ast$, const void$\ast$, const void$\ast$)}} 
 \end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}\label{classcslt_1_1String_adc4b6300e480f5f8dd3f4269ce26cc86}} 
 \index{cslt::String@{cslt::String}!reset@{reset}}

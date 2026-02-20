@@ -843,6 +843,222 @@ namespace cslt {
             if (win_begin > win_end) break;
         }
     }
+// -------------------------------------------------------------------------------- 
+
+    bool String::replace(const char* pattern,
+                         const char* replacement,
+                         const void* begin,
+                         const void* end) noexcept {
+        if (!str_ || !pattern || !replacement || !allocator_) return false;
+
+        size_t const pat_len = std::strlen(pattern);
+        if (pat_len == 0u) return true;  // empty pattern — no-op
+
+        size_t const rep_len = std::strlen(replacement);
+
+        uint8_t* base     = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+        uint8_t* used_end = base + len_;
+
+        uint8_t* win_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(begin));
+
+        uint8_t* win_end = (end == nullptr)
+            ? used_end
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(end));
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(win_begin) || !is_ptr(win_end)) return false;
+
+        // Clamp to used region
+        if (win_begin > used_end) return false;
+        if (win_end   > used_end) win_end = used_end;
+        if (win_begin >= win_end) return true;  // empty window — no-op
+
+        size_t const window_len = static_cast<size_t>(win_end - win_begin);
+        if (window_len < pat_len) return true;
+
+        // 1) Count matches so we can compute the exact final length up front
+        size_t const k = words(pattern, win_begin, win_end);
+        if (k == 0u) return true;
+
+        // 2) Compute new total length
+        size_t const prefix_len = static_cast<size_t>(win_begin - base);
+        size_t const suffix_len = static_cast<size_t>(used_end - win_end);
+        size_t new_window_len;
+        if (rep_len >= pat_len) {
+            new_window_len = window_len + k * (rep_len - pat_len);
+        } else {
+            new_window_len = window_len - k * (pat_len - rep_len);
+        }
+        size_t const new_len = prefix_len + new_window_len + suffix_len;
+
+        // 3) Grow buffer in a single allocation if needed
+        if (new_len + 1u > alloc_) {
+            size_t const needed = new_len + 1u;
+            auto realloc_result = allocator_->realloc(str_, alloc_, needed, false);
+            if (realloc_result.hasValue()) {
+                str_   = static_cast<char*>(realloc_result.value());
+                alloc_ = needed;
+            } else {
+                // Fallback: allocate-copy-free
+                auto new_result = allocator_->alloc(needed, false);
+                if (!new_result.hasValue()) return false;
+                char* newbuf = static_cast<char*>(new_result.value());
+                std::memcpy(newbuf, str_, len_ + 1u);
+                allocator_->return_element(str_, alloc_,
+                                           allocator_->default_alignment());
+                str_   = newbuf;
+                alloc_ = needed;
+            }
+            // Rebase all pointers after possible buffer move
+            base      = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+            win_begin = base + prefix_len;
+            win_end   = win_begin + window_len;  // original content window end
+        }
+
+        // 4) Replace right-to-left to minimise memmove distances
+        size_t  cur_len    = len_;
+        uint8_t* search_end = win_end;
+
+        for (size_t t = 0u; t < k; ++t) {
+            size_t const hit_off = find(pattern, win_begin, search_end, REVERSE);
+            if (hit_off == SIZE_MAX) break;
+
+            uint8_t* hit = base + hit_off;
+            size_t const after_match_off = hit_off + pat_len;
+
+            // Shift tail (including NUL) to open or close the gap
+            if (rep_len != pat_len) {
+                size_t const bytes_tail = (cur_len + 1u) - after_match_off;
+                std::memmove(hit + rep_len, base + after_match_off, bytes_tail);
+                if (rep_len > pat_len) {
+                    cur_len += (rep_len - pat_len);
+                } else {
+                    cur_len -= (pat_len - rep_len);
+                }
+            }
+
+            // Write replacement bytes
+            if (rep_len != 0u) {
+                std::memcpy(hit, replacement, rep_len);
+            }
+
+            // Advance reverse search window — stay strictly left of this hit
+            search_end = hit;
+            if (search_end <= win_begin) break;
+        }
+
+        len_ = cur_len;
+        str_[len_] = '\0';
+        return true;
+    }
+// --------------------------------------------------------------------------------
+
+    bool String::replace(const String& pattern,
+                         const String& replacement,
+                         const void*   begin,
+                         const void*   end) noexcept {
+        if (!str_ || !pattern.str_ || !replacement.str_ || !allocator_) return false;
+
+        size_t const pat_len = pattern.len_;
+        if (pat_len == 0u) return true;  // empty pattern — no-op
+
+        size_t const rep_len = replacement.len_;
+
+        uint8_t* base     = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+        uint8_t* used_end = base + len_;
+
+        uint8_t* win_begin = (begin == nullptr)
+            ? base
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(begin));
+
+        uint8_t* win_end = (end == nullptr)
+            ? used_end
+            : reinterpret_cast<uint8_t*>(const_cast<void*>(end));
+
+        // Validate pointers lie within the allocation
+        if (!is_ptr(win_begin) || !is_ptr(win_end)) return false;
+
+        // Clamp to used region
+        if (win_begin > used_end) return false;
+        if (win_end   > used_end) win_end = used_end;
+        if (win_begin >= win_end) return true;  // empty window — no-op
+
+        size_t const window_len = static_cast<size_t>(win_end - win_begin);
+        if (window_len < pat_len) return true;
+
+        // 1) Count matches
+        size_t const k = words(pattern, win_begin, win_end);
+        if (k == 0u) return true;
+
+        // 2) Compute new total length
+        size_t const prefix_len = static_cast<size_t>(win_begin - base);
+        size_t const suffix_len = static_cast<size_t>(used_end - win_end);
+        size_t new_window_len;
+        if (rep_len >= pat_len) {
+            new_window_len = window_len + k * (rep_len - pat_len);
+        } else {
+            new_window_len = window_len - k * (pat_len - rep_len);
+        }
+        size_t const new_len = prefix_len + new_window_len + suffix_len;
+
+        // 3) Grow buffer in a single allocation if needed
+        if (new_len + 1u > alloc_) {
+            size_t const needed = new_len + 1u;
+            auto realloc_result = allocator_->realloc(str_, alloc_, needed, false);
+            if (realloc_result.hasValue()) {
+                str_   = static_cast<char*>(realloc_result.value());
+                alloc_ = needed;
+            } else {
+                auto new_result = allocator_->alloc(needed, false);
+                if (!new_result.hasValue()) return false;
+                char* newbuf = static_cast<char*>(new_result.value());
+                std::memcpy(newbuf, str_, len_ + 1u);
+                allocator_->return_element(str_, alloc_,
+                                           allocator_->default_alignment());
+                str_   = newbuf;
+                alloc_ = needed;
+            }
+            // Rebase all pointers after possible buffer move
+            base      = reinterpret_cast<uint8_t*>(static_cast<void*>(str_));
+            win_begin = base + prefix_len;
+            win_end   = win_begin + window_len;
+        }
+
+        // 4) Replace right-to-left
+        size_t   cur_len    = len_;
+        uint8_t* search_end = win_end;
+
+        for (size_t t = 0u; t < k; ++t) {
+            size_t const hit_off = find(pattern, win_begin, search_end, REVERSE);
+            if (hit_off == SIZE_MAX) break;
+
+            uint8_t* hit = base + hit_off;
+            size_t const after_match_off = hit_off + pat_len;
+
+            if (rep_len != pat_len) {
+                size_t const bytes_tail = (cur_len + 1u) - after_match_off;
+                std::memmove(hit + rep_len, base + after_match_off, bytes_tail);
+                if (rep_len > pat_len) {
+                    cur_len += (rep_len - pat_len);
+                } else {
+                    cur_len -= (pat_len - rep_len);
+                }
+            }
+
+            if (rep_len != 0u) {
+                std::memcpy(hit, replacement.str_, rep_len);
+            }
+
+            search_end = hit;
+            if (search_end <= win_begin) break;
+        }
+
+        len_ = cur_len;
+        str_[len_] = '\0';
+        return true;
+    }
 // ================================================================================
 // ================================================================================
 // eof

@@ -4337,6 +4337,365 @@ TEST_F(StringDropTest, BothOverloads_AgreeOnResult_WithRange) {
     EXPECT_STREQ(s1->c_str(), s2->c_str());
     EXPECT_EQ(s1->size(), s2->size());
 }
+// -------------------------------------------------------------------------------- 
+
+class StringReplaceTest : public ::testing::Test {
+protected:
+    cslt::HeapAllocator alloc;
+
+    cslt::UniquePtr<cslt::String, cslt::StringDeleter>
+    make(const char* cstr) {
+        auto r = cslt::String::init(cstr, 0, alloc);
+        EXPECT_TRUE(r.hasValue()) << "String::init failed for: " << cstr;
+        return cslt::UniquePtr<cslt::String, cslt::StringDeleter>(r.value());
+    }
+};
+
+// ================================================================================
+// replace(const char*, const char*) — nominal: equal-length substitution
+// ================================================================================
+
+// Pattern and replacement are the same length — no buffer growth needed
+TEST_F(StringReplaceTest, Literal_EqualLength_SingleOccurrence) {
+    auto s = make("one two three");
+    EXPECT_TRUE(s->replace("two", "six"));
+    EXPECT_STREQ(s->c_str(), "one six three");
+    EXPECT_EQ(s->size(), 13u);
+}
+
+TEST_F(StringReplaceTest, Literal_EqualLength_MultipleOccurrences) {
+    auto s = make("cat and cat and cat");
+    EXPECT_TRUE(s->replace("cat", "dog"));
+    EXPECT_STREQ(s->c_str(), "dog and dog and dog");
+    EXPECT_EQ(s->size(), 19u);
+}
+
+// ================================================================================
+// replace(const char*, const char*) — nominal: replacement shorter than pattern
+// ================================================================================
+
+// Buffer shrinks — size() must reflect the reduction
+TEST_F(StringReplaceTest, Literal_ShorterReplacement_SingleOccurrence) {
+    auto s = make("one two three");
+    EXPECT_TRUE(s->replace("two", "a"));
+    EXPECT_STREQ(s->c_str(), "one a three");
+    EXPECT_EQ(s->size(), 11u);
+}
+
+TEST_F(StringReplaceTest, Literal_ShorterReplacement_MultipleOccurrences) {
+    auto s = make("one fish two fish red fish");
+    EXPECT_TRUE(s->replace("fish", "x"));
+    EXPECT_STREQ(s->c_str(), "one x two x red x");
+    EXPECT_EQ(s->size(), 17u);
+}
+
+// Replace with empty string — effectively deletes all occurrences
+TEST_F(StringReplaceTest, Literal_ReplaceWithEmpty_DeletesAllOccurrences) {
+    auto s = make("hello world hello");
+    EXPECT_TRUE(s->replace("hello", ""));
+    EXPECT_STREQ(s->c_str(), " world ");
+    EXPECT_EQ(s->size(), 7u);
+}
+
+// ================================================================================
+// replace(const char*, const char*) — nominal: replacement longer than pattern
+// ================================================================================
+
+// Buffer must grow to accommodate the longer replacement
+TEST_F(StringReplaceTest, Literal_LongerReplacement_SingleOccurrence) {
+    auto s = make("one two three");
+    EXPECT_TRUE(s->replace("two", "twenty"));
+    EXPECT_STREQ(s->c_str(), "one twenty three");
+    EXPECT_EQ(s->size(), 16u);
+}
+
+TEST_F(StringReplaceTest, Literal_LongerReplacement_MultipleOccurrences) {
+    auto s = make("one two two three");
+    EXPECT_TRUE(s->replace("two", "four"));
+    EXPECT_STREQ(s->c_str(), "one four four three");
+    EXPECT_EQ(s->size(), 19u);
+}
+
+// ================================================================================
+// replace(const char*, const char*) — nominal: position and range
+// ================================================================================
+
+// Pattern at the very start of the string
+TEST_F(StringReplaceTest, Literal_MatchAtStart) {
+    auto s = make("foo bar baz");
+    EXPECT_TRUE(s->replace("foo", "qux"));
+    EXPECT_STREQ(s->c_str(), "qux bar baz");
+}
+
+// Pattern at the very end of the string
+TEST_F(StringReplaceTest, Literal_MatchAtEnd) {
+    auto s = make("bar baz foo");
+    EXPECT_TRUE(s->replace("foo", "qux"));
+    EXPECT_STREQ(s->c_str(), "bar baz qux");
+}
+
+// Pattern equals the entire string
+TEST_F(StringReplaceTest, Literal_PatternIsEntireString) {
+    auto s = make("hello");
+    EXPECT_TRUE(s->replace("hello", "world"));
+    EXPECT_STREQ(s->c_str(), "world");
+    EXPECT_EQ(s->size(), 5u);
+}
+
+// Ranged replace — only the occurrence inside the window is replaced;
+// the two occurrences outside the window survive untouched
+TEST_F(StringReplaceTest, Literal_WithRange_OnlyWindowOccurrenceReplaced) {
+    auto s = make("cat and cat and cat");
+    // Window covers only the middle "cat" (chars 8–10)
+    const void* begin = s->c_str() + 8;
+    const void* end   = s->c_str() + 11;
+    EXPECT_TRUE(s->replace("cat", "dog", begin, end));
+    EXPECT_STREQ(s->c_str(), "cat and dog and cat");
+}
+
+// size() is updated correctly when the replacement grows the string
+TEST_F(StringReplaceTest, Literal_SizeUpdatedCorrectly_AfterGrowth) {
+    auto s = make("a b a");
+    size_t before = s->size();
+    EXPECT_TRUE(s->replace("a", "zzz"));
+    // Each "a" (1 char) → "zzz" (3 chars), two replacements: +4 chars total
+    EXPECT_EQ(s->size(), before + 4u);
+    EXPECT_STREQ(s->c_str(), "zzz b zzz");
+}
+
+// Case-sensitive — different case must not be replaced
+TEST_F(StringReplaceTest, Literal_CaseSensitive_NoMatch) {
+    auto s = make("Hello World");
+    EXPECT_TRUE(s->replace("hello", "bye"));
+    EXPECT_STREQ(s->c_str(), "Hello World");
+}
+
+// ================================================================================
+// replace(const char*, const char*) — off-nominal edge cases
+// ================================================================================
+
+// Null pattern — must return false, string unchanged
+TEST_F(StringReplaceTest, Literal_NullPattern_ReturnsFalse) {
+    auto s = make("hello world");
+    EXPECT_FALSE(s->replace(nullptr, "bye"));
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Null replacement — must return false, string unchanged
+TEST_F(StringReplaceTest, Literal_NullReplacement_ReturnsFalse) {
+    auto s = make("hello world");
+    EXPECT_FALSE(s->replace("hello", nullptr));
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Empty pattern — must return true as a no-op, string unchanged
+TEST_F(StringReplaceTest, Literal_EmptyPattern_NoOp_ReturnsTrue) {
+    auto s = make("hello world");
+    EXPECT_TRUE(s->replace("", "bye"));
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Pattern not present — must return true, string unchanged
+TEST_F(StringReplaceTest, Literal_PatternNotPresent_ReturnsTrue_Unchanged) {
+    auto s = make("hello world");
+    EXPECT_TRUE(s->replace("xyz", "abc"));
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Pattern longer than string — impossible match, string unchanged
+TEST_F(StringReplaceTest, Literal_PatternLongerThanString_Unchanged) {
+    auto s = make("hi");
+    EXPECT_TRUE(s->replace("hello world", "bye"));
+    EXPECT_STREQ(s->c_str(), "hi");
+}
+
+// begin == end — empty window is a no-op, returns true
+TEST_F(StringReplaceTest, Literal_BeginEqualsEnd_NoOp_ReturnsTrue) {
+    auto s = make("one two three");
+    const void* mid = s->c_str() + 4;
+    EXPECT_TRUE(s->replace("two", "six", mid, mid));
+    EXPECT_STREQ(s->c_str(), "one two three");
+}
+
+// Repeated calls — second call finds nothing and is a clean no-op
+TEST_F(StringReplaceTest, Literal_RepeatedCalls_SecondIsNoOp) {
+    auto s = make("one two three");
+    EXPECT_TRUE(s->replace("two", "six"));
+    std::string snapshot(s->c_str());
+    EXPECT_TRUE(s->replace("two", "six"));
+    EXPECT_STREQ(s->c_str(), snapshot.c_str());
+}
+
+// ================================================================================
+// replace(const String&, const String&) — nominal
+// ================================================================================
+
+TEST_F(StringReplaceTest, StringOverload_EqualLength_SingleOccurrence) {
+    auto s = make("one two three");
+    auto p = make("two");
+    auto r = make("six");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), "one six three");
+    EXPECT_EQ(s->size(), 13u);
+}
+
+TEST_F(StringReplaceTest, StringOverload_EqualLength_MultipleOccurrences) {
+    auto s = make("cat and cat and cat");
+    auto p = make("cat");
+    auto r = make("dog");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), "dog and dog and dog");
+}
+
+TEST_F(StringReplaceTest, StringOverload_ShorterReplacement_MultipleOccurrences) {
+    auto s = make("one fish two fish red fish");
+    auto p = make("fish");
+    auto r = make("x");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), "one x two x red x");
+    EXPECT_EQ(s->size(), 17u);
+}
+
+TEST_F(StringReplaceTest, StringOverload_LongerReplacement_MultipleOccurrences) {
+    auto s = make("one two two three");
+    auto p = make("two");
+    auto r = make("four");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), "one four four three");
+    EXPECT_EQ(s->size(), 19u);
+}
+
+// Replace with empty String — effectively deletes all occurrences
+TEST_F(StringReplaceTest, StringOverload_ReplaceWithEmpty_DeletesAllOccurrences) {
+    auto s = make("hello world hello");
+    auto p = make("hello");
+    auto r = make("");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), " world ");
+}
+
+// Ranged replace — only occurrence inside window is substituted
+TEST_F(StringReplaceTest, StringOverload_WithRange_OnlyWindowOccurrenceReplaced) {
+    auto s = make("cat and cat and cat");
+    auto p = make("cat");
+    auto r = make("dog");
+    const void* begin = s->c_str() + 8;
+    const void* end   = s->c_str() + 11;
+    EXPECT_TRUE(s->replace(*p, *r, begin, end));
+    EXPECT_STREQ(s->c_str(), "cat and dog and cat");
+}
+
+// ================================================================================
+// replace(const String&, const String&) — off-nominal edge cases
+// ================================================================================
+
+// Empty pattern String — no-op, returns true
+TEST_F(StringReplaceTest, StringOverload_EmptyPattern_NoOp_ReturnsTrue) {
+    auto s = make("hello world");
+    auto p = make("");
+    auto r = make("bye");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// Pattern not present — returns true, string unchanged
+TEST_F(StringReplaceTest, StringOverload_PatternNotPresent_ReturnsTrue_Unchanged) {
+    auto s = make("hello world");
+    auto p = make("xyz");
+    auto r = make("abc");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), "hello world");
+}
+
+// begin == end — empty window, no-op, returns true
+TEST_F(StringReplaceTest, StringOverload_BeginEqualsEnd_NoOp_ReturnsTrue) {
+    auto s = make("one two three");
+    auto p = make("two");
+    auto r = make("six");
+    const void* mid = s->c_str() + 4;
+    EXPECT_TRUE(s->replace(*p, *r, mid, mid));
+    EXPECT_STREQ(s->c_str(), "one two three");
+}
+
+// Case-sensitive — wrong case must not be replaced
+TEST_F(StringReplaceTest, StringOverload_CaseSensitive_NoMatch) {
+    auto s = make("Hello World");
+    auto p = make("hello");
+    auto r = make("bye");
+    EXPECT_TRUE(s->replace(*p, *r));
+    EXPECT_STREQ(s->c_str(), "Hello World");
+}
+
+// ================================================================================
+// Cross-overload consistency
+// ================================================================================
+
+// Both overloads must produce identical content and size — equal-length
+TEST_F(StringReplaceTest, BothOverloads_AgreeOnResult_EqualLength) {
+    auto s1 = make("one two two three");
+    auto s2 = make("one two two three");
+    auto p  = make("two");
+    auto r  = make("six");
+
+    EXPECT_TRUE(s1->replace("two", "six"));
+    EXPECT_TRUE(s2->replace(*p, *r));
+
+    EXPECT_STREQ(s1->c_str(), s2->c_str());
+    EXPECT_EQ(s1->size(), s2->size());
+}
+
+// Both overloads agree — replacement longer than pattern
+TEST_F(StringReplaceTest, BothOverloads_AgreeOnResult_LongerReplacement) {
+    auto s1 = make("a and a and a");
+    auto s2 = make("a and a and a");
+    auto p  = make("a");
+    auto r  = make("alpha");
+
+    EXPECT_TRUE(s1->replace("a", "alpha"));
+    EXPECT_TRUE(s2->replace(*p, *r));
+
+    EXPECT_STREQ(s1->c_str(), s2->c_str());
+    EXPECT_EQ(s1->size(), s2->size());
+}
+
+// Both overloads agree — replacement shorter than pattern
+TEST_F(StringReplaceTest, BothOverloads_AgreeOnResult_ShorterReplacement) {
+    auto s1 = make("one fish two fish red fish");
+    auto s2 = make("one fish two fish red fish");
+    auto p  = make("fish");
+    auto r  = make("x");
+
+    EXPECT_TRUE(s1->replace("fish", "x"));
+    EXPECT_TRUE(s2->replace(*p, *r));
+
+    EXPECT_STREQ(s1->c_str(), s2->c_str());
+    EXPECT_EQ(s1->size(), s2->size());
+}
+
+// Both overloads agree when a ranged window is supplied
+TEST_F(StringReplaceTest, BothOverloads_AgreeOnResult_WithRange) {
+    auto s1 = make("cat and cat and cat");
+    auto s2 = make("cat and cat and cat");
+    auto p  = make("cat");
+    auto r  = make("dog");
+
+    const void* begin1 = s1->c_str() + 8;
+    const void* end1   = s1->c_str() + 11;
+    const void* begin2 = s2->c_str() + 8;
+    const void* end2   = s2->c_str() + 11;
+
+    EXPECT_TRUE(s1->replace("cat", "dog", begin1, end1));
+    EXPECT_TRUE(s2->replace(*p, *r, begin2, end2));
+
+    EXPECT_STREQ(s1->c_str(), s2->c_str());
+    EXPECT_EQ(s1->size(), s2->size());
+}
+
+// ================================================================================
+// ================================================================================
+// eof
+// ================================================================================
+// ================================================================================
 // ================================================================================
 // ================================================================================
 // eof

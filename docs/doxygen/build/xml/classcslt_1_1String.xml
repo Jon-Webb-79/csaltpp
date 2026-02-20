@@ -76,7 +76,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1227" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1227" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1301" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1301" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -1880,6 +1880,169 @@ Behaviour is identical to drop(const char*). See that overload for full semantic
         </inbodydescription>
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1221" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="786" bodyend="845"/>
       </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1aa33f118a5afaf9d78d89e34fa29a09cd" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::String::replace</definition>
+        <argsstring>(const char *pattern, const char *replacement, const void *begin=nullptr, const void *end=nullptr) noexcept</argsstring>
+        <name>replace</name>
+        <param>
+          <type>const char *</type>
+          <declname>pattern</declname>
+        </param>
+        <param>
+          <type>const char *</type>
+          <declname>replacement</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Replace all non-overlapping occurrences of a pattern with a replacement string, in-place. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>C-string to search for (case-sensitive) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>replacement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>C-string to substitute in place of each match </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of search window (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of search window (default: end of string) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success or if no replacements were needed; false on invalid arguments or allocation failure</para>
+</simplesect>
+Counts all non-overlapping occurrences of <computeroutput>pattern</computeroutput> in the window first, computes the exact new length, grows the buffer in a single allocation if necessary, then performs all substitutions using reverse-order search to minimise memmove distances.</para>
+<para>On allocation failure the string content is left unchanged and false is returned. An empty pattern is defined as a no-op (returns true). An empty window (begin &gt;= end) is also a no-op.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one<sp/>two<sp/>two<sp/>three&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;replace(</highlight><highlight class="stringliteral">&quot;two&quot;</highlight><highlight class="normal">,<sp/></highlight><highlight class="stringliteral">&quot;four&quot;</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;one<sp/>four<sp/>four<sp/>three&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1a1f97a5f0c2d56436a35da3f6ec43df1e" kindref="member">replace(const String&amp;, const String&amp;, const void*, const void*)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1258" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="848" bodyend="955"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1a1f97a5f0c2d56436a35da3f6ec43df1e" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::String::replace</definition>
+        <argsstring>(const String &amp;pattern, const String &amp;replacement, const void *begin=nullptr, const void *end=nullptr) noexcept</argsstring>
+        <name>replace</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1String" kindref="compound">String</ref> &amp;</type>
+          <declname>pattern</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1String" kindref="compound">String</ref> &amp;</type>
+          <declname>replacement</declname>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>begin</declname>
+          <defval>nullptr</defval>
+        </param>
+        <param>
+          <type>const void *</type>
+          <declname>end</declname>
+          <defval>nullptr</defval>
+        </param>
+        <briefdescription>
+<para>Replace all non-overlapping occurrences of a pattern with a replacement string, in-place. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>pattern</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1String" kindref="compound">String</ref> to search for (case-sensitive) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>replacement</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1String" kindref="compound">String</ref> to substitute in place of each match </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>begin</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional start of search window (default: start of string) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Optional end of search window (default: end of string) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success or if no replacements were needed; false on invalid arguments or allocation failure</para>
+</simplesect>
+Convenience overload accepting <ref refid="classcslt_1_1String" kindref="compound">String</ref> objects. Behaviour is identical to replace(const char*, const char*, ...).</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rs<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one<sp/>two<sp/>two<sp/>three&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rp<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;two&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rr<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;four&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rs.hasValue()<sp/>&amp;&amp;<sp/>rp.hasValue()<sp/>&amp;&amp;<sp/>rr.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(rs.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>p(rp.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>r(rr.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>s-&gt;replace(*p,<sp/>*r);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;one<sp/>four<sp/>four<sp/>three&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1aa33f118a5afaf9d78d89e34fa29a09cd" kindref="member">replace(const char*, const char*, const void*, const void*)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1294" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="958" bodyend="1061"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Allocator-backed string container. </para>
@@ -1917,7 +2080,7 @@ Behaviour is identical to drop(const char*). See that overload for full semantic
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1228"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1302"/>
     <listofallmembers>
       <member refid="classcslt_1_1String_1aed2a23a1c540c4caf68f6e43a1d4164a" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>alloc_</name></member>
       <member refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>allocator</name></member>
@@ -1941,6 +2104,8 @@ Behaviour is identical to drop(const char*). See that overload for full semantic
       <member refid="classcslt_1_1String_1a40b7c4993607b42bc6216c83f319c6d2" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>lowercase</name></member>
       <member refid="classcslt_1_1String_1a44851bf726e219fba16bee4223cb7584" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
       <member refid="classcslt_1_1String_1aa878a4aaceeb4c2ad0a8f321d7da6c5b" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1String_1aa33f118a5afaf9d78d89e34fa29a09cd" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>replace</name></member>
+      <member refid="classcslt_1_1String_1a1f97a5f0c2d56436a35da3f6ec43df1e" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>replace</name></member>
       <member refid="classcslt_1_1String_1adc4b6300e480f5f8dd3f4269ce26cc86" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>reset</name></member>
       <member refid="classcslt_1_1String_1acad01b0064c0fba1f1fbbadc6b2f625d" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>size</name></member>
       <member refid="classcslt_1_1String_1abc44c53a24452072b8b53bd52c65dc84" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>str_</name></member>

@@ -73,6 +73,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String9lowercaseEPKvPKv"><code class="docutils literal notranslate"><span class="pre">lowercase()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4dropEPKcPKvPKv"><code class="docutils literal notranslate"><span class="pre">drop()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4dropERK6StringPKvPKv"><code class="docutils literal notranslate"><span class="pre">drop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String7replaceEPKcPKcPKvPKv"><code class="docutils literal notranslate"><span class="pre">replace()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String7replaceERK6StringRK6StringPKvPKv"><code class="docutils literal notranslate"><span class="pre">replace()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt6String4initEPKc6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 </ul>
 </li>
@@ -1358,6 +1360,81 @@ Behaviour is identical to drop(const char*). See that overload for full semantic
 <li><p><strong>begin</strong> – Optional start of search window (default: start of string) </p></li>
 <li><p><strong>end</strong> – Optional end of search window (default: end of string)</p></li>
 </ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt6String7replaceEPKcPKcPKvPKv">
+<span id="_CPPv3N4cslt6String7replaceEPKcPKcPKvPKv"></span><span id="_CPPv2N4cslt6String7replaceEPKcPKcPKvPKv"></span><span id="cslt::String::replace__cCP.cCP.voidCP.voidCP"></span><span class="target" id="classcslt_1_1String_1aa33f118a5afaf9d78d89e34fa29a09cd"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">replace</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">pattern</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">replacement</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">begin</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">end</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6String7replaceEPKcPKcPKvPKv" title="Link to this definition"></a><br /></dt>
+<dd><p>Replace all non-overlapping occurrences of a pattern with a replacement string, in-place. </p>
+<p>
+Counts all non-overlapping occurrences of <code class="docutils literal notranslate"><span class="pre">pattern</span></code> in the window first, computes the exact new length, grows the buffer in a single allocation if necessary, then performs all substitutions using reverse-order search to minimise memmove distances.</p>
+<p>On allocation failure the string content is left unchanged and false is returned. An empty pattern is defined as a no-op (returns true). An empty window (begin &gt;= end) is also a no-op.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;one two two three&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">replace</span><span class="p">(</span><span class="s">&quot;two&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;four&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;one four four three&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1a1f97a5f0c2d56436a35da3f6ec43df1e"><span class="std std-ref">replace(const String&amp;, const String&amp;, const void*, const void*)</span></a></p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> – C-string to search for (case-sensitive) </p></li>
+<li><p><strong>replacement</strong> – C-string to substitute in place of each match </p></li>
+<li><p><strong>begin</strong> – Optional start of search window (default: start of string) </p></li>
+<li><p><strong>end</strong> – Optional end of search window (default: end of string) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success or if no replacements were needed; false on invalid arguments or allocation failure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt6String7replaceERK6StringRK6StringPKvPKv">
+<span id="_CPPv3N4cslt6String7replaceERK6StringRK6StringPKvPKv"></span><span id="_CPPv2N4cslt6String7replaceERK6StringRK6StringPKvPKv"></span><span id="cslt::String::replace__StringCR.StringCR.voidCP.voidCP"></span><span class="target" id="classcslt_1_1String_1a1f97a5f0c2d56436a35da3f6ec43df1e"></span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">replace</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">pattern</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">replacement</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">begin</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">end</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">nullptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6String7replaceERK6StringRK6StringPKvPKv" title="Link to this definition"></a><br /></dt>
+<dd><p>Replace all non-overlapping occurrences of a pattern with a replacement string, in-place. </p>
+<p>
+Convenience overload accepting <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> objects. Behaviour is identical to replace(const char*, const char*, …).</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;one two two three&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">rp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;two&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">rr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;four&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rp</span><span class="p">.</span><span class="n">hasValue</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">rr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">p</span><span class="p">(</span><span class="n">rp</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">r</span><span class="p">(</span><span class="n">rr</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">replace</span><span class="p">(</span><span class="o">*</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">r</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">s</span><span class="o">-&gt;</span><span class="n">c_str</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span><span class="w">  </span><span class="c1">// &quot;one four four three&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="#classcslt_1_1String_1aa33f118a5afaf9d78d89e34fa29a09cd"><span class="std std-ref">replace(const char*, const char*, const void*, const void*)</span></a></p>
+</div>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pattern</strong> – <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> to search for (case-sensitive) </p></li>
+<li><p><strong>replacement</strong> – <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> to substitute in place of each match </p></li>
+<li><p><strong>begin</strong> – Optional start of search window (default: start of string) </p></li>
+<li><p><strong>end</strong> – Optional end of search window (default: end of string) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success or if no replacements were needed; false on invalid arguments or allocation failure</p>
 </dd>
 </dl>
 </dd></dl>

@@ -12,6 +12,10 @@ Allocator-\/backed string container.
 \doxysubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
+char \mbox{\hyperlink{classcslt_1_1String_ae0468ab2b1c22028895d05e200681bfd}{operator\mbox{[}$\,$\mbox{]}}} (size\+\_\+t index) const noexcept
+\begin{DoxyCompactList}\small\item\em Read-\/only index access to a single character. \end{DoxyCompactList}\item 
+char \& \mbox{\hyperlink{classcslt_1_1String_a191b26d15433e03da466b5064c5400e0}{operator\mbox{[}$\,$\mbox{]}}} (size\+\_\+t index) noexcept
+\begin{DoxyCompactList}\small\item\em Read-\/write index access to a single character. \end{DoxyCompactList}\item 
 const char $\ast$ \mbox{\hyperlink{classcslt_1_1String_aafb23f3fb1b81ecf14b2c89bd13dfca9}{c\+\_\+str}} () const noexcept
 \begin{DoxyCompactList}\small\item\em Get the internal null-\/terminated C string. \end{DoxyCompactList}\item 
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_acad01b0064c0fba1f1fbbadc6b2f625d}{size}} () const noexcept
@@ -61,7 +65,11 @@ void \mbox{\hyperlink{classcslt_1_1String_ab29f156a3630ee6f06d2194a1764eae6}{dro
 bool \mbox{\hyperlink{classcslt_1_1String_aa33f118a5afaf9d78d89e34fa29a09cd}{replace}} (const char $\ast$pattern, const char $\ast$replacement, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
 \begin{DoxyCompactList}\small\item\em Replace all non-\/overlapping occurrences of a pattern with a replacement string, in-\/place. \end{DoxyCompactList}\item 
 bool \mbox{\hyperlink{classcslt_1_1String_a1f97a5f0c2d56436a35da3f6ec43df1e}{replace}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&pattern, const \mbox{\hyperlink{classcslt_1_1String}{String}} \&replacement, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) noexcept
-\begin{DoxyCompactList}\small\item\em Replace all non-\/overlapping occurrences of a pattern with a replacement string, in-\/place. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Replace all non-\/overlapping occurrences of a pattern with a replacement string, in-\/place. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1String_a6eb2bea6fd525ce2011be46877803ae3}{pop}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&token, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&\mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}}) noexcept
+\begin{DoxyCompactList}\small\item\em Find the last occurrence of a delimiter \mbox{\hyperlink{classcslt_1_1String}{String}}, return everything to its right as a new \mbox{\hyperlink{classcslt_1_1String}{String}}, and truncate this string to everything to its left. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1String_ae17a18c4316cb964c7038e1b643b1650}{pop}} (const char $\ast$token, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&\mbox{\hyperlink{classcslt_1_1String_a6eda4a5ad208384fe665c3e9a8c6f90c}{allocator}}) noexcept
+\begin{DoxyCompactList}\small\item\em Find the last occurrence of a delimiter C-\/string, return everything to its right as a new \mbox{\hyperlink{classcslt_1_1String}{String}}, and truncate this string to everything to its left. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -71,7 +79,9 @@ static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{cl
 \begin{DoxyCompactItemize}
 \item 
 class \mbox{\hyperlink{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}{String\+Deleter}}
-\end{DoxyCompactItemize}
+\item 
+std\+::ostream \& \mbox{\hyperlink{classcslt_1_1String_a723de0a84d1ac7baa71c7dde71acdd67}{operator$<$$<$}} (std\+::ostream \&os, const \mbox{\hyperlink{classcslt_1_1String}{String}} \&s) noexcept
+\begin{DoxyCompactList}\small\item\em Stream insertion operator — prints the string up to its logical length, not the null terminator. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
@@ -1220,6 +1230,187 @@ Range parameters\+:
 \begin{DoxySeeAlso}{See also}
 \mbox{\hyperlink{classcslt_1_1String_a92ea4894c00f0ca3ec7aac7b02778f4f}{uppercase(const void$\ast$, const void$\ast$)}} 
 \end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_ae0468ab2b1c22028895d05e200681bfd}\label{classcslt_1_1String_ae0468ab2b1c22028895d05e200681bfd}} 
+\index{cslt::String@{cslt::String}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily char cslt\+::\+String\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Read-\/only index access to a single character. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Zero-\/based position within the used string (0 to len\+\_\+-\/1) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The character at that position
+\end{DoxyReturn}
+Provides bounds-\/checked read access to individual characters. Only indices within the logical length \mbox{[}0, len\+\_\+) are valid. The null terminator at position len\+\_\+ is intentionally excluded.
+
+\begin{DoxyParagraph}{Error behaviour\+:}
+If index $>$= len\+\_\+ or the internal buffer is null, \textquotesingle{}\textbackslash{}0\textquotesingle{} is returned as a safe sentinel. This keeps the operator noexcept without invoking undefined behaviour on an out-\/of-\/bounds access.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    \textcolor{keywordtype}{char} c = (*s)[1];  \textcolor{comment}{// 'e'}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_a191b26d15433e03da466b5064c5400e0}{operator\mbox{[}$\,$\mbox{]}(size\+\_\+t)}} for write access 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a191b26d15433e03da466b5064c5400e0}\label{classcslt_1_1String_a191b26d15433e03da466b5064c5400e0}} 
+\index{cslt::String@{cslt::String}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily char \& cslt\+::\+String\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Read-\/write index access to a single character. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Zero-\/based position within the used string (0 to len\+\_\+-\/1) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to the character at that position
+\end{DoxyReturn}
+Provides bounds-\/checked write access to individual characters. Only indices within the logical length \mbox{[}0, len\+\_\+) are valid. The null terminator at position len\+\_\+ cannot be modified through this operator.
+
+\begin{DoxyParagraph}{Error behaviour\+:}
+If index $>$= len\+\_\+ or the internal buffer is null, a reference to an internal static sentinel \textquotesingle{}\textbackslash{}0\textquotesingle{} character is returned. Assigning to this sentinel is silently discarded, which preserves both noexcept and defined behaviour on out-\/of-\/bounds writes.
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    (*s)[1] = \textcolor{charliteral}{'a'};  \textcolor{comment}{// "{}hallo"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_ae0468ab2b1c22028895d05e200681bfd}{operator\mbox{[}$\,$\mbox{]}(size\+\_\+t) const }}for read-\/only access 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_ae17a18c4316cb964c7038e1b643b1650}\label{classcslt_1_1String_ae17a18c4316cb964c7038e1b643b1650}} 
+\index{cslt::String@{cslt::String}!pop@{pop}}
+\index{pop@{pop}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{pop()}{pop()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ cslt\+::\+String\+::pop (\begin{DoxyParamCaption}\item[{const char $\ast$}]{token,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Find the last occurrence of a delimiter C-\/string, return everything to its right as a new \mbox{\hyperlink{classcslt_1_1String}{String}}, and truncate this string to everything to its left. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em token} & Null-\/terminated delimiter to search for (case-\/sensitive) \\
+\hline
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} used to create the returned \mbox{\hyperlink{classcslt_1_1String}{String}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+String$\ast$$>$ containing the right-\/hand fragment, or an error if the operation cannot be performed
+\end{DoxyReturn}
+Convenience overload accepting a C-\/string token. Behaviour is identical to \mbox{\hyperlink{classcslt_1_1String_a6eb2bea6fd525ce2011be46877803ae3}{pop(const String\&, Allocator\&)}}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} rs = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one::two::three"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (rs.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(rs.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} rhs = s-\/>pop(\textcolor{stringliteral}{"{}::"{}}, alloc);}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (rhs.hasValue()) \{}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} right(rhs.value());}
+\DoxyCodeLine{        \textcolor{comment}{// right-\/>c\_str() == "{}three"{}}}
+\DoxyCodeLine{        \textcolor{comment}{// s-\/>c\_str()     == "{}one::two"{}}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_a6eb2bea6fd525ce2011be46877803ae3}{pop(const String\&, Allocator\&)}} 
+\end{DoxySeeAlso}
+\mbox{\Hypertarget{classcslt_1_1String_a6eb2bea6fd525ce2011be46877803ae3}\label{classcslt_1_1String_a6eb2bea6fd525ce2011be46877803ae3}} 
+\index{cslt::String@{cslt::String}!pop@{pop}}
+\index{pop@{pop}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{pop()}{pop()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1String}{String}} $\ast$ $>$ cslt\+::\+String\+::pop (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{token,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+
+Find the last occurrence of a delimiter \mbox{\hyperlink{classcslt_1_1String}{String}}, return everything to its right as a new \mbox{\hyperlink{classcslt_1_1String}{String}}, and truncate this string to everything to its left. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em token} & Delimiter to search for (case-\/sensitive) \\
+\hline
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} used to create the returned \mbox{\hyperlink{classcslt_1_1String}{String}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+String$\ast$$>$ containing the right-\/hand fragment, or an error if the operation cannot be performed
+\end{DoxyReturn}
+Locates the last (rightmost) occurrence of {\ttfamily token} using a reverse search. On success\+:
+\begin{DoxyItemize}
+\item A new \mbox{\hyperlink{classcslt_1_1String}{String}} is allocated containing the text that follows the token.
+\item This string is truncated in-\/place to the text that precedes the token.
+\item The token itself is consumed and appears in neither result.
+\end{DoxyItemize}
+
+The caller owns the returned \mbox{\hyperlink{classcslt_1_1String}{String}} and must free it via \mbox{\hyperlink{classcslt_1_1StringDeleter}{String\+Deleter}}.
+
+\begin{DoxyParagraph}{Error conditions (returns Expected with error)\+:}
+
+\begin{DoxyItemize}
+\item str\+\_\+ is null
+\item token.\+str\+\_\+ is null or token is empty
+\item This string is empty
+\item Token is not found
+\item Allocation of the result \mbox{\hyperlink{classcslt_1_1String}{String}} fails
+\end{DoxyItemize}
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} rs = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}one::two::three"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keyword}{auto} rt = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}::"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (rs.hasValue() \&\& rt.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(rs.value());}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} t(rt.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{    \textcolor{keyword}{auto} rhs = s-\/>pop(*t, alloc);}
+\DoxyCodeLine{    \textcolor{keywordflow}{if} (rhs.hasValue()) \{}
+\DoxyCodeLine{        \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} right(rhs.value());}
+\DoxyCodeLine{        \textcolor{comment}{// right-\/>c\_str() == "{}three"{}}}
+\DoxyCodeLine{        \textcolor{comment}{// s-\/>c\_str()     == "{}one::two"{}}}
+\DoxyCodeLine{    \}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxySeeAlso}{See also}
+\mbox{\hyperlink{classcslt_1_1String_ae17a18c4316cb964c7038e1b643b1650}{pop(const char$\ast$, Allocator\&)}} 
+\end{DoxySeeAlso}
 \mbox{\Hypertarget{classcslt_1_1String_aa33f118a5afaf9d78d89e34fa29a09cd}\label{classcslt_1_1String_aa33f118a5afaf9d78d89e34fa29a09cd}} 
 \index{cslt::String@{cslt::String}!replace@{replace}}
 \index{replace@{replace}!cslt::String@{cslt::String}}
@@ -1607,7 +1798,41 @@ Return value\+:
  
 
 \doxysubsection{Friends And Related Function Documentation}
-\mbox{\Hypertarget{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}\label{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}} 
+\mbox{\Hypertarget{classcslt_1_1String_a723de0a84d1ac7baa71c7dde71acdd67}\label{classcslt_1_1String_a723de0a84d1ac7baa71c7dde71acdd67}} 
+\index{cslt::String@{cslt::String}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!cslt::String@{cslt::String}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$}{operator<<}}
+{\footnotesize\ttfamily std\+::ostream\& operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os,  }\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+Stream insertion operator — prints the string up to its logical length, not the null terminator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em os} & Output stream to write to \\
+\hline
+{\em s} & \mbox{\hyperlink{classcslt_1_1String}{String}} to print \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to {\ttfamily os} for chaining
+\end{DoxyReturn}
+Writes exactly len\+\_\+ characters to the stream using std\+::ostream\+::write() rather than operator$<$$<$(const char$\ast$), which would stop at the first embedded null byte. Characters beyond len\+\_\+ (including the null terminator) are never accessed.
+
+The operator is a no-\/op if the internal buffer is null, leaving the stream in a valid state.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello world"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    std::cout << *s << std::endl;  \textcolor{comment}{// prints "{}hello world"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}\label{classcslt_1_1String_a689e801650cd38a0341ef5781c508716}} 
 \index{cslt::String@{cslt::String}!StringDeleter@{StringDeleter}}
 \index{StringDeleter@{StringDeleter}!cslt::String@{cslt::String}}
 \doxysubsubsection{\texorpdfstring{StringDeleter}{StringDeleter}}

@@ -107,6 +107,63 @@ namespace cslt {
 
     public:
         /**
+         * @brief Read-only index access to a single character
+         *
+         * @param index Zero-based position within the used string (0 to len_-1)
+         * @return      The character at that position
+         *
+         * @details Provides bounds-checked read access to individual characters.
+         * Only indices within the logical length [0, len_) are valid. The null
+         * terminator at position len_ is intentionally excluded.
+         *
+         * @par Error behaviour:
+         * If index >= len_ or the internal buffer is null, '\0' is returned as
+         * a safe sentinel. This keeps the operator noexcept without invoking
+         * undefined behaviour on an out-of-bounds access.
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("hello", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     char c = (*s)[1];  // 'e'
+         * }
+         * @endcode
+         *
+         * @see operator[](size_t) for write access
+         */
+        char operator[](size_t index) const noexcept;
+// --------------------------------------------------------------------------------
+
+        /**
+         * @brief Read-write index access to a single character
+         *
+         * @param index Zero-based position within the used string (0 to len_-1)
+         * @return      Reference to the character at that position
+         *
+         * @details Provides bounds-checked write access to individual characters.
+         * Only indices within the logical length [0, len_) are valid. The null
+         * terminator at position len_ cannot be modified through this operator.
+         *
+         * @par Error behaviour:
+         * If index >= len_ or the internal buffer is null, a reference to an
+         * internal static sentinel '\0' character is returned. Assigning to this
+         * sentinel is silently discarded, which preserves both noexcept and
+         * defined behaviour on out-of-bounds writes.
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::String::init("hello", 0, alloc);
+         * if (r.hasValue()) {
+         *     cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(r.value());
+         *     (*s)[1] = 'a';  // "hallo"
+         * }
+         * @endcode
+         *
+         * @see operator[](size_t) const for read-only access
+         */
+        char& operator[](size_t index) noexcept;
+        /**
          * @brief Initialize an allocator-backed string
          * 
          * @param cstr Null-terminated source C string

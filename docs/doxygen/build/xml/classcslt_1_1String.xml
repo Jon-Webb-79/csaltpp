@@ -76,7 +76,57 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1301" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1301" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1469" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="1469" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="friend" id="classcslt_1_1String_1a723de0a84d1ac7baa71c7dde71acdd67" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>std::ostream &amp;</type>
+        <definition>std::ostream&amp; operator&lt;&lt;</definition>
+        <argsstring>(std::ostream &amp;os, const String &amp;s) noexcept</argsstring>
+        <name>operator&lt;&lt;</name>
+        <param>
+          <type>std::ostream &amp;</type>
+          <declname>os</declname>
+        </param>
+        <param>
+          <type>const <ref refid="classcslt_1_1String" kindref="compound">String</ref> &amp;</type>
+          <declname>s</declname>
+        </param>
+        <briefdescription>
+<para>Stream insertion operator — prints the string up to its logical length, not the null terminator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>os</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Output stream to write to </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>s</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1String" kindref="compound">String</ref> to print </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to <computeroutput>os</computeroutput> for chaining</para>
+</simplesect>
+Writes exactly len_ characters to the stream using std::ostream::write() rather than operator&lt;&lt;(const char*), which would stop at the first embedded null byte. Characters beyond len_ (including the null terminator) are never accessed.</para>
+<para>The operator is a no-op if the internal buffer is null, leaving the stream in a valid state.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello<sp/>world&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>*s<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>prints<sp/>&quot;hello<sp/>world&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1464" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="1186" bodyend="1191"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-func">
@@ -130,7 +180,7 @@ This constructor is private to enforce the use of the <ref refid="classcslt_1_1S
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="95" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="68" bodyend="97"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="95" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="86" bodyend="115"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a675f1af6899bff56d3fbd6201497bd1b" prot="private" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type></type>
@@ -144,7 +194,7 @@ This constructor is private to enforce the use of the <ref refid="classcslt_1_1S
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="100" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="104" bodyend="109"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="100" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="122" bodyend="127"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1ad65d747327441df6ed27e322208215b9" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
         <type></type>
@@ -211,111 +261,91 @@ This constructor is private to enforce the use of the <ref refid="classcslt_1_1S
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="106" column="16"/>
       </memberdef>
       </sectiondef>
-      <sectiondef kind="public-static-func">
-      <memberdef kind="function" id="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" prot="public" static="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
-        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
-        <definition>Expected&lt; String * &gt; cslt::String::init</definition>
-        <argsstring>(const char *cstr, size_t capacity_bytes, Allocator &amp;allocator) noexcept</argsstring>
-        <name>init</name>
-        <param>
-          <type>const char *</type>
-          <declname>cstr</declname>
-        </param>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1String_1ae0468ab2b1c22028895d05e200681bfd" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>char</type>
+        <definition>char cslt::String::operator[]</definition>
+        <argsstring>(size_t index) const noexcept</argsstring>
+        <name>operator[]</name>
         <param>
           <type>size_t</type>
-          <declname>capacity_bytes</declname>
-        </param>
-        <param>
-          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
-          <declname>allocator</declname>
+          <declname>index</declname>
         </param>
         <briefdescription>
-<para>Initialize an allocator-backed string. </para>
+<para>Read-only index access to a single character. </para>
         </briefdescription>
         <detaileddescription>
 <para><parameterlist kind="param"><parameteritem>
 <parameternamelist>
-<parametername>cstr</parametername>
+<parametername>index</parametername>
 </parameternamelist>
 <parameterdescription>
-<para>Null-terminated source C string </para>
-</parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>capacity_bytes</parametername>
-</parameternamelist>
-<parameterdescription>
-<para>Requested payload capacity in characters (excludes null terminator) </para>
-</parameterdescription>
-</parameteritem>
-<parameteritem>
-<parameternamelist>
-<parametername>allocator</parametername>
-</parameternamelist>
-<parameterdescription>
-<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> to use for memory management</para>
+<para>Zero-based position within the used string (0 to len_-1) </para>
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-<simplesect kind="return"><para>Expected&lt;String*&gt; containing pointer to <ref refid="classcslt_1_1String" kindref="compound">String</ref> or error</para>
+<simplesect kind="return"><para>The character at that position</para>
 </simplesect>
-Creates a new <ref refid="classcslt_1_1String" kindref="compound">String</ref> instance using the provided allocator.</para>
-<para>Capacity semantics:<itemizedlist>
-<listitem><para>If capacity_bytes is 0, the allocation defaults to exactly the length of cstr plus space for the null terminator</para>
-</listitem><listitem><para>If capacity_bytes is non-zero, the container allocates (capacity_bytes + 1) bytes to guarantee space for the terminator</para>
-</listitem><listitem><para>If the requested capacity is smaller than the source string length, the stored string is truncated to fit and always null-terminated</para>
-</listitem></itemizedlist>
-</para>
-<para>Memory allocation:<itemizedlist>
-<listitem><para>Both the <ref refid="classcslt_1_1String" kindref="compound">String</ref> object and its internal buffer are allocated through the provided allocator</para>
-</listitem><listitem><para>The allocator reference is stored for cleanup</para>
-</listitem><listitem><para>Memory must later be released through the <ref refid="classcslt_1_1StringDeleter" kindref="compound">StringDeleter</ref></para>
-</listitem></itemizedlist>
-</para>
-<para><simplesect kind="par"><title>Error conditions:</title><para><itemizedlist>
-<listitem><para><ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref> if cstr is nullptr</para>
-</listitem><listitem><para>Propagates any allocation errors from the allocator (typically <ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
-</listitem></itemizedlist>
-</para>
+Provides bounds-checked read access to individual characters. Only indices within the logical length [0, len_) are valid. The null terminator at position len_ is intentionally excluded.</para>
+<para><simplesect kind="par"><title>Error behaviour:</title><para>If index &gt;= len_ or the internal buffer is null, &apos;\0&apos; is returned as a safe sentinel. This keeps the operator noexcept without invoking undefined behaviour on an out-of-bounds access.</para>
 </simplesect>
-<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>;</highlight></codeline>
-<codeline><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Default<sp/>capacity<sp/>(fits<sp/>exact<sp/>string)</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r1<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello&quot;</highlight><highlight class="normal">,<sp/>0,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r1.hasValue())<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r1.value());</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>5</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;capacity()<sp/>&lt;&lt;<sp/>std::endl;<sp/></highlight><highlight class="comment">//<sp/>6<sp/>(includes<sp/>null)</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Pre-allocated<sp/>capacity</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r2<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hi&quot;</highlight><highlight class="normal">,<sp/>100,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r2.hasValue())<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r2.value());</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>2</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;capacity()<sp/>&lt;&lt;<sp/>std::endl;<sp/></highlight><highlight class="comment">//<sp/>101<sp/>(100<sp/>+<sp/>null)</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal">}</highlight></codeline>
-<codeline><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Truncation<sp/>case</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r3<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello<sp/>world&quot;</highlight><highlight class="normal">,<sp/>5,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r3.hasValue())<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r3.value());</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello&quot;</highlight><highlight class="normal"></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>5<sp/>(truncated)</highlight><highlight class="normal"></highlight></codeline>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>c<sp/>=<sp/>(*s)[1];<sp/><sp/></highlight><highlight class="comment">//<sp/>&apos;e&apos;</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
-<para><simplesect kind="see"><para><ref refid="classcslt_1_1StringDeleter" kindref="compound">StringDeleter</ref> for cleanup semantics </para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1a191b26d15433e03da466b5064c5400e0" kindref="member">operator[](size_t)</ref> for write access </para>
 </simplesect>
 </para>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="169" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="116" bodyend="148"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="135" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="68" bodyend="71"/>
       </memberdef>
-      </sectiondef>
-      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1String_1a191b26d15433e03da466b5064c5400e0" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type>char &amp;</type>
+        <definition>char &amp; cslt::String::operator[]</definition>
+        <argsstring>(size_t index) noexcept</argsstring>
+        <name>operator[]</name>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Read-write index access to a single character. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based position within the used string (0 to len_-1) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Reference to the character at that position</para>
+</simplesect>
+Provides bounds-checked write access to individual characters. Only indices within the logical length [0, len_) are valid. The null terminator at position len_ cannot be modified through this operator.</para>
+<para><simplesect kind="par"><title>Error behaviour:</title><para>If index &gt;= len_ or the internal buffer is null, a reference to an internal static sentinel &apos;\0&apos; character is returned. Assigning to this sentinel is silently discarded, which preserves both noexcept and defined behaviour on out-of-bounds writes.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>(*s)[1]<sp/>=<sp/></highlight><highlight class="charliteral">&apos;a&apos;</highlight><highlight class="normal">;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hallo&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1ae0468ab2b1c22028895d05e200681bfd" kindref="member">operator[](size_t) const </ref>for read-only access </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="165" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="74" bodyend="83"/>
+      </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1aafb23f3fb1b81ecf14b2c89bd13dfca9" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
         <type>const char *</type>
         <definition>const char* cslt::String::c_str</definition>
@@ -338,7 +368,7 @@ Returns a pointer to the underlying character buffer. The pointer remains valid 
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="191" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="191" bodyend="191"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="248" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="248" bodyend="248"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1acad01b0064c0fba1f1fbbadc6b2f625d" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -361,7 +391,7 @@ Returns the number of characters stored in the container, not including the null
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="210" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="210" bodyend="210"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="267" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="267" bodyend="267"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a45e6a308d90c30ff3e82fe5daaa47449" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -384,7 +414,7 @@ Returns the number of bytes allocated for the internal buffer, including space r
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="229" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="229" bodyend="229"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="286" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="286" bodyend="286"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
         <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> *</type>
@@ -408,7 +438,7 @@ Returns the allocator that was used to create this string and will be used to fr
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="249" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="249" bodyend="249"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="306" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="306" bodyend="306"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1aac0bd5318610af25a85a1215f8c6b592" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>bool</type>
@@ -528,7 +558,7 @@ Appends the contents of str to the end of the current string. The function autom
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="358" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="151" bodyend="226"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="415" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="169" bodyend="244"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a66cd222863f1288a09b1b4c2304fa91f" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>bool</type>
@@ -647,7 +677,7 @@ Convenience overload that appends the contents of another <ref refid="classcslt_
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="469" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="229" bodyend="232"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="526" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="247" bodyend="250"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1ab9e603bb5b2f8e9c23a529f85115213d" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>int8_t</type>
@@ -767,7 +797,7 @@ Comparison semantics:<itemizedlist>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="568" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="235" bodyend="260"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="625" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="253" bodyend="278"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a03b7a5f843d7f0e39a7f935feda3302c" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>int8_t</type>
@@ -883,7 +913,7 @@ Comparison algorithm:<itemizedlist>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="662" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="263" bodyend="291"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="719" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="281" bodyend="309"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1adc4b6300e480f5f8dd3f4269ce26cc86" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>void</type>
@@ -932,7 +962,7 @@ Comparison algorithm:<itemizedlist>
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="705" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="294" bodyend="301"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="762" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="312" bodyend="319"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
@@ -979,7 +1009,7 @@ Creates an independent copy with the same content using the same allocator as th
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="747" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="304" bodyend="328"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="804" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="322" bodyend="346"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1af50cdb934bab6f41ca8262439cedaa57" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
@@ -1042,7 +1072,7 @@ Creates an independent copy with the same content using the specified allocator.
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="793" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="331" bodyend="350"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="850" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="349" bodyend="368"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a702bea4742b4c1778a85527cd4e534a3" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>bool</type>
@@ -1059,7 +1089,7 @@ Creates an independent copy with the same content using the specified allocator.
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="796" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="353" bodyend="371"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="853" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="371" bodyend="389"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a42d91a877c9034679dd31693360f0a4b" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>bool</type>
@@ -1080,7 +1110,7 @@ Creates an independent copy with the same content using the specified allocator.
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="799" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="374" bodyend="394"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="856" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="392" bodyend="412"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1ab7fcc225d61114773963649405afea6b" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1209,7 +1239,7 @@ Searches for the first occurrence of needle within the specified range using SIM
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="874" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="397" bodyend="459"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="931" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="415" bodyend="477"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a299d1b577c9847512d8a89408cb134a3" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1325,7 +1355,7 @@ Convenience overload that accepts a C-string needle. Behavior is identical to fi
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="940" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="462" bodyend="525"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="997" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="480" bodyend="543"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a0a52906a75298894dbeefb3c543df1f4" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1395,7 +1425,7 @@ Counts how many times word appears in this string using the same non-overlapping
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="975" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="528" bodyend="555"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1032" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="546" bodyend="573"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1aa364caed1933542ad226be575806fe3d" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1458,7 +1488,7 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1001" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="558" bodyend="585"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1058" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="576" bodyend="603"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1ae2eb1fbb34bddad0686bd396b0d88c28" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1532,7 +1562,7 @@ A token is a maximal run of non-delimiter characters. Adjacent delimiters collap
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1039" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="588" bodyend="625"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1096" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="606" bodyend="643"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a18164f5f747701b28ea4ab79d9551db9" prot="public" static="no" const="yes" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>size_t</type>
@@ -1598,7 +1628,7 @@ Convenience overload accepting a string literal or C-string. Behaviour is identi
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1066" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="628" bodyend="665"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1123" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="646" bodyend="683"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a92ea4894c00f0ca3ec7aac7b02778f4f" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>void</type>
@@ -1668,7 +1698,7 @@ Converts every ASCII lowercase letter (a–z) in the specified window to its upp
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1109" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="668" bodyend="693"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1166" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="686" bodyend="711"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a40b7c4993607b42bc6216c83f319c6d2" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>void</type>
@@ -1738,7 +1768,7 @@ Converts every ASCII uppercase letter (A–Z) in the specified window to its low
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1151" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="696" bodyend="721"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1208" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="714" bodyend="739"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1ab42b5d7efa2838a28bf18aada634858c" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>void</type>
@@ -1811,7 +1841,7 @@ Scans the window in reverse order (rightmost match first) and removes each occur
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1191" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="724" bodyend="783"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1248" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="742" bodyend="801"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1ab29f156a3630ee6f06d2194a1764eae6" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>void</type>
@@ -1878,7 +1908,7 @@ Behaviour is identical to drop(const char*). See that overload for full semantic
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1221" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="786" bodyend="845"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1278" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="804" bodyend="863"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1aa33f118a5afaf9d78d89e34fa29a09cd" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>bool</type>
@@ -1958,7 +1988,7 @@ Counts all non-overlapping occurrences of <computeroutput>pattern</computeroutpu
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1258" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="848" bodyend="955"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1315" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="866" bodyend="973"/>
       </memberdef>
       <memberdef kind="function" id="classcslt_1_1String_1a1f97a5f0c2d56436a35da3f6ec43df1e" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
         <type>bool</type>
@@ -2041,7 +2071,244 @@ Convenience overload accepting <ref refid="classcslt_1_1String" kindref="compoun
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1294" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="958" bodyend="1061"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1351" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="976" bodyend="1079"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1a6eb2bea6fd525ce2011be46877803ae3" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
+        <definition>Expected&lt; String * &gt; cslt::String::pop</definition>
+        <argsstring>(const String &amp;token, Allocator &amp;allocator) noexcept</argsstring>
+        <name>pop</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1String" kindref="compound">String</ref> &amp;</type>
+          <declname>token</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Find the last occurrence of a delimiter <ref refid="classcslt_1_1String" kindref="compound">String</ref>, return everything to its right as a new <ref refid="classcslt_1_1String" kindref="compound">String</ref>, and truncate this string to everything to its left. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Delimiter to search for (case-sensitive) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used to create the returned <ref refid="classcslt_1_1String" kindref="compound">String</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;String*&gt; containing the right-hand fragment, or an error if the operation cannot be performed</para>
+</simplesect>
+Locates the last (rightmost) occurrence of <computeroutput>token</computeroutput> using a reverse search. On success:<itemizedlist>
+<listitem><para>A new <ref refid="classcslt_1_1String" kindref="compound">String</ref> is allocated containing the text that follows the token.</para>
+</listitem><listitem><para>This string is truncated in-place to the text that precedes the token.</para>
+</listitem><listitem><para>The token itself is consumed and appears in neither result.</para>
+</listitem></itemizedlist>
+</para>
+<para>The caller owns the returned <ref refid="classcslt_1_1String" kindref="compound">String</ref> and must free it via <ref refid="classcslt_1_1StringDeleter" kindref="compound">StringDeleter</ref>.</para>
+<para><simplesect kind="par"><title>Error conditions (returns Expected with error):</title><para><itemizedlist>
+<listitem><para>str_ is null</para>
+</listitem><listitem><para>token.str_ is null or token is empty</para>
+</listitem><listitem><para>This string is empty</para>
+</listitem><listitem><para>Token is not found</para>
+</listitem><listitem><para>Allocation of the result <ref refid="classcslt_1_1String" kindref="compound">String</ref> fails</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rs<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one::two::three&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rt<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;::&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rs.hasValue()<sp/>&amp;&amp;<sp/>rt.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(rs.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>t(rt.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rhs<sp/>=<sp/>s-&gt;pop(*t,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rhs.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>right(rhs.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>right-&gt;c_str()<sp/>==<sp/>&quot;three&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>s-&gt;c_str()<sp/><sp/><sp/><sp/><sp/>==<sp/>&quot;one::two&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1ae17a18c4316cb964c7038e1b643b1650" kindref="member">pop(const char*, Allocator&amp;)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1401" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="1082" bodyend="1130"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1String_1ae17a18c4316cb964c7038e1b643b1650" prot="public" static="no" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
+        <definition>Expected&lt; String * &gt; cslt::String::pop</definition>
+        <argsstring>(const char *token, Allocator &amp;allocator) noexcept</argsstring>
+        <name>pop</name>
+        <param>
+          <type>const char *</type>
+          <declname>token</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Find the last occurrence of a delimiter C-string, return everything to its right as a new <ref refid="classcslt_1_1String" kindref="compound">String</ref>, and truncate this string to everything to its left. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>token</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated delimiter to search for (case-sensitive) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used to create the returned <ref refid="classcslt_1_1String" kindref="compound">String</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;String*&gt; containing the right-hand fragment, or an error if the operation cannot be performed</para>
+</simplesect>
+Convenience overload accepting a C-string token. Behaviour is identical to <ref refid="classcslt_1_1String_1a6eb2bea6fd525ce2011be46877803ae3" kindref="member">pop(const String&amp;, Allocator&amp;)</ref>.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rs<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;one::two::three&quot;</highlight><highlight class="normal">,<sp/>0,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rs.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(rs.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rhs<sp/>=<sp/>s-&gt;pop(</highlight><highlight class="stringliteral">&quot;::&quot;</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(rhs.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>right(rhs.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>right-&gt;c_str()<sp/>==<sp/>&quot;three&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>s-&gt;c_str()<sp/><sp/><sp/><sp/><sp/>==<sp/>&quot;one::two&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>}</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1String_1a6eb2bea6fd525ce2011be46877803ae3" kindref="member">pop(const String&amp;, Allocator&amp;)</ref> </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="1435" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="1133" bodyend="1183"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" prot="public" static="yes" const="no" explicit="no" inline="no" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1String" kindref="compound">String</ref> * &gt;</type>
+        <definition>Expected&lt; String * &gt; cslt::String::init</definition>
+        <argsstring>(const char *cstr, size_t capacity_bytes, Allocator &amp;allocator) noexcept</argsstring>
+        <name>init</name>
+        <param>
+          <type>const char *</type>
+          <declname>cstr</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>capacity_bytes</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Initialize an allocator-backed string. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cstr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Null-terminated source C string </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>capacity_bytes</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Requested payload capacity in characters (excludes null terminator) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> to use for memory management</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;String*&gt; containing pointer to <ref refid="classcslt_1_1String" kindref="compound">String</ref> or error</para>
+</simplesect>
+Creates a new <ref refid="classcslt_1_1String" kindref="compound">String</ref> instance using the provided allocator.</para>
+<para>Capacity semantics:<itemizedlist>
+<listitem><para>If capacity_bytes is 0, the allocation defaults to exactly the length of cstr plus space for the null terminator</para>
+</listitem><listitem><para>If capacity_bytes is non-zero, the container allocates (capacity_bytes + 1) bytes to guarantee space for the terminator</para>
+</listitem><listitem><para>If the requested capacity is smaller than the source string length, the stored string is truncated to fit and always null-terminated</para>
+</listitem></itemizedlist>
+</para>
+<para>Memory allocation:<itemizedlist>
+<listitem><para>Both the <ref refid="classcslt_1_1String" kindref="compound">String</ref> object and its internal buffer are allocated through the provided allocator</para>
+</listitem><listitem><para>The allocator reference is stored for cleanup</para>
+</listitem><listitem><para>Memory must later be released through the <ref refid="classcslt_1_1StringDeleter" kindref="compound">StringDeleter</ref></para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="par"><title>Error conditions:</title><para><itemizedlist>
+<listitem><para><ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref> if cstr is nullptr</para>
+</listitem><listitem><para>Propagates any allocation errors from the allocator (typically <ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Default<sp/>capacity<sp/>(fits<sp/>exact<sp/>string)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r1<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello&quot;</highlight><highlight class="normal">,<sp/>0,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r1.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r1.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>5</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;capacity()<sp/>&lt;&lt;<sp/>std::endl;<sp/></highlight><highlight class="comment">//<sp/>6<sp/>(includes<sp/>null)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Pre-allocated<sp/>capacity</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r2<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hi&quot;</highlight><highlight class="normal">,<sp/>100,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r2.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;capacity()<sp/>&lt;&lt;<sp/>std::endl;<sp/></highlight><highlight class="comment">//<sp/>101<sp/>(100<sp/>+<sp/>null)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Truncation<sp/>case</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r3<sp/>=<sp/><ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">cslt::String::init</ref>(</highlight><highlight class="stringliteral">&quot;hello<sp/>world&quot;</highlight><highlight class="normal">,<sp/>5,<sp/><ref refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" kindref="member">allocator</ref>);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r3.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::String, cslt::StringDeleter&gt;</ref><sp/>s(r3.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;c_str()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/></highlight><highlight class="comment">//<sp/>&quot;hello&quot;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>s-&gt;size()<sp/>&lt;&lt;<sp/>std::endl;<sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>5<sp/>(truncated)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="see"><para><ref refid="classcslt_1_1StringDeleter" kindref="compound">StringDeleter</ref> for cleanup semantics </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="226" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/string.cpp" bodystart="134" bodyend="166"/>
       </memberdef>
       </sectiondef>
     <briefdescription>
@@ -2080,7 +2347,7 @@ Convenience overload accepting <ref refid="classcslt_1_1String" kindref="compoun
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1302"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" line="77" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/string.hpp" bodystart="77" bodyend="1470"/>
     <listofallmembers>
       <member refid="classcslt_1_1String_1aed2a23a1c540c4caf68f6e43a1d4164a" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>alloc_</name></member>
       <member refid="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>allocator</name></member>
@@ -2102,8 +2369,13 @@ Convenience overload accepting <ref refid="classcslt_1_1String" kindref="compoun
       <member refid="classcslt_1_1String_1a42d91a877c9034679dd31693360f0a4b" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>is_ptr</name></member>
       <member refid="classcslt_1_1String_1a204f710bdd00d26c0c017d3d9e12748f" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>len_</name></member>
       <member refid="classcslt_1_1String_1a40b7c4993607b42bc6216c83f319c6d2" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>lowercase</name></member>
+      <member refid="classcslt_1_1String_1a723de0a84d1ac7baa71c7dde71acdd67" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>operator&lt;&lt;</name></member>
       <member refid="classcslt_1_1String_1a44851bf726e219fba16bee4223cb7584" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
       <member refid="classcslt_1_1String_1aa878a4aaceeb4c2ad0a8f321d7da6c5b" prot="private" virt="non-virtual"><scope>cslt::String</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1String_1ae0468ab2b1c22028895d05e200681bfd" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>operator[]</name></member>
+      <member refid="classcslt_1_1String_1a191b26d15433e03da466b5064c5400e0" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>operator[]</name></member>
+      <member refid="classcslt_1_1String_1a6eb2bea6fd525ce2011be46877803ae3" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>pop</name></member>
+      <member refid="classcslt_1_1String_1ae17a18c4316cb964c7038e1b643b1650" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>pop</name></member>
       <member refid="classcslt_1_1String_1aa33f118a5afaf9d78d89e34fa29a09cd" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>replace</name></member>
       <member refid="classcslt_1_1String_1a1f97a5f0c2d56436a35da3f6ec43df1e" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>replace</name></member>
       <member refid="classcslt_1_1String_1adc4b6300e480f5f8dd3f4269ce26cc86" prot="public" virt="non-virtual"><scope>cslt::String</scope><name>reset</name></member>

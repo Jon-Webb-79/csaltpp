@@ -65,6 +65,24 @@ namespace cslt {
     // String Constructor
     // ============================================================================
 
+    char String::operator[](size_t index) const noexcept {
+        if (!str_ || index >= len_) return '\0';
+        return str_[index];
+    }
+// --------------------------------------------------------------------------------
+
+    char& String::operator[](size_t index) noexcept {
+        // A static sentinel absorbs out-of-bounds writes safely.
+        // It is reset to '\0' before each use so a prior write does not
+        // corrupt a subsequent out-of-bounds read through the const overload.
+        if (!str_ || index >= len_) {
+            static char sentinel = '\0';
+            return sentinel;
+        }
+        return str_[index];
+    }
+// -------------------------------------------------------------------------------- 
+
     String::String(const char* cstr, size_t capacity_bytes, Allocator& allocator)
         : str_(nullptr), len_(0), alloc_(0), allocator_(&allocator) {
         

@@ -357,6 +357,8 @@ static uintptr\+\_\+t \mbox{\hyperlink{namespacecslt_a3d05c36cc6408f030f92f49138
 static size\+\_\+t \mbox{\hyperlink{namespacecslt_ab3d36c0fb67974f234d964174e9f7449}{\+\_\+pad\+\_\+up}} (uintptr\+\_\+t p, size\+\_\+t a)
 \item 
 static size\+\_\+t \mbox{\hyperlink{namespacecslt_a1a93f18dc32c8917b230e2f81e8e924e}{\+\_\+mul\+\_\+div\+\_\+ceil}} (size\+\_\+t x, size\+\_\+t mul, size\+\_\+t div)
+\item 
+std\+::ostream \& \mbox{\hyperlink{namespacecslt_a024c81c16eb3dd4d51404fe0fd2da96c}{operator$<$$<$}} (std\+::ostream \&os, const \mbox{\hyperlink{classcslt_1_1String}{String}} \&s) noexcept
 \end{DoxyCompactItemize}
 \doxysubsection*{Variables}
 \begin{DoxyCompactItemize}
@@ -708,7 +710,37 @@ bool cslt\+::operator$<$ (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{
 {\footnotesize\ttfamily template$<$class T $>$ \\
 bool cslt\+::operator$<$ (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\+\_\+t}}}]{,  }\item[{const \mbox{\hyperlink{classcslt_1_1SharedPtr}{Shared\+Ptr}}$<$ T $>$ \&}]{p }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
 
-\mbox{\Hypertarget{namespacecslt_a8cba6bf6d7b26aaf96438f4c809ec2cc}\label{namespacecslt_a8cba6bf6d7b26aaf96438f4c809ec2cc}} 
+\mbox{\Hypertarget{namespacecslt_a024c81c16eb3dd4d51404fe0fd2da96c}\label{namespacecslt_a024c81c16eb3dd4d51404fe0fd2da96c}} 
+\index{cslt@{cslt}!operator$<$$<$@{operator$<$$<$}}
+\index{operator$<$$<$@{operator$<$$<$}!cslt@{cslt}}
+\doxysubsubsection{\texorpdfstring{operator$<$$<$()}{operator<<()}}
+{\footnotesize\ttfamily std\+::ostream\& cslt\+::operator$<$$<$ (\begin{DoxyParamCaption}\item[{std\+::ostream \&}]{os,  }\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [noexcept]}}
+
+
+\begin{DoxyParams}{Parameters}
+{\em os} & Output stream to write to \\
+\hline
+{\em s} & \mbox{\hyperlink{classcslt_1_1String}{String}} to print \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Reference to {\ttfamily os} for chaining
+\end{DoxyReturn}
+Writes exactly len\+\_\+ characters to the stream using std\+::ostream\+::write() rather than operator$<$$<$(const char$\ast$), which would stop at the first embedded null byte. Characters beyond len\+\_\+ (including the null terminator) are never accessed.
+
+The operator is a no-\/op if the internal buffer is null, leaving the stream in a valid state.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}hello world"{}}, 0, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::String, cslt::StringDeleter>}} s(r.value());}
+\DoxyCodeLine{    std::cout << *s << std::endl;  \textcolor{comment}{// prints "{}hello world"{}}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{namespacecslt_a8cba6bf6d7b26aaf96438f4c809ec2cc}\label{namespacecslt_a8cba6bf6d7b26aaf96438f4c809ec2cc}} 
 \index{cslt@{cslt}!operator$<$=@{operator$<$=}}
 \index{operator$<$=@{operator$<$=}!cslt@{cslt}}
 \doxysubsubsection{\texorpdfstring{operator$<$=()}{operator<=()}\hspace{0.1cm}{\footnotesize\ttfamily [1/4]}}

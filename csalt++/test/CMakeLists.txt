@@ -14,6 +14,7 @@ add_executable(unit_tests
   test_utilities.cpp
   test_pointers.cpp
   test_string.cpp
+  test_array.cpp
   #  test_matrix.cpp
 )
 

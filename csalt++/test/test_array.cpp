@@ -590,6 +590,1886 @@ TEST_F(ArrayInitTest, PushAnyTriggersGrowth) {
     EXPECT_EQ((*arr)[1].value(), 2);
     EXPECT_EQ((*arr)[2].value(), 3);
 }
+// -------------------------------------------------------------------------------- 
+
+// ================================================================================
+// ================================================================================
+ 
+// ============================================================================
+// pop_back tests
+// ============================================================================
+ 
+/**
+ * @test Verify that pop_back() removes the last int element and decrements size
+ */
+TEST_F(ArrayInitTest, PopBackIntRemovesLastElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->pop_back());
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_back() removes the last double element correctly
+ */
+TEST_F(ArrayInitTest, PopBackDoubleRemovesLastElement) {
+    auto result = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.1);
+    arr->push_back(2.2);
+    arr->push_back(3.3);
+ 
+    EXPECT_TRUE(arr->pop_back());
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_DOUBLE_EQ((*arr)[0].value(), 1.1);
+    EXPECT_DOUBLE_EQ((*arr)[1].value(), 2.2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_back() removes the last Point element correctly
+ */
+TEST_F(ArrayInitTest, PopBackPointRemovesLastElement) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    Point p1{1, 0}, p2{2, 0}, p3{3, 0};
+    arr->push_back(p1);
+    arr->push_back(p2);
+    arr->push_back(p3);
+ 
+    EXPECT_TRUE(arr->pop_back());
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ((*arr)[0].value(), p1);
+    EXPECT_EQ((*arr)[1].value(), p2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that repeated pop_back() calls drain the array to empty
+ */
+TEST_F(ArrayInitTest, PopBackDrainsToEmpty) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->pop_back());
+    EXPECT_TRUE(arr->pop_back());
+    EXPECT_TRUE(arr->pop_back());
+    EXPECT_EQ(arr->size(), 0u);
+    EXPECT_TRUE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_back() on an empty array returns false
+ */
+TEST_F(ArrayInitTest, PopBackOnEmptyArrayReturnsFalse) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    EXPECT_FALSE(arr->pop_back());
+    EXPECT_EQ(arr->size(), 0u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_back() does not reduce the buffer capacity
+ */
+TEST_F(ArrayInitTest, PopBackDoesNotReduceCapacity) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    size_t const cap_before = arr->capacity();
+ 
+    arr->pop_back();
+    EXPECT_EQ(arr->capacity(), cap_before);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that an element pushed after pop_back() lands at the correct index
+ */
+TEST_F(ArrayInitTest, PopBackThenPushBackRestoresElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->pop_back();
+    arr->push_back(99);
+ 
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 99);
+}
+ 
+// ============================================================================
+// pop_front tests
+// ============================================================================
+ 
+/**
+ * @test Verify that pop_front() removes the first int element and shifts
+ *       remaining elements left
+ */
+TEST_F(ArrayInitTest, PopFrontIntRemovesFirstElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->pop_front());
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ((*arr)[0].value(), 2);
+    EXPECT_EQ((*arr)[1].value(), 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_front() removes the first double element correctly
+ */
+TEST_F(ArrayInitTest, PopFrontDoubleRemovesFirstElement) {
+    auto result = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.1);
+    arr->push_back(2.2);
+    arr->push_back(3.3);
+ 
+    EXPECT_TRUE(arr->pop_front());
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_DOUBLE_EQ((*arr)[0].value(), 2.2);
+    EXPECT_DOUBLE_EQ((*arr)[1].value(), 3.3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_front() removes the first Point element correctly
+ */
+TEST_F(ArrayInitTest, PopFrontPointRemovesFirstElement) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    Point p1{1, 0}, p2{2, 0}, p3{3, 0};
+    arr->push_back(p1);
+    arr->push_back(p2);
+    arr->push_back(p3);
+ 
+    EXPECT_TRUE(arr->pop_front());
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ((*arr)[0].value(), p2);
+    EXPECT_EQ((*arr)[1].value(), p3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that repeated pop_front() calls drain the array to empty
+ */
+TEST_F(ArrayInitTest, PopFrontDrainsToEmpty) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->pop_front());
+    EXPECT_TRUE(arr->pop_front());
+    EXPECT_TRUE(arr->pop_front());
+    EXPECT_EQ(arr->size(), 0u);
+    EXPECT_TRUE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_front() on an empty array returns false
+ */
+TEST_F(ArrayInitTest, PopFrontOnEmptyArrayReturnsFalse) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    EXPECT_FALSE(arr->pop_front());
+    EXPECT_EQ(arr->size(), 0u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_front() does not reduce the buffer capacity
+ */
+TEST_F(ArrayInitTest, PopFrontDoesNotReduceCapacity) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    size_t const cap_before = arr->capacity();
+ 
+    arr->pop_front();
+    EXPECT_EQ(arr->capacity(), cap_before);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that a single-element array is empty after pop_front()
+ */
+TEST_F(ArrayInitTest, PopFrontSingleElementLeavesArrayEmpty) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(42);
+    EXPECT_TRUE(arr->pop_front());
+    EXPECT_TRUE(arr->is_empty());
+}
+ 
+// ============================================================================
+// pop_any tests
+// ============================================================================
+ 
+/**
+ * @test Verify that pop_any() at index 0 behaves identically to pop_front()
+ */
+TEST_F(ArrayInitTest, PopAnyAtIndexZeroMatchesPopFront) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->pop_any(0));
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ((*arr)[0].value(), 2);
+    EXPECT_EQ((*arr)[1].value(), 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_any() at index == size()-1 behaves identically to pop_back()
+ */
+TEST_F(ArrayInitTest, PopAnyAtLastIndexMatchesPopBack) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->pop_any(arr->size() - 1u));
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_any() removes the correct middle int element and
+ *       shifts remaining elements left
+ */
+TEST_F(ArrayInitTest, PopAnyIntMiddleRemoval) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    EXPECT_TRUE(arr->pop_any(1));  // remove 2
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 3);
+    EXPECT_EQ((*arr)[2].value(), 4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_any() removes the correct middle double element
+ */
+TEST_F(ArrayInitTest, PopAnyDoubleMiddleRemoval) {
+    auto result = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.0);
+    arr->push_back(2.0);
+    arr->push_back(3.0);
+    arr->push_back(4.0);
+ 
+    EXPECT_TRUE(arr->pop_any(2));  // remove 3.0
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_DOUBLE_EQ((*arr)[0].value(), 1.0);
+    EXPECT_DOUBLE_EQ((*arr)[1].value(), 2.0);
+    EXPECT_DOUBLE_EQ((*arr)[2].value(), 4.0);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_any() removes the correct middle Point element
+ */
+TEST_F(ArrayInitTest, PopAnyPointMiddleRemoval) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    Point p1{1, 0}, p2{2, 0}, p3{3, 0}, p4{4, 0};
+    arr->push_back(p1);
+    arr->push_back(p2);
+    arr->push_back(p3);
+    arr->push_back(p4);
+ 
+    EXPECT_TRUE(arr->pop_any(2));  // remove p3
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_EQ((*arr)[0].value(), p1);
+    EXPECT_EQ((*arr)[1].value(), p2);
+    EXPECT_EQ((*arr)[2].value(), p4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_any() on an empty array returns false
+ */
+TEST_F(ArrayInitTest, PopAnyOnEmptyArrayReturnsFalse) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    EXPECT_FALSE(arr->pop_any(0));
+    EXPECT_EQ(arr->size(), 0u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_any() with an out-of-range index returns false and
+ *       leaves the array unchanged
+ */
+TEST_F(ArrayInitTest, PopAnyOutOfRangeReturnsFalse) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+ 
+    EXPECT_FALSE(arr->pop_any(5));  // index 5 >= size 2
+    EXPECT_EQ(arr->size(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that pop_any() does not reduce the buffer capacity
+ */
+TEST_F(ArrayInitTest, PopAnyDoesNotReduceCapacity) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    size_t const cap_before = arr->capacity();
+ 
+    arr->pop_any(1);
+    EXPECT_EQ(arr->capacity(), cap_before);
+}
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// set() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that set() overwrites an existing int element at a valid index
+ */
+TEST_F(ArrayInitTest, SetIntOverwritesExistingElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    auto r = arr->set(1, 99);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_TRUE(r.value());
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_EQ((*arr)[1].value(), 99);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that set() overwrites an existing double element correctly
+ */
+TEST_F(ArrayInitTest, SetDoubleOverwritesExistingElement) {
+    auto result = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.0);
+    arr->push_back(2.0);
+    arr->push_back(3.0);
+ 
+    auto r = arr->set(0, 9.9);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_DOUBLE_EQ((*arr)[0].value(), 9.9);
+    EXPECT_DOUBLE_EQ((*arr)[1].value(), 2.0);
+    EXPECT_DOUBLE_EQ((*arr)[2].value(), 3.0);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that set() overwrites an existing Point element correctly
+ */
+TEST_F(ArrayInitTest, SetPointOverwritesExistingElement) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    Point p1{1, 0}, p2{2, 0}, p3{3, 0}, p99{99, 99};
+    arr->push_back(p1);
+    arr->push_back(p2);
+    arr->push_back(p3);
+ 
+    auto r = arr->set(2, p99);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ((*arr)[0].value(), p1);
+    EXPECT_EQ((*arr)[1].value(), p2);
+    EXPECT_EQ((*arr)[2].value(), p99);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that set() at index == size() appends a new int element
+ *       and increments size
+ */
+TEST_F(ArrayInitTest, SetIntAtSizeAppendsElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+ 
+    auto r = arr->set(arr->size(), 3);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_EQ((*arr)[2].value(), 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that set() at index == size() triggers growth when the buffer
+ *       is full and appends the element correctly
+ */
+TEST_F(ArrayInitTest, SetIntAtSizeTriggersGrowth) {
+    auto result = cslt::Array<int>::init(2, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);  // now full
+ 
+    auto r = arr->set(arr->size(), 3);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_GE(arr->capacity(), 3u);
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 2);
+    EXPECT_EQ((*arr)[2].value(), 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that set() does not alter neighbouring elements when
+ *       overwriting a middle element
+ */
+TEST_F(ArrayInitTest, SetIntDoesNotAlterNeighbours) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    arr->set(1, 99);
+ 
+    EXPECT_EQ((*arr)[0].value(), 10);
+    EXPECT_EQ((*arr)[1].value(), 99);
+    EXPECT_EQ((*arr)[2].value(), 30);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that set() returns an OutOfBoundsError when index > size()
+ */
+TEST_F(ArrayInitTest, SetOutOfRangeReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+ 
+    auto r = arr->set(5, 99);  // index 5 > size 2
+    EXPECT_FALSE(r.hasValue());
+    EXPECT_EQ(arr->size(), 2u);  // array unchanged
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that set() does not change size when overwriting an existing element
+ */
+TEST_F(ArrayInitTest, SetOverwriteDoesNotChangeSize) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    arr->set(0, 99);
+    EXPECT_EQ(arr->size(), 3u);
+}
+ 
+// ============================================================================
+// operator[] (const read overload) tests
+// ============================================================================
+ 
+/**
+ * @test Verify that operator[] returns the correct int value at each valid index
+ */
+TEST_F(ArrayInitTest, OperatorBracketIntReturnsCorrectValues) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    EXPECT_EQ((*arr)[0].value(), 10);
+    EXPECT_EQ((*arr)[1].value(), 20);
+    EXPECT_EQ((*arr)[2].value(), 30);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that operator[] returns the correct double value at each valid index
+ */
+TEST_F(ArrayInitTest, OperatorBracketDoubleReturnsCorrectValues) {
+    auto result = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.1);
+    arr->push_back(2.2);
+    arr->push_back(3.3);
+ 
+    EXPECT_DOUBLE_EQ((*arr)[0].value(), 1.1);
+    EXPECT_DOUBLE_EQ((*arr)[1].value(), 2.2);
+    EXPECT_DOUBLE_EQ((*arr)[2].value(), 3.3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that operator[] returns the correct Point value at each valid index
+ */
+TEST_F(ArrayInitTest, OperatorBracketPointReturnsCorrectValues) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    Point p1{1, 2}, p2{3, 4}, p3{5, 6};
+    arr->push_back(p1);
+    arr->push_back(p2);
+    arr->push_back(p3);
+ 
+    EXPECT_EQ((*arr)[0].value(), p1);
+    EXPECT_EQ((*arr)[1].value(), p2);
+    EXPECT_EQ((*arr)[2].value(), p3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that operator[] returns an error when index equals size()
+ */
+TEST_F(ArrayInitTest, OperatorBracketAtSizeReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+ 
+    auto r = (*arr)[arr->size()];
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that operator[] returns an error on a well out-of-range index
+ */
+TEST_F(ArrayInitTest, OperatorBracketFarOutOfRangeReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+ 
+    auto r = (*arr)[100];
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that operator[] returns an error on any index when the array
+ *       is empty
+ */
+TEST_F(ArrayInitTest, OperatorBracketOnEmptyArrayReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    auto r = (*arr)[0];
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that operator[] reflects an updated value after a set() call
+ */
+TEST_F(ArrayInitTest, OperatorBracketReflectsSetUpdate) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    arr->set(1, 99);
+    EXPECT_EQ((*arr)[1].value(), 99);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that operator[] at each index returns correct values after a
+ *       series of push_front() calls
+ */
+TEST_F(ArrayInitTest, OperatorBracketAfterPushFrontReturnsCorrectOrder) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_front(3);
+    arr->push_front(2);
+    arr->push_front(1);
+ 
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 2);
+    EXPECT_EQ((*arr)[2].value(), 3);
+}
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// is_empty() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that a freshly initialised int array reports is_empty() == true
+ */
+TEST_F(ArrayInitTest, IsEmptyTrueOnFreshIntArray) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    EXPECT_TRUE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_empty() returns false after a push_back()
+ */
+TEST_F(ArrayInitTest, IsEmptyFalseAfterPushBack) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    EXPECT_FALSE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_empty() returns true after all elements are popped
+ */
+TEST_F(ArrayInitTest, IsEmptyTrueAfterAllElementsPopped) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->pop_back();
+    arr->pop_back();
+ 
+    EXPECT_TRUE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_empty() returns true after clear()
+ */
+TEST_F(ArrayInitTest, IsEmptyTrueAfterClear) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->clear();
+ 
+    EXPECT_TRUE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_empty() works correctly for double arrays
+ */
+TEST_F(ArrayInitTest, IsEmptyDoubleArray) {
+    auto result = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    EXPECT_TRUE(arr->is_empty());
+    arr->push_back(1.0);
+    EXPECT_FALSE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_empty() works correctly for Point arrays
+ */
+TEST_F(ArrayInitTest, IsEmptyPointArray) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    EXPECT_TRUE(arr->is_empty());
+    arr->push_back({1, 2});
+    EXPECT_FALSE(arr->is_empty());
+}
+ 
+// ============================================================================
+// is_full() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that is_full() returns false on a freshly initialised array
+ */
+TEST_F(ArrayInitTest, IsFullFalseOnFreshArray) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    EXPECT_FALSE(arr->is_full());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_full() returns true when size equals capacity for int
+ */
+TEST_F(ArrayInitTest, IsFullTrueWhenIntArrayAtCapacity) {
+    auto result = cslt::Array<int>::init(3, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->is_full());
+    EXPECT_EQ(arr->size(), arr->capacity());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_full() returns true when size equals capacity for double
+ */
+TEST_F(ArrayInitTest, IsFullTrueWhenDoubleArrayAtCapacity) {
+    auto result = cslt::Array<double>::init(2, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.0);
+    arr->push_back(2.0);
+ 
+    EXPECT_TRUE(arr->is_full());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_full() returns true when size equals capacity for Point
+ */
+TEST_F(ArrayInitTest, IsFullTrueWhenPointArrayAtCapacity) {
+    auto result = cslt::Array<Point>::init(2, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({1, 2});
+    arr->push_back({3, 4});
+ 
+    EXPECT_TRUE(arr->is_full());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_full() returns false after a pop reduces size below capacity
+ */
+TEST_F(ArrayInitTest, IsFullFalseAfterPopBack) {
+    auto result = cslt::Array<int>::init(2, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    EXPECT_TRUE(arr->is_full());
+ 
+    arr->pop_back();
+    EXPECT_FALSE(arr->is_full());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_full() returns false after growth — push_back()
+ *       beyond capacity grows the buffer so size < new capacity
+ */
+TEST_F(ArrayInitTest, IsFullFalseAfterGrowth) {
+    auto result = cslt::Array<int>::init(2, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);  // triggers growth: capacity doubles to 4, size is 3
+ 
+    EXPECT_FALSE(arr->is_full());
+    EXPECT_GT(arr->capacity(), arr->size());
+}
+ 
+// ============================================================================
+// is_ptr() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that is_ptr() returns true for a pointer to the first element
+ */
+TEST_F(ArrayInitTest, IsPtrTrueForFirstElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    const int* p = arr->data();
+    EXPECT_TRUE(arr->is_ptr(p));
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns true for a pointer to a middle element
+ */
+TEST_F(ArrayInitTest, IsPtrTrueForMiddleElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    const int* p = arr->data() + 1;
+    EXPECT_TRUE(arr->is_ptr(p));
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns true for a pointer to the last element
+ */
+TEST_F(ArrayInitTest, IsPtrTrueForLastElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    const int* p = arr->data() + 2;  // last populated element
+    EXPECT_TRUE(arr->is_ptr(p));
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns false for a pointer one past the last
+ *       populated element (i.e. data() + size())
+ */
+TEST_F(ArrayInitTest, IsPtrFalseForOnePastEnd) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+ 
+    const int* p = arr->data() + arr->size();  // one past populated region
+    EXPECT_FALSE(arr->is_ptr(p));
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns false for a pointer before the buffer
+ */
+TEST_F(ArrayInitTest, IsPtrFalseForPointerBeforeBuffer) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+ 
+    const int* p = arr->data() - 1;
+    EXPECT_FALSE(arr->is_ptr(p));
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns false for a nullptr
+ */
+TEST_F(ArrayInitTest, IsPtrFalseForNullptr) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+ 
+    EXPECT_FALSE(arr->is_ptr(nullptr));
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns false when the array is empty
+ */
+TEST_F(ArrayInitTest, IsPtrFalseWhenArrayIsEmpty) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    const int* p = arr->data();
+    EXPECT_FALSE(arr->is_ptr(p));
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns true for all valid element pointers
+ *       in a Point array
+ */
+TEST_F(ArrayInitTest, IsPtrTrueForAllPointElements) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({1, 1});
+    arr->push_back({2, 2});
+    arr->push_back({3, 3});
+ 
+    for (size_t i = 0u; i < arr->size(); ++i) {
+        EXPECT_TRUE(arr->is_ptr(arr->data() + i));
+    }
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that is_ptr() returns false for an unaligned byte offset
+ *       within the buffer (pointer is inside the buffer but not on an
+ *       element boundary)
+ */
+TEST_F(ArrayInitTest, IsPtrFalseForUnalignedPointer) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    // Advance by one byte into the buffer — not aligned to sizeof(int)
+    const char* byte_ptr = reinterpret_cast<const char*>(arr->data()) + 1;
+    const int*  unaligned = reinterpret_cast<const int*>(byte_ptr);
+    EXPECT_FALSE(arr->is_ptr(unaligned));
+}
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// cumulative() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that cumulative() produces the correct prefix sum for an int
+ *       array using a caller-supplied allocator
+ */
+TEST_F(ArrayInitTest, CumulativeIntSumWithAllocator) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    auto cr = cslt::Array<int>::cumulative(
+        *arr,
+        [](int& accum, const int& elem) { accum += elem; },
+        alloc);
+ 
+    ASSERT_TRUE(cr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum(cr.value());
+ 
+    EXPECT_EQ(cum->size(), 4u);
+    EXPECT_EQ((*cum)[0].value(), 1);   // 1
+    EXPECT_EQ((*cum)[1].value(), 3);   // 1+2
+    EXPECT_EQ((*cum)[2].value(), 6);   // 1+2+3
+    EXPECT_EQ((*cum)[3].value(), 10);  // 1+2+3+4
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that cumulative() produces the correct prefix sum using the
+ *       source array's own allocator (single-argument overload)
+ */
+TEST_F(ArrayInitTest, CumulativeIntSumWithSourceAllocator) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    auto cr = cslt::Array<int>::cumulative(
+        *arr,
+        [](int& accum, const int& elem) { accum += elem; });
+ 
+    ASSERT_TRUE(cr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum(cr.value());
+ 
+    EXPECT_EQ(cum->size(), 4u);
+    EXPECT_EQ((*cum)[0].value(), 1);
+    EXPECT_EQ((*cum)[1].value(), 3);
+    EXPECT_EQ((*cum)[2].value(), 6);
+    EXPECT_EQ((*cum)[3].value(), 10);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that cumulative() produces the correct prefix product for an
+ *       int array (exercises a non-additive callable)
+ */
+TEST_F(ArrayInitTest, CumulativeIntProduct) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    auto cr = cslt::Array<int>::cumulative(
+        *arr,
+        [](int& accum, const int& elem) { accum *= elem; },
+        alloc);
+ 
+    ASSERT_TRUE(cr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum(cr.value());
+ 
+    EXPECT_EQ(cum->size(), 4u);
+    EXPECT_EQ((*cum)[0].value(), 1);   // 1
+    EXPECT_EQ((*cum)[1].value(), 2);   // 1*2
+    EXPECT_EQ((*cum)[2].value(), 6);   // 1*2*3
+    EXPECT_EQ((*cum)[3].value(), 24);  // 1*2*3*4
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that cumulative() produces the correct prefix sum for a double
+ *       array
+ */
+TEST_F(ArrayInitTest, CumulativeDoubleSum) {
+    auto result = cslt::Array<double>::init(3, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.5);
+    arr->push_back(2.5);
+    arr->push_back(1.0);
+ 
+    auto cr = cslt::Array<double>::cumulative(
+        *arr,
+        [](double& accum, const double& elem) { accum += elem; },
+        alloc);
+ 
+    ASSERT_TRUE(cr.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> cum(cr.value());
+ 
+    EXPECT_EQ(cum->size(), 3u);
+    EXPECT_DOUBLE_EQ((*cum)[0].value(), 1.5);
+    EXPECT_DOUBLE_EQ((*cum)[1].value(), 4.0);
+    EXPECT_DOUBLE_EQ((*cum)[2].value(), 5.0);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that cumulative() on a single-element array returns a
+ *       single-element result equal to the seed
+ */
+TEST_F(ArrayInitTest, CumulativeSingleElementReturnsSeed) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(42);
+ 
+    auto cr = cslt::Array<int>::cumulative(
+        *arr,
+        [](int& accum, const int& elem) { accum += elem; },
+        alloc);
+ 
+    ASSERT_TRUE(cr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum(cr.value());
+ 
+    EXPECT_EQ(cum->size(), 1u);
+    EXPECT_EQ((*cum)[0].value(), 42);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the result of cumulative() has capacity equal to the
+ *       source size (fixed-length snapshot with no extra room)
+ */
+TEST_F(ArrayInitTest, CumulativeResultCapacityEqualsSourceSize) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    auto cr = cslt::Array<int>::cumulative(
+        *arr,
+        [](int& accum, const int& elem) { accum += elem; },
+        alloc);
+ 
+    ASSERT_TRUE(cr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum(cr.value());
+ 
+    // Capacity must equal exactly the number of source elements
+    EXPECT_EQ(cum->capacity(), arr->size());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that cumulative() does not modify the source array
+ */
+TEST_F(ArrayInitTest, CumulativeDoesNotModifySource) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    auto cr = cslt::Array<int>::cumulative(
+        *arr,
+        [](int& accum, const int& elem) { accum += elem; },
+        alloc);
+    ASSERT_TRUE(cr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum(cr.value());
+ 
+    // Source must be unchanged
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 2);
+    EXPECT_EQ((*arr)[2].value(), 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that cumulative() on an empty array returns an error
+ */
+TEST_F(ArrayInitTest, CumulativeEmptyArrayReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    auto cr = cslt::Array<int>::cumulative(
+        *arr,
+        [](int& accum, const int& elem) { accum += elem; },
+        alloc);
+ 
+    EXPECT_FALSE(cr.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the two cumulative() overloads produce identical results
+ *       for the same source and callable
+ */
+TEST_F(ArrayInitTest, CumulativeBothOverloadsProduceSameResult) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    auto add = [](int& accum, const int& elem) { accum += elem; };
+ 
+    auto cr1 = cslt::Array<int>::cumulative(*arr, add, alloc);
+    auto cr2 = cslt::Array<int>::cumulative(*arr, add);
+ 
+    ASSERT_TRUE(cr1.hasValue());
+    ASSERT_TRUE(cr2.hasValue());
+ 
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum1(cr1.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> cum2(cr2.value());
+ 
+    ASSERT_EQ(cum1->size(), cum2->size());
+    for (size_t i = 0u; i < cum1->size(); ++i) {
+        EXPECT_EQ((*cum1)[i].value(), (*cum2)[i].value());
+    }
+}
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// slice() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that slice() returns the correct elements for a middle range
+ *       of an int array using a caller-supplied allocator
+ */
+TEST_F(ArrayInitTest, SliceIntMiddleRangeWithAllocator) {
+    auto result = cslt::Array<int>::init(6, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+    arr->push_back(40);
+    arr->push_back(50);
+ 
+    // slice [1, 4) -> {20, 30, 40}
+    auto sr = cslt::Array<int>::slice(*arr, 1, 4, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 3u);
+    EXPECT_EQ((*sl)[0].value(), 20);
+    EXPECT_EQ((*sl)[1].value(), 30);
+    EXPECT_EQ((*sl)[2].value(), 40);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() returns the correct elements using the source
+ *       array's own allocator (single-argument overload)
+ */
+TEST_F(ArrayInitTest, SliceIntMiddleRangeWithSourceAllocator) {
+    auto result = cslt::Array<int>::init(6, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+    arr->push_back(40);
+    arr->push_back(50);
+ 
+    auto sr = cslt::Array<int>::slice(*arr, 1, 4);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 3u);
+    EXPECT_EQ((*sl)[0].value(), 20);
+    EXPECT_EQ((*sl)[1].value(), 30);
+    EXPECT_EQ((*sl)[2].value(), 40);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() from index 0 to size() returns a full copy of
+ *       the source array
+ */
+TEST_F(ArrayInitTest, SliceIntFullRange) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    auto sr = cslt::Array<int>::slice(*arr, 0, 4, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 4u);
+    EXPECT_EQ((*sl)[0].value(), 1);
+    EXPECT_EQ((*sl)[1].value(), 2);
+    EXPECT_EQ((*sl)[2].value(), 3);
+    EXPECT_EQ((*sl)[3].value(), 4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() of a single element returns a one-element array
+ */
+TEST_F(ArrayInitTest, SliceIntSingleElement) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    // slice [1, 2) -> {20}
+    auto sr = cslt::Array<int>::slice(*arr, 1, 2, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 1u);
+    EXPECT_EQ((*sl)[0].value(), 20);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() from the start of the array produces the correct
+ *       prefix
+ */
+TEST_F(ArrayInitTest, SliceIntFromStart) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    // slice [0, 2) -> {1, 2}
+    auto sr = cslt::Array<int>::slice(*arr, 0, 2, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 2u);
+    EXPECT_EQ((*sl)[0].value(), 1);
+    EXPECT_EQ((*sl)[1].value(), 2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() to the end of the array produces the correct suffix
+ */
+TEST_F(ArrayInitTest, SliceIntToEnd) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    // slice [2, 4) -> {3, 4}
+    auto sr = cslt::Array<int>::slice(*arr, 2, 4, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 2u);
+    EXPECT_EQ((*sl)[0].value(), 3);
+    EXPECT_EQ((*sl)[1].value(), 4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() produces correct results for a double array
+ */
+TEST_F(ArrayInitTest, SliceDoubleMiddleRange) {
+    auto result = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.1);
+    arr->push_back(2.2);
+    arr->push_back(3.3);
+    arr->push_back(4.4);
+ 
+    // slice [1, 3) -> {2.2, 3.3}
+    auto sr = cslt::Array<double>::slice(*arr, 1, 3, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 2u);
+    EXPECT_DOUBLE_EQ((*sl)[0].value(), 2.2);
+    EXPECT_DOUBLE_EQ((*sl)[1].value(), 3.3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() produces correct results for a Point array
+ */
+TEST_F(ArrayInitTest, SlicePointMiddleRange) {
+    auto result = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    Point p1{1, 0}, p2{2, 0}, p3{3, 0}, p4{4, 0};
+    arr->push_back(p1);
+    arr->push_back(p2);
+    arr->push_back(p3);
+    arr->push_back(p4);
+ 
+    // slice [1, 3) -> {p2, p3}
+    auto sr = cslt::Array<Point>::slice(*arr, 1, 3, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->size(), 2u);
+    EXPECT_EQ((*sl)[0].value(), p2);
+    EXPECT_EQ((*sl)[1].value(), p3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the slice result has capacity equal to the slice length
+ *       (fixed-length snapshot)
+ */
+TEST_F(ArrayInitTest, SliceResultCapacityEqualsSliceLength) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+    arr->push_back(5);
+ 
+    // slice [1, 4) -> 3 elements
+    auto sr = cslt::Array<int>::slice(*arr, 1, 4, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(sl->capacity(), 3u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() does not modify the source array
+ */
+TEST_F(ArrayInitTest, SliceDoesNotModifySource) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    auto sr = cslt::Array<int>::slice(*arr, 1, 3, alloc);
+    ASSERT_TRUE(sr.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl(sr.value());
+ 
+    EXPECT_EQ(arr->size(), 4u);
+    EXPECT_EQ((*arr)[0].value(), 1);
+    EXPECT_EQ((*arr)[1].value(), 2);
+    EXPECT_EQ((*arr)[2].value(), 3);
+    EXPECT_EQ((*arr)[3].value(), 4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the two slice() overloads produce identical results
+ */
+TEST_F(ArrayInitTest, SliceBothOverloadsProduceSameResult) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    auto sr1 = cslt::Array<int>::slice(*arr, 1, 3, alloc);
+    auto sr2 = cslt::Array<int>::slice(*arr, 1, 3);
+ 
+    ASSERT_TRUE(sr1.hasValue());
+    ASSERT_TRUE(sr2.hasValue());
+ 
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl1(sr1.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> sl2(sr2.value());
+ 
+    ASSERT_EQ(sl1->size(), sl2->size());
+    for (size_t i = 0u; i < sl1->size(); ++i) {
+        EXPECT_EQ((*sl1)[i].value(), (*sl2)[i].value());
+    }
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() returns an error when start >= end
+ */
+TEST_F(ArrayInitTest, SliceStartEqualToEndReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    auto sr = cslt::Array<int>::slice(*arr, 2, 2, alloc);  // start == end
+    EXPECT_FALSE(sr.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() returns an error when start > end
+ */
+TEST_F(ArrayInitTest, SliceStartGreaterThanEndReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    auto sr = cslt::Array<int>::slice(*arr, 3, 1, alloc);  // start > end
+    EXPECT_FALSE(sr.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that slice() returns an error when end exceeds size()
+ */
+TEST_F(ArrayInitTest, SliceEndExceedsSizeReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    auto sr = cslt::Array<int>::slice(*arr, 0, 10, alloc);  // end > size
+    EXPECT_FALSE(sr.hasValue());
+}
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// concat() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that concat() appends all int elements of another array
+ *       in the correct order
+ */
+TEST_F(ArrayInitTest, ConcatIntAppendsCorrectly) {
+    auto ra = cslt::Array<int>::init(4, alloc);
+    auto rb = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> b(rb.value());
+ 
+    a->push_back(1);
+    a->push_back(2);
+    a->push_back(3);
+    b->push_back(4);
+    b->push_back(5);
+    b->push_back(6);
+ 
+    EXPECT_TRUE(a->concat(*b));
+ 
+    EXPECT_EQ(a->size(), 6u);
+    EXPECT_EQ((*a)[0].value(), 1);
+    EXPECT_EQ((*a)[1].value(), 2);
+    EXPECT_EQ((*a)[2].value(), 3);
+    EXPECT_EQ((*a)[3].value(), 4);
+    EXPECT_EQ((*a)[4].value(), 5);
+    EXPECT_EQ((*a)[5].value(), 6);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that concat() appends all double elements correctly
+ */
+TEST_F(ArrayInitTest, ConcatDoubleAppendsCorrectly) {
+    auto ra = cslt::Array<double>::init(4, alloc);
+    auto rb = cslt::Array<double>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> b(rb.value());
+ 
+    a->push_back(1.1);
+    a->push_back(2.2);
+    b->push_back(3.3);
+    b->push_back(4.4);
+ 
+    EXPECT_TRUE(a->concat(*b));
+ 
+    EXPECT_EQ(a->size(), 4u);
+    EXPECT_DOUBLE_EQ((*a)[0].value(), 1.1);
+    EXPECT_DOUBLE_EQ((*a)[1].value(), 2.2);
+    EXPECT_DOUBLE_EQ((*a)[2].value(), 3.3);
+    EXPECT_DOUBLE_EQ((*a)[3].value(), 4.4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that concat() appends all Point elements correctly
+ */
+TEST_F(ArrayInitTest, ConcatPointAppendsCorrectly) {
+    auto ra = cslt::Array<Point>::init(4, alloc);
+    auto rb = cslt::Array<Point>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> b(rb.value());
+ 
+    Point p1{1, 0}, p2{2, 0}, p3{3, 0}, p4{4, 0};
+    a->push_back(p1);
+    a->push_back(p2);
+    b->push_back(p3);
+    b->push_back(p4);
+ 
+    EXPECT_TRUE(a->concat(*b));
+ 
+    EXPECT_EQ(a->size(), 4u);
+    EXPECT_EQ((*a)[0].value(), p1);
+    EXPECT_EQ((*a)[1].value(), p2);
+    EXPECT_EQ((*a)[2].value(), p3);
+    EXPECT_EQ((*a)[3].value(), p4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that concat() onto an empty destination produces a copy of
+ *       the source
+ */
+TEST_F(ArrayInitTest, ConcatOntoEmptyArray) {
+    auto ra = cslt::Array<int>::init(4, alloc);
+    auto rb = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> b(rb.value());
+ 
+    b->push_back(1);
+    b->push_back(2);
+    b->push_back(3);
+ 
+    EXPECT_TRUE(a->concat(*b));
+ 
+    EXPECT_EQ(a->size(), 3u);
+    EXPECT_EQ((*a)[0].value(), 1);
+    EXPECT_EQ((*a)[1].value(), 2);
+    EXPECT_EQ((*a)[2].value(), 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that concat() with an empty source leaves the destination
+ *       unchanged and returns true
+ */
+TEST_F(ArrayInitTest, ConcatEmptySourceReturnsTrue) {
+    auto ra = cslt::Array<int>::init(4, alloc);
+    auto rb = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> b(rb.value());
+ 
+    a->push_back(1);
+    a->push_back(2);
+ 
+    EXPECT_TRUE(a->concat(*b));  // b is empty
+ 
+    EXPECT_EQ(a->size(), 2u);
+    EXPECT_EQ((*a)[0].value(), 1);
+    EXPECT_EQ((*a)[1].value(), 2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that concat() triggers growth when the combined size exceeds
+ *       the current capacity and all values are preserved
+ */
+TEST_F(ArrayInitTest, ConcatTriggersGrowth) {
+    auto ra = cslt::Array<int>::init(2, alloc);
+    auto rb = cslt::Array<int>::init(2, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> b(rb.value());
+ 
+    a->push_back(1);
+    a->push_back(2);  // a is now full (cap == 2)
+    b->push_back(3);
+    b->push_back(4);
+ 
+    EXPECT_TRUE(a->concat(*b));
+ 
+    EXPECT_EQ(a->size(), 4u);
+    EXPECT_GE(a->capacity(), 4u);
+    EXPECT_EQ((*a)[0].value(), 1);
+    EXPECT_EQ((*a)[1].value(), 2);
+    EXPECT_EQ((*a)[2].value(), 3);
+    EXPECT_EQ((*a)[3].value(), 4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that concat() does not modify the source array
+ */
+TEST_F(ArrayInitTest, ConcatDoesNotModifySource) {
+    auto ra = cslt::Array<int>::init(4, alloc);
+    auto rb = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> b(rb.value());
+ 
+    a->push_back(1);
+    a->push_back(2);
+    b->push_back(3);
+    b->push_back(4);
+ 
+    a->concat(*b);
+ 
+    EXPECT_EQ(b->size(), 2u);
+    EXPECT_EQ((*b)[0].value(), 3);
+    EXPECT_EQ((*b)[1].value(), 4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that self-concatenation doubles the array correctly
+ */
+TEST_F(ArrayInitTest, ConcatSelfDoubles) {
+    auto ra = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> a(ra.value());
+ 
+    a->push_back(1);
+    a->push_back(2);
+    a->push_back(3);
+ 
+    EXPECT_TRUE(a->concat(*a));
+ 
+    EXPECT_EQ(a->size(), 6u);
+    EXPECT_EQ((*a)[0].value(), 1);
+    EXPECT_EQ((*a)[1].value(), 2);
+    EXPECT_EQ((*a)[2].value(), 3);
+    EXPECT_EQ((*a)[3].value(), 1);
+    EXPECT_EQ((*a)[4].value(), 2);
+    EXPECT_EQ((*a)[5].value(), 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that multiple sequential concat() calls accumulate correctly
+ */
+TEST_F(ArrayInitTest, ConcatMultipleSequentialCalls) {
+    auto ra = cslt::Array<int>::init(4, alloc);
+    auto rb = cslt::Array<int>::init(4, alloc);
+    auto rc = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(ra.hasValue());
+    ASSERT_TRUE(rb.hasValue());
+    ASSERT_TRUE(rc.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> a(ra.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> b(rb.value());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> c(rc.value());
+ 
+    a->push_back(1);
+    b->push_back(2);
+    b->push_back(3);
+    c->push_back(4);
+    c->push_back(5);
+    c->push_back(6);
+ 
+    EXPECT_TRUE(a->concat(*b));
+    EXPECT_TRUE(a->concat(*c));
+ 
+    EXPECT_EQ(a->size(), 6u);
+    EXPECT_EQ((*a)[0].value(), 1);
+    EXPECT_EQ((*a)[1].value(), 2);
+    EXPECT_EQ((*a)[2].value(), 3);
+    EXPECT_EQ((*a)[3].value(), 4);
+    EXPECT_EQ((*a)[4].value(), 5);
+    EXPECT_EQ((*a)[5].value(), 6);
+}
 // ================================================================================
 // ================================================================================
 // eof

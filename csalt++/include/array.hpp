@@ -820,45 +820,59 @@ namespace cslt {
                                               Func            add,
                                               Allocator&      allocator) noexcept {
             Expected<Array<T>*> result;
-
+ 
             if (src.len_ == 0u) {
                 result.setError(EmptyError("Array::cumulative: source array is empty"));
                 return result;
             }
-
-            // Allocate the output Array struct
-            auto obj_result = allocator.alloc(sizeof(Array<T>), true);
-            if (!obj_result.hasValue()) {
-                result.setError(obj_result.error());
+ 
+            // Construct the destination array via init() — same validated path
+            // as all other callers, capacity fixed to src.len_ (snapshot).
+            auto init_result = Array<T>::init(src.len_, allocator);
+            if (!init_result.hasValue()) {
+                result.setError(init_result.error());
                 return result;
             }
-
-            // Construct with capacity == src.len_ (fixed-length snapshot)
-            Array<T>* dst = new (obj_result.value()) Array<T>(src.len_, allocator);
-
-            if (!dst->data_) {
-                dst->~Array<T>();
-                allocator.return_element(obj_result.value(),
+ 
+            // Hold ownership so any early return is leak-free.
+            // ArrayDeleter is defined after this class, so use a lambda deleter
+            // to avoid the forward-reference problem.
+            auto array_deleter = [](Array<T>* p) noexcept {
+                if (!p) return;
+                Allocator* a = p->allocator_;
+                p->~Array<T>();
+                if (a) a->return_element(static_cast<void*>(p),
                                          sizeof(Array<T>),
-                                         allocator.default_alignment());
-                result.setError(MemoryError("Array::cumulative: failed to allocate buffer"));
+                                         a->default_alignment());
+            };
+            UniquePtr<Array<T>, decltype(array_deleter)> dst(init_result.value(), array_deleter);
+ 
+            // Seed: output[0] = src[0]
+            if (!dst->push_back(src.data_[0])) {
+                result.setError(MemoryError("Array::cumulative: failed to seed output"));
                 return result;
             }
-
-            // Seed: output[0] = input[0]
-            new (static_cast<void*>(dst->data_)) T(src.data_[0]);
-            dst->len_ = 1u;
-
-            // Prefix-sum pass: output[i] = output[i-1] + input[i]
+ 
+            // Prefix-accumulation pass: output[i] = output[i-1] `add` src[i]
             for (size_t i = 1u; i < src.len_; ++i) {
-                // Copy previous cumulative value into current output slot
-                new (static_cast<void*>(dst->data_ + i)) T(dst->data_[i - 1u]);
-                // Add current source element into the output slot in place
-                add(dst->data_[i], src.data_[i]);
-                dst->len_ = i + 1u;
+                // Read the previous cumulative value through the const overload.
+                auto prev = (*const_cast<const Array<T>*>(dst.get()))[i - 1u];
+                if (!prev.hasValue()) {
+                    result.setError(MemoryError("Array::cumulative: failed to read previous element"));
+                    return result;
+                }
+                // Start the new slot as a copy of the previous cumulative value,
+                // then apply the caller's accumulation operation in place.
+                T next_val = prev.value();
+                add(next_val, src.data_[i]);
+                if (!dst->push_back(next_val)) {
+                    result.setError(MemoryError("Array::cumulative: failed to push accumulated element"));
+                    return result;
+                }
             }
-
-            result.setValue(dst);
+ 
+            // Release ownership to the caller.
+            result.setValue(dst.release());
             return result;
         }
 // --------------------------------------------------------------------------------
@@ -921,7 +935,7 @@ namespace cslt {
                                          size_t          end,
                                          Allocator&      allocator) noexcept {
             Expected<Array<T>*> result;
-
+ 
             if (start >= end) {
                 result.setError(ArgumentError("Array::slice: start must be < end"));
                 return result;
@@ -930,18 +944,19 @@ namespace cslt {
                 result.setError(OutOfBoundsError("Array::slice: end exceeds array size"));
                 return result;
             }
-
+ 
             size_t const slice_len = end - start;
-
-            // Allocate the output Array struct
+ 
+            // Allocate the output Array struct directly, mirroring the copy()
+            // pattern — no UniquePtr or ArrayDeleter needed here.
             auto obj_result = allocator.alloc(sizeof(Array<T>), true);
             if (!obj_result.hasValue()) {
                 result.setError(obj_result.error());
                 return result;
             }
-
+ 
             Array<T>* dst = new (obj_result.value()) Array<T>(slice_len, allocator);
-
+ 
             if (!dst->data_) {
                 dst->~Array<T>();
                 allocator.return_element(obj_result.value(),
@@ -950,20 +965,14 @@ namespace cslt {
                 result.setError(MemoryError("Array::slice: failed to allocate buffer"));
                 return result;
             }
-
-            // Copy elements from [start, end) into the new buffer
-            if constexpr (std::is_trivially_copyable_v<T>) {
-                std::memcpy(static_cast<void*>(dst->data_),
-                            static_cast<const void*>(src.data_ + start),
-                            slice_len * sizeof(T));
-                dst->len_ = slice_len;
-            } else {
-                for (size_t i = 0u; i < slice_len; ++i) {
-                    new (static_cast<void*>(dst->data_ + i)) T(src.data_[start + i]);
-                    dst->len_ = i + 1u;
-                }
+ 
+            // Copy-construct each element from the source range, incrementing
+            // len_ after each one so the destructor cleans up correctly on throw.
+            for (size_t i = 0u; i < slice_len; ++i) {
+                new (static_cast<void*>(dst->data_ + i)) T(src.data_[start + i]);
+                dst->len_ = i + 1u;
             }
-
+ 
             result.setValue(dst);
             return result;
         }

@@ -1,0 +1,857 @@
+\hypertarget{classcslt_1_1Array}{}\doxysection{cslt\+::Array$<$ T $>$ Class Template Reference}
+\label{classcslt_1_1Array}\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+
+
+Allocator-\/backed generic dynamic array container.  
+
+
+
+
+{\ttfamily \#include $<$array.\+hpp$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_a726d2a2a623ba9b343d2188df90ef528}{push\+\_\+back}} (const T \&value) noexcept
+\begin{DoxyCompactList}\small\item\em Append an element to the end of the array. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_a851651295787acc2c6ce9d489cd387ec}{push\+\_\+front}} (const T \&value) noexcept
+\begin{DoxyCompactList}\small\item\em Insert an element at the beginning of the array. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_aa91f92b23fcfd16ab12e7d8a7fda93bb}{push\+\_\+any}} (size\+\_\+t index, const T \&value) noexcept
+\begin{DoxyCompactList}\small\item\em Insert an element at a caller-\/specified index. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_ad14072d1502e720a6bb6486bc7b5b450}{pop\+\_\+back}} () noexcept
+\begin{DoxyCompactList}\small\item\em Remove the last element from the array. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_a691c2bb38c65ad98fcd2733ed4295822}{pop\+\_\+front}} () noexcept
+\begin{DoxyCompactList}\small\item\em Remove the element at the beginning of the array. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_a08a750139f2258e7188ce23f4074987d}{pop\+\_\+any}} (size\+\_\+t index) noexcept
+\begin{DoxyCompactList}\small\item\em Remove the element at a caller-\/specified index. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1Array_abe8bb1180a8ab41d1ce588069d2ec9df}{clear}} () noexcept
+\begin{DoxyCompactList}\small\item\em Destroy all live elements and reset the populated length to zero. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ bool $>$ \mbox{\hyperlink{classcslt_1_1Array_a6a1cea7677e1cea74ed7fc3a5b8216c4}{set}} (size\+\_\+t index, const T \&value) noexcept
+\begin{DoxyCompactList}\small\item\em Write or append an element at a given index. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ T $>$ \mbox{\hyperlink{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}{operator\mbox{[}$\,$\mbox{]}}} (size\+\_\+t index) const noexcept
+\begin{DoxyCompactList}\small\item\em Read-\/only access to an element at a given index. \end{DoxyCompactList}\item 
+const T $\ast$ \mbox{\hyperlink{classcslt_1_1Array_a195cbdaefaeda905714878914d1657f8}{data}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Return a const pointer to the beginning of the element buffer. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Return the number of elements currently stored. \end{DoxyCompactList}\item 
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1Array_a40413b1da52d2649f2e028704fcd4c1a}{capacity}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Return the current element capacity of the buffer. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_a6292b3c1418914cf410825f07e870346}{is\+\_\+empty}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Return true if no elements are currently stored. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_a5b47a30bac5aa7debbdfb6ee22b20444}{is\+\_\+full}} () const noexcept
+\begin{DoxyCompactList}\small\item\em Return true if the populated length equals the allocated capacity. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_ac6d266921c654a1014ba273926e6e882}{is\+\_\+ptr}} (const T $\ast$ptr) const noexcept
+\begin{DoxyCompactList}\small\item\em Return true if a pointer falls within the populated region and is aligned to an element boundary. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classcslt_1_1Array_a4695ffd06f5596aaa146af0bf9990dc2}{concat}} (const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&other) noexcept
+\begin{DoxyCompactList}\small\item\em Append all elements of another \mbox{\hyperlink{classcslt_1_1Array}{Array}} to the end of this array. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classcslt_1_1Array_abea00fd3a938b939d6b5ca58c3671f0e}{reverse}} () noexcept
+\begin{DoxyCompactList}\small\item\em Reverse the order of all elements in the array in place. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\bool \mbox{\hyperlink{classcslt_1_1Array_a5641e347374697257d317a5119de8571}{sort}} (Func cmp, \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2}{Direction}} dir) noexcept
+\begin{DoxyCompactList}\small\item\em Sort the array in place using an iterative quicksort. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}{init}} (size\+\_\+t \mbox{\hyperlink{classcslt_1_1Array_a40413b1da52d2649f2e028704fcd4c1a}{capacity}}, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&allocator) noexcept
+\begin{DoxyCompactList}\small\item\em Initialise an allocator-\/backed \mbox{\hyperlink{classcslt_1_1Array}{Array}}. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1Array_a01e0a4d91fda691cbe8f216ae74017c8}{copy}} (const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&src, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&allocator) noexcept
+\begin{DoxyCompactList}\small\item\em Create a deep copy of an existing \mbox{\hyperlink{classcslt_1_1Array}{Array}} using a caller-\/supplied allocator. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1Array_ab88d1e98d485536f968a0d7a968cabf2}{copy}} (const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&src) noexcept
+\begin{DoxyCompactList}\small\item\em Create a deep copy of an existing \mbox{\hyperlink{classcslt_1_1Array}{Array}} using the source \mbox{\hyperlink{classcslt_1_1Array}{Array}}\textquotesingle{}s own allocator. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1Array_a3cf8c18d406d0dd4eda56ad739fc8d20}{cumulative}} (const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&src, Func add, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&allocator) noexcept
+\begin{DoxyCompactList}\small\item\em Produce a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the prefix-\/sum (running total) of this array using a caller-\/supplied accumulation function. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1Array_a4719d5b2930cfdd24eb2978889ab0585}{cumulative}} (const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&src, Func add) noexcept
+\begin{DoxyCompactList}\small\item\em Produce a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the prefix-\/sum of this array using the source array\textquotesingle{}s own allocator. \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1Array_a8983e26966518f5a421d64c42faa2647}{slice}} (const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&src, size\+\_\+t start, size\+\_\+t end, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&allocator) noexcept
+\begin{DoxyCompactList}\small\item\em Return a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the elements in \mbox{[}start, end) \end{DoxyCompactList}\item 
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$ $>$ \mbox{\hyperlink{classcslt_1_1Array_a4162c5f0b5a0993e999ad4c5f941c315}{slice}} (const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&src, size\+\_\+t start, size\+\_\+t end) noexcept
+\begin{DoxyCompactList}\small\item\em Return a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the elements in \mbox{[}start, end) using the source array\textquotesingle{}s own allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename U $>$ }\\class \mbox{\hyperlink{classcslt_1_1Array_a4450d33525d3362abca5637eeb1e0b98}{Array\+Deleter}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$typename T$>$\newline
+class cslt\+::\+Array$<$ T $>$}
+
+Allocator-\/backed generic dynamic array container. 
+
+Provides a resizable array container that uses custom allocators for memory management. Both the \mbox{\hyperlink{classcslt_1_1Array}{Array}} struct and its internal data buffer are allocated through the provided allocator.
+
+Key features\+:
+\begin{DoxyItemize}
+\item Custom allocator support (heap, arena, buddy, slab, etc.)
+\item Generic element type via template parameter
+\item Tiered growth strategy to avoid runaway allocation at large sizes
+\item Safe insertion and removal via push/pop family of methods
+\item Bounds-\/checked read via \mbox{\hyperlink{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}{operator\mbox{[}$\,$\mbox{]}(size\+\_\+t) const }}returning Expected$<$\+T$>$
+\item Bounds-\/checked write via \mbox{\hyperlink{classcslt_1_1Array_a6a1cea7677e1cea74ed7fc3a5b8216c4}{set(size\+\_\+t, const T\&)}} returning Expected$<$bool$>$
+\item Copy factory via \mbox{\hyperlink{classcslt_1_1Array_a01e0a4d91fda691cbe8f216ae74017c8}{copy()}}; move construction explicitly deleted
+\item RAII-\/based memory management through init factory function
+\end{DoxyItemize}
+
+Growth tiers (in elements)\+:
+\begin{DoxyItemize}
+\item 0 -\/$>$ 1
+\item $<$ 1024 -\/$>$ 2x
+\item $<$ 8192 -\/$>$ 1.\+5x (cap + cap/2)
+\item $<$ 65536 -\/$>$ 1.\+25x (cap + cap/4)
+\item $>$= 65536 -\/$>$ cap + 256 (linear increment)
+\end{DoxyItemize}
+
+Shift strategy\+:
+\begin{DoxyItemize}
+\item Trivially copyable T\+: std\+::memmove (compiler-\/vectorisable)
+\item Non-\/trivial T\+: placement-\/new / explicit destructor loop
+\end{DoxyItemize}
+
+Usage pattern\+:
+\begin{DoxyItemize}
+\item Must be initialised via the static factory function \mbox{\hyperlink{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}{init()}}
+\item Cannot be constructed directly (private constructor)
+\item Automatically manages both the \mbox{\hyperlink{classcslt_1_1Array}{Array}} object and its buffer memory
+\item Cleaned up through \mbox{\hyperlink{classcslt_1_1ArrayDeleter}{Array\+Deleter}}
+\end{DoxyItemize}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Element type stored in the array\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\textcolor{keyword}{auto} result = \mbox{\hyperlink{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}{cslt::Array<int>::init}}(8, allocator);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::Array<int>}}, \mbox{\hyperlink{classcslt_1_1ArrayDeleter}{cslt::ArrayDeleter<int>}}> arr(result.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{    arr-\/>push\_back(1);}
+\DoxyCodeLine{    arr-\/>push\_back(2);}
+\DoxyCodeLine{    arr-\/>push\_back(3);}
+\DoxyCodeLine{}
+\DoxyCodeLine{    (*arr)[1] = 99;            \textcolor{comment}{// overwrite index 1}}
+\DoxyCodeLine{    \textcolor{keyword}{auto} r = (*arr)[1];        \textcolor{comment}{// read index 1 -\/> Expected<int>}}
+\DoxyCodeLine{    arr-\/>pop\_back();           \textcolor{comment}{// removes 3}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyNote}{Note}
+This class cannot be instantiated directly. Use the \mbox{\hyperlink{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}{init()}} factory function to create instances. 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1Array_a40413b1da52d2649f2e028704fcd4c1a}\label{classcslt_1_1Array_a40413b1da52d2649f2e028704fcd4c1a}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!capacity@{capacity}}
+\index{capacity@{capacity}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{capacity()}{capacity()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::capacity (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return the current element capacity of the buffer. 
+
+\begin{DoxyReturn}{Returns}
+Capacity in number of elements 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcslt_1_1Array_abe8bb1180a8ab41d1ce588069d2ec9df}\label{classcslt_1_1Array_abe8bb1180a8ab41d1ce588069d2ec9df}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!clear@{clear}}
+\index{clear@{clear}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Destroy all live elements and reset the populated length to zero. 
+
+Calls the destructor of every live element in reverse order, then sets len\+\_\+ to 0. The allocated buffer and its capacity are preserved so the \mbox{\hyperlink{classcslt_1_1Array}{Array}} can be reused without a further allocation.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arr-\/>clear();}
+\DoxyCodeLine{\textcolor{comment}{// arr-\/>size() == 0, arr-\/>capacity() unchanged}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a4695ffd06f5596aaa146af0bf9990dc2}\label{classcslt_1_1Array_a4695ffd06f5596aaa146af0bf9990dc2}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!concat@{concat}}
+\index{concat@{concat}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{concat()}{concat()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::concat (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&}]{other }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Append all elements of another \mbox{\hyperlink{classcslt_1_1Array}{Array}} to the end of this array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em other} & \mbox{\hyperlink{classcslt_1_1Array}{Array}} whose elements are appended to this array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success, false if any reallocation fails
+\end{DoxyReturn}
+Iterates over the populated elements of {\ttfamily other} and appends each one via \mbox{\hyperlink{classcslt_1_1Array_a726d2a2a623ba9b343d2188df90ef528}{push\+\_\+back()}}, which uses the tiered growth strategy as needed. If any individual \mbox{\hyperlink{classcslt_1_1Array_a726d2a2a623ba9b343d2188df90ef528}{push\+\_\+back()}} fails (reallocation error), the method returns false immediately; elements already appended before the failure remain in the array.
+
+\begin{DoxyNote}{Note}
+Self-\/concatenation (passing this array as {\ttfamily other}) is safe because \mbox{\hyperlink{classcslt_1_1Array_a726d2a2a623ba9b343d2188df90ef528}{push\+\_\+back()}} always reads from {\ttfamily other} before writing, and the snapshot of other.\+len\+\_\+ is taken once before the loop.
+\end{DoxyNote}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// a contains \{1, 2, 3\}, b contains \{4, 5, 6\}}}
+\DoxyCodeLine{a-\/>concat(*b);}
+\DoxyCodeLine{\textcolor{comment}{// a now contains \{1, 2, 3, 4, 5, 6\}}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_ab88d1e98d485536f968a0d7a968cabf2}\label{classcslt_1_1Array_ab88d1e98d485536f968a0d7a968cabf2}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!copy@{copy}}
+\index{copy@{copy}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{copy()}{copy()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$T$>$$\ast$$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::copy (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&}]{src }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Create a deep copy of an existing \mbox{\hyperlink{classcslt_1_1Array}{Array}} using the source \mbox{\hyperlink{classcslt_1_1Array}{Array}}\textquotesingle{}s own allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & \mbox{\hyperlink{classcslt_1_1Array}{Array}} to copy from \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$Array$<$\+T$>$$\ast$$>$ containing a pointer to the new \mbox{\hyperlink{classcslt_1_1Array}{Array}}, or an error
+\end{DoxyReturn}
+Convenience overload that forwards to copy(src, allocator) using the allocator already associated with {\ttfamily src}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1Array_a01e0a4d91fda691cbe8f216ae74017c8}{cslt::Array<int>::copy}}(*arr);}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a01e0a4d91fda691cbe8f216ae74017c8}\label{classcslt_1_1Array_a01e0a4d91fda691cbe8f216ae74017c8}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!copy@{copy}}
+\index{copy@{copy}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{copy()}{copy()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$T$>$$\ast$$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::copy (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&}]{src,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Create a deep copy of an existing \mbox{\hyperlink{classcslt_1_1Array}{Array}} using a caller-\/supplied allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & \mbox{\hyperlink{classcslt_1_1Array}{Array}} to copy from \\
+\hline
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} used to back the new \mbox{\hyperlink{classcslt_1_1Array}{Array}} and its buffer \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$Array$<$\+T$>$$\ast$$>$ containing a pointer to the new \mbox{\hyperlink{classcslt_1_1Array}{Array}}, or an error
+\end{DoxyReturn}
+Allocates a fresh \mbox{\hyperlink{classcslt_1_1Array}{Array}} with the same capacity as {\ttfamily src}, then copy-\/constructs each live element. On any failure the partially constructed \mbox{\hyperlink{classcslt_1_1Array}{Array}} is cleaned up and an error is returned.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r  = \mbox{\hyperlink{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}{cslt::Array<int>::init}}(4, alloc);}
+\DoxyCodeLine{\textcolor{comment}{// ... push elements ...}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r2 = \mbox{\hyperlink{classcslt_1_1Array_a01e0a4d91fda691cbe8f216ae74017c8}{cslt::Array<int>::copy}}(*r.value(), alloc);}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a4719d5b2930cfdd24eb2978889ab0585}\label{classcslt_1_1Array_a4719d5b2930cfdd24eb2978889ab0585}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!cumulative@{cumulative}}
+\index{cumulative@{cumulative}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{cumulative()}{cumulative()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$T$>$$\ast$$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::cumulative (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&}]{src,  }\item[{Func}]{add }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Produce a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the prefix-\/sum of this array using the source array\textquotesingle{}s own allocator. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily void(\+T\&, const T\&)} \\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em add} & Accumulation callable \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$Array$<$\+T$>$$\ast$$>$ on success, or an error
+\end{DoxyReturn}
+Convenience overload that forwards to cumulative(src, add, allocator) using the allocator already associated with this array.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1Array_a3cf8c18d406d0dd4eda56ad739fc8d20}{cslt::Array<int>::cumulative}}(*src,}
+\DoxyCodeLine{    [](\textcolor{keywordtype}{int}\& accum, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& elem) \{ accum += elem; \});}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a3cf8c18d406d0dd4eda56ad739fc8d20}\label{classcslt_1_1Array_a3cf8c18d406d0dd4eda56ad739fc8d20}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!cumulative@{cumulative}}
+\index{cumulative@{cumulative}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{cumulative()}{cumulative()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$T$>$$\ast$$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::cumulative (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&}]{src,  }\item[{Func}]{add,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Produce a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the prefix-\/sum (running total) of this array using a caller-\/supplied accumulation function. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily void(\+T\&, const T\&)}. The first argument is the current output element (modified in place); the second is the incoming source element. Any callable is accepted\+: plain function, lambda, or functor.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em add} & Accumulation callable \\
+\hline
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} used to back the returned \mbox{\hyperlink{classcslt_1_1Array}{Array}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$Array$<$\+T$>$$\ast$$>$ containing the cumulative \mbox{\hyperlink{classcslt_1_1Array}{Array}} on success, or an error
+\end{DoxyReturn}
+Mirrors the C cumulative\+\_\+array() prefix-\/sum algorithm\+:
+\begin{DoxyItemize}
+\item result\mbox{[}0\mbox{]} = src\mbox{[}0\mbox{]} (seed — no identity element required)
+\item result\mbox{[}i\mbox{]} = result\mbox{[}i-\/1\mbox{]} + src\mbox{[}i\mbox{]} for i $>$= 1
+\end{DoxyItemize}
+
+The output \mbox{\hyperlink{classcslt_1_1Array}{Array}} is allocated with exactly len\+\_\+ slots (no extra capacity), making it a fixed-\/length snapshot.
+
+\begin{DoxyParagraph}{Error conditions\+:}
+
+\begin{DoxyItemize}
+\item \mbox{\hyperlink{classcslt_1_1Array}{Array}} is empty (\mbox{\hyperlink{classcslt_1_1EmptyError}{Empty\+Error}})
+\item Allocation of the output struct or buffer fails (\mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}})
+\end{DoxyItemize}
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1Array_a3cf8c18d406d0dd4eda56ad739fc8d20}{cslt::Array<int>::cumulative}}(*src,}
+\DoxyCodeLine{    [](\textcolor{keywordtype}{int}\& accum, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& elem) \{ accum += elem; \},}
+\DoxyCodeLine{    alloc);}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a195cbdaefaeda905714878914d1657f8}\label{classcslt_1_1Array_a195cbdaefaeda905714878914d1657f8}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!data@{data}}
+\index{data@{data}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{data()}{data()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+const T$\ast$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::data (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return a const pointer to the beginning of the element buffer. 
+
+\begin{DoxyReturn}{Returns}
+Const pointer to the first element, or nullptr if the array has not been successfully initialised
+\end{DoxyReturn}
+The pointer is valid until the next push operation that triggers a reallocation.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{int}* ptr = arr-\/>data();}
+\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{size\_t} i = 0; i < arr-\/>size(); ++i)}
+\DoxyCodeLine{    std::cout << ptr[i] << \textcolor{charliteral}{'\(\backslash\)n'};}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}\label{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!init@{init}}
+\index{init@{init}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$T$>$$\ast$$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::init (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{capacity,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Initialise an allocator-\/backed \mbox{\hyperlink{classcslt_1_1Array}{Array}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em capacity} & Initial element capacity (must be $>$ 0) \\
+\hline
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} to use for memory management \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$Array$<$\+T$>$$\ast$$>$ containing a pointer to the \mbox{\hyperlink{classcslt_1_1Array}{Array}}, or an error
+\end{DoxyReturn}
+Allocates the \mbox{\hyperlink{classcslt_1_1Array}{Array}} object itself and its internal element buffer through the provided allocator using placement new, mirroring the \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{String\+::init()}} pattern.
+
+\begin{DoxyParagraph}{Error conditions\+:}
+
+\begin{DoxyItemize}
+\item capacity == 0 (\mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}})
+\item Allocation of the \mbox{\hyperlink{classcslt_1_1Array}{Array}} struct fails (\mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}})
+\item Allocation of the element buffer fails (\mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}})
+\end{DoxyItemize}
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}{cslt::Array<float>::init}}(16, alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::Array<float>}}, \mbox{\hyperlink{classcslt_1_1ArrayDeleter}{cslt::ArrayDeleter<float>}}> arr(r.value());}
+\DoxyCodeLine{    arr-\/>push\_back(3.14f);}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a6292b3c1418914cf410825f07e870346}\label{classcslt_1_1Array_a6292b3c1418914cf410825f07e870346}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!is\_empty@{is\_empty}}
+\index{is\_empty@{is\_empty}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{is\_empty()}{is\_empty()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::is\+\_\+empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return true if no elements are currently stored. 
+
+\begin{DoxyReturn}{Returns}
+true if \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}} == 0
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (arr-\/>is\_empty()) \{ ... \}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a5b47a30bac5aa7debbdfb6ee22b20444}\label{classcslt_1_1Array_a5b47a30bac5aa7debbdfb6ee22b20444}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!is\_full@{is\_full}}
+\index{is\_full@{is\_full}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{is\_full()}{is\_full()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::is\+\_\+full (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return true if the populated length equals the allocated capacity. 
+
+\begin{DoxyReturn}{Returns}
+true if \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}} == \mbox{\hyperlink{classcslt_1_1Array_a40413b1da52d2649f2e028704fcd4c1a}{capacity()}}
+\end{DoxyReturn}
+Note that a push operation on a full array will attempt to grow the buffer automatically. \mbox{\hyperlink{classcslt_1_1Array_a5b47a30bac5aa7debbdfb6ee22b20444}{is\+\_\+full()}} is useful for callers that need to know whether the next push will trigger a reallocation.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (arr-\/>is\_full()) \{ ... \}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_ac6d266921c654a1014ba273926e6e882}\label{classcslt_1_1Array_ac6d266921c654a1014ba273926e6e882}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!is\_ptr@{is\_ptr}}
+\index{is\_ptr@{is\_ptr}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{is\_ptr()}{is\_ptr()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::is\+\_\+ptr (\begin{DoxyParamCaption}\item[{const T $\ast$}]{ptr }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return true if a pointer falls within the populated region and is aligned to an element boundary. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em ptr} & Pointer to test \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if {\ttfamily ptr} points to a valid element in \mbox{[}data\+\_\+, data\+\_\+ + len\+\_\+) and satisfies (ptr -\/ data\+\_\+) \% sizeof(\+T) == 0
+\end{DoxyReturn}
+A pointer obtained after a reallocation (e.\+g. following a push that triggered a grow) may no longer be valid; callers are responsible for not retaining pointers across reallocations.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{const} \textcolor{keywordtype}{int}* p = \&(*arr-\/>data());}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (arr-\/>is\_ptr(p)) \{ ... \}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}\label{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!operator\mbox{[}\mbox{]}@{operator[]}}
+\index{operator\mbox{[}\mbox{]}@{operator[]}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$T$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::operator\mbox{[}$\,$\mbox{]} (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Read-\/only access to an element at a given index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Zero-\/based position to read from. Must be $<$ \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+T$>$ containing a copy of the element on success, or an error if {\ttfamily index} is out of the populated range
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = (*arr)[1];}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{int} val = r.value();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a08a750139f2258e7188ce23f4074987d}\label{classcslt_1_1Array_a08a750139f2258e7188ce23f4074987d}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!pop\_any@{pop\_any}}
+\index{pop\_any@{pop\_any}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{pop\_any()}{pop\_any()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::pop\+\_\+any (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Remove the element at a caller-\/specified index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Zero-\/based position of the element to remove. Must be $<$ \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}}. index == 0 is equivalent to \mbox{\hyperlink{classcslt_1_1Array_a691c2bb38c65ad98fcd2733ed4295822}{pop\+\_\+front()}}. index == \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}}-\/1 is equivalent to \mbox{\hyperlink{classcslt_1_1Array_ad14072d1502e720a6bb6486bc7b5b450}{pop\+\_\+back()}}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success, false if the array is empty or index is out of range
+\end{DoxyReturn}
+Destroys the element at {\ttfamily index}, shifts all elements at (index, len\+\_\+) one position to the left, then decrements len\+\_\+. The buffer capacity is not reduced.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// array contains \{1, 2, 3, 4\}}}
+\DoxyCodeLine{arr-\/>pop\_any(2);  \textcolor{comment}{// array becomes \{1, 2, 4\}}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_ad14072d1502e720a6bb6486bc7b5b450}\label{classcslt_1_1Array_ad14072d1502e720a6bb6486bc7b5b450}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!pop\_back@{pop\_back}}
+\index{pop\_back@{pop\_back}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{pop\_back()}{pop\_back()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::pop\+\_\+back (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Remove the last element from the array. 
+
+\begin{DoxyReturn}{Returns}
+true if an element was removed, false if the array was empty
+\end{DoxyReturn}
+Calls the destructor of the last element and decrements len\+\_\+. The buffer capacity is not reduced.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arr-\/>pop\_back();}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a691c2bb38c65ad98fcd2733ed4295822}\label{classcslt_1_1Array_a691c2bb38c65ad98fcd2733ed4295822}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!pop\_front@{pop\_front}}
+\index{pop\_front@{pop\_front}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{pop\_front()}{pop\_front()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::pop\+\_\+front (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Remove the element at the beginning of the array. 
+
+\begin{DoxyReturn}{Returns}
+true if an element was removed, false if the array was empty
+\end{DoxyReturn}
+Destroys the element at index 0, shifts all remaining elements one position to the left, then decrements len\+\_\+. The buffer capacity is not reduced.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arr-\/>pop\_front();}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_aa91f92b23fcfd16ab12e7d8a7fda93bb}\label{classcslt_1_1Array_aa91f92b23fcfd16ab12e7d8a7fda93bb}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!push\_any@{push\_any}}
+\index{push\_any@{push\_any}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{push\_any()}{push\_any()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::push\+\_\+any (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index,  }\item[{const T \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Insert an element at a caller-\/specified index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Zero-\/based insertion position. Must be $<$= \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}}. index == 0 is equivalent to \mbox{\hyperlink{classcslt_1_1Array_a851651295787acc2c6ce9d489cd387ec}{push\+\_\+front()}}. index == \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}} is equivalent to \mbox{\hyperlink{classcslt_1_1Array_a726d2a2a623ba9b343d2188df90ef528}{push\+\_\+back()}}. \\
+\hline
+{\em value} & Element to copy into the array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success, false if index is out of range or reallocation failed
+\end{DoxyReturn}
+Grows the buffer if at capacity, shifts all elements at \mbox{[}index, len\+\_\+) one position to the right, then copy-\/constructs the new element at {\ttfamily index}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// array contains \{1, 2, 4\}}}
+\DoxyCodeLine{arr-\/>push\_any(2, 3);  \textcolor{comment}{// array becomes \{1, 2, 3, 4\}}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a726d2a2a623ba9b343d2188df90ef528}\label{classcslt_1_1Array_a726d2a2a623ba9b343d2188df90ef528}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!push\_back@{push\_back}}
+\index{push\_back@{push\_back}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{push\_back()}{push\_back()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::push\+\_\+back (\begin{DoxyParamCaption}\item[{const T \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Append an element to the end of the array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Element to copy into the array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success, false if reallocation failed
+\end{DoxyReturn}
+Grows the buffer using the tiered strategy if at capacity, then copy-\/constructs the new element at the end.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arr-\/>push\_back(42);}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a851651295787acc2c6ce9d489cd387ec}\label{classcslt_1_1Array_a851651295787acc2c6ce9d489cd387ec}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!push\_front@{push\_front}}
+\index{push\_front@{push\_front}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{push\_front()}{push\_front()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::push\+\_\+front (\begin{DoxyParamCaption}\item[{const T \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Insert an element at the beginning of the array. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Element to copy into the array \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success, false if reallocation failed
+\end{DoxyReturn}
+Grows the buffer if at capacity, shifts all existing elements one position to the right via memmove (trivial T) or a placement-\/new loop (non-\/trivial T), then copy-\/constructs the new element at index 0.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arr-\/>push\_front(42);}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_abea00fd3a938b939d6b5ca58c3671f0e}\label{classcslt_1_1Array_abea00fd3a938b939d6b5ca58c3671f0e}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!reverse@{reverse}}
+\index{reverse@{reverse}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{reverse()}{reverse()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+void \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::reverse (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Reverse the order of all elements in the array in place. 
+
+For trivially copyable T the reversal is delegated to simd\+\_\+reverse\+\_\+uint8(), which is resolved at compile time to the best available SIMD back-\/end (AVX-\/512, AVX2, AVX, SSE4.\+1, SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback. The function treats each element as an opaque bag of sizeof(\+T) bytes and swaps element positions — it does not reverse the bytes within an individual element.
+
+For non-\/trivial T, a scalar swap loop is used that respects move construction and destruction semantics.
+
+Arrays with fewer than two elements are left unchanged.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// arr contains \{1, 2, 3, 4, 5\}}}
+\DoxyCodeLine{arr-\/>reverse();}
+\DoxyCodeLine{\textcolor{comment}{// arr now contains \{5, 4, 3, 2, 1\}}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a6a1cea7677e1cea74ed7fc3a5b8216c4}\label{classcslt_1_1Array_a6a1cea7677e1cea74ed7fc3a5b8216c4}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!set@{set}}
+\index{set@{set}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{set()}{set()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$bool$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::set (\begin{DoxyParamCaption}\item[{size\+\_\+t}]{index,  }\item[{const T \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Write or append an element at a given index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em index} & Zero-\/based position to write to. Must be $<$= \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}}. \\
+\hline
+{\em value} & Element to copy into the array at {\ttfamily index} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$bool$>$ — true on success; error on failure
+\end{DoxyReturn}
+Three cases are handled\+:
+\begin{DoxyItemize}
+\item index $<$ len\+\_\+ \+: destroys the existing element and copy-\/constructs {\ttfamily value} in its place
+\item index == len\+\_\+ \+: calls \+\_\+ensure\+\_\+capacity(), copy-\/constructs {\ttfamily value}, and increments len\+\_\+
+\item index $>$ len\+\_\+ \+: returns an \mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}}
+\end{DoxyItemize}
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arr-\/>set(0, 42);            \textcolor{comment}{// overwrite existing element}}
+\DoxyCodeLine{arr-\/>set(arr-\/>size(), 99);  \textcolor{comment}{// append via set}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}\label{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!size@{size}}
+\index{size@{size}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return the number of elements currently stored. 
+
+\begin{DoxyReturn}{Returns}
+Element count 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classcslt_1_1Array_a4162c5f0b5a0993e999ad4c5f941c315}\label{classcslt_1_1Array_a4162c5f0b5a0993e999ad4c5f941c315}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!slice@{slice}}
+\index{slice@{slice}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{slice()}{slice()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$T$>$$\ast$$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::slice (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&}]{src,  }\item[{size\+\_\+t}]{start,  }\item[{size\+\_\+t}]{end }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Return a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the elements in \mbox{[}start, end) using the source array\textquotesingle{}s own allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em start} & Zero-\/based index of the first element to include \\
+\hline
+{\em end} & One-\/past-\/the-\/last index (exclusive upper bound) \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$Array$<$\+T$>$$\ast$$>$ on success, or an error
+\end{DoxyReturn}
+Convenience overload that forwards to slice(src, start, end, allocator) using the allocator already associated with this array.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1Array_a8983e26966518f5a421d64c42faa2647}{cslt::Array<int>::slice}}(*arr, 1, 4);}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a8983e26966518f5a421d64c42faa2647}\label{classcslt_1_1Array_a8983e26966518f5a421d64c42faa2647}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!slice@{slice}}
+\index{slice@{slice}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{slice()}{slice()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+static \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$T$>$$\ast$$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::slice (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ \&}]{src,  }\item[{size\+\_\+t}]{start,  }\item[{size\+\_\+t}]{end,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Return a new \mbox{\hyperlink{classcslt_1_1Array}{Array}} containing the elements in \mbox{[}start, end) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em start} & Zero-\/based index of the first element to include \\
+\hline
+{\em end} & One-\/past-\/the-\/last index (exclusive upper bound). Must satisfy start $<$ end $<$= \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}}. \\
+\hline
+{\em allocator} & \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} used to back the returned \mbox{\hyperlink{classcslt_1_1Array}{Array}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$Array$<$\+T$>$$\ast$$>$ containing the slice on success, or an error
+\end{DoxyReturn}
+Mirrors the C slice\+\_\+array() semantics exactly\+:
+\begin{DoxyItemize}
+\item start $>$= end is an \mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}}
+\item end $>$ len\+\_\+ is an \mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}} The returned \mbox{\hyperlink{classcslt_1_1Array}{Array}} has capacity == (end -\/ start) and is a fixed-\/length snapshot of the source range. For trivially copyable T the copy uses std\+::memcpy; for non-\/trivial T each element is copy-\/constructed individually.
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Error conditions\+:}
+
+\begin{DoxyItemize}
+\item start $>$= end (\mbox{\hyperlink{classcslt_1_1ArgumentError}{Argument\+Error}})
+\item end $>$ len\+\_\+ (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}})
+\item Allocation failure (\mbox{\hyperlink{classcslt_1_1MemoryError}{Memory\+Error}})
+\end{DoxyItemize}
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// array contains \{0, 1, 2, 3, 4\}}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1Array_a8983e26966518f5a421d64c42faa2647}{cslt::Array<int>::slice}}(*arr, 1, 4, alloc);}
+\DoxyCodeLine{\textcolor{comment}{// result contains \{1, 2, 3\}}}
+
+\end{DoxyCode}
+ \mbox{\Hypertarget{classcslt_1_1Array_a5641e347374697257d317a5119de8571}\label{classcslt_1_1Array_a5641e347374697257d317a5119de8571}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!sort@{sort}}
+\index{sort@{sort}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{sort()}{sort()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+bool \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::sort (\begin{DoxyParamCaption}\item[{Func}]{cmp,  }\item[{\mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2}{Direction}}}]{dir }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Sort the array in place using an iterative quicksort. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily int(const T\&, const T\&)}. Must return negative if a $<$ b, zero if a == b, and positive if a $>$ b — identical to the C qsort comparator convention. Lambdas, functors, and plain function pointers are all accepted.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em cmp} & Comparator callable \\
+\hline
+{\em dir} & \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{Direction\+::\+FORWARD}} for ascending order; \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c}{Direction\+::\+REVERSE}} for descending order \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success; false if the array is uninitialised or contains fewer than two elements (no-\/op in those cases)
+\end{DoxyReturn}
+Implements an iterative median-\/of-\/three quicksort with an insertion sort fallback for partitions smaller than 10 elements and tail-\/call optimisation to keep stack depth at O(log n) in the worst case. Element swaps use memcpy for trivially copyable T and move construction / destruction for non-\/trivial T.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{arr-\/>sort([](\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& a, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& b) \{ \textcolor{keywordflow}{return} a -\/ b; \},}
+\DoxyCodeLine{          \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{cslt::Direction::FORWARD}});   \textcolor{comment}{// ascending}}
+\DoxyCodeLine{}
+\DoxyCodeLine{arr-\/>sort([](\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& a, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& b) \{ \textcolor{keywordflow}{return} a -\/ b; \},}
+\DoxyCodeLine{          \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c}{cslt::Direction::REVERSE}});   \textcolor{comment}{// descending}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Friends And Related Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1Array_a4450d33525d3362abca5637eeb1e0b98}\label{classcslt_1_1Array_a4450d33525d3362abca5637eeb1e0b98}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!ArrayDeleter@{ArrayDeleter}}
+\index{ArrayDeleter@{ArrayDeleter}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{ArrayDeleter}{ArrayDeleter}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename U $>$ \\
+friend class \mbox{\hyperlink{classcslt_1_1ArrayDeleter}{Array\+Deleter}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{array_8hpp}{array.\+hpp}}\end{DoxyCompactItemize}

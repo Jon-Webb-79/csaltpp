@@ -34,7 +34,7 @@ static inline __m256i _avx_reverse_bytes(__m256i v) {
 static void simd_reverse_uint8(uint8_t* data, size_t len, size_t data_size) {
     if (data == NULL || len < 2u || data_size == 0u) return;
 
-    if (data_size <= 32u && (32u % data_size == 0u)) {
+    if (data_size < 32u && (32u % data_size == 0u)) {
         size_t lo = 0u;
         size_t hi = len - 1u;
         size_t elems_per_reg = 32u / data_size;
@@ -186,6 +186,196 @@ static size_t simd_contains_uint8(const uint8_t* data,
         }
     }
     return SIZE_MAX;
+}
+// -------------------------------------------------------------------------------- 
+
+static inline uint8_t _avx_hmin128_u8(__m128i v) {
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 8));
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 4));
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 2));
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 1));
+    return (uint8_t)_mm_cvtsi128_si32(v);
+}
+
+static inline uint8_t _avx_hmax128_u8(__m128i v) {
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 8));
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 4));
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 2));
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 1));
+    return (uint8_t)_mm_cvtsi128_si32(v);
+}
+
+static size_t simd_min_uint8(const uint8_t* data,
+                              size_t         len,
+                              size_t         data_size,
+                              int          (*cmp)(const void*, const void*)) {
+    if (data_size == 1u) {
+        __m128i vmin = _mm_set1_epi8((char)0xFF);
+        size_t  i    = 0u;
+        while (i + 32u <= len) {
+            __m256i chunk = _mm256_loadu_si256((__m256i*)(data + i));
+            __m128i lo    = _mm256_castsi256_si128(chunk);
+            __m128i hi    = _mm256_extractf128_si256(chunk, 1);
+            vmin = _mm_min_epu8(vmin, _mm_min_epu8(lo, hi));
+            i += 32u;
+        }
+        if (i + 16u <= len) {
+            vmin = _mm_min_epu8(vmin, _mm_loadu_si128((__m128i*)(data + i)));
+            i += 16u;
+        }
+        for (; i < len; i++) {
+            __m128i v = _mm_set1_epi8((char)data[i]);
+            vmin = _mm_min_epu8(vmin, v);
+        }
+        uint8_t min_val = _avx_hmin128_u8(vmin);
+        _mm256_zeroupper();
+        for (size_t j = 0u; j < len; j++)
+            if (data[j] == min_val) return j;
+    }
+    _mm256_zeroupper();
+    size_t best = 0u;
+    for (size_t i = 1u; i < len; i++)
+        if (cmp(data + i * data_size, data + best * data_size) < 0) best = i;
+    return best;
+}
+// -------------------------------------------------------------------------------- 
+
+static size_t simd_max_uint8(const uint8_t* data,
+                              size_t         len,
+                              size_t         data_size,
+                              int          (*cmp)(const void*, const void*)) {
+    if (data_size == 1u) {
+        __m128i vmax = _mm_setzero_si128();
+        size_t  i    = 0u;
+        while (i + 32u <= len) {
+            __m256i chunk = _mm256_loadu_si256((__m256i*)(data + i));
+            __m128i lo    = _mm256_castsi256_si128(chunk);
+            __m128i hi    = _mm256_extractf128_si256(chunk, 1);
+            vmax = _mm_max_epu8(vmax, _mm_max_epu8(lo, hi));
+            i += 32u;
+        }
+        if (i + 16u <= len) {
+            vmax = _mm_max_epu8(vmax, _mm_loadu_si128((__m128i*)(data + i)));
+            i += 16u;
+        }
+        for (; i < len; i++) {
+            __m128i v = _mm_set1_epi8((char)data[i]);
+            vmax = _mm_max_epu8(vmax, v);
+        }
+        uint8_t max_val = _avx_hmax128_u8(vmax);
+        _mm256_zeroupper();
+        for (size_t j = 0u; j < len; j++)
+            if (data[j] == max_val) return j;
+    }
+    _mm256_zeroupper();
+    size_t best = 0u;
+    for (size_t i = 1u; i < len; i++)
+        if (cmp(data + i * data_size, data + best * data_size) > 0) best = i;
+    return best;
+}
+// -------------------------------------------------------------------------------- 
+
+static void simd_sum_uint8(const uint8_t* data,
+                            size_t         len,
+                            size_t         data_size,
+                            void*          accum,
+                            void         (*add)(void* accum, const void* element)) {
+    size_t i = 0u;
+    if (data_size == 1u) {
+        while (i + 32u <= len) {
+            __m256i chunk = _mm256_loadu_si256((__m256i*)(data + i));
+            __m128i lo    = _mm256_castsi256_si128(chunk);
+            __m128i hi    = _mm256_extractf128_si256(chunk, 1);
+            uint8_t v;
+            v=(uint8_t)_mm_extract_epi8(lo, 0);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 1);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 2);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 3);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 4);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 5);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 6);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 7);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 8);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo, 9);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo,10);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo,11);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo,12);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo,13);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo,14);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(lo,15);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 0);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 1);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 2);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 3);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 4);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 5);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 6);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 7);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 8);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi, 9);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi,10);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi,11);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi,12);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi,13);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi,14);add(accum,&v);
+            v=(uint8_t)_mm_extract_epi8(hi,15);add(accum,&v);
+            i += 32u;
+        }
+    } else if (data_size == 2u) {
+        while (i + 16u <= len) {
+            __m256i chunk = _mm256_loadu_si256((__m256i*)(data + i * 2u));
+            __m128i lo    = _mm256_castsi256_si128(chunk);
+            __m128i hi    = _mm256_extractf128_si256(chunk, 1);
+            uint16_t v;
+            v=(uint16_t)_mm_extract_epi16(lo,0);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(lo,1);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(lo,2);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(lo,3);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(lo,4);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(lo,5);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(lo,6);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(lo,7);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,0);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,1);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,2);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,3);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,4);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,5);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,6);add(accum,&v);
+            v=(uint16_t)_mm_extract_epi16(hi,7);add(accum,&v);
+            i += 16u;
+        }
+    } else if (data_size == 4u) {
+        while (i + 8u <= len) {
+            __m256i chunk = _mm256_loadu_si256((__m256i*)(data + i * 4u));
+            __m128i lo    = _mm256_castsi256_si128(chunk);
+            __m128i hi    = _mm256_extractf128_si256(chunk, 1);
+            uint32_t v;
+            v=(uint32_t)_mm_extract_epi32(lo,0);add(accum,&v);
+            v=(uint32_t)_mm_extract_epi32(lo,1);add(accum,&v);
+            v=(uint32_t)_mm_extract_epi32(lo,2);add(accum,&v);
+            v=(uint32_t)_mm_extract_epi32(lo,3);add(accum,&v);
+            v=(uint32_t)_mm_extract_epi32(hi,0);add(accum,&v);
+            v=(uint32_t)_mm_extract_epi32(hi,1);add(accum,&v);
+            v=(uint32_t)_mm_extract_epi32(hi,2);add(accum,&v);
+            v=(uint32_t)_mm_extract_epi32(hi,3);add(accum,&v);
+            i += 8u;
+        }
+    } else if (data_size == 8u) {
+        while (i + 4u <= len) {
+            __m256i chunk = _mm256_loadu_si256((__m256i*)(data + i * 8u));
+            __m128i lo    = _mm256_castsi256_si128(chunk);
+            __m128i hi    = _mm256_extractf128_si256(chunk, 1);
+            uint64_t v;
+            v=(uint64_t)_mm_extract_epi64(lo,0);add(accum,&v);
+            v=(uint64_t)_mm_extract_epi64(lo,1);add(accum,&v);
+            v=(uint64_t)_mm_extract_epi64(hi,0);add(accum,&v);
+            v=(uint64_t)_mm_extract_epi64(hi,1);add(accum,&v);
+            i += 4u;
+        }
+    }
+    _mm256_zeroupper();
+    for (; i < len; i++) add(accum, data + i * data_size);
 }
 // ================================================================================ 
 // ================================================================================ 

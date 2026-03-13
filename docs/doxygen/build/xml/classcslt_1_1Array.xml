@@ -1,0 +1,1634 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classcslt_1_1Array" kind="class" language="C++" prot="public">
+    <compoundname>cslt::Array</compoundname>
+    <includes refid="array_8hpp" local="no">array.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcslt_1_1Array_1a2097dd5367bb9f07406910c9fac42d84" prot="private" static="no" mutable="no">
+        <type>T *</type>
+        <definition>T* cslt::Array&lt; T &gt;::data_</definition>
+        <argsstring></argsstring>
+        <name>data_</name>
+        <briefdescription>
+<para>Pointer to the element buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="120" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="120" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Array_1af25964a345c47a5390b595b6b7e959cd" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::Array&lt; T &gt;::len_</definition>
+        <argsstring></argsstring>
+        <name>len_</name>
+        <briefdescription>
+<para>Number of elements currently stored. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="121" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="121" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Array_1ac25e4d8742d714d42d5901249490a8e0" prot="private" static="no" mutable="no">
+        <type>size_t</type>
+        <definition>size_t cslt::Array&lt; T &gt;::cap_</definition>
+        <argsstring></argsstring>
+        <name>cap_</name>
+        <briefdescription>
+<para>Total element capacity of the buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="122" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="122" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Array_1acd16a48a948d30bef823a9ee79dad7c7" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> *</type>
+        <definition>Allocator* cslt::Array&lt; T &gt;::allocator_</definition>
+        <argsstring></argsstring>
+        <name>allocator_</name>
+        <briefdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used for all memory operations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="123" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="123" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="friend">
+      <memberdef kind="friend" id="classcslt_1_1Array_1a4450d33525d3362abca5637eeb1e0b98" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename U</type>
+          </param>
+        </templateparamlist>
+        <type>class</type>
+        <definition>friend class ArrayDeleter</definition>
+        <argsstring></argsstring>
+        <name>ArrayDeleter</name>
+        <param>
+          <type><ref refid="classcslt_1_1ArrayDeleter" kindref="compound">ArrayDeleter</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1358" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1358" bodyend="-1"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classcslt_1_1Array_1ad74730e11c8d7bdb869fe26325cc6a13" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>static size_t cslt::Array&lt; T &gt;::_compute_new_cap</definition>
+        <argsstring>(size_t current) noexcept</argsstring>
+        <name>_compute_new_cap</name>
+        <param>
+          <type>size_t</type>
+          <declname>current</declname>
+        </param>
+        <briefdescription>
+<para>Compute the next capacity using a tiered growth strategy. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>current</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Current capacity in elements </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>New capacity in elements</para>
+</simplesect>
+Tiered to avoid runaway allocation at large sizes while maintaining fast ramp-up at small sizes:<itemizedlist>
+<listitem><para>0 elements -&gt; 1</para>
+</listitem><listitem><para>&lt; 1024 elements -&gt; 2x</para>
+</listitem><listitem><para>&lt; 8192 elements -&gt; 1.5x (cap + cap/2)</para>
+</listitem><listitem><para>&lt; 65536 elements -&gt; 1.25x (cap + cap/4)</para>
+</listitem><listitem><para>&gt;= 65536 elements -&gt; linear increment of 256 </para>
+</listitem></itemizedlist>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="143" column="23" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="143" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a9d5e67c5e2343ce7498fb0a0ff5c6441" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type>int</type>
+        <definition>static int cslt::Array&lt; T &gt;::_apply_dir</definition>
+        <argsstring>(int cmp_result, Direction dir) noexcept</argsstring>
+        <name>_apply_dir</name>
+        <param>
+          <type>int</type>
+          <declname>cmp_result</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <briefdescription>
+<para>Apply Direction to a raw comparator result. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmp_result</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Raw result from the caller-supplied comparator </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dir</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>FORWARD leaves the result unchanged; REVERSE negates it </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Adjusted comparator result </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="257" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="257" bodyend="259"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1ad2932617c4b056c8e1b53e8190aad10b" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cslt::Array&lt; T &gt;::_swap_move</definition>
+        <argsstring>(T *a, T *b) noexcept</argsstring>
+        <name>_swap_move</name>
+        <param>
+          <type>T *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>T *</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Swap two elements using move semantics (non-trivial T) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="265" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="265" bodyend="271"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1af8153f4128d723f0de5c721f1b59fb10" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>static void cslt::Array&lt; T &gt;::_swap_trivial</definition>
+        <argsstring>(T *a, T *b) noexcept</argsstring>
+        <name>_swap_trivial</name>
+        <param>
+          <type>T *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>T *</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Swap two elements using memcpy (trivially copyable T) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="277" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="277" bodyend="282"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a0d672e6dd2a7d66291720bddfc257604" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type>T *</type>
+        <definition>static T* cslt::Array&lt; T &gt;::_median_of_three</definition>
+        <argsstring>(T *a, T *b, T *c, Func cmp, Direction dir) noexcept</argsstring>
+        <name>_median_of_three</name>
+        <param>
+          <type>T *</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type>T *</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type>T *</type>
+          <declname>c</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>cmp</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <briefdescription>
+<para>Median-of-three pivot selection. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Pointer to the median element among a, b, and c </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="291" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="291" bodyend="305"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcslt_1_1Array_1ac8b572cadf0f73791e509daad43d9c87" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::_grow</definition>
+        <argsstring>(size_t new_cap) noexcept</argsstring>
+        <name>_grow</name>
+        <param>
+          <type>size_t</type>
+          <declname>new_cap</declname>
+        </param>
+        <briefdescription>
+<para>Reallocate the element buffer to new_cap elements. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>new_cap</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Target capacity in elements </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success; false if overflow guard triggers or the allocator reallocation fails. On failure the array is left completely unchanged.</para>
+</simplesect>
+Guards against size_t overflow before computing byte counts, mirroring the overflow check in the C _grow_array helper. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="163" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="163" bodyend="179"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1aad7e990bb4ff16e59ff0d3b6f9d68ac0" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::_ensure_capacity</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>_ensure_capacity</name>
+        <briefdescription>
+<para>Ensure at least one free slot exists, growing if necessary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if there is room to write (either already, or after a successful grow); false if the grow failed. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="188" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="188" bodyend="191"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a6e31560f6f8d4ad3a4f2303118c0c2ec" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Array&lt; T &gt;::_shift_right</definition>
+        <argsstring>(size_t index) noexcept</argsstring>
+        <name>_shift_right</name>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Shift elements right by one slot over the range [index, len_) to open a gap at <computeroutput>index</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First position to move</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+For trivially copyable T, delegates to std::memmove which the compiler can vectorise. For non-trivial T, uses a placement-new / explicit-destructor loop to preserve correct construction and destruction semantics.</para>
+<para><simplesect kind="pre"><para>len_ &lt; cap_ (caller must have ensured capacity first) </para>
+</simplesect>
+<simplesect kind="pre"><para>index &lt;= len_ </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="208" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="208" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1af3c58dca1a798ee00fc138762eec07a6" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Array&lt; T &gt;::_shift_left</definition>
+        <argsstring>(size_t index) noexcept</argsstring>
+        <name>_shift_left</name>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Shift elements left by one slot over the range (index, len_) to close the gap at <computeroutput>index</computeroutput>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Position of the element that has already been destroyed</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+For trivially copyable T, delegates to std::memmove. For non-trivial T, uses a placement-new / explicit-destructor loop.</para>
+<para><simplesect kind="pre"><para>The element at <computeroutput>index</computeroutput> has already been destroyed by the caller </para>
+</simplesect>
+<simplesect kind="pre"><para>index &lt; len_ </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="235" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="235" bodyend="246"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a12a1cfc4dfc17363459961baa4d59205" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cslt::Array&lt; T &gt;::_insertion_sort</definition>
+        <argsstring>(size_t lo, size_t hi, Func cmp, Direction dir) noexcept</argsstring>
+        <name>_insertion_sort</name>
+        <param>
+          <type>size_t</type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>hi</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>cmp</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <briefdescription>
+<para>Insertion sort for small partitions [lo, hi] inclusive. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="312" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="312" bodyend="325"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a6d09dfac1f3ce65813dc36e5e6147479" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type>size_t</type>
+        <definition>size_t cslt::Array&lt; T &gt;::_partition</definition>
+        <argsstring>(size_t lo, size_t hi, Func cmp, Direction dir) noexcept</argsstring>
+        <name>_partition</name>
+        <param>
+          <type>size_t</type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>hi</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>cmp</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <briefdescription>
+<para>Partition data_[lo..hi] around a median-of-three pivot. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Final index of the pivot element </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="334" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="334" bodyend="366"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a9e109a162e1986d4c757b0d4ec5c7ad1" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type>void</type>
+        <definition>void cslt::Array&lt; T &gt;::_quicksort</definition>
+        <argsstring>(size_t lo, size_t hi, Func cmp, Direction dir) noexcept</argsstring>
+        <name>_quicksort</name>
+        <param>
+          <type>size_t</type>
+          <declname>lo</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>hi</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>cmp</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <briefdescription>
+<para>Iterative quicksort with median-of-three pivot, insertion sort fallback for small partitions, and tail-call optimisation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="374" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="374" bodyend="398"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a75040427dfec7bd158f203d49aeefe7f" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Array&lt; T &gt;::Array</definition>
+        <argsstring>(size_t capacity, Allocator &amp;allocator)</argsstring>
+        <name>Array</name>
+        <param>
+          <type>size_t</type>
+          <declname>capacity</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Private constructor - prevents direct instantiation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>capacity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial element capacity to allocate </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> to use for memory management</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Sets up an empty array with a pre-allocated buffer of the requested capacity. If allocation fails, data_ is left as nullptr so that <ref refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" kindref="member">init()</ref> can detect the failure and clean up. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="411" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="411" bodyend="422"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a4981c7885a955206275850fd6f210640" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Array&lt; T &gt;::~Array</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>~Array</name>
+        <briefdescription>
+<para>Private destructor - cleanup is handled by <ref refid="classcslt_1_1ArrayDeleter" kindref="compound">ArrayDeleter</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Calls the destructor of every live element, then frees the buffer through the stored allocator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="431" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="431" bodyend="442"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a142f045dea54fc0d07c8b45a41741ecf" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Array&lt; T &gt;::Array</definition>
+        <argsstring>(const Array &amp;)=delete</argsstring>
+        <name>Array</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="446" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a8780d1dcb9a6605d804f29bae11c3701" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> &amp;</type>
+        <definition>Array&amp; cslt::Array&lt; T &gt;::operator=</definition>
+        <argsstring>(const Array &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="447" column="15"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a33a7a54904f340dee106ed71d5ddb556" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Array&lt; T &gt;::Array</definition>
+        <argsstring>(Array &amp;&amp;)=delete</argsstring>
+        <name>Array</name>
+        <param>
+          <type><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="448" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a062d7639f92b264a3548873245b88403" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> &amp;</type>
+        <definition>Array&amp; cslt::Array&lt; T &gt;::operator=</definition>
+        <argsstring>(Array &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <param>
+          <type><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="449" column="15"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; * &gt;</type>
+        <definition>static Expected&lt;Array&lt;T&gt;*&gt; cslt::Array&lt; T &gt;::init</definition>
+        <argsstring>(size_t capacity, Allocator &amp;allocator) noexcept</argsstring>
+        <name>init</name>
+        <param>
+          <type>size_t</type>
+          <declname>capacity</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Initialise an allocator-backed <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>capacity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial element capacity (must be &gt; 0) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> to use for memory management </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Array&lt;T&gt;*&gt; containing a pointer to the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>, or an error</para>
+</simplesect>
+Allocates the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> object itself and its internal element buffer through the provided allocator using placement new, mirroring the <ref refid="classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c" kindref="member">String::init()</ref> pattern.</para>
+<para><simplesect kind="par"><title>Error conditions:</title><para><itemizedlist>
+<listitem><para>capacity == 0 (<ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref>)</para>
+</listitem><listitem><para>Allocation of the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> struct fails (<ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
+</listitem><listitem><para>Allocation of the element buffer fails (<ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" kindref="member">cslt::Array&lt;float&gt;::init</ref>(16,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::Array&lt;float&gt;</ref>,<sp/><ref refid="classcslt_1_1ArrayDeleter" kindref="compound">cslt::ArrayDeleter&lt;float&gt;</ref>&gt;<sp/>arr(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arr-&gt;push_back(3.14f);</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="482" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="482" bodyend="513"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; * &gt;</type>
+        <definition>static Expected&lt;Array&lt;T&gt;*&gt; cslt::Array&lt; T &gt;::copy</definition>
+        <argsstring>(const Array&lt; T &gt; &amp;src, Allocator &amp;allocator) noexcept</argsstring>
+        <name>copy</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Create a deep copy of an existing <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> using a caller-supplied allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> to copy from </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used to back the new <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> and its buffer </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Array&lt;T&gt;*&gt; containing a pointer to the new <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>, or an error</para>
+</simplesect>
+Allocates a fresh <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> with the same capacity as <computeroutput>src</computeroutput>, then copy-constructs each live element. On any failure the partially constructed <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> is cleaned up and an error is returned.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/><sp/>=<sp/><ref refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" kindref="member">cslt::Array&lt;int&gt;::init</ref>(4,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>...<sp/>push<sp/>elements<sp/>...</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r2<sp/>=<sp/><ref refid="classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8" kindref="member">cslt::Array&lt;int&gt;::copy</ref>(*r.value(),<sp/>alloc);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="537" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="537" bodyend="568"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1ab88d1e98d485536f968a0d7a968cabf2" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; * &gt;</type>
+        <definition>static Expected&lt;Array&lt;T&gt;*&gt; cslt::Array&lt; T &gt;::copy</definition>
+        <argsstring>(const Array&lt; T &gt; &amp;src) noexcept</argsstring>
+        <name>copy</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <briefdescription>
+<para>Create a deep copy of an existing <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> using the source <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&apos;s own allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> to copy from </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Array&lt;T&gt;*&gt; containing a pointer to the new <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>, or an error</para>
+</simplesect>
+Convenience overload that forwards to copy(src, allocator) using the allocator already associated with <computeroutput>src</computeroutput>.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r2<sp/>=<sp/><ref refid="classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8" kindref="member">cslt::Array&lt;int&gt;::copy</ref>(*arr);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="586" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="586" bodyend="588"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a3cf8c18d406d0dd4eda56ad739fc8d20" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; * &gt;</type>
+        <definition>static Expected&lt;Array&lt;T&gt;*&gt; cslt::Array&lt; T &gt;::cumulative</definition>
+        <argsstring>(const Array&lt; T &gt; &amp;src, Func add, Allocator &amp;allocator) noexcept</argsstring>
+        <name>cumulative</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>add</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Produce a new <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> containing the prefix-sum (running total) of this array using a caller-supplied accumulation function. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable with signature <computeroutput>void(T&amp;, const T&amp;)</computeroutput>. The first argument is the current output element (modified in place); the second is the incoming source element. Any callable is accepted: plain function, lambda, or functor.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>add</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Accumulation callable </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used to back the returned <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Array&lt;T&gt;*&gt; containing the cumulative <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> on success, or an error</para>
+</simplesect>
+Mirrors the C cumulative_array() prefix-sum algorithm:<itemizedlist>
+<listitem><para>result[0] = src[0] (seed — no identity element required)</para>
+</listitem><listitem><para>result[i] = result[i-1] + src[i] for i &gt;= 1</para>
+</listitem></itemizedlist>
+</para>
+<para>The output <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> is allocated with exactly len_ slots (no extra capacity), making it a fixed-length snapshot.</para>
+<para><simplesect kind="par"><title>Error conditions:</title><para><itemizedlist>
+<listitem><para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> is empty (<ref refid="classcslt_1_1EmptyError" kindref="compound">EmptyError</ref>)</para>
+</listitem><listitem><para>Allocation of the output struct or buffer fails (<ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Array_1a3cf8c18d406d0dd4eda56ad739fc8d20" kindref="member">cslt::Array&lt;int&gt;::cumulative</ref>(*src,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>[](</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>accum,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>elem)<sp/>{<sp/>accum<sp/>+=<sp/>elem;<sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>alloc);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1001" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1001" bodyend="1059"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a4719d5b2930cfdd24eb2978889ab0585" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; * &gt;</type>
+        <definition>static Expected&lt;Array&lt;T&gt;*&gt; cslt::Array&lt; T &gt;::cumulative</definition>
+        <argsstring>(const Array&lt; T &gt; &amp;src, Func add) noexcept</argsstring>
+        <name>cumulative</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>add</declname>
+        </param>
+        <briefdescription>
+<para>Produce a new <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> containing the prefix-sum of this array using the source array&apos;s own allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable with signature <computeroutput>void(T&amp;, const T&amp;)</computeroutput> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>add</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Accumulation callable </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Array&lt;T&gt;*&gt; on success, or an error</para>
+</simplesect>
+Convenience overload that forwards to cumulative(src, add, allocator) using the allocator already associated with this array.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Array_1a3cf8c18d406d0dd4eda56ad739fc8d20" kindref="member">cslt::Array&lt;int&gt;::cumulative</ref>(*src,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>[](</highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>accum,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>elem)<sp/>{<sp/>accum<sp/>+=<sp/>elem;<sp/>});</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1080" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1080" bodyend="1083"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a8983e26966518f5a421d64c42faa2647" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; * &gt;</type>
+        <definition>static Expected&lt;Array&lt;T&gt;*&gt; cslt::Array&lt; T &gt;::slice</definition>
+        <argsstring>(const Array&lt; T &gt; &amp;src, size_t start, size_t end, Allocator &amp;allocator) noexcept</argsstring>
+        <name>slice</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>end</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Return a new <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> containing the elements in [start, end) </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based index of the first element to include </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One-past-the-last index (exclusive upper bound). Must satisfy start &lt; end &lt;= <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used to back the returned <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Array&lt;T&gt;*&gt; containing the slice on success, or an error</para>
+</simplesect>
+Mirrors the C slice_array() semantics exactly:<itemizedlist>
+<listitem><para>start &gt;= end is an <ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref></para>
+</listitem><listitem><para>end &gt; len_ is an <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref> The returned <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> has capacity == (end - start) and is a fixed-length snapshot of the source range. For trivially copyable T the copy uses std::memcpy; for non-trivial T each element is copy-constructed individually.</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="par"><title>Error conditions:</title><para><itemizedlist>
+<listitem><para>start &gt;= end (<ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref>)</para>
+</listitem><listitem><para>end &gt; len_ (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>)</para>
+</listitem><listitem><para>Allocation failure (<ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>array<sp/>contains<sp/>{0,<sp/>1,<sp/>2,<sp/>3,<sp/>4}</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Array_1a8983e26966518f5a421d64c42faa2647" kindref="member">cslt::Array&lt;int&gt;::slice</ref>(*arr,<sp/>1,<sp/>4,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>result<sp/>contains<sp/>{1,<sp/>2,<sp/>3}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1115" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1115" bodyend="1160"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a4162c5f0b5a0993e999ad4c5f941c315" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; * &gt;</type>
+        <definition>static Expected&lt;Array&lt;T&gt;*&gt; cslt::Array&lt; T &gt;::slice</definition>
+        <argsstring>(const Array&lt; T &gt; &amp;src, size_t start, size_t end) noexcept</argsstring>
+        <name>slice</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>start</declname>
+        </param>
+        <param>
+          <type>size_t</type>
+          <declname>end</declname>
+        </param>
+        <briefdescription>
+<para>Return a new <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> containing the elements in [start, end) using the source array&apos;s own allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>start</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based index of the first element to include </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>end</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>One-past-the-last index (exclusive upper bound) </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Array&lt;T&gt;*&gt; on success, or an error</para>
+</simplesect>
+Convenience overload that forwards to slice(src, start, end, allocator) using the allocator already associated with this array.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Array_1a8983e26966518f5a421d64c42faa2647" kindref="member">cslt::Array&lt;int&gt;::slice</ref>(*arr,<sp/>1,<sp/>4);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1179" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1179" bodyend="1183"/>
+      </memberdef>
+      </sectiondef>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::push_back</definition>
+        <argsstring>(const T &amp;value) noexcept</argsstring>
+        <name>push_back</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Append an element to the end of the array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to copy into the array </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success, false if reallocation failed</para>
+</simplesect>
+Grows the buffer using the tiered strategy if at capacity, then copy-constructs the new element at the end.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">arr-&gt;push_back(42);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="608" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="608" bodyend="615"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a851651295787acc2c6ce9d489cd387ec" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::push_front</definition>
+        <argsstring>(const T &amp;value) noexcept</argsstring>
+        <name>push_front</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Insert an element at the beginning of the array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to copy into the array </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success, false if reallocation failed</para>
+</simplesect>
+Grows the buffer if at capacity, shifts all existing elements one position to the right via memmove (trivial T) or a placement-new loop (non-trivial T), then copy-constructs the new element at index 0.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">arr-&gt;push_front(42);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="633" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="633" bodyend="641"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1aa91f92b23fcfd16ab12e7d8a7fda93bb" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::push_any</definition>
+        <argsstring>(size_t index, const T &amp;value) noexcept</argsstring>
+        <name>push_any</name>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Insert an element at a caller-specified index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based insertion position. Must be &lt;= <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref>. index == 0 is equivalent to <ref refid="classcslt_1_1Array_1a851651295787acc2c6ce9d489cd387ec" kindref="member">push_front()</ref>. index == <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref> is equivalent to <ref refid="classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528" kindref="member">push_back()</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to copy into the array </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success, false if index is out of range or reallocation failed</para>
+</simplesect>
+Grows the buffer if at capacity, shifts all elements at [index, len_) one position to the right, then copy-constructs the new element at <computeroutput>index</computeroutput>.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>array<sp/>contains<sp/>{1,<sp/>2,<sp/>4}</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arr-&gt;push_any(2,<sp/>3);<sp/><sp/></highlight><highlight class="comment">//<sp/>array<sp/>becomes<sp/>{1,<sp/>2,<sp/>3,<sp/>4}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="663" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="663" bodyend="672"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1ad14072d1502e720a6bb6486bc7b5b450" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::pop_back</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>pop_back</name>
+        <briefdescription>
+<para>Remove the last element from the array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if an element was removed, false if the array was empty</para>
+</simplesect>
+Calls the destructor of the last element and decrements len_. The buffer capacity is not reduced.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">arr-&gt;pop_back();</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="691" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="691" bodyend="697"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a691c2bb38c65ad98fcd2733ed4295822" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::pop_front</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>pop_front</name>
+        <briefdescription>
+<para>Remove the element at the beginning of the array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if an element was removed, false if the array was empty</para>
+</simplesect>
+Destroys the element at index 0, shifts all remaining elements one position to the left, then decrements len_. The buffer capacity is not reduced.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">arr-&gt;pop_front();</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="713" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="713" bodyend="720"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a08a750139f2258e7188ce23f4074987d" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::pop_any</definition>
+        <argsstring>(size_t index) noexcept</argsstring>
+        <name>pop_any</name>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Remove the element at a caller-specified index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based position of the element to remove. Must be &lt; <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref>. index == 0 is equivalent to <ref refid="classcslt_1_1Array_1a691c2bb38c65ad98fcd2733ed4295822" kindref="member">pop_front()</ref>. index == <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref>-1 is equivalent to <ref refid="classcslt_1_1Array_1ad14072d1502e720a6bb6486bc7b5b450" kindref="member">pop_back()</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success, false if the array is empty or index is out of range</para>
+</simplesect>
+Destroys the element at <computeroutput>index</computeroutput>, shifts all elements at (index, len_) one position to the left, then decrements len_. The buffer capacity is not reduced.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>array<sp/>contains<sp/>{1,<sp/>2,<sp/>3,<sp/>4}</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arr-&gt;pop_any(2);<sp/><sp/></highlight><highlight class="comment">//<sp/>array<sp/>becomes<sp/>{1,<sp/>2,<sp/>4}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="742" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="742" bodyend="750"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1abe8bb1180a8ab41d1ce588069d2ec9df" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Array&lt; T &gt;::clear</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>clear</name>
+        <briefdescription>
+<para>Destroy all live elements and reset the populated length to zero. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Calls the destructor of every live element in reverse order, then sets len_ to 0. The allocated buffer and its capacity are preserved so the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> can be reused without a further allocation.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">arr-&gt;clear();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>arr-&gt;size()<sp/>==<sp/>0,<sp/>arr-&gt;capacity()<sp/>unchanged</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="766" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="766" bodyend="771"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a6a1cea7677e1cea74ed7fc3a5b8216c4" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; bool &gt;</type>
+        <definition>Expected&lt;bool&gt; cslt::Array&lt; T &gt;::set</definition>
+        <argsstring>(size_t index, const T &amp;value) noexcept</argsstring>
+        <name>set</name>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Write or append an element at a given index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based position to write to. Must be &lt;= <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to copy into the array at <computeroutput>index</computeroutput> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;bool&gt; — true on success; error on failure</para>
+</simplesect>
+Three cases are handled:<itemizedlist>
+<listitem><para>index &lt; len_ : destroys the existing element and copy-constructs <computeroutput>value</computeroutput> in its place</para>
+</listitem><listitem><para>index == len_ : calls _ensure_capacity(), copy-constructs <computeroutput>value</computeroutput>, and increments len_</para>
+</listitem><listitem><para>index &gt; len_ : returns an <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref></para>
+</listitem></itemizedlist>
+</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">arr-&gt;set(0,<sp/>42);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>overwrite<sp/>existing<sp/>element</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arr-&gt;set(arr-&gt;size(),<sp/>99);<sp/><sp/></highlight><highlight class="comment">//<sp/>append<sp/>via<sp/>set</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="797" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="797" bodyend="825"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a01ca5eb33c0b1e4e46cc7379f872e6df" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; T &gt;</type>
+        <definition>Expected&lt;T&gt; cslt::Array&lt; T &gt;::operator[]</definition>
+        <argsstring>(size_t index) const noexcept</argsstring>
+        <name>operator[]</name>
+        <param>
+          <type>size_t</type>
+          <declname>index</declname>
+        </param>
+        <briefdescription>
+<para>Read-only access to an element at a given index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>index</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Zero-based position to read from. Must be &lt; <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;T&gt; containing a copy of the element on success, or an error if <computeroutput>index</computeroutput> is out of the populated range</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>(*arr)[1];</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>val<sp/>=<sp/>r.value();</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="842" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="842" bodyend="852"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a195cbdaefaeda905714878914d1657f8" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>const T *</type>
+        <definition>const T* cslt::Array&lt; T &gt;::data</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>data</name>
+        <briefdescription>
+<para>Return a const pointer to the beginning of the element buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Const pointer to the first element, or nullptr if the array has not been successfully initialised</para>
+</simplesect>
+The pointer is valid until the next push operation that triggers a reallocation.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>arr-&gt;data();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">for</highlight><highlight class="normal"><sp/>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>i<sp/>=<sp/>0;<sp/>i<sp/>&lt;<sp/>arr-&gt;size();<sp/>++i)</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>std::cout<sp/>&lt;&lt;<sp/>ptr[i]<sp/>&lt;&lt;<sp/></highlight><highlight class="charliteral">&apos;\n&apos;</highlight><highlight class="normal">;</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="874" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="874" bodyend="876"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::Array&lt; T &gt;::size</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>size</name>
+        <briefdescription>
+<para>Return the number of elements currently stored. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Element count </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="884" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="884" bodyend="886"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a40413b1da52d2649f2e028704fcd4c1a" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>size_t</type>
+        <definition>size_t cslt::Array&lt; T &gt;::capacity</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>capacity</name>
+        <briefdescription>
+<para>Return the current element capacity of the buffer. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Capacity in number of elements </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="894" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="894" bodyend="896"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a6292b3c1418914cf410825f07e870346" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::is_empty</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>is_empty</name>
+        <briefdescription>
+<para>Return true if no elements are currently stored. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref> == 0</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arr-&gt;is_empty())<sp/>{<sp/>...<sp/>}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="908" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="908" bodyend="910"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a5b47a30bac5aa7debbdfb6ee22b20444" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::is_full</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>is_full</name>
+        <briefdescription>
+<para>Return true if the populated length equals the allocated capacity. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>true if <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref> == <ref refid="classcslt_1_1Array_1a40413b1da52d2649f2e028704fcd4c1a" kindref="member">capacity()</ref></para>
+</simplesect>
+Note that a push operation on a full array will attempt to grow the buffer automatically. <ref refid="classcslt_1_1Array_1a5b47a30bac5aa7debbdfb6ee22b20444" kindref="member">is_full()</ref> is useful for callers that need to know whether the next push will trigger a reallocation.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arr-&gt;is_full())<sp/>{<sp/>...<sp/>}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="927" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="927" bodyend="929"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1ac6d266921c654a1014ba273926e6e882" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::is_ptr</definition>
+        <argsstring>(const T *ptr) const noexcept</argsstring>
+        <name>is_ptr</name>
+        <param>
+          <type>const T *</type>
+          <declname>ptr</declname>
+        </param>
+        <briefdescription>
+<para>Return true if a pointer falls within the populated region and is aligned to an element boundary. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>ptr</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to test </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if <computeroutput>ptr</computeroutput> points to a valid element in [data_, data_ + len_) and satisfies (ptr - data_) % sizeof(T) == 0</para>
+</simplesect>
+A pointer obtained after a reallocation (e.g. following a push that triggered a grow) may no longer be valid; callers are responsible for not retaining pointers across reallocations.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">*<sp/>p<sp/>=<sp/>&amp;(*arr-&gt;data());</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(arr-&gt;is_ptr(p))<sp/>{<sp/>...<sp/>}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="949" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="949" bodyend="961"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a4695ffd06f5596aaa146af0bf9990dc2" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::concat</definition>
+        <argsstring>(const Array&lt; T &gt; &amp;other) noexcept</argsstring>
+        <name>concat</name>
+        <param>
+          <type>const <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; &amp;</type>
+          <declname>other</declname>
+        </param>
+        <briefdescription>
+<para>Append all elements of another <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> to the end of this array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>other</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> whose elements are appended to this array </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success, false if any reallocation fails</para>
+</simplesect>
+Iterates over the populated elements of <computeroutput>other</computeroutput> and appends each one via <ref refid="classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528" kindref="member">push_back()</ref>, which uses the tiered growth strategy as needed. If any individual <ref refid="classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528" kindref="member">push_back()</ref> fails (reallocation error), the method returns false immediately; elements already appended before the failure remain in the array.</para>
+<para><simplesect kind="note"><para>Self-concatenation (passing this array as <computeroutput>other</computeroutput>) is safe because <ref refid="classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528" kindref="member">push_back()</ref> always reads from <computeroutput>other</computeroutput> before writing, and the snapshot of other.len_ is taken once before the loop.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>a<sp/>contains<sp/>{1,<sp/>2,<sp/>3},<sp/>b<sp/>contains<sp/>{4,<sp/>5,<sp/>6}</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">a-&gt;concat(*b);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>a<sp/>now<sp/>contains<sp/>{1,<sp/>2,<sp/>3,<sp/>4,<sp/>5,<sp/>6}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1209" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1209" bodyend="1246"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1abea00fd3a938b939d6b5ca58c3671f0e" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::Array&lt; T &gt;::reverse</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>reverse</name>
+        <briefdescription>
+<para>Reverse the order of all elements in the array in place. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>For trivially copyable T the reversal is delegated to simd_reverse_uint8(), which is resolved at compile time to the best available SIMD back-end (AVX-512, AVX2, AVX, SSE4.1, SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback. The function treats each element as an opaque bag of sizeof(T) bytes and swaps element positions — it does not reverse the bytes within an individual element.</para>
+<para>For non-trivial T, a scalar swap loop is used that respects move construction and destruction semantics.</para>
+<para>Arrays with fewer than two elements are left unchanged.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>arr<sp/>contains<sp/>{1,<sp/>2,<sp/>3,<sp/>4,<sp/>5}</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arr-&gt;reverse();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>arr<sp/>now<sp/>contains<sp/>{5,<sp/>4,<sp/>3,<sp/>2,<sp/>1}</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1271" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1271" bodyend="1313"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a5641e347374697257d317a5119de8571" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type>bool</type>
+        <definition>bool cslt::Array&lt; T &gt;::sort</definition>
+        <argsstring>(Func cmp, Direction dir) noexcept</argsstring>
+        <name>sort</name>
+        <param>
+          <type>Func</type>
+          <declname>cmp</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <briefdescription>
+<para>Sort the array in place using an iterative quicksort. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable with signature <computeroutput>int(const T&amp;, const T&amp;)</computeroutput>. Must return negative if a &lt; b, zero if a == b, and positive if a &gt; b — identical to the C qsort comparator convention. Lambdas, functors, and plain function pointers are all accepted.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>cmp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Comparator callable </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dir</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">Direction::FORWARD</ref> for ascending order; <ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c" kindref="member">Direction::REVERSE</ref> for descending order </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success; false if the array is uninitialised or contains fewer than two elements (no-op in those cases)</para>
+</simplesect>
+Implements an iterative median-of-three quicksort with an insertion sort fallback for partitions smaller than 10 elements and tail-call optimisation to keep stack depth at O(log n) in the worst case. Element swaps use memcpy for trivially copyable T and move construction / destruction for non-trivial T.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal">arr-&gt;sort([](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>b)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a<sp/>-<sp/>b;<sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">cslt::Direction::FORWARD</ref>);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>ascending</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arr-&gt;sort([](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>b)<sp/>{<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a<sp/>-<sp/>b;<sp/>},</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c" kindref="member">cslt::Direction::REVERSE</ref>);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>descending</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1347" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1347" bodyend="1353"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Allocator-backed generic dynamic array container. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Provides a resizable array container that uses custom allocators for memory management. Both the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> struct and its internal data buffer are allocated through the provided allocator.</para>
+<para>Key features:<itemizedlist>
+<listitem><para>Custom allocator support (heap, arena, buddy, slab, etc.)</para>
+</listitem><listitem><para>Generic element type via template parameter</para>
+</listitem><listitem><para>Tiered growth strategy to avoid runaway allocation at large sizes</para>
+</listitem><listitem><para>Safe insertion and removal via push/pop family of methods</para>
+</listitem><listitem><para>Bounds-checked read via <ref refid="classcslt_1_1Array_1a01ca5eb33c0b1e4e46cc7379f872e6df" kindref="member">operator[](size_t) const </ref>returning Expected&lt;T&gt;</para>
+</listitem><listitem><para>Bounds-checked write via <ref refid="classcslt_1_1Array_1a6a1cea7677e1cea74ed7fc3a5b8216c4" kindref="member">set(size_t, const T&amp;)</ref> returning Expected&lt;bool&gt;</para>
+</listitem><listitem><para>Copy factory via <ref refid="classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8" kindref="member">copy()</ref>; move construction explicitly deleted</para>
+</listitem><listitem><para>RAII-based memory management through init factory function</para>
+</listitem></itemizedlist>
+</para>
+<para>Growth tiers (in elements):<itemizedlist>
+<listitem><para>0 -&gt; 1</para>
+</listitem><listitem><para>&lt; 1024 -&gt; 2x</para>
+</listitem><listitem><para>&lt; 8192 -&gt; 1.5x (cap + cap/2)</para>
+</listitem><listitem><para>&lt; 65536 -&gt; 1.25x (cap + cap/4)</para>
+</listitem><listitem><para>&gt;= 65536 -&gt; cap + 256 (linear increment)</para>
+</listitem></itemizedlist>
+</para>
+<para>Shift strategy:<itemizedlist>
+<listitem><para>Trivially copyable T: std::memmove (compiler-vectorisable)</para>
+</listitem><listitem><para>Non-trivial T: placement-new / explicit destructor loop</para>
+</listitem></itemizedlist>
+</para>
+<para>Usage pattern:<itemizedlist>
+<listitem><para>Must be initialised via the static factory function <ref refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" kindref="member">init()</ref></para>
+</listitem><listitem><para>Cannot be constructed directly (private constructor)</para>
+</listitem><listitem><para>Automatically manages both the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> object and its buffer memory</para>
+</listitem><listitem><para>Cleaned up through <ref refid="classcslt_1_1ArrayDeleter" kindref="compound">ArrayDeleter</ref></para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element type stored in the array</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/><ref refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" kindref="member">cslt::Array&lt;int&gt;::init</ref>(8,<sp/>allocator);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::Array&lt;int&gt;</ref>,<sp/><ref refid="classcslt_1_1ArrayDeleter" kindref="compound">cslt::ArrayDeleter&lt;int&gt;</ref>&gt;<sp/>arr(result.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arr-&gt;push_back(1);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arr-&gt;push_back(2);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arr-&gt;push_back(3);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>(*arr)[1]<sp/>=<sp/>99;<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>overwrite<sp/>index<sp/>1</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>(*arr)[1];<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>read<sp/>index<sp/>1<sp/>-&gt;<sp/>Expected&lt;int&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arr-&gt;pop_back();<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>removes<sp/>3</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting></para>
+<para><simplesect kind="note"><para>This class cannot be instantiated directly. Use the <ref refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" kindref="member">init()</ref> factory function to create instances. </para>
+</simplesect>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="118" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="118" bodyend="1359"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1Array_1a9d5e67c5e2343ce7498fb0a0ff5c6441" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_apply_dir</name></member>
+      <member refid="classcslt_1_1Array_1ad74730e11c8d7bdb869fe26325cc6a13" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_compute_new_cap</name></member>
+      <member refid="classcslt_1_1Array_1aad7e990bb4ff16e59ff0d3b6f9d68ac0" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_ensure_capacity</name></member>
+      <member refid="classcslt_1_1Array_1ac8b572cadf0f73791e509daad43d9c87" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_grow</name></member>
+      <member refid="classcslt_1_1Array_1a12a1cfc4dfc17363459961baa4d59205" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_insertion_sort</name></member>
+      <member refid="classcslt_1_1Array_1a0d672e6dd2a7d66291720bddfc257604" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_median_of_three</name></member>
+      <member refid="classcslt_1_1Array_1a6d09dfac1f3ce65813dc36e5e6147479" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_partition</name></member>
+      <member refid="classcslt_1_1Array_1a9e109a162e1986d4c757b0d4ec5c7ad1" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_quicksort</name></member>
+      <member refid="classcslt_1_1Array_1af3c58dca1a798ee00fc138762eec07a6" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_shift_left</name></member>
+      <member refid="classcslt_1_1Array_1a6e31560f6f8d4ad3a4f2303118c0c2ec" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_shift_right</name></member>
+      <member refid="classcslt_1_1Array_1ad2932617c4b056c8e1b53e8190aad10b" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_swap_move</name></member>
+      <member refid="classcslt_1_1Array_1af8153f4128d723f0de5c721f1b59fb10" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_swap_trivial</name></member>
+      <member refid="classcslt_1_1Array_1acd16a48a948d30bef823a9ee79dad7c7" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>allocator_</name></member>
+      <member refid="classcslt_1_1Array_1a75040427dfec7bd158f203d49aeefe7f" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>Array</name></member>
+      <member refid="classcslt_1_1Array_1a142f045dea54fc0d07c8b45a41741ecf" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>Array</name></member>
+      <member refid="classcslt_1_1Array_1a33a7a54904f340dee106ed71d5ddb556" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>Array</name></member>
+      <member refid="classcslt_1_1Array_1a4450d33525d3362abca5637eeb1e0b98" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>ArrayDeleter</name></member>
+      <member refid="classcslt_1_1Array_1ac25e4d8742d714d42d5901249490a8e0" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>cap_</name></member>
+      <member refid="classcslt_1_1Array_1a40413b1da52d2649f2e028704fcd4c1a" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>capacity</name></member>
+      <member refid="classcslt_1_1Array_1abe8bb1180a8ab41d1ce588069d2ec9df" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>clear</name></member>
+      <member refid="classcslt_1_1Array_1a4695ffd06f5596aaa146af0bf9990dc2" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>concat</name></member>
+      <member refid="classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>copy</name></member>
+      <member refid="classcslt_1_1Array_1ab88d1e98d485536f968a0d7a968cabf2" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>copy</name></member>
+      <member refid="classcslt_1_1Array_1a3cf8c18d406d0dd4eda56ad739fc8d20" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>cumulative</name></member>
+      <member refid="classcslt_1_1Array_1a4719d5b2930cfdd24eb2978889ab0585" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>cumulative</name></member>
+      <member refid="classcslt_1_1Array_1a195cbdaefaeda905714878914d1657f8" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>data</name></member>
+      <member refid="classcslt_1_1Array_1a2097dd5367bb9f07406910c9fac42d84" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>data_</name></member>
+      <member refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>init</name></member>
+      <member refid="classcslt_1_1Array_1a6292b3c1418914cf410825f07e870346" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>is_empty</name></member>
+      <member refid="classcslt_1_1Array_1a5b47a30bac5aa7debbdfb6ee22b20444" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>is_full</name></member>
+      <member refid="classcslt_1_1Array_1ac6d266921c654a1014ba273926e6e882" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>is_ptr</name></member>
+      <member refid="classcslt_1_1Array_1af25964a345c47a5390b595b6b7e959cd" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>len_</name></member>
+      <member refid="classcslt_1_1Array_1a8780d1dcb9a6605d804f29bae11c3701" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1Array_1a062d7639f92b264a3548873245b88403" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1Array_1a01ca5eb33c0b1e4e46cc7379f872e6df" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>operator[]</name></member>
+      <member refid="classcslt_1_1Array_1a08a750139f2258e7188ce23f4074987d" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>pop_any</name></member>
+      <member refid="classcslt_1_1Array_1ad14072d1502e720a6bb6486bc7b5b450" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>pop_back</name></member>
+      <member refid="classcslt_1_1Array_1a691c2bb38c65ad98fcd2733ed4295822" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>pop_front</name></member>
+      <member refid="classcslt_1_1Array_1aa91f92b23fcfd16ab12e7d8a7fda93bb" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>push_any</name></member>
+      <member refid="classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>push_back</name></member>
+      <member refid="classcslt_1_1Array_1a851651295787acc2c6ce9d489cd387ec" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>push_front</name></member>
+      <member refid="classcslt_1_1Array_1abea00fd3a938b939d6b5ca58c3671f0e" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>reverse</name></member>
+      <member refid="classcslt_1_1Array_1a6a1cea7677e1cea74ed7fc3a5b8216c4" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>set</name></member>
+      <member refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>size</name></member>
+      <member refid="classcslt_1_1Array_1a8983e26966518f5a421d64c42faa2647" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>slice</name></member>
+      <member refid="classcslt_1_1Array_1a4162c5f0b5a0993e999ad4c5f941c315" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>slice</name></member>
+      <member refid="classcslt_1_1Array_1a5641e347374697257d317a5119de8571" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>sort</name></member>
+      <member refid="classcslt_1_1Array_1a4981c7885a955206275850fd6f210640" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>~Array</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

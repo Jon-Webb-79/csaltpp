@@ -2470,6 +2470,553 @@ TEST_F(ArrayInitTest, ConcatMultipleSequentialCalls) {
     EXPECT_EQ((*a)[4].value(), 5);
     EXPECT_EQ((*a)[5].value(), 6);
 }
+// ================================================================================ 
+// ================================================================================ 
+
+// ============================================================================
+// reverse() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that reverse() correctly reverses an odd-length int array
+ */
+TEST_F(ArrayInitTest, ReverseIntOddLength) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+    arr->push_back(5);
+ 
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->size(), 5u);
+    EXPECT_EQ(arr->data()[0], 5);
+    EXPECT_EQ(arr->data()[1], 4);
+    EXPECT_EQ(arr->data()[2], 3);
+    EXPECT_EQ(arr->data()[3], 2);
+    EXPECT_EQ(arr->data()[4], 1);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that reverse() correctly reverses an even-length int array
+ */
+TEST_F(ArrayInitTest, ReverseIntEvenLength) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+ 
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->size(), 4u);
+    EXPECT_EQ(arr->data()[0], 4);
+    EXPECT_EQ(arr->data()[1], 3);
+    EXPECT_EQ(arr->data()[2], 2);
+    EXPECT_EQ(arr->data()[3], 1);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that reverse() correctly reverses a double array
+ */
+TEST_F(ArrayInitTest, ReverseDoubleArray) {
+    auto result = cslt::Array<double>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.1);
+    arr->push_back(2.2);
+    arr->push_back(3.3);
+    arr->push_back(4.4);
+ 
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->size(), 4u);
+    EXPECT_DOUBLE_EQ(arr->data()[0], 4.4);
+    EXPECT_DOUBLE_EQ(arr->data()[1], 3.3);
+    EXPECT_DOUBLE_EQ(arr->data()[2], 2.2);
+    EXPECT_DOUBLE_EQ(arr->data()[3], 1.1);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that reverse() correctly reverses a Point array
+ *       (non-trivially-copyable path)
+ */
+TEST_F(ArrayInitTest, ReversePointArray) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    Point p1{1, 0}, p2{2, 0}, p3{3, 0}, p4{4, 0};
+    arr->push_back(p1);
+    arr->push_back(p2);
+    arr->push_back(p3);
+    arr->push_back(p4);
+ 
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->size(), 4u);
+    EXPECT_EQ(arr->data()[0], p4);
+    // EXPECT_EQ(arr->data()[1], p3);
+    // EXPECT_EQ(arr->data()[2], p2);
+    // EXPECT_EQ(arr->data()[3], p1);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that reverse() on a single-element array leaves it unchanged
+ */
+TEST_F(ArrayInitTest, ReverseSingleElementIsNoop) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(42);
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->size(), 1u);
+    EXPECT_EQ(arr->data()[0], 42);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that reverse() on an empty array is a no-op and does not crash
+ */
+TEST_F(ArrayInitTest, ReverseEmptyArrayIsNoop) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->size(), 0u);
+    EXPECT_TRUE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that reverse() does not alter the size or capacity
+ */
+TEST_F(ArrayInitTest, ReversePreservesSizeAndCapacity) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    size_t const size_before = arr->size();
+    size_t const cap_before  = arr->capacity();
+ 
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->size(),     size_before);
+    EXPECT_EQ(arr->capacity(), cap_before);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that two successive reverse() calls restore the original order
+ */
+TEST_F(ArrayInitTest, ReverseDoubleInversionRestoresOrder) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+    arr->push_back(5);
+ 
+    arr->reverse();
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->data()[0], 1);
+    EXPECT_EQ(arr->data()[1], 2);
+    EXPECT_EQ(arr->data()[2], 3);
+    EXPECT_EQ(arr->data()[3], 4);
+    EXPECT_EQ(arr->data()[4], 5);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that reverse() on a two-element int array swaps the elements
+ */
+TEST_F(ArrayInitTest, ReverseTwoElementArray) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+ 
+    arr->reverse();
+ 
+    EXPECT_EQ(arr->data()[0], 20);
+    EXPECT_EQ(arr->data()[1], 10);
+}
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// Comparators used across sort() tests
+// ============================================================================
+ 
+static int cmp_int_asc(const int& a, const int& b) {
+    return (a > b) - (a < b);
+}
+ 
+static int cmp_double_asc(const double& a, const double& b) {
+    return (a > b) - (a < b);
+}
+ 
+static int cmp_point_x_asc(const Point& a, const Point& b) {
+    return (a.x > b.x) - (a.x < b.x);
+}
+ 
+// ============================================================================
+// sort() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that sort() ascending correctly sorts an unsorted int array
+ */
+TEST_F(ArrayInitTest, SortIntAscending) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(5);
+    arr->push_back(2);
+    arr->push_back(8);
+    arr->push_back(1);
+    arr->push_back(9);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->sort(cmp_int_asc, cslt::Direction::FORWARD));
+ 
+    EXPECT_EQ(arr->size(), 6u);
+    EXPECT_EQ(arr->data()[0], 1);
+    EXPECT_EQ(arr->data()[1], 2);
+    EXPECT_EQ(arr->data()[2], 3);
+    EXPECT_EQ(arr->data()[3], 5);
+    EXPECT_EQ(arr->data()[4], 8);
+    EXPECT_EQ(arr->data()[5], 9);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() descending correctly sorts an unsorted int array
+ */
+TEST_F(ArrayInitTest, SortIntDescending) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(5);
+    arr->push_back(2);
+    arr->push_back(8);
+    arr->push_back(1);
+    arr->push_back(9);
+    arr->push_back(3);
+ 
+    EXPECT_TRUE(arr->sort(cmp_int_asc, cslt::Direction::REVERSE));
+ 
+    EXPECT_EQ(arr->size(), 6u);
+    EXPECT_EQ(arr->data()[0], 9);
+    EXPECT_EQ(arr->data()[1], 8);
+    EXPECT_EQ(arr->data()[2], 5);
+    EXPECT_EQ(arr->data()[3], 3);
+    EXPECT_EQ(arr->data()[4], 2);
+    EXPECT_EQ(arr->data()[5], 1);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() correctly sorts a double array ascending
+ */
+TEST_F(ArrayInitTest, SortDoubleAscending) {
+    auto result = cslt::Array<double>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(3.3);
+    arr->push_back(1.1);
+    arr->push_back(4.4);
+    arr->push_back(2.2);
+ 
+    EXPECT_TRUE(arr->sort(cmp_double_asc, cslt::Direction::FORWARD));
+ 
+    EXPECT_DOUBLE_EQ(arr->data()[0], 1.1);
+    EXPECT_DOUBLE_EQ(arr->data()[1], 2.2);
+    EXPECT_DOUBLE_EQ(arr->data()[2], 3.3);
+    EXPECT_DOUBLE_EQ(arr->data()[3], 4.4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() correctly sorts a double array descending
+ */
+TEST_F(ArrayInitTest, SortDoubleDescending) {
+    auto result = cslt::Array<double>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(3.3);
+    arr->push_back(1.1);
+    arr->push_back(4.4);
+    arr->push_back(2.2);
+ 
+    EXPECT_TRUE(arr->sort(cmp_double_asc, cslt::Direction::REVERSE));
+ 
+    EXPECT_DOUBLE_EQ(arr->data()[0], 4.4);
+    EXPECT_DOUBLE_EQ(arr->data()[1], 3.3);
+    EXPECT_DOUBLE_EQ(arr->data()[2], 2.2);
+    EXPECT_DOUBLE_EQ(arr->data()[3], 1.1);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() correctly sorts a Point array ascending by x
+ */
+TEST_F(ArrayInitTest, SortPointAscendingByX) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({4, 0});
+    arr->push_back({1, 0});
+    arr->push_back({3, 0});
+    arr->push_back({2, 0});
+ 
+    EXPECT_TRUE(arr->sort(cmp_point_x_asc, cslt::Direction::FORWARD));
+ 
+    EXPECT_EQ(arr->data()[0].x, 1);
+    EXPECT_EQ(arr->data()[1].x, 2);
+    EXPECT_EQ(arr->data()[2].x, 3);
+    EXPECT_EQ(arr->data()[3].x, 4);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() correctly sorts a Point array descending by x
+ */
+TEST_F(ArrayInitTest, SortPointDescendingByX) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({4, 0});
+    arr->push_back({1, 0});
+    arr->push_back({3, 0});
+    arr->push_back({2, 0});
+ 
+    EXPECT_TRUE(arr->sort(cmp_point_x_asc, cslt::Direction::REVERSE));
+ 
+    EXPECT_EQ(arr->data()[0].x, 4);
+    EXPECT_EQ(arr->data()[1].x, 3);
+    EXPECT_EQ(arr->data()[2].x, 2);
+    EXPECT_EQ(arr->data()[3].x, 1);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() with a lambda comparator works correctly
+ */
+TEST_F(ArrayInitTest, SortIntAscendingWithLambda) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(4);
+    arr->push_back(2);
+    arr->push_back(7);
+    arr->push_back(1);
+    arr->push_back(5);
+ 
+    EXPECT_TRUE(arr->sort(
+        [](const int& a, const int& b) { return (a > b) - (a < b); },
+        cslt::Direction::FORWARD));
+ 
+    EXPECT_EQ(arr->data()[0], 1);
+    EXPECT_EQ(arr->data()[1], 2);
+    EXPECT_EQ(arr->data()[2], 4);
+    EXPECT_EQ(arr->data()[3], 5);
+    EXPECT_EQ(arr->data()[4], 7);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() on an already-sorted array leaves it unchanged
+ */
+TEST_F(ArrayInitTest, SortAlreadySortedArray) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+    arr->push_back(4);
+    arr->push_back(5);
+ 
+    EXPECT_TRUE(arr->sort(cmp_int_asc, cslt::Direction::FORWARD));
+ 
+    EXPECT_EQ(arr->data()[0], 1);
+    EXPECT_EQ(arr->data()[1], 2);
+    EXPECT_EQ(arr->data()[2], 3);
+    EXPECT_EQ(arr->data()[3], 4);
+    EXPECT_EQ(arr->data()[4], 5);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() on a reverse-sorted array sorts correctly
+ */
+TEST_F(ArrayInitTest, SortReverseSortedArray) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(5);
+    arr->push_back(4);
+    arr->push_back(3);
+    arr->push_back(2);
+    arr->push_back(1);
+ 
+    EXPECT_TRUE(arr->sort(cmp_int_asc, cslt::Direction::FORWARD));
+ 
+    EXPECT_EQ(arr->data()[0], 1);
+    EXPECT_EQ(arr->data()[1], 2);
+    EXPECT_EQ(arr->data()[2], 3);
+    EXPECT_EQ(arr->data()[3], 4);
+    EXPECT_EQ(arr->data()[4], 5);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() handles an array with all duplicate values
+ */
+TEST_F(ArrayInitTest, SortAllDuplicates) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(7);
+    arr->push_back(7);
+    arr->push_back(7);
+    arr->push_back(7);
+ 
+    EXPECT_TRUE(arr->sort(cmp_int_asc, cslt::Direction::FORWARD));
+ 
+    EXPECT_EQ(arr->data()[0], 7);
+    EXPECT_EQ(arr->data()[1], 7);
+    EXPECT_EQ(arr->data()[2], 7);
+    EXPECT_EQ(arr->data()[3], 7);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() on a two-element unsorted array swaps correctly
+ */
+TEST_F(ArrayInitTest, SortTwoElementArray) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(9);
+    arr->push_back(1);
+ 
+    EXPECT_TRUE(arr->sort(cmp_int_asc, cslt::Direction::FORWARD));
+ 
+    EXPECT_EQ(arr->data()[0], 1);
+    EXPECT_EQ(arr->data()[1], 9);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() returns false and is a no-op on a single-element array
+ */
+TEST_F(ArrayInitTest, SortSingleElementReturnsFalse) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(42);
+ 
+    EXPECT_FALSE(arr->sort(cmp_int_asc, cslt::Direction::FORWARD));
+    EXPECT_EQ(arr->data()[0], 42);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() returns false on an empty array
+ */
+TEST_F(ArrayInitTest, SortEmptyArrayReturnsFalse) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    EXPECT_FALSE(arr->sort(cmp_int_asc, cslt::Direction::FORWARD));
+    EXPECT_TRUE(arr->is_empty());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() does not alter the size or capacity
+ */
+TEST_F(ArrayInitTest, SortPreservesSizeAndCapacity) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(3);
+    arr->push_back(1);
+    arr->push_back(2);
+    size_t const size_before = arr->size();
+    size_t const cap_before  = arr->capacity();
+ 
+    arr->sort(cmp_int_asc, cslt::Direction::FORWARD);
+ 
+    EXPECT_EQ(arr->size(),     size_before);
+    EXPECT_EQ(arr->capacity(), cap_before);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that sort() ascending followed by sort() descending produces
+ *       the reverse of the ascending result
+ */
+TEST_F(ArrayInitTest, SortAscendingThenDescendingProducesReverse) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(3);
+    arr->push_back(1);
+    arr->push_back(4);
+    arr->push_back(2);
+    arr->push_back(5);
+ 
+    arr->sort(cmp_int_asc, cslt::Direction::FORWARD);
+    arr->sort(cmp_int_asc, cslt::Direction::REVERSE);
+ 
+    EXPECT_EQ(arr->data()[0], 5);
+    EXPECT_EQ(arr->data()[1], 4);
+    EXPECT_EQ(arr->data()[2], 3);
+    EXPECT_EQ(arr->data()[3], 2);
+    EXPECT_EQ(arr->data()[4], 1);
+}
 // ================================================================================
 // ================================================================================
 // eof

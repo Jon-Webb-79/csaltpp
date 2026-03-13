@@ -85,6 +85,7 @@ Typical Use Cases
     Error <Error>
     Allocator <Allocator>
     String <String>
+    Array <Array>
     
 Indices and tables
 ==================

@@ -42,9 +42,9 @@ bool \mbox{\hyperlink{classcslt_1_1String_a702bea4742b4c1778a85527cd4e534a3}{is\
 \item 
 bool \mbox{\hyperlink{classcslt_1_1String_a42d91a877c9034679dd31693360f0a4b}{is\+\_\+ptr}} (const void $\ast$ptr, size\+\_\+t bytes) const noexcept
 \item 
-size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_ab7fcc225d61114773963649405afea6b}{find}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&needle, const void $\ast$begin=nullptr, const void $\ast$end=nullptr, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}} dir=\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}) const noexcept
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_ab7fcc225d61114773963649405afea6b}{find}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&needle, const void $\ast$begin=nullptr, const void $\ast$end=nullptr, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}} dir=FORWARD) const noexcept
 \begin{DoxyCompactList}\small\item\em Find substring within this string. \end{DoxyCompactList}\item 
-size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a299d1b577c9847512d8a89408cb134a3}{find}} (const char $\ast$needle, const void $\ast$begin=nullptr, const void $\ast$end=nullptr, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}} dir=\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}) const noexcept
+size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a299d1b577c9847512d8a89408cb134a3}{find}} (const char $\ast$needle, const void $\ast$begin=nullptr, const void $\ast$end=nullptr, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}} dir=FORWARD) const noexcept
 \begin{DoxyCompactList}\small\item\em Find C-\/string within this string. \end{DoxyCompactList}\item 
 size\+\_\+t \mbox{\hyperlink{classcslt_1_1String_a0a52906a75298894dbeefb3c543df1f4}{words}} (const \mbox{\hyperlink{classcslt_1_1String}{String}} \&word, const void $\ast$begin=nullptr, const void $\ast$end=nullptr) const noexcept
 \begin{DoxyCompactList}\small\item\em Count non-\/overlapping occurrences of a \mbox{\hyperlink{classcslt_1_1String}{String}} within this string. \end{DoxyCompactList}\item 
@@ -914,7 +914,7 @@ Behaviour is identical to drop(const char$\ast$). See that overload for full sem
 \index{cslt::String@{cslt::String}!find@{find}}
 \index{find@{find}!cslt::String@{cslt::String}}
 \doxysubsubsection{\texorpdfstring{find()}{find()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
-{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const char $\ast$}]{needle,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr},  }\item[{\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}}}]{dir = {\ttfamily \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const char $\ast$}]{needle,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr},  }\item[{\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}}}]{dir = {\ttfamily FORWARD} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
 
 
 
@@ -970,7 +970,7 @@ O(n$\ast$m) worst case, but SIMD-\/optimized for typical cases.
 \DoxyCodeLine{    \}}
 \DoxyCodeLine{    }
 \DoxyCodeLine{    \textcolor{comment}{// Find last occurrence with REVERSE}}
-\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}the"{}}, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6ba906b7cc20b42994dda4da492767c1de9}{REVERSE}});}
+\DoxyCodeLine{    pos = str-\/>find(\textcolor{stringliteral}{"{}the"{}}, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, REVERSE);}
 \DoxyCodeLine{    std::cout << \textcolor{stringliteral}{"{}Last 'the' at: "{}} << pos << std::endl;  \textcolor{comment}{// 31}}
 \DoxyCodeLine{    }
 \DoxyCodeLine{    \textcolor{comment}{// Find in limited range}}
@@ -994,7 +994,7 @@ find(const String\&, const void$\ast$, const void$\ast$, direction\+\_\+t)
 \index{cslt::String@{cslt::String}!find@{find}}
 \index{find@{find}!cslt::String@{cslt::String}}
 \doxysubsubsection{\texorpdfstring{find()}{find()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
-{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{needle,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr},  }\item[{\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}}}]{dir = {\ttfamily \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6baa26736999186daf8146f809e863712a1}{FORWARD}}} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
+{\footnotesize\ttfamily size\+\_\+t cslt\+::\+String\+::find (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{classcslt_1_1String}{String}} \&}]{needle,  }\item[{const void $\ast$}]{begin = {\ttfamily nullptr},  }\item[{const void $\ast$}]{end = {\ttfamily nullptr},  }\item[{\mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6b}{direction\+\_\+t}}}]{dir = {\ttfamily FORWARD} }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [noexcept]}}
 
 
 
@@ -1055,7 +1055,7 @@ O(n$\ast$m) worst case, but SIMD-\/optimized for typical cases.
 \DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Found at: "{}} << pos << std::endl;  \textcolor{comment}{// 12}}
 \DoxyCodeLine{        }
 \DoxyCodeLine{        \textcolor{comment}{// Find in reverse (last occurrence)}}
-\DoxyCodeLine{        pos = str-\/>find(*needle, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, \mbox{\hyperlink{string_8hpp_ae9ae980041e438eed7a3af43ce4e9f6ba906b7cc20b42994dda4da492767c1de9}{REVERSE}});}
+\DoxyCodeLine{        pos = str-\/>find(*needle, \textcolor{keyword}{nullptr}, \textcolor{keyword}{nullptr}, REVERSE);}
 \DoxyCodeLine{        std::cout << \textcolor{stringliteral}{"{}Last at: "{}} << pos << std::endl;  \textcolor{comment}{// 12}}
 \DoxyCodeLine{        }
 \DoxyCodeLine{        \textcolor{comment}{// Find within specific range}}

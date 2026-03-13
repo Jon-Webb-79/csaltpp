@@ -1,0 +1,74 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+  <compounddef id="classcslt_1_1ArrayDeleter" kind="class" language="C++" prot="public">
+    <compoundname>cslt::ArrayDeleter</compoundname>
+    <includes refid="array_8hpp" local="no">array.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type>typename T</type>
+      </param>
+    </templateparamlist>
+      <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1ArrayDeleter_1a42151e7cb828a53f1d165e41284a5042" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>void</type>
+        <definition>void cslt::ArrayDeleter&lt; T &gt;::operator()</definition>
+        <argsstring>(Array&lt; T &gt; *a) const noexcept</argsstring>
+        <name>operator()</name>
+        <param>
+          <type><ref refid="classcslt_1_1Array" kindref="compound">Array</ref>&lt; T &gt; *</type>
+          <declname>a</declname>
+        </param>
+        <briefdescription>
+<para>Delete an <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> instance. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> to delete (may be nullptr)</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Frees the element buffer and the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> structure using the allocator stored within the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>. Safe to call with nullptr. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1397" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1397" bodyend="1412"/>
+      </memberdef>
+      </sectiondef>
+    <briefdescription>
+<para>Custom deleter for <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> instances. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Implements proper cleanup for <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> objects by:<orderedlist>
+<listitem><para>Calling the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> destructor (which destroys elements and frees the buffer)</para>
+</listitem><listitem><para>Freeing the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> object itself Both operations use the allocator stored inside the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref>.</para>
+</listitem></orderedlist>
+</para>
+<para>This deleter is intended for use with <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref> to provide RAII semantics.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element type of the <ref refid="classcslt_1_1Array" kindref="compound">Array</ref> being deleted</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef" kindref="member">cslt::Array&lt;int&gt;::init</ref>(8,<sp/>allocator);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1UniquePtr" kindref="compound">cslt::UniquePtr&lt;cslt::Array&lt;int&gt;</ref>,<sp/><ref refid="classcslt_1_1ArrayDeleter" kindref="compound">cslt::ArrayDeleter&lt;int&gt;</ref>&gt;<sp/>arr(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arr-&gt;push_back(1);</highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>ArrayDeleter<sp/>called<sp/>here<sp/>-<sp/>buffer<sp/>and<sp/>struct<sp/>are<sp/>both<sp/>freed</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1387" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1387" bodyend="1413"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1ArrayDeleter_1a42151e7cb828a53f1d165e41284a5042" prot="public" virt="non-virtual"><scope>cslt::ArrayDeleter</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

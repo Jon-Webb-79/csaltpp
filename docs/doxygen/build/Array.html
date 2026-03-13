@@ -1,0 +1,907 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Array Overview &mdash; csalt++-lib 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="C++ String Overview" href="String.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            csalt++-lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html"> Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pointers.html"> Smart Pointers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html"> Error</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Allocator.html"> Allocator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="String.html"> String</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#"> Array</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#growth-strategy"><strong>Growth Strategy</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#element-type-requirements"><strong>Element Type Requirements</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sorting"><strong>Sorting</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reversal"><strong>Reversal</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#array-class">Array Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE"><code class="docutils literal notranslate"><span class="pre">cslt::Array</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array9push_backERK1T"><code class="docutils literal notranslate"><span class="pre">push_back()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array10push_frontERK1T"><code class="docutils literal notranslate"><span class="pre">push_front()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array8push_anyE6size_tRK1T"><code class="docutils literal notranslate"><span class="pre">push_any()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array8pop_backEv"><code class="docutils literal notranslate"><span class="pre">pop_back()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array9pop_frontEv"><code class="docutils literal notranslate"><span class="pre">pop_front()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array7pop_anyE6size_t"><code class="docutils literal notranslate"><span class="pre">pop_any()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array5clearEv"><code class="docutils literal notranslate"><span class="pre">clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array3setE6size_tRK1T"><code class="docutils literal notranslate"><span class="pre">set()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5ArrayixE6size_t"><code class="docutils literal notranslate"><span class="pre">operator[]()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5Array4dataEv"><code class="docutils literal notranslate"><span class="pre">data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5Array4sizeEv"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5Array8capacityEv"><code class="docutils literal notranslate"><span class="pre">capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5Array8is_emptyEv"><code class="docutils literal notranslate"><span class="pre">is_empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5Array7is_fullEv"><code class="docutils literal notranslate"><span class="pre">is_full()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5Array6is_ptrEPK1T"><code class="docutils literal notranslate"><span class="pre">is_ptr()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array6concatERK5ArrayI1TE"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array7reverseEv"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt5Array4sortEb4Func9Direction"><code class="docutils literal notranslate"><span class="pre">sort()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4initE6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TER9Allocator"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TE"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4FuncR9Allocator"><code class="docutils literal notranslate"><span class="pre">cumulative()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4Func"><code class="docutils literal notranslate"><span class="pre">cumulative()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">slice()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_t"><code class="docutils literal notranslate"><span class="pre">slice()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">csalt++-lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">C++ Array Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Array.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-array-overview">
+<span id="array-file"></span><h1>C++ Array Overview<a class="headerlink" href="#c-array-overview" title="Link to this heading"></a></h1>
+<p>Dynamic array handling in C++ traditionally relies on <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>, which
+provides convenient automatic memory management but comes with limitations in
+specialized environments. The standard library implementation uses dynamic
+allocation with opaque memory policies, making it unsuitable for embedded
+systems, real-time applications, or projects requiring deterministic memory
+behavior and MISRA C++ compliance.</p>
+<p>The <em>C++ Array module</em> in this library provides a lightweight, allocator-aware
+generic array container implemented in C++ and declared in <code class="docutils literal notranslate"><span class="pre">array.hpp</span></code>.
+Unlike <code class="docutils literal notranslate"><span class="pre">std::vector</span></code>, this container:</p>
+<ul class="simple">
+<li><p>Integrates directly with custom allocator hierarchies (heap, arena, buddy, slab)</p></li>
+<li><p>Explicitly tracks element count, allocated capacity, and the owning allocator</p></li>
+<li><p>Enforces initialization through a factory pattern preventing uninitialized arrays</p></li>
+<li><p>Provides automatic cleanup via RAII with custom deleters</p></li>
+<li><p>Returns explicit success/error state using the <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code> pattern</p></li>
+<li><p>Supports in-place sorting, reversal, slicing, and cumulative transformations</p></li>
+</ul>
+<p>The only dependencies this module has within the CSalt library are the
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, <code class="docutils literal notranslate"><span class="pre">error.hpp</span></code>, <code class="docutils literal notranslate"><span class="pre">iter_dir.hpp</span></code>, and <code class="docutils literal notranslate"><span class="pre">pointers.hpp</span></code> files,
+making it suitable for integration into larger systems while maintaining minimal
+coupling.</p>
+<section id="allocator-integration">
+<h2><strong>Allocator Integration</strong><a class="headerlink" href="#allocator-integration" title="Link to this heading"></a></h2>
+<p>By integrating directly with the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class defined in
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, the array container supports multiple allocation strategies
+without changing the public API:</p>
+<ul class="simple">
+<li><p><strong>HeapAllocator</strong> — Standard heap allocation via <code class="docutils literal notranslate"><span class="pre">operator</span> <span class="pre">new</span></code></p></li>
+<li><p><strong>ArenaAllocator</strong> — Sequential bump allocation with bulk deallocation</p></li>
+<li><p><strong>BuddyAllocator</strong> — Power-of-two block allocation with coalescing</p></li>
+<li><p><strong>SlabAllocator</strong> — Fixed-size object pools for uniform allocations</p></li>
+<li><p><strong>Custom allocators</strong> — Any user-defined class inheriting from <code class="docutils literal notranslate"><span class="pre">Allocator</span></code></p></li>
+</ul>
+<p>This design enables deterministic memory behavior suitable for embedded,
+real-time, or safety-regulated environments where allocation patterns must
+be controlled and predictable. The user can also develop their own allocators
+as long as they conform to the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class.</p>
+</section>
+<section id="factory-pattern-and-raii">
+<h2><strong>Factory Pattern and RAII</strong><a class="headerlink" href="#factory-pattern-and-raii" title="Link to this heading"></a></h2>
+<p>Unlike traditional constructors, array creation uses a static factory function
+<code class="docutils literal notranslate"><span class="pre">Array::init()</span></code> that returns <code class="docutils literal notranslate"><span class="pre">Expected&lt;Array&lt;T&gt;*&gt;</span></code>. This design:</p>
+<ul class="simple">
+<li><p>Prevents creation of uninitialized or invalid arrays</p></li>
+<li><p>Provides explicit error handling at the point of creation</p></li>
+<li><p>Enables proper two-phase initialization (object allocation + buffer allocation)</p></li>
+<li><p>Returns typed error objects (<code class="docutils literal notranslate"><span class="pre">ArgumentError</span></code>, <code class="docutils literal notranslate"><span class="pre">MemoryError</span></code>) with descriptive messages</p></li>
+</ul>
+<p>Memory cleanup is automatic through the <code class="docutils literal notranslate"><span class="pre">ArrayDeleter</span></code> custom deleter, which
+works seamlessly with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to provide RAII semantics:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Automatic cleanup when UniquePtr goes out of scope</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">ArrayDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">arr</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">        </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="w">        </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// Array and buffer automatically freed here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="growth-strategy">
+<h2><strong>Growth Strategy</strong><a class="headerlink" href="#growth-strategy" title="Link to this heading"></a></h2>
+<p>The array grows automatically when a push operation requires more capacity.
+Growth is tiered to avoid runaway allocation at large sizes while maintaining
+fast ramp-up at small sizes:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Current capacity</p></th>
+<th class="head"><p>New capacity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0 elements</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt; 1,024 elements</p></td>
+<td><p>2× current</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt; 8,192 elements</p></td>
+<td><p>1.5× current (cap + cap/2)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt; 65,536 elements</p></td>
+<td><p>1.25× current (cap + cap/4)</p></td>
+</tr>
+<tr class="row-even"><td><p>≥ 65,536 elements</p></td>
+<td><p>current + 256 (linear increment)</p></td>
+</tr>
+</tbody>
+</table>
+<p>A single reallocation is issued per growth event, and the array’s size and
+capacity are always kept consistent through the public API.</p>
+</section>
+<section id="element-type-requirements">
+<h2><strong>Element Type Requirements</strong><a class="headerlink" href="#element-type-requirements" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code> container supports any element type <code class="docutils literal notranslate"><span class="pre">T</span></code>, but the internal
+implementation selects between two code paths at compile time based on
+<code class="docutils literal notranslate"><span class="pre">std::is_trivially_copyable_v&lt;T&gt;</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Trivially copyable T</strong> (<code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">double</span></code>, plain structs with no
+user-defined constructors or destructors) — shift and copy operations use
+<code class="docutils literal notranslate"><span class="pre">std::memmove</span></code> / <code class="docutils literal notranslate"><span class="pre">std::memcpy</span></code>, which the compiler can vectorise.</p></li>
+<li><p><strong>Non-trivial T</strong> — shift and copy operations use placement-new and explicit
+destructor calls to honour the full object lifecycle.</p></li>
+</ul>
+<p>This distinction is invisible to the caller — the public API is identical for
+both cases.</p>
+</section>
+<section id="sorting">
+<h2><strong>Sorting</strong><a class="headerlink" href="#sorting" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">sort()</span></code> method provides an in-place iterative quicksort with the
+following properties:</p>
+<ul class="simple">
+<li><p>Median-of-three pivot selection to avoid worst-case behaviour on sorted input</p></li>
+<li><p>Insertion sort fallback for partitions smaller than 10 elements</p></li>
+<li><p>Tail-call optimisation keeping worst-case stack depth at O(log n)</p></li>
+<li><p>Direction controlled by <code class="docutils literal notranslate"><span class="pre">cslt::Direction::FORWARD</span></code> (ascending) or
+<code class="docutils literal notranslate"><span class="pre">cslt::Direction::REVERSE</span></code> (descending)</p></li>
+<li><p>Comparator accepts any callable with signature <code class="docutils literal notranslate"><span class="pre">int(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code></p></li>
+</ul>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">sort</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">FORWARD</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="reversal">
+<h2><strong>Reversal</strong><a class="headerlink" href="#reversal" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">reverse()</span></code> method reverses the array in place. Three compile-time paths
+are selected based on element type and size:</p>
+<ul class="simple">
+<li><p><strong>Single-byte trivially copyable T</strong> — delegates to <code class="docutils literal notranslate"><span class="pre">simd_reverse_uint8()</span></code>,
+which selects the best available SIMD back-end at compile time (AVX-512,
+AVX2, AVX, SSE4.1, SSSE3, SSE2, NEON, SVE, SVE2) or a scalar fallback.</p></li>
+<li><p><strong>Multi-byte trivially copyable T</strong> — scalar <code class="docutils literal notranslate"><span class="pre">memcpy</span></code>-swap loop, which
+the compiler will typically auto-vectorise for common element sizes.</p></li>
+<li><p><strong>Non-trivial T</strong> — move-swap loop that respects construction and destruction
+semantics throughout.</p></li>
+</ul>
+</section>
+<section id="array-class">
+<h2>Array Class<a class="headerlink" href="#array-class" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt5ArrayE">
+<span id="_CPPv3I0EN4cslt5ArrayE"></span><span id="_CPPv2I0EN4cslt5ArrayE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Array</span></span></span><a class="headerlink" href="#_CPPv4I0EN4cslt5ArrayE" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocator-backed generic dynamic array container. </p>
+<p>Provides a resizable array container that uses custom allocators for memory management. Both the <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> struct and its internal data buffer are allocated through the provided allocator.</p>
+<p>Key features:<ul class="simple">
+<li><p>Custom allocator support (heap, arena, buddy, slab, etc.)</p></li>
+<li><p>Generic element type via template parameter</p></li>
+<li><p>Tiered growth strategy to avoid runaway allocation at large sizes</p></li>
+<li><p>Safe insertion and removal via push/pop family of methods</p></li>
+<li><p>Bounds-checked read via <a class="reference internal" href="#classcslt_1_1Array_1a01ca5eb33c0b1e4e46cc7379f872e6df"><span class="std std-ref">operator[](size_t) const </span></a>returning Expected&lt;T&gt;</p></li>
+<li><p>Bounds-checked write via <a class="reference internal" href="#classcslt_1_1Array_1a6a1cea7677e1cea74ed7fc3a5b8216c4"><span class="std std-ref">set(size_t, const T&amp;)</span></a> returning Expected&lt;bool&gt;</p></li>
+<li><p>Copy factory via <a class="reference internal" href="#classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8"><span class="std std-ref">copy()</span></a>; move construction explicitly deleted</p></li>
+<li><p>RAII-based memory management through init factory function</p></li>
+</ul>
+</p>
+<p>Growth tiers (in elements):<ul class="simple">
+<li><p>0 -&gt; 1</p></li>
+<li><p>&lt; 1024 -&gt; 2x</p></li>
+<li><p>&lt; 8192 -&gt; 1.5x (cap + cap/2)</p></li>
+<li><p>&lt; 65536 -&gt; 1.25x (cap + cap/4)</p></li>
+<li><p>&gt;= 65536 -&gt; cap + 256 (linear increment)</p></li>
+</ul>
+</p>
+<p>Shift strategy:<ul class="simple">
+<li><p>Trivially copyable T: std::memmove (compiler-vectorisable)</p></li>
+<li><p>Non-trivial T: placement-new / explicit destructor loop</p></li>
+</ul>
+</p>
+<p>Usage pattern:<ul class="simple">
+<li><p>Must be initialised via the static factory function <a class="reference internal" href="#classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef"><span class="std std-ref">init()</span></a></p></li>
+<li><p>Cannot be constructed directly (private constructor)</p></li>
+<li><p>Automatically manages both the <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> object and its buffer memory</p></li>
+<li><p>Cleaned up through ArrayDeleter</p></li>
+</ul>
+</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">ArrayDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">arr</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="w">    </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="w">    </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+<span class="w">    </span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">99</span><span class="p">;</span><span class="w">            </span><span class="c1">// overwrite index 1</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span><span class="w">        </span><span class="c1">// read index 1 -&gt; Expected&lt;int&gt;</span>
+<span class="w">    </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">pop_back</span><span class="p">();</span><span class="w">           </span><span class="c1">// removes 3</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class cannot be instantiated directly. Use the <a class="reference internal" href="#classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef"><span class="std std-ref">init()</span></a> factory function to create instances. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – Element type stored in the array</p>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array9push_backERK1T">
+<span id="_CPPv3N4cslt5Array9push_backERK1T"></span><span id="_CPPv2N4cslt5Array9push_backERK1T"></span><span id="cslt::Array::push_back__TCR"></span><span class="target" id="classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_back</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array9push_backERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Append an element to the end of the array. </p>
+<p>
+Grows the buffer using the tiered strategy if at capacity, then copy-constructs the new element at the end.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Element to copy into the array </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success, false if reallocation failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array10push_frontERK1T">
+<span id="_CPPv3N4cslt5Array10push_frontERK1T"></span><span id="_CPPv2N4cslt5Array10push_frontERK1T"></span><span id="cslt::Array::push_front__TCR"></span><span class="target" id="classcslt_1_1Array_1a851651295787acc2c6ce9d489cd387ec"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_front</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array10push_frontERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Insert an element at the beginning of the array. </p>
+<p>
+Grows the buffer if at capacity, shifts all existing elements one position to the right via memmove (trivial T) or a placement-new loop (non-trivial T), then copy-constructs the new element at index 0.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_front</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Element to copy into the array </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success, false if reallocation failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array8push_anyE6size_tRK1T">
+<span id="_CPPv3N4cslt5Array8push_anyE6size_tRK1T"></span><span id="_CPPv2N4cslt5Array8push_anyE6size_tRK1T"></span><span id="cslt::Array::push_any__s.TCR"></span><span class="target" id="classcslt_1_1Array_1aa91f92b23fcfd16ab12e7d8a7fda93bb"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_any</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array8push_anyE6size_tRK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Insert an element at a caller-specified index. </p>
+<p>
+Grows the buffer if at capacity, shifts all elements at [index, len_) one position to the right, then copy-constructs the new element at <code class="docutils literal notranslate"><span class="pre">index</span></code>.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// array contains {1, 2, 4}</span>
+<span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_any</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span><span class="w">  </span><span class="c1">// array becomes {1, 2, 3, 4}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – Zero-based insertion position. Must be &lt;= <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a>. index == 0 is equivalent to <a class="reference internal" href="#classcslt_1_1Array_1a851651295787acc2c6ce9d489cd387ec"><span class="std std-ref">push_front()</span></a>. index == <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a> is equivalent to <a class="reference internal" href="#classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528"><span class="std std-ref">push_back()</span></a>. </p></li>
+<li><p><strong>value</strong> – Element to copy into the array </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success, false if index is out of range or reallocation failed</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array8pop_backEv">
+<span id="_CPPv3N4cslt5Array8pop_backEv"></span><span id="_CPPv2N4cslt5Array8pop_backEv"></span><span id="cslt::Array::pop_back"></span><span class="target" id="classcslt_1_1Array_1ad14072d1502e720a6bb6486bc7b5b450"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array8pop_backEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove the last element from the array. </p>
+<p>
+Calls the destructor of the last element and decrements len_. The buffer capacity is not reduced.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">pop_back</span><span class="p">();</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if an element was removed, false if the array was empty</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array9pop_frontEv">
+<span id="_CPPv3N4cslt5Array9pop_frontEv"></span><span id="_CPPv2N4cslt5Array9pop_frontEv"></span><span id="cslt::Array::pop_front"></span><span class="target" id="classcslt_1_1Array_1a691c2bb38c65ad98fcd2733ed4295822"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array9pop_frontEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove the element at the beginning of the array. </p>
+<p>
+Destroys the element at index 0, shifts all remaining elements one position to the left, then decrements len_. The buffer capacity is not reduced.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">pop_front</span><span class="p">();</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if an element was removed, false if the array was empty</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array7pop_anyE6size_t">
+<span id="_CPPv3N4cslt5Array7pop_anyE6size_t"></span><span id="_CPPv2N4cslt5Array7pop_anyE6size_t"></span><span id="cslt::Array::pop_any__s"></span><span class="target" id="classcslt_1_1Array_1a08a750139f2258e7188ce23f4074987d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_any</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array7pop_anyE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove the element at a caller-specified index. </p>
+<p>
+Destroys the element at <code class="docutils literal notranslate"><span class="pre">index</span></code>, shifts all elements at (index, len_) one position to the left, then decrements len_. The buffer capacity is not reduced.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// array contains {1, 2, 3, 4}</span>
+<span class="n">arr</span><span class="o">-&gt;</span><span class="n">pop_any</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span><span class="w">  </span><span class="c1">// array becomes {1, 2, 4}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Zero-based position of the element to remove. Must be &lt; <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a>. index == 0 is equivalent to <a class="reference internal" href="#classcslt_1_1Array_1a691c2bb38c65ad98fcd2733ed4295822"><span class="std std-ref">pop_front()</span></a>. index == <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a>-1 is equivalent to <a class="reference internal" href="#classcslt_1_1Array_1ad14072d1502e720a6bb6486bc7b5b450"><span class="std std-ref">pop_back()</span></a>. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success, false if the array is empty or index is out of range</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array5clearEv">
+<span id="_CPPv3N4cslt5Array5clearEv"></span><span id="_CPPv2N4cslt5Array5clearEv"></span><span id="cslt::Array::clear"></span><span class="target" id="classcslt_1_1Array_1abe8bb1180a8ab41d1ce588069d2ec9df"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array5clearEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Destroy all live elements and reset the populated length to zero. </p>
+<p>Calls the destructor of every live element in reverse order, then sets len_ to 0. The allocated buffer and its capacity are preserved so the <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> can be reused without a further allocation.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">clear</span><span class="p">();</span>
+<span class="c1">// arr-&gt;size() == 0, arr-&gt;capacity() unchanged</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array3setE6size_tRK1T">
+<span id="_CPPv3N4cslt5Array3setE6size_tRK1T"></span><span id="_CPPv2N4cslt5Array3setE6size_tRK1T"></span><span id="cslt::Array::set__s.TCR"></span><span class="target" id="classcslt_1_1Array_1a6a1cea7677e1cea74ed7fc3a5b8216c4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="kt"><span class="pre">bool</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">set</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array3setE6size_tRK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Write or append an element at a given index. </p>
+<p>
+Three cases are handled:<ul class="simple">
+<li><p>index &lt; len_ : destroys the existing element and copy-constructs <code class="docutils literal notranslate"><span class="pre">value</span></code> in its place</p></li>
+<li><p>index == len_ : calls _ensure_capacity(), copy-constructs <code class="docutils literal notranslate"><span class="pre">value</span></code>, and increments len_</p></li>
+<li><p>index &gt; len_ : returns an <a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a></p></li>
+</ul>
+</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">set</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span><span class="w">            </span><span class="c1">// overwrite existing element</span>
+<span class="n">arr</span><span class="o">-&gt;</span><span class="n">set</span><span class="p">(</span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="mi">99</span><span class="p">);</span><span class="w">  </span><span class="c1">// append via set</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – Zero-based position to write to. Must be &lt;= <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a>. </p></li>
+<li><p><strong>value</strong> – Element to copy into the array at <code class="docutils literal notranslate"><span class="pre">index</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;bool&gt; — true on success; error on failure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5ArrayixE6size_t">
+<span id="_CPPv3NK4cslt5ArrayixE6size_t"></span><span id="_CPPv2NK4cslt5ArrayixE6size_t"></span><span id="cslt::Array::subscript-operator__sC"></span><span class="target" id="classcslt_1_1Array_1a01ca5eb33c0b1e4e46cc7379f872e6df"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">[]</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5ArrayixE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Read-only access to an element at a given index. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Zero-based position to read from. Must be &lt; <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a>. </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;T&gt; containing a copy of the element on success, or an error if <code class="docutils literal notranslate"><span class="pre">index</span></code> is out of the populated range</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5Array4dataEv">
+<span id="_CPPv3NK4cslt5Array4dataEv"></span><span id="_CPPv2NK4cslt5Array4dataEv"></span><span id="cslt::Array::dataC"></span><span class="target" id="classcslt_1_1Array_1a195cbdaefaeda905714878914d1657f8"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">data</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5Array4dataEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a const pointer to the beginning of the element buffer. </p>
+<p>
+The pointer is valid until the next push operation that triggers a reallocation.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">ptr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">size</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ptr</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">&#39;\n&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Const pointer to the first element, or nullptr if the array has not been successfully initialised</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5Array4sizeEv">
+<span id="_CPPv3NK4cslt5Array4sizeEv"></span><span id="_CPPv2NK4cslt5Array4sizeEv"></span><span id="cslt::Array::sizeC"></span><span class="target" id="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5Array4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of elements currently stored. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Element count </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5Array8capacityEv">
+<span id="_CPPv3NK4cslt5Array8capacityEv"></span><span id="_CPPv2NK4cslt5Array8capacityEv"></span><span id="cslt::Array::capacityC"></span><span class="target" id="classcslt_1_1Array_1a40413b1da52d2649f2e028704fcd4c1a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">capacity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5Array8capacityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the current element capacity of the buffer. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Capacity in number of elements </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5Array8is_emptyEv">
+<span id="_CPPv3NK4cslt5Array8is_emptyEv"></span><span id="_CPPv2NK4cslt5Array8is_emptyEv"></span><span id="cslt::Array::is_emptyC"></span><span class="target" id="classcslt_1_1Array_1a6292b3c1418914cf410825f07e870346"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_empty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5Array8is_emptyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if no elements are currently stored. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">is_empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a> == 0</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5Array7is_fullEv">
+<span id="_CPPv3NK4cslt5Array7is_fullEv"></span><span id="_CPPv2NK4cslt5Array7is_fullEv"></span><span id="cslt::Array::is_fullC"></span><span class="target" id="classcslt_1_1Array_1a5b47a30bac5aa7debbdfb6ee22b20444"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_full</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5Array7is_fullEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if the populated length equals the allocated capacity. </p>
+<p>
+Note that a push operation on a full array will attempt to grow the buffer automatically. <a class="reference internal" href="#classcslt_1_1Array_1a5b47a30bac5aa7debbdfb6ee22b20444"><span class="std std-ref">is_full()</span></a> is useful for callers that need to know whether the next push will trigger a reallocation.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">is_full</span><span class="p">())</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a> == <a class="reference internal" href="#classcslt_1_1Array_1a40413b1da52d2649f2e028704fcd4c1a"><span class="std std-ref">capacity()</span></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5Array6is_ptrEPK1T">
+<span id="_CPPv3NK4cslt5Array6is_ptrEPK1T"></span><span id="_CPPv2NK4cslt5Array6is_ptrEPK1T"></span><span id="cslt::Array::is_ptr__TCPC"></span><span class="target" id="classcslt_1_1Array_1ac6d266921c654a1014ba273926e6e882"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_ptr</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">ptr</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5Array6is_ptrEPK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if a pointer falls within the populated region and is aligned to an element boundary. </p>
+<p>
+A pointer obtained after a reallocation (e.g. following a push that triggered a grow) may no longer be valid; callers are responsible for not retaining pointers across reallocations.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">*</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">());</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">is_ptr</span><span class="p">(</span><span class="n">p</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="p">...</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ptr</strong> – Pointer to test </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true if <code class="docutils literal notranslate"><span class="pre">ptr</span></code> points to a valid element in [data_, data_ + len_) and satisfies (ptr - data_) % sizeof(T) == 0</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array6concatERK5ArrayI1TE">
+<span id="_CPPv3N4cslt5Array6concatERK5ArrayI1TE"></span><span id="_CPPv2N4cslt5Array6concatERK5ArrayI1TE"></span><span id="cslt::Array::concat__Array:T:CR"></span><span class="target" id="classcslt_1_1Array_1a4695ffd06f5596aaa146af0bf9990dc2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">concat</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array6concatERK5ArrayI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Append all elements of another <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> to the end of this array. </p>
+<p>
+Iterates over the populated elements of <code class="docutils literal notranslate"><span class="pre">other</span></code> and appends each one via <a class="reference internal" href="#classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528"><span class="std std-ref">push_back()</span></a>, which uses the tiered growth strategy as needed. If any individual <a class="reference internal" href="#classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528"><span class="std std-ref">push_back()</span></a> fails (reallocation error), the method returns false immediately; elements already appended before the failure remain in the array.</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// a contains {1, 2, 3}, b contains {4, 5, 6}</span>
+<span class="n">a</span><span class="o">-&gt;</span><span class="n">concat</span><span class="p">(</span><span class="o">*</span><span class="n">b</span><span class="p">);</span>
+<span class="c1">// a now contains {1, 2, 3, 4, 5, 6}</span>
+</pre></div>
+</div>
+ </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Self-concatenation (passing this array as <code class="docutils literal notranslate"><span class="pre">other</span></code>) is safe because <a class="reference internal" href="#classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528"><span class="std std-ref">push_back()</span></a> always reads from <code class="docutils literal notranslate"><span class="pre">other</span></code> before writing, and the snapshot of other.len_ is taken once before the loop.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>other</strong> – <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> whose elements are appended to this array </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success, false if any reallocation fails</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array7reverseEv">
+<span id="_CPPv3N4cslt5Array7reverseEv"></span><span id="_CPPv2N4cslt5Array7reverseEv"></span><span id="cslt::Array::reverse"></span><span class="target" id="classcslt_1_1Array_1abea00fd3a938b939d6b5ca58c3671f0e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reverse</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array7reverseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reverse the order of all elements in the array in place. </p>
+<p>For trivially copyable T the reversal is delegated to simd_reverse_uint8(), which is resolved at compile time to the best available SIMD back-end (AVX-512, AVX2, AVX, SSE4.1, SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback. The function treats each element as an opaque bag of sizeof(T) bytes and swaps element positions — it does not reverse the bytes within an individual element.</p>
+<p>For non-trivial T, a scalar swap loop is used that respects move construction and destruction semantics.</p>
+<p>Arrays with fewer than two elements are left unchanged.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// arr contains {1, 2, 3, 4, 5}</span>
+<span class="n">arr</span><span class="o">-&gt;</span><span class="n">reverse</span><span class="p">();</span>
+<span class="c1">// arr now contains {5, 4, 3, 2, 1}</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt5Array4sortEb4Func9Direction">
+<span id="_CPPv3I0EN4cslt5Array4sortE4Func9Direction"></span><span id="_CPPv2I0EN4cslt5Array4sortE4Func9Direction"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1a5641e347374697257d317a5119de8571"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">sort</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN4cslt5Array4sortEb4Func9Direction" title="cslt::Array::sort::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cmp</span></span>, <span class="n"><span class="pre">Direction</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dir</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN4cslt5Array4sortEb4Func9Direction" title="Link to this definition"></a><br /></dt>
+<dd><p>Sort the array in place using an iterative quicksort. </p>
+<p>
+Implements an iterative median-of-three quicksort with an insertion sort fallback for partitions smaller than 10 elements and tail-call optimisation to keep stack depth at O(log n) in the worst case. Element swaps use memcpy for trivially copyable T and move construction / destruction for non-trivial T.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">sort</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">FORWARD</span><span class="p">);</span><span class="w">   </span><span class="c1">// ascending</span>
+
+<span class="n">arr</span><span class="o">-&gt;</span><span class="n">sort</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">b</span><span class="p">;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">          </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">REVERSE</span><span class="p">);</span><span class="w">   </span><span class="c1">// descending</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">int(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code>. Must return negative if a &lt; b, zero if a == b, and positive if a &gt; b — identical to the C qsort comparator convention. Lambdas, functors, and plain function pointers are all accepted.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>cmp</strong> – Comparator callable </p></li>
+<li><p><strong>dir</strong> – Direction::FORWARD for ascending order; Direction::REVERSE for descending order </p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true on success; false if the array is uninitialised or contains fewer than two elements (no-op in those cases)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array4initE6size_tR9Allocator">
+<span id="_CPPv3N4cslt5Array4initE6size_tR9Allocator"></span><span id="_CPPv2N4cslt5Array4initE6size_tR9Allocator"></span><span id="cslt::Array::init__s.AllocatorR"></span><span class="target" id="classcslt_1_1Array_1ae39a55a8e6cff462c8ad9a4a1c6d06ef"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">capacity</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array4initE6size_tR9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialise an allocator-backed <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a>. </p>
+<p>
+Allocates the <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> object itself and its internal element buffer through the provided allocator using placement new, mirroring the <a class="reference internal" href="String.html#classcslt_1_1String_1ab1efd0bf9fe05c2af789e5fb74f7223c"><span class="std std-ref">String::init()</span></a> pattern.</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">ArrayDeleter</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">arr</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mf">3.14f</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ <dl class="simple">
+<dt><strong>Error conditions:</strong></dt><dd><p><ul class="simple">
+<li><p>capacity == 0 (<a class="reference internal" href="Error.html#classcslt_1_1ArgumentError"><span class="std std-ref">ArgumentError</span></a>)</p></li>
+<li><p>Allocation of the <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> struct fails (<a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a>)</p></li>
+<li><p>Allocation of the element buffer fails (<a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>capacity</strong> – Initial element capacity (must be &gt; 0) </p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> to use for memory management </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Array&lt;T&gt;*&gt; containing a pointer to the <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a>, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array4copyERK5ArrayI1TER9Allocator">
+<span id="_CPPv3N4cslt5Array4copyERK5ArrayI1TER9Allocator"></span><span id="_CPPv2N4cslt5Array4copyERK5ArrayI1TER9Allocator"></span><span id="cslt::Array::copy__Array:T:CR.AllocatorR"></span><span class="target" id="classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TER9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a deep copy of an existing <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> using a caller-supplied allocator. </p>
+<p>
+Allocates a fresh <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> with the same capacity as <code class="docutils literal notranslate"><span class="pre">src</span></code>, then copy-constructs each live element. On any failure the partially constructed <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> is cleaned up and an error is returned.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="c1">// ... push elements ...</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">(),</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> – <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> to copy from </p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> used to back the new <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> and its buffer </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Array&lt;T&gt;*&gt; containing a pointer to the new <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a>, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array4copyERK5ArrayI1TE">
+<span id="_CPPv3N4cslt5Array4copyERK5ArrayI1TE"></span><span id="_CPPv2N4cslt5Array4copyERK5ArrayI1TE"></span><span id="cslt::Array::copy__Array:T:CR"></span><span class="target" id="classcslt_1_1Array_1ab88d1e98d485536f968a0d7a968cabf2"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a deep copy of an existing <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> using the source <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a>’s own allocator. </p>
+<p>
+Convenience overload that forwards to copy(src, allocator) using the allocator already associated with <code class="docutils literal notranslate"><span class="pre">src</span></code>.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>src</strong> – <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> to copy from </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Array&lt;T&gt;*&gt; containing a pointer to the new <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a>, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4FuncR9Allocator">
+<span id="_CPPv3I0EN4cslt5Array10cumulativeERK5ArrayI1TE4FuncR9Allocator"></span><span id="_CPPv2I0EN4cslt5Array10cumulativeERK5ArrayI1TE4FuncR9Allocator"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1a3cf8c18d406d0dd4eda56ad739fc8d20"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cumulative</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <a class="reference internal" href="#_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4FuncR9Allocator" title="cslt::Array::cumulative::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">add</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4FuncR9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Produce a new <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> containing the prefix-sum (running total) of this array using a caller-supplied accumulation function. </p>
+<p>
+Mirrors the C cumulative_array() prefix-sum algorithm:<ul class="simple">
+<li><p>result[0] = src[0] (seed — no identity element required)</p></li>
+<li><p>result[i] = result[i-1] + src[i] for i &gt;= 1</p></li>
+</ul>
+</p>
+<p>The output <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> is allocated with exactly len_ slots (no extra capacity), making it a fixed-length snapshot.</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">cumulative</span><span class="p">(</span><span class="o">*</span><span class="n">src</span><span class="p">,</span>
+<span class="w">    </span><span class="p">[](</span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">accum</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">elem</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">accum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">elem</span><span class="p">;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">    </span><span class="n">alloc</span><span class="p">);</span>
+</pre></div>
+</div>
+ <dl class="simple">
+<dt><strong>Error conditions:</strong></dt><dd><p><ul class="simple">
+<li><p><a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> is empty (<a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a>)</p></li>
+<li><p>Allocation of the output struct or buffer fails (<a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">void(T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code>. The first argument is the current output element (modified in place); the second is the incoming source element. Any callable is accepted: plain function, lambda, or functor.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>add</strong> – Accumulation callable </p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> used to back the returned <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a></p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Array&lt;T&gt;*&gt; containing the cumulative <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> on success, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4Func">
+<span id="_CPPv3I0EN4cslt5Array10cumulativeERK5ArrayI1TE4Func"></span><span id="_CPPv2I0EN4cslt5Array10cumulativeERK5ArrayI1TE4Func"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1a4719d5b2930cfdd24eb2978889ab0585"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">cumulative</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <a class="reference internal" href="#_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4Func" title="cslt::Array::cumulative::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">add</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN4cslt5Array10cumulativeE8ExpectedIP5ArrayI1TEERK5ArrayI1TE4Func" title="Link to this definition"></a><br /></dt>
+<dd><p>Produce a new <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> containing the prefix-sum of this array using the source array’s own allocator. </p>
+<p>
+Convenience overload that forwards to cumulative(src, add, allocator) using the allocator already associated with this array.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">cumulative</span><span class="p">(</span><span class="o">*</span><span class="n">src</span><span class="p">,</span>
+<span class="w">    </span><span class="p">[](</span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">accum</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">elem</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">accum</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">elem</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">void(T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code></p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>add</strong> – Accumulation callable </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Array&lt;T&gt;*&gt; on success, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_tR9Allocator">
+<span id="_CPPv3N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_tR9Allocator"></span><span id="_CPPv2N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_tR9Allocator"></span><span id="cslt::Array::slice__Array:T:CR.s.s.AllocatorR"></span><span class="target" id="classcslt_1_1Array_1a8983e26966518f5a421d64c42faa2647"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slice</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_tR9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a new <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> containing the elements in [start, end) </p>
+<p>
+Mirrors the C slice_array() semantics exactly:<ul class="simple">
+<li><p>start &gt;= end is an <a class="reference internal" href="Error.html#classcslt_1_1ArgumentError"><span class="std std-ref">ArgumentError</span></a></p></li>
+<li><p>end &gt; len_ is an <a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a> The returned <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> has capacity == (end - start) and is a fixed-length snapshot of the source range. For trivially copyable T the copy uses std::memcpy; for non-trivial T each element is copy-constructed individually.</p></li>
+</ul>
+</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// array contains {0, 1, 2, 3, 4}</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">slice</span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="c1">// result contains {1, 2, 3}</span>
+</pre></div>
+</div>
+ <dl class="simple">
+<dt><strong>Error conditions:</strong></dt><dd><p><ul class="simple">
+<li><p>start &gt;= end (<a class="reference internal" href="Error.html#classcslt_1_1ArgumentError"><span class="std std-ref">ArgumentError</span></a>)</p></li>
+<li><p>end &gt; len_ (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>)</p></li>
+<li><p>Allocation failure (<a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> – Zero-based index of the first element to include </p></li>
+<li><p><strong>end</strong> – One-past-the-last index (exclusive upper bound). Must satisfy start &lt; end &lt;= <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a>. </p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> used to back the returned <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Array&lt;T&gt;*&gt; containing the slice on success, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_t">
+<span id="_CPPv3N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_t"></span><span id="_CPPv2N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_t"></span><span id="cslt::Array::slice__Array:T:CR.s.s"></span><span class="target" id="classcslt_1_1Array_1a4162c5f0b5a0993e999ad4c5f941c315"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slice</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array"><span class="n"><span class="pre">Array</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">start</span></span>, <span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">end</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5Array5sliceERK5ArrayI1TE6size_t6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a new <a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> containing the elements in [start, end) using the source array’s own allocator. </p>
+<p>
+Convenience overload that forwards to slice(src, start, end, allocator) using the allocator already associated with this array.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Array</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">slice</span><span class="p">(</span><span class="o">*</span><span class="n">arr</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> – Zero-based index of the first element to include </p></li>
+<li><p><strong>end</strong> – One-past-the-last index (exclusive upper bound) </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Array&lt;T&gt;*&gt; on success, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="String.html" class="btn btn-neutral float-left" title="C++ String Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

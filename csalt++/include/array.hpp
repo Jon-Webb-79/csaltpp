@@ -22,10 +22,40 @@
 #include <cstring>
 #include <new>
 #include <type_traits>
+#include <utility>
+
+#if defined(__AVX512BW__)
+#  include "simd_avx512_uint8.inl"
+#elif defined(__AVX2__)
+#  include "simd_avx2_uint8.inl"
+#elif defined(__AVX__)
+#  include "simd_avx_uint8.inl"
+#elif defined(__SSE4_1__)
+#  include "simd_sse41_uint8.inl"
+#elif defined(__SSSE3__)
+#  include "simd_sse3_uint8.inl"
+#elif defined(__SSE2__)
+#  include "simd_sse2_uint8.inl"
+#elif defined(__ARM_FEATURE_SVE2)
+#  include "simd_sve2_uint8.inl"
+#elif defined(__ARM_FEATURE_SVE)
+#  include "simd_sve_uint8.inl"
+#elif defined(__ARM_NEON)
+#  include "simd_neon_uint8.inl"
+#else
+#  include "simd_scalar_uint8.inl"
+#endif
 // ================================================================================ 
 // ================================================================================ 
 
 namespace cslt {
+
+    #ifndef ITER_DIR_H
+    enum class Direction {
+        FORWARD = 0,  ///< Ascending / forward order
+        REVERSE = 1   ///< Descending / reverse order
+    };
+    #endif
 
     /**
      * @class Array
@@ -211,6 +241,158 @@ namespace cslt {
                 for (size_t i = index; i < len_ - 1u; ++i) {
                     new (static_cast<void*>(data_ + i)) T(data_[i + 1u]);
                     data_[i + 1u].~T();
+                }
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Apply Direction to a raw comparator result
+         *
+         * @param cmp_result Raw result from the caller-supplied comparator
+         * @param dir        FORWARD leaves the result unchanged; REVERSE negates it
+         * @return Adjusted comparator result
+         */
+        template <typename Func>
+        static int _apply_dir(int cmp_result, Direction dir) noexcept {
+            return (dir == Direction::FORWARD) ? cmp_result : -cmp_result;
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Swap two elements using move semantics (non-trivial T)
+         */
+        static void _swap_move(T* a, T* b) noexcept {
+            T tmp(std::move(*a));
+            a->~T();
+            new (static_cast<void*>(a)) T(std::move(*b));
+            b->~T();
+            new (static_cast<void*>(b)) T(std::move(tmp));
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Swap two elements using memcpy (trivially copyable T)
+         */
+        static void _swap_trivial(T* a, T* b) noexcept {
+            T tmp;
+            std::memcpy(&tmp, a,    sizeof(T));
+            std::memcpy(a,    b,    sizeof(T));
+            std::memcpy(b,    &tmp, sizeof(T));
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Median-of-three pivot selection
+         *
+         * @return Pointer to the median element among a, b, and c
+         */
+        template <typename Func>
+        static T* _median_of_three(T* a, T* b, T* c,
+                                   Func cmp, Direction dir) noexcept {
+            int ab = _apply_dir<Func>(cmp(*a, *b), dir);
+            int bc = _apply_dir<Func>(cmp(*b, *c), dir);
+            int ac = _apply_dir<Func>(cmp(*a, *c), dir);
+ 
+            if (ab <= 0) {
+                if (bc <= 0) return b;   // a <= b <= c
+                if (ac <= 0) return c;   // a <= c < b
+                return a;                // c < a <= b
+            }
+            if (ac <= 0) return a;       // b < a <= c
+            if (bc <= 0) return c;       // b <= c < a
+            return b;                    // c < b < a
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Insertion sort for small partitions [lo, hi] inclusive
+         */
+        template <typename Func>
+        void _insertion_sort(size_t lo, size_t hi,
+                             Func cmp, Direction dir) noexcept {
+            for (size_t i = lo + 1u; i <= hi; ++i) {
+                size_t j = i;
+                while (j > lo &&
+                       _apply_dir<Func>(cmp(data_[j - 1u], data_[j]), dir) > 0) {
+                    if constexpr (std::is_trivially_copyable_v<T>)
+                        _swap_trivial(data_ + j - 1u, data_ + j);
+                    else
+                        _swap_move(data_ + j - 1u, data_ + j);
+                    --j;
+                }
+            }
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Partition data_[lo..hi] around a median-of-three pivot
+         *
+         * @return Final index of the pivot element
+         */
+        template <typename Func>
+        size_t _partition(size_t lo, size_t hi,
+                          Func cmp, Direction dir) noexcept {
+            size_t mid = lo + (hi - lo) / 2u;
+            T* pivot_ptr = _median_of_three(data_ + lo, data_ + mid, data_ + hi,
+                                            cmp, dir);
+ 
+            // Move pivot to end so it is out of the way during partitioning
+            if (pivot_ptr != data_ + hi) {
+                if constexpr (std::is_trivially_copyable_v<T>)
+                    _swap_trivial(pivot_ptr, data_ + hi);
+                else
+                    _swap_move(pivot_ptr, data_ + hi);
+            }
+ 
+            size_t i = lo;
+            for (size_t j = lo; j < hi; ++j) {
+                if (_apply_dir<Func>(cmp(data_[j], data_[hi]), dir) < 0) {
+                    if constexpr (std::is_trivially_copyable_v<T>)
+                        _swap_trivial(data_ + i, data_ + j);
+                    else
+                        _swap_move(data_ + i, data_ + j);
+                    ++i;
+                }
+            }
+ 
+            // Place pivot in its final position
+            if constexpr (std::is_trivially_copyable_v<T>)
+                _swap_trivial(data_ + i, data_ + hi);
+            else
+                _swap_move(data_ + i, data_ + hi);
+ 
+            return i;
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Iterative quicksort with median-of-three pivot, insertion sort
+         *        fallback for small partitions, and tail-call optimisation
+         */
+        template <typename Func>
+        void _quicksort(size_t lo, size_t hi,
+                        Func cmp, Direction dir) noexcept {
+            constexpr size_t INSERTION_THRESHOLD = 10u;
+ 
+            while (lo < hi) {
+                if (hi - lo < INSERTION_THRESHOLD) {
+                    _insertion_sort(lo, hi, cmp, dir);
+                    break;
+                }
+ 
+                size_t pi = _partition(lo, hi, cmp, dir);
+ 
+                // Recurse into the smaller partition, iterate into the larger
+                // to keep worst-case stack depth at O(log n)
+                if (pi > lo && pi - lo <= hi - pi) {
+                    _quicksort(lo, pi - 1u, cmp, dir);
+                    lo = pi + 1u;
+                } else {
+                    if (pi + 1u < hi)
+                        _quicksort(pi + 1u, hi, cmp, dir);
+                    if (pi == 0u) break;
+                    hi = pi - 1u;
                 }
             }
         }
@@ -1060,6 +1242,113 @@ namespace cslt {
                 }
             }
 
+            return true;
+        }
+// -------------------------------------------------------------------------------- 
+
+       /**
+         * @brief Reverse the order of all elements in the array in place
+         *
+         * @details For trivially copyable T the reversal is delegated to
+         *          simd_reverse_uint8(), which is resolved at compile time to
+         *          the best available SIMD back-end (AVX-512, AVX2, AVX, SSE4.1,
+         *          SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback.
+         *          The function treats each element as an opaque bag of
+         *          sizeof(T) bytes and swaps element positions — it does not
+         *          reverse the bytes within an individual element.
+         *
+         *          For non-trivial T, a scalar swap loop is used that respects
+         *          move construction and destruction semantics.
+         *
+         *          Arrays with fewer than two elements are left unchanged.
+         *
+         * @code{.cpp}
+         * // arr contains {1, 2, 3, 4, 5}
+         * arr->reverse();
+         * // arr now contains {5, 4, 3, 2, 1}
+         * @endcode
+         */
+        void reverse() noexcept {
+            if (len_ < 2u) return;
+ 
+            if constexpr (std::is_trivially_copyable_v<T> && sizeof(T) == 1u) {
+                // Single-byte trivially copyable elements (e.g. uint8_t, char):
+                // delegate to the SIMD back-end selected at compile time.
+                // reinterpret_cast to uint8_t* is legal — the standard permits
+                // copying object representations through unsigned char / uint8_t.
+                simd_reverse_uint8(reinterpret_cast<uint8_t*>(data_),
+                                   len_,
+                                   sizeof(T));
+            } else if constexpr (std::is_trivially_copyable_v<T>) {
+                // Multi-byte trivially copyable elements (int, double, structs,
+                // etc.): use a scalar memcpy-swap loop.  memcpy is correct here
+                // because the standard explicitly permits copying trivially
+                // copyable object representations.  The compiler will typically
+                // auto-vectorise this loop for common element sizes.
+                size_t lo = 0u;
+                size_t hi = len_;
+                while (lo < hi) {
+                    --hi;
+                    T tmp;
+                    std::memcpy(&tmp,       data_ + lo, sizeof(T));
+                    std::memcpy(data_ + lo, data_ + hi, sizeof(T));
+                    std::memcpy(data_ + hi, &tmp,       sizeof(T));
+                    ++lo;
+                }
+            } else {
+                // Non-trivial T: honour construction and destruction semantics
+                // via a move-swap loop.
+                size_t lo = 0u;
+                size_t hi = len_;
+                while (lo < hi) {
+                    --hi;
+                    T tmp(std::move(data_[lo]));
+                    data_[lo].~T();
+                    new (static_cast<void*>(data_ + lo)) T(std::move(data_[hi]));
+                    data_[hi].~T();
+                    new (static_cast<void*>(data_ + hi)) T(std::move(tmp));
+                    ++lo;
+                }
+            }
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Sort the array in place using an iterative quicksort
+         *
+         * @tparam Func  Callable with signature `int(const T&, const T&)`.
+         *               Must return negative if a < b, zero if a == b, and
+         *               positive if a > b — identical to the C qsort comparator
+         *               convention.  Lambdas, functors, and plain function
+         *               pointers are all accepted.
+         *
+         * @param cmp  Comparator callable
+         * @param dir  Direction::FORWARD for ascending order;
+         *             Direction::REVERSE for descending order
+         * @return true on success; false if the array is uninitialised or
+         *         contains fewer than two elements (no-op in those cases)
+         *
+         * @details Implements an iterative median-of-three quicksort with an
+         *          insertion sort fallback for partitions smaller than 10
+         *          elements and tail-call optimisation to keep stack depth at
+         *          O(log n) in the worst case.  Element swaps use memcpy for
+         *          trivially copyable T and move construction / destruction for
+         *          non-trivial T.
+         *
+         * @code{.cpp}
+         * arr->sort([](const int& a, const int& b) { return a - b; },
+         *           cslt::Direction::FORWARD);   // ascending
+         *
+         * arr->sort([](const int& a, const int& b) { return a - b; },
+         *           cslt::Direction::REVERSE);   // descending
+         * @endcode
+         */
+        template <typename Func>
+        bool sort(Func cmp, Direction dir) noexcept {
+            if (!data_ || !allocator_) return false;
+            if (len_ < 2u)             return false;
+ 
+            _quicksort(0u, len_ - 1u, cmp, dir);
             return true;
         }
 // --------------------------------------------------------------------------------

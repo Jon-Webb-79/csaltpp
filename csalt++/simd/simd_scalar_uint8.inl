@@ -62,6 +62,43 @@ static size_t simd_contains_uint8(const uint8_t* data,
     }
     return SIZE_MAX;
 }
+// -------------------------------------------------------------------------------- 
+
+static size_t simd_min_uint8(const uint8_t* data,
+                              size_t         len,
+                              size_t         data_size,
+                              int          (*cmp)(const void*, const void*)) {
+    size_t best = 0u;
+    for (size_t i = 1u; i < len; i++) {
+        if (cmp(data + i * data_size, data + best * data_size) < 0)
+            best = i;
+    }
+    return best;
+}
+// -------------------------------------------------------------------------------- 
+
+static size_t simd_max_uint8(const uint8_t* data,
+                              size_t         len,
+                              size_t         data_size,
+                              int          (*cmp)(const void*, const void*)) {
+    size_t best = 0u;
+    for (size_t i = 1u; i < len; i++) {
+        if (cmp(data + i * data_size, data + best * data_size) > 0)
+            best = i;
+    }
+    return best;
+}
+// -------------------------------------------------------------------------------- 
+
+static void simd_sum_uint8(const uint8_t* data,
+                            size_t         len,
+                            size_t         data_size,
+                            void*          accum,
+                            void         (*add)(void* accum, const void* element)) {
+    for (size_t i = 0u; i < len; i++) {
+        add(accum, data + i * data_size);
+    }
+}
 // ================================================================================ 
 // ================================================================================ 
 #endif /* CSALT_SIMD_SCALAR_UINT8_INL */

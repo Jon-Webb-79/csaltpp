@@ -32,7 +32,7 @@ static void simd_reverse_uint8(uint8_t* data, size_t len, size_t data_size) {
     if (data == NULL || len < 2u || data_size == 0u) return;
 
     /* SIMD fast path: only for element sizes that evenly divide 16 */
-    if (data_size <= 16u && (16u % data_size == 0u)) {
+    if (data_size < 16u && (16u % data_size == 0u)) {
         size_t lo = 0u;
         size_t hi = len - 1u;
 
@@ -178,6 +178,116 @@ static size_t simd_contains_uint8(const uint8_t* data,
         }
     }
     return SIZE_MAX;
+}
+// -------------------------------------------------------------------------------- 
+
+static inline uint8_t _sse2_hmin_u8(__m128i v) {
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 8));
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 4));
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 2));
+    v = _mm_min_epu8(v, _mm_srli_si128(v, 1));
+    return (uint8_t)_mm_cvtsi128_si32(v);
+}
+
+static inline uint8_t _sse2_hmax_u8(__m128i v) {
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 8));
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 4));
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 2));
+    v = _mm_max_epu8(v, _mm_srli_si128(v, 1));
+    return (uint8_t)_mm_cvtsi128_si32(v);
+}
+
+static size_t simd_min_uint8(const uint8_t* data,
+                              size_t         len,
+                              size_t         data_size,
+                              int          (*cmp)(const void*, const void*)) {
+    if (data_size == 1u) {
+        __m128i vmin = _mm_set1_epi8((char)0xFF);
+        size_t  i    = 0u;
+        while (i + 16u <= len) {
+            vmin = _mm_min_epu8(vmin, _mm_loadu_si128((__m128i*)(data + i)));
+            i += 16u;
+        }
+        for (; i < len; i++) {
+            __m128i v = _mm_set1_epi8((char)data[i]);
+            vmin = _mm_min_epu8(vmin, v);
+        }
+        uint8_t min_val = _sse2_hmin_u8(vmin);
+        for (size_t j = 0u; j < len; j++)
+            if (data[j] == min_val) return j;
+    }
+    size_t best = 0u;
+    for (size_t i = 1u; i < len; i++)
+        if (cmp(data + i * data_size, data + best * data_size) < 0) best = i;
+    return best;
+}
+
+static size_t simd_max_uint8(const uint8_t* data,
+                              size_t         len,
+                              size_t         data_size,
+                              int          (*cmp)(const void*, const void*)) {
+    if (data_size == 1u) {
+        __m128i vmax = _mm_setzero_si128();
+        size_t  i    = 0u;
+        while (i + 16u <= len) {
+            vmax = _mm_max_epu8(vmax, _mm_loadu_si128((__m128i*)(data + i)));
+            i += 16u;
+        }
+        for (; i < len; i++) {
+            __m128i v = _mm_set1_epi8((char)data[i]);
+            vmax = _mm_max_epu8(vmax, v);
+        }
+        uint8_t max_val = _sse2_hmax_u8(vmax);
+        for (size_t j = 0u; j < len; j++)
+            if (data[j] == max_val) return j;
+    }
+    size_t best = 0u;
+    for (size_t i = 1u; i < len; i++)
+        if (cmp(data + i * data_size, data + best * data_size) > 0) best = i;
+    return best;
+}
+// -------------------------------------------------------------------------------- 
+
+static void simd_sum_uint8(const uint8_t* data,
+                            size_t         len,
+                            size_t         data_size,
+                            void*          accum,
+                            void         (*add)(void* accum, const void* element)) {
+    size_t i = 0u;
+    if (data_size == 1u) {
+        while (i + 16u <= len) {
+            uint8_t tmp[16];
+            _mm_storeu_si128((__m128i*)tmp,
+                             _mm_loadu_si128((__m128i*)(data + i)));
+            for (size_t e = 0u; e < 16u; e++) add(accum, &tmp[e]);
+            i += 16u;
+        }
+    } else if (data_size == 2u) {
+        while (i + 8u <= len) {
+            uint16_t tmp[8];
+            _mm_storeu_si128((__m128i*)tmp,
+                             _mm_loadu_si128((__m128i*)(data + i * 2u)));
+            for (size_t e = 0u; e < 8u; e++) add(accum, &tmp[e]);
+            i += 8u;
+        }
+    } else if (data_size == 4u) {
+        while (i + 4u <= len) {
+            uint32_t tmp[4];
+            _mm_storeu_si128((__m128i*)tmp,
+                             _mm_loadu_si128((__m128i*)(data + i * 4u)));
+            for (size_t e = 0u; e < 4u; e++) add(accum, &tmp[e]);
+            i += 4u;
+        }
+    } else if (data_size == 8u) {
+        while (i + 2u <= len) {
+            uint64_t tmp[2];
+            _mm_storeu_si128((__m128i*)tmp,
+                             _mm_loadu_si128((__m128i*)(data + i * 8u)));
+            for (size_t e = 0u; e < 2u; e++) add(accum, &tmp[e]);
+            i += 2u;
+        }
+    }
+    for (; i < len; i++) add(accum, data + i * data_size);
 }
 // ================================================================================ 
 // ================================================================================ 

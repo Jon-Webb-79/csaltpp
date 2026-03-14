@@ -1039,16 +1039,16 @@ Only works if pool owns arena or arena supports growth. </para>
 <codeline><highlight class="normal">pool-&gt;return_element(ptr.value(),<sp/>256);</highlight></codeline>
 </programlisting></para>
 </simplesect>
-<simplesect kind="par"><title>Object Pool Pattern</title><para><programlisting filename=".cpp"><codeline><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Particle<sp/>{<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>x,<sp/>y,<sp/>z;<sp/>};</highlight></codeline>
-<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>pool<sp/>=<sp/><ref refid="classcslt_1_1PoolAllocator_1a87a93c1ba62e4a84c9c7134926210813" kindref="member">PoolAllocator::Heap</ref>(</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(Particle),<sp/>1000).value();</highlight></codeline>
+<simplesect kind="par"><title>Object Pool Pattern</title><para><programlisting filename=".cpp"><codeline><highlight class="keyword">struct<sp/></highlight><highlight class="normal"><ref refid="structParticle" kindref="compound">Particle</ref><sp/>{<sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>x,<sp/>y,<sp/>z;<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>pool<sp/>=<sp/><ref refid="classcslt_1_1PoolAllocator_1a87a93c1ba62e4a84c9c7134926210813" kindref="member">PoolAllocator::Heap</ref>(</highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<ref refid="structParticle" kindref="compound">Particle</ref>),<sp/>1000).value();</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Allocate<sp/>and<sp/>construct</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>mem<sp/>=<sp/>pool-&gt;alloc_pool().value();</highlight></codeline>
-<codeline><highlight class="normal">Particle*<sp/>p<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>(mem)<sp/>Particle();</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="structParticle" kindref="compound">Particle</ref>*<sp/>p<sp/>=<sp/></highlight><highlight class="keyword">new</highlight><highlight class="normal"><sp/>(mem)<sp/><ref refid="structParticle" kindref="compound">Particle</ref>();</highlight></codeline>
 <codeline><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Destroy<sp/>and<sp/>return</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal">p-&gt;~Particle();</highlight></codeline>
-<codeline><highlight class="normal">pool-&gt;return_element(mem,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(Particle));</highlight></codeline>
+<codeline><highlight class="normal">pool-&gt;return_element(mem,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(<ref refid="structParticle" kindref="compound">Particle</ref>));</highlight></codeline>
 </programlisting></para>
 </simplesect>
 <simplesect kind="note"><para>Block size must be at least sizeof(void*) for free-list management </para>

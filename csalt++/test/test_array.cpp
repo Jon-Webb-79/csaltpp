@@ -2671,7 +2671,19 @@ TEST_F(ArrayInitTest, ReverseTwoElementArray) {
 // ============================================================================
 // Comparators used across sort() tests
 // ============================================================================
- 
+
+struct Particle {
+    float mass;      ///< Mass in arbitrary units
+    float charge;    ///< Charge in arbitrary units
+    int   id;        ///< Unique identifier
+
+    bool operator==(const Particle& other) const noexcept {
+        return mass   == other.mass   &&
+               charge == other.charge &&
+               id     == other.id;
+    }
+};
+
 static int cmp_int_asc(const int& a, const int& b) {
     return (a > b) - (a < b);
 }
@@ -2683,7 +2695,15 @@ static int cmp_double_asc(const double& a, const double& b) {
 static int cmp_point_x_asc(const Point& a, const Point& b) {
     return (a.x > b.x) - (a.x < b.x);
 }
+// -------------------------------------------------------------------------------- 
+
+static int cmp_float_asc(const float& a, const float& b) {
+    return (a > b) - (a < b);
+}
  
+static int cmp_particle_mass_asc(const Particle& a, const Particle& b) {
+    return (a.mass > b.mass) - (a.mass < b.mass);
+}
 // ============================================================================
 // sort() tests
 // ============================================================================
@@ -3016,6 +3036,329 @@ TEST_F(ArrayInitTest, SortAscendingThenDescendingProducesReverse) {
     EXPECT_EQ(arr->data()[2], 3);
     EXPECT_EQ(arr->data()[3], 2);
     EXPECT_EQ(arr->data()[4], 1);
+}
+// ============================================================================
+// min() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that min() returns the correct minimum float value
+ */
+TEST_F(ArrayInitTest, MinFloatReturnsCorrectValue) {
+    auto result = cslt::Array<float>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(3.5f);
+    arr->push_back(1.1f);
+    arr->push_back(4.4f);
+    arr->push_back(2.2f);
+ 
+    auto r = arr->min(cmp_float_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value(), 1.1f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() returns the first occurrence when duplicates exist
+ */
+TEST_F(ArrayInitTest, MinFloatWithDuplicatesReturnsFirst) {
+    auto result = cslt::Array<float>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(2.0f);
+    arr->push_back(1.0f);
+    arr->push_back(1.0f);
+    arr->push_back(3.0f);
+ 
+    auto r = arr->min(cmp_float_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value(), 1.0f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() on a single-element float array returns that element
+ */
+TEST_F(ArrayInitTest, MinFloatSingleElement) {
+    auto result = cslt::Array<float>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(7.7f);
+ 
+    auto r = arr->min(cmp_float_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value(), 7.7f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() on an empty float array returns an error
+ */
+TEST_F(ArrayInitTest, MinFloatEmptyArrayReturnsError) {
+    auto result = cslt::Array<float>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    auto r = arr->min(cmp_float_asc);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() does not modify the array
+ */
+TEST_F(ArrayInitTest, MinFloatDoesNotModifyArray) {
+    auto result = cslt::Array<float>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(3.0f);
+    arr->push_back(1.0f);
+    arr->push_back(2.0f);
+ 
+    arr->min(cmp_float_asc);
+ 
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_FLOAT_EQ(arr->data()[0], 3.0f);
+    EXPECT_FLOAT_EQ(arr->data()[1], 1.0f);
+    EXPECT_FLOAT_EQ(arr->data()[2], 2.0f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() returns the correct minimum Particle by mass
+ */
+TEST_F(ArrayInitTest, MinParticleByMassReturnsCorrectValue) {
+    auto result = cslt::Array<Particle>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    arr->push_back({9.1f,  -1.0f, 1});  // electron-like
+    arr->push_back({0.5f,   0.0f, 2});  // lightest
+    arr->push_back({1.8f,   1.0f, 3});  // proton-like
+ 
+    auto r = arr->min(cmp_particle_mass_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value().mass, 0.5f);
+    EXPECT_EQ(r.value().id, 2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() on a Particle array with a lambda comparator
+ *       comparing by charge returns the correct element
+ */
+TEST_F(ArrayInitTest, MinParticleByChargeWithLambda) {
+    auto result = cslt::Array<Particle>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    arr->push_back({1.0f,  0.5f, 1});
+    arr->push_back({2.0f, -1.5f, 2});   // most negative charge — minimum
+    arr->push_back({3.0f,  1.0f, 3});
+ 
+    auto r = arr->min([](const Particle& a, const Particle& b) {
+        return (a.charge > b.charge) - (a.charge < b.charge);
+    });
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value().charge, -1.5f);
+    EXPECT_EQ(r.value().id, 2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() on a single-element Particle array returns that element
+ */
+TEST_F(ArrayInitTest, MinParticleSingleElement) {
+    auto result = cslt::Array<Particle>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    Particle p{5.0f, 2.0f, 42};
+    arr->push_back(p);
+ 
+    auto r = arr->min(cmp_particle_mass_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), p);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that min() on an empty Particle array returns an error
+ */
+TEST_F(ArrayInitTest, MinParticleEmptyArrayReturnsError) {
+    auto result = cslt::Array<Particle>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    auto r = arr->min(cmp_particle_mass_asc);
+    EXPECT_FALSE(r.hasValue());
+}
+ 
+// ============================================================================
+// max() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that max() returns the correct maximum float value
+ */
+TEST_F(ArrayInitTest, MaxFloatReturnsCorrectValue) {
+    auto result = cslt::Array<float>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(3.5f);
+    arr->push_back(1.1f);
+    arr->push_back(4.4f);
+    arr->push_back(2.2f);
+ 
+    auto r = arr->max(cmp_float_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value(), 4.4f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() returns the first occurrence when duplicates exist
+ */
+TEST_F(ArrayInitTest, MaxFloatWithDuplicatesReturnsFirst) {
+    auto result = cslt::Array<float>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(1.0f);
+    arr->push_back(3.0f);
+    arr->push_back(3.0f);
+    arr->push_back(2.0f);
+ 
+    auto r = arr->max(cmp_float_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value(), 3.0f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() on a single-element float array returns that element
+ */
+TEST_F(ArrayInitTest, MaxFloatSingleElement) {
+    auto result = cslt::Array<float>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(9.9f);
+ 
+    auto r = arr->max(cmp_float_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value(), 9.9f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() on an empty float array returns an error
+ */
+TEST_F(ArrayInitTest, MaxFloatEmptyArrayReturnsError) {
+    auto result = cslt::Array<float>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    auto r = arr->max(cmp_float_asc);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() does not modify the array
+ */
+TEST_F(ArrayInitTest, MaxFloatDoesNotModifyArray) {
+    auto result = cslt::Array<float>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<float>, cslt::ArrayDeleter<float>> arr(result.value());
+ 
+    arr->push_back(3.0f);
+    arr->push_back(1.0f);
+    arr->push_back(2.0f);
+ 
+    arr->max(cmp_float_asc);
+ 
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_FLOAT_EQ(arr->data()[0], 3.0f);
+    EXPECT_FLOAT_EQ(arr->data()[1], 1.0f);
+    EXPECT_FLOAT_EQ(arr->data()[2], 2.0f);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() returns the correct maximum Particle by mass
+ */
+TEST_F(ArrayInitTest, MaxParticleByMassReturnsCorrectValue) {
+    auto result = cslt::Array<Particle>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    arr->push_back({0.5f,   0.0f, 1});  // lightest
+    arr->push_back({9.1f,  -1.0f, 2});  // heaviest
+    arr->push_back({1.8f,   1.0f, 3});
+ 
+    auto r = arr->max(cmp_particle_mass_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value().mass, 9.1f);
+    EXPECT_EQ(r.value().id, 2);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() on a Particle array with a lambda comparator
+ *       comparing by charge returns the correct element
+ */
+TEST_F(ArrayInitTest, MaxParticleByChargeWithLambda) {
+    auto result = cslt::Array<Particle>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    arr->push_back({1.0f, -1.0f, 1});
+    arr->push_back({2.0f,  0.5f, 2});
+    arr->push_back({3.0f,  2.5f, 3});  // highest charge — maximum
+ 
+    auto r = arr->max([](const Particle& a, const Particle& b) {
+        return (a.charge > b.charge) - (a.charge < b.charge);
+    });
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_FLOAT_EQ(r.value().charge, 2.5f);
+    EXPECT_EQ(r.value().id, 3);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() on a single-element Particle array returns that element
+ */
+TEST_F(ArrayInitTest, MaxParticleSingleElement) {
+    auto result = cslt::Array<Particle>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    Particle p{5.0f, 2.0f, 42};
+    arr->push_back(p);
+ 
+    auto r = arr->max(cmp_particle_mass_asc);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), p);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that max() on an empty Particle array returns an error
+ */
+TEST_F(ArrayInitTest, MaxParticleEmptyArrayReturnsError) {
+    auto result = cslt::Array<Particle>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Particle>, cslt::ArrayDeleter<Particle>> arr(result.value());
+ 
+    auto r = arr->max(cmp_particle_mass_asc);
+    EXPECT_FALSE(r.hasValue());
 }
 // ================================================================================
 // ================================================================================

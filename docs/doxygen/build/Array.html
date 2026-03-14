@@ -75,6 +75,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array6concatERK5ArrayI1TE"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array7reverseEv"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt5Array4sortEb4Func9Direction"><code class="docutils literal notranslate"><span class="pre">sort()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt5Array3minE8ExpectedI1TE4Func"><code class="docutils literal notranslate"><span class="pre">min()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt5Array3maxE8ExpectedI1TE4Func"><code class="docutils literal notranslate"><span class="pre">max()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4initE6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TER9Allocator"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TE"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
@@ -654,6 +656,150 @@ Implements an iterative median-of-three quicksort with an insertion sort fallbac
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>true on success; false if the array is uninitialised or contains fewer than two elements (no-op in those cases)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK4cslt5Array3minE8ExpectedI1TE4Func">
+<span id="_CPPv3I0ENK4cslt5Array3minE4Func"></span><span id="_CPPv2I0ENK4cslt5Array3minE4Func"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1aba7f27b63d398667436f10100f98ab42"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">min</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0ENK4cslt5Array3minE8ExpectedI1TE4Func" title="cslt::Array::min::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cmp</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK4cslt5Array3minE8ExpectedI1TE4Func" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the minimum element in the array. </p>
+<p>
+Any callable is accepted: lambda, functor, or plain function pointer. For T == uint8_t the comparator is ignored — the SIMD back-end uses hardware min directly.</p>
+<p>
+Scalar types — subtract or use the branchless idiom: <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// int array — branchless (avoids signed overflow risk of a - b)</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// float array — branchless</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Comparator examples</strong></dt><dd><p></p>
+</dd>
+</dl>
+</p>
+<p>Struct / class types — compare on a specific field: <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Particle struct with fields mass, charge, id</span>
+<span class="c1">// Find the particle with the lowest mass</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// Find the particle with the most negative charge</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">charge</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">charge</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">charge</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">charge</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</p>
+<p>File-scope comparator function (reusable across multiple calls): <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmp_particle_mass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">min</span><span class="p">(</span><span class="n">cmp_particle_mass</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Particle</span><span class="w"> </span><span class="n">lightest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+<p><dl class="simple">
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p><a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> is empty (<a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a>) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">int(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code>. The comparator must satisfy:<ul class="simple">
+<li><p>returns a negative value when a &lt; b</p></li>
+<li><p>returns zero when a == b</p></li>
+<li><p>returns a positive value when a &gt; b</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cmp</strong> – Comparator callable </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected&lt;T&gt; containing a copy of the minimum element on success, or an <a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a> if the array has no elements</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK4cslt5Array3maxE8ExpectedI1TE4Func">
+<span id="_CPPv3I0ENK4cslt5Array3maxE4Func"></span><span id="_CPPv2I0ENK4cslt5Array3maxE4Func"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1a9e807c06817e827112e674ba270e1706"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">max</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0ENK4cslt5Array3maxE8ExpectedI1TE4Func" title="cslt::Array::max::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cmp</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK4cslt5Array3maxE8ExpectedI1TE4Func" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the maximum element in the array. </p>
+<p>
+Any callable is accepted: lambda, functor, or plain function pointer. For T == uint8_t the comparator is ignored — the SIMD back-end uses hardware max directly.</p>
+<p>
+Scalar types — use the branchless idiom: <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// int array</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// float array</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<dl class="simple">
+<dt><strong>Comparator examples</strong></dt><dd><p></p>
+</dd>
+</dl>
+</p>
+<p>Struct / class types — compare on a specific field: <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Particle struct with fields mass, charge, id</span>
+<span class="c1">// Find the particle with the highest mass</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">);</span>
+<span class="p">});</span>
+
+<span class="c1">// Find the particle with the highest charge</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">charge</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">charge</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">charge</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">charge</span><span class="p">);</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+</p>
+<p>File-scope comparator function (reusable across multiple calls): <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmp_particle_mass</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">max</span><span class="p">(</span><span class="n">cmp_particle_mass</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Particle</span><span class="w"> </span><span class="n">heaviest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+<p><dl class="simple">
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p><a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> is empty (<a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a>) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">int(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code>. The comparator must satisfy:<ul class="simple">
+<li><p>returns a negative value when a &lt; b</p></li>
+<li><p>returns zero when a == b</p></li>
+<li><p>returns a positive value when a &gt; b</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>cmp</strong> – Comparator callable </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected&lt;T&gt; containing a copy of the maximum element on success, or an <a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a> if the array has no elements</p>
 </dd>
 </dl>
 </dd></dl>

@@ -396,6 +396,46 @@ namespace cslt {
                 }
             }
         }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Return the index of the minimum element
+         *
+         * @details For T == uint8_t delegates to the SIMD back-end selected at
+         *          compile time.  For all other types performs a scalar linear
+         *          scan using the caller-supplied comparator.
+         */
+        template <typename Func>
+        size_t _min_index(Func cmp) const noexcept {
+            if constexpr (std::is_same_v<T, uint8_t>) {
+                return simd_min_uint8(data_, len_);
+            } else {
+                size_t best = 0u;
+                for (size_t i = 1u; i < len_; ++i)
+                    if (cmp(data_[i], data_[best]) < 0) best = i;
+                return best;
+            }
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Return the index of the maximum element
+         *
+         * @details For T == uint8_t delegates to the SIMD back-end selected at
+         *          compile time.  For all other types performs a scalar linear
+         *          scan using the caller-supplied comparator.
+         */
+        template <typename Func>
+        size_t _max_index(Func cmp) const noexcept {
+            if constexpr (std::is_same_v<T, uint8_t>) {
+                return simd_max_uint8(data_, len_);
+            } else {
+                size_t best = 0u;
+                for (size_t i = 1u; i < len_; ++i)
+                    if (cmp(data_[i], data_[best]) > 0) best = i;
+                return best;
+            }
+        }
 // --------------------------------------------------------------------------------
 
         /**
@@ -1343,6 +1383,7 @@ namespace cslt {
          *           cslt::Direction::REVERSE);   // descending
          * @endcode
          */
+
         template <typename Func>
         bool sort(Func cmp, Direction dir) noexcept {
             if (!data_ || !allocator_) return false;
@@ -1350,6 +1391,150 @@ namespace cslt {
  
             _quicksort(0u, len_ - 1u, cmp, dir);
             return true;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Return the minimum element in the array
+         *
+         * @tparam Func  Callable with signature `int(const T&, const T&)`.
+         *               The comparator must satisfy:
+         *               - returns a negative value when a <  b
+         *               - returns zero              when a == b
+         *               - returns a positive value  when a >  b
+         *
+         *               Any callable is accepted: lambda, functor, or plain
+         *               function pointer.  For T == uint8_t the comparator is
+         *               ignored — the SIMD back-end uses hardware min directly.
+         *
+         * @param cmp  Comparator callable
+         * @return Expected<T> containing a copy of the minimum element on
+         *         success, or an EmptyError if the array has no elements
+         *
+         * @par Comparator examples
+         *
+         * Scalar types — subtract or use the branchless idiom:
+         * @code{.cpp}
+         * // int array — branchless (avoids signed overflow risk of a - b)
+         * auto r = arr->min([](const int& a, const int& b) {
+         *     return (a > b) - (a < b);
+         * });
+         *
+         * // float array — branchless
+         * auto r = arr->min([](const float& a, const float& b) {
+         *     return (a > b) - (a < b);
+         * });
+         * @endcode
+         *
+         * Struct / class types — compare on a specific field:
+         * @code{.cpp}
+         * // Particle struct with fields mass, charge, id
+         * // Find the particle with the lowest mass
+         * auto r = arr->min([](const Particle& a, const Particle& b) {
+         *     return (a.mass > b.mass) - (a.mass < b.mass);
+         * });
+         *
+         * // Find the particle with the most negative charge
+         * auto r = arr->min([](const Particle& a, const Particle& b) {
+         *     return (a.charge > b.charge) - (a.charge < b.charge);
+         * });
+         * @endcode
+         *
+         * File-scope comparator function (reusable across multiple calls):
+         * @code{.cpp}
+         * static int cmp_particle_mass(const Particle& a, const Particle& b) {
+         *     return (a.mass > b.mass) - (a.mass < b.mass);
+         * }
+         * auto r = arr->min(cmp_particle_mass);
+         * if (r.hasValue()) {
+         *     Particle lightest = r.value();
+         * }
+         * @endcode
+         *
+         * @par Error conditions
+         * - Array is empty (EmptyError)
+         */    
+        template <typename Func>
+        Expected<T> min(Func cmp) const noexcept {
+            Expected<T> result;
+            if (!data_ || len_ == 0u) {
+                result.setError(EmptyError("Array::min: array is empty"));
+                return result;
+            }
+            result.setValue(data_[_min_index(cmp)]);
+            return result;
+        }
+// --------------------------------------------------------------------------------
+ 
+        /**
+         * @brief Return the maximum element in the array
+         *
+         * @tparam Func  Callable with signature `int(const T&, const T&)`.
+         *               The comparator must satisfy:
+         *               - returns a negative value when a <  b
+         *               - returns zero              when a == b
+         *               - returns a positive value  when a >  b
+         *
+         *               Any callable is accepted: lambda, functor, or plain
+         *               function pointer.  For T == uint8_t the comparator is
+         *               ignored — the SIMD back-end uses hardware max directly.
+         *
+         * @param cmp  Comparator callable
+         * @return Expected<T> containing a copy of the maximum element on
+         *         success, or an EmptyError if the array has no elements
+         *
+         * @par Comparator examples
+         *
+         * Scalar types — use the branchless idiom:
+         * @code{.cpp}
+         * // int array
+         * auto r = arr->max([](const int& a, const int& b) {
+         *     return (a > b) - (a < b);
+         * });
+         *
+         * // float array
+         * auto r = arr->max([](const float& a, const float& b) {
+         *     return (a > b) - (a < b);
+         * });
+         * @endcode
+         *
+         * Struct / class types — compare on a specific field:
+         * @code{.cpp}
+         * // Particle struct with fields mass, charge, id
+         * // Find the particle with the highest mass
+         * auto r = arr->max([](const Particle& a, const Particle& b) {
+         *     return (a.mass > b.mass) - (a.mass < b.mass);
+         * });
+         *
+         * // Find the particle with the highest charge
+         * auto r = arr->max([](const Particle& a, const Particle& b) {
+         *     return (a.charge > b.charge) - (a.charge < b.charge);
+         * });
+         * @endcode
+         *
+         * File-scope comparator function (reusable across multiple calls):
+         * @code{.cpp}
+         * static int cmp_particle_mass(const Particle& a, const Particle& b) {
+         *     return (a.mass > b.mass) - (a.mass < b.mass);
+         * }
+         * auto r = arr->max(cmp_particle_mass);
+         * if (r.hasValue()) {
+         *     Particle heaviest = r.value();
+         * }
+         * @endcode
+         *
+         * @par Error conditions
+         * - Array is empty (EmptyError)
+         */ 
+        template <typename Func>
+        Expected<T> max(Func cmp) const noexcept {
+            Expected<T> result;
+            if (!data_ || len_ == 0u) {
+                result.setError(EmptyError("Array::max: array is empty"));
+                return result;
+            }
+            result.setValue(data_[_max_index(cmp)]);
+            return result;
         }
 // --------------------------------------------------------------------------------
 

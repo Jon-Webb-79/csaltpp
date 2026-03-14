@@ -47,7 +47,11 @@ bool \mbox{\hyperlink{classcslt_1_1Array_a4695ffd06f5596aaa146af0bf9990dc2}{conc
 void \mbox{\hyperlink{classcslt_1_1Array_abea00fd3a938b939d6b5ca58c3671f0e}{reverse}} () noexcept
 \begin{DoxyCompactList}\small\item\em Reverse the order of all elements in the array in place. \end{DoxyCompactList}\item 
 {\footnotesize template$<$typename Func $>$ }\\bool \mbox{\hyperlink{classcslt_1_1Array_a5641e347374697257d317a5119de8571}{sort}} (Func cmp, \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2}{Direction}} dir) noexcept
-\begin{DoxyCompactList}\small\item\em Sort the array in place using an iterative quicksort. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Sort the array in place using an iterative quicksort. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ T $>$ \mbox{\hyperlink{classcslt_1_1Array_aba7f27b63d398667436f10100f98ab42}{min}} (Func cmp) const noexcept
+\begin{DoxyCompactList}\small\item\em Return the minimum element in the array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ T $>$ \mbox{\hyperlink{classcslt_1_1Array_a9e807c06817e827112e674ba270e1706}{max}} (Func cmp) const noexcept
+\begin{DoxyCompactList}\small\item\em Return the maximum element in the array. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -480,7 +484,177 @@ A pointer obtained after a reallocation (e.\+g. following a push that triggered 
 \DoxyCodeLine{\textcolor{keywordflow}{if} (arr-\/>is\_ptr(p)) \{ ... \}}
 
 \end{DoxyCode}
- \mbox{\Hypertarget{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}\label{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}} 
+ \mbox{\Hypertarget{classcslt_1_1Array_a9e807c06817e827112e674ba270e1706}\label{classcslt_1_1Array_a9e807c06817e827112e674ba270e1706}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!max@{max}}
+\index{max@{max}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{max()}{max()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$T$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::max (\begin{DoxyParamCaption}\item[{Func}]{cmp }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return the maximum element in the array. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily int(const T\&, const T\&)}. The comparator must satisfy\+:
+\begin{DoxyItemize}
+\item returns a negative value when a $<$ b
+\item returns zero when a == b
+\item returns a positive value when a $>$ b
+\end{DoxyItemize}\\
+\hline
+\end{DoxyTemplParams}
+Any callable is accepted\+: lambda, functor, or plain function pointer. For T == uint8\+\_\+t the comparator is ignored — the SIMD back-\/end uses hardware max directly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmp} & Comparator callable \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+T$>$ containing a copy of the maximum element on success, or an \mbox{\hyperlink{classcslt_1_1EmptyError}{Empty\+Error}} if the array has no elements
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Comparator examples}
+
+\end{DoxyParagraph}
+Scalar types — use the branchless idiom\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// int array}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>max([](\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& a, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a > b) -\/ (a < b);}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// float array}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>max([](\textcolor{keyword}{const} \textcolor{keywordtype}{float}\& a, \textcolor{keyword}{const} \textcolor{keywordtype}{float}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a > b) -\/ (a < b);}
+\DoxyCodeLine{\});}
+
+\end{DoxyCode}
+
+
+Struct / class types — compare on a specific field\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Particle struct with fields mass, charge, id}}
+\DoxyCodeLine{\textcolor{comment}{// Find the particle with the highest mass}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>max([](\textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& a, \textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} > b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}}) -\/ (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} < b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}});}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Find the particle with the highest charge}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>max([](\textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& a, \textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}} > b.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}}) -\/ (a.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}} < b.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}});}
+\DoxyCodeLine{\});}
+
+\end{DoxyCode}
+
+
+File-\/scope comparator function (reusable across multiple calls)\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{static} \textcolor{keywordtype}{int} cmp\_particle\_mass(\textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& a, \textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} > b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}}) -\/ (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} < b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>max(cmp\_particle\_mass);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{structParticle}{Particle}} heaviest = r.value();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyParagraph}{Error conditions}
+
+\begin{DoxyItemize}
+\item \mbox{\hyperlink{classcslt_1_1Array}{Array}} is empty (\mbox{\hyperlink{classcslt_1_1EmptyError}{Empty\+Error}}) 
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classcslt_1_1Array_aba7f27b63d398667436f10100f98ab42}\label{classcslt_1_1Array_aba7f27b63d398667436f10100f98ab42}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!min@{min}}
+\index{min@{min}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{min()}{min()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$T$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::min (\begin{DoxyParamCaption}\item[{Func}]{cmp }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return the minimum element in the array. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily int(const T\&, const T\&)}. The comparator must satisfy\+:
+\begin{DoxyItemize}
+\item returns a negative value when a $<$ b
+\item returns zero when a == b
+\item returns a positive value when a $>$ b
+\end{DoxyItemize}\\
+\hline
+\end{DoxyTemplParams}
+Any callable is accepted\+: lambda, functor, or plain function pointer. For T == uint8\+\_\+t the comparator is ignored — the SIMD back-\/end uses hardware min directly.
+
+
+\begin{DoxyParams}{Parameters}
+{\em cmp} & Comparator callable \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+T$>$ containing a copy of the minimum element on success, or an \mbox{\hyperlink{classcslt_1_1EmptyError}{Empty\+Error}} if the array has no elements
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Comparator examples}
+
+\end{DoxyParagraph}
+Scalar types — subtract or use the branchless idiom\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// int array — branchless (avoids signed overflow risk of a -\/ b)}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>min([](\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& a, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a > b) -\/ (a < b);}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// float array — branchless}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>min([](\textcolor{keyword}{const} \textcolor{keywordtype}{float}\& a, \textcolor{keyword}{const} \textcolor{keywordtype}{float}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a > b) -\/ (a < b);}
+\DoxyCodeLine{\});}
+
+\end{DoxyCode}
+
+
+Struct / class types — compare on a specific field\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Particle struct with fields mass, charge, id}}
+\DoxyCodeLine{\textcolor{comment}{// Find the particle with the lowest mass}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>min([](\textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& a, \textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} > b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}}) -\/ (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} < b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}});}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Find the particle with the most negative charge}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>min([](\textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& a, \textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}} > b.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}}) -\/ (a.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}} < b.\mbox{\hyperlink{structParticle_a49266db1373b6cbe831a8e638ad366f5}{charge}});}
+\DoxyCodeLine{\});}
+
+\end{DoxyCode}
+
+
+File-\/scope comparator function (reusable across multiple calls)\+: 
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{static} \textcolor{keywordtype}{int} cmp\_particle\_mass(\textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& a, \textcolor{keyword}{const} \mbox{\hyperlink{structParticle}{Particle}}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} > b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}}) -\/ (a.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}} < b.\mbox{\hyperlink{structParticle_a3c6ce7e289c672449533a714b5c22e75}{mass}});}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>min(cmp\_particle\_mass);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \mbox{\hyperlink{structParticle}{Particle}} lightest = r.value();}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+
+
+\begin{DoxyParagraph}{Error conditions}
+
+\begin{DoxyItemize}
+\item \mbox{\hyperlink{classcslt_1_1Array}{Array}} is empty (\mbox{\hyperlink{classcslt_1_1EmptyError}{Empty\+Error}}) 
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}\label{classcslt_1_1Array_a01ca5eb33c0b1e4e46cc7379f872e6df}} 
 \index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!operator\mbox{[}\mbox{]}@{operator[]}}
 \index{operator\mbox{[}\mbox{]}@{operator[]}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
 \doxysubsubsection{\texorpdfstring{operator[]()}{operator[]()}}

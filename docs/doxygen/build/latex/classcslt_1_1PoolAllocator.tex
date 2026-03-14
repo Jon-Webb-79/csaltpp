@@ -112,16 +112,16 @@ The pool carves blocks from contiguous memory slices backed by an arena. Freed b
 \begin{DoxyParagraph}{Object Pool Pattern}
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{struct }Particle \{ \textcolor{keywordtype}{float} x, y, z; \};}
-\DoxyCodeLine{\textcolor{keyword}{auto} pool = \mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{PoolAllocator::Heap}}(\textcolor{keyword}{sizeof}(Particle), 1000).value();}
+\DoxyCodeLine{\textcolor{keyword}{struct }\mbox{\hyperlink{structParticle}{Particle}} \{ \textcolor{keywordtype}{float} x, y, z; \};}
+\DoxyCodeLine{\textcolor{keyword}{auto} pool = \mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{PoolAllocator::Heap}}(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{structParticle}{Particle}}), 1000).value();}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{comment}{// Allocate and construct}}
 \DoxyCodeLine{\textcolor{keywordtype}{void}* mem = pool-\/>alloc\_pool().value();}
-\DoxyCodeLine{Particle* p = \textcolor{keyword}{new} (mem) Particle();}
+\DoxyCodeLine{\mbox{\hyperlink{structParticle}{Particle}}* p = \textcolor{keyword}{new} (mem) \mbox{\hyperlink{structParticle}{Particle}}();}
 \DoxyCodeLine{}
 \DoxyCodeLine{\textcolor{comment}{// Destroy and return}}
 \DoxyCodeLine{p-\/>\string~Particle();}
-\DoxyCodeLine{pool-\/>return\_element(mem, \textcolor{keyword}{sizeof}(Particle));}
+\DoxyCodeLine{pool-\/>return\_element(mem, \textcolor{keyword}{sizeof}(\mbox{\hyperlink{structParticle}{Particle}}));}
 
 \end{DoxyCode}
 

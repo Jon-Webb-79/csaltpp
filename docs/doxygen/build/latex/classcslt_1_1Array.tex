@@ -51,7 +51,15 @@ void \mbox{\hyperlink{classcslt_1_1Array_abea00fd3a938b939d6b5ca58c3671f0e}{reve
 {\footnotesize template$<$typename Func $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ T $>$ \mbox{\hyperlink{classcslt_1_1Array_aba7f27b63d398667436f10100f98ab42}{min}} (Func cmp) const noexcept
 \begin{DoxyCompactList}\small\item\em Return the minimum element in the array. \end{DoxyCompactList}\item 
 {\footnotesize template$<$typename Func $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ T $>$ \mbox{\hyperlink{classcslt_1_1Array_a9e807c06817e827112e674ba270e1706}{max}} (Func cmp) const noexcept
-\begin{DoxyCompactList}\small\item\em Return the maximum element in the array. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Return the maximum element in the array. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ size\+\_\+t $>$ \mbox{\hyperlink{classcslt_1_1Array_a047274afa0f9af3352a9b3fff3451c4e}{contains}} (const T \&value) const noexcept
+\begin{DoxyCompactList}\small\item\em Search for the first element whose byte representation matches {\ttfamily value} and return its index. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ size\+\_\+t $>$ \mbox{\hyperlink{classcslt_1_1Array_ae87fbc3108bb337639c72c08b68802a6}{contains}} (const T \&value, Func eq) const noexcept
+\begin{DoxyCompactList}\small\item\em Search for the first element for which a caller-\/supplied equality predicate returns true and return its index. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ size\+\_\+t $>$ \mbox{\hyperlink{classcslt_1_1Array_a561bb0eb5a72309e378d5d6a91a55035}{binary\+\_\+search}} (const T \&value, Func cmp, \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2}{Direction}} dir, bool is\+\_\+sorted) noexcept
+\begin{DoxyCompactList}\small\item\em Search for {\ttfamily value} using binary search and return its index. \end{DoxyCompactList}\item 
+{\footnotesize template$<$typename Func $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ std\+::pair$<$ size\+\_\+t, size\+\_\+t $>$ $>$ \mbox{\hyperlink{classcslt_1_1Array_a96999c71f744e1d4067484eb4a84044d}{bracketed\+\_\+binary\+\_\+search}} (const T \&value, Func cmp, \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2}{Direction}} dir, bool is\+\_\+sorted) noexcept
+\begin{DoxyCompactList}\small\item\em Search for the bracketing pair of indices surrounding {\ttfamily value} in the sorted array. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -150,6 +158,171 @@ This class cannot be instantiated directly. Use the \mbox{\hyperlink{classcslt_1
 
 
 \doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classcslt_1_1Array_a561bb0eb5a72309e378d5d6a91a55035}\label{classcslt_1_1Array_a561bb0eb5a72309e378d5d6a91a55035}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!binary\_search@{binary\_search}}
+\index{binary\_search@{binary\_search}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{binary\_search()}{binary\_search()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$size\+\_\+t$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::binary\+\_\+search (\begin{DoxyParamCaption}\item[{const T \&}]{value,  }\item[{Func}]{cmp,  }\item[{\mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2}{Direction}}}]{dir,  }\item[{bool}]{is\+\_\+sorted }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Search for {\ttfamily value} using binary search and return its index. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily int(const T\&, const T\&)}. Same convention as \mbox{\hyperlink{classcslt_1_1Array_a5641e347374697257d317a5119de8571}{sort()}} and \mbox{\hyperlink{classcslt_1_1Array_aba7f27b63d398667436f10100f98ab42}{min()}}/max()\+:
+\begin{DoxyItemize}
+\item negative when a $<$ b
+\item zero when a == b
+\item positive when a $>$ b
+\end{DoxyItemize}\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Element to search for \\
+\hline
+{\em cmp} & Comparator defining the sort order \\
+\hline
+{\em dir} & \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{Direction\+::\+FORWARD}} if the array is (or should be) sorted ascending; \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c}{Direction\+::\+REVERSE}} if descending. Must be consistent with {\ttfamily cmp}. \\
+\hline
+{\em is\+\_\+sorted} & Pass true if the array is already sorted in the order defined by {\ttfamily cmp} and {\ttfamily dir}. Pass false to sort the array in place before searching.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$size\+\_\+t$>$ containing the zero-\/based index of a matching element on success, or an \mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}} if no match is found or the array is empty.
+\end{DoxyReturn}
+Implements a standard iterative binary search. When {\ttfamily is\+\_\+sorted} is false the array is sorted in place via the same quicksort used by \mbox{\hyperlink{classcslt_1_1Array_a5641e347374697257d317a5119de8571}{sort()}} before the search begins, so subsequent calls with is\+\_\+sorted == true are valid.
+
+If multiple elements compare equal to {\ttfamily value} the index of the first (lowest) occurrence is returned. Once a match is found the search continues leftward until no earlier match exists.
+
+\begin{DoxyParagraph}{Complexity}
+
+\begin{DoxyItemize}
+\item O(n log n) when is\+\_\+sorted == false (sort step dominates)
+\item O(log n) when is\+\_\+sorted == true
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Usage examples}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{keyword}{auto} cmp = [](\textcolor{keyword}{const} \textcolor{keywordtype}{int}\& a, \textcolor{keyword}{const} \textcolor{keywordtype}{int}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a > b) -\/ (a < b);}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Array not yet sorted — sort in place then search}}
+\DoxyCodeLine{arr-\/>binary\_search(30, cmp, \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{cslt::Direction::FORWARD}}, \textcolor{keyword}{false});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Array already sorted ascending — skip the sort step}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>binary\_search(30, cmp, \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{cslt::Direction::FORWARD}}, \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} idx = r.value();}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Struct array sorted descending by x field}}
+\DoxyCodeLine{\textcolor{keyword}{auto} cmp\_pt = [](\textcolor{keyword}{const} \mbox{\hyperlink{structPoint}{Point}}\& a, \textcolor{keyword}{const} \mbox{\hyperlink{structPoint}{Point}}\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} (a.\mbox{\hyperlink{structPoint_a8c779e11e694b20e0946105a9f5de842}{x}} > b.x) -\/ (a.\mbox{\hyperlink{structPoint_a8c779e11e694b20e0946105a9f5de842}{x}} < b.x);}
+\DoxyCodeLine{\};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>binary\_search(target, cmp\_pt,}
+\DoxyCodeLine{                            \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c}{cslt::Direction::REVERSE}}, \textcolor{keyword}{true});}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error conditions}
+
+\begin{DoxyItemize}
+\item Value not found (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}})
+\item \mbox{\hyperlink{classcslt_1_1Array}{Array}} is empty (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}}) 
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classcslt_1_1Array_a96999c71f744e1d4067484eb4a84044d}\label{classcslt_1_1Array_a96999c71f744e1d4067484eb4a84044d}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!bracketed\_binary\_search@{bracketed\_binary\_search}}
+\index{bracketed\_binary\_search@{bracketed\_binary\_search}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{bracketed\_binary\_search()}{bracketed\_binary\_search()}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$std\+::pair$<$size\+\_\+t, size\+\_\+t$>$ $>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::bracketed\+\_\+binary\+\_\+search (\begin{DoxyParamCaption}\item[{const T \&}]{value,  }\item[{Func}]{cmp,  }\item[{\mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2}{Direction}}}]{dir,  }\item[{bool}]{is\+\_\+sorted }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Search for the bracketing pair of indices surrounding {\ttfamily value} in the sorted array. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily int(const T\&, const T\&)}. Same convention as \mbox{\hyperlink{classcslt_1_1Array_a5641e347374697257d317a5119de8571}{sort()}} and \mbox{\hyperlink{classcslt_1_1Array_a561bb0eb5a72309e378d5d6a91a55035}{binary\+\_\+search()}}\+:
+\begin{DoxyItemize}
+\item negative when a $<$ b
+\item zero when a == b
+\item positive when a $>$ b
+\end{DoxyItemize}\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Element to bracket \\
+\hline
+{\em cmp} & Comparator defining the sort order \\
+\hline
+{\em dir} & \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{Direction\+::\+FORWARD}} for ascending order; \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c}{Direction\+::\+REVERSE}} for descending order. Must be consistent with {\ttfamily cmp}. \\
+\hline
+{\em is\+\_\+sorted} & Pass true if the array is already sorted in the order defined by {\ttfamily cmp} and {\ttfamily dir}. Pass false to sort the array in place before searching.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$std\+::pair$<$size\+\_\+t, size\+\_\+t$>$$>$ where\+:
+\begin{DoxyItemize}
+\item first is the index of the largest element $<$= {\ttfamily value} (lower bound)
+\item second is the index of the smallest element $>$= {\ttfamily value} (upper bound)
+\end{DoxyItemize}
+\end{DoxyReturn}
+When {\ttfamily value} exists in the array both bounds are the index of the first (lowest) matching element.
+
+Returns \mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}} when\+:
+\begin{DoxyItemize}
+\item the array is empty
+\item {\ttfamily value} is less than the smallest element (no lower bound)
+\item {\ttfamily value} is greater than the largest element (no upper bound)
+
+The algorithm performs a single binary search pass to locate the insertion point of {\ttfamily value}, then derives the lower and upper bound indices from the elements immediately surrounding that point.
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Complexity}
+
+\begin{DoxyItemize}
+\item O(n log n) when is\+\_\+sorted == false (sort step dominates)
+\item O(log n) when is\+\_\+sorted == true
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Usage examples}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Array \{10, 20, 30, 40, 50\} — bracket 25}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>bracketed\_binary\_search(25, cmp,}
+\DoxyCodeLine{                                      \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{cslt::Direction::FORWARD}}, \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} lo = r.value().first;   \textcolor{comment}{// index of 20}}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} hi = r.value().second;  \textcolor{comment}{// index of 30}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Exact match — bracket 30}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>bracketed\_binary\_search(30, cmp,}
+\DoxyCodeLine{                                      \mbox{\hyperlink{namespacecslt_aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31}{cslt::Direction::FORWARD}}, \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{comment}{// r.value().first == r.value().second == 2 (index of 30)}}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error conditions}
+
+\begin{DoxyItemize}
+\item \mbox{\hyperlink{classcslt_1_1Array}{Array}} is empty (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}})
+\item Value below the smallest element — no lower bound (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}})
+\item Value above the largest element — no upper bound (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}}) 
+\end{DoxyItemize}
+\end{DoxyParagraph}
 \mbox{\Hypertarget{classcslt_1_1Array_a40413b1da52d2649f2e028704fcd4c1a}\label{classcslt_1_1Array_a40413b1da52d2649f2e028704fcd4c1a}} 
 \index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!capacity@{capacity}}
 \index{capacity@{capacity}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
@@ -214,7 +387,132 @@ Self-\/concatenation (passing this array as {\ttfamily other}) is safe because \
 \DoxyCodeLine{\textcolor{comment}{// a now contains \{1, 2, 3, 4, 5, 6\}}}
 
 \end{DoxyCode}
- \mbox{\Hypertarget{classcslt_1_1Array_ab88d1e98d485536f968a0d7a968cabf2}\label{classcslt_1_1Array_ab88d1e98d485536f968a0d7a968cabf2}} 
+ \mbox{\Hypertarget{classcslt_1_1Array_a047274afa0f9af3352a9b3fff3451c4e}\label{classcslt_1_1Array_a047274afa0f9af3352a9b3fff3451c4e}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!contains@{contains}}
+\index{contains@{contains}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{contains()}{contains()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$size\+\_\+t$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::contains (\begin{DoxyParamCaption}\item[{const T \&}]{value }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Search for the first element whose byte representation matches {\ttfamily value} and return its index. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Element to search for. Comparison is performed by comparing the raw byte representation of each array element against the raw bytes of {\ttfamily value} using simd\+\_\+contains\+\_\+uint8() (for the SIMD-\/accelerated path) or memcmp() (for the scalar remainder).\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$size\+\_\+t$>$ containing the zero-\/based index of the first match on success, or an \mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}} if no match is found
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Compile-\/time restriction}
+This overload is only available when T satisfies both\+:
+\begin{DoxyItemize}
+\item std\+::is\+\_\+trivially\+\_\+copyable\+\_\+v$<$\+T$>$ == true
+\item std\+::is\+\_\+floating\+\_\+point\+\_\+v$<$\+T$>$ == false
+\end{DoxyItemize}
+\end{DoxyParagraph}
+Floating-\/point types are excluded because -\/0.\+0 and +0.\+0 are equal by value but differ in bit pattern, so memcmp-\/based search would produce incorrect results. Use the predicate overload (coming soon) for float, double, and long double.
+
+Structs with padding bytes are also subject to this caveat — padding content is unspecified by the standard and may differ between two otherwise identical objects. Prefer the predicate overload for structs unless you can guarantee there are no padding bytes.
+
+\begin{DoxyParagraph}{SIMD dispatch}
+The search delegates to simd\+\_\+contains\+\_\+uint8(), which is resolved at compile time to the best available SIMD back-\/end (AVX-\/512, AVX2, AVX, SSE4.\+1, SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback. For element sizes 1, 2, 4, and 8 bytes the SIMD path is taken; all other sizes fall through to a scalar memcmp loop.
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Usage examples}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Search for an integer value}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>contains(42);}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} idx = r.value();  \textcolor{comment}{// index of first 42}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Search for a plain struct (no padding, no floats)}}
+\DoxyCodeLine{\textcolor{keyword}{struct }Vec3i \{ \textcolor{keywordtype}{int} x, y, z; \};}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>contains(Vec3i\{1, 2, 3\});}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error conditions}
+
+\begin{DoxyItemize}
+\item Value not found in the array (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}}) 
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classcslt_1_1Array_ae87fbc3108bb337639c72c08b68802a6}\label{classcslt_1_1Array_ae87fbc3108bb337639c72c08b68802a6}} 
+\index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!contains@{contains}}
+\index{contains@{contains}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{contains()}{contains()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$typename T $>$ \\
+template$<$typename Func $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$size\+\_\+t$>$ \mbox{\hyperlink{classcslt_1_1Array}{cslt\+::\+Array}}$<$ T $>$\+::contains (\begin{DoxyParamCaption}\item[{const T \&}]{value,  }\item[{Func}]{eq }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Search for the first element for which a caller-\/supplied equality predicate returns true and return its index. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily bool(const T\&, const T\&)}. Must return true when the two arguments are considered equal. Any callable is accepted\+: lambda, functor, or plain function pointer.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em value} & Element to search for, passed as the first argument to {\ttfamily eq} at each position \\
+\hline
+{\em eq} & Equality predicate\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$size\+\_\+t$>$ containing the zero-\/based index of the first match on success, or an \mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}} if no match is found
+\end{DoxyReturn}
+Performs a linear scan from index 0 to \mbox{\hyperlink{classcslt_1_1Array_aad7dcf8caca330a7161686e5db7e1d32}{size()}}-\/1, calling eq(value, data\+\_\+\mbox{[}i\mbox{]}) at each position. No SIMD acceleration is applied — equality semantics are entirely defined by the caller\textquotesingle{}s predicate, so no byte-\/level optimisation is possible.
+
+This overload is intended for\+:
+\begin{DoxyItemize}
+\item Non-\/trivially-\/copyable types (classes with user-\/defined copy constructors or destructors)
+\item Trivially copyable types where value equality differs from bitwise equality (e.\+g. structs with padding bytes)
+\item Any type where a custom notion of equality is required (e.\+g. case-\/insensitive string matching, epsilon comparison)
+\end{DoxyItemize}
+
+\begin{DoxyParagraph}{Usage examples}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{// Non-\/trivial class with a user-\/defined copy constructor}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>contains(target,}
+\DoxyCodeLine{    [](\textcolor{keyword}{const} MyClass\& a, \textcolor{keyword}{const} MyClass\& b) \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{return} a.id() == b.id();}
+\DoxyCodeLine{    \});}
+\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
+\DoxyCodeLine{    \textcolor{keywordtype}{size\_t} idx = r.value();}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// Struct with padding — use operator== rather than memcmp}}
+\DoxyCodeLine{\textcolor{keyword}{struct }Padded \{ \textcolor{keywordtype}{char} c; \textcolor{keywordtype}{int} x; \};   \textcolor{comment}{// likely has 3 padding bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>contains(needle,}
+\DoxyCodeLine{    [](\textcolor{keyword}{const} Padded\& a, \textcolor{keyword}{const} Padded\& b) \{}
+\DoxyCodeLine{        \textcolor{keywordflow}{return} a.c == b.c \&\& a.x == b.x;}
+\DoxyCodeLine{    \});}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{// File-\/scope predicate (reusable across multiple calls)}}
+\DoxyCodeLine{\textcolor{keyword}{static} \textcolor{keywordtype}{bool} eq\_by\_id(\textcolor{keyword}{const} MyClass\& a, \textcolor{keyword}{const} MyClass\& b) \{}
+\DoxyCodeLine{    \textcolor{keywordflow}{return} a.id() == b.id();}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\textcolor{keyword}{auto} r = arr-\/>contains(target, eq\_by\_id);}
+
+\end{DoxyCode}
+
+\end{DoxyParagraph}
+\begin{DoxyParagraph}{Error conditions}
+
+\begin{DoxyItemize}
+\item Value not found in the array (\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error}}) 
+\end{DoxyItemize}
+\end{DoxyParagraph}
+\mbox{\Hypertarget{classcslt_1_1Array_ab88d1e98d485536f968a0d7a968cabf2}\label{classcslt_1_1Array_ab88d1e98d485536f968a0d7a968cabf2}} 
 \index{cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}!copy@{copy}}
 \index{copy@{copy}!cslt::Array$<$ T $>$@{cslt::Array$<$ T $>$}}
 \doxysubsubsection{\texorpdfstring{copy()}{copy()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}

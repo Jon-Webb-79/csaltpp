@@ -77,6 +77,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt5Array4sortEb4Func9Direction"><code class="docutils literal notranslate"><span class="pre">sort()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt5Array3minE8ExpectedI1TE4Func"><code class="docutils literal notranslate"><span class="pre">min()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt5Array3maxE8ExpectedI1TE4Func"><code class="docutils literal notranslate"><span class="pre">max()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5Array8containsERK1T"><code class="docutils literal notranslate"><span class="pre">contains()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt5Array8containsE8ExpectedI6size_tERK1T4Func"><code class="docutils literal notranslate"><span class="pre">contains()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt5Array13binary_searchE8ExpectedI6size_tERK1T4Func9Directionb"><code class="docutils literal notranslate"><span class="pre">binary_search()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt5Array23bracketed_binary_searchE8ExpectedINSt4pairI6size_t6size_tEEERK1T4Func9Directionb"><code class="docutils literal notranslate"><span class="pre">bracketed_binary_search()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4initE6size_tR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TER9Allocator"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5Array4copyERK5ArrayI1TE"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
@@ -800,6 +804,252 @@ Scalar types — use the branchless idiom: <div class="highlight-cpp notranslate
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Expected&lt;T&gt; containing a copy of the maximum element on success, or an <a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a> if the array has no elements</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5Array8containsERK1T">
+<span id="_CPPv3NK4cslt5Array8containsERK1T"></span><span id="_CPPv2NK4cslt5Array8containsERK1T"></span><span id="cslt::Array::contains__TCRC"></span><span class="target" id="classcslt_1_1Array_1a047274afa0f9af3352a9b3fff3451c4e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">contains</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5Array8containsERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Search for the first element whose byte representation matches <code class="docutils literal notranslate"><span class="pre">value</span></code> and return its index. </p>
+<p>
+Floating-point types are excluded because -0.0 and +0.0 are equal by value but differ in bit pattern, so memcmp-based search would produce incorrect results. Use the predicate overload (coming soon) for float, double, and long double.<dl class="simple">
+<dt><strong>Compile-time restriction</strong></dt><dd><p>This overload is only available when T satisfies both:<ul class="simple">
+<li><p>std::is_trivially_copyable_v&lt;T&gt; == true</p></li>
+<li><p>std::is_floating_point_v&lt;T&gt; == false</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<p>Structs with padding bytes are also subject to this caveat — padding content is unspecified by the standard and may differ between two otherwise identical objects. Prefer the predicate overload for structs unless you can guarantee there are no padding bytes.</p>
+<p><dl>
+<dt><strong>SIMD dispatch</strong></dt><dd><p>The search delegates to simd_contains_uint8(), which is resolved at compile time to the best available SIMD back-end (AVX-512, AVX2, AVX, SSE4.1, SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback. For element sizes 1, 2, 4, and 8 bytes the SIMD path is taken; all other sizes fall through to a scalar memcmp loop.</p>
+</dd>
+<dt><strong>Usage examples</strong></dt><dd><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Search for an integer value</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">contains</span><span class="p">(</span><span class="mi">42</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">();</span><span class="w">  </span><span class="c1">// index of first 42</span>
+<span class="p">}</span>
+
+<span class="c1">// Search for a plain struct (no padding, no floats)</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Vec3i</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">z</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">contains</span><span class="p">(</span><span class="n">Vec3i</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">});</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p>Value not found in the array (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Element to search for. Comparison is performed by comparing the raw byte representation of each array element against the raw bytes of <code class="docutils literal notranslate"><span class="pre">value</span></code> using simd_contains_uint8() (for the SIMD-accelerated path) or memcmp() (for the scalar remainder).</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;size_t&gt; containing the zero-based index of the first match on success, or an <a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a> if no match is found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK4cslt5Array8containsE8ExpectedI6size_tERK1T4Func">
+<span id="_CPPv3I0ENK4cslt5Array8containsERK1T4Func"></span><span id="_CPPv2I0ENK4cslt5Array8containsERK1T4Func"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1ae87fbc3108bb337639c72c08b68802a6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">contains</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span>, <a class="reference internal" href="#_CPPv4I0ENK4cslt5Array8containsE8ExpectedI6size_tERK1T4Func" title="cslt::Array::contains::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">eq</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK4cslt5Array8containsE8ExpectedI6size_tERK1T4Func" title="Link to this definition"></a><br /></dt>
+<dd><p>Search for the first element for which a caller-supplied equality predicate returns true and return its index. </p>
+<p>
+Performs a linear scan from index 0 to <a class="reference internal" href="#classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32"><span class="std std-ref">size()</span></a>-1, calling eq(value, data_[i]) at each position. No SIMD acceleration is applied — equality semantics are entirely defined by the caller’s predicate, so no byte-level optimisation is possible.</p>
+<p>This overload is intended for:<ul class="simple">
+<li><p>Non-trivially-copyable types (classes with user-defined copy constructors or destructors)</p></li>
+<li><p>Trivially copyable types where value equality differs from bitwise equality (e.g. structs with padding bytes)</p></li>
+<li><p>Any type where a custom notion of equality is required (e.g. case-insensitive string matching, epsilon comparison)</p></li>
+</ul>
+</p>
+<p><dl>
+<dt><strong>Usage examples</strong></dt><dd><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Non-trivial class with a user-defined copy constructor</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">contains</span><span class="p">(</span><span class="n">target</span><span class="p">,</span>
+<span class="w">    </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">id</span><span class="p">();</span>
+<span class="w">    </span><span class="p">});</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Struct with padding — use operator== rather than memcmp</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Padded</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">c</span><span class="p">;</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">x</span><span class="p">;</span><span class="w"> </span><span class="p">};</span><span class="w">   </span><span class="c1">// likely has 3 padding bytes</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">contains</span><span class="p">(</span><span class="n">needle</span><span class="p">,</span>
+<span class="w">    </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">Padded</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Padded</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">c</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">c</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">;</span>
+<span class="w">    </span><span class="p">});</span>
+
+<span class="c1">// File-scope predicate (reusable across multiple calls)</span>
+<span class="k">static</span><span class="w"> </span><span class="kt">bool</span><span class="w"> </span><span class="nf">eq_by_id</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">MyClass</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">id</span><span class="p">()</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">id</span><span class="p">();</span>
+<span class="p">}</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">contains</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">eq_by_id</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p>Value not found in the array (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">bool(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code>. Must return true when the two arguments are considered equal. Any callable is accepted: lambda, functor, or plain function pointer.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>value</strong> – Element to search for, passed as the first argument to <code class="docutils literal notranslate"><span class="pre">eq</span></code> at each position </p></li>
+<li><p><strong>eq</strong> – Equality predicate</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected&lt;size_t&gt; containing the zero-based index of the first match on success, or an <a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a> if no match is found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt5Array13binary_searchE8ExpectedI6size_tERK1T4Func9Directionb">
+<span id="_CPPv3I0EN4cslt5Array13binary_searchERK1T4Func9Directionb"></span><span id="_CPPv2I0EN4cslt5Array13binary_searchERK1T4Func9Directionb"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1a561bb0eb5a72309e378d5d6a91a55035"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">binary_search</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span>, <a class="reference internal" href="#_CPPv4I0EN4cslt5Array13binary_searchE8ExpectedI6size_tERK1T4Func9Directionb" title="cslt::Array::binary_search::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cmp</span></span>, <span class="n"><span class="pre">Direction</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dir</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">is_sorted</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN4cslt5Array13binary_searchE8ExpectedI6size_tERK1T4Func9Directionb" title="Link to this definition"></a><br /></dt>
+<dd><p>Search for <code class="docutils literal notranslate"><span class="pre">value</span></code> using binary search and return its index. </p>
+<p>
+Implements a standard iterative binary search. When <code class="docutils literal notranslate"><span class="pre">is_sorted</span></code> is false the array is sorted in place via the same quicksort used by <a class="reference internal" href="#classcslt_1_1Array_1a5641e347374697257d317a5119de8571"><span class="std std-ref">sort()</span></a> before the search begins, so subsequent calls with is_sorted == true are valid.</p>
+<p>If multiple elements compare equal to <code class="docutils literal notranslate"><span class="pre">value</span></code> the index of the first (lowest) occurrence is returned. Once a match is found the search continues leftward until no earlier match exists.</p>
+<p><dl>
+<dt><strong>Complexity</strong></dt><dd><p><ul class="simple">
+<li><p>O(n log n) when is_sorted == false (sort step dominates)</p></li>
+<li><p>O(log n) when is_sorted == true</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Usage examples</strong></dt><dd><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">cmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c1">// Array not yet sorted — sort in place then search</span>
+<span class="n">arr</span><span class="o">-&gt;</span><span class="n">binary_search</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="n">cmp</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">FORWARD</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+
+<span class="c1">// Array already sorted ascending — skip the sort step</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">binary_search</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="n">cmp</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">FORWARD</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">idx</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="c1">// Struct array sorted descending by x field</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">cmp_pt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Point</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">);</span>
+<span class="p">};</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">binary_search</span><span class="p">(</span><span class="n">target</span><span class="p">,</span><span class="w"> </span><span class="n">cmp_pt</span><span class="p">,</span>
+<span class="w">                            </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">REVERSE</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p>Value not found (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>)</p></li>
+<li><p><a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> is empty (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">int(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code>. Same convention as <a class="reference internal" href="#classcslt_1_1Array_1a5641e347374697257d317a5119de8571"><span class="std std-ref">sort()</span></a> and <a class="reference internal" href="#classcslt_1_1Array_1aba7f27b63d398667436f10100f98ab42"><span class="std std-ref">min()</span></a>/max():<ul class="simple">
+<li><p>negative when a &lt; b</p></li>
+<li><p>zero when a == b</p></li>
+<li><p>positive when a &gt; b</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>value</strong> – Element to search for </p></li>
+<li><p><strong>cmp</strong> – Comparator defining the sort order </p></li>
+<li><p><strong>dir</strong> – Direction::FORWARD if the array is (or should be) sorted ascending; Direction::REVERSE if descending. Must be consistent with <code class="docutils literal notranslate"><span class="pre">cmp</span></code>. </p></li>
+<li><p><strong>is_sorted</strong> – Pass true if the array is already sorted in the order defined by <code class="docutils literal notranslate"><span class="pre">cmp</span></code> and <code class="docutils literal notranslate"><span class="pre">dir</span></code>. Pass false to sort the array in place before searching.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected&lt;size_t&gt; containing the zero-based index of a matching element on success, or an <a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a> if no match is found or the array is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt5Array23bracketed_binary_searchE8ExpectedINSt4pairI6size_t6size_tEEERK1T4Func9Directionb">
+<span id="_CPPv3I0EN4cslt5Array23bracketed_binary_searchERK1T4Func9Directionb"></span><span id="_CPPv2I0EN4cslt5Array23bracketed_binary_searchERK1T4Func9Directionb"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Array_1a96999c71f744e1d4067484eb4a84044d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">pair</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">bracketed_binary_search</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5ArrayE" title="cslt::Array::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span>, <a class="reference internal" href="#_CPPv4I0EN4cslt5Array23bracketed_binary_searchE8ExpectedINSt4pairI6size_t6size_tEEERK1T4Func9Directionb" title="cslt::Array::bracketed_binary_search::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cmp</span></span>, <span class="n"><span class="pre">Direction</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">dir</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">is_sorted</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN4cslt5Array23bracketed_binary_searchE8ExpectedINSt4pairI6size_t6size_tEEERK1T4Func9Directionb" title="Link to this definition"></a><br /></dt>
+<dd><p>Search for the bracketing pair of indices surrounding <code class="docutils literal notranslate"><span class="pre">value</span></code> in the sorted array. </p>
+<p>
+When <code class="docutils literal notranslate"><span class="pre">value</span></code> exists in the array both bounds are the index of the first (lowest) matching element.</p>
+<p>Returns <a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a> when:<ul>
+<li><p>the array is empty</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> is less than the smallest element (no lower bound)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code> is greater than the largest element (no upper bound)</p>
+<p>The algorithm performs a single binary search pass to locate the insertion point of <code class="docutils literal notranslate"><span class="pre">value</span></code>, then derives the lower and upper bound indices from the elements immediately surrounding that point.</p>
+</li>
+</ul>
+</p>
+<p><dl>
+<dt><strong>Complexity</strong></dt><dd><p><ul class="simple">
+<li><p>O(n log n) when is_sorted == false (sort step dominates)</p></li>
+<li><p>O(log n) when is_sorted == true</p></li>
+</ul>
+</p>
+</dd>
+<dt><strong>Usage examples</strong></dt><dd><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Array {10, 20, 30, 40, 50} — bracket 25</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">bracketed_binary_search</span><span class="p">(</span><span class="mi">25</span><span class="p">,</span><span class="w"> </span><span class="n">cmp</span><span class="p">,</span>
+<span class="w">                                      </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">FORWARD</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">lo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">().</span><span class="n">first</span><span class="p">;</span><span class="w">   </span><span class="c1">// index of 20</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">hi</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">().</span><span class="n">second</span><span class="p">;</span><span class="w">  </span><span class="c1">// index of 30</span>
+<span class="p">}</span>
+
+<span class="c1">// Exact match — bracket 30</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">arr</span><span class="o">-&gt;</span><span class="n">bracketed_binary_search</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="n">cmp</span><span class="p">,</span>
+<span class="w">                                      </span><span class="n">cslt</span><span class="o">::</span><span class="n">Direction</span><span class="o">::</span><span class="n">FORWARD</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">);</span>
+<span class="c1">// r.value().first == r.value().second == 2 (index of 30)</span>
+</pre></div>
+</div>
+</dd>
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p><a class="reference internal" href="#classcslt_1_1Array"><span class="std std-ref">Array</span></a> is empty (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>)</p></li>
+<li><p>Value below the smallest element — no lower bound (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>)</p></li>
+<li><p>Value above the largest element — no upper bound (<a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref">OutOfBoundsError</span></a>) </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">int(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code>. Same convention as <a class="reference internal" href="#classcslt_1_1Array_1a5641e347374697257d317a5119de8571"><span class="std std-ref">sort()</span></a> and <a class="reference internal" href="#classcslt_1_1Array_1a561bb0eb5a72309e378d5d6a91a55035"><span class="std std-ref">binary_search()</span></a>:<ul class="simple">
+<li><p>negative when a &lt; b</p></li>
+<li><p>zero when a == b</p></li>
+<li><p>positive when a &gt; b</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>value</strong> – Element to bracket </p></li>
+<li><p><strong>cmp</strong> – Comparator defining the sort order </p></li>
+<li><p><strong>dir</strong> – Direction::FORWARD for ascending order; Direction::REVERSE for descending order. Must be consistent with <code class="docutils literal notranslate"><span class="pre">cmp</span></code>. </p></li>
+<li><p><strong>is_sorted</strong> – Pass true if the array is already sorted in the order defined by <code class="docutils literal notranslate"><span class="pre">cmp</span></code> and <code class="docutils literal notranslate"><span class="pre">dir</span></code>. Pass false to sort the array in place before searching.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;std::pair&lt;size_t, size_t&gt;&gt; where:<ul class="simple">
+<li><p>first is the index of the largest element &lt;= <code class="docutils literal notranslate"><span class="pre">value</span></code> (lower bound)</p></li>
+<li><p>second is the index of the smallest element &gt;= <code class="docutils literal notranslate"><span class="pre">value</span></code> (upper bound)</p></li>
+</ul>
+</p>
 </dd>
 </dl>
 </dd></dl>

@@ -86,7 +86,7 @@
         </detaileddescription>
         <inbodydescription>
         </inbodydescription>
-        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1543" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1543" bodyend="-1"/>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1966" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1966" bodyend="-1"/>
       </memberdef>
       </sectiondef>
       <sectiondef kind="private-static-func">
@@ -1734,6 +1734,397 @@ Scalar types — use the branchless idiom: <programlisting filename=".cpp"><code
         </inbodydescription>
         <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1530" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1530" bodyend="1538"/>
       </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a047274afa0f9af3352a9b3fff3451c4e" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; size_t &gt;</type>
+        <definition>Expected&lt;size_t&gt; cslt::Array&lt; T &gt;::contains</definition>
+        <argsstring>(const T &amp;value) const noexcept</argsstring>
+        <name>contains</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Search for the first element whose byte representation matches <computeroutput>value</computeroutput> and return its index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to search for. Comparison is performed by comparing the raw byte representation of each array element against the raw bytes of <computeroutput>value</computeroutput> using simd_contains_uint8() (for the SIMD-accelerated path) or memcmp() (for the scalar remainder).</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;size_t&gt; containing the zero-based index of the first match on success, or an <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref> if no match is found</para>
+</simplesect>
+<simplesect kind="par"><title>Compile-time restriction</title><para>This overload is only available when T satisfies both:<itemizedlist>
+<listitem><para>std::is_trivially_copyable_v&lt;T&gt; == true</para>
+</listitem><listitem><para>std::is_floating_point_v&lt;T&gt; == false</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+Floating-point types are excluded because -0.0 and +0.0 are equal by value but differ in bit pattern, so memcmp-based search would produce incorrect results. Use the predicate overload (coming soon) for float, double, and long double.</para>
+<para>Structs with padding bytes are also subject to this caveat — padding content is unspecified by the standard and may differ between two otherwise identical objects. Prefer the predicate overload for structs unless you can guarantee there are no padding bytes.</para>
+<para><simplesect kind="par"><title>SIMD dispatch</title><para>The search delegates to simd_contains_uint8(), which is resolved at compile time to the best available SIMD back-end (AVX-512, AVX2, AVX, SSE4.1, SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback. For element sizes 1, 2, 4, and 8 bytes the SIMD path is taken; all other sizes fall through to a scalar memcmp loop.</para>
+</simplesect>
+<simplesect kind="par"><title>Usage examples</title><para><programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>Search<sp/>for<sp/>an<sp/>integer<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;contains(42);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx<sp/>=<sp/>r.value();<sp/><sp/></highlight><highlight class="comment">//<sp/>index<sp/>of<sp/>first<sp/>42</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Search<sp/>for<sp/>a<sp/>plain<sp/>struct<sp/>(no<sp/>padding,<sp/>no<sp/>floats)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Vec3i<sp/>{<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>x,<sp/>y,<sp/>z;<sp/>};</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;contains(Vec3i{1,<sp/>2,<sp/>3});</highlight></codeline>
+</programlisting></para>
+</simplesect>
+<simplesect kind="par"><title>Error conditions</title><para><itemizedlist>
+<listitem><para>Value not found in the array (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>) </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1592" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1592" bodyend="1624"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1ae87fbc3108bb337639c72c08b68802a6" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; size_t &gt;</type>
+        <definition>Expected&lt;size_t&gt; cslt::Array&lt; T &gt;::contains</definition>
+        <argsstring>(const T &amp;value, Func eq) const noexcept</argsstring>
+        <name>contains</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>eq</declname>
+        </param>
+        <briefdescription>
+<para>Search for the first element for which a caller-supplied equality predicate returns true and return its index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable with signature <computeroutput>bool(const T&amp;, const T&amp;)</computeroutput>. Must return true when the two arguments are considered equal. Any callable is accepted: lambda, functor, or plain function pointer.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to search for, passed as the first argument to <computeroutput>eq</computeroutput> at each position </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>eq</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Equality predicate</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;size_t&gt; containing the zero-based index of the first match on success, or an <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref> if no match is found</para>
+</simplesect>
+Performs a linear scan from index 0 to <ref refid="classcslt_1_1Array_1aad7dcf8caca330a7161686e5db7e1d32" kindref="member">size()</ref>-1, calling eq(value, data_[i]) at each position. No SIMD acceleration is applied — equality semantics are entirely defined by the caller&apos;s predicate, so no byte-level optimisation is possible.</para>
+<para>This overload is intended for:<itemizedlist>
+<listitem><para>Non-trivially-copyable types (classes with user-defined copy constructors or destructors)</para>
+</listitem><listitem><para>Trivially copyable types where value equality differs from bitwise equality (e.g. structs with padding bytes)</para>
+</listitem><listitem><para>Any type where a custom notion of equality is required (e.g. case-insensitive string matching, epsilon comparison)</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="par"><title>Usage examples</title><para><programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>Non-trivial<sp/>class<sp/>with<sp/>a<sp/>user-defined<sp/>copy<sp/>constructor</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;contains(target,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>[](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MyClass&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MyClass&amp;<sp/>b)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a.id()<sp/>==<sp/>b.id();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx<sp/>=<sp/>r.value();</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Struct<sp/>with<sp/>padding<sp/>—<sp/>use<sp/>operator==<sp/>rather<sp/>than<sp/>memcmp</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">struct<sp/></highlight><highlight class="normal">Padded<sp/>{<sp/></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>c;<sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal"><sp/>x;<sp/>};<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>likely<sp/>has<sp/>3<sp/>padding<sp/>bytes</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;contains(needle,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>[](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Padded&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>Padded&amp;<sp/>b)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a.c<sp/>==<sp/>b.c<sp/>&amp;&amp;<sp/>a.x<sp/>==<sp/>b.x;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>});</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>File-scope<sp/>predicate<sp/>(reusable<sp/>across<sp/>multiple<sp/>calls)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>eq_by_id(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MyClass&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/>MyClass&amp;<sp/>b)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>a.id()<sp/>==<sp/>b.id();</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;contains(target,<sp/>eq_by_id);</highlight></codeline>
+</programlisting></para>
+</simplesect>
+<simplesect kind="par"><title>Error conditions</title><para><itemizedlist>
+<listitem><para>Value not found in the array (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>) </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1685" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1685" bodyend="1704"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a561bb0eb5a72309e378d5d6a91a55035" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; size_t &gt;</type>
+        <definition>Expected&lt;size_t&gt; cslt::Array&lt; T &gt;::binary_search</definition>
+        <argsstring>(const T &amp;value, Func cmp, Direction dir, bool is_sorted) noexcept</argsstring>
+        <name>binary_search</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>cmp</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>is_sorted</declname>
+        </param>
+        <briefdescription>
+<para>Search for <computeroutput>value</computeroutput> using binary search and return its index. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable with signature <computeroutput>int(const T&amp;, const T&amp;)</computeroutput>. Same convention as <ref refid="classcslt_1_1Array_1a5641e347374697257d317a5119de8571" kindref="member">sort()</ref> and <ref refid="classcslt_1_1Array_1aba7f27b63d398667436f10100f98ab42" kindref="member">min()</ref>/max():<itemizedlist>
+<listitem><para>negative when a &lt; b</para>
+</listitem><listitem><para>zero when a == b</para>
+</listitem><listitem><para>positive when a &gt; b</para>
+</listitem></itemizedlist>
+</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to search for </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cmp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Comparator defining the sort order </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dir</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">Direction::FORWARD</ref> if the array is (or should be) sorted ascending; <ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c" kindref="member">Direction::REVERSE</ref> if descending. Must be consistent with <computeroutput>cmp</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>is_sorted</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pass true if the array is already sorted in the order defined by <computeroutput>cmp</computeroutput> and <computeroutput>dir</computeroutput>. Pass false to sort the array in place before searching.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;size_t&gt; containing the zero-based index of a matching element on success, or an <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref> if no match is found or the array is empty.</para>
+</simplesect>
+Implements a standard iterative binary search. When <computeroutput>is_sorted</computeroutput> is false the array is sorted in place via the same quicksort used by <ref refid="classcslt_1_1Array_1a5641e347374697257d317a5119de8571" kindref="member">sort()</ref> before the search begins, so subsequent calls with is_sorted == true are valid.</para>
+<para>If multiple elements compare equal to <computeroutput>value</computeroutput> the index of the first (lowest) occurrence is returned. Once a match is found the search continues leftward until no earlier match exists.</para>
+<para><simplesect kind="par"><title>Complexity</title><para><itemizedlist>
+<listitem><para>O(n log n) when is_sorted == false (sort step dominates)</para>
+</listitem><listitem><para>O(log n) when is_sorted == true</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="par"><title>Usage examples</title><para><programlisting filename=".cpp"><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>cmp<sp/>=<sp/>[](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>b)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(a<sp/>&gt;<sp/>b)<sp/>-<sp/>(a<sp/>&lt;<sp/>b);</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Array<sp/>not<sp/>yet<sp/>sorted<sp/>—<sp/>sort<sp/>in<sp/>place<sp/>then<sp/>search</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arr-&gt;binary_search(30,<sp/>cmp,<sp/><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">cslt::Direction::FORWARD</ref>,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Array<sp/>already<sp/>sorted<sp/>ascending<sp/>—<sp/>skip<sp/>the<sp/>sort<sp/>step</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;binary_search(30,<sp/>cmp,<sp/><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">cslt::Direction::FORWARD</ref>,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>idx<sp/>=<sp/>r.value();</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Struct<sp/>array<sp/>sorted<sp/>descending<sp/>by<sp/>x<sp/>field</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>cmp_pt<sp/>=<sp/>[](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structPoint" kindref="compound">Point</ref>&amp;<sp/>a,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/><ref refid="structPoint" kindref="compound">Point</ref>&amp;<sp/>b)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal"><sp/>(a.<ref refid="structPoint_1a8c779e11e694b20e0946105a9f5de842" kindref="member">x</ref><sp/>&gt;<sp/>b.x)<sp/>-<sp/>(a.<ref refid="structPoint_1a8c779e11e694b20e0946105a9f5de842" kindref="member">x</ref><sp/>&lt;<sp/>b.x);</highlight></codeline>
+<codeline><highlight class="normal">};</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;binary_search(target,<sp/>cmp_pt,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c" kindref="member">cslt::Direction::REVERSE</ref>,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+</programlisting></para>
+</simplesect>
+<simplesect kind="par"><title>Error conditions</title><para><itemizedlist>
+<listitem><para>Value not found (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>)</para>
+</listitem><listitem><para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> is empty (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>) </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1771" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1771" bodyend="1823"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Array_1a96999c71f744e1d4067484eb4a84044d" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type>typename Func</type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; std::pair&lt; size_t, size_t &gt; &gt;</type>
+        <definition>Expected&lt;std::pair&lt;size_t, size_t&gt; &gt; cslt::Array&lt; T &gt;::bracketed_binary_search</definition>
+        <argsstring>(const T &amp;value, Func cmp, Direction dir, bool is_sorted) noexcept</argsstring>
+        <name>bracketed_binary_search</name>
+        <param>
+          <type>const T &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type>Func</type>
+          <declname>cmp</declname>
+        </param>
+        <param>
+          <type><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2" kindref="member">Direction</ref></type>
+          <declname>dir</declname>
+        </param>
+        <param>
+          <type>bool</type>
+          <declname>is_sorted</declname>
+        </param>
+        <briefdescription>
+<para>Search for the bracketing pair of indices surrounding <computeroutput>value</computeroutput> in the sorted array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable with signature <computeroutput>int(const T&amp;, const T&amp;)</computeroutput>. Same convention as <ref refid="classcslt_1_1Array_1a5641e347374697257d317a5119de8571" kindref="member">sort()</ref> and <ref refid="classcslt_1_1Array_1a561bb0eb5a72309e378d5d6a91a55035" kindref="member">binary_search()</ref>:<itemizedlist>
+<listitem><para>negative when a &lt; b</para>
+</listitem><listitem><para>zero when a == b</para>
+</listitem><listitem><para>positive when a &gt; b</para>
+</listitem></itemizedlist>
+</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element to bracket </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>cmp</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Comparator defining the sort order </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>dir</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">Direction::FORWARD</ref> for ascending order; <ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2a642e0b6684e6165e142c074f1cd8d55c" kindref="member">Direction::REVERSE</ref> for descending order. Must be consistent with <computeroutput>cmp</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>is_sorted</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pass true if the array is already sorted in the order defined by <computeroutput>cmp</computeroutput> and <computeroutput>dir</computeroutput>. Pass false to sort the array in place before searching.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;std::pair&lt;size_t, size_t&gt;&gt; where:<itemizedlist>
+<listitem><para>first is the index of the largest element &lt;= <computeroutput>value</computeroutput> (lower bound)</para>
+</listitem><listitem><para>second is the index of the smallest element &gt;= <computeroutput>value</computeroutput> (upper bound)</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+When <computeroutput>value</computeroutput> exists in the array both bounds are the index of the first (lowest) matching element.</para>
+<para>Returns <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref> when:<itemizedlist>
+<listitem><para>the array is empty</para>
+</listitem><listitem><para><computeroutput>value</computeroutput> is less than the smallest element (no lower bound)</para>
+</listitem><listitem><para><computeroutput>value</computeroutput> is greater than the largest element (no upper bound)</para>
+<para>The algorithm performs a single binary search pass to locate the insertion point of <computeroutput>value</computeroutput>, then derives the lower and upper bound indices from the elements immediately surrounding that point.</para>
+</listitem></itemizedlist>
+</para>
+<para><simplesect kind="par"><title>Complexity</title><para><itemizedlist>
+<listitem><para>O(n log n) when is_sorted == false (sort step dominates)</para>
+</listitem><listitem><para>O(log n) when is_sorted == true</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<simplesect kind="par"><title>Usage examples</title><para><programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>Array<sp/>{10,<sp/>20,<sp/>30,<sp/>40,<sp/>50}<sp/>—<sp/>bracket<sp/>25</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;bracketed_binary_search(25,<sp/>cmp,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">cslt::Direction::FORWARD</ref>,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>lo<sp/>=<sp/>r.value().first;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>index<sp/>of<sp/>20</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>hi<sp/>=<sp/>r.value().second;<sp/><sp/></highlight><highlight class="comment">//<sp/>index<sp/>of<sp/>30</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Exact<sp/>match<sp/>—<sp/>bracket<sp/>30</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>arr-&gt;bracketed_binary_search(30,<sp/>cmp,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="namespacecslt_1aed0a9ba4a64259f4aa38055a6bb2b2a2abfec72bb37910c61f36b6c29a1f7ec31" kindref="member">cslt::Direction::FORWARD</ref>,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>r.value().first<sp/>==<sp/>r.value().second<sp/>==<sp/>2<sp/>(index<sp/>of<sp/>30)</highlight></codeline>
+</programlisting></para>
+</simplesect>
+<simplesect kind="par"><title>Error conditions</title><para><itemizedlist>
+<listitem><para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> is empty (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>)</para>
+</listitem><listitem><para>Value below the smallest element — no lower bound (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>)</para>
+</listitem><listitem><para>Value above the largest element — no upper bound (<ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref>) </para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="1891" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="1891" bodyend="1961"/>
+      </memberdef>
       </sectiondef>
     <briefdescription>
 <para>Allocator-backed generic dynamic array container. </para>
@@ -1799,7 +2190,7 @@ Scalar types — use the branchless idiom: <programlisting filename=".cpp"><code
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="118" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="118" bodyend="1544"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" line="118" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/array.hpp" bodystart="118" bodyend="1967"/>
     <listofallmembers>
       <member refid="classcslt_1_1Array_1a9d5e67c5e2343ce7498fb0a0ff5c6441" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_apply_dir</name></member>
       <member refid="classcslt_1_1Array_1ad74730e11c8d7bdb869fe26325cc6a13" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>_compute_new_cap</name></member>
@@ -1820,10 +2211,14 @@ Scalar types — use the branchless idiom: <programlisting filename=".cpp"><code
       <member refid="classcslt_1_1Array_1a142f045dea54fc0d07c8b45a41741ecf" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>Array</name></member>
       <member refid="classcslt_1_1Array_1a33a7a54904f340dee106ed71d5ddb556" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>Array</name></member>
       <member refid="classcslt_1_1Array_1a4450d33525d3362abca5637eeb1e0b98" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>ArrayDeleter</name></member>
+      <member refid="classcslt_1_1Array_1a561bb0eb5a72309e378d5d6a91a55035" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>binary_search</name></member>
+      <member refid="classcslt_1_1Array_1a96999c71f744e1d4067484eb4a84044d" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>bracketed_binary_search</name></member>
       <member refid="classcslt_1_1Array_1ac25e4d8742d714d42d5901249490a8e0" prot="private" virt="non-virtual"><scope>cslt::Array</scope><name>cap_</name></member>
       <member refid="classcslt_1_1Array_1a40413b1da52d2649f2e028704fcd4c1a" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>capacity</name></member>
       <member refid="classcslt_1_1Array_1abe8bb1180a8ab41d1ce588069d2ec9df" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>clear</name></member>
       <member refid="classcslt_1_1Array_1a4695ffd06f5596aaa146af0bf9990dc2" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>concat</name></member>
+      <member refid="classcslt_1_1Array_1a047274afa0f9af3352a9b3fff3451c4e" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>contains</name></member>
+      <member refid="classcslt_1_1Array_1ae87fbc3108bb337639c72c08b68802a6" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>contains</name></member>
       <member refid="classcslt_1_1Array_1a01e0a4d91fda691cbe8f216ae74017c8" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>copy</name></member>
       <member refid="classcslt_1_1Array_1ab88d1e98d485536f968a0d7a968cabf2" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>copy</name></member>
       <member refid="classcslt_1_1Array_1a3cf8c18d406d0dd4eda56ad739fc8d20" prot="public" virt="non-virtual"><scope>cslt::Array</scope><name>cumulative</name></member>

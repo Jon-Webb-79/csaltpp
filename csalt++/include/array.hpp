@@ -1702,6 +1702,263 @@ namespace cslt {
                 "Array::contains: value not found"));
             return result;
         }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Search for @p value using binary search and return its index
+         *
+         * @tparam Func  Callable with signature `int(const T&, const T&)`.
+         *               Same convention as sort() and min()/max():
+         *               - negative when a <  b
+         *               - zero     when a == b
+         *               - positive when a >  b
+         *
+         * @param value     Element to search for
+         * @param cmp       Comparator defining the sort order
+         * @param dir       Direction::FORWARD if the array is (or should be)
+         *                  sorted ascending; Direction::REVERSE if descending.
+         *                  Must be consistent with @p cmp.
+         * @param is_sorted Pass true if the array is already sorted in the
+         *                  order defined by @p cmp and @p dir.  Pass false to
+         *                  sort the array in place before searching.
+         *
+         * @return Expected<size_t> containing the zero-based index of a
+         *         matching element on success, or an OutOfBoundsError if no
+         *         match is found or the array is empty.
+         *
+         * @details Implements a standard iterative binary search.  When
+         *          @p is_sorted is false the array is sorted in place via
+         *          the same quicksort used by sort() before the search begins,
+         *          so subsequent calls with is_sorted == true are valid.
+         *
+         *          If multiple elements compare equal to @p value the index
+         *          of the first (lowest) occurrence is returned.  Once a match
+         *          is found the search continues leftward until no earlier
+         *          match exists.
+         *
+         * @par Complexity
+         * - O(n log n) when is_sorted == false (sort step dominates)
+         * - O(log n)   when is_sorted == true
+         *
+         * @par Usage examples
+         * @code{.cpp}
+         * auto cmp = [](const int& a, const int& b) {
+         *     return (a > b) - (a < b);
+         * };
+         *
+         * // Array not yet sorted — sort in place then search
+         * arr->binary_search(30, cmp, cslt::Direction::FORWARD, false);
+         *
+         * // Array already sorted ascending — skip the sort step
+         * auto r = arr->binary_search(30, cmp, cslt::Direction::FORWARD, true);
+         * if (r.hasValue()) {
+         *     size_t idx = r.value();
+         * }
+         *
+         * // Struct array sorted descending by x field
+         * auto cmp_pt = [](const Point& a, const Point& b) {
+         *     return (a.x > b.x) - (a.x < b.x);
+         * };
+         * auto r = arr->binary_search(target, cmp_pt,
+         *                             cslt::Direction::REVERSE, true);
+         * @endcode
+         *
+         * @par Error conditions
+         * - Value not found (OutOfBoundsError)
+         * - Array is empty (OutOfBoundsError)
+         */
+        template <typename Func>
+        Expected<size_t> binary_search(const T& value,
+                                       Func     cmp,
+                                       Direction dir,
+                                       bool     is_sorted) noexcept {
+            Expected<size_t> result;
+ 
+            if (!data_ || len_ == 0u) {
+                result.setError(OutOfBoundsError(
+                    "Array::binary_search: array is empty"));
+                return result;
+            }
+ 
+            // Sort in place if the caller has not guaranteed ordering
+            if (!is_sorted) {
+                _quicksort(0u, len_ - 1u, cmp, dir);
+            }
+ 
+            // Iterative binary search — finds the leftmost matching index
+            // when duplicates are present.  The standard binary search is run
+            // first to confirm the value exists, then hi is tightened to find
+            // the first occurrence.
+            size_t lo    = 0u;
+            size_t hi    = len_ - 1u;
+            size_t found = SIZE_MAX;
+ 
+            while (lo <= hi) {
+                size_t const mid = lo + (hi - lo) / 2u;
+                int    const cmp_result = _apply_dir<Func>(
+                                              cmp(data_[mid], value), dir);
+ 
+                if (cmp_result == 0) {
+                    // Record this match and keep searching left for an
+                    // earlier occurrence
+                    found = mid;
+                    if (mid == 0u) break;
+                    hi = mid - 1u;
+                } else if (cmp_result < 0) {
+                    lo = mid + 1u;
+                } else {
+                    if (mid == 0u) break;
+                    hi = mid - 1u;
+                }
+            }
+ 
+            if (found == SIZE_MAX) {
+                result.setError(OutOfBoundsError(
+                    "Array::binary_search: value not found"));
+                return result;
+            }
+ 
+            result.setValue(found);
+            return result;
+        }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Search for the bracketing pair of indices surrounding @p value
+         *        in the sorted array
+         *
+         * @tparam Func  Callable with signature `int(const T&, const T&)`.
+         *               Same convention as sort() and binary_search():
+         *               - negative when a <  b
+         *               - zero     when a == b
+         *               - positive when a >  b
+         *
+         * @param value     Element to bracket
+         * @param cmp       Comparator defining the sort order
+         * @param dir       Direction::FORWARD for ascending order;
+         *                  Direction::REVERSE for descending order.
+         *                  Must be consistent with @p cmp.
+         * @param is_sorted Pass true if the array is already sorted in the
+         *                  order defined by @p cmp and @p dir.  Pass false to
+         *                  sort the array in place before searching.
+         *
+         * @return Expected<std::pair<size_t, size_t>> where:
+         *         - first  is the index of the largest element <= @p value
+         *                  (lower bound)
+         *         - second is the index of the smallest element >= @p value
+         *                  (upper bound)
+         *
+         *         When @p value exists in the array both bounds are the index
+         *         of the first (lowest) matching element.
+         *
+         *         Returns OutOfBoundsError when:
+         *         - the array is empty
+         *         - @p value is less than the smallest element (no lower bound)
+         *         - @p value is greater than the largest element (no upper bound)
+         *
+         * @details The algorithm performs a single binary search pass to locate
+         *          the insertion point of @p value, then derives the lower and
+         *          upper bound indices from the elements immediately surrounding
+         *          that point.
+         *
+         * @par Complexity
+         * - O(n log n) when is_sorted == false (sort step dominates)
+         * - O(log n)   when is_sorted == true
+         *
+         * @par Usage examples
+         * @code{.cpp}
+         * // Array {10, 20, 30, 40, 50} — bracket 25
+         * auto r = arr->bracketed_binary_search(25, cmp,
+         *                                       cslt::Direction::FORWARD, true);
+         * if (r.hasValue()) {
+         *     size_t lo = r.value().first;   // index of 20
+         *     size_t hi = r.value().second;  // index of 30
+         * }
+         *
+         * // Exact match — bracket 30
+         * auto r = arr->bracketed_binary_search(30, cmp,
+         *                                       cslt::Direction::FORWARD, true);
+         * // r.value().first == r.value().second == 2 (index of 30)
+         * @endcode
+         *
+         * @par Error conditions
+         * - Array is empty (OutOfBoundsError)
+         * - Value below the smallest element — no lower bound (OutOfBoundsError)
+         * - Value above the largest element  — no upper bound (OutOfBoundsError)
+         */
+        template <typename Func>
+        Expected<std::pair<size_t, size_t>>
+        bracketed_binary_search(const T& value,
+                                Func     cmp,
+                                Direction dir,
+                                bool     is_sorted) noexcept {
+            Expected<std::pair<size_t, size_t>> result;
+ 
+            if (!data_ || len_ == 0u) {
+                result.setError(OutOfBoundsError(
+                    "Array::bracketed_binary_search: array is empty"));
+                return result;
+            }
+ 
+            if (!is_sorted) {
+                _quicksort(0u, len_ - 1u, cmp, dir);
+            }
+ 
+            // Check whether value is within the range of the array.
+            // For FORWARD: data_[0] <= value <= data_[len_-1]
+            // For REVERSE: data_[0] >= value >= data_[len_-1]
+            // _apply_dir normalises so that cmp(a,b) < 0 means a < b
+            // in the sorted order.
+            if (_apply_dir<Func>(cmp(value, data_[0u]), dir) < 0) {
+                result.setError(OutOfBoundsError(
+                    "Array::bracketed_binary_search: "
+                    "value is below the smallest element"));
+                return result;
+            }
+            if (_apply_dir<Func>(cmp(value, data_[len_ - 1u]), dir) > 0) {
+                result.setError(OutOfBoundsError(
+                    "Array::bracketed_binary_search: "
+                    "value is above the largest element"));
+                return result;
+            }
+ 
+            // Binary search for the insertion point: find the smallest index
+            // whose element is >= value (in sorted order).
+            size_t lo = 0u;
+            size_t hi = len_ - 1u;
+ 
+            while (lo < hi) {
+                size_t const mid = lo + (hi - lo) / 2u;
+                int    const c   = _apply_dir<Func>(cmp(data_[mid], value), dir);
+ 
+                if (c < 0) {
+                    // data_[mid] < value — insertion point is to the right
+                    lo = mid + 1u;
+                } else {
+                    // data_[mid] >= value — insertion point is here or left
+                    hi = mid;
+                }
+            }
+            // lo == hi is now the index of the first element >= value
+ 
+            int const exact = _apply_dir<Func>(cmp(data_[lo], value), dir);
+ 
+            if (exact == 0) {
+                // Exact match — walk left to find the first occurrence
+                size_t first = lo;
+                while (first > 0u &&
+                       _apply_dir<Func>(cmp(data_[first - 1u], value), dir) == 0) {
+                    --first;
+                }
+                result.setValue(std::make_pair(first, first));
+            } else {
+                // lo is the upper bound; lo-1 is the lower bound
+                // (range check above guarantees lo > 0)
+                result.setValue(std::make_pair(lo - 1u, lo));
+            }
+ 
+            return result;
+        }
 // --------------------------------------------------------------------------------
 
         // ArrayDeleter needs access to private members for cleanup

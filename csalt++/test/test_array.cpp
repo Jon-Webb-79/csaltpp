@@ -3741,6 +3741,640 @@ TEST_F(ArrayInitTest, ContainsPredicateDoesNotModifyArray) {
     EXPECT_EQ(arr->data()[0].id, 1);
     EXPECT_EQ(arr->data()[1].id, 2);
 }
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// binary_search() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that binary_search() finds an int in a pre-sorted array
+ *       ascending and returns the correct index
+ */
+TEST_F(ArrayInitTest, BinarySearchIntPresortedAscending) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+    arr->push_back(40);
+    arr->push_back(50);
+ 
+    auto r = arr->binary_search(30, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() sorts in place and finds an int when
+ *       is_sorted is false
+ */
+TEST_F(ArrayInitTest, BinarySearchIntSortsInPlaceThenFinds) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(50);
+    arr->push_back(10);
+    arr->push_back(30);
+    arr->push_back(20);
+    arr->push_back(40);
+ 
+    auto r = arr->binary_search(30, cmp_int_asc,
+                                cslt::Direction::FORWARD, false);
+    ASSERT_TRUE(r.hasValue());
+ 
+    // After in-place sort the array is {10,20,30,40,50} so 30 is at index 2
+    EXPECT_EQ(r.value(), 2u);
+    EXPECT_EQ(arr->data()[0], 10);
+    EXPECT_EQ(arr->data()[1], 20);
+    EXPECT_EQ(arr->data()[2], 30);
+    EXPECT_EQ(arr->data()[3], 40);
+    EXPECT_EQ(arr->data()[4], 50);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() finds the value at the first index
+ */
+TEST_F(ArrayInitTest, BinarySearchIntFindsFirstElement) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->binary_search(10, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 0u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() finds the value at the last index
+ */
+TEST_F(ArrayInitTest, BinarySearchIntFindsLastElement) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->binary_search(30, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() returns an error when the value is not
+ *       present in the array
+ */
+TEST_F(ArrayInitTest, BinarySearchIntNotFoundReturnsError) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->binary_search(99, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() returns an error on an empty array
+ */
+TEST_F(ArrayInitTest, BinarySearchIntEmptyArrayReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    auto r = arr->binary_search(10, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() on a single-element array finds the
+ *       element
+ */
+TEST_F(ArrayInitTest, BinarySearchIntSingleElementMatch) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(42);
+ 
+    auto r = arr->binary_search(42, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 0u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() on a single-element array returns an
+ *       error when the element does not match
+ */
+TEST_F(ArrayInitTest, BinarySearchIntSingleElementNoMatch) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(42);
+ 
+    auto r = arr->binary_search(99, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() returns the first (lowest) index when
+ *       duplicates exist
+ */
+TEST_F(ArrayInitTest, BinarySearchIntReturnsFirstDuplicate) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(20);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->binary_search(20, cmp_int_asc,
+                                cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);  // first of three 20s
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() works correctly on a descending-sorted
+ *       int array
+ */
+TEST_F(ArrayInitTest, BinarySearchIntDescendingPresorted) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(50);
+    arr->push_back(40);
+    arr->push_back(30);
+    arr->push_back(20);
+    arr->push_back(10);
+ 
+    auto r = arr->binary_search(30, cmp_int_asc,
+                                cslt::Direction::REVERSE, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() sorts descending in place and finds
+ *       the value correctly
+ */
+TEST_F(ArrayInitTest, BinarySearchIntSortsDescendingInPlace) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(50);
+    arr->push_back(30);
+    arr->push_back(20);
+    arr->push_back(40);
+ 
+    auto r = arr->binary_search(30, cmp_int_asc,
+                                cslt::Direction::REVERSE, false);
+    ASSERT_TRUE(r.hasValue());
+ 
+    // After descending sort: {50,40,30,20,10} — 30 is at index 2
+    EXPECT_EQ(r.value(), 2u);
+    EXPECT_EQ(arr->data()[0], 50);
+    EXPECT_EQ(arr->data()[1], 40);
+    EXPECT_EQ(arr->data()[2], 30);
+    EXPECT_EQ(arr->data()[3], 20);
+    EXPECT_EQ(arr->data()[4], 10);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() works correctly for a double array
+ */
+TEST_F(ArrayInitTest, BinarySearchDoubleAscending) {
+    auto result = cslt::Array<double>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.1);
+    arr->push_back(2.2);
+    arr->push_back(3.3);
+    arr->push_back(4.4);
+ 
+    auto r = arr->binary_search(3.3, cmp_double_asc,
+                                cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() works correctly for a Point array
+ *       sorted ascending by x
+ */
+TEST_F(ArrayInitTest, BinarySearchPointAscendingByX) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({1, 0});
+    arr->push_back({2, 0});
+    arr->push_back({3, 0});
+    arr->push_back({4, 0});
+    arr->push_back({5, 0});
+ 
+    auto r = arr->binary_search(Point{3, 0}, cmp_point_x_asc,
+                                cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() returns an error for a Point not in
+ *       the array
+ */
+TEST_F(ArrayInitTest, BinarySearchPointNotFoundReturnsError) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({1, 0});
+    arr->push_back({2, 0});
+    arr->push_back({3, 0});
+ 
+    auto r = arr->binary_search(Point{99, 0}, cmp_point_x_asc,
+                                cslt::Direction::FORWARD, true);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that binary_search() with a lambda comparator works correctly
+ */
+TEST_F(ArrayInitTest, BinarySearchIntWithLambdaComparator) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(5);
+    arr->push_back(15);
+    arr->push_back(25);
+    arr->push_back(35);
+    arr->push_back(45);
+ 
+    auto r = arr->binary_search(25,
+        [](const int& a, const int& b) { return (a > b) - (a < b); },
+        cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// bracketed_binary_search() tests
+// ============================================================================
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns the correct lower and
+ *       upper bound indices when the value falls between two int elements
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntValueBetweenElements) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+    arr->push_back(40);
+    arr->push_back(50);
+ 
+    // 25 falls between 20 (index 1) and 30 (index 2)
+    auto r = arr->bracketed_binary_search(25, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);  // lower bound: index of 20
+    EXPECT_EQ(r.value().second, 2u);  // upper bound: index of 30
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns equal lower and upper
+ *       bound indices when the value exists exactly in the array
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntExactMatch) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+    arr->push_back(40);
+    arr->push_back(50);
+ 
+    // 30 exists at index 2 — both bounds should be 2
+    auto r = arr->bracketed_binary_search(30, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  2u);
+    EXPECT_EQ(r.value().second, 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns equal bounds pointing
+ *       to the first occurrence when the exact value appears multiple times
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntExactMatchDuplicates) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(20);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    // 20 exists at indices 1, 2, 3 — both bounds should point to index 1
+    auto r = arr->bracketed_binary_search(20, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);
+    EXPECT_EQ(r.value().second, 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() brackets a value between the
+ *       first and second elements correctly
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntValueNearFront) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    // 15 falls between 10 (index 0) and 20 (index 1)
+    auto r = arr->bracketed_binary_search(15, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  0u);
+    EXPECT_EQ(r.value().second, 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() brackets a value between the
+ *       last two elements correctly
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntValueNearBack) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    // 25 falls between 20 (index 1) and 30 (index 2)
+    auto r = arr->bracketed_binary_search(25, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);
+    EXPECT_EQ(r.value().second, 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns an error when the
+ *       value is below the smallest element
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntBelowRangeReturnsError) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->bracketed_binary_search(5, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns an error when the
+ *       value is above the largest element
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntAboveRangeReturnsError) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->bracketed_binary_search(99, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns an error on an empty
+ *       array
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntEmptyArrayReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    auto r = arr->bracketed_binary_search(10, cmp_int_asc,
+                                          cslt::Direction::FORWARD, true);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() sorts in place when
+ *       is_sorted is false and then brackets correctly
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntSortsInPlace) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(40);
+    arr->push_back(10);
+    arr->push_back(30);
+    arr->push_back(50);
+    arr->push_back(20);
+ 
+    // After sort: {10,20,30,40,50}; 25 brackets indices 1 and 2
+    auto r = arr->bracketed_binary_search(25, cmp_int_asc,
+                                          cslt::Direction::FORWARD, false);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);
+    EXPECT_EQ(r.value().second, 2u);
+ 
+    // Verify the array was sorted in place
+    EXPECT_EQ(arr->data()[0], 10);
+    EXPECT_EQ(arr->data()[1], 20);
+    EXPECT_EQ(arr->data()[2], 30);
+    EXPECT_EQ(arr->data()[3], 40);
+    EXPECT_EQ(arr->data()[4], 50);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() works correctly for a
+ *       descending-sorted int array
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchIntDescending) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(50);
+    arr->push_back(40);
+    arr->push_back(30);
+    arr->push_back(20);
+    arr->push_back(10);
+ 
+    // 25 falls between 30 (index 2) and 20 (index 3) in descending order
+    auto r = arr->bracketed_binary_search(25, cmp_int_asc,
+                                          cslt::Direction::REVERSE, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  2u);  // lower bound: index of 30
+    EXPECT_EQ(r.value().second, 3u);  // upper bound: index of 20
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() works correctly for a double
+ *       array
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchDoubleValueBetweenElements) {
+    auto result = cslt::Array<double>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.0);
+    arr->push_back(2.0);
+    arr->push_back(3.0);
+    arr->push_back(4.0);
+ 
+    // 2.5 falls between 2.0 (index 1) and 3.0 (index 2)
+    auto r = arr->bracketed_binary_search(2.5, cmp_double_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);
+    EXPECT_EQ(r.value().second, 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns equal bounds for an
+ *       exact match in a double array
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchDoubleExactMatch) {
+    auto result = cslt::Array<double>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<double>, cslt::ArrayDeleter<double>> arr(result.value());
+ 
+    arr->push_back(1.0);
+    arr->push_back(2.0);
+    arr->push_back(3.0);
+    arr->push_back(4.0);
+ 
+    auto r = arr->bracketed_binary_search(2.0, cmp_double_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);
+    EXPECT_EQ(r.value().second, 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() works correctly for a Point
+ *       array sorted by x
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchPointValueBetweenElements) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({10, 0});
+    arr->push_back({20, 0});
+    arr->push_back({30, 0});
+    arr->push_back({40, 0});
+ 
+    // {25,0} falls between {20,0} (index 1) and {30,0} (index 2)
+    auto r = arr->bracketed_binary_search(Point{25, 0}, cmp_point_x_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);
+    EXPECT_EQ(r.value().second, 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that bracketed_binary_search() returns equal bounds for an
+ *       exact Point match
+ */
+TEST_F(ArrayInitTest, BracketedBinarySearchPointExactMatch) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({10, 0});
+    arr->push_back({20, 0});
+    arr->push_back({30, 0});
+ 
+    auto r = arr->bracketed_binary_search(Point{20, 0}, cmp_point_x_asc,
+                                          cslt::Direction::FORWARD, true);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value().first,  1u);
+    EXPECT_EQ(r.value().second, 1u);
+}
 // ================================================================================
 // ================================================================================
 // eof

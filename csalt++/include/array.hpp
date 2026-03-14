@@ -1536,6 +1536,172 @@ namespace cslt {
             result.setValue(data_[_max_index(cmp)]);
             return result;
         }
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Search for the first element whose byte representation matches
+         *        @p value and return its index
+         *
+         * @param value  Element to search for.  Comparison is performed by
+         *               comparing the raw byte representation of each array
+         *               element against the raw bytes of @p value using
+         *               simd_contains_uint8() (for the SIMD-accelerated path)
+         *               or memcmp() (for the scalar remainder).
+         *
+         * @return Expected<size_t> containing the zero-based index of the first
+         *         match on success, or an OutOfBoundsError if no match is found
+         *
+         * @par Compile-time restriction
+         * This overload is only available when T satisfies both:
+         * - std::is_trivially_copyable_v<T> == true
+         * - std::is_floating_point_v<T>     == false
+         *
+         * Floating-point types are excluded because -0.0 and +0.0 are equal
+         * by value but differ in bit pattern, so memcmp-based search would
+         * produce incorrect results.  Use the predicate overload (coming soon)
+         * for float, double, and long double.
+         *
+         * Structs with padding bytes are also subject to this caveat — padding
+         * content is unspecified by the standard and may differ between two
+         * otherwise identical objects.  Prefer the predicate overload for
+         * structs unless you can guarantee there are no padding bytes.
+         *
+         * @par SIMD dispatch
+         * The search delegates to simd_contains_uint8(), which is resolved at
+         * compile time to the best available SIMD back-end (AVX-512, AVX2, AVX,
+         * SSE4.1, SSSE3, SSE2, NEON, SVE, SVE2) or a portable scalar fallback.
+         * For element sizes 1, 2, 4, and 8 bytes the SIMD path is taken; all
+         * other sizes fall through to a scalar memcmp loop.
+         *
+         * @par Usage examples
+         * @code{.cpp}
+         * // Search for an integer value
+         * auto r = arr->contains(42);
+         * if (r.hasValue()) {
+         *     size_t idx = r.value();  // index of first 42
+         * }
+         *
+         * // Search for a plain struct (no padding, no floats)
+         * struct Vec3i { int x, y, z; };
+         * auto r = arr->contains(Vec3i{1, 2, 3});
+         * @endcode
+         *
+         * @par Error conditions
+         * - Value not found in the array (OutOfBoundsError)
+         */
+        Expected<size_t> contains(const T& value) const noexcept {
+            static_assert(std::is_trivially_copyable_v<T>,
+                "Array::contains: T must be trivially copyable. "
+                "Use the predicate overload for non-trivial types.");
+            static_assert(!std::is_floating_point_v<T>,
+                "Array::contains: floating-point types are not safe for "
+                "byte comparison (-0.0 != +0.0 bitwise). "
+                "Use the predicate overload for float, double, and long double.");
+ 
+            Expected<size_t> result;
+ 
+            if (!data_ || len_ == 0u) {
+                result.setError(OutOfBoundsError(
+                    "Array::contains: value not found"));
+                return result;
+            }
+ 
+            size_t idx = simd_contains_uint8(
+                reinterpret_cast<const uint8_t*>(data_),
+                0u,
+                len_,
+                sizeof(T),
+                reinterpret_cast<const uint8_t*>(&value));
+ 
+            if (idx == SIZE_MAX) {
+                result.setError(OutOfBoundsError(
+                    "Array::contains: value not found"));
+                return result;
+            }
+ 
+            result.setValue(idx);
+            return result;
+        } 
+// -------------------------------------------------------------------------------- 
+
+        /**
+         * @brief Search for the first element for which a caller-supplied
+         *        equality predicate returns true and return its index
+         *
+         * @tparam Func  Callable with signature `bool(const T&, const T&)`.
+         *               Must return true when the two arguments are considered
+         *               equal.  Any callable is accepted: lambda, functor, or
+         *               plain function pointer.
+         *
+         * @param value  Element to search for, passed as the first argument
+         *               to @p eq at each position
+         * @param eq     Equality predicate
+         *
+         * @return Expected<size_t> containing the zero-based index of the first
+         *         match on success, or an OutOfBoundsError if no match is found
+         *
+         * @details Performs a linear scan from index 0 to size()-1, calling
+         *          eq(value, data_[i]) at each position.  No SIMD acceleration
+         *          is applied — equality semantics are entirely defined by the
+         *          caller's predicate, so no byte-level optimisation is possible.
+         *
+         *          This overload is intended for:
+         *          - Non-trivially-copyable types (classes with user-defined
+         *            copy constructors or destructors)
+         *          - Trivially copyable types where value equality differs from
+         *            bitwise equality (e.g. structs with padding bytes)
+         *          - Any type where a custom notion of equality is required
+         *            (e.g. case-insensitive string matching, epsilon comparison)
+         *
+         * @par Usage examples
+         * @code{.cpp}
+         * // Non-trivial class with a user-defined copy constructor
+         * auto r = arr->contains(target,
+         *     [](const MyClass& a, const MyClass& b) {
+         *         return a.id() == b.id();
+         *     });
+         * if (r.hasValue()) {
+         *     size_t idx = r.value();
+         * }
+         *
+         * // Struct with padding — use operator== rather than memcmp
+         * struct Padded { char c; int x; };   // likely has 3 padding bytes
+         * auto r = arr->contains(needle,
+         *     [](const Padded& a, const Padded& b) {
+         *         return a.c == b.c && a.x == b.x;
+         *     });
+         *
+         * // File-scope predicate (reusable across multiple calls)
+         * static bool eq_by_id(const MyClass& a, const MyClass& b) {
+         *     return a.id() == b.id();
+         * }
+         * auto r = arr->contains(target, eq_by_id);
+         * @endcode
+         *
+         * @par Error conditions
+         * - Value not found in the array (OutOfBoundsError)
+         */
+        template <typename Func>
+        Expected<size_t> contains(const T& value, Func eq) const noexcept {
+            Expected<size_t> result;
+ 
+            if (!data_ || len_ == 0u) {
+                result.setError(OutOfBoundsError(
+                    "Array::contains: value not found"));
+                return result;
+            }
+ 
+            for (size_t i = 0u; i < len_; ++i) {
+                if (eq(value, data_[i])) {
+                    result.setValue(i);
+                    return result;
+                }
+            }
+ 
+            result.setError(OutOfBoundsError(
+                "Array::contains: value not found"));
+            return result;
+        }
 // --------------------------------------------------------------------------------
 
         // ArrayDeleter needs access to private members for cleanup

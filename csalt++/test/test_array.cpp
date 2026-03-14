@@ -3360,6 +3360,387 @@ TEST_F(ArrayInitTest, MaxParticleEmptyArrayReturnsError) {
     auto r = arr->max(cmp_particle_mass_asc);
     EXPECT_FALSE(r.hasValue());
 }
+// -------------------------------------------------------------------------------- 
+
+// ============================================================================
+// contains() — byte-comparison overload tests
+// ============================================================================
+
+class NonTrivial {
+public:
+    int    id;
+    double value;
+
+    NonTrivial(int i, double v) : id(i), value(v) {}
+
+    /* User-defined copy constructor — makes the type non-trivially copyable */
+    NonTrivial(const NonTrivial& other) : id(other.id), value(other.value) {}
+
+    /* User-defined destructor — also contributes to non-trivial copyability */
+    ~NonTrivial() {}
+
+    bool operator==(const NonTrivial& other) const noexcept {
+        return id == other.id && value == other.value;
+    }
+};
+
+/**
+ * @test Verify that the byte-comparison overload finds an int at a middle index
+ */
+TEST_F(ArrayInitTest, ContainsByteIntFindsMiddleElement) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+    arr->push_back(40);
+    arr->push_back(50);
+ 
+    auto r = arr->contains(30);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload finds an int at index 0
+ */
+TEST_F(ArrayInitTest, ContainsByteIntFindsFirstElement) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(99);
+    arr->push_back(10);
+    arr->push_back(20);
+ 
+    auto r = arr->contains(99);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 0u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload finds an int at the last index
+ */
+TEST_F(ArrayInitTest, ContainsByteIntFindsLastElement) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(99);
+ 
+    auto r = arr->contains(99);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 2u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload returns the first occurrence
+ *       when duplicates exist
+ */
+TEST_F(ArrayInitTest, ContainsByteIntReturnsFirstDuplicate) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->contains(20);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload returns an error when the
+ *       value is not present
+ */
+TEST_F(ArrayInitTest, ContainsByteIntNotFoundReturnsError) {
+    auto result = cslt::Array<int>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(10);
+    arr->push_back(20);
+    arr->push_back(30);
+ 
+    auto r = arr->contains(99);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload returns an error on an
+ *       empty array
+ */
+TEST_F(ArrayInitTest, ContainsByteIntEmptyArrayReturnsError) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    auto r = arr->contains(42);
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload works correctly for uint8_t
+ *       (exercises the single-byte SIMD path)
+ */
+TEST_F(ArrayInitTest, ContainsByteUint8FindsValue) {
+    auto result = cslt::Array<uint8_t>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<uint8_t>, cslt::ArrayDeleter<uint8_t>> arr(result.value());
+ 
+    arr->push_back(10u);
+    arr->push_back(20u);
+    arr->push_back(30u);
+ 
+    auto r = arr->contains(static_cast<uint8_t>(20u));
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload works correctly for a
+ *       Point struct (exercises the multi-byte trivially copyable path)
+ */
+TEST_F(ArrayInitTest, ContainsBytePointFindsValue) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({1, 0});
+    arr->push_back({2, 0});
+    arr->push_back({3, 0});
+ 
+    auto r = arr->contains(Point{2, 0});
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload returns an error for a Point
+ *       not in the array
+ */
+TEST_F(ArrayInitTest, ContainsBytePointNotFoundReturnsError) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({1, 0});
+    arr->push_back({2, 0});
+ 
+    auto r = arr->contains(Point{99, 99});
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the byte-comparison overload does not modify the array
+ */
+TEST_F(ArrayInitTest, ContainsByteDoesNotModifyArray) {
+    auto result = cslt::Array<int>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<int>, cslt::ArrayDeleter<int>> arr(result.value());
+ 
+    arr->push_back(1);
+    arr->push_back(2);
+    arr->push_back(3);
+ 
+    arr->contains(2);
+ 
+    EXPECT_EQ(arr->size(), 3u);
+    EXPECT_EQ(arr->data()[0], 1);
+    EXPECT_EQ(arr->data()[1], 2);
+    EXPECT_EQ(arr->data()[2], 3);
+}
+ 
+// ============================================================================
+// contains() — predicate overload tests
+// ============================================================================
+ 
+/**
+ * @test Verify that the predicate overload finds a NonTrivial element by full
+ *       equality and returns the correct index
+ */
+TEST_F(ArrayInitTest, ContainsPredicateNonTrivialFindsElement) {
+    auto result = cslt::Array<NonTrivial>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<NonTrivial>, cslt::ArrayDeleter<NonTrivial>> arr(result.value());
+ 
+    arr->push_back(NonTrivial{1, 1.1});
+    arr->push_back(NonTrivial{2, 2.2});
+    arr->push_back(NonTrivial{3, 3.3});
+ 
+    auto r = arr->contains(NonTrivial{2, 2.2},
+        [](const NonTrivial& a, const NonTrivial& b) {
+            return a == b;
+        });
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the predicate overload finds a NonTrivial element by id
+ *       only (partial equality), ignoring the value field
+ */
+TEST_F(ArrayInitTest, ContainsPredicateNonTrivialFindsByIdOnly) {
+    auto result = cslt::Array<NonTrivial>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<NonTrivial>, cslt::ArrayDeleter<NonTrivial>> arr(result.value());
+ 
+    arr->push_back(NonTrivial{1, 1.1});
+    arr->push_back(NonTrivial{2, 9.9});  // id matches needle but value differs
+    arr->push_back(NonTrivial{3, 3.3});
+ 
+    NonTrivial needle{2, 0.0};  // only id matters for this search
+    auto r = arr->contains(needle,
+        [](const NonTrivial& a, const NonTrivial& b) {
+            return a.id == b.id;
+        });
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the predicate overload returns an error when no element
+ *       satisfies the predicate
+ */
+TEST_F(ArrayInitTest, ContainsPredicateNonTrivialNotFoundReturnsError) {
+    auto result = cslt::Array<NonTrivial>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<NonTrivial>, cslt::ArrayDeleter<NonTrivial>> arr(result.value());
+ 
+    arr->push_back(NonTrivial{1, 1.1});
+    arr->push_back(NonTrivial{2, 2.2});
+ 
+    auto r = arr->contains(NonTrivial{99, 99.0},
+        [](const NonTrivial& a, const NonTrivial& b) {
+            return a == b;
+        });
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the predicate overload returns an error on an empty array
+ */
+TEST_F(ArrayInitTest, ContainsPredicateEmptyArrayReturnsError) {
+    auto result = cslt::Array<NonTrivial>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<NonTrivial>, cslt::ArrayDeleter<NonTrivial>> arr(result.value());
+ 
+    auto r = arr->contains(NonTrivial{1, 1.0},
+        [](const NonTrivial& a, const NonTrivial& b) {
+            return a == b;
+        });
+    EXPECT_FALSE(r.hasValue());
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the predicate overload returns the first match when
+ *       duplicates satisfy the predicate
+ */
+TEST_F(ArrayInitTest, ContainsPredicateReturnsFirstMatch) {
+    auto result = cslt::Array<NonTrivial>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<NonTrivial>, cslt::ArrayDeleter<NonTrivial>> arr(result.value());
+ 
+    arr->push_back(NonTrivial{1, 1.1});
+    arr->push_back(NonTrivial{2, 2.2});
+    arr->push_back(NonTrivial{2, 9.9});  // same id as index 1
+    arr->push_back(NonTrivial{3, 3.3});
+ 
+    NonTrivial needle{2, 0.0};
+    auto r = arr->contains(needle,
+        [](const NonTrivial& a, const NonTrivial& b) {
+            return a.id == b.id;
+        });
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);  // first match, not second
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the predicate overload with a file-scope predicate
+ *       function works correctly
+ */
+static bool eq_nontrivial_by_id(const NonTrivial& a, const NonTrivial& b) {
+    return a.id == b.id;
+}
+ 
+TEST_F(ArrayInitTest, ContainsPredicateFileScopePredicateWorks) {
+    auto result = cslt::Array<NonTrivial>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<NonTrivial>, cslt::ArrayDeleter<NonTrivial>> arr(result.value());
+ 
+    arr->push_back(NonTrivial{10, 1.0});
+    arr->push_back(NonTrivial{20, 2.0});
+    arr->push_back(NonTrivial{30, 3.0});
+ 
+    auto r = arr->contains(NonTrivial{20, 0.0}, eq_nontrivial_by_id);
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the predicate overload also works for trivially copyable
+ *       types when custom equality is needed (e.g. comparing only one field
+ *       of a Point)
+ */
+TEST_F(ArrayInitTest, ContainsPredicateWorksForTrivialTypeWithCustomEquality) {
+    auto result = cslt::Array<Point>::init(8, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<Point>, cslt::ArrayDeleter<Point>> arr(result.value());
+ 
+    arr->push_back({1, 10});
+    arr->push_back({2, 20});
+    arr->push_back({3, 30});
+ 
+    // Search by x only — y is irrelevant
+    auto r = arr->contains(Point{2, 0},
+        [](const Point& a, const Point& b) {
+            return a.x == b.x;
+        });
+    ASSERT_TRUE(r.hasValue());
+    EXPECT_EQ(r.value(), 1u);
+}
+// --------------------------------------------------------------------------------
+ 
+/**
+ * @test Verify that the predicate overload does not modify the array
+ */
+TEST_F(ArrayInitTest, ContainsPredicateDoesNotModifyArray) {
+    auto result = cslt::Array<NonTrivial>::init(4, alloc);
+    ASSERT_TRUE(result.hasValue());
+    cslt::UniquePtr<cslt::Array<NonTrivial>, cslt::ArrayDeleter<NonTrivial>> arr(result.value());
+ 
+    arr->push_back(NonTrivial{1, 1.0});
+    arr->push_back(NonTrivial{2, 2.0});
+ 
+    arr->contains(NonTrivial{1, 1.0},
+        [](const NonTrivial& a, const NonTrivial& b) { return a == b; });
+ 
+    EXPECT_EQ(arr->size(), 2u);
+    EXPECT_EQ(arr->data()[0].id, 1);
+    EXPECT_EQ(arr->data()[1].id, 2);
+}
 // ================================================================================
 // ================================================================================
 // eof

@@ -224,6 +224,119 @@ processed according to the ``overwrite`` flag:
 
 Neither source dictionary is modified by ``merge()``.
 
+**String Keys**
+===============
+
+The most common use case for a dictionary is mapping string keys to values.
+``cslt::String`` cannot be used directly as a key because its private
+destructor and deleted copy operations make it non-trivially copyable — a
+requirement enforced by ``Dict``'s ``static_assert``.
+
+``cslt::StringKey<N>`` solves this cleanly.  It copies the string content into
+a fixed-size stack buffer of ``N`` bytes (including the null terminator),
+producing a type that is trivially copyable, zero-cost to hash, and requires
+no heap allocation.  Strings longer than ``N-1`` characters are silently
+truncated, so choose ``N`` based on the longest key you expect to store.
+
++-------------------+--------------------------------------------+
+| Type              | Recommended use                            |
++===================+============================================+
+| StringKey<32>     | Short identifiers, sensor names, config    |
++-------------------+--------------------------------------------+
+| StringKey<64>     | Dictionary words, variable names           |
++-------------------+--------------------------------------------+
+| StringKey<128>    | Sentences, file names                      |
++-------------------+--------------------------------------------+
+| StringKey<256>    | File paths, long descriptors               |
++-------------------+--------------------------------------------+
+
+A type alias keeps call sites concise:
+
+.. code-block:: cpp
+
+   using Key64 = cslt::StringKey<64>;
+
+**Basic string key usage:**
+
+.. code-block:: cpp
+
+   #include "dict.hpp"
+
+   using Key64 = cslt::StringKey<64>;
+
+   cslt::HeapAllocator alloc;
+   auto r = cslt::Dict<Key64, float>::init(8, true, alloc);
+   if (!r.hasValue()) return;
+
+   cslt::UniquePtr<cslt::Dict<Key64, float>,
+                   cslt::DictDeleter<Key64, float>> d(r.value());
+
+   // Insert using C-string literals
+   d->insert(Key64{"pi"},      3.14159f);
+   d->insert(Key64{"euler"},   2.71828f);
+   d->insert(Key64{"phi"},     1.61803f);
+
+   // Look up by C-string literal
+   auto gr = d->get(Key64{"pi"});
+   if (gr.hasValue()) {
+       float val = gr.value();   // 3.14159f
+   }
+
+   bool found   = d->has_key(Key64{"euler"});   // true
+   bool missing = d->has_key(Key64{"zero"});    // false
+
+**Constructing a key from a cslt::String:**
+
+.. code-block:: cpp
+
+   #include "dict.hpp"
+   #include "string.hpp"
+
+   using Key64 = cslt::StringKey<64>;
+
+   cslt::HeapAllocator alloc;
+   auto r = cslt::Dict<Key64, float>::init(8, true, alloc);
+   if (!r.hasValue()) return;
+   cslt::UniquePtr<cslt::Dict<Key64, float>,
+                   cslt::DictDeleter<Key64, float>> d(r.value());
+
+   d->insert(Key64{"temperature"}, 98.6f);
+
+   // Build a lookup key from a runtime cslt::String
+   auto rs = cslt::String::init("temperature", 0, alloc);
+   if (rs.hasValue()) {
+       cslt::UniquePtr<cslt::String, cslt::StringDeleter> s(rs.value());
+       auto gr = d->get(Key64{*s});          // construct key from String
+       if (gr.hasValue()) {
+           float temp = gr.value();          // 98.6f
+       }
+   }
+
+**Iterating over string-keyed entries:**
+
+.. code-block:: cpp
+
+   d->foreach([](const Key64& key, const float& value) {
+       // key.c_str() returns the null-terminated string
+       // key.size()  returns the logical length
+   });
+
+**Updating and removing string keys:**
+
+.. code-block:: cpp
+
+   d->update(Key64{"pi"}, 3.14f);          // overwrite existing value
+   auto pr = d->pop(Key64{"euler"});        // remove and return value
+   if (pr.hasValue()) {
+       float e = pr.value();               // 2.71828f
+   }
+
+StringKey Class
+===============
+
+    .. doxygenclass:: cslt::StringKey
+       :members:
+
 Dict Class
 ==========
 

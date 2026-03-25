@@ -61,6 +61,19 @@
 <li class="toctree-l2"><a class="reference internal" href="#node-layout"><strong>Node Layout</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#iteration"><strong>Iteration</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#copy-and-merge"><strong>Copy and Merge</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#string-keys"><strong>String Keys</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#stringkey-class">StringKey Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I_6size_tEN4cslt9StringKeyE"><code class="docutils literal notranslate"><span class="pre">cslt::StringKey</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9StringKey9StringKeyEPKc"><code class="docutils literal notranslate"><span class="pre">StringKey()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0EN4cslt9StringKey9StringKeyERK7StringT"><code class="docutils literal notranslate"><span class="pre">StringKey()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9StringKeyeqERK9StringKeyI1NE"><code class="docutils literal notranslate"><span class="pre">operator==()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9StringKey5c_strEv"><code class="docutils literal notranslate"><span class="pre">c_str()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt9StringKey4sizeEv"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt9StringKey4dataE"><code class="docutils literal notranslate"><span class="pre">data</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#dict-class">Dict Class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4I00EN4cslt4DictE"><code class="docutils literal notranslate"><span class="pre">cslt::Dict</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt4Dict6insertERK1KRK1V"><code class="docutils literal notranslate"><span class="pre">insert()</span></code></a></li>
@@ -325,6 +338,225 @@ processed according to the <code class="docutils literal notranslate"><span clas
 </pre></div>
 </div>
 <p>Neither source dictionary is modified by <code class="docutils literal notranslate"><span class="pre">merge()</span></code>.</p>
+</section>
+<section id="string-keys">
+<h2><strong>String Keys</strong><a class="headerlink" href="#string-keys" title="Link to this heading"></a></h2>
+<p>The most common use case for a dictionary is mapping string keys to values.
+<code class="docutils literal notranslate"><span class="pre">cslt::String</span></code> cannot be used directly as a key because its private
+destructor and deleted copy operations make it non-trivially copyable — a
+requirement enforced by <code class="docutils literal notranslate"><span class="pre">Dict</span></code>’s <code class="docutils literal notranslate"><span class="pre">static_assert</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">cslt::StringKey&lt;N&gt;</span></code> solves this cleanly.  It copies the string content into
+a fixed-size stack buffer of <code class="docutils literal notranslate"><span class="pre">N</span></code> bytes (including the null terminator),
+producing a type that is trivially copyable, zero-cost to hash, and requires
+no heap allocation.  Strings longer than <code class="docutils literal notranslate"><span class="pre">N-1</span></code> characters are silently
+truncated, so choose <code class="docutils literal notranslate"><span class="pre">N</span></code> based on the longest key you expect to store.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Type</p></th>
+<th class="head"><p>Recommended use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>StringKey&lt;32&gt;</p></td>
+<td><p>Short identifiers, sensor names, config</p></td>
+</tr>
+<tr class="row-odd"><td><p>StringKey&lt;64&gt;</p></td>
+<td><p>Dictionary words, variable names</p></td>
+</tr>
+<tr class="row-even"><td><p>StringKey&lt;128&gt;</p></td>
+<td><p>Sentences, file names</p></td>
+</tr>
+<tr class="row-odd"><td><p>StringKey&lt;256&gt;</p></td>
+<td><p>File paths, long descriptors</p></td>
+</tr>
+</tbody>
+</table>
+<p>A type alias keeps call sites concise:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">using</span><span class="w"> </span><span class="n">Key64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringKey</span><span class="o">&lt;</span><span class="mi">64</span><span class="o">&gt;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p><strong>Basic string key usage:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;dict.hpp&quot;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="n">Key64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringKey</span><span class="o">&lt;</span><span class="mi">64</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Dict</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Dict</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">DictDeleter</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="c1">// Insert using C-string literals</span>
+<span class="n">d</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;pi&quot;</span><span class="p">},</span><span class="w">      </span><span class="mf">3.14159f</span><span class="p">);</span>
+<span class="n">d</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;euler&quot;</span><span class="p">},</span><span class="w">   </span><span class="mf">2.71828f</span><span class="p">);</span>
+<span class="n">d</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;phi&quot;</span><span class="p">},</span><span class="w">     </span><span class="mf">1.61803f</span><span class="p">);</span>
+
+<span class="c1">// Look up by C-string literal</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">gr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="o">-&gt;</span><span class="n">get</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;pi&quot;</span><span class="p">});</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gr</span><span class="p">.</span><span class="n">value</span><span class="p">();</span><span class="w">   </span><span class="c1">// 3.14159f</span>
+<span class="p">}</span>
+
+<span class="kt">bool</span><span class="w"> </span><span class="n">found</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="o">-&gt;</span><span class="n">has_key</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;euler&quot;</span><span class="p">});</span><span class="w">   </span><span class="c1">// true</span>
+<span class="kt">bool</span><span class="w"> </span><span class="n">missing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="o">-&gt;</span><span class="n">has_key</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;zero&quot;</span><span class="p">});</span><span class="w">    </span><span class="c1">// false</span>
+</pre></div>
+</div>
+<p><strong>Constructing a key from a cslt::String:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;dict.hpp&quot;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&quot;string.hpp&quot;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="n">Key64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringKey</span><span class="o">&lt;</span><span class="mi">64</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Dict</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Dict</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">DictDeleter</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="n">d</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;temperature&quot;</span><span class="p">},</span><span class="w"> </span><span class="mf">98.6f</span><span class="p">);</span>
+
+<span class="c1">// Build a lookup key from a runtime cslt::String</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;temperature&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">gr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="o">-&gt;</span><span class="n">get</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="o">*</span><span class="n">s</span><span class="p">});</span><span class="w">          </span><span class="c1">// construct key from String</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">float</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gr</span><span class="p">.</span><span class="n">value</span><span class="p">();</span><span class="w">          </span><span class="c1">// 98.6f</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Iterating over string-keyed entries:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">-&gt;</span><span class="n">foreach</span><span class="p">([](</span><span class="k">const</span><span class="w"> </span><span class="n">Key64</span><span class="o">&amp;</span><span class="w"> </span><span class="n">key</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="kt">float</span><span class="o">&amp;</span><span class="w"> </span><span class="n">value</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// key.c_str() returns the null-terminated string</span>
+<span class="w">    </span><span class="c1">// key.size()  returns the logical length</span>
+<span class="p">});</span>
+</pre></div>
+</div>
+<p><strong>Updating and removing string keys:</strong></p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">d</span><span class="o">-&gt;</span><span class="n">update</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;pi&quot;</span><span class="p">},</span><span class="w"> </span><span class="mf">3.14f</span><span class="p">);</span><span class="w">          </span><span class="c1">// overwrite existing value</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">pr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="o">-&gt;</span><span class="n">pop</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;euler&quot;</span><span class="p">});</span><span class="w">        </span><span class="c1">// remove and return value</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pr</span><span class="p">.</span><span class="n">value</span><span class="p">();</span><span class="w">               </span><span class="c1">// 2.71828f</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="stringkey-class">
+<h2>StringKey Class<a class="headerlink" href="#stringkey-class" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I_6size_tEN4cslt9StringKeyE">
+<span id="_CPPv3I_6size_tEN4cslt9StringKeyE"></span><span id="_CPPv2I_6size_tEN4cslt9StringKeyE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">N</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structcslt_1_1StringKey"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StringKey</span></span></span><a class="headerlink" href="#_CPPv4I_6size_tEN4cslt9StringKeyE" title="Link to this definition"></a><br /></dt>
+<dd><p>Fixed-size trivially copyable string key for use with Dict&lt;K, V&gt; </p>
+<p><code class="docutils literal notranslate"><a class="reference internal" href="String.html#classcslt_1_1String"><span class="std std-ref"><span class="pre">cslt::String</span></span></a></code> cannot be used directly as a <a class="reference internal" href="#classcslt_1_1Dict"><span class="std std-ref">Dict</span></a> key because its private destructor and deleted copy operations make it non-trivially-copyable — a requirement enforced by <a class="reference internal" href="#classcslt_1_1Dict"><span class="std std-ref">Dict</span></a>’s <code class="docutils literal notranslate"><span class="pre">static_assert</span></code>. <code class="docutils literal notranslate"><a class="reference internal" href="#structcslt_1_1StringKey"><span class="std std-ref"><span class="pre">StringKey</span></span></a><span class="pre">&lt;N&gt;</span></code> solves this by copying the string content into a fixed-size stack buffer of <code class="docutils literal notranslate"><span class="pre">N</span></code> bytes (including the null terminator), making the type trivially copyable and zero-cost to hash.</p>
+<p>The template parameter <code class="docutils literal notranslate"><span class="pre">N</span></code> is the total buffer size <strong>including</strong> the null terminator, so a <code class="docutils literal notranslate"><a class="reference internal" href="#structcslt_1_1StringKey"><span class="std std-ref"><span class="pre">StringKey</span></span></a><span class="pre">&lt;32&gt;</span></code> stores up to 31 printable characters. Strings longer than <code class="docutils literal notranslate"><span class="pre">N-1</span></code> characters are silently truncated.</p>
+<p><code class="docutils literal notranslate"><span class="pre">operator==</span></code> uses <code class="docutils literal notranslate"><span class="pre">std::strncmp</span></code> so <a class="reference internal" href="#classcslt_1_1Dict"><span class="std std-ref">Dict</span></a>’s equality detection trait picks it up automatically — no custom comparator is needed.</p>
+<p>Recommended sizes:<ul class="simple">
+<li><p><code class="docutils literal notranslate"><a class="reference internal" href="#structcslt_1_1StringKey"><span class="std std-ref"><span class="pre">StringKey</span></span></a><span class="pre">&lt;32&gt;</span></code> — short identifiers, sensor names, config keys</p></li>
+<li><p><code class="docutils literal notranslate"><a class="reference internal" href="#structcslt_1_1StringKey"><span class="std std-ref"><span class="pre">StringKey</span></span></a><span class="pre">&lt;64&gt;</span></code> — typical dictionary words, variable names</p></li>
+<li><p><code class="docutils literal notranslate"><a class="reference internal" href="#structcslt_1_1StringKey"><span class="std std-ref"><span class="pre">StringKey</span></span></a><span class="pre">&lt;128&gt;</span></code> — sentences, file names</p></li>
+<li><p><code class="docutils literal notranslate"><a class="reference internal" href="#structcslt_1_1StringKey"><span class="std std-ref"><span class="pre">StringKey</span></span></a><span class="pre">&lt;256&gt;</span></code> — file paths, long descriptors</p></li>
+</ul>
+</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Type alias to keep call sites concise</span>
+<span class="k">using</span><span class="w"> </span><span class="n">Key64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringKey</span><span class="o">&lt;</span><span class="mi">64</span><span class="o">&gt;</span><span class="p">;</span>
+
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Dict</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Dict</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">DictDeleter</span><span class="o">&lt;</span><span class="n">Key64</span><span class="p">,</span><span class="w"> </span><span class="kt">float</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">d</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="c1">// Insert using a string literal</span>
+<span class="n">d</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;pi&quot;</span><span class="p">},</span><span class="w">    </span><span class="mf">3.14159f</span><span class="p">);</span>
+<span class="n">d</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;euler&quot;</span><span class="p">},</span><span class="w"> </span><span class="mf">2.71828f</span><span class="p">);</span>
+
+<span class="c1">// Look up by string literal</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">gr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="o">-&gt;</span><span class="n">get</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="s">&quot;pi&quot;</span><span class="p">});</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">gr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">float</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gr</span><span class="p">.</span><span class="n">value</span><span class="p">();</span><span class="w">   </span><span class="c1">// 3.14159f</span>
+<span class="p">}</span>
+
+<span class="c1">// Construct a key from a cslt::String</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;euler&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">StringDeleter</span><span class="o">&gt;</span><span class="w"> </span><span class="n">s</span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="kt">bool</span><span class="w"> </span><span class="n">found</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="o">-&gt;</span><span class="n">has_key</span><span class="p">(</span><span class="n">Key64</span><span class="p">{</span><span class="o">*</span><span class="n">s</span><span class="p">});</span><span class="w">   </span><span class="c1">// true</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>N</strong> – Total buffer size in bytes, including the null terminator. Must be &gt;= 2.</p>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9StringKey9StringKeyEPKc">
+<span id="_CPPv3N4cslt9StringKey9StringKeyEPKc"></span><span id="_CPPv2N4cslt9StringKey9StringKeyEPKc"></span><span id="cslt::StringKey::StringKey__cCP"></span><span class="target" id="structcslt_1_1StringKey_1a9e4208b7eb030f6f72b88bd0d524aa2c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StringKey</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="n sig-param"><span class="pre">s</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt9StringKey9StringKeyEPKc" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct from a null-terminated C-string. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> – Source string. If nullptr, the key is initialised to an empty string. If longer than N-1 characters the content is silently truncated. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt9StringKey9StringKeyERK7StringT">
+<span id="_CPPv3I0EN4cslt9StringKey9StringKeyERK7StringT"></span><span id="_CPPv2I0EN4cslt9StringKey9StringKeyERK7StringT"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StringT</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="structcslt_1_1StringKey_1a81abe082d442d0d6b373b2753fa41ab5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">explicit</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">StringKey</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt9StringKey9StringKeyERK7StringT" title="cslt::StringKey::StringKey::StringT"><span class="n"><span class="pre">StringT</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">s</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0EN4cslt9StringKey9StringKeyERK7StringT" title="Link to this definition"></a><br /></dt>
+<dd><p>Construct from a <a class="reference internal" href="String.html#classcslt_1_1String"><span class="std std-ref">cslt::String</span></a>. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This constructor is only available when string.hpp has been included before dict.hpp. If you do not use <a class="reference internal" href="String.html#classcslt_1_1String"><span class="std std-ref">cslt::String</span></a> as a source, include only dict.hpp and construct from a C-string literal instead. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>s</strong> – Source <a class="reference internal" href="String.html#classcslt_1_1String"><span class="std std-ref">String</span></a>. If its content is longer than N-1 characters it is silently truncated.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9StringKeyeqERK9StringKeyI1NE">
+<span id="_CPPv3NK4cslt9StringKeyeqERK9StringKeyI1NE"></span><span id="_CPPv2NK4cslt9StringKeyeqERK9StringKeyI1NE"></span><span id="cslt::StringKey::eq-operator__StringKey:N:CRC"></span><span class="target" id="structcslt_1_1StringKey_1a0f227fdd75a3af948307ee24919f2af3"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">==</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I_6size_tEN4cslt9StringKeyE" title="cslt::StringKey"><span class="n"><span class="pre">StringKey</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I_6size_tEN4cslt9StringKeyE" title="cslt::StringKey::N"><span class="n"><span class="pre">N</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">other</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9StringKeyeqERK9StringKeyI1NE" title="Link to this definition"></a><br /></dt>
+<dd><p>Equality comparison — required by <a class="reference internal" href="#classcslt_1_1Dict"><span class="std std-ref">Dict</span></a>’s key equality detection. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true if both keys hold the same null-terminated string content </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9StringKey5c_strEv">
+<span id="_CPPv3NK4cslt9StringKey5c_strEv"></span><span id="_CPPv2NK4cslt9StringKey5c_strEv"></span><span id="cslt::StringKey::c_strC"></span><span class="target" id="structcslt_1_1StringKey_1a40b6b7f90b8599b511e9b8506e701d93"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">c_str</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9StringKey5c_strEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the stored string as a C-string pointer. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt9StringKey4sizeEv">
+<span id="_CPPv3NK4cslt9StringKey4sizeEv"></span><span id="_CPPv2NK4cslt9StringKey4sizeEv"></span><span id="cslt::StringKey::sizeC"></span><span class="target" id="structcslt_1_1StringKey_1a2772894c0541ba2f5a145055a6cb103d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt9StringKey4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the logical length of the stored string (excludes null terminator) </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-members">Public Members</p>
+<dl class="cpp var">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt9StringKey4dataE">
+<span id="_CPPv3N4cslt9StringKey4dataE"></span><span id="_CPPv2N4cslt9StringKey4dataE"></span><span id="cslt::StringKey::data__cA"></span><span class="target" id="structcslt_1_1StringKey_1a9ebc65a26944ebcaddeabd6f6a63cd85"></span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">data</span></span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#_CPPv4I_6size_tEN4cslt9StringKeyE" title="cslt::StringKey::N"><span class="n"><span class="pre">N</span></span></a><span class="p"><span class="pre">]</span></span><a class="headerlink" href="#_CPPv4N4cslt9StringKey4dataE" title="Link to this definition"></a><br /></dt>
+<dd><p>Null-terminated fixed-size character buffer. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
 </section>
 <section id="dict-class">
 <h2>Dict Class<a class="headerlink" href="#dict-class" title="Link to this heading"></a></h2>

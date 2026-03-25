@@ -1,0 +1,181 @@
+\doxysection{cslt\+::String\+Key\texorpdfstring{$<$}{<} N \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{structcslt_1_1StringKey}{}\label{structcslt_1_1StringKey}\index{cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}}
+
+
+Fixed-\/size trivially copyable string key for use with Dict$<$\+K, V$>$  
+
+
+
+
+{\ttfamily \#include $<$dict.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{structcslt_1_1StringKey_a9e4208b7eb030f6f72b88bd0d524aa2c}{String\+Key}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{char}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{s}}) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Construct from a null-\/terminated C-\/string. \end{DoxyCompactList}\item 
+{\footnotesize template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{StringT}} $>$ }\\\mbox{\hyperlink{structcslt_1_1StringKey_a81abe082d442d0d6b373b2753fa41ab5}{String\+Key}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{StringT}} \&\mbox{\hyperlink{classcslt_1_1Expected}{s}}) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Construct from a \doxylink{classcslt_1_1String}{cslt\+::\+String}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{structcslt_1_1StringKey_a0f227fdd75a3af948307ee24919f2af3}{operator==}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{structcslt_1_1StringKey}{String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$ \&\mbox{\hyperlink{classcslt_1_1Expected}{other}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Equality comparison — required by \doxylink{classcslt_1_1Dict}{Dict}\textquotesingle{}s key equality detection. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{char}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structcslt_1_1StringKey_a40b6b7f90b8599b511e9b8506e701d93}{c\+\_\+str}} () \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Return the stored string as a C-\/string pointer. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{structcslt_1_1StringKey_a2772894c0541ba2f5a145055a6cb103d}{size}} () \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Return the logical length of the stored string (excludes null terminator) \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Data Fields}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{char}} \mbox{\hyperlink{structcslt_1_1StringKey_a9ebc65a26944ebcaddeabd6f6a63cd85}{data}} \mbox{[}\mbox{\hyperlink{classcslt_1_1Expected}{N}}\mbox{]}
+\begin{DoxyCompactList}\small\item\em Null-\/terminated fixed-\/size character buffer. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} N$>$\newline
+class cslt\+::\+String\+Key$<$ N $>$}
+Fixed-\/size trivially copyable string key for use with Dict$<$\+K, V$>$ 
+
+{\ttfamily \doxylink{classcslt_1_1String}{cslt\+::\+String}} cannot be used directly as a \doxylink{classcslt_1_1Dict}{Dict} key because its private destructor and deleted copy operations make it non-\/trivially-\/copyable — a requirement enforced by \doxylink{classcslt_1_1Dict}{Dict}\textquotesingle{}s {\ttfamily static\+\_\+assert}. {\ttfamily \doxylink{structcslt_1_1StringKey}{String\+Key}\texorpdfstring{$<$}{<}N\texorpdfstring{$>$}{>}} solves this by copying the string content into a fixed-\/size stack buffer of {\ttfamily N} bytes (including the null terminator), making the type trivially copyable and zero-\/cost to hash.
+
+The template parameter {\ttfamily N} is the total buffer size {\bfseries{including}} the null terminator, so a {\ttfamily \doxylink{structcslt_1_1StringKey}{String\+Key}\texorpdfstring{$<$}{<}32\texorpdfstring{$>$}{>}} stores up to 31 printable characters. Strings longer than {\ttfamily N-\/1} characters are silently truncated.
+
+{\ttfamily operator==} uses {\ttfamily std\+::strncmp} so \doxylink{classcslt_1_1Dict}{Dict}\textquotesingle{}s equality detection trait picks it up automatically — no custom comparator is needed.
+
+Recommended sizes\+:
+\begin{DoxyItemize}
+\item {\ttfamily \doxylink{structcslt_1_1StringKey}{String\+Key}\texorpdfstring{$<$}{<}32\texorpdfstring{$>$}{>}} — short identifiers, sensor names, config keys
+\item {\ttfamily \doxylink{structcslt_1_1StringKey}{String\+Key}\texorpdfstring{$<$}{<}64\texorpdfstring{$>$}{>}} — typical dictionary words, variable names
+\item {\ttfamily \doxylink{structcslt_1_1StringKey}{String\+Key}\texorpdfstring{$<$}{<}128\texorpdfstring{$>$}{>}} — sentences, file names
+\item {\ttfamily \doxylink{structcslt_1_1StringKey}{String\+Key}\texorpdfstring{$<$}{<}256\texorpdfstring{$>$}{>}} — file paths, long descriptors
+\end{DoxyItemize}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em N} & Total buffer size in bytes, including the null terminator. Must be \texorpdfstring{$>$}{>}= 2.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Type\ alias\ to\ keep\ call\ sites\ concise}}
+\DoxyCodeLine{\textcolor{keyword}{using\ }Key64\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::StringKey<64>}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<Key64,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<Key64,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<Key64,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Insert\ using\ a\ string\ literal}}
+\DoxyCodeLine{d-\/>insert(Key64\{\textcolor{stringliteral}{"{}pi"{}}\},\ \ \ \ 3.14159f);}
+\DoxyCodeLine{d-\/>insert(Key64\{\textcolor{stringliteral}{"{}euler"{}}\},\ 2.71828f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Look\ up\ by\ string\ literal}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ gr\ =\ d-\/>get(Key64\{\textcolor{stringliteral}{"{}pi"{}}\});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (gr.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{float}\ val\ =\ gr.value();\ \ \ \textcolor{comment}{//\ 3.14159f}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Construct\ a\ key\ from\ a\ cslt::String}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ rs\ =\ \mbox{\hyperlink{classcslt_1_1String_ab1efd0bf9fe05c2af789e5fb74f7223c}{cslt::String::init}}(\textcolor{stringliteral}{"{}euler"{}},\ 0,\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (rs.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::String,\ cslt::StringDeleter>}}\ s(rs.value());}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{bool}\ found\ =\ d-\/>has\_key(Key64\{*s\});\ \ \ \textcolor{comment}{//\ true}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\Hypertarget{structcslt_1_1StringKey_a9e4208b7eb030f6f72b88bd0d524aa2c}\label{structcslt_1_1StringKey_a9e4208b7eb030f6f72b88bd0d524aa2c} 
+\index{cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}!StringKey@{StringKey}}
+\index{StringKey@{StringKey}!cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{StringKey()}{StringKey()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{structcslt_1_1StringKey}{cslt\+::\+String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$\+::\+String\+Key (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{char}} \texorpdfstring{$\ast$}{*}}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}, {\ttfamily [noexcept]}}
+
+
+
+Construct from a null-\/terminated C-\/string. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Source string. If nullptr, the key is initialised to an empty string. If longer than N-\/1 characters the content is silently truncated. \\
+\hline
+\end{DoxyParams}
+\Hypertarget{structcslt_1_1StringKey_a81abe082d442d0d6b373b2753fa41ab5}\label{structcslt_1_1StringKey_a81abe082d442d0d6b373b2753fa41ab5} 
+\index{cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}!StringKey@{StringKey}}
+\index{StringKey@{StringKey}!cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{StringKey()}{StringKey()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} N$>$ \\
+template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{StringT}} $>$ \\
+\mbox{\hyperlink{structcslt_1_1StringKey}{cslt\+::\+String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$\+::\+String\+Key (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{StringT}} \&}]{s }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [explicit]}, {\ttfamily [noexcept]}}
+
+
+
+Construct from a \doxylink{classcslt_1_1String}{cslt\+::\+String}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em s} & Source \doxylink{classcslt_1_1String}{String}. If its content is longer than N-\/1 characters it is silently truncated.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+This constructor is only available when \doxylink{string_8hpp}{string.\+hpp} has been included before \doxylink{dict_8hpp}{dict.\+hpp}. If you do not use \doxylink{classcslt_1_1String}{cslt\+::\+String} as a source, include only \doxylink{dict_8hpp}{dict.\+hpp} and construct from a C-\/string literal instead. 
+\end{DoxyNote}
+
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{structcslt_1_1StringKey_a40b6b7f90b8599b511e9b8506e701d93}\label{structcslt_1_1StringKey_a40b6b7f90b8599b511e9b8506e701d93} 
+\index{cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}!c\_str@{c\_str}}
+\index{c\_str@{c\_str}!cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{c\_str()}{c\_str()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{char}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{structcslt_1_1StringKey}{cslt\+::\+String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$\+::c\+\_\+str (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return the stored string as a C-\/string pointer. 
+
+\Hypertarget{structcslt_1_1StringKey_a0f227fdd75a3af948307ee24919f2af3}\label{structcslt_1_1StringKey_a0f227fdd75a3af948307ee24919f2af3} 
+\index{cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}!operator==@{operator==}}
+\index{operator==@{operator==}!cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{operator==()}{operator==()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{structcslt_1_1StringKey}{cslt\+::\+String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$\+::operator== (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{structcslt_1_1StringKey}{String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$ \&}]{other }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Equality comparison — required by \doxylink{classcslt_1_1Dict}{Dict}\textquotesingle{}s key equality detection. 
+
+\begin{DoxyReturn}{Returns}
+true if both keys hold the same null-\/terminated string content 
+\end{DoxyReturn}
+\Hypertarget{structcslt_1_1StringKey_a2772894c0541ba2f5a145055a6cb103d}\label{structcslt_1_1StringKey_a2772894c0541ba2f5a145055a6cb103d} 
+\index{cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}!size@{size}}
+\index{size@{size}!cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{structcslt_1_1StringKey}{cslt\+::\+String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return the logical length of the stored string (excludes null terminator) 
+
+
+
+\doxysubsection{Field Documentation}
+\Hypertarget{structcslt_1_1StringKey_a9ebc65a26944ebcaddeabd6f6a63cd85}\label{structcslt_1_1StringKey_a9ebc65a26944ebcaddeabd6f6a63cd85} 
+\index{cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}!data@{data}}
+\index{data@{data}!cslt::StringKey$<$ N $>$@{cslt::StringKey$<$ N $>$}}
+\doxysubsubsection{\texorpdfstring{data}{data}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} N$>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{char}} \mbox{\hyperlink{structcslt_1_1StringKey}{cslt\+::\+String\+Key}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{N}} $>$\+::data\mbox{[}\mbox{\hyperlink{classcslt_1_1Expected}{N}}\mbox{]}}
+
+
+
+Null-\/terminated fixed-\/size character buffer. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/\mbox{\hyperlink{dict_8hpp}{dict.\+hpp}}\end{DoxyCompactItemize}

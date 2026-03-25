@@ -144,6 +144,46 @@ involves challenges:</p>
 <li><p><strong>Recommended pattern</strong> - Preferred over exceptions for safety-critical and real-time code</p></li>
 </ul>
 </section>
+<section id="smart-pointers">
+<h3>Smart Pointers<a class="headerlink" href="#smart-pointers" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>RAII ownership</strong> - <code class="docutils literal notranslate"><span class="pre">UniquePtr&lt;T,</span> <span class="pre">Deleter&gt;</span></code> provides deterministic single-owner lifetime management with custom deleters</p></li>
+<li><p><strong>Shared ownership</strong> - <code class="docutils literal notranslate"><span class="pre">SharedPtr&lt;T&gt;</span></code> provides reference-counted shared ownership with allocator-aware control blocks</p></li>
+<li><p><strong>Weak references</strong> - <code class="docutils literal notranslate"><span class="pre">WeakPtr&lt;T&gt;</span></code> enables non-owning observation of shared resources without extending lifetime</p></li>
+<li><p><strong>Allocator-aware</strong> - All pointer types work with the full allocator hierarchy (heap, arena, buddy, slab)</p></li>
+<li><p><strong>No standard library dependency</strong> - Independent implementation compatible with <code class="docutils literal notranslate"><span class="pre">STATIC_ONLY</span></code> mode</p></li>
+<li><p><strong>Custom deleters</strong> - Full support for user-defined cleanup logic via the deleter template parameter</p></li>
+<li><p><strong>Type-safe</strong> - Strongly typed ownership semantics prevent common dangling pointer and double-free bugs</p></li>
+</ul>
+</section>
+<section id="array">
+<h3>Array<a class="headerlink" href="#array" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Generic container</strong> - <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code> supports any element type via template parameter <code class="docutils literal notranslate"><span class="pre">T</span></code></p></li>
+<li><p><strong>Allocator-backed</strong> - Both the container struct and its element buffer are allocated through the provided allocator</p></li>
+<li><p><strong>Factory pattern</strong> - Creation via <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;::init()</span></code> returning <code class="docutils literal notranslate"><span class="pre">Expected&lt;Array&lt;T&gt;*&gt;</span></code> prevents uninitialised instances</p></li>
+<li><p><strong>Tiered growth</strong> - Automatic buffer growth uses a five-tier strategy to avoid runaway allocation at large sizes</p></li>
+<li><p><strong>Bounds-checked access</strong> - <code class="docutils literal notranslate"><span class="pre">operator[]</span></code> returns <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code> for safe reads; <code class="docutils literal notranslate"><span class="pre">set()</span></code> returns <code class="docutils literal notranslate"><span class="pre">Expected&lt;bool&gt;</span></code> for safe writes</p></li>
+<li><p><strong>In-place algorithms</strong> - <code class="docutils literal notranslate"><span class="pre">sort()</span></code>, <code class="docutils literal notranslate"><span class="pre">reverse()</span></code>, <code class="docutils literal notranslate"><span class="pre">clear()</span></code>, and <code class="docutils literal notranslate"><span class="pre">concat()</span></code> operate without additional allocation</p></li>
+<li><p><strong>SIMD-accelerated</strong> - <code class="docutils literal notranslate"><span class="pre">reverse()</span></code> and <code class="docutils literal notranslate"><span class="pre">min()</span></code>/<code class="docutils literal notranslate"><span class="pre">max()</span></code> dispatch to the best available SIMD back-end at compile time</p></li>
+<li><p><strong>Search</strong> - <code class="docutils literal notranslate"><span class="pre">contains()</span></code>, <code class="docutils literal notranslate"><span class="pre">binary_search()</span></code>, and <code class="docutils literal notranslate"><span class="pre">bracketed_binary_search()</span></code> provide O(1)–O(log n) lookup</p></li>
+<li><p><strong>Transformations</strong> - <code class="docutils literal notranslate"><span class="pre">slice()</span></code> and <code class="docutils literal notranslate"><span class="pre">cumulative()</span></code> produce new arrays from existing data</p></li>
+</ul>
+</section>
+<section id="dictionary">
+<h3>Dictionary<a class="headerlink" href="#dictionary" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Generic hash map</strong> - <code class="docutils literal notranslate"><span class="pre">Dict&lt;K,</span> <span class="pre">V&gt;</span></code> maps keys of any trivially copyable type <code class="docutils literal notranslate"><span class="pre">K</span></code> to values of type <code class="docutils literal notranslate"><span class="pre">V</span></code></p></li>
+<li><p><strong>Allocator-backed</strong> - Both the <code class="docutils literal notranslate"><span class="pre">Dict</span></code> struct and every internal node are allocated through the provided allocator</p></li>
+<li><p><strong>Factory pattern</strong> - Creation via <code class="docutils literal notranslate"><span class="pre">Dict&lt;K,V&gt;::init()</span></code> returning <code class="docutils literal notranslate"><span class="pre">Expected&lt;Dict&lt;K,V&gt;*&gt;</span></code> prevents uninitialised instances</p></li>
+<li><p><strong>MurmurHash3</strong> - High-quality hash function operating on raw key bytes with configurable seed</p></li>
+<li><p><strong>Chained collision resolution</strong> - Singly-linked bucket chains handle hash collisions without probing</p></li>
+<li><p><strong>Optional growth</strong> - Automatic resize when load factor exceeds 0.75; can be disabled for fixed-capacity use</p></li>
+<li><p><strong>String key support</strong> - <code class="docutils literal notranslate"><span class="pre">StringKey&lt;N&gt;</span></code> provides a trivially copyable fixed-size wrapper for string keys</p></li>
+<li><p><strong>Templated iteration</strong> - <code class="docutils literal notranslate"><span class="pre">foreach()</span></code> accepts any callable with signature <code class="docutils literal notranslate"><span class="pre">void(const</span> <span class="pre">K&amp;,</span> <span class="pre">const</span> <span class="pre">V&amp;)</span></code></p></li>
+<li><p><strong>Copy and merge</strong> - <code class="docutils literal notranslate"><span class="pre">copy()</span></code> and <code class="docutils literal notranslate"><span class="pre">merge()</span></code> factory methods build new dictionaries from existing ones</p></li>
+</ul>
+</section>
 </section>
 <section id="typical-use-cases">
 <h2>Typical Use Cases<a class="headerlink" href="#typical-use-cases" title="Link to this heading"></a></h2>

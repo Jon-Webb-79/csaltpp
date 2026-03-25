@@ -68,6 +68,40 @@ Expected Class
 * **MISRA compliant** - Fully compliant in both standard and ``STATIC_ONLY`` modes
 * **Recommended pattern** - Preferred over exceptions for safety-critical and real-time code
 
+Smart Pointers
+--------------
+* **RAII ownership** - ``UniquePtr<T, Deleter>`` provides deterministic single-owner lifetime management with custom deleters
+* **Shared ownership** - ``SharedPtr<T>`` provides reference-counted shared ownership with allocator-aware control blocks
+* **Weak references** - ``WeakPtr<T>`` enables non-owning observation of shared resources without extending lifetime
+* **Allocator-aware** - All pointer types work with the full allocator hierarchy (heap, arena, buddy, slab)
+* **No standard library dependency** - Independent implementation compatible with ``STATIC_ONLY`` mode
+* **Custom deleters** - Full support for user-defined cleanup logic via the deleter template parameter
+* **Type-safe** - Strongly typed ownership semantics prevent common dangling pointer and double-free bugs
+ 
+Array
+-----
+* **Generic container** - ``Array<T>`` supports any element type via template parameter ``T``
+* **Allocator-backed** - Both the container struct and its element buffer are allocated through the provided allocator
+* **Factory pattern** - Creation via ``Array<T>::init()`` returning ``Expected<Array<T>*>`` prevents uninitialised instances
+* **Tiered growth** - Automatic buffer growth uses a five-tier strategy to avoid runaway allocation at large sizes
+* **Bounds-checked access** - ``operator[]`` returns ``Expected<T>`` for safe reads; ``set()`` returns ``Expected<bool>`` for safe writes
+* **In-place algorithms** - ``sort()``, ``reverse()``, ``clear()``, and ``concat()`` operate without additional allocation
+* **SIMD-accelerated** - ``reverse()`` and ``min()``/``max()`` dispatch to the best available SIMD back-end at compile time
+* **Search** - ``contains()``, ``binary_search()``, and ``bracketed_binary_search()`` provide O(1)–O(log n) lookup
+* **Transformations** - ``slice()`` and ``cumulative()`` produce new arrays from existing data
+ 
+Dictionary
+----------
+* **Generic hash map** - ``Dict<K, V>`` maps keys of any trivially copyable type ``K`` to values of type ``V``
+* **Allocator-backed** - Both the ``Dict`` struct and every internal node are allocated through the provided allocator
+* **Factory pattern** - Creation via ``Dict<K,V>::init()`` returning ``Expected<Dict<K,V>*>`` prevents uninitialised instances
+* **MurmurHash3** - High-quality hash function operating on raw key bytes with configurable seed
+* **Chained collision resolution** - Singly-linked bucket chains handle hash collisions without probing
+* **Optional growth** - Automatic resize when load factor exceeds 0.75; can be disabled for fixed-capacity use
+* **String key support** - ``StringKey<N>`` provides a trivially copyable fixed-size wrapper for string keys
+* **Templated iteration** - ``foreach()`` accepts any callable with signature ``void(const K&, const V&)``
+* **Copy and merge** - ``copy()`` and ``merge()`` factory methods build new dictionaries from existing ones
+
 Typical Use Cases
 #################
 

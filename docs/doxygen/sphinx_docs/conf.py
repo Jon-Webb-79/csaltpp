@@ -15,6 +15,7 @@
 #import sys
 #sys.path.insert(0, os.path.abspath('../../../src'))
 # -- Project info ------------------------------------------------------------
+import os
 project = 'csalt++-lib'
 copyright = '2025, Jonathan A. Webb'
 author = 'Jonathan A. Webb'
@@ -48,7 +49,8 @@ todo_include_todos = True
  
 # Use an absolute path to eliminate any working-directory ambiguity.
 # This path must point to the directory that contains index.xml.
-DOXYGEN_XML_DIR = "/home/jonwebb/Code_Dev/C++/csaltpp/docs/doxygen/build/xml"
+DOXYGEN_XML_DIR = os.path.join(os.path.dirname(__file__),
+                               "..", "build", "xml")
  
 breathe_default_project = "csaltpp"
 breathe_projects = {

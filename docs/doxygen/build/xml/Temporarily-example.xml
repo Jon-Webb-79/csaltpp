@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
   <compounddef id="Temporarily-example" kind="example">
     <compoundname>Temporarily</compoundname>
     <briefdescription>
@@ -22,37 +22,37 @@ Dynamically enables or disables the arena&apos;s ability to grow by allocating a
 </listitem><listitem><para>Preventing unbounded growth</para>
 </listitem></itemizedlist>
 </para>
-<para>disable growth <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(4096,<sp/>true).value());</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Fill<sp/>initial<sp/>capacity</highlight></codeline>
-<codeline><highlight class="normal">while<sp/>(arena-&gt;remaining()<sp/>&gt;=<sp/>64)<sp/>{</highlight></codeline>
+<para>disable growth <programlisting><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>arena<sp/>=<sp/><ref refid="namespacecslt_1ad55f4168d9f1832627c6d75e60d14a6c" kindref="member">cslt::move</ref>(<ref refid="classcslt_1_1ArenaAllocator_1ab71e5fc5e1cf3e9b07ad7208465a7b0f" kindref="member">cslt::ArenaAllocator::Heap</ref>(4096,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">).value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Fill<sp/>initial<sp/>capacity</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(arena-&gt;remaining()<sp/>&gt;=<sp/>64)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;alloc(64);</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Can<sp/>still<sp/>grow</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>ptr1<sp/>=<sp/>arena-&gt;alloc(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Can<sp/>still<sp/>grow</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr1<sp/>=<sp/>arena-&gt;alloc(1024);</highlight></codeline>
 <codeline><highlight class="normal">assert(ptr1.hasValue());</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Disable<sp/>growth</highlight></codeline>
-<codeline><highlight class="normal">arena-&gt;toggle_resize(false);</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Fill<sp/>again</highlight></codeline>
-<codeline><highlight class="normal">while<sp/>(arena-&gt;remaining()<sp/>&gt;=<sp/>64)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Disable<sp/>growth</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arena-&gt;toggle_resize(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Fill<sp/>again</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">while</highlight><highlight class="normal"><sp/>(arena-&gt;remaining()<sp/>&gt;=<sp/>64)<sp/>{</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;alloc(64);</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>This<sp/>will<sp/>fail<sp/>-<sp/>no<sp/>growth<sp/>allowed</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>ptr2<sp/>=<sp/>arena-&gt;alloc(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>This<sp/>will<sp/>fail<sp/>-<sp/>no<sp/>growth<sp/>allowed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr2<sp/>=<sp/>arena-&gt;alloc(1024);</highlight></codeline>
 <codeline><highlight class="normal">assert(!ptr2.hasValue());</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Re-enable<sp/>growth</highlight></codeline>
-<codeline><highlight class="normal">arena-&gt;toggle_resize(true);</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Now<sp/>works<sp/>again</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>ptr3<sp/>=<sp/>arena-&gt;alloc(1024);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Re-enable<sp/>growth</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">arena-&gt;toggle_resize(</highlight><highlight class="keyword">true</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Now<sp/>works<sp/>again</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ptr3<sp/>=<sp/>arena-&gt;alloc(1024);</highlight></codeline>
 <codeline><highlight class="normal">assert(ptr3.hasValue());</highlight></codeline>
 </programlisting> <programlisting filename="Temporarily"></programlisting> </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp"/>
   </compounddef>
 </doxygen>

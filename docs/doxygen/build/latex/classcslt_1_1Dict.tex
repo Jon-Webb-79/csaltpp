@@ -1,0 +1,723 @@
+\doxysection{cslt\+::Dict\texorpdfstring{$<$}{<} K, V \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classcslt_1_1Dict}{}\label{classcslt_1_1Dict}\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+
+
+Allocator-\/backed generic hash dictionary mapping keys of type K to values of type V.  
+
+
+
+
+{\ttfamily \#include $<$dict.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict_a1a6366012907d0a6683b164bd874b12e}{insert}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&\mbox{\hyperlink{classcslt_1_1Expected}{key}}, \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} \&value) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Insert a new key-\/value pair. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict_a545138414e5e301a15588ab0cfff7049}{update}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&\mbox{\hyperlink{classcslt_1_1Expected}{key}}, \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} \&value) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Overwrite the value of an existing key. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \mbox{\hyperlink{classcslt_1_1Dict_ad38477084a84f1eb9ab5e5791165ff4f}{pop}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&\mbox{\hyperlink{classcslt_1_1Expected}{key}}) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Remove a key-\/value pair and return the removed value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \mbox{\hyperlink{classcslt_1_1Dict_a6673ffd8aa81f17995514ce5aa463e48}{get}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&\mbox{\hyperlink{classcslt_1_1Expected}{key}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Return a copy of the value associated with a key. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classcslt_1_1Dict_ac4d77742fb8cf5a793ab81b6a37e1ae2}{get\+\_\+ptr}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&\mbox{\hyperlink{classcslt_1_1Expected}{key}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Return a read-\/only pointer directly into the node\textquotesingle{}s value slot. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict_a8f49e1aa29a41442da6132a46ad7995c}{has\+\_\+key}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&\mbox{\hyperlink{classcslt_1_1Expected}{key}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Test whether a key exists without retrieving its value. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1Dict_a30207a6dbfc6d7550ee8201de08a063c}{clear}} () \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Remove all entries without freeing the \doxylink{classcslt_1_1Dict}{Dict} or its bucket array. \end{DoxyCompactList}\item 
+{\footnotesize template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{Func}} $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict_af9e30eb9070fc744e73c6ed0995fd21c}{foreach}} (\mbox{\hyperlink{classcslt_1_1Expected}{Func}} \mbox{\hyperlink{classcslt_1_1Expected}{fn}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Call {\ttfamily fn} once for every key-\/value pair in the dict. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Dict_a323937f988a50c9a6bcc9b2b201cf7c2}{size}} () \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Number of occupied buckets (chains with at least one entry) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Dict_a45f2be36b215978ba38e964c822ae757}{hash\+\_\+size}} () \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Total number of key-\/value pairs stored. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Dict_a913efcf08d5f620beb9a85039cef3be2}{bucket\+\_\+count}} () \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Number of buckets allocated (always a power of two) \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict_a236da0d47344f310a9385f9e848b5322}{is\+\_\+empty}} () \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em true if no key-\/value pairs are stored \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{init}} (\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} capacity, \mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Expected}{growth}}, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&allocator) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Allocate and initialise a new \doxylink{classcslt_1_1Dict}{Dict}. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict_ac21ccb45e4005fce65f12dd77e46fd80}{copy}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&\mbox{\hyperlink{classcslt_1_1Expected}{src}}, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&allocator) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Create a deep copy of {\ttfamily src} using a caller-\/supplied allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict_aa57aac42f0c713e0d822ddb3d6595651}{copy}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&\mbox{\hyperlink{classcslt_1_1Expected}{src}}) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Create a deep copy using the source dict\textquotesingle{}s own allocator. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict_aac1cb02eeb122d32b7cf87b1705c563c}{merge}} (\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&\mbox{\hyperlink{classcslt_1_1Expected}{a}}, \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&\mbox{\hyperlink{classcslt_1_1Expected}{b}}, \mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Expected}{overwrite}}, \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&allocator) \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Merge two dicts into a new dict. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Friends}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{KK}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{VV}} $>$ }\\\mbox{\hyperlink{classcslt_1_1Expected}{class}} \mbox{\hyperlink{classcslt_1_1Dict_a4f5d2974c32a671a89e5bd3d51d09a3e}{Dict\+Deleter}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}}$>$\newline
+class cslt\+::\+Dict$<$ K, V $>$}
+Allocator-\/backed generic hash dictionary mapping keys of type K to values of type V. 
+
+Implements a chained hash table using the Murmur\+Hash3-\/inspired hash function from the companion C implementation. Both the \doxylink{classcslt_1_1Dict}{Dict} object and every internal node are allocated through the provided \doxylink{classcslt_1_1Allocator}{Allocator}, enabling deterministic memory behaviour across heap, arena, buddy, and slab allocators.
+
+Key features\+:
+\begin{DoxyItemize}
+\item Template parameters K and V decouple key and value types completely
+\item K must be trivially copyable; keys are hashed over their raw bytes
+\item Key equality uses operator== when available, memcmp as fallback
+\item V may be any copy-\/constructible, destructible type
+\item Optional automatic growth when load factor exceeds 0.\+75
+\item Factory pattern via \doxylink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{init()} prevents uninitialised instances
+\item RAII cleanup through \doxylink{classcslt_1_1DictDeleter}{Dict\+Deleter} and \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr}
+\item \doxylink{classcslt_1_1Dict_af9e30eb9070fc744e73c6ed0995fd21c}{foreach()} iteration accepts any callable (lambda, functor, function pointer)
+\end{DoxyItemize}
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em K} & Key type — must satisfy std\+::is\+\_\+trivially\+\_\+copyable\+\_\+v$<$\+K$>$ \\
+\hline
+{\em V} & Value type — must be default-\/constructible, copy-\/constructible, and destructible. Default-\/constructibility is required because \doxylink{classcslt_1_1Dict_a6673ffd8aa81f17995514ce5aa463e48}{get()} and \doxylink{classcslt_1_1Dict_ad38477084a84f1eb9ab5e5791165ff4f}{pop()} declare a local Expected$<$\+V$>$ which default-\/constructs V before a value is available.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (r.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,float>}}>\ d(r.value());}
+\DoxyCodeLine{\ \ \ \ d-\/>insert(42,\ 3.14f);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{auto}\ val\ =\ d-\/>get(42);\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Expected<float>}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{auto}\ popped\ =\ d-\/>pop(42);\ \ \ \ \ \ \ \textcolor{comment}{//\ Expected<float>}}
+\DoxyCodeLine{\}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classcslt_1_1Dict_a913efcf08d5f620beb9a85039cef3be2}\label{classcslt_1_1Dict_a913efcf08d5f620beb9a85039cef3be2} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!bucket\_count@{bucket\_count}}
+\index{bucket\_count@{bucket\_count}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{bucket\_count()}{bucket\_count()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::bucket\+\_\+count (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Number of buckets allocated (always a power of two) 
+
+This is the current size of the internal bucket array. It grows automatically when growth is enabled and the load factor exceeds 0.\+75. The initial value is the smallest power of two \texorpdfstring{$>$}{>}= the capacity passed to \doxylink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{init()}, with a minimum of 8.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(10,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t}\ bc\ =\ d-\/>bucket\_count();\ \ \ \textcolor{comment}{//\ bc\ ==\ 16\ (next\ power\ of\ two\ >=\ 10)}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a30207a6dbfc6d7550ee8201de08a063c}\label{classcslt_1_1Dict_a30207a6dbfc6d7550ee8201de08a063c} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!clear@{clear}}
+\index{clear@{clear}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Remove all entries without freeing the \doxylink{classcslt_1_1Dict}{Dict} or its bucket array. 
+
+Every node (key copy + inline value) is destroyed and freed via the allocator. The bucket array is retained and zeroed so the \doxylink{classcslt_1_1Dict}{Dict} can be reused immediately without a further allocation. \doxylink{classcslt_1_1Dict_a323937f988a50c9a6bcc9b2b201cf7c2}{size()} and \doxylink{classcslt_1_1Dict_a45f2be36b215978ba38e964c822ae757}{hash\+\_\+size()} are reset to 0; \doxylink{classcslt_1_1Dict_a913efcf08d5f620beb9a85039cef3be2}{bucket\+\_\+count()} is unchanged.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(1,\ 1.1f);}
+\DoxyCodeLine{d-\/>insert(2,\ 2.2f);}
+\DoxyCodeLine{\textcolor{comment}{//\ d-\/>hash\_size()\ ==\ 2}}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>clear();}
+\DoxyCodeLine{\textcolor{comment}{//\ d-\/>hash\_size()\ ==\ 0,\ d-\/>is\_empty()\ ==\ true}}
+\DoxyCodeLine{\textcolor{comment}{//\ d-\/>bucket\_count()\ is\ unchanged\ —\ the\ bucket\ array\ is\ reused}}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(3,\ 3.3f);\ \ \ \textcolor{comment}{//\ can\ insert\ immediately\ after\ clear}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_aa57aac42f0c713e0d822ddb3d6595651}\label{classcslt_1_1Dict_aa57aac42f0c713e0d822ddb3d6595651} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!copy@{copy}}
+\index{copy@{copy}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{copy()}{copy()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::copy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&}]{src }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Create a deep copy using the source dict\textquotesingle{}s own allocator. 
+
+Convenience overload that forwards to copy(src, allocator) using the allocator already associated with {\ttfamily src}.
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & \doxylink{classcslt_1_1Dict}{Dict} to copy from \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classcslt_1_1Expected}{Expected}\texorpdfstring{$<$}{<}Dict$<$\+K,\+V$>$\texorpdfstring{$\ast$}{*}\texorpdfstring{$>$}{>} on success, or a \doxylink{classcslt_1_1MemoryError}{Memory\+Error}
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ src(r.value());}
+\DoxyCodeLine{src-\/>insert(10,\ 9.9f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Copy\ using\ src's\ own\ allocator\ —\ no\ need\ to\ pass\ alloc\ explicitly}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ cr\ =\ \mbox{\hyperlink{classcslt_1_1Dict_ac21ccb45e4005fce65f12dd77e46fd80}{cslt::Dict<int,\ float>::copy}}(*src);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!cr.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ dst(cr.value());}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_ac21ccb45e4005fce65f12dd77e46fd80}\label{classcslt_1_1Dict_ac21ccb45e4005fce65f12dd77e46fd80} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!copy@{copy}}
+\index{copy@{copy}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{copy()}{copy()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::copy (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&}]{src,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Create a deep copy of {\ttfamily src} using a caller-\/supplied allocator. 
+
+All key-\/value pairs are rehashed into a new bucket array of the same capacity as {\ttfamily src}. Nodes are copy-\/constructed individually so the copy is fully independent of the source.
+
+
+\begin{DoxyParams}{Parameters}
+{\em src} & \doxylink{classcslt_1_1Dict}{Dict} to copy from \\
+\hline
+{\em allocator} & \doxylink{classcslt_1_1Allocator}{Allocator} for the new \doxylink{classcslt_1_1Dict}{Dict} and all its nodes. May differ from the allocator used to create {\ttfamily src}. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classcslt_1_1Expected}{Expected}\texorpdfstring{$<$}{<}Dict$<$\+K,\+V$>$\texorpdfstring{$\ast$}{*}\texorpdfstring{$>$}{>} on success, or a \doxylink{classcslt_1_1MemoryError}{Memory\+Error} on allocation failure
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Build\ the\ source\ dictionary}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ src(r.value());}
+\DoxyCodeLine{src-\/>insert(1,\ 1.1f);}
+\DoxyCodeLine{src-\/>insert(2,\ 2.2f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Deep-\/copy\ into\ a\ second\ dictionary\ backed\ by\ the\ same\ allocator}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ cr\ =\ \mbox{\hyperlink{classcslt_1_1Dict_ac21ccb45e4005fce65f12dd77e46fd80}{cslt::Dict<int,\ float>::copy}}(*src,\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!cr.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ dst(cr.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ src\ and\ dst\ are\ independent\ —\ mutating\ one\ does\ not\ affect\ the\ other}}
+\DoxyCodeLine{dst-\/>insert(3,\ 3.3f);}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_af9e30eb9070fc744e73c6ed0995fd21c}\label{classcslt_1_1Dict_af9e30eb9070fc744e73c6ed0995fd21c} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!foreach@{foreach}}
+\index{foreach@{foreach}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{foreach()}{foreach()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{Func}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::foreach (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{Func}}}]{fn }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Call {\ttfamily fn} once for every key-\/value pair in the dict. 
+
+Traversal order is bucket order (not insertion order). The callback receives const references to both the key and the value.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em Func} & Callable with signature {\ttfamily void(const K\&, const V\&)}. Lambdas, functors, and plain function pointers are all accepted. The callback must not insert, update, remove, or clear entries during traversal.\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em fn} & Callback invoked for each entry. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success; false if the dict is uninitialised.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(1,\ 1.1f);}
+\DoxyCodeLine{d-\/>insert(2,\ 2.2f);}
+\DoxyCodeLine{d-\/>insert(3,\ 3.3f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Lambda\ —\ accumulate\ the\ sum\ of\ all\ values}}
+\DoxyCodeLine{\textcolor{keywordtype}{float}\ total\ =\ 0.0f;}
+\DoxyCodeLine{d-\/>foreach([\&total](\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&\ key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\&\ value)\ \{}
+\DoxyCodeLine{\ \ \ \ total\ +=\ value;}
+\DoxyCodeLine{\});}
+\DoxyCodeLine{\textcolor{comment}{//\ total\ ==\ 6.6f\ (approximately)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ File-\/scope\ function\ pointer}}
+\DoxyCodeLine{\textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ print\_entry(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\&\ key,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{float}\&\ value)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ log\ key\ and\ value}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{d-\/>foreach(print\_entry);}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a6673ffd8aa81f17995514ce5aa463e48}\label{classcslt_1_1Dict_a6673ffd8aa81f17995514ce5aa463e48} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!get@{get}}
+\index{get@{get}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{get()}{get()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::get (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&}]{key }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return a copy of the value associated with a key. 
+
+The dict is not modified. The returned \doxylink{classcslt_1_1Expected}{Expected} owns a copy of the value; mutations to the copy do not affect the stored value.
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Key to look up. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+V$>$ containing a copy of the value on success, or an \doxylink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error} if the key is not found.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(42,\ 3.14f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ gr\ =\ d-\/>get(42);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (gr.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{float}\ v\ =\ gr.value();\ \ \ \textcolor{comment}{//\ v\ ==\ 3.14f}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ missing\ =\ d-\/>get(99);}
+\DoxyCodeLine{\textcolor{comment}{//\ missing.hasValue()\ ==\ false}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_ac4d77742fb8cf5a793ab81b6a37e1ae2}\label{classcslt_1_1Dict_ac4d77742fb8cf5a793ab81b6a37e1ae2} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!get\_ptr@{get\_ptr}}
+\index{get\_ptr@{get\_ptr}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{get\_ptr()}{get\_ptr()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} \texorpdfstring{$\ast$}{*} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::get\+\_\+ptr (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&}]{key }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Return a read-\/only pointer directly into the node\textquotesingle{}s value slot. 
+
+The pointer remains valid until the next mutation of the dict (insert, update, pop, clear, or any operation that triggers a resize). The caller must not free or write through it.
+
+Prefer \doxylink{classcslt_1_1Dict_a6673ffd8aa81f17995514ce5aa463e48}{get()} when a copy is acceptable. Use \doxylink{classcslt_1_1Dict_ac4d77742fb8cf5a793ab81b6a37e1ae2}{get\+\_\+ptr()} only when avoiding the copy is important and the pointer lifetime can be guaranteed.
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Key to look up. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Const pointer to the value on success, nullptr if not found.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(42,\ 3.14f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ ptr\ =\ d-\/>get\_ptr(42);\ \ \ \textcolor{comment}{//\ ptr\ !=\ nullptr}}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (ptr)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{float}\ v\ =\ *ptr;\ \ \ \textcolor{comment}{//\ v\ ==\ 3.14f\ —\ zero-\/copy\ read}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{const}\ \textcolor{keywordtype}{float}*\ missing\ =\ d-\/>get\_ptr(99);\ \ \ \textcolor{comment}{//\ missing\ ==\ nullptr}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a8f49e1aa29a41442da6132a46ad7995c}\label{classcslt_1_1Dict_a8f49e1aa29a41442da6132a46ad7995c} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!has\_key@{has\_key}}
+\index{has\_key@{has\_key}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{has\_key()}{has\_key()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::has\+\_\+key (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&}]{key }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Test whether a key exists without retrieving its value. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Key to test. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the key exists, false otherwise.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(42,\ 3.14f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ found\ \ \ =\ d-\/>has\_key(42);\ \ \ \textcolor{comment}{//\ true}}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ missing\ =\ d-\/>has\_key(99);\ \ \ \textcolor{comment}{//\ false}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a45f2be36b215978ba38e964c822ae757}\label{classcslt_1_1Dict_a45f2be36b215978ba38e964c822ae757} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!hash\_size@{hash\_size}}
+\index{hash\_size@{hash\_size}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{hash\_size()}{hash\_size()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::hash\+\_\+size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Total number of key-\/value pairs stored. 
+
+Incremented by \doxylink{classcslt_1_1Dict_a1a6366012907d0a6683b164bd874b12e}{insert()} and decremented by \doxylink{classcslt_1_1Dict_ad38477084a84f1eb9ab5e5791165ff4f}{pop()}. Reset to 0 by \doxylink{classcslt_1_1Dict_a30207a6dbfc6d7550ee8201de08a063c}{clear()}. This is the value to use when you need to know how many distinct keys are in the dict.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(1,\ 1.0f);}
+\DoxyCodeLine{d-\/>insert(2,\ 2.0f);}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t}\ n\ =\ d-\/>hash\_size();\ \ \ \textcolor{comment}{//\ n\ ==\ 2}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}\label{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!init@{init}}
+\index{init@{init}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}}}]{capacity,  }\item[{\mbox{\hyperlink{classcslt_1_1Expected}{bool}}}]{growth,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Allocate and initialise a new \doxylink{classcslt_1_1Dict}{Dict}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em capacity} & Initial bucket count. Must be \texorpdfstring{$>$}{>} 0. Rounded up to the next power of two (minimum 8). \\
+\hline
+{\em growth} & If true the table resizes automatically when the load factor exceeds 0.\+75. If false, \doxylink{classcslt_1_1Dict_a1a6366012907d0a6683b164bd874b12e}{insert()} returns false when all buckets are full. \\
+\hline
+{\em allocator} & \doxylink{classcslt_1_1Allocator}{Allocator} for all internal memory. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classcslt_1_1Expected}{Expected}\texorpdfstring{$<$}{<}Dict$<$\+K,\+V$>$\texorpdfstring{$\ast$}{*}\texorpdfstring{$>$}{>} on success, or a \doxylink{classcslt_1_1MemoryError}{Memory\+Error} / \doxylink{classcslt_1_1ArgumentError}{Argument\+Error}
+\end{DoxyReturn}
+\begin{DoxyParagraph}{Error conditions}
+
+\begin{DoxyItemize}
+\item capacity == 0 (\doxylink{classcslt_1_1ArgumentError}{Argument\+Error})
+\item Allocation of the \doxylink{classcslt_1_1Dict}{Dict} struct fails (\doxylink{classcslt_1_1MemoryError}{Memory\+Error})
+\item Allocation of the bucket array fails (\doxylink{classcslt_1_1MemoryError}{Memory\+Error})
+\end{DoxyItemize}
+\end{DoxyParagraph}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\textcolor{comment}{//\ Create\ an\ int-\/>float\ dictionary\ with\ an\ initial\ capacity\ of\ 16\ buckets}}
+\DoxyCodeLine{\textcolor{comment}{//\ and\ automatic\ growth\ enabled.\ \ The\ UniquePtr\ owns\ the\ dict\ and\ frees}}
+\DoxyCodeLine{\textcolor{comment}{//\ it\ automatically\ when\ it\ goes\ out\ of\ scope.}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(16,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ handle\ error\ —\ r.error()\ describes\ the\ failure}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(1,\ 1.1f);}
+\DoxyCodeLine{d-\/>insert(2,\ 2.2f);}
+\DoxyCodeLine{\textcolor{comment}{//\ d\ is\ freed\ here\ when\ it\ leaves\ scope}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a1a6366012907d0a6683b164bd874b12e}\label{classcslt_1_1Dict_a1a6366012907d0a6683b164bd874b12e} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!insert@{insert}}
+\index{insert@{insert}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{insert()}{insert()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::insert (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&}]{key,  }\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Insert a new key-\/value pair. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Key to insert. Must not already exist in the dict. \\
+\hline
+{\em value} & Value to associate with the key. Copy-\/constructed into the node\textquotesingle{}s inline buffer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success; false if the key already exists, allocation fails, or the dict is full and growth is disabled.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ ok\ =\ d-\/>insert(42,\ 3.14f);\ \ \ \textcolor{comment}{//\ ok\ ==\ true}}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ dup\ =\ d-\/>insert(42,\ 9.99f);\ \ \textcolor{comment}{//\ dup\ ==\ false\ —\ duplicate\ key\ rejected}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a236da0d47344f310a9385f9e848b5322}\label{classcslt_1_1Dict_a236da0d47344f310a9385f9e848b5322} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!is\_empty@{is\_empty}}
+\index{is\_empty@{is\_empty}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{is\_empty()}{is\_empty()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::is\+\_\+empty (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+true if no key-\/value pairs are stored 
+
+Equivalent to \doxylink{classcslt_1_1Dict_a45f2be36b215978ba38e964c822ae757}{hash\+\_\+size()} == 0. Returns true on a freshly initialised dict and after \doxylink{classcslt_1_1Dict_a30207a6dbfc6d7550ee8201de08a063c}{clear()}.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ empty\_before\ =\ d-\/>is\_empty();\ \ \ \textcolor{comment}{//\ true}}
+\DoxyCodeLine{d-\/>insert(1,\ 1.0f);}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ empty\_after\ \ =\ d-\/>is\_empty();\ \ \ \textcolor{comment}{//\ false}}
+\DoxyCodeLine{d-\/>clear();}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ empty\_again\ \ =\ d-\/>is\_empty();\ \ \ \textcolor{comment}{//\ true}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_aac1cb02eeb122d32b7cf87b1705c563c}\label{classcslt_1_1Dict_aac1cb02eeb122d32b7cf87b1705c563c} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!merge@{merge}}
+\index{merge@{merge}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{merge()}{merge()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \texorpdfstring{$\ast$}{*} $>$ \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::merge (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&}]{a,  }\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Dict}{Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \&}]{b,  }\item[{\mbox{\hyperlink{classcslt_1_1Expected}{bool}}}]{overwrite,  }\item[{\mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}} \&}]{allocator }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}, {\ttfamily [noexcept]}}
+
+
+
+Merge two dicts into a new dict. 
+
+All entries from {\ttfamily a} are inserted first. Entries from {\ttfamily b} are then processed\+:
+\begin{DoxyItemize}
+\item If the key does not exist in the result it is inserted.
+\item If the key exists and {\ttfamily overwrite} is true the value is replaced.
+\item If the key exists and {\ttfamily overwrite} is false the original value is kept.
+\end{DoxyItemize}
+
+{\ttfamily a} and {\ttfamily b} are not modified.
+
+
+\begin{DoxyParams}{Parameters}
+{\em a} & First source dict \\
+\hline
+{\em b} & Second source dict \\
+\hline
+{\em overwrite} & If true, {\ttfamily b\textquotesingle{}s} values win on key conflicts \\
+\hline
+{\em allocator} & \doxylink{classcslt_1_1Allocator}{Allocator} for the new dict \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\doxylink{classcslt_1_1Expected}{Expected}\texorpdfstring{$<$}{<}Dict$<$\+K,\+V$>$\texorpdfstring{$\ast$}{*}\texorpdfstring{$>$}{>} on success, or a \doxylink{classcslt_1_1MemoryError}{Memory\+Error} on allocation failure
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Build\ the\ first\ source\ dictionary}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ ra\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!ra.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ a(ra.value());}
+\DoxyCodeLine{a-\/>insert(1,\ 1.0f);}
+\DoxyCodeLine{a-\/>insert(2,\ 2.0f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Build\ the\ second\ source\ dictionary\ —\ key\ 2\ conflicts\ with\ a}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ rb\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!rb.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ b(rb.value());}
+\DoxyCodeLine{b-\/>insert(2,\ 99.0f);\ \ \ \textcolor{comment}{//\ conflict\ —\ same\ key\ as\ in\ a}}
+\DoxyCodeLine{b-\/>insert(3,\ 3.0f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ Merge:\ b\ wins\ on\ conflicts\ (overwrite\ ==\ true)}}
+\DoxyCodeLine{\textcolor{comment}{//\ Result\ contains:\ \{1-\/>1.0,\ 2-\/>99.0,\ 3-\/>3.0\}}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ mr\ =\ \mbox{\hyperlink{classcslt_1_1Dict_aac1cb02eeb122d32b7cf87b1705c563c}{cslt::Dict<int,\ float>::merge}}(*a,\ *b,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!mr.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ merged(mr.value());}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_ad38477084a84f1eb9ab5e5791165ff4f}\label{classcslt_1_1Dict_ad38477084a84f1eb9ab5e5791165ff4f} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!pop@{pop}}
+\index{pop@{pop}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{pop()}{pop()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{Expected}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::pop (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&}]{key }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Remove a key-\/value pair and return the removed value. 
+
+The node is unlinked from its bucket chain and freed. The value is copy-\/constructed into the \doxylink{classcslt_1_1Expected}{Expected} before the node is destroyed, so the caller always receives the value regardless of what type V is.
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Key to remove. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Expected$<$\+V$>$ containing the value on success, or an \doxylink{classcslt_1_1OutOfBoundsError}{Out\+Of\+Bounds\+Error} if the key is not found.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(42,\ 3.14f);}
+\DoxyCodeLine{d-\/>insert(99,\ 9.99f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ pr\ =\ d-\/>pop(42);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (pr.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{float}\ v\ =\ pr.value();\ \ \ \textcolor{comment}{//\ v\ ==\ 3.14f;\ key\ 42\ no\ longer\ in\ dict}}
+\DoxyCodeLine{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ missing\ =\ d-\/>pop(7);}
+\DoxyCodeLine{\textcolor{comment}{//\ missing.hasValue()\ ==\ false\ —\ key\ 7\ was\ never\ inserted}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a323937f988a50c9a6bcc9b2b201cf7c2}\label{classcslt_1_1Dict_a323937f988a50c9a6bcc9b2b201cf7c2} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!size@{size}}
+\index{size@{size}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{size()}{size()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::size (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Number of occupied buckets (chains with at least one entry) 
+
+This is the number of distinct hash slots in use, not the total number of key-\/value pairs. Multiple keys may hash to the same bucket and form a chain; each such chain counts as one occupied bucket. Use \doxylink{classcslt_1_1Dict_a45f2be36b215978ba38e964c822ae757}{hash\+\_\+size()} for the total number of pairs.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(1,\ 1.0f);}
+\DoxyCodeLine{d-\/>insert(2,\ 2.0f);}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t}\ occ\ =\ d-\/>size();\ \ \ \textcolor{comment}{//\ <=\ 2\ (may\ be\ 1\ if\ both\ keys\ hash\ to\ same\ bucket)}}
+
+\end{DoxyCode}
+ \Hypertarget{classcslt_1_1Dict_a545138414e5e301a15588ab0cfff7049}\label{classcslt_1_1Dict_a545138414e5e301a15588ab0cfff7049} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!update@{update}}
+\index{update@{update}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{K}}, \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$\+::update (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} \&}]{key,  }\item[{\mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} \&}]{value }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Overwrite the value of an existing key. 
+
+The key is not re-\/hashed and no allocation is performed — only the stored value is replaced via destroy-\/then-\/copy-\/construct in place.
+
+
+\begin{DoxyParams}{Parameters}
+{\em key} & Key to update. Must already exist in the dict. \\
+\hline
+{\em value} & New value to store. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true on success; false if the key is not found.
+\end{DoxyReturn}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ alloc;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Dict_a49eea3f6e2ef88c80a1003042c38b7cb}{cslt::Dict<int,\ float>::init}}(8,\ \textcolor{keyword}{true},\ alloc);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!r.hasValue())\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Dict<int,\ float>}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::DictDeleter<int,\ float>}}>\ d(r.value());}
+\DoxyCodeLine{}
+\DoxyCodeLine{d-\/>insert(42,\ 3.14f);}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ ok\ =\ d-\/>update(42,\ 6.28f);\ \ \ \textcolor{comment}{//\ ok\ ==\ true,\ \ value\ is\ now\ 6.28f}}
+\DoxyCodeLine{\textcolor{keywordtype}{bool}\ nf\ =\ d-\/>update(99,\ 1.00f);\ \ \ \textcolor{comment}{//\ nf\ ==\ false,\ key\ 99\ does\ not\ exist}}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Friends And Related Symbol Documentation}
+\Hypertarget{classcslt_1_1Dict_a4f5d2974c32a671a89e5bd3d51d09a3e}\label{classcslt_1_1Dict_a4f5d2974c32a671a89e5bd3d51d09a3e} 
+\index{cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}!DictDeleter@{DictDeleter}}
+\index{DictDeleter@{DictDeleter}!cslt::Dict$<$ K, V $>$@{cslt::Dict$<$ K, V $>$}}
+\doxysubsubsection{\texorpdfstring{DictDeleter}{DictDeleter}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{K}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{V}} $>$ \\
+template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{KK}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{VV}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{friend}} \mbox{\hyperlink{classcslt_1_1Expected}{class}} \mbox{\hyperlink{classcslt_1_1DictDeleter}{Dict\+Deleter}}\hspace{0.3cm}{\ttfamily [friend]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/\mbox{\hyperlink{dict_8hpp}{dict.\+hpp}}\end{DoxyCompactItemize}

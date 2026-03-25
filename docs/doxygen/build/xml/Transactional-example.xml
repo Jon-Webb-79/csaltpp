@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
   <compounddef id="Transactional-example" kind="example">
     <compoundname>Transactional</compoundname>
     <briefdescription>
@@ -17,26 +17,26 @@ Creates a checkpoint of the current arena state. The checkpoint can later be use
 </para>
 <para><simplesect kind="warning"><para>You must call restore() on the checkpoint to free it. Losing the checkpoint pointer without calling restore() causes a memory leak.</para>
 </simplesect>
-allocations <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(8192).value());</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Make<sp/>some<sp/>permanent<sp/>allocations</highlight></codeline>
-<codeline><highlight class="normal">void*<sp/>permanent1<sp/>=<sp/>arena-&gt;alloc(256).value();</highlight></codeline>
-<codeline><highlight class="normal">void*<sp/>permanent2<sp/>=<sp/>arena-&gt;alloc(512).value();</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Save<sp/>checkpoint<sp/>before<sp/>temporary<sp/>work</highlight></codeline>
-<codeline><highlight class="normal">void*<sp/>checkpoint<sp/>=<sp/>arena-&gt;save();</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Make<sp/>temporary<sp/>allocations</highlight></codeline>
-<codeline><highlight class="normal">void*<sp/>temp1<sp/>=<sp/>arena-&gt;alloc(1024).value();</highlight></codeline>
-<codeline><highlight class="normal">void*<sp/>temp2<sp/>=<sp/>arena-&gt;alloc(2048).value();</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Rollback<sp/>-<sp/>frees<sp/>temp1<sp/>and<sp/>temp2</highlight></codeline>
+allocations <programlisting><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>arena<sp/>=<sp/><ref refid="namespacecslt_1ad55f4168d9f1832627c6d75e60d14a6c" kindref="member">cslt::move</ref>(<ref refid="classcslt_1_1ArenaAllocator_1ab71e5fc5e1cf3e9b07ad7208465a7b0f" kindref="member">cslt::ArenaAllocator::Heap</ref>(8192).value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Make<sp/>some<sp/>permanent<sp/>allocations</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>permanent1<sp/>=<sp/>arena-&gt;alloc(256).value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>permanent2<sp/>=<sp/>arena-&gt;alloc(512).value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Save<sp/>checkpoint<sp/>before<sp/>temporary<sp/>work</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>checkpoint<sp/>=<sp/>arena-&gt;save();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Make<sp/>temporary<sp/>allocations</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>temp1<sp/>=<sp/>arena-&gt;alloc(1024).value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>temp2<sp/>=<sp/>arena-&gt;alloc(2048).value();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Rollback<sp/>-<sp/>frees<sp/>temp1<sp/>and<sp/>temp2</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal">arena-&gt;restore(checkpoint);</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>permanent1<sp/>and<sp/>permanent2<sp/>still<sp/>valid</highlight></codeline>
-<codeline><highlight class="normal">//<sp/>temp1<sp/>and<sp/>temp2<sp/>now<sp/>INVALID</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>permanent1<sp/>and<sp/>permanent2<sp/>still<sp/>valid</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>temp1<sp/>and<sp/>temp2<sp/>now<sp/>INVALID</highlight></codeline>
 </programlisting> <programlisting filename="Transactional"></programlisting> </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp"/>
   </compounddef>
 </doxygen>

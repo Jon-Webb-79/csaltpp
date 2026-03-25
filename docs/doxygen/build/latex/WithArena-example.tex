@@ -1,13 +1,15 @@
-\hypertarget{WithArena-example}{}\doxysection{With\+Arena}
+\doxysection{With\+Arena}
+\hypertarget{WithArena-example}{}\label{WithArena-example}pool (borrowed arena)
+
 pool (borrowed arena) 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(ArenaAllocator::Heap(16384).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(ArenaAllocator::Heap(16384).value());}
 \DoxyCodeLine{\{}
-\DoxyCodeLine{    \textcolor{keyword}{auto} pool = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(PoolAllocator::WithArena(*arena, 256, 32).value());}
-\DoxyCodeLine{    \textcolor{comment}{// owns\_arena\_ = false}}
-\DoxyCodeLine{    \textcolor{comment}{// When pool destroyed: only pool destructor called, arena untouched}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{auto}\ pool\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(PoolAllocator::WithArena(*arena,\ 256,\ 32).value());}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ owns\_arena\_\ =\ false}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ When\ pool\ destroyed:\ only\ pool\ destructor\ called,\ arena\ untouched}}
 \DoxyCodeLine{\}}
-\DoxyCodeLine{\textcolor{comment}{// Arena still alive and usable}}
+\DoxyCodeLine{\textcolor{comment}{//\ Arena\ still\ alive\ and\ usable}}
 
 \end{DoxyCode}
 

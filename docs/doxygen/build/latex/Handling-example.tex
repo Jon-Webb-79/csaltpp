@@ -1,15 +1,17 @@
-\hypertarget{Handling-example}{}\doxysection{Handling}
+\doxysection{Handling}
+\hypertarget{Handling-example}{}\label{Handling-example}allocation failure
+
 allocation failure 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(512, \textcolor{keyword}{false}).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(512,\ \textcolor{keyword}{false}).value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Fill arena}}
-\DoxyCodeLine{\textcolor{keywordflow}{while} (arena-\/>alloc(64).hasValue()) \{ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ Fill\ arena}}
+\DoxyCodeLine{\textcolor{keywordflow}{while}\ (arena-\/>alloc(64).hasValue())\ \{\ \}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// This will fail -\/ no space left}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = arena-\/>alloc(128);}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (!result.hasValue()) \{}
-\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Out of memory: "{}} << result.error().what() << \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
+\DoxyCodeLine{\textcolor{comment}{//\ This\ will\ fail\ -\/\ no\ space\ left}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ arena-\/>alloc(128);}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!result.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Out\ of\ memory:\ "{}}\ <<\ result.error().what()\ <<\ \textcolor{stringliteral}{"{}\(\backslash\)n"{}};}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

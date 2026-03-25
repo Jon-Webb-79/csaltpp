@@ -1,4 +1,6 @@
-\hypertarget{Cache-line-example}{}\doxysection{Cache-\/line}
+\doxysection{Cache-\/line}
+\hypertarget{Cache-line-example}{}\label{Cache-line-example}Allocate aligned memory from the arena.
+
 Allocate aligned memory from the arena
 \begin{DoxyParams}{Parameters}
 {\em bytes} & Number of bytes to allocate \\
@@ -35,14 +37,14 @@ The alignment requirement may cause padding to be inserted, which counts against
 \end{DoxyRetVals}
 aligned allocation 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(8192).value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Allocate aligned to 64-\/byte cache line}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = arena-\/>alloc\_aligned(256, 64);}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result.value();}
+\DoxyCodeLine{\textcolor{comment}{//\ Allocate\ aligned\ to\ 64-\/byte\ cache\ line}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ arena-\/>alloc\_aligned(256,\ 64);}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ ptr\ =\ result.value();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Verify alignment}}
-\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 64 == 0);}
+\DoxyCodeLine{\textcolor{comment}{//\ Verify\ alignment}}
+\DoxyCodeLine{assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr)\ \%\ 64\ ==\ 0);}
 
 \end{DoxyCode}
 

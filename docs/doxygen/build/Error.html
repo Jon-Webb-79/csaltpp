@@ -8,14 +8,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Error Handling Overview &mdash; csalt++-lib 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=d45e8c67"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -44,9 +47,9 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="Utilities.html"> Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Pointers.html"> Smart Pointers</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"> Error</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pointers.html">Smart Pointers</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Error</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#error-class-overview">Error Class Overview</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#error-class-hierarchy">Error Class Hierarchy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#base-error-class">Base Error Class</a><ul>
@@ -93,9 +96,10 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Allocator.html"> Allocator</a></li>
-<li class="toctree-l1"><a class="reference internal" href="String.html"> String</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Array.html"> Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Allocator.html">Allocator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="String.html">String</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
 </ul>
 
         </div>
@@ -2871,7 +2875,7 @@ and safety.</p>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt8Expected8setValueERR1T">
-<span id="_CPPv3N4cslt8Expected8setValueERR1T"></span><span id="_CPPv2N4cslt8Expected8setValueERR1T"></span><span id="cslt::Expected::setValue__TRR"></span><span class="target" id="classcslt_1_1Expected_1abc6c60a67eeac1e4da5ac9a363ea4160"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setValue</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><br /></dt>
+<span id="_CPPv3N4cslt8Expected8setValueERR1T"></span><span id="_CPPv2N4cslt8Expected8setValueERR1T"></span><span id="cslt::Expected::setValue__TRR"></span><span class="target" id="classcslt_1_1Expected_1abc6c60a67eeac1e4da5ac9a363ea4160"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">setValue</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">val</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt8Expected8setValueERR1T" title="Link to this definition"></a><br /></dt>
 <dd><p>Sets the value by move and marks this as containing a value. </p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -2915,7 +2919,7 @@ and safety.</p>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt8Expected5valueEv">
-<span id="_CPPv3N4cslt8Expected5valueEv"></span><span id="_CPPv2N4cslt8Expected5valueEv"></span><span id="cslt::Expected::value"></span><span class="target" id="classcslt_1_1Expected_1a22d497d5f274197ed394d95f7213ef62"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt8Expected5valueEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt8Expected5valueEv"></span><span id="_CPPv2N4cslt8Expected5valueEv"></span><span id="cslt::Expected::value"></span><span class="target" id="classcslt_1_1Expected_1a5d4e95808d25a88c3e7b2935a654f92f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt8Expected5valueEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Gets the contained value. </p>
 <p>Behavior is undefined if the <a class="reference internal" href="#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> contains an error. Use <a class="reference internal" href="#classcslt_1_1Expected_1a457cd7aa736a7cc327310c75a2e30661"><span class="std std-ref">hasValue()</span></a> to check before calling this method.</p>
 <dl class="field-list simple">
@@ -2927,7 +2931,7 @@ and safety.</p>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK4cslt8Expected5valueEv">
-<span id="_CPPv3NK4cslt8Expected5valueEv"></span><span id="_CPPv2NK4cslt8Expected5valueEv"></span><span id="cslt::Expected::valueC"></span><span class="target" id="classcslt_1_1Expected_1a06e939d88c00473cffbcca869086cea2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt8Expected5valueEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3NK4cslt8Expected5valueEv"></span><span id="_CPPv2NK4cslt8Expected5valueEv"></span><span id="cslt::Expected::valueC"></span><span class="target" id="classcslt_1_1Expected_1a70106cbbe55633ef58fd4b58e849ca13"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">value</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt8Expected5valueEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Gets the contained value (const version). </p>
 <p>Behavior is undefined if the <a class="reference internal" href="#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> contains an error. Use <a class="reference internal" href="#classcslt_1_1Expected_1a457cd7aa736a7cc327310c75a2e30661"><span class="std std-ref">hasValue()</span></a> to check before calling this method.</p>
 <dl class="field-list simple">
@@ -2939,7 +2943,7 @@ and safety.</p>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt8Expected5errorEv">
-<span id="_CPPv3N4cslt8Expected5errorEv"></span><span id="_CPPv2N4cslt8Expected5errorEv"></span><span id="cslt::Expected::error"></span><span class="target" id="classcslt_1_1Expected_1a77a79c9d462fe34ee984e9218d730ac4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt5ErrorE" title="cslt::Error"><span class="n"><span class="pre">Error</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">error</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt8Expected5errorEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt8Expected5errorEv"></span><span id="_CPPv2N4cslt8Expected5errorEv"></span><span id="cslt::Expected::error"></span><span class="target" id="classcslt_1_1Expected_1ac30487446828083efb81438432e8c721"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt5ErrorE" title="cslt::Error"><span class="n"><span class="pre">Error</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">error</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N4cslt8Expected5errorEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Gets the contained error. </p>
 <p>Behavior is undefined if the <a class="reference internal" href="#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> contains a value. Use <a class="reference internal" href="#classcslt_1_1Expected_1a4a3b839cd47d2945c7f0c20a57e382ce"><span class="std std-ref">hasError()</span></a> to check before calling this method.</p>
 <dl class="field-list simple">
@@ -2951,7 +2955,7 @@ and safety.</p>
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK4cslt8Expected5errorEv">
-<span id="_CPPv3NK4cslt8Expected5errorEv"></span><span id="_CPPv2NK4cslt8Expected5errorEv"></span><span id="cslt::Expected::errorC"></span><span class="target" id="classcslt_1_1Expected_1a1bd1ec1e1713215eeba65adb58671b13"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt5ErrorE" title="cslt::Error"><span class="n"><span class="pre">Error</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">error</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt8Expected5errorEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3NK4cslt8Expected5errorEv"></span><span id="_CPPv2NK4cslt8Expected5errorEv"></span><span id="cslt::Expected::errorC"></span><span class="target" id="classcslt_1_1Expected_1af8812624ffd5c6a65184c72a13dcd227"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt5ErrorE" title="cslt::Error"><span class="n"><span class="pre">Error</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="n"><span class="pre">error</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><a class="headerlink" href="#_CPPv4NK4cslt8Expected5errorEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Gets the contained error (const version). </p>
 <p>Behavior is undefined if the <a class="reference internal" href="#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a> contains a value. Use <a class="reference internal" href="#classcslt_1_1Expected_1a4a3b839cd47d2945c7f0c20a57e382ce"><span class="std std-ref">hasError()</span></a> to check before calling this method.</p>
 <dl class="field-list simple">

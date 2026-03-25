@@ -37,7 +37,7 @@ done
 # Paths
 SCRIPT_DIR="$(cd -- "$(dirname -- "${(%):-%N}")" && pwd)"
 PROJ_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
-SRC_DIR="$PROJ_ROOT/csalt++"
+SRC_DIR="$PROJ_ROOT/csaltpp"
 OUT_DIR="$PROJ_ROOT/$BUILD_DIR"
 BIN_DIR="$OUT_DIR/bin"
 UNIT_EXE="$BIN_DIR/unit_tests"

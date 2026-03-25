@@ -1,14 +1,16 @@
-\hypertarget{SIMD-example}{}\doxysection{SIMD}
+\doxysection{SIMD}
+\hypertarget{SIMD-example}{}\label{SIMD-example}alignment (256-\/bit AVX)
+
 alignment (256-\/bit AVX) 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Allocate aligned for AVX operations}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(1024, 32, \textcolor{keyword}{true});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{keywordtype}{float}* data = \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}*\textcolor{keyword}{>}(result.value());}
-\DoxyCodeLine{    \textcolor{comment}{// Can safely use AVX instructions}}
-\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(data, 1024, 32);}
+\DoxyCodeLine{\textcolor{comment}{//\ Allocate\ aligned\ for\ AVX\ operations}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a53a1b9b301c70c4ce6035075385317e7}{alloc\_aligned}}(1024,\ 32,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{float}*\ data\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}*\textcolor{keyword}{>}(result.value());}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Can\ safely\ use\ AVX\ instructions}}
+\DoxyCodeLine{\ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(data,\ 1024,\ 32);}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

@@ -1,22 +1,22 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
   <compounddef id="Shrinking-example" kind="example">
     <compoundname>Shrinking</compoundname>
     <briefdescription>
 <para>allocation </para>
     </briefdescription>
     <detaileddescription>
-<para>allocation <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">auto<sp/>result1<sp/>=<sp/>allocator.alloc(1024,<sp/>false);</highlight></codeline>
-<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Shrink<sp/>to<sp/>512<sp/>bytes</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>result2<sp/>=<sp/>allocator.realloc(ptr,<sp/>1024,<sp/>512,<sp/>false);</highlight></codeline>
-<codeline><highlight class="normal">if<sp/>(result2.hasValue())<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void*<sp/>new_ptr<sp/>=<sp/>result2.value();</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>First<sp/>512<sp/>bytes<sp/>preserved</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(new_ptr,<sp/>512,<sp/>allocator.default_alignment());</highlight></codeline>
+<para>allocation <programlisting><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result1<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a11de81a6f52b82e6578b69332482735d" kindref="member">alloc</ref>(1024,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result1.<ref refid="classcslt_1_1Expected_1a5d4e95808d25a88c3e7b2935a654f92f" kindref="member">value</ref>();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Shrink<sp/>to<sp/>512<sp/>bytes</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result2<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a7a3330d0681e32e1e31245d24e109d57" kindref="member">realloc</ref>(ptr,<sp/>1024,<sp/>512,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>new_ptr<sp/>=<sp/>result2.<ref refid="classcslt_1_1Expected_1a5d4e95808d25a88c3e7b2935a654f92f" kindref="member">value</ref>();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>First<sp/>512<sp/>bytes<sp/>preserved</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(new_ptr,<sp/>512,<sp/>allocator.<ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment</ref>());</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 <para><simplesect kind="warning"><para>After calling realloc, the original pointer is invalid. Always use the newly returned pointer.</para>
@@ -27,6 +27,6 @@
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp"/>
   </compounddef>
 </doxygen>

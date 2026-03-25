@@ -1,53 +1,53 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
   <compounddef id="Getting-example" kind="example">
     <compoundname>Getting</compoundname>
     <briefdescription>
 <para>statistics </para>
     </briefdescription>
     <detaileddescription>
-<para>statistics <programlisting><codeline><highlight class="normal"><sp/>{.c++}</highlight></codeline>
-<codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator(32);<sp/><sp/>//<sp/>32-byte<sp/>default<sp/>alignment</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">char<sp/>buffer[512];</highlight></codeline>
-<codeline><highlight class="normal">if<sp/>(allocator.stats(buffer,<sp/>sizeof(buffer)))<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(&quot;%s\n&quot;,<sp/>buffer);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Outputs<sp/>allocator<sp/>type,<sp/>alignment,<sp/>and<sp/>capabilities</highlight></codeline>
+<para>statistics <programlisting><codeline><highlight class="normal">{.c++}<sp/></highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator(32);<sp/><sp/></highlight><highlight class="comment">//<sp/>32-byte<sp/>default<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">char</highlight><highlight class="normal"><sp/>buffer[512];</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(allocator.stats(buffer,<sp/></highlight><highlight class="keyword">sizeof</highlight><highlight class="normal">(buffer)))<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>printf(</highlight><highlight class="stringliteral">&quot;%s\n&quot;</highlight><highlight class="normal">,<sp/>buffer);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Outputs<sp/>allocator<sp/>type,<sp/>alignment,<sp/>and<sp/>capabilities</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
-<sect3 id="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp_1autotoc_md0">
+<sect3 id="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp_1autotoc_md0">
 <title>Always match allocation and deallocation:</title>
-<para><programlisting><codeline><highlight class="normal">//<sp/>CORRECT</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>r<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/>false);</highlight></codeline>
-<codeline><highlight class="normal">allocator.return_element(r.value(),<sp/>512,<sp/>64);<sp/><sp/>//<sp/>Same<sp/>alignment!</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>INCORRECT<sp/>-<sp/>mismatched<sp/>alignment</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>r<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/>false);</highlight></codeline>
-<codeline><highlight class="normal">allocator.return_element(r.value(),<sp/>512,<sp/>16);<sp/><sp/>//<sp/>Wrong!<sp/>Undefined<sp/>behavior!</highlight></codeline>
+<para><programlisting><codeline><highlight class="comment">//<sp/>CORRECT</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">allocator.return_element(r.value(),<sp/>512,<sp/>64);<sp/><sp/></highlight><highlight class="comment">//<sp/>Same<sp/>alignment!</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>INCORRECT<sp/>-<sp/>mismatched<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal">allocator.return_element(r.value(),<sp/>512,<sp/>16);<sp/><sp/></highlight><highlight class="comment">//<sp/>Wrong!<sp/>Undefined<sp/>behavior!</highlight></codeline>
 </programlisting></para>
 </sect3>
-<sect3 id="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp_1autotoc_md1">
+<sect3 id="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp_1autotoc_md1">
 <title>Check return values:</title>
-<para><programlisting><codeline><highlight class="normal">auto<sp/>result<sp/>=<sp/>allocator.alloc(1024,<sp/>false);</highlight></codeline>
-<codeline><highlight class="normal">if<sp/>(result.hasValue())<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Safe<sp/>to<sp/>use<sp/>result.value()</highlight></codeline>
-<codeline><highlight class="normal">}<sp/>else<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Handle<sp/>allocation<sp/>failure</highlight></codeline>
+<para><programlisting><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.alloc(1024,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Safe<sp/>to<sp/>use<sp/>result.value()</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="keywordflow">else</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Handle<sp/>allocation<sp/>failure</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 </sect3>
-<sect3 id="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp_1autotoc_md2">
+<sect3 id="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp_1autotoc_md2">
 <title>Clean up before destruction:</title>
 <para><programlisting><codeline><highlight class="normal">{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>result<sp/>=<sp/>allocator.alloc(1024,<sp/>false);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a11de81a6f52b82e6578b69332482735d" kindref="member">alloc</ref>(1024,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>...<sp/>use<sp/>memory<sp/>...</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>MUST<sp/>free<sp/>before<sp/>allocator<sp/>is<sp/>destroyed</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(result.value(),<sp/>1024,<sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>allocator.default_alignment());</highlight></codeline>
-<codeline><highlight class="normal">}<sp/>//<sp/>Safe<sp/>-<sp/>all<sp/>memory<sp/>freed</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>MUST<sp/>free<sp/>before<sp/>allocator<sp/>is<sp/>destroyed</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(result.value(),<sp/>1024,<sp/></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1Allocator_1a5efa5aa5b36cca23c9bb94f5ba2756d0" kindref="member">default_alignment</ref>());</highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="comment">//<sp/>Safe<sp/>-<sp/>all<sp/>memory<sp/>freed</highlight></codeline>
 </programlisting></para>
 <para><simplesect kind="note"><para>This class is only available when ARENA_ENABLE_DYNAMIC is enabled. Define STATIC_ONLY to disable dynamic allocation for MISRA compliance.</para>
 </simplesect>
@@ -66,6 +66,6 @@
 </para>
 </sect3>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp"/>
   </compounddef>
 </doxygen>

@@ -1,4 +1,6 @@
-\hypertarget{Basic-example}{}\doxysection{Basic}
+\doxysection{Basic}
+\hypertarget{Basic-example}{}\label{Basic-example}Allocate memory from system heap.
+
 Allocate memory from system heap
 \begin{DoxyParams}{Parameters}
 {\em bytes} & Number of bytes to allocate \\
@@ -7,7 +9,7 @@ Allocate memory from system heap
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-Expected$<$void$\ast$$>$ containing pointer to allocated memory or error
+Expected$<$void\texorpdfstring{$\ast$}{*}$>$ containing pointer to allocated memory or error
 \end{DoxyReturn}
 Allocates memory using operator new with the allocator\textquotesingle{}s default alignment. Uses std\+::nothrow to avoid exceptions.
 
@@ -27,15 +29,15 @@ Allocates memory using operator new with the allocator\textquotesingle{}s defaul
 \end{DoxyRetVals}
 allocation 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(512, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
-\DoxyCodeLine{    memset(ptr, 0xAB, 512);}
-\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr, 512, allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
-\DoxyCodeLine{\} \textcolor{keywordflow}{else} \{}
-\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Allocation failed\(\backslash\)n"{}};}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a11de81a6f52b82e6578b69332482735d}{alloc}}(512,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ result.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
+\DoxyCodeLine{\ \ \ \ memset(ptr,\ 0xAB,\ 512);}
+\DoxyCodeLine{\ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr,\ 512,\ allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{\ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Allocation\ failed\(\backslash\)n"{}};}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

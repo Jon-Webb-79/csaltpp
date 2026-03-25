@@ -1,4 +1,6 @@
-\hypertarget{Validate-example}{}\doxysection{Validate}
+\doxysection{Validate}
+\hypertarget{Validate-example}{}\label{Validate-example}Check if pointer was allocated by this arena.
+
 Check if pointer was allocated by this arena
 \begin{DoxyParams}{Parameters}
 {\em ptr} & Pointer to check\\
@@ -19,14 +21,14 @@ Returns false for\+:
 
 pointer 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(4096).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(4096).value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = arena-\/>alloc(128).value();}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* external = malloc(128);}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ ptr\ =\ arena-\/>alloc(128).value();}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ external\ =\ malloc(128);}
 \DoxyCodeLine{}
-\DoxyCodeLine{assert(arena-\/>is\_ptr(ptr));          \textcolor{comment}{// true}}
-\DoxyCodeLine{assert(!arena-\/>is\_ptr(external));    \textcolor{comment}{// false}}
-\DoxyCodeLine{assert(!arena-\/>is\_ptr(\textcolor{keyword}{nullptr}));     \textcolor{comment}{// false}}
+\DoxyCodeLine{assert(arena-\/>is\_ptr(ptr));\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ true}}
+\DoxyCodeLine{assert(!arena-\/>is\_ptr(external));\ \ \ \ \textcolor{comment}{//\ false}}
+\DoxyCodeLine{assert(!arena-\/>is\_ptr(\textcolor{keyword}{nullptr}));\ \ \ \ \ \textcolor{comment}{//\ false}}
 \DoxyCodeLine{}
 \DoxyCodeLine{free(external);}
 

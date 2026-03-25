@@ -1,20 +1,22 @@
-\hypertarget{Error-example}{}\doxysection{Error}
+\doxysection{Error}
+\hypertarget{Error-example}{}\label{Error-example}handling
+
 handling 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{ \{.c++\}}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\{.c++\}\ }
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(0, \textcolor{keyword}{false});  \textcolor{comment}{// Invalid: 0 bytes}}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (!result.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{comment}{// Handle error -\/ likely InvalidArgError}}
-\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Allocation failed\(\backslash\)n"{}};}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a11de81a6f52b82e6578b69332482735d}{alloc}}(0,\ \textcolor{keyword}{false});\ \ \textcolor{comment}{//\ Invalid:\ 0\ bytes}}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!result.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Handle\ error\ -\/\ likely\ InvalidArgError}}
+\DoxyCodeLine{\ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Allocation\ failed\(\backslash\)n"{}};}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Very large allocation might fail}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(SIZE\_MAX, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (!result2.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{comment}{// Handle error -\/ likely BadAllocError}}
-\DoxyCodeLine{    std::cerr << \textcolor{stringliteral}{"{}Insufficient memory\(\backslash\)n"{}};}
+\DoxyCodeLine{\textcolor{comment}{//\ Very\ large\ allocation\ might\ fail}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result2\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a11de81a6f52b82e6578b69332482735d}{alloc}}(SIZE\_MAX,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (!result2.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Handle\ error\ -\/\ likely\ BadAllocError}}
+\DoxyCodeLine{\ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Insufficient\ memory\(\backslash\)n"{}};}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

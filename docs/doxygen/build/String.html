@@ -8,14 +8,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>C++ String Overview &mdash; csalt++-lib 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
       <script src="_static/documentation_options.js?v=d45e8c67"></script>
-      <script src="_static/doctools.js?v=9bcbadda"></script>
-      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -44,11 +47,11 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="Utilities.html"> Utilities</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Pointers.html"> Smart Pointers</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Error.html"> Error</a></li>
-<li class="toctree-l1"><a class="reference internal" href="Allocator.html"> Allocator</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#"> String</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pointers.html">Smart Pointers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html">Error</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Allocator.html">Allocator</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">String</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#string-class">String Class</a><ul>
@@ -88,7 +91,8 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="Array.html"> Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
 </ul>
 
         </div>
@@ -288,7 +292,7 @@ Provides bounds-checked write access to individual characters. Only indices with
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK4cslt6String5c_strEv">
-<span id="_CPPv3NK4cslt6String5c_strEv"></span><span id="_CPPv2NK4cslt6String5c_strEv"></span><span id="cslt::String::c_strC"></span><span class="target" id="classcslt_1_1String_1aafb23f3fb1b81ecf14b2c89bd13dfca9"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">c_str</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String5c_strEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3NK4cslt6String5c_strEv"></span><span id="_CPPv2NK4cslt6String5c_strEv"></span><span id="cslt::String::c_strC"></span><span class="target" id="classcslt_1_1String_1aaf1aa8c61268e5c7cdae6e5f10bf3173"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="kt"><span class="pre">char</span></span><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">c_str</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String5c_strEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Get the internal null-terminated C string. </p>
 <p>
 Returns a pointer to the underlying character buffer. The pointer remains valid until the <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> is destroyed.</p>
@@ -349,7 +353,7 @@ Returns the number of bytes allocated for the internal buffer, including space r
 
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4NK4cslt6String9allocatorEv">
-<span id="_CPPv3NK4cslt6String9allocatorEv"></span><span id="_CPPv2NK4cslt6String9allocatorEv"></span><span id="cslt::String::allocatorC"></span><span class="target" id="classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">allocator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String9allocatorEv" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3NK4cslt6String9allocatorEv"></span><span id="_CPPv2NK4cslt6String9allocatorEv"></span><span id="cslt::String::allocatorC"></span><span class="target" id="classcslt_1_1String_1a4de72a25764349d3d2f68c1afa20c9e2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">*</span></span><span class="sig-name descname"><span class="n"><span class="pre">allocator</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt6String9allocatorEv" title="Link to this definition"></a><br /></dt>
 <dd><p>Get the allocator used by this string. </p>
 <p>
 Returns the allocator that was used to create this string and will be used to free it.</p>
@@ -587,7 +591,7 @@ Convenience overload that appends the contents of another <a class="reference in
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1String_1aafb23f3fb1b81ecf14b2c89bd13dfca9"><span class="std std-ref">c_str()</span></a> to extract the C-string from a <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object </p>
+<p><a class="reference internal" href="#classcslt_1_1String_1aaf1aa8c61268e5c7cdae6e5f10bf3173"><span class="std std-ref">c_str()</span></a> to extract the C-string from a <a class="reference internal" href="#classcslt_1_1String"><span class="std std-ref">String</span></a> object </p>
 </div>
 </p>
 <dl class="field-list simple">
@@ -911,7 +915,7 @@ Creates an independent copy with the same content using the same allocator as th
 </div>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p>copy(Allocator&amp;) to <a class="reference internal" href="#classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e"><span class="std std-ref">copy</span></a> using a different <a class="reference internal" href="#classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c"><span class="std std-ref">allocator</span></a></p>
+<p>copy(Allocator&amp;) to <a class="reference internal" href="#classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e"><span class="std std-ref">copy</span></a> using a different <a class="reference internal" href="#classcslt_1_1String_1a4de72a25764349d3d2f68c1afa20c9e2"><span class="std std-ref">allocator</span></a></p>
 </div>
 </p>
 <dl class="field-list simple">
@@ -960,7 +964,7 @@ Creates an independent copy with the same content using the specified allocator.
 </div>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e"><span class="std std-ref">copy()</span></a> to <a class="reference internal" href="#classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e"><span class="std std-ref">copy</span></a> using the same <a class="reference internal" href="#classcslt_1_1String_1a6eda4a5ad208384fe665c3e9a8c6f90c"><span class="std std-ref">allocator</span></a></p>
+<p><a class="reference internal" href="#classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e"><span class="std std-ref">copy()</span></a> to <a class="reference internal" href="#classcslt_1_1String_1a655e65ff6340cefabf99ef005fd8e18e"><span class="std std-ref">copy</span></a> using the same <a class="reference internal" href="#classcslt_1_1String_1a4de72a25764349d3d2f68c1afa20c9e2"><span class="std std-ref">allocator</span></a></p>
 </div>
 </p>
 <dl class="field-list simple">
@@ -1692,10 +1696,10 @@ Creates a new <a class="reference internal" href="#classcslt_1_1String"><span cl
 <p class="breathe-sectiondef-title rubric" id="breathe-section-title-friends">Friends</p>
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt6StringlsERNSt7ostreamERK6String">
-<span id="_CPPv3N4cslt6StringlsERNSt7ostreamERK6String"></span><span id="_CPPv2N4cslt6StringlsERNSt7ostreamERK6String"></span><span id="cslt::String::lshift-operator__osR.StringCR"></span><span class="target" id="classcslt_1_1String_1a723de0a84d1ac7baa71c7dde71acdd67"></span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">s</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6StringlsERNSt7ostreamERK6String" title="Link to this definition"></a><br /></dt>
+<span id="_CPPv3N4cslt6StringlsERNSt7ostreamERK6String"></span><span id="_CPPv2N4cslt6StringlsERNSt7ostreamERK6String"></span><span id="cslt::String::lshift-operator__osR.StringCR"></span><span class="target" id="classcslt_1_1String_1a6206f466a02ba94feb42c0eba7bbf5f7"></span><span class="k"><span class="pre">friend</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="sig-name descname"><span class="k"><span class="pre">operator</span></span><span class="o"><span class="pre">&lt;&lt;</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">ostream</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">os</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4N4cslt6StringE" title="cslt::String"><span class="n"><span class="pre">String</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">s</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt6StringlsERNSt7ostreamERK6String" title="Link to this definition"></a><br /></dt>
 <dd><p>Stream insertion operator — prints the string up to its logical length, not the null terminator. </p>
 <p>
-Writes exactly len_ characters to the stream using std::ostream::write() rather than operator&lt;&lt;(const char*), which would stop at the first embedded null byte. Characters beyond len_ (including the null terminator) are never accessed.</p>
+Writes exactly len_ characters to the stream using std::ostream::write() rather than <a class="reference internal" href="#classcslt_1_1String_1a6206f466a02ba94feb42c0eba7bbf5f7"><span class="std std-ref">operator&lt;&lt;(const char*)</span></a>, which would stop at the first embedded null byte. Characters beyond len_ (including the null terminator) are never accessed.</p>
 <p>The operator is a no-op if the internal buffer is null, leaving the stream in a valid state.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
 <span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">String</span><span class="o">::</span><span class="n">init</span><span class="p">(</span><span class="s">&quot;hello world&quot;</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>

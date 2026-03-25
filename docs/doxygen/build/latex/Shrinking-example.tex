@@ -1,17 +1,19 @@
-\hypertarget{Shrinking-example}{}\doxysection{Shrinking}
+\doxysection{Shrinking}
+\hypertarget{Shrinking-example}{}\label{Shrinking-example}allocation
+
 allocation 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{auto} result1 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(1024, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result1.value();}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result1\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a11de81a6f52b82e6578b69332482735d}{alloc}}(1024,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ ptr\ =\ result1.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Shrink to 512 bytes}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8da5b4e9dc6e8d13020a66d384835363}{realloc}}(ptr, 1024, 512, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (result2.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = result2.value();}
-\DoxyCodeLine{    \textcolor{comment}{// First 512 bytes preserved}}
-\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(new\_ptr, 512, allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\textcolor{comment}{//\ Shrink\ to\ 512\ bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result2\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a7a3330d0681e32e1e31245d24e109d57}{realloc}}(ptr,\ 1024,\ 512,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result2.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}*\ new\_ptr\ =\ result2.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ First\ 512\ bytes\ preserved}}
+\DoxyCodeLine{\ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(new\_ptr,\ 512,\ allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

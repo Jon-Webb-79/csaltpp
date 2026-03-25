@@ -1,0 +1,1467 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classcslt_1_1Dict" kind="class" language="C++" prot="public">
+    <compoundname>cslt::Dict</compoundname>
+    <includes refid="dict_8hpp" local="no">dict.hpp</includes>
+    <innerclass refid="structcslt_1_1Dict_1_1Bucket" prot="private">cslt::Dict::Bucket</innerclass>
+    <innerclass refid="structcslt_1_1Dict_1_1Node" prot="private">cslt::Dict::Node</innerclass>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref></type>
+      </param>
+      <param>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">V</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-static-attrib">
+      <memberdef kind="variable" id="classcslt_1_1Dict_1ae87addf35d9d0fbf07b7da7aa5cee863" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">constexpr</ref> <ref refid="classcslt_1_1Expected" kindref="compound">double</ref></type>
+        <definition>constexpr double cslt::Dict&lt; K, V &gt;::LOAD_FACTOR</definition>
+        <argsstring></argsstring>
+        <name>LOAD_FACTOR</name>
+        <qualifiedname>cslt::Dict::LOAD_FACTOR</qualifiedname>
+        <initializer>= 0.75</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="113" column="33" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1a8e463abc8e4fcbd362026f20c101d9de" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">constexpr</ref> <ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>constexpr size_t cslt::Dict&lt; K, V &gt;::GROWTH_FACTOR</definition>
+        <argsstring></argsstring>
+        <name>GROWTH_FACTOR</name>
+        <qualifiedname>cslt::Dict::GROWTH_FACTOR</qualifiedname>
+        <initializer>= 2<ref refid="classcslt_1_1Expected" kindref="compound">u</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="114" column="33" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1a29e441422af21e485999b564eb6e6d26" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">constexpr</ref> <ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>constexpr size_t cslt::Dict&lt; K, V &gt;::LARGE_THRESH</definition>
+        <argsstring></argsstring>
+        <name>LARGE_THRESH</name>
+        <qualifiedname>cslt::Dict::LARGE_THRESH</qualifiedname>
+        <initializer>= 4096<ref refid="classcslt_1_1Expected" kindref="compound">u</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="115" column="33" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1a0935a4c776802b28f97293e5708f7511" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">constexpr</ref> <ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>constexpr size_t cslt::Dict&lt; K, V &gt;::LARGE_STEP</definition>
+        <argsstring></argsstring>
+        <name>LARGE_STEP</name>
+        <qualifiedname>cslt::Dict::LARGE_STEP</qualifiedname>
+        <initializer>= 1024<ref refid="classcslt_1_1Expected" kindref="compound">u</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="116" column="33" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="116" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1abd3619a06b53f6a494f9f9e526ea1c2d" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">constexpr</ref> <ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>constexpr size_t cslt::Dict&lt; K, V &gt;::MIN_ALLOC</definition>
+        <argsstring></argsstring>
+        <name>MIN_ALLOC</name>
+        <qualifiedname>cslt::Dict::MIN_ALLOC</qualifiedname>
+        <initializer>= 8<ref refid="classcslt_1_1Expected" kindref="compound">u</ref></initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="117" column="33" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="117" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1aab18ee6295160e3edb2fb365c34452bc" prot="private" static="yes" constexpr="yes" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">constexpr</ref> <ref refid="classcslt_1_1Expected" kindref="compound">uint32_t</ref></type>
+        <definition>constexpr uint32_t cslt::Dict&lt; K, V &gt;::HASH_SEED</definition>
+        <argsstring></argsstring>
+        <name>HASH_SEED</name>
+        <qualifiedname>cslt::Dict::HASH_SEED</qualifiedname>
+        <initializer>= 0xdeadbeef</initializer>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="118" column="35" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="118" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcslt_1_1Dict_1a5df5f35e76594141790d57f63dfa9f81" prot="private" static="no" mutable="no">
+        <type>Bucket *</type>
+        <definition>Bucket* cslt::Dict&lt; K, V &gt;::buckets_</definition>
+        <argsstring></argsstring>
+        <name>buckets_</name>
+        <qualifiedname>cslt::Dict::buckets_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classcslt_1_1Array" kindref="compound">Array</ref> of bucket sentinels, length alloc_. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="147" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="147" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1af9e1004a1cb5fdd34b1107177302970f" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::Dict&lt; K, V &gt;::len_</definition>
+        <argsstring></argsstring>
+        <name>len_</name>
+        <qualifiedname>cslt::Dict::len_</qualifiedname>
+        <briefdescription>
+<para>Number of occupied buckets (non-empty chains) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="148" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="148" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1afd1e586070a63206e73fc1905d95126e" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::Dict&lt; K, V &gt;::hash_size_</definition>
+        <argsstring></argsstring>
+        <name>hash_size_</name>
+        <qualifiedname>cslt::Dict::hash_size_</qualifiedname>
+        <briefdescription>
+<para>Total number of key-value pairs stored. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="149" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="149" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1a5103b0093fe9957ecb36a4efa0adbdd4" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::Dict&lt; K, V &gt;::alloc_</definition>
+        <argsstring></argsstring>
+        <name>alloc_</name>
+        <qualifiedname>cslt::Dict::alloc_</qualifiedname>
+        <briefdescription>
+<para>Number of buckets allocated (always power of two) </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="150" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="150" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1ad72d008e477cb8819a347cca902b875c" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::Dict&lt; K, V &gt;::growth_</definition>
+        <argsstring></argsstring>
+        <name>growth_</name>
+        <qualifiedname>cslt::Dict::growth_</qualifiedname>
+        <briefdescription>
+<para>If true, resize automatically when load &gt; 0.75. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="151" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="151" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1Dict_1a6fc1f72c36748b369cb10fcb0dd730e4" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> *</type>
+        <definition>Allocator* cslt::Dict&lt; K, V &gt;::allocator_</definition>
+        <argsstring></argsstring>
+        <name>allocator_</name>
+        <qualifiedname>cslt::Dict::allocator_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used for all internal memory. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="152" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="152" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="classcslt_1_1Dict_1a4f5d2974c32a671a89e5bd3d51d09a3e" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">KK</ref></type>
+          </param>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">VV</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">class</ref></type>
+        <definition>friend class DictDeleter</definition>
+        <argsstring></argsstring>
+        <name>DictDeleter</name>
+        <qualifiedname>cslt::Dict::DictDeleter</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1DictDeleter" kindref="compound">DictDeleter</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="420" column="22" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="420" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcslt_1_1Dict_1a731645bf2aea463f984ad64baa52b2b7" prot="private" static="no" const="no" explicit="no" inline="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Dict&lt; K, V &gt;::Dict</definition>
+        <argsstring>(Bucket *buckets, size_t alloc, bool growth, Allocator &amp;allocator)</argsstring>
+        <name>Dict</name>
+        <qualifiedname>cslt::Dict::Dict</qualifiedname>
+        <param>
+          <type>Bucket *</type>
+          <declname>buckets</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>alloc</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+          <declname>growth</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="158" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="158" bodyend="165"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a7ba293bf3d21d36a13f94993d58bd08f" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Dict&lt; K, V &gt;::~Dict</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>~Dict</name>
+        <qualifiedname>cslt::Dict::~Dict</qualifiedname>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="167" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="167" bodyend="181"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1aeaa8ace788ecc1e5d15ec698896df7d8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Dict&lt; K, V &gt;::Dict</definition>
+        <argsstring>(const Dict &amp;)=delete</argsstring>
+        <name>Dict</name>
+        <qualifiedname>cslt::Dict::Dict</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="183" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1adff39331fc76f7f97e68826157165769" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> &amp;</type>
+        <definition>Dict &amp; cslt::Dict&lt; K, V &gt;::operator=</definition>
+        <argsstring>(const Dict &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>cslt::Dict::operator=</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="184" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1af3ddf5baa97f3aa6c04365ff4bd7d7a5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::Dict&lt; K, V &gt;::Dict</definition>
+        <argsstring>(Dict &amp;&amp;)=delete</argsstring>
+        <name>Dict</name>
+        <qualifiedname>cslt::Dict::Dict</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="185" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1ad4d39f0de02980eb0828f32614f063c5" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> &amp;</type>
+        <definition>Dict &amp; cslt::Dict&lt; K, V &gt;::operator=</definition>
+        <argsstring>(Dict &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>cslt::Dict::operator=</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="186" column="14"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a1c512fd5784b0ef132f75ff8694458d3" prot="private" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::Dict&lt; K, V &gt;::_bucket_index</definition>
+        <argsstring>(const K &amp;key) const noexcept</argsstring>
+        <name>_bucket_index</name>
+        <qualifiedname>cslt::Dict::_bucket_index</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="281" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="281" bodyend="283"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1af6d8c7e4fcecbcf8918277aad57236aa" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>Node * cslt::Dict&lt; K, V &gt;::_alloc_node</definition>
+        <argsstring>(const K &amp;key, const V &amp;value) noexcept</argsstring>
+        <name>_alloc_node</name>
+        <qualifiedname>cslt::Dict::_alloc_node</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Allocate a node with an inline copy-constructed V value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Layout: [Node header][V value (placement-new)] Key is stored in a separate allocation.</para>
+<para><simplesect kind="return"><para>nullptr on any allocation failure (node cleaned up internally) </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="315" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="315" bodyend="340"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1aa4351b557f0386198fa3030fda706069" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>void cslt::Dict&lt; K, V &gt;::_free_node</definition>
+        <argsstring>(Node *node) noexcept</argsstring>
+        <name>_free_node</name>
+        <qualifiedname>cslt::Dict::_free_node</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Destroy the inline V and free both the key and node allocations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="343" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="343" bodyend="352"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a9412507209a40552a8a99d1fdf69b371" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>Node * cslt::Dict&lt; K, V &gt;::_find_node</definition>
+        <argsstring>(size_t bucket_idx, const K &amp;key) noexcept</argsstring>
+        <name>_find_node</name>
+        <qualifiedname>cslt::Dict::_find_node</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>bucket_idx</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="358" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="358" bodyend="364"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a1026b50f639672ec6d7981dabfaecd14" prot="private" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+        <definition>const Node * cslt::Dict&lt; K, V &gt;::_find_node_c</definition>
+        <argsstring>(size_t bucket_idx, const K &amp;key) const noexcept</argsstring>
+        <name>_find_node_c</name>
+        <qualifiedname>cslt::Dict::_find_node_c</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>bucket_idx</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="366" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="366" bodyend="372"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a3b4c21355cb035c605ea1d3c302b3383" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::Dict&lt; K, V &gt;::_resize</definition>
+        <argsstring>(size_t new_alloc) noexcept</argsstring>
+        <name>_resize</name>
+        <qualifiedname>cslt::Dict::_resize</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>new_alloc</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="378" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="378" bodyend="416"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classcslt_1_1Dict_1aaa3c7853b3dc07e3f8197d9d90adc6c0" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">V</ref> *</type>
+        <definition>static V * cslt::Dict&lt; K, V &gt;::_node_value</definition>
+        <argsstring>(Node *n) noexcept</argsstring>
+        <name>_node_value</name>
+        <qualifiedname>cslt::Dict::_node_value</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Return a pointer to the V value stored inline after the node header. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="193" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="193" bodyend="196"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1ab03f0d573fd50e45540f498143cc1c96" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> *</type>
+        <definition>static const V * cslt::Dict&lt; K, V &gt;::_node_value_c</definition>
+        <argsstring>(const Node *n) noexcept</argsstring>
+        <name>_node_value_c</name>
+        <qualifiedname>cslt::Dict::_node_value_c</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="198" column="24" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="198" bodyend="201"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a60ff94646707a3e32415703a1457fbe1" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>static bool cslt::Dict&lt; K, V &gt;::_keys_equal</definition>
+        <argsstring>(const K &amp;a, const K &amp;b) noexcept</argsstring>
+        <name>_keys_equal</name>
+        <qualifiedname>cslt::Dict::_keys_equal</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>b</declname>
+        </param>
+        <briefdescription>
+<para>Compare two keys for equality. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Uses operator== when K provides it; falls back to memcmp otherwise. Both paths are correct for trivially copyable K. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="213" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="213" bodyend="219"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a8b79322336c6042f0530d32ac0fbdcf7" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>static size_t cslt::Dict&lt; K, V &gt;::_hash_key</definition>
+        <argsstring>(const K &amp;key) noexcept</argsstring>
+        <name>_hash_key</name>
+        <qualifiedname>cslt::Dict::_hash_key</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>MurmurHash3-inspired hash over the raw bytes of key. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Operates on sizeof(K) bytes, which is safe for trivially copyable K. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="230" column="23" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="230" bodyend="232"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1ac9b2843a3345c81ea93efd403ebfcf15" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>static size_t cslt::Dict&lt; K, V &gt;::_hash_bytes</definition>
+        <argsstring>(const void *data, size_t len, uint32_t seed) noexcept</argsstring>
+        <name>_hash_bytes</name>
+        <qualifiedname>cslt::Dict::_hash_bytes</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">void</ref> *</type>
+          <declname>data</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>len</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">uint32_t</ref></type>
+          <declname>seed</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="234" column="23" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="234" bodyend="279"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a07df6186eb7de014d857ef99439d74b5" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>static size_t cslt::Dict&lt; K, V &gt;::_next_pow2</definition>
+        <argsstring>(size_t n) noexcept</argsstring>
+        <name>_next_pow2</name>
+        <qualifiedname>cslt::Dict::_next_pow2</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="289" column="23" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="289" bodyend="301"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; * &gt;</type>
+        <definition>static Expected&lt; Dict&lt; K, V &gt; * &gt; cslt::Dict&lt; K, V &gt;::init</definition>
+        <argsstring>(size_t capacity, bool growth, Allocator &amp;allocator) noexcept</argsstring>
+        <name>init</name>
+        <qualifiedname>cslt::Dict::init</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>capacity</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+          <declname>growth</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Allocate and initialise a new <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>capacity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Initial bucket count. Must be &gt; 0. Rounded up to the next power of two (minimum 8). </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>growth</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true the table resizes automatically when the load factor exceeds 0.75. If false, <ref refid="classcslt_1_1Dict_1a1a6366012907d0a6683b164bd874b12e" kindref="member">insert()</ref> returns false when all buckets are full. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> for all internal memory. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Dict&lt;K,V&gt;*&gt; on success, or a <ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref> / <ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref></para>
+</simplesect>
+<simplesect kind="par"><title>Error conditions</title><para><itemizedlist>
+<listitem><para>capacity == 0 (<ref refid="classcslt_1_1ArgumentError" kindref="compound">ArgumentError</ref>)</para>
+</listitem><listitem><para>Allocation of the <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> struct fails (<ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
+</listitem><listitem><para>Allocation of the bucket array fails (<ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref>)</para>
+</listitem></itemizedlist>
+</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="comment">//<sp/>Create<sp/>an<sp/>int-&gt;float<sp/>dictionary<sp/>with<sp/>an<sp/>initial<sp/>capacity<sp/>of<sp/>16<sp/>buckets</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>and<sp/>automatic<sp/>growth<sp/>enabled.<sp/><sp/>The<sp/>UniquePtr<sp/>owns<sp/>the<sp/>dict<sp/>and<sp/>frees</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>it<sp/>automatically<sp/>when<sp/>it<sp/>goes<sp/>out<sp/>of<sp/>scope.</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(16,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>handle<sp/>error<sp/>—<sp/>r.error()<sp/>describes<sp/>the<sp/>failure</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(1,<sp/>1.1f);</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(2,<sp/>2.2f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>d<sp/>is<sp/>freed<sp/>here<sp/>when<sp/>it<sp/>leaves<sp/>scope</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="462" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="462" bodyend="502"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1ac21ccb45e4005fce65f12dd77e46fd80" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; * &gt;</type>
+        <definition>static Expected&lt; Dict&lt; K, V &gt; * &gt; cslt::Dict&lt; K, V &gt;::copy</definition>
+        <argsstring>(const Dict&lt; K, V &gt; &amp;src, Allocator &amp;allocator) noexcept</argsstring>
+        <name>copy</name>
+        <qualifiedname>cslt::Dict::copy</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Create a deep copy of <computeroutput>src</computeroutput> using a caller-supplied allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All key-value pairs are rehashed into a new bucket array of the same capacity as <computeroutput>src</computeroutput>. Nodes are copy-constructed individually so the copy is fully independent of the source.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> to copy from </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> for the new <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> and all its nodes. May differ from the allocator used to create <computeroutput>src</computeroutput>. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Dict&lt;K,V&gt;*&gt; on success, or a <ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref> on allocation failure</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Build<sp/>the<sp/>source<sp/>dictionary</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>src(r.value());</highlight></codeline>
+<codeline><highlight class="normal">src-&gt;insert(1,<sp/>1.1f);</highlight></codeline>
+<codeline><highlight class="normal">src-&gt;insert(2,<sp/>2.2f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Deep-copy<sp/>into<sp/>a<sp/>second<sp/>dictionary<sp/>backed<sp/>by<sp/>the<sp/>same<sp/>allocator</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>cr<sp/>=<sp/><ref refid="classcslt_1_1Dict_1ac21ccb45e4005fce65f12dd77e46fd80" kindref="member">cslt::Dict&lt;int, float&gt;::copy</ref>(*src,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!cr.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>dst(cr.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>src<sp/>and<sp/>dst<sp/>are<sp/>independent<sp/>—<sp/>mutating<sp/>one<sp/>does<sp/>not<sp/>affect<sp/>the<sp/>other</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">dst-&gt;insert(3,<sp/>3.3f);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="539" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="539" bodyend="571"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1aa57aac42f0c713e0d822ddb3d6595651" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; * &gt;</type>
+        <definition>static Expected&lt; Dict&lt; K, V &gt; * &gt; cslt::Dict&lt; K, V &gt;::copy</definition>
+        <argsstring>(const Dict&lt; K, V &gt; &amp;src) noexcept</argsstring>
+        <name>copy</name>
+        <qualifiedname>cslt::Dict::copy</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; &amp;</type>
+          <declname>src</declname>
+        </param>
+        <briefdescription>
+<para>Create a deep copy using the source dict&apos;s own allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Convenience overload that forwards to copy(src, allocator) using the allocator already associated with <computeroutput>src</computeroutput>.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>src</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> to copy from </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Dict&lt;K,V&gt;*&gt; on success, or a <ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref></para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>src(r.value());</highlight></codeline>
+<codeline><highlight class="normal">src-&gt;insert(10,<sp/>9.9f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Copy<sp/>using<sp/>src&apos;s<sp/>own<sp/>allocator<sp/>—<sp/>no<sp/>need<sp/>to<sp/>pass<sp/>alloc<sp/>explicitly</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>cr<sp/>=<sp/><ref refid="classcslt_1_1Dict_1ac21ccb45e4005fce65f12dd77e46fd80" kindref="member">cslt::Dict&lt;int, float&gt;::copy</ref>(*src);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!cr.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>dst(cr.value());</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="599" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="599" bodyend="601"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1aac1cb02eeb122d32b7cf87b1705c563c" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; * &gt;</type>
+        <definition>static Expected&lt; Dict&lt; K, V &gt; * &gt; cslt::Dict&lt; K, V &gt;::merge</definition>
+        <argsstring>(const Dict&lt; K, V &gt; &amp;a, const Dict&lt; K, V &gt; &amp;b, bool overwrite, Allocator &amp;allocator) noexcept</argsstring>
+        <name>merge</name>
+        <qualifiedname>cslt::Dict::merge</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; &amp;</type>
+          <declname>a</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">K</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt; &amp;</type>
+          <declname>b</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+          <declname>overwrite</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Merge two dicts into a new dict. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>All entries from <computeroutput>a</computeroutput> are inserted first. Entries from <computeroutput>b</computeroutput> are then processed:<itemizedlist>
+<listitem><para>If the key does not exist in the result it is inserted.</para>
+</listitem><listitem><para>If the key exists and <computeroutput>overwrite</computeroutput> is true the value is replaced.</para>
+</listitem><listitem><para>If the key exists and <computeroutput>overwrite</computeroutput> is false the original value is kept.</para>
+</listitem></itemizedlist>
+</para>
+<para><computeroutput>a</computeroutput> and <computeroutput>b</computeroutput> are not modified.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>a</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>First source dict </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>b</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Second source dict </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>overwrite</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, <computeroutput>b&apos;s</computeroutput> values win on key conflicts </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> for the new dict </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt;Dict&lt;K,V&gt;*&gt; on success, or a <ref refid="classcslt_1_1MemoryError" kindref="compound">MemoryError</ref> on allocation failure</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Build<sp/>the<sp/>first<sp/>source<sp/>dictionary</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>ra<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!ra.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>a(ra.value());</highlight></codeline>
+<codeline><highlight class="normal">a-&gt;insert(1,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">a-&gt;insert(2,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Build<sp/>the<sp/>second<sp/>source<sp/>dictionary<sp/>—<sp/>key<sp/>2<sp/>conflicts<sp/>with<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>rb<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!rb.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>b(rb.value());</highlight></codeline>
+<codeline><highlight class="normal">b-&gt;insert(2,<sp/>99.0f);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>conflict<sp/>—<sp/>same<sp/>key<sp/>as<sp/>in<sp/>a</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">b-&gt;insert(3,<sp/>3.0f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Merge:<sp/>b<sp/>wins<sp/>on<sp/>conflicts<sp/>(overwrite<sp/>==<sp/>true)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Result<sp/>contains:<sp/>{1-&gt;1.0,<sp/>2-&gt;99.0,<sp/>3-&gt;3.0}</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>mr<sp/>=<sp/><ref refid="classcslt_1_1Dict_1aac1cb02eeb122d32b7cf87b1705c563c" kindref="member">cslt::Dict&lt;int, float&gt;::merge</ref>(*a,<sp/>*b,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!mr.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>merged(mr.value());</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="649" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="649" bodyend="688"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1Dict_1a1a6366012907d0a6683b164bd874b12e" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::Dict&lt; K, V &gt;::insert</definition>
+        <argsstring>(const K &amp;key, const V &amp;value) noexcept</argsstring>
+        <name>insert</name>
+        <qualifiedname>cslt::Dict::insert</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Insert a new key-value pair. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key to insert. Must not already exist in the dict. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to associate with the key. Copy-constructed into the node&apos;s inline buffer. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success; false if the key already exists, allocation fails, or the dict is full and growth is disabled.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ok<sp/>=<sp/>d-&gt;insert(42,<sp/>3.14f);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>ok<sp/>==<sp/>true</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>dup<sp/>=<sp/>d-&gt;insert(42,<sp/>9.99f);<sp/><sp/></highlight><highlight class="comment">//<sp/>dup<sp/>==<sp/>false<sp/>—<sp/>duplicate<sp/>key<sp/>rejected</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="714" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="714" bodyend="744"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a545138414e5e301a15588ab0cfff7049" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::Dict&lt; K, V &gt;::update</definition>
+        <argsstring>(const K &amp;key, const V &amp;value) noexcept</argsstring>
+        <name>update</name>
+        <qualifiedname>cslt::Dict::update</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Overwrite the value of an existing key. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The key is not re-hashed and no allocation is performed — only the stored value is replaced via destroy-then-copy-construct in place.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key to update. Must already exist in the dict. </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>New value to store. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success; false if the key is not found.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(42,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>ok<sp/>=<sp/>d-&gt;update(42,<sp/>6.28f);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>ok<sp/>==<sp/>true,<sp/><sp/>value<sp/>is<sp/>now<sp/>6.28f</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>nf<sp/>=<sp/>d-&gt;update(99,<sp/>1.00f);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>nf<sp/>==<sp/>false,<sp/>key<sp/>99<sp/>does<sp/>not<sp/>exist</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="770" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="770" bodyend="783"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1ad38477084a84f1eb9ab5e5791165ff4f" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt;</type>
+        <definition>Expected&lt; V &gt; cslt::Dict&lt; K, V &gt;::pop</definition>
+        <argsstring>(const K &amp;key) noexcept</argsstring>
+        <name>pop</name>
+        <qualifiedname>cslt::Dict::pop</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Remove a key-value pair and return the removed value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The node is unlinked from its bucket chain and freed. The value is copy-constructed into the <ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref> before the node is destroyed, so the caller always receives the value regardless of what type V is.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key to remove. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;V&gt; containing the value on success, or an <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref> if the key is not found.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(42,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(99,<sp/>9.99f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>pr<sp/>=<sp/>d-&gt;pop(42);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(pr.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>v<sp/>=<sp/>pr.value();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>v<sp/>==<sp/>3.14f;<sp/>key<sp/>42<sp/>no<sp/>longer<sp/>in<sp/>dict</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>missing<sp/>=<sp/>d-&gt;pop(7);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>missing.hasValue()<sp/>==<sp/>false<sp/>—<sp/>key<sp/>7<sp/>was<sp/>never<sp/>inserted</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="816" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="816" bodyend="848"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a6673ffd8aa81f17995514ce5aa463e48" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> &gt;</type>
+        <definition>Expected&lt; V &gt; cslt::Dict&lt; K, V &gt;::get</definition>
+        <argsstring>(const K &amp;key) const noexcept</argsstring>
+        <name>get</name>
+        <qualifiedname>cslt::Dict::get</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Return a copy of the value associated with a key. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The dict is not modified. The returned <ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref> owns a copy of the value; mutations to the copy do not affect the stored value.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key to look up. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;V&gt; containing a copy of the value on success, or an <ref refid="classcslt_1_1OutOfBoundsError" kindref="compound">OutOfBoundsError</ref> if the key is not found.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(42,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>gr<sp/>=<sp/>d-&gt;get(42);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(gr.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>v<sp/>=<sp/>gr.value();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>v<sp/>==<sp/>3.14f</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>missing<sp/>=<sp/>d-&gt;get(99);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>missing.hasValue()<sp/>==<sp/>false</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="882" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="882" bodyend="900"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1ac4d77742fb8cf5a793ab81b6a37e1ae2" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">V</ref> *</type>
+        <definition>const V * cslt::Dict&lt; K, V &gt;::get_ptr</definition>
+        <argsstring>(const K &amp;key) const noexcept</argsstring>
+        <name>get_ptr</name>
+        <qualifiedname>cslt::Dict::get_ptr</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Return a read-only pointer directly into the node&apos;s value slot. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The pointer remains valid until the next mutation of the dict (insert, update, pop, clear, or any operation that triggers a resize). The caller must not free or write through it.</para>
+<para>Prefer <ref refid="classcslt_1_1Dict_1a6673ffd8aa81f17995514ce5aa463e48" kindref="member">get()</ref> when a copy is acceptable. Use <ref refid="classcslt_1_1Dict_1ac4d77742fb8cf5a793ab81b6a37e1ae2" kindref="member">get_ptr()</ref> only when avoiding the copy is important and the pointer lifetime can be guaranteed.</para>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key to look up. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Const pointer to the value on success, nullptr if not found.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(42,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>d-&gt;get_ptr(42);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>ptr<sp/>!=<sp/>nullptr</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(ptr)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>v<sp/>=<sp/>*ptr;<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>v<sp/>==<sp/>3.14f<sp/>—<sp/>zero-copy<sp/>read</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">*<sp/>missing<sp/>=<sp/>d-&gt;get_ptr(99);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>missing<sp/>==<sp/>nullptr</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="934" column="17" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="934" bodyend="939"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a8f49e1aa29a41442da6132a46ad7995c" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::Dict&lt; K, V &gt;::has_key</definition>
+        <argsstring>(const K &amp;key) const noexcept</argsstring>
+        <name>has_key</name>
+        <qualifiedname>cslt::Dict::has_key</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">K</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Test whether a key exists without retrieving its value. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key to test. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true if the key exists, false otherwise.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(42,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>found<sp/><sp/><sp/>=<sp/>d-&gt;has_key(42);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>true</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>missing<sp/>=<sp/>d-&gt;has_key(99);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>false</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="961" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="961" bodyend="965"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a30207a6dbfc6d7550ee8201de08a063c" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>void cslt::Dict&lt; K, V &gt;::clear</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>clear</name>
+        <qualifiedname>cslt::Dict::clear</qualifiedname>
+        <briefdescription>
+<para>Remove all entries without freeing the <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> or its bucket array. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Every node (key copy + inline value) is destroyed and freed via the allocator. The bucket array is retained and zeroed so the <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> can be reused immediately without a further allocation. <ref refid="classcslt_1_1Dict_1a323937f988a50c9a6bcc9b2b201cf7c2" kindref="member">size()</ref> and <ref refid="classcslt_1_1Dict_1a45f2be36b215978ba38e964c822ae757" kindref="member">hash_size()</ref> are reset to 0; <ref refid="classcslt_1_1Dict_1a913efcf08d5f620beb9a85039cef3be2" kindref="member">bucket_count()</ref> is unchanged.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(1,<sp/>1.1f);</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(2,<sp/>2.2f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>d-&gt;hash_size()<sp/>==<sp/>2</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;clear();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>d-&gt;hash_size()<sp/>==<sp/>0,<sp/>d-&gt;is_empty()<sp/>==<sp/>true</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>d-&gt;bucket_count()<sp/>is<sp/>unchanged<sp/>—<sp/>the<sp/>bucket<sp/>array<sp/>is<sp/>reused</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(3,<sp/>3.3f);<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>can<sp/>insert<sp/>immediately<sp/>after<sp/>clear</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="997" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="997" bodyend="1010"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1af9e30eb9070fc744e73c6ed0995fd21c" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Func</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::Dict&lt; K, V &gt;::foreach</definition>
+        <argsstring>(Func fn) const noexcept</argsstring>
+        <name>foreach</name>
+        <qualifiedname>cslt::Dict::foreach</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">Func</ref></type>
+          <declname>fn</declname>
+        </param>
+        <briefdescription>
+<para>Call <computeroutput>fn</computeroutput> once for every key-value pair in the dict. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Traversal order is bucket order (not insertion order). The callback receives const references to both the key and the value.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Func</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable with signature <computeroutput>void(const K&amp;, const V&amp;)</computeroutput>. Lambdas, functors, and plain function pointers are all accepted. The callback must not insert, update, remove, or clear entries during traversal.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>fn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callback invoked for each entry. </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>true on success; false if the dict is uninitialised.</para>
+</simplesect>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(1,<sp/>1.1f);</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(2,<sp/>2.2f);</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(3,<sp/>3.3f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Lambda<sp/>—<sp/>accumulate<sp/>the<sp/>sum<sp/>of<sp/>all<sp/>values</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">float</highlight><highlight class="normal"><sp/>total<sp/>=<sp/>0.0f;</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;foreach([&amp;total](</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>key,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">&amp;<sp/>value)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>total<sp/>+=<sp/>value;</highlight></codeline>
+<codeline><highlight class="normal">});</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>total<sp/>==<sp/>6.6f<sp/>(approximately)</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>File-scope<sp/>function<sp/>pointer</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal"><sp/>print_entry(</highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">int</highlight><highlight class="normal">&amp;<sp/>key,<sp/></highlight><highlight class="keyword">const</highlight><highlight class="normal"><sp/></highlight><highlight class="keywordtype">float</highlight><highlight class="normal">&amp;<sp/>value)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>log<sp/>key<sp/>and<sp/>value</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;foreach(print_entry);</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="1056" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="1056" bodyend="1066"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a323937f988a50c9a6bcc9b2b201cf7c2" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::Dict&lt; K, V &gt;::size</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>size</name>
+        <qualifiedname>cslt::Dict::size</qualifiedname>
+        <briefdescription>
+<para>Number of occupied buckets (chains with at least one entry) </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the number of distinct hash slots in use, not the total number of key-value pairs. Multiple keys may hash to the same bucket and form a chain; each such chain counts as one occupied bucket. Use <ref refid="classcslt_1_1Dict_1a45f2be36b215978ba38e964c822ae757" kindref="member">hash_size()</ref> for the total number of pairs.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(1,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(2,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>occ<sp/>=<sp/>d-&gt;size();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>&lt;=<sp/>2<sp/>(may<sp/>be<sp/>1<sp/>if<sp/>both<sp/>keys<sp/>hash<sp/>to<sp/>same<sp/>bucket)</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="1092" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="1092" bodyend="1092"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a45f2be36b215978ba38e964c822ae757" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::Dict&lt; K, V &gt;::hash_size</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>hash_size</name>
+        <qualifiedname>cslt::Dict::hash_size</qualifiedname>
+        <briefdescription>
+<para>Total number of key-value pairs stored. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Incremented by <ref refid="classcslt_1_1Dict_1a1a6366012907d0a6683b164bd874b12e" kindref="member">insert()</ref> and decremented by <ref refid="classcslt_1_1Dict_1ad38477084a84f1eb9ab5e5791165ff4f" kindref="member">pop()</ref>. Reset to 0 by <ref refid="classcslt_1_1Dict_1a30207a6dbfc6d7550ee8201de08a063c" kindref="member">clear()</ref>. This is the value to use when you need to know how many distinct keys are in the dict.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(1,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(2,<sp/>2.0f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>n<sp/>=<sp/>d-&gt;hash_size();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>n<sp/>==<sp/>2</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="1113" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="1113" bodyend="1113"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a913efcf08d5f620beb9a85039cef3be2" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::Dict&lt; K, V &gt;::bucket_count</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>bucket_count</name>
+        <qualifiedname>cslt::Dict::bucket_count</qualifiedname>
+        <briefdescription>
+<para>Number of buckets allocated (always a power of two) </para>
+        </briefdescription>
+        <detaileddescription>
+<para>This is the current size of the internal bucket array. It grows automatically when growth is enabled and the load factor exceeds 0.75. The initial value is the smallest power of two &gt;= the capacity passed to <ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">init()</ref>, with a minimum of 8.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(10,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>bc<sp/>=<sp/>d-&gt;bucket_count();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>bc<sp/>==<sp/>16<sp/>(next<sp/>power<sp/>of<sp/>two<sp/>&gt;=<sp/>10)</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="1133" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="1133" bodyend="1133"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1Dict_1a236da0d47344f310a9385f9e848b5322" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::Dict&lt; K, V &gt;::is_empty</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>is_empty</name>
+        <qualifiedname>cslt::Dict::is_empty</qualifiedname>
+        <briefdescription>
+<para>true if no key-value pairs are stored </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Equivalent to <ref refid="classcslt_1_1Dict_1a45f2be36b215978ba38e964c822ae757" kindref="member">hash_size()</ref> == 0. Returns true on a freshly initialised dict and after <ref refid="classcslt_1_1Dict_1a30207a6dbfc6d7550ee8201de08a063c" kindref="member">clear()</ref>.</para>
+<para><programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(!r.hasValue())<sp/></highlight><highlight class="keywordflow">return</highlight><highlight class="normal">;</highlight></codeline>
+<codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int, float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int, float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>empty_before<sp/>=<sp/>d-&gt;is_empty();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>true</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;insert(1,<sp/>1.0f);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>empty_after<sp/><sp/>=<sp/>d-&gt;is_empty();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>false</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">d-&gt;clear();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/>empty_again<sp/><sp/>=<sp/>d-&gt;is_empty();<sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>true</highlight></codeline>
+</programlisting> </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="1155" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="1155" bodyend="1155"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Allocator-backed generic hash dictionary mapping keys of type K to values of type V. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Implements a chained hash table using the MurmurHash3-inspired hash function from the companion C implementation. Both the <ref refid="classcslt_1_1Dict" kindref="compound">Dict</ref> object and every internal node are allocated through the provided <ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref>, enabling deterministic memory behaviour across heap, arena, buddy, and slab allocators.</para>
+<para>Key features:<itemizedlist>
+<listitem><para>Template parameters K and V decouple key and value types completely</para>
+</listitem><listitem><para>K must be trivially copyable; keys are hashed over their raw bytes</para>
+</listitem><listitem><para>Key equality uses operator== when available, memcmp as fallback</para>
+</listitem><listitem><para>V may be any copy-constructible, destructible type</para>
+</listitem><listitem><para>Optional automatic growth when load factor exceeds 0.75</para>
+</listitem><listitem><para>Factory pattern via <ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">init()</ref> prevents uninitialised instances</para>
+</listitem><listitem><para>RAII cleanup through <ref refid="classcslt_1_1DictDeleter" kindref="compound">DictDeleter</ref> and <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref></para>
+</listitem><listitem><para><ref refid="classcslt_1_1Dict_1af9e30eb9070fc744e73c6ed0995fd21c" kindref="member">foreach()</ref> iteration accepts any callable (lambda, functor, function pointer)</para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>K</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Key type — must satisfy std::is_trivially_copyable_v&lt;K&gt; </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>V</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value type — must be default-constructible, copy-constructible, and destructible. Default-constructibility is required because <ref refid="classcslt_1_1Dict_1a6673ffd8aa81f17995514ce5aa463e48" kindref="member">get()</ref> and <ref refid="classcslt_1_1Dict_1ad38477084a84f1eb9ab5e5791165ff4f" kindref="member">pop()</ref> declare a local Expected&lt;V&gt; which default-constructs V before a value is available.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>alloc;</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>r<sp/>=<sp/><ref refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" kindref="member">cslt::Dict&lt;int, float&gt;::init</ref>(8,<sp/></highlight><highlight class="keyword">true</highlight><highlight class="normal">,<sp/>alloc);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(r.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Dict&lt;int,float&gt;</ref>,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::DictDeleter&lt;int,float&gt;</ref>&gt;<sp/>d(r.value());</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>d-&gt;insert(42,<sp/>3.14f);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>val<sp/>=<sp/>d-&gt;get(42);<sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Expected&lt;float&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>popped<sp/>=<sp/>d-&gt;pop(42);<sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Expected&lt;float&gt;</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" line="100" column="5" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/dict.hpp" bodystart="100" bodyend="1156"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1Dict_1af6d8c7e4fcecbcf8918277aad57236aa" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_alloc_node</name></member>
+      <member refid="classcslt_1_1Dict_1a1c512fd5784b0ef132f75ff8694458d3" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_bucket_index</name></member>
+      <member refid="classcslt_1_1Dict_1a9412507209a40552a8a99d1fdf69b371" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_find_node</name></member>
+      <member refid="classcslt_1_1Dict_1a1026b50f639672ec6d7981dabfaecd14" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_find_node_c</name></member>
+      <member refid="classcslt_1_1Dict_1aa4351b557f0386198fa3030fda706069" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_free_node</name></member>
+      <member refid="classcslt_1_1Dict_1ac9b2843a3345c81ea93efd403ebfcf15" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_hash_bytes</name></member>
+      <member refid="classcslt_1_1Dict_1a8b79322336c6042f0530d32ac0fbdcf7" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_hash_key</name></member>
+      <member refid="classcslt_1_1Dict_1a60ff94646707a3e32415703a1457fbe1" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_keys_equal</name></member>
+      <member refid="classcslt_1_1Dict_1a07df6186eb7de014d857ef99439d74b5" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_next_pow2</name></member>
+      <member refid="classcslt_1_1Dict_1aaa3c7853b3dc07e3f8197d9d90adc6c0" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_node_value</name></member>
+      <member refid="classcslt_1_1Dict_1ab03f0d573fd50e45540f498143cc1c96" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_node_value_c</name></member>
+      <member refid="classcslt_1_1Dict_1a3b4c21355cb035c605ea1d3c302b3383" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>_resize</name></member>
+      <member refid="classcslt_1_1Dict_1a5103b0093fe9957ecb36a4efa0adbdd4" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>alloc_</name></member>
+      <member refid="classcslt_1_1Dict_1a6fc1f72c36748b369cb10fcb0dd730e4" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>allocator_</name></member>
+      <member refid="classcslt_1_1Dict_1a913efcf08d5f620beb9a85039cef3be2" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>bucket_count</name></member>
+      <member refid="classcslt_1_1Dict_1a5df5f35e76594141790d57f63dfa9f81" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>buckets_</name></member>
+      <member refid="classcslt_1_1Dict_1a30207a6dbfc6d7550ee8201de08a063c" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>clear</name></member>
+      <member refid="classcslt_1_1Dict_1ac21ccb45e4005fce65f12dd77e46fd80" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>copy</name></member>
+      <member refid="classcslt_1_1Dict_1aa57aac42f0c713e0d822ddb3d6595651" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>copy</name></member>
+      <member refid="classcslt_1_1Dict_1a731645bf2aea463f984ad64baa52b2b7" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>Dict</name></member>
+      <member refid="classcslt_1_1Dict_1aeaa8ace788ecc1e5d15ec698896df7d8" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>Dict</name></member>
+      <member refid="classcslt_1_1Dict_1af3ddf5baa97f3aa6c04365ff4bd7d7a5" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>Dict</name></member>
+      <member refid="classcslt_1_1Dict_1a4f5d2974c32a671a89e5bd3d51d09a3e" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>DictDeleter</name></member>
+      <member refid="classcslt_1_1Dict_1af9e30eb9070fc744e73c6ed0995fd21c" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>foreach</name></member>
+      <member refid="classcslt_1_1Dict_1a6673ffd8aa81f17995514ce5aa463e48" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>get</name></member>
+      <member refid="classcslt_1_1Dict_1ac4d77742fb8cf5a793ab81b6a37e1ae2" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>get_ptr</name></member>
+      <member refid="classcslt_1_1Dict_1ad72d008e477cb8819a347cca902b875c" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>growth_</name></member>
+      <member refid="classcslt_1_1Dict_1a8e463abc8e4fcbd362026f20c101d9de" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>GROWTH_FACTOR</name></member>
+      <member refid="classcslt_1_1Dict_1a8f49e1aa29a41442da6132a46ad7995c" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>has_key</name></member>
+      <member refid="classcslt_1_1Dict_1aab18ee6295160e3edb2fb365c34452bc" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>HASH_SEED</name></member>
+      <member refid="classcslt_1_1Dict_1a45f2be36b215978ba38e964c822ae757" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>hash_size</name></member>
+      <member refid="classcslt_1_1Dict_1afd1e586070a63206e73fc1905d95126e" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>hash_size_</name></member>
+      <member refid="classcslt_1_1Dict_1a49eea3f6e2ef88c80a1003042c38b7cb" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>init</name></member>
+      <member refid="classcslt_1_1Dict_1a1a6366012907d0a6683b164bd874b12e" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>insert</name></member>
+      <member refid="classcslt_1_1Dict_1a236da0d47344f310a9385f9e848b5322" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>is_empty</name></member>
+      <member refid="classcslt_1_1Dict_1a0935a4c776802b28f97293e5708f7511" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>LARGE_STEP</name></member>
+      <member refid="classcslt_1_1Dict_1a29e441422af21e485999b564eb6e6d26" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>LARGE_THRESH</name></member>
+      <member refid="classcslt_1_1Dict_1af9e1004a1cb5fdd34b1107177302970f" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>len_</name></member>
+      <member refid="classcslt_1_1Dict_1ae87addf35d9d0fbf07b7da7aa5cee863" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>LOAD_FACTOR</name></member>
+      <member refid="classcslt_1_1Dict_1aac1cb02eeb122d32b7cf87b1705c563c" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>merge</name></member>
+      <member refid="classcslt_1_1Dict_1abd3619a06b53f6a494f9f9e526ea1c2d" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>MIN_ALLOC</name></member>
+      <member refid="classcslt_1_1Dict_1adff39331fc76f7f97e68826157165769" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1Dict_1ad4d39f0de02980eb0828f32614f063c5" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1Dict_1ad38477084a84f1eb9ab5e5791165ff4f" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>pop</name></member>
+      <member refid="classcslt_1_1Dict_1a323937f988a50c9a6bcc9b2b201cf7c2" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>size</name></member>
+      <member refid="classcslt_1_1Dict_1a545138414e5e301a15588ab0cfff7049" prot="public" virt="non-virtual"><scope>cslt::Dict</scope><name>update</name></member>
+      <member refid="classcslt_1_1Dict_1a7ba293bf3d21d36a13f94993d58bd08f" prot="private" virt="non-virtual"><scope>cslt::Dict</scope><name>~Dict</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
   <compounddef id="Reallocate-example" kind="example">
     <compoundname>Reallocate</compoundname>
     <briefdescription>
@@ -92,21 +92,21 @@ Like realloc(), but maintains the specified alignment. The returned pointer is g
 </parameterdescription>
 </parameteritem>
 </parameterlist>
-cache-aligned buffer <programlisting><codeline><highlight class="normal">cslt::HeapAllocator<sp/>allocator;</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Initial<sp/>64-byte<sp/>aligned<sp/>allocation</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>result1<sp/>=<sp/>allocator.alloc_aligned(512,<sp/>64,<sp/>false);</highlight></codeline>
-<codeline><highlight class="normal">void*<sp/>ptr<sp/>=<sp/>result1.value();</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">//<sp/>Grow<sp/>while<sp/>maintaining<sp/>64-byte<sp/>alignment</highlight></codeline>
-<codeline><highlight class="normal">auto<sp/>result2<sp/>=<sp/>allocator.realloc_aligned(ptr,<sp/>512,<sp/>1024,<sp/>64,<sp/>false);</highlight></codeline>
-<codeline><highlight class="normal">if<sp/>(result2.hasValue())<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>void*<sp/>new_ptr<sp/>=<sp/>result2.value();</highlight></codeline>
+cache-aligned buffer <programlisting><codeline><highlight class="normal"><ref refid="classcslt_1_1HeapAllocator" kindref="compound">cslt::HeapAllocator</ref><sp/>allocator;</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Initial<sp/>64-byte<sp/>aligned<sp/>allocation</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result1<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1a53a1b9b301c70c4ce6035075385317e7" kindref="member">alloc_aligned</ref>(512,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>ptr<sp/>=<sp/>result1.<ref refid="classcslt_1_1Expected_1a5d4e95808d25a88c3e7b2935a654f92f" kindref="member">value</ref>();</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Grow<sp/>while<sp/>maintaining<sp/>64-byte<sp/>alignment</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>result2<sp/>=<sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aac4dc418d8906892495d0a6fcf965fa1" kindref="member">realloc_aligned</ref>(ptr,<sp/>512,<sp/>1024,<sp/>64,<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">if</highlight><highlight class="normal"><sp/>(result2.hasValue())<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>new_ptr<sp/>=<sp/>result2.<ref refid="classcslt_1_1Expected_1a5d4e95808d25a88c3e7b2935a654f92f" kindref="member">value</ref>();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Verify<sp/>alignment<sp/>maintained</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(reinterpret_cast&lt;uintptr_t&gt;(new_ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Verify<sp/>alignment<sp/>maintained</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>assert(</highlight><highlight class="keyword">reinterpret_cast&lt;</highlight><highlight class="normal">uintptr_t</highlight><highlight class="keyword">&gt;</highlight><highlight class="normal">(new_ptr)<sp/>%<sp/>64<sp/>==<sp/>0);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.return_element(new_ptr,<sp/>1024,<sp/>64);</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>allocator.<ref refid="classcslt_1_1HeapAllocator_1aee2691eca10efc6a09848cfcdcec9c2c" kindref="member">return_element</ref>(new_ptr,<sp/>1024,<sp/>64);</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 <para><simplesect kind="warning"><para>The alignment parameter must match the alignment used in the original allocation.</para>
@@ -117,6 +117,6 @@ cache-aligned buffer <programlisting><codeline><highlight class="normal">cslt::H
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp"/>
   </compounddef>
 </doxygen>

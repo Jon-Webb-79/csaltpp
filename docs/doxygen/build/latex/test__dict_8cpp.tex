@@ -1,0 +1,579 @@
+\doxysection{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/test/test\+\_\+dict.cpp File Reference}
+\hypertarget{test__dict_8cpp}{}\label{test__dict_8cpp}\index{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/test/test\_dict.cpp@{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/test/test\_dict.cpp}}
+{\ttfamily \#include $<$gtest/gtest.\+h$>$}\newline
+{\ttfamily \#include "{}dict.\+hpp"{}}\newline
+{\ttfamily \#include "{}allocator.\+hpp"{}}\newline
+Include dependency graph for test\+\_\+dict.\+cpp\+:
+% FIG 0
+\doxysubsubsection*{Data Structures}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structPoint3i}{Point3i}}
+\begin{DoxyCompactList}\small\item\em A trivially copyable struct used to exercise Dict with a non-\/scalar key type. \end{DoxyCompactList}\item 
+struct \mbox{\hyperlink{structPayload}{Payload}}
+\begin{DoxyCompactList}\small\item\em A non-\/trivially-\/copyable value type used to verify that Dict$<$\+K,\+V$>$ correctly calls constructors and destructors for non-\/trivial V. \end{DoxyCompactList}\item 
+class \mbox{\hyperlink{classDictTest}{Dict\+Test}}
+\begin{DoxyCompactList}\small\item\em Test fixture providing a shared Heap\+Allocator for all Dict tests. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+{\footnotesize template$<$typename K , typename V $>$ }\\using \mbox{\hyperlink{test__dict_8cpp_a213026424391fcd0551ee2d1e07a16a2}{Dict\+Ptr}} = \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$ \mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$ K, V $>$, \mbox{\hyperlink{classcslt_1_1DictDeleter}{cslt\+::\+Dict\+Deleter}}$<$ K, V $>$ $>$
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ac32bb8289619f4b68da954260e5d0359}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Init\+Int\+Float\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ad47922fb8394f03a859157993703ce0c}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Init\+Capacity\+Rounds\+Up\+To\+Minimum)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a30581c7a7568bdaa47fc9c997593107f}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Init\+Capacity\+Rounds\+Up\+To\+Power\+Of\+Two)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aae7952639fbf3ae6171a009453d8b4f7}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Init\+Zero\+Capacity\+Returns\+Error)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ac7bcab5d2f33e5f23542502f22107edc}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Init\+Non\+Trivial\+Value\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a978922259efb3bf5500bed6d66ab180f}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Init\+Struct\+Key\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a0fd6ba8aaaac34316d91f61fc7b9db9d}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+Int\+Float\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_acd8fc7a4e52efa822e3c0743cabdf58d}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+Multiple\+Int\+Float\+Pairs)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ac9fa513f9aa248da0a711b7b3f6f0016}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+Duplicate\+Key\+Returns\+False)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a7aa515955d4b01220653cda3b35e8b6f}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+Struct\+Key\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ab9a41b73c72937b90b18333e0bc71249}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+Non\+Trivial\+Value\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a5a718610ae4a9154ed02e144d164004e}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+Triggers\+Growth)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a38926ad517462ba7ce15c31158d8fdae}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+Fails\+When\+Full\+And\+Growth\+Disabled)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a7364a0e6d83e7a73c1490df7f6fe3dc3}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Update\+Int\+Float\+Overwrites\+Value)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ad778b65d832a0e9c5a689ad7b2f52cb3}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Update\+Does\+Not\+Change\+Hash\+Size)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aaf6ae0759b54872319ac4a49ebf5da90}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Update\+Missing\+Key\+Returns\+False)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a4df288e6db316213a7377fc6ca74484b}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Update\+Non\+Trivial\+Value\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ad7863e903a46ce92d0d774860a2a26f2}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Pop\+Int\+Float\+Returns\+Value)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a226bfb0330f9ce7bb1bdb4b50a2131b5}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Pop\+Decrements\+Hash\+Size)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_af5c63e3a1e777ba1c4e30c0f077794fc}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Pop\+Missing\+Key\+Returns\+Error)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a9d9393ec216a49cf9b52a1e69ad27867}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Pop\+Non\+Trivial\+Value\+Returns\+Value)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aa9736f1309a930934ff93a865dc5965e}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Pop\+Then\+Reinsert\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a582d864bb87e9fdc534dfa07ec39ce29}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Int\+Float\+Returns\+Correct\+Value)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a916ce7b16d22aa9cef141d9b5403c2dd}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Missing\+Key\+Returns\+Error)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a9f73ed9e17cfb563e71ab0b35c674da1}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Does\+Not\+Modify\+Dict)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a0c8d8495e43011961e9d5fc0e2ca26a9}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Struct\+Key\+Returns\+Correct\+Value)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ad68948777c9e7d2c486a8ae72c87a32c}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Non\+Trivial\+Value\+Returns\+Correct\+Value)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ad1ac26e942ec898511ad3a8196b5dc5f}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Ptr\+Returns\+Correct\+Pointer)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a902a6e3c2fe8e0c4973453855250a24e}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Ptr\+Missing\+Key\+Returns\+Nullptr)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aad941eb231f6c1dbbf187b7a31217035}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Get\+Ptr\+Reflects\+Update\+Change)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ab28478faf0a180fb2ae53e5f5749fcfa}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Has\+Key\+Returns\+True\+For\+Existing\+Key)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a3353258af1bff9c92414621781fc5210}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Has\+Key\+Returns\+False\+For\+Missing\+Key)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a267f0354cdb8f292c6ab6528b622fcfd}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Has\+Key\+Returns\+False\+After\+Pop)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a6a16c46d08cedcf27ae8828af847d2ba}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Has\+Key\+Struct\+Key\+Works)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a188b81755159bb3bb1e7ed23eeaf161d}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Clear\+Removes\+All\+Entries)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a74ebd56b6515a93535ab4905a466c661}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Clear\+Preserves\+Bucket\+Count)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a42f7df49be28681ccccd1157dd3d1fc1}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Insert\+After\+Clear\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_af3ad3a0f1acf65f471e3e66dca5a6d6b}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Clear\+Non\+Trivial\+Value\+Destructs\+Correctly)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aa987aaa56724fe977a207d8fb8cd08cc}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Foreach\+Visits\+All\+Pairs)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a854a43dc375c8bbc87c6a2e164be8f86}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Foreach\+On\+Empty\+Dict\+Calls\+Callback\+Zero\+Times)
+\item 
+static void \mbox{\hyperlink{test__dict_8cpp_a0c953e1fbbb69b1abec54decfc2430eb}{foreach\+\_\+counter}} (const int \&, const float \&)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a9a5caf2414bfbd522d7fec0b3444c35c}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Foreach\+With\+Function\+Pointer\+Works)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a899eeae1e9be0147a1ab1c6a1ce030f9}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Copy\+Produces\+Independent\+Dict)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aefccdc7d241a8880175ce26bceca1c39}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Copy\+One\+Arg\+Overload\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aa202c22afd12c4b6df57fc27e4a486d6}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Copy\+Non\+Trivial\+Value\+Succeeds)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_adfe30ffcc8824b2411d409027590ac58}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Merge\+Non\+Overlapping\+Dicts)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a558c877000fd09d5c1b07f8329bc98ca}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Merge\+Overwrite\+True\+BWins)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a31bbc21ed09c92ed8c3f59f91ae3e8b4}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Merge\+Overwrite\+False\+AWins)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a9c2bc48211d3a8bf0ff71ba9a62bbf76}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Merge\+Does\+Not\+Modify\+Sources)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_ae50b9c0deb0516abd21ad4e501b512cd}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Hash\+Size\+Tracks\+Insertions\+And\+Pops)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_aa3b550761f1e30f2c77c74934fdc6a06}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Is\+Empty\+Fresh\+And\+After\+Insert)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a86246bcbad6eff0d876a51e98e50d4a2}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Bucket\+Count\+Is\+Power\+Of\+Two\+GECapacity)
+\item 
+\mbox{\hyperlink{test__dict_8cpp_a245248ee4011829e80bb37978690e4f7}{TEST\+\_\+F}} (\mbox{\hyperlink{classDictTest}{Dict\+Test}}, Size\+Is\+Le\+Or\+Equal\+To\+Hash\+Size)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static int \mbox{\hyperlink{test__dict_8cpp_a7b891a6eb1bbcacc1a86085c213780d1}{g\+\_\+foreach\+\_\+count}} = 0
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Typedef Documentation}
+\Hypertarget{test__dict_8cpp_a213026424391fcd0551ee2d1e07a16a2}\label{test__dict_8cpp_a213026424391fcd0551ee2d1e07a16a2} 
+\index{test\_dict.cpp@{test\_dict.cpp}!DictPtr@{DictPtr}}
+\index{DictPtr@{DictPtr}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{DictPtr}{DictPtr}}
+{\footnotesize\ttfamily template$<$typename K , typename V $>$ \\
+using \mbox{\hyperlink{test__dict_8cpp_a213026424391fcd0551ee2d1e07a16a2}{Dict\+Ptr}} =  \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt\+::\+Unique\+Ptr}}$<$\mbox{\hyperlink{classcslt_1_1Dict}{cslt\+::\+Dict}}$<$K,V$>$, \mbox{\hyperlink{classcslt_1_1DictDeleter}{cslt\+::\+Dict\+Deleter}}$<$K,V$>$ $>$}
+
+
+
+\doxysubsection{Function Documentation}
+\Hypertarget{test__dict_8cpp_a0c953e1fbbb69b1abec54decfc2430eb}\label{test__dict_8cpp_a0c953e1fbbb69b1abec54decfc2430eb} 
+\index{test\_dict.cpp@{test\_dict.cpp}!foreach\_counter@{foreach\_counter}}
+\index{foreach\_counter@{foreach\_counter}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{foreach\_counter()}{foreach\_counter()}}
+{\footnotesize\ttfamily static void foreach\+\_\+counter (\begin{DoxyParamCaption}\item[{const int \&}]{,  }\item[{const float \&}]{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [static]}}
+
+\Hypertarget{test__dict_8cpp_a86246bcbad6eff0d876a51e98e50d4a2}\label{test__dict_8cpp_a86246bcbad6eff0d876a51e98e50d4a2} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [1/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Bucket\+Count\+Is\+Power\+Of\+Two\+GECapacity}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000263}{Test}}]Verify that bucket\+\_\+count() returns a power of two \texorpdfstring{$>$}{>}= the requested capacity \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_af3ad3a0f1acf65f471e3e66dca5a6d6b}\label{test__dict_8cpp_af3ad3a0f1acf65f471e3e66dca5a6d6b} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [2/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Clear\+Non\+Trivial\+Value\+Destructs\+Correctly}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000250}{Test}}]Verify that clear() correctly destructs non-\/trivial value types \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a74ebd56b6515a93535ab4905a466c661}\label{test__dict_8cpp_a74ebd56b6515a93535ab4905a466c661} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [3/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Clear\+Preserves\+Bucket\+Count}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000248}{Test}}]Verify that clear() does not change the bucket count \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a188b81755159bb3bb1e7ed23eeaf161d}\label{test__dict_8cpp_a188b81755159bb3bb1e7ed23eeaf161d} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [4/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Clear\+Removes\+All\+Entries}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000247}{Test}}]Verify that clear() removes all entries and resets hash\+\_\+size to zero \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aa202c22afd12c4b6df57fc27e4a486d6}\label{test__dict_8cpp_aa202c22afd12c4b6df57fc27e4a486d6} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [5/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Copy\+Non\+Trivial\+Value\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000256}{Test}}]Verify that copy() correctly copies non-\/trivial value types \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aefccdc7d241a8880175ce26bceca1c39}\label{test__dict_8cpp_aefccdc7d241a8880175ce26bceca1c39} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [6/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Copy\+One\+Arg\+Overload\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000255}{Test}}]Verify that the single-\/argument copy() overload uses the source allocator \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a899eeae1e9be0147a1ab1c6a1ce030f9}\label{test__dict_8cpp_a899eeae1e9be0147a1ab1c6a1ce030f9} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [7/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Copy\+Produces\+Independent\+Dict}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000254}{Test}}]Verify that copy() produces an independent deep copy \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a854a43dc375c8bbc87c6a2e164be8f86}\label{test__dict_8cpp_a854a43dc375c8bbc87c6a2e164be8f86} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [8/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Foreach\+On\+Empty\+Dict\+Calls\+Callback\+Zero\+Times}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000252}{Test}}]Verify that foreach() on an empty dict calls the callback zero times \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aa987aaa56724fe977a207d8fb8cd08cc}\label{test__dict_8cpp_aa987aaa56724fe977a207d8fb8cd08cc} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [9/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Foreach\+Visits\+All\+Pairs}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000251}{Test}}]Verify that foreach() visits every key-\/value pair exactly once \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a9a5caf2414bfbd522d7fec0b3444c35c}\label{test__dict_8cpp_a9a5caf2414bfbd522d7fec0b3444c35c} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [10/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Foreach\+With\+Function\+Pointer\+Works}]{ }\end{DoxyParamCaption})}
+
+\Hypertarget{test__dict_8cpp_a9f73ed9e17cfb563e71ab0b35c674da1}\label{test__dict_8cpp_a9f73ed9e17cfb563e71ab0b35c674da1} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [11/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Does\+Not\+Modify\+Dict}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000237}{Test}}]Verify that get() does not modify the dict \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a582d864bb87e9fdc534dfa07ec39ce29}\label{test__dict_8cpp_a582d864bb87e9fdc534dfa07ec39ce29} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [12/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Int\+Float\+Returns\+Correct\+Value}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000235}{Test}}]Verify that get() returns the correct float value for an existing key \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a916ce7b16d22aa9cef141d9b5403c2dd}\label{test__dict_8cpp_a916ce7b16d22aa9cef141d9b5403c2dd} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [13/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Missing\+Key\+Returns\+Error}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000236}{Test}}]Verify that get() returns an error for a missing key \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ad68948777c9e7d2c486a8ae72c87a32c}\label{test__dict_8cpp_ad68948777c9e7d2c486a8ae72c87a32c} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [14/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Non\+Trivial\+Value\+Returns\+Correct\+Value}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000239}{Test}}]Verify that get() works correctly for a non-\/trivial value type \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a902a6e3c2fe8e0c4973453855250a24e}\label{test__dict_8cpp_a902a6e3c2fe8e0c4973453855250a24e} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [15/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Ptr\+Missing\+Key\+Returns\+Nullptr}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000241}{Test}}]Verify that get\+\_\+ptr() returns nullptr for a missing key \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aad941eb231f6c1dbbf187b7a31217035}\label{test__dict_8cpp_aad941eb231f6c1dbbf187b7a31217035} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [16/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Ptr\+Reflects\+Update\+Change}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000242}{Test}}]Verify that get\+\_\+ptr() reflects a value updated via update() \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ad1ac26e942ec898511ad3a8196b5dc5f}\label{test__dict_8cpp_ad1ac26e942ec898511ad3a8196b5dc5f} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [17/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Ptr\+Returns\+Correct\+Pointer}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000240}{Test}}]Verify that get\+\_\+ptr() returns a non-\/null pointer to the correct value \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a0c8d8495e43011961e9d5fc0e2ca26a9}\label{test__dict_8cpp_a0c8d8495e43011961e9d5fc0e2ca26a9} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [18/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Get\+Struct\+Key\+Returns\+Correct\+Value}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000238}{Test}}]Verify that get() works correctly for a struct key \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ae50b9c0deb0516abd21ad4e501b512cd}\label{test__dict_8cpp_ae50b9c0deb0516abd21ad4e501b512cd} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [19/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Hash\+Size\+Tracks\+Insertions\+And\+Pops}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000261}{Test}}]Verify that hash\+\_\+size() tracks insertions and pops correctly \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a267f0354cdb8f292c6ab6528b622fcfd}\label{test__dict_8cpp_a267f0354cdb8f292c6ab6528b622fcfd} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [20/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Has\+Key\+Returns\+False\+After\+Pop}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000245}{Test}}]Verify that has\+\_\+key() returns false after a key is popped \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a3353258af1bff9c92414621781fc5210}\label{test__dict_8cpp_a3353258af1bff9c92414621781fc5210} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [21/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Has\+Key\+Returns\+False\+For\+Missing\+Key}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000244}{Test}}]Verify that has\+\_\+key() returns false for a missing key \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ab28478faf0a180fb2ae53e5f5749fcfa}\label{test__dict_8cpp_ab28478faf0a180fb2ae53e5f5749fcfa} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [22/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Has\+Key\+Returns\+True\+For\+Existing\+Key}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000243}{Test}}]Verify that has\+\_\+key() returns true for an existing int key \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a6a16c46d08cedcf27ae8828af847d2ba}\label{test__dict_8cpp_a6a16c46d08cedcf27ae8828af847d2ba} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [23/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Has\+Key\+Struct\+Key\+Works}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000246}{Test}}]Verify that has\+\_\+key() works correctly for a struct key type \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ad47922fb8394f03a859157993703ce0c}\label{test__dict_8cpp_ad47922fb8394f03a859157993703ce0c} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [24/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Init\+Capacity\+Rounds\+Up\+To\+Minimum}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000214}{Test}}]Verify that init() with capacity 1 rounds up to the minimum of 8 \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a30581c7a7568bdaa47fc9c997593107f}\label{test__dict_8cpp_a30581c7a7568bdaa47fc9c997593107f} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [25/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Init\+Capacity\+Rounds\+Up\+To\+Power\+Of\+Two}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000215}{Test}}]Verify that init() rounds capacity up to the next power of two \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ac32bb8289619f4b68da954260e5d0359}\label{test__dict_8cpp_ac32bb8289619f4b68da954260e5d0359} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [26/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Init\+Int\+Float\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000213}{Test}}]Verify that init() succeeds with a valid capacity and returns a non-\/null pointer with correct initial state \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ac7bcab5d2f33e5f23542502f22107edc}\label{test__dict_8cpp_ac7bcab5d2f33e5f23542502f22107edc} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [27/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Init\+Non\+Trivial\+Value\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000217}{Test}}]Verify that init() works correctly for a non-\/trivial value type \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a978922259efb3bf5500bed6d66ab180f}\label{test__dict_8cpp_a978922259efb3bf5500bed6d66ab180f} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [28/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Init\+Struct\+Key\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000218}{Test}}]Verify that init() works correctly for a struct key type \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aae7952639fbf3ae6171a009453d8b4f7}\label{test__dict_8cpp_aae7952639fbf3ae6171a009453d8b4f7} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [29/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Init\+Zero\+Capacity\+Returns\+Error}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000216}{Test}}]Verify that init() returns an error when capacity is zero \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a42f7df49be28681ccccd1157dd3d1fc1}\label{test__dict_8cpp_a42f7df49be28681ccccd1157dd3d1fc1} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [30/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+After\+Clear\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000249}{Test}}]Verify that insert() works correctly after a clear() \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ac9fa513f9aa248da0a711b7b3f6f0016}\label{test__dict_8cpp_ac9fa513f9aa248da0a711b7b3f6f0016} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [31/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+Duplicate\+Key\+Returns\+False}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000221}{Test}}]Verify that insert() rejects a duplicate key and returns false \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a38926ad517462ba7ce15c31158d8fdae}\label{test__dict_8cpp_a38926ad517462ba7ce15c31158d8fdae} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [32/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+Fails\+When\+Full\+And\+Growth\+Disabled}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000225}{Test}}]Verify that insert() returns false when growth is disabled and the dict is full \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a0fd6ba8aaaac34316d91f61fc7b9db9d}\label{test__dict_8cpp_a0fd6ba8aaaac34316d91f61fc7b9db9d} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [33/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+Int\+Float\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000219}{Test}}]Verify that insert() stores an int-\/\texorpdfstring{$>$}{>}float pair and increments hash\+\_\+size \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_acd8fc7a4e52efa822e3c0743cabdf58d}\label{test__dict_8cpp_acd8fc7a4e52efa822e3c0743cabdf58d} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [34/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+Multiple\+Int\+Float\+Pairs}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000220}{Test}}]Verify that insert() correctly stores multiple distinct int-\/\texorpdfstring{$>$}{>}float pairs \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ab9a41b73c72937b90b18333e0bc71249}\label{test__dict_8cpp_ab9a41b73c72937b90b18333e0bc71249} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [35/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+Non\+Trivial\+Value\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000223}{Test}}]Verify that insert() works correctly for a non-\/trivial value type \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a7aa515955d4b01220653cda3b35e8b6f}\label{test__dict_8cpp_a7aa515955d4b01220653cda3b35e8b6f} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [36/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+Struct\+Key\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000222}{Test}}]Verify that insert() works correctly for a struct key type \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a5a718610ae4a9154ed02e144d164004e}\label{test__dict_8cpp_a5a718610ae4a9154ed02e144d164004e} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [37/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Insert\+Triggers\+Growth}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000224}{Test}}]Verify that insert() triggers growth when the load factor is exceeded \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aa3b550761f1e30f2c77c74934fdc6a06}\label{test__dict_8cpp_aa3b550761f1e30f2c77c74934fdc6a06} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [38/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Is\+Empty\+Fresh\+And\+After\+Insert}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000262}{Test}}]Verify that is\+\_\+empty() returns true on a fresh dict and false after insert \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a9c2bc48211d3a8bf0ff71ba9a62bbf76}\label{test__dict_8cpp_a9c2bc48211d3a8bf0ff71ba9a62bbf76} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [39/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Merge\+Does\+Not\+Modify\+Sources}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000260}{Test}}]Verify that merge() does not modify the source dicts \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_adfe30ffcc8824b2411d409027590ac58}\label{test__dict_8cpp_adfe30ffcc8824b2411d409027590ac58} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [40/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Merge\+Non\+Overlapping\+Dicts}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000257}{Test}}]Verify that merge() combines two non-\/overlapping dicts correctly \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a31bbc21ed09c92ed8c3f59f91ae3e8b4}\label{test__dict_8cpp_a31bbc21ed09c92ed8c3f59f91ae3e8b4} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [41/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Merge\+Overwrite\+False\+AWins}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000259}{Test}}]Verify that merge() with overwrite == false keeps a\textquotesingle{}s value on conflict \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a558c877000fd09d5c1b07f8329bc98ca}\label{test__dict_8cpp_a558c877000fd09d5c1b07f8329bc98ca} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [42/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Merge\+Overwrite\+True\+BWins}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000258}{Test}}]Verify that merge() with overwrite == true uses b\textquotesingle{}s value on conflict \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a226bfb0330f9ce7bb1bdb4b50a2131b5}\label{test__dict_8cpp_a226bfb0330f9ce7bb1bdb4b50a2131b5} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [43/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Pop\+Decrements\+Hash\+Size}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000231}{Test}}]Verify that pop() decrements hash\+\_\+size correctly \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ad7863e903a46ce92d0d774860a2a26f2}\label{test__dict_8cpp_ad7863e903a46ce92d0d774860a2a26f2} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [44/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Pop\+Int\+Float\+Returns\+Value}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000230}{Test}}]Verify that pop() removes an int key and returns the correct value \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_af5c63e3a1e777ba1c4e30c0f077794fc}\label{test__dict_8cpp_af5c63e3a1e777ba1c4e30c0f077794fc} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [45/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Pop\+Missing\+Key\+Returns\+Error}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000232}{Test}}]Verify that pop() returns an error for a key that does not exist \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a9d9393ec216a49cf9b52a1e69ad27867}\label{test__dict_8cpp_a9d9393ec216a49cf9b52a1e69ad27867} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [46/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Pop\+Non\+Trivial\+Value\+Returns\+Value}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000233}{Test}}]Verify that pop() works correctly for a non-\/trivial value type \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aa9736f1309a930934ff93a865dc5965e}\label{test__dict_8cpp_aa9736f1309a930934ff93a865dc5965e} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [47/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Pop\+Then\+Reinsert\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000234}{Test}}]Verify that the same key can be re-\/inserted after being popped \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a245248ee4011829e80bb37978690e4f7}\label{test__dict_8cpp_a245248ee4011829e80bb37978690e4f7} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [48/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Size\+Is\+Le\+Or\+Equal\+To\+Hash\+Size}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000264}{Test}}]Verify that size() returns the number of occupied buckets, which is \texorpdfstring{$<$}{<}= hash\+\_\+size() \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_ad778b65d832a0e9c5a689ad7b2f52cb3}\label{test__dict_8cpp_ad778b65d832a0e9c5a689ad7b2f52cb3} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [49/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Update\+Does\+Not\+Change\+Hash\+Size}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000227}{Test}}]Verify that update() does not change hash\+\_\+size \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a7364a0e6d83e7a73c1490df7f6fe3dc3}\label{test__dict_8cpp_a7364a0e6d83e7a73c1490df7f6fe3dc3} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [50/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Update\+Int\+Float\+Overwrites\+Value}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000226}{Test}}]Verify that update() overwrites the value for an existing int key \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_aaf6ae0759b54872319ac4a49ebf5da90}\label{test__dict_8cpp_aaf6ae0759b54872319ac4a49ebf5da90} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [51/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Update\+Missing\+Key\+Returns\+False}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000228}{Test}}]Verify that update() returns false for a key that does not exist \end{DoxyRefDesc}
+\Hypertarget{test__dict_8cpp_a4df288e6db316213a7377fc6ca74484b}\label{test__dict_8cpp_a4df288e6db316213a7377fc6ca74484b} 
+\index{test\_dict.cpp@{test\_dict.cpp}!TEST\_F@{TEST\_F}}
+\index{TEST\_F@{TEST\_F}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{TEST\_F()}{TEST\_F()}\hspace{0.1cm}{\footnotesize\ttfamily [52/52]}}
+{\footnotesize\ttfamily TEST\+\_\+F (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classDictTest}{Dict\+Test}}}]{,  }\item[{Update\+Non\+Trivial\+Value\+Succeeds}]{ }\end{DoxyParamCaption})}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000229}{Test}}]Verify that update() works correctly for a non-\/trivial value type \end{DoxyRefDesc}
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{test__dict_8cpp_a7b891a6eb1bbcacc1a86085c213780d1}\label{test__dict_8cpp_a7b891a6eb1bbcacc1a86085c213780d1} 
+\index{test\_dict.cpp@{test\_dict.cpp}!g\_foreach\_count@{g\_foreach\_count}}
+\index{g\_foreach\_count@{g\_foreach\_count}!test\_dict.cpp@{test\_dict.cpp}}
+\doxysubsubsection{\texorpdfstring{g\_foreach\_count}{g\_foreach\_count}}
+{\footnotesize\ttfamily int g\+\_\+foreach\+\_\+count = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+\begin{DoxyRefDesc}{Test}
+\item[\mbox{\hyperlink{test__test000253}{Test}}]Verify that foreach() works with a file-\/scope function pointer \end{DoxyRefDesc}

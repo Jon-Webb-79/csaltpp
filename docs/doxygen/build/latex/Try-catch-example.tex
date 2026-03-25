@@ -1,23 +1,25 @@
-\hypertarget{Try-catch-example}{}\doxysection{Try-\/catch}
+\doxysection{Try-\/catch}
+\hypertarget{Try-catch-example}{}\label{Try-catch-example}pattern
+
 pattern 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(8192).value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = arena-\/>save();}
-\DoxyCodeLine{\textcolor{keywordflow}{try} \{}
-\DoxyCodeLine{    \textcolor{comment}{// Make allocations that might fail}}
-\DoxyCodeLine{    \textcolor{keyword}{auto} data1 = arena-\/>alloc(1024).value();}
-\DoxyCodeLine{    risky\_operation(data1);}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    \textcolor{keyword}{auto} data2 = arena-\/>alloc(2048).value();}
-\DoxyCodeLine{    risky\_operation(data2);}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    \textcolor{comment}{// Success -\/ keep allocations}}
-\DoxyCodeLine{    arena-\/>restore(checkpoint);  \textcolor{comment}{// Must free checkpoint!}}
-\DoxyCodeLine{\} \textcolor{keywordflow}{catch} (...) \{}
-\DoxyCodeLine{    \textcolor{comment}{// Failure -\/ rollback allocations}}
-\DoxyCodeLine{    arena-\/>restore(checkpoint);}
-\DoxyCodeLine{    \textcolor{keywordflow}{throw};}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ checkpoint\ =\ arena-\/>save();}
+\DoxyCodeLine{\textcolor{keywordflow}{try}\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Make\ allocations\ that\ might\ fail}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{auto}\ data1\ =\ arena-\/>alloc(1024).value();}
+\DoxyCodeLine{\ \ \ \ risky\_operation(data1);}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{auto}\ data2\ =\ arena-\/>alloc(2048).value();}
+\DoxyCodeLine{\ \ \ \ risky\_operation(data2);}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Success\ -\/\ keep\ allocations}}
+\DoxyCodeLine{\ \ \ \ arena-\/>restore(checkpoint);\ \ \textcolor{comment}{//\ Must\ free\ checkpoint!}}
+\DoxyCodeLine{\}\ \textcolor{keywordflow}{catch}\ (...)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Failure\ -\/\ rollback\ allocations}}
+\DoxyCodeLine{\ \ \ \ arena-\/>restore(checkpoint);}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordflow}{throw};}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

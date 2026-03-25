@@ -1,20 +1,22 @@
-\hypertarget{Checkpoint-example}{}\doxysection{Checkpoint}
+\doxysection{Checkpoint}
+\hypertarget{Checkpoint-example}{}\label{Checkpoint-example}and restore
+
 and restore 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena\_result = \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192);}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(arena\_result.value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\_result\ =\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(8192);}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(arena\_result.value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{auto} permanent = arena-\/>alloc(256);}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ permanent\ =\ arena-\/>alloc(256);}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Save checkpoint before temporary allocations}}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = arena-\/>save();}
+\DoxyCodeLine{\textcolor{comment}{//\ Save\ checkpoint\ before\ temporary\ allocations}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ checkpoint\ =\ arena-\/>save();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keyword}{auto} temp1 = arena-\/>alloc(128);}
-\DoxyCodeLine{\textcolor{keyword}{auto} temp2 = arena-\/>alloc(512);}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ temp1\ =\ arena-\/>alloc(128);}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ temp2\ =\ arena-\/>alloc(512);}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Rollback to checkpoint (frees temp1 and temp2)}}
+\DoxyCodeLine{\textcolor{comment}{//\ Rollback\ to\ checkpoint\ (frees\ temp1\ and\ temp2)}}
 \DoxyCodeLine{arena-\/>restore(checkpoint);}
-\DoxyCodeLine{\textcolor{comment}{// permanent is still valid, temp1 and temp2 are now invalid}}
+\DoxyCodeLine{\textcolor{comment}{//\ permanent\ is\ still\ valid,\ temp1\ and\ temp2\ are\ now\ invalid}}
 
 \end{DoxyCode}
 

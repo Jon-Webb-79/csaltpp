@@ -1,21 +1,23 @@
-\hypertarget{Aligned-example}{}\doxysection{Aligned}
+\doxysection{Aligned}
+\hypertarget{Aligned-example}{}\label{Aligned-example}allocation for SIMD
+
 allocation for SIMD 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Allocate 512 bytes aligned to 64-\/byte cache line}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(512, 64, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    \textcolor{comment}{// Verify alignment}}
-\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 64 == 0);}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    \textcolor{comment}{// Can safely use SIMD instructions}}
-\DoxyCodeLine{    \textcolor{keywordtype}{float}* data = \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}*\textcolor{keyword}{>}(ptr);}
-\DoxyCodeLine{    \textcolor{comment}{// ... perform SIMD operations ...}}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr, 512, 64);}
+\DoxyCodeLine{\textcolor{comment}{//\ Allocate\ 512\ bytes\ aligned\ to\ 64-\/byte\ cache\ line}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a53a1b9b301c70c4ce6035075385317e7}{alloc\_aligned}}(512,\ 64,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ result.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Verify\ alignment}}
+\DoxyCodeLine{\ \ \ \ assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr)\ \%\ 64\ ==\ 0);}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Can\ safely\ use\ SIMD\ instructions}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{float}*\ data\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{float}*\textcolor{keyword}{>}(ptr);}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ...\ perform\ SIMD\ operations\ ...}}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr,\ 512,\ 64);}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

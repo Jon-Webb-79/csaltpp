@@ -1,18 +1,20 @@
-\hypertarget{Heap-example}{}\doxysection{Heap}
+\doxysection{Heap}
+\hypertarget{Heap-example}{}\label{Heap-example}buffer arena
+
 buffer arena 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{uint8\_t* buffer = \textcolor{keyword}{new} uint8\_t[65536];}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}{cslt::ArenaAllocator::Stack}}(buffer, 65536, 32);}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(result.value());}
+\DoxyCodeLine{uint8\_t*\ buffer\ =\ \textcolor{keyword}{new}\ uint8\_t[65536];}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}{cslt::ArenaAllocator::Stack}}(buffer,\ 65536,\ 32);}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(result.value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Use arena...}}
-\DoxyCodeLine{\textcolor{keyword}{auto} ptr = arena-\/>alloc(1024);}
+\DoxyCodeLine{\textcolor{comment}{//\ Use\ arena...}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ ptr\ =\ arena-\/>alloc(1024);}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Arena destroyed first}}
+\DoxyCodeLine{\textcolor{comment}{//\ Arena\ destroyed\ first}}
 \DoxyCodeLine{arena.reset();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Now safe to free buffer}}
-\DoxyCodeLine{\textcolor{keyword}{delete}[] buffer;}
+\DoxyCodeLine{\textcolor{comment}{//\ Now\ safe\ to\ free\ buffer}}
+\DoxyCodeLine{\textcolor{keyword}{delete}[]\ buffer;}
 
 \end{DoxyCode}
 

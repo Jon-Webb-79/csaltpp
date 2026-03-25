@@ -1,4 +1,6 @@
-\hypertarget{Resizable-example}{}\doxysection{Resizable}
+\doxysection{Resizable}
+\hypertarget{Resizable-example}{}\label{Resizable-example}Create a heap-\/allocated pool with owned arena.
+
 Create a heap-\/allocated pool with owned arena
 \begin{DoxyParams}{Parameters}
 {\em block\+\_\+size} & Size of each block in bytes \\
@@ -23,18 +25,18 @@ If prewarm=true, allocates the first chunk immediately so the first allocation i
 
 pool 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} pool = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1PoolAllocator_a87a93c1ba62e4a84c9c7134926210813}{cslt::PoolAllocator::Heap}}(}
-\DoxyCodeLine{    256,      \textcolor{comment}{// 256-\/byte blocks}}
-\DoxyCodeLine{    64,       \textcolor{comment}{// 64 blocks per chunk}}
-\DoxyCodeLine{    0,        \textcolor{comment}{// default alignment}}
-\DoxyCodeLine{    16384,    \textcolor{comment}{// 16KB initial arena}}
-\DoxyCodeLine{    \textcolor{keyword}{true},     \textcolor{comment}{// can grow}}
-\DoxyCodeLine{    \textcolor{keyword}{true}      \textcolor{comment}{// prewarm}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ pool\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1PoolAllocator_ab4355fdddca9ff22210c5b5f658fc509}{cslt::PoolAllocator::Heap}}(}
+\DoxyCodeLine{\ \ \ \ 256,\ \ \ \ \ \ \textcolor{comment}{//\ 256-\/byte\ blocks}}
+\DoxyCodeLine{\ \ \ \ 64,\ \ \ \ \ \ \ \textcolor{comment}{//\ 64\ blocks\ per\ chunk}}
+\DoxyCodeLine{\ \ \ \ 0,\ \ \ \ \ \ \ \ \textcolor{comment}{//\ default\ alignment}}
+\DoxyCodeLine{\ \ \ \ 16384,\ \ \ \ \textcolor{comment}{//\ 16KB\ initial\ arena}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{true},\ \ \ \ \ \textcolor{comment}{//\ can\ grow}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{true}\ \ \ \ \ \ \textcolor{comment}{//\ prewarm}}
 \DoxyCodeLine{).value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Can allocate indefinitely -\/ pool grows as needed}}
-\DoxyCodeLine{\textcolor{keywordflow}{for} (\textcolor{keywordtype}{int} i = 0; i < 1000; ++i) \{}
-\DoxyCodeLine{    \textcolor{keyword}{auto} ptr = pool-\/>alloc(256);}
+\DoxyCodeLine{\textcolor{comment}{//\ Can\ allocate\ indefinitely\ -\/\ pool\ grows\ as\ needed}}
+\DoxyCodeLine{\textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{int}\ i\ =\ 0;\ i\ <\ 1000;\ ++i)\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{auto}\ ptr\ =\ pool-\/>alloc(256);}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

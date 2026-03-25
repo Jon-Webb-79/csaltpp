@@ -1,0 +1,426 @@
+\doxysection{utilities.\+hpp}
+\hypertarget{utilities_8hpp_source}{}\label{utilities_8hpp_source}\index{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/include/utilities.hpp@{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/include/utilities.hpp}}
+\mbox{\hyperlink{utilities_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ -\/\ File:\ \ \ \ utilities.hpp}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ -\/\ Purpose:\ This\ file\ contains\ template\ utility\ classes\ and\ functions}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ Source\ Metadata}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ -\/\ Author:\ \ Jonathan\ A.\ Webb}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ -\/\ Date:\ \ \ \ January\ 04,\ 2026}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ -\/\ Version:\ 1.0}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ -\/\ Copyright:\ Copyright\ 2022,\ Jon\ Webb\ Inc.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#ifndef\ UTILITIES\_HPP}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ UTILITIES\_HPP}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ <atomic>}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00021\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacecslt}{cslt}}\ \{}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacecslt_a8b88a2ec39f36d897c6a52ca28e7d38e}{nullptr\_t}}\ =\ \textcolor{keyword}{decltype}(\textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00026\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{bool}\ B>}
+\DoxyCodeLine{00030\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1BoolConstant}{BoolConstant}}\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1BoolConstant_a960fb280a9d44a64f7443c5c29271743}{value}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{B}};\ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{structcslt_1_1BoolConstant}{TrueType}}\ \ =\ \mbox{\hyperlink{classcslt_1_1Expected}{BoolConstant<true>}};}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{structcslt_1_1BoolConstant}{FalseType}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{BoolConstant<false>}};}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00036\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1RemoveRef}{RemoveRef}}\ \{\ \textcolor{keyword}{using\ }\mbox{\hyperlink{classcslt_1_1Expected}{type}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{T}};\ \};}
+\DoxyCodeLine{00040\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00043\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1RemoveRef}{RemoveRef}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}}\&>\ \{\ \textcolor{keyword}{using\ }\mbox{\hyperlink{classcslt_1_1Expected}{type}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{T}};\ \};}
+\DoxyCodeLine{00044\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00045\ }
+\DoxyCodeLine{00046\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1RemoveRef}{RemoveRef}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\&>\ \{\ \textcolor{keyword}{using\ }\mbox{\hyperlink{classcslt_1_1Expected}{type}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{T}};\ \};}
+\DoxyCodeLine{00048\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacecslt_a387ce1a7f22e8794a5e474d90a3720bc}{RemoveRefT}}\ =\ \textcolor{keyword}{typename}\ \mbox{\hyperlink{structcslt_1_1RemoveRef_a7b09d2aaeab8b9e8588d9695115d3679}{RemoveRef<T>::type}};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00054\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00057\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsLValueRef}{IsLValueRef}}\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsLValueRef_af2632219cefa2676d7c106cbe907a385}{value}}\ =\ \textcolor{keyword}{false};\ \};}
+\DoxyCodeLine{00058\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00059\ }
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsLValueRef}{IsLValueRef}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}}\&>\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ value\ =\ \textcolor{keyword}{true};\ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00064\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00065\ }
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{bool}\ Cond,\ \textcolor{keyword}{class}\ T\ =\ \textcolor{keywordtype}{void}>}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1EnableIf}{EnableIf}}\ \{\ \};}
+\DoxyCodeLine{00068\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00070\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1EnableIf}{EnableIf}}<\mbox{\hyperlink{classcslt_1_1Expected}{true}},\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}>\ \{\ \textcolor{keyword}{using\ }\mbox{\hyperlink{classcslt_1_1Expected}{type}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{T}};\ \};}
+\DoxyCodeLine{00072\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00073\ }
+\DoxyCodeLine{00074\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keywordtype}{bool}\ Cond,\ \textcolor{keyword}{class}\ T\ =\ \textcolor{keywordtype}{void}>}
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{using\ }\mbox{\hyperlink{namespacecslt_a5fda297689c673027737544d24c21927}{EnableIfT}}\ =\ \textcolor{keyword}{typename}\ \mbox{\hyperlink{structcslt_1_1EnableIf}{EnableIf<Cond,\ T>::type}};}
+\DoxyCodeLine{00076\ }
+\DoxyCodeLine{00077\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00078\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00080\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ A,\ \textcolor{keyword}{class}\ B>}
+\DoxyCodeLine{00081\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsSame}{IsSame}}\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsSame_aa1daa73066a3233c70c1268851851f2d}{value}}\ =\ \textcolor{keyword}{false};\ \};}
+\DoxyCodeLine{00082\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00083\ }
+\DoxyCodeLine{00084\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ A>}
+\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsSame}{IsSame}}<\mbox{\hyperlink{classcslt_1_1Expected}{A}},\ \mbox{\hyperlink{classcslt_1_1Expected}{A}}>\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsSame_aa1daa73066a3233c70c1268851851f2d}{value}}\ =\ \textcolor{keyword}{true};\ \};}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00088\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00089\ }
+\DoxyCodeLine{00090\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00091\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsArray}{IsArray}}\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsArray_a9db9cc450bd99a3f37610bfb4a4c16c0}{value}}\ =\ \textcolor{keyword}{false};\ \};}
+\DoxyCodeLine{00092\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00093\ }
+\DoxyCodeLine{00094\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00095\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsArray}{IsArray}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}}[]>\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsArray_a9db9cc450bd99a3f37610bfb4a4c16c0}{value}}\ =\ \textcolor{keyword}{true};\ \};}
+\DoxyCodeLine{00096\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T,\ ::\textcolor{keywordtype}{size\_t}\ N>}
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsArray}{IsArray}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}}[\mbox{\hyperlink{classcslt_1_1Expected}{N}}]>\ \{\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsArray_a9db9cc450bd99a3f37610bfb4a4c16c0}{value}}\ =\ \textcolor{keyword}{true};\ \};}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00102\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00103\ }
+\DoxyCodeLine{00104\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00105\ \ \ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{classcslt_1_1Expected}{RemoveRefT<T>}}\&\&\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{move}}(\mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\&\ x)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classcslt_1_1Expected}{RemoveRefT<T>}}\&\&\textcolor{keyword}{>}(x);}
+\DoxyCodeLine{00107\ \ \ \ \ \}}
+\DoxyCodeLine{00108\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00111\ \ \ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\&\ \mbox{\hyperlink{namespacecslt_a399cfc2fc6bfa9628919b300a6059891}{forward}}(\mbox{\hyperlink{classcslt_1_1Expected}{RemoveRefT<T>}}\&\ x)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\&\textcolor{keyword}{>}(x);}
+\DoxyCodeLine{00113\ \ \ \ \ \}}
+\DoxyCodeLine{00114\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00117\ \ \ \ \ \textcolor{keyword}{constexpr}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\&\ \mbox{\hyperlink{namespacecslt_a399cfc2fc6bfa9628919b300a6059891}{forward}}(\mbox{\hyperlink{classcslt_1_1Expected}{RemoveRefT<T>}}\&\&\ x)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_assert}(!\mbox{\hyperlink{structcslt_1_1IsLValueRef}{IsLValueRef<T>::value}},}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}cslt::forward<T>(T\&\&):\ T\ is\ an\ lvalue\ reference"{}});}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\&\textcolor{keyword}{>}(x);}
+\DoxyCodeLine{00121\ \ \ \ \ \}}
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00124\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00125\ }
+\DoxyCodeLine{00126\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00127\ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacecslt_ad5e0362c774ef1c0474fa5fb0b9f0dac}{swap}}(\mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{a}},\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{b}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\ \mbox{\hyperlink{classcslt_1_1Expected}{tmp}}\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1Expected}{a}});}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{a}}\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1Expected}{b}});}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{b}}\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1Expected}{tmp}});}
+\DoxyCodeLine{00131\ \ \ \ \ \}}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00134\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00137\ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\&\ \mbox{\hyperlink{namespacecslt_ad3f4c2eab9aaafbf36058c7e21c4a1b0}{declval}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}};\ \textcolor{comment}{//\ declaration\ only\ (no\ definition\ needed)}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00140\ }
+\DoxyCodeLine{00141\ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{namespace}}\ detail\ \{}
+\DoxyCodeLine{00142\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ To>}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacecslt_1_1detail_a3c7b3d372025343cdd0f5209851294fd}{\_accept}}(\mbox{\hyperlink{classcslt_1_1Expected}{To}});\ \textcolor{comment}{//\ declaration\ only}}
+\DoxyCodeLine{00145\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ From,\ \textcolor{keyword}{class}\ To>}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1detail_1_1IsConvertibleImpl}{IsConvertibleImpl}}\ \{}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{template\ <class\ F,\ class\ =\ decltype(\_accept<To>}}(\mbox{\hyperlink{classcslt_1_1Expected}{declval<F>}}()))>}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ test(\textcolor{keywordtype}{int});}
+\DoxyCodeLine{00152\ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}>}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{long}\ test(...);}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ value\ =\ (\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{test<From>}}(0))\ ==\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}));}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00161\ \textcolor{comment}{//\ IsConstructibleImpl}}
+\DoxyCodeLine{00162\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class\ }\mbox{\hyperlink{classcslt_1_1Expected}{T}},\ \textcolor{keyword}{class}...\ \mbox{\hyperlink{classcslt_1_1Expected}{Args}}>}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1detail_1_1IsConstructibleImpl}{IsConstructibleImpl}}\ \{}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{template\ <class\ U,\ class\ =\ decltype(U(declval<Args>}}()...))>}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ test(\textcolor{keywordtype}{int});}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ \textcolor{keyword}{class}...>}
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{long}\ test(...);}
+\DoxyCodeLine{00172\ }
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ value\ =\ (\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{test<T>}}(0))\ ==\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}));}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00178\ \textcolor{comment}{//\ IsAssignableImpl}}
+\DoxyCodeLine{00179\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00180\ }
+\DoxyCodeLine{00181\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T,\ \textcolor{keyword}{class}\ U>}
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1detail_1_1IsAssignableImpl}{IsAssignableImpl}}\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{template\ <class\ X,\ class\ Y,\ class\ =\ decltype(declval<X>}}()\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{declval<Y>}}())>}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{char}\ test(\textcolor{keywordtype}{int});}
+\DoxyCodeLine{00186\ }
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class},\ \textcolor{keyword}{class}>}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{long}\ test(...);}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ value\ =\ (\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{test<T,\ U>}}(0))\ ==\ \textcolor{keyword}{sizeof}(\textcolor{keywordtype}{char}));}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00193\ }
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}\ \{}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ std::atomic<size\_t>\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock_a3f18afa18bc78efd3fca068d3d61115f}{strong}};}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ std::atomic<size\_t>\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock_a4edded5eb0a8e12ee4d0202a91103bc7}{weak}};}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock_a8f8b7b47986b28a50a0b9e43a447ea4d}{ControlBlock}}()\ :\ strong(1u),\ weak(1u)\ \{\}}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock_a51c8a3399efcc0c94a18676bbd9e40fa}{\string~ControlBlock}}()\ \{\}}
+\DoxyCodeLine{00200\ }
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock_a004d1435ffd30739d39fcd84f6a39001}{destroy\_object}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ =\ 0;}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{virtual}}\ \textcolor{keywordtype}{void}*\ get\_ptr()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ =\ 0;}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ struct\ ControlBlock\ \{}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ std::atomic<size\_t>\ strong;}}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ ControlBlock()\ :\ strong(1u)\ \{\}}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ virtual\ \string~ControlBlock()\ \{\}}}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ virtual\ void\ destroy\_object()\ noexcept\ =\ 0;}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ virtual\ void*\ get\_ptr()\ const\ noexcept\ =\ 0;}}
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \};}}
+\DoxyCodeLine{00213\ }
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Control\ block\ for\ pointer\ +\ deleter\ stored\ by\ value}}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{template}}\ <\mbox{\hyperlink{classcslt_1_1Expected}{class}}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}},\ \mbox{\hyperlink{classcslt_1_1Expected}{class}}\ \mbox{\hyperlink{classcslt_1_1Expected}{Deleter}}>}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{struct}}\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlockPtr}{ControlBlockPtr}}\ \mbox{\hyperlink{classcslt_1_1Expected}{final}}\ :\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}\ \{}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{T}}*\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlockPtr_aa297aafb0df3fdd4cff595fd4307becc}{ptr}};}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Deleter}}\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlockPtr_a858d0ad3ee81332b191bf1d70fa5399e}{del}};}
+\DoxyCodeLine{00219\ }
+\DoxyCodeLine{00220\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlockPtr_a5efe51da192004ee4a2e07b0d784960f}{ControlBlockPtr}}(\mbox{\hyperlink{classcslt_1_1Expected}{T}}*\ p,\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{Deleter}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{d}})\ :\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}(),\ ptr(p),\ del(\mbox{\hyperlink{classcslt_1_1Expected}{d}})\ \{\}}
+\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlockPtr_a3d1eb32d6d5098fffec380983bab8e2b}{ControlBlockPtr}}(\mbox{\hyperlink{classcslt_1_1Expected}{T}}*\ p,\ \mbox{\hyperlink{classcslt_1_1Expected}{Deleter}}\&\&\ \mbox{\hyperlink{classcslt_1_1Expected}{d}})\ \ \ \ \ \ :\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}(),\ ptr(p),\ del(\mbox{\hyperlink{namespacecslt}{cslt}}::\mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{move}}(\mbox{\hyperlink{classcslt_1_1Expected}{d}}))\ \{\}}
+\DoxyCodeLine{00222\ }
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlockPtr_abc3cf5b7e6692f73868bfd83d5b76980}{destroy\_object}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (ptr)\ \{}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ del(ptr);}
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ptr\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlockPtr_a665ca93e41b6e9855f89c185a324a7b5}{get\_ptr}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\textcolor{keyword}{\ override\ }\{\ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{void}*)ptr;\ \}}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00232\ }
+\DoxyCodeLine{00233\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Strong\ reference\ operations}}
+\DoxyCodeLine{00234\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacecslt_1_1detail_aaa03fdc23abf862d9b86c0f4df05f166}{incref\_strong}}(\mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \{}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>strong.fetch\_add(1u,\ std::memory\_order\_relaxed);}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00239\ }
+\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{namespacecslt_1_1detail_a14515b09422aeaf5d596d1cdf92fb054}{decref\_strong}}(\mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>strong.fetch\_sub(1u,\ std::memory\_order\_acq\_rel)\ ==\ 1u)\ \{}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::atomic\_thread\_fence(std::memory\_order\_acquire);}
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00248\ }
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Weak\ reference\ operations}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{namespacecslt_1_1detail_a35f2dc33d366ba2d37fa9080e3ae42c5}{incref\_weak}}(\mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \{}
+\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>weak.fetch\_add(1u,\ std::memory\_order\_relaxed);}
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00255\ }
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{namespacecslt_1_1detail_ad6d8c76506487e56580ffa958d16c930}{decref\_weak}}(\mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>weak.fetch\_sub(1u,\ std::memory\_order\_acq\_rel)\ ==\ 1u)\ \{}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::atomic\_thread\_fence(std::memory\_order\_acquire);}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00264\ }
+\DoxyCodeLine{00265\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{namespacecslt_1_1detail_ae20f3930731cf42841faf4462529c9ba}{get\_strong\_count}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keywordflow}{return}\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>strong.load(std::memory\_order\_relaxed);}
+\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00269\ }
+\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{namespacecslt_1_1detail_a2d6c63bf215d9e64ea5ea8ced53940ce}{get\_weak\_count}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00271\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keywordflow}{return}\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>weak.load(std::memory\_order\_relaxed);}
+\DoxyCodeLine{00273\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00274\ }
+\DoxyCodeLine{00275\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Try\ to\ increment\ strong\ count\ (for\ weak-\/>shared\ conversion)}}
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Returns\ true\ if\ successful\ (strong\ count\ was\ >\ 0)}}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{namespacecslt_1_1detail_af9d8d0a0bc8111a447cc907a1eb24c23}{try\_incref\_strong}}(\mbox{\hyperlink{structcslt_1_1detail_1_1ControlBlock}{ControlBlock}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00278\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{cb}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{count}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>strong.load(std::memory\_order\_relaxed);}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (\mbox{\hyperlink{classcslt_1_1Expected}{count}}\ !=\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}})\ \{}
+\DoxyCodeLine{00282\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Try\ to\ increment\ if\ still\ non-\/zero}}
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{cb}}-\/>strong.compare\_exchange\_weak(\mbox{\hyperlink{classcslt_1_1Expected}{count}},\ \mbox{\hyperlink{classcslt_1_1Expected}{count}}\ +\ 1u,}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::memory\_order\_relaxed,}
+\DoxyCodeLine{00285\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::memory\_order\_relaxed))\ \{}
+\DoxyCodeLine{00286\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00287\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00288\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ count\ was\ updated\ by\ compare\_exchange\_weak\ on\ failure,\ retry}}
+\DoxyCodeLine{00289\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00290\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00291\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00292\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thread-\/safe\ refcount\ operations\ using\ atomics}}
+\DoxyCodeLine{00293\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ inline\ void\ incref(ControlBlock*\ cb)\ noexcept\ \{}}
+\DoxyCodeLine{00294\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ if\ (cb)\ \{}}
+\DoxyCodeLine{00295\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ cb-\/>strong.fetch\_add(1u,\ std::memory\_order\_relaxed);}}
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \}}}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ inline\ bool\ decref(ControlBlock*\ cb)\ noexcept\ \{}}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ if\ (!cb)\ return\ false;}}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ //\ fetch\_sub\ returns\ the\ value\ BEFORE\ subtraction}}
+\DoxyCodeLine{00302\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ //\ Use\ acquire-\/release\ ordering\ for\ proper\ synchronization}}
+\DoxyCodeLine{00303\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ if\ (cb-\/>strong.fetch\_sub(1u,\ std::memory\_order\_acq\_rel)\ ==\ 1u)\ \{}}
+\DoxyCodeLine{00304\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ //\ We\ were\ the\ last\ reference}}
+\DoxyCodeLine{00305\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ //\ Add\ an\ acquire\ fence\ to\ ensure\ all\ writes\ from\ other\ threads\ are\ visible}}
+\DoxyCodeLine{00306\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ std::atomic\_thread\_fence(std::memory\_order\_acquire);}}
+\DoxyCodeLine{00307\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ return\ true;}}
+\DoxyCodeLine{00308\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \}}}
+\DoxyCodeLine{00309\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ return\ false;}}
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00312\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ inline\ size\_t\ get\_refcount(const\ ControlBlock*\ cb)\ noexcept\ \{}}
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ if\ (!cb)\ return\ 0u;}}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ return\ cb-\/>strong.load(std::memory\_order\_relaxed);}}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00316\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ struct\ ControlBlock\ \{}}
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ size\_t\ strong;}}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ ControlBlock()\ :\ strong(1u)\ \{\}}}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ virtual\ \string~ControlBlock()\ \{\}}}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00322\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ virtual\ void\ destroy\_object()\ noexcept\ =\ 0;}}
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ virtual\ void*\ get\_ptr()\ const\ noexcept\ =\ 0;}}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \};}}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00326\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ //\ Control\ block\ for\ pointer\ +\ deleter\ stored\ by\ value}}
+\DoxyCodeLine{00327\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ template\ <class\ T,\ class\ Deleter>}}
+\DoxyCodeLine{00328\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ struct\ ControlBlockPtr\ final\ :\ ControlBlock\ \{}}
+\DoxyCodeLine{00329\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ T*\ ptr;}}
+\DoxyCodeLine{00330\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ Deleter\ del;}}
+\DoxyCodeLine{00331\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00332\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ ControlBlockPtr(T*\ p,\ const\ Deleter\&\ d)\ :\ ControlBlock(),\ ptr(p),\ del(d)\ \{\}}}
+\DoxyCodeLine{00333\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ ControlBlockPtr(T*\ p,\ Deleter\&\&\ d)\ \ \ \ \ \ :\ ControlBlock(),\ ptr(p),\ del(cslt::move(d))\ \{\}}}
+\DoxyCodeLine{00334\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00335\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ void\ destroy\_object()\ noexcept\ override\ \{}}
+\DoxyCodeLine{00336\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ if\ (ptr)\ \{}}
+\DoxyCodeLine{00337\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ del(ptr);}}
+\DoxyCodeLine{00338\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ \ ptr\ =\ nullptr;}}
+\DoxyCodeLine{00339\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00340\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ \}}}
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ void*\ get\_ptr()\ const\ noexcept\ override\ \{\ return\ (void*)ptr;\ \}}}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \};}}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ //\ Simple\ refcount\ ops\ (non-\/atomic\ for\ now)}}
+\DoxyCodeLine{00346\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ inline\ void\ incref(ControlBlock*\ cb)\ noexcept\ \{}}
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ if\ (cb)\ \{\ ++cb-\/>strong;\ \}}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ inline\ bool\ decref(ControlBlock*\ cb)\ noexcept\ \{}}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ if\ (!cb)\ return\ false;}}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ //\ returns\ true\ if\ reached\ zero}}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \ \ \ \ return\ (-\/-\/cb-\/>strong\ ==\ 0u);}}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ \}}}
+\DoxyCodeLine{00355\ \ \ \ \ \}\ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00356\ }
+\DoxyCodeLine{00357\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00358\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00359\ }
+\DoxyCodeLine{00360\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ From,\ \textcolor{keyword}{class}\ To>}
+\DoxyCodeLine{00361\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsConvertible}{IsConvertible}}\ \{}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ value\ =\ \mbox{\hyperlink{structcslt_1_1detail_1_1IsConvertibleImpl}{detail::IsConvertibleImpl<From,\ To>::value}};}
+\DoxyCodeLine{00363\ \ \ \ \ \};}
+\DoxyCodeLine{00364\ }
+\DoxyCodeLine{00365\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00366\ \textcolor{comment}{//\ IsConstructible\ (public\ wrapper)}}
+\DoxyCodeLine{00367\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00368\ }
+\DoxyCodeLine{00369\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class\ }\mbox{\hyperlink{classcslt_1_1Expected}{T}},\ \textcolor{keyword}{class}...\ \mbox{\hyperlink{classcslt_1_1Expected}{Args}}>}
+\DoxyCodeLine{00370\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsConstructible}{IsConstructible}}\ \{}
+\DoxyCodeLine{00371\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsConstructible_ad149bca076e8c7c7a522006913aee27e}{value}}\ =\ \mbox{\hyperlink{structcslt_1_1detail_1_1IsConstructibleImpl}{detail::IsConstructibleImpl}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}},\ \mbox{\hyperlink{classcslt_1_1Expected}{Args}}...>\mbox{\hyperlink{structcslt_1_1IsConstructible_ad149bca076e8c7c7a522006913aee27e}{::value}};}
+\DoxyCodeLine{00372\ \ \ \ \ \};}
+\DoxyCodeLine{00373\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00374\ }
+\DoxyCodeLine{00375\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00376\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsDefaultConstructible}{IsDefaultConstructible}}\ \{}
+\DoxyCodeLine{00377\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsDefaultConstructible_ab3270a22d8996b5fdc4638bfbca600fb}{value}}\ =\ \mbox{\hyperlink{structcslt_1_1IsConstructible}{IsConstructible<T>::value}};}
+\DoxyCodeLine{00378\ \ \ \ \ \};}
+\DoxyCodeLine{00379\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00380\ }
+\DoxyCodeLine{00381\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00382\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsMoveConstructible}{IsMoveConstructible}}\ \{}
+\DoxyCodeLine{00383\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsMoveConstructible_a4ff7cf6ff430eb9db2e3a76134a57e07}{value}}\ =\ \mbox{\hyperlink{structcslt_1_1IsConstructible}{IsConstructible<T,\ T\&\&>::value}};}
+\DoxyCodeLine{00384\ \ \ \ \ \};}
+\DoxyCodeLine{00385\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00386\ }
+\DoxyCodeLine{00387\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00388\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsCopyConstructible}{IsCopyConstructible}}\ \{}
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsCopyConstructible_a3a9f7713d2de3b0ad9a315badbef6f8c}{value}}\ =\ \mbox{\hyperlink{structcslt_1_1IsConstructible}{IsConstructible<T,\ const\ T\&>::value}};}
+\DoxyCodeLine{00390\ \ \ \ \ \};}
+\DoxyCodeLine{00391\ }
+\DoxyCodeLine{00392\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00393\ \textcolor{comment}{//\ IsAssignable\ (public\ wrapper)}}
+\DoxyCodeLine{00394\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00395\ }
+\DoxyCodeLine{00396\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T,\ \textcolor{keyword}{class}\ U>}
+\DoxyCodeLine{00397\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsAssignable}{IsAssignable}}\ \{}
+\DoxyCodeLine{00398\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsAssignable_a7c744473028c19cb85da41ecde397c43}{value}}\ =\ \mbox{\hyperlink{structcslt_1_1detail_1_1IsAssignableImpl}{detail::IsAssignableImpl<T,\ U>::value}};}
+\DoxyCodeLine{00399\ \ \ \ \ \};}
+\DoxyCodeLine{00400\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00401\ }
+\DoxyCodeLine{00402\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00403\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsMoveAssignable}{IsMoveAssignable}}\ \{}
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsMoveAssignable_a4a5ca2a79a63e092b5c8f2fb15ecd9a8}{value}}\ =\ \mbox{\hyperlink{structcslt_1_1IsAssignable}{IsAssignable<T\&,\ T\&\&>::value}};}
+\DoxyCodeLine{00405\ \ \ \ \ \};}
+\DoxyCodeLine{00406\ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00408\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{class}\ T>}
+\DoxyCodeLine{00409\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1IsCopyAssignable}{IsCopyAssignable}}\ \{}
+\DoxyCodeLine{00410\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{structcslt_1_1IsCopyAssignable_a2ff8b6e2b6152236bf913c66fcc913ce}{value}}\ =\ \mbox{\hyperlink{structcslt_1_1IsAssignable}{IsAssignable<T\&,\ const\ T\&>::value}};}
+\DoxyCodeLine{00411\ \ \ \ \ \};}
+\DoxyCodeLine{00412\ }
+\DoxyCodeLine{00413\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00414\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00415\ \}\ \textcolor{comment}{//\ namespace\ cslt}}
+\DoxyCodeLine{00416\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{//\ UTILITIES\_HPP}}
+\DoxyCodeLine{00417\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00418\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00419\ \textcolor{comment}{//\ eof}}
+\DoxyCodeLine{00420\ }
+
+\end{DoxyCode}

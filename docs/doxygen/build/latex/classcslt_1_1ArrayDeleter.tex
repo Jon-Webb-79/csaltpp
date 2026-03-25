@@ -1,72 +1,71 @@
-\hypertarget{classcslt_1_1ArrayDeleter}{}\doxysection{cslt\+::Array\+Deleter$<$ T $>$ Class Template Reference}
-\label{classcslt_1_1ArrayDeleter}\index{cslt::ArrayDeleter$<$ T $>$@{cslt::ArrayDeleter$<$ T $>$}}
+\doxysection{cslt\+::Array\+Deleter\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classcslt_1_1ArrayDeleter}{}\label{classcslt_1_1ArrayDeleter}\index{cslt::ArrayDeleter$<$ T $>$@{cslt::ArrayDeleter$<$ T $>$}}
 
 
-Custom deleter for \mbox{\hyperlink{classcslt_1_1Array}{Array}} instances.  
+Custom deleter for \doxylink{classcslt_1_1Array}{Array} instances.  
 
 
 
 
 {\ttfamily \#include $<$array.\+hpp$>$}
 
-\doxysubsection*{Public Member Functions}
+\doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{classcslt_1_1ArrayDeleter_a42151e7cb828a53f1d165e41284a5042}{operator()}} (\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$a) const noexcept
-\begin{DoxyCompactList}\small\item\em Delete an \mbox{\hyperlink{classcslt_1_1Array}{Array}} instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1ArrayDeleter_a42151e7cb828a53f1d165e41284a5042}{operator()}} (\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$ \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{a}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Delete an \doxylink{classcslt_1_1Array}{Array} instance. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-\subsubsection*{template$<$typename T$>$\newline
+\subsubsection*{template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{T}}$>$\newline
 class cslt\+::\+Array\+Deleter$<$ T $>$}
+Custom deleter for \doxylink{classcslt_1_1Array}{Array} instances. 
 
-Custom deleter for \mbox{\hyperlink{classcslt_1_1Array}{Array}} instances. 
-
-Implements proper cleanup for \mbox{\hyperlink{classcslt_1_1Array}{Array}} objects by\+:
+Implements proper cleanup for \doxylink{classcslt_1_1Array}{Array} objects by\+:
 \begin{DoxyEnumerate}
-\item Calling the \mbox{\hyperlink{classcslt_1_1Array}{Array}} destructor (which destroys elements and frees the buffer)
-\item Freeing the \mbox{\hyperlink{classcslt_1_1Array}{Array}} object itself Both operations use the allocator stored inside the \mbox{\hyperlink{classcslt_1_1Array}{Array}}.
+\item Calling the \doxylink{classcslt_1_1Array}{Array} destructor (which destroys elements and frees the buffer)
+\item Freeing the \doxylink{classcslt_1_1Array}{Array} object itself Both operations use the allocator stored inside the \doxylink{classcslt_1_1Array}{Array}.
 \end{DoxyEnumerate}
 
-This deleter is intended for use with \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} to provide RAII semantics.
+This deleter is intended for use with \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr} to provide RAII semantics.
 
 
 \begin{DoxyTemplParams}{Template Parameters}
-{\em T} & Element type of the \mbox{\hyperlink{classcslt_1_1Array}{Array}} being deleted\\
+{\em T} & Element type of the \doxylink{classcslt_1_1Array}{Array} being deleted\\
 \hline
 \end{DoxyTemplParams}
 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
-\DoxyCodeLine{\textcolor{keyword}{auto} r = \mbox{\hyperlink{classcslt_1_1Array_ae39a55a8e6cff462c8ad9a4a1c6d06ef}{cslt::Array<int>::init}}(8, allocator);}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ r\ =\ \mbox{\hyperlink{classcslt_1_1Array_a12ebee9f380a77e34e6f30362faefbc4}{cslt::Array<int>::init}}(8,\ allocator);}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (r.hasValue()) \{}
-\DoxyCodeLine{    \mbox{\hyperlink{classcslt_1_1UniquePtr}{cslt::UniquePtr<cslt::Array<int>}}, \mbox{\hyperlink{classcslt_1_1ArrayDeleter}{cslt::ArrayDeleter<int>}}> arr(r.value());}
-\DoxyCodeLine{    arr-\/>push\_back(1);}
-\DoxyCodeLine{\} \textcolor{comment}{// ArrayDeleter called here -\/ buffer and struct are both freed}}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (r.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Array<int>}},\ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::ArrayDeleter<int>}}>\ arr(r.value());}
+\DoxyCodeLine{\ \ \ \ arr-\/>push\_back(1);}
+\DoxyCodeLine{\}\ \textcolor{comment}{//\ ArrayDeleter\ called\ here\ -\/\ buffer\ and\ struct\ are\ both\ freed}}
 
 \end{DoxyCode}
  
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{classcslt_1_1ArrayDeleter_a42151e7cb828a53f1d165e41284a5042}\label{classcslt_1_1ArrayDeleter_a42151e7cb828a53f1d165e41284a5042}} 
+\Hypertarget{classcslt_1_1ArrayDeleter_a42151e7cb828a53f1d165e41284a5042}\label{classcslt_1_1ArrayDeleter_a42151e7cb828a53f1d165e41284a5042} 
 \index{cslt::ArrayDeleter$<$ T $>$@{cslt::ArrayDeleter$<$ T $>$}!operator()@{operator()}}
 \index{operator()@{operator()}!cslt::ArrayDeleter$<$ T $>$@{cslt::ArrayDeleter$<$ T $>$}}
 \doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
-{\footnotesize\ttfamily template$<$typename T $>$ \\
-void \mbox{\hyperlink{classcslt_1_1ArrayDeleter}{cslt\+::\+Array\+Deleter}}$<$ T $>$\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ T $>$ $\ast$}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1ArrayDeleter}{cslt\+::\+Array\+Deleter}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Array}{Array}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$ \texorpdfstring{$\ast$}{*}}]{a }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
 
 
 
-Delete an \mbox{\hyperlink{classcslt_1_1Array}{Array}} instance. 
+Delete an \doxylink{classcslt_1_1Array}{Array} instance. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em a} & \mbox{\hyperlink{classcslt_1_1Array}{Array}} to delete (may be nullptr)\\
+{\em a} & \doxylink{classcslt_1_1Array}{Array} to delete (may be nullptr)\\
 \hline
 \end{DoxyParams}
-Frees the element buffer and the \mbox{\hyperlink{classcslt_1_1Array}{Array}} structure using the allocator stored within the \mbox{\hyperlink{classcslt_1_1Array}{Array}}. Safe to call with nullptr. 
+Frees the element buffer and the \doxylink{classcslt_1_1Array}{Array} structure using the allocator stored within the \doxylink{classcslt_1_1Array}{Array}. Safe to call with nullptr. 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{array_8hpp}{array.\+hpp}}\end{DoxyCompactItemize}
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/\mbox{\hyperlink{array_8hpp}{array.\+hpp}}\end{DoxyCompactItemize}

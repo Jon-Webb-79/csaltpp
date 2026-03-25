@@ -80,12 +80,13 @@ Typical Use Cases
    :maxdepth: 1
    :caption: Modules:
 
-    Utilities <Utilities>
-    Smart Pointers <Pointers>
-    Error <Error>
-    Allocator <Allocator>
-    String <String>
-    Array <Array>
+   Utilities <Utilities>
+   Smart Pointers <Pointers>
+   Error <Error>
+   Allocator <Allocator>
+   String <String>
+   Array <Array>
+   Dictionary <Dict>
     
 Indices and tables
 ==================

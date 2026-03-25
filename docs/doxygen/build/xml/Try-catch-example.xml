@@ -1,28 +1,28 @@
 <?xml version='1.0' encoding='UTF-8' standalone='no'?>
-<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.1" xml:lang="en-US">
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
   <compounddef id="Try-catch-example" kind="example">
     <compoundname>Try-catch</compoundname>
     <briefdescription>
 <para>pattern </para>
     </briefdescription>
     <detaileddescription>
-<para>pattern <programlisting><codeline><highlight class="normal">auto<sp/>arena<sp/>=<sp/>cslt::move(cslt::ArenaAllocator::Heap(8192).value());</highlight></codeline>
-<codeline></codeline>
-<codeline><highlight class="normal">void*<sp/>checkpoint<sp/>=<sp/>arena-&gt;save();</highlight></codeline>
-<codeline><highlight class="normal">try<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Make<sp/>allocations<sp/>that<sp/>might<sp/>fail</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>data1<sp/>=<sp/>arena-&gt;alloc(1024).value();</highlight></codeline>
+<para>pattern <programlisting><codeline><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>arena<sp/>=<sp/><ref refid="namespacecslt_1ad55f4168d9f1832627c6d75e60d14a6c" kindref="member">cslt::move</ref>(<ref refid="classcslt_1_1ArenaAllocator_1ab71e5fc5e1cf3e9b07ad7208465a7b0f" kindref="member">cslt::ArenaAllocator::Heap</ref>(8192).value());</highlight></codeline>
+<codeline><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordtype">void</highlight><highlight class="normal">*<sp/>checkpoint<sp/>=<sp/>arena-&gt;save();</highlight></codeline>
+<codeline><highlight class="normal"></highlight><highlight class="keywordflow">try</highlight><highlight class="normal"><sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Make<sp/>allocations<sp/>that<sp/>might<sp/>fail</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>data1<sp/>=<sp/>arena-&gt;alloc(1024).value();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>risky_operation(data1);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>auto<sp/>data2<sp/>=<sp/>arena-&gt;alloc(2048).value();</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>data2<sp/>=<sp/>arena-&gt;alloc(2048).value();</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>risky_operation(data2);</highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Success<sp/>-<sp/>keep<sp/>allocations</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;restore(checkpoint);<sp/><sp/>//<sp/>Must<sp/>free<sp/>checkpoint!</highlight></codeline>
-<codeline><highlight class="normal">}<sp/>catch<sp/>(...)<sp/>{</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>//<sp/>Failure<sp/>-<sp/>rollback<sp/>allocations</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Success<sp/>-<sp/>keep<sp/>allocations</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;restore(checkpoint);<sp/><sp/></highlight><highlight class="comment">//<sp/>Must<sp/>free<sp/>checkpoint!</highlight><highlight class="normal"></highlight></codeline>
+<codeline><highlight class="normal">}<sp/></highlight><highlight class="keywordflow">catch</highlight><highlight class="normal"><sp/>(...)<sp/>{</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="comment">//<sp/>Failure<sp/>-<sp/>rollback<sp/>allocations</highlight><highlight class="normal"></highlight></codeline>
 <codeline><highlight class="normal"><sp/><sp/><sp/><sp/>arena-&gt;restore(checkpoint);</highlight></codeline>
-<codeline><highlight class="normal"><sp/><sp/><sp/><sp/>throw;</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/></highlight><highlight class="keywordflow">throw</highlight><highlight class="normal">;</highlight></codeline>
 <codeline><highlight class="normal">}</highlight></codeline>
 </programlisting></para>
 <para><simplesect kind="see"><para>restore() To restore to checkpoint </para>
@@ -31,6 +31,6 @@
 </simplesect>
 </para>
     </detaileddescription>
-    <location file="/home/jonwebb/Code_Dev/C++/csalt++/csalt++/include/allocator.hpp"/>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp"/>
   </compounddef>
 </doxygen>

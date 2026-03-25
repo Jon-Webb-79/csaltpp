@@ -1,0 +1,58 @@
+\doxysection{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/allocator.cpp File Reference}
+\hypertarget{allocator_8cpp}{}\label{allocator_8cpp}\index{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/allocator.cpp@{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/allocator.cpp}}
+{\ttfamily \#include "{}allocator.\+hpp"{}}\newline
+{\ttfamily \#include $<$cstring$>$}\newline
+{\ttfamily \#include $<$cstdarg$>$}\newline
+{\ttfamily \#include $<$new$>$}\newline
+{\ttfamily \#include $<$cstdint$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+{\ttfamily \#include $<$sys/mman.\+h$>$}\newline
+{\ttfamily \#include $<$unistd.\+h$>$}\newline
+Include dependency graph for allocator.\+cpp\+:
+% FIG 0
+\doxysubsubsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+namespace \mbox{\hyperlink{namespacecslt}{cslt}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{bool}} \mbox{\hyperlink{namespacecslt_a60929310f6258747143b37bbebb0d22e}{cslt\+::\+\_\+buf\+\_\+appendf}} (\mbox{\hyperlink{classcslt_1_1Expected}{char}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{buffer}}, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{buffer\+\_\+size}}, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{p\+\_\+offset}}, \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{char}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{fmt}},...)
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{namespacecslt_abc3a0835723fbba0ec2b994f712e3bf0}{cslt\+::normalize\+\_\+alignment}} (\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{a}})
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{namespacecslt_abaf3729c2a283815b8a90776fe2c55bb}{cslt\+::\+\_\+align\+\_\+up\+\_\+size}} (\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} x, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{a}})
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{uintptr\+\_\+t}} \mbox{\hyperlink{namespacecslt_a3d05c36cc6408f030f92f49138c958cb}{cslt\+::\+\_\+align\+\_\+up\+\_\+uintptr}} (\mbox{\hyperlink{classcslt_1_1Expected}{uintptr\+\_\+t}} p, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{a}})
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{namespacecslt_ab3d36c0fb67974f234d964174e9f7449}{cslt\+::\+\_\+pad\+\_\+up}} (\mbox{\hyperlink{classcslt_1_1Expected}{uintptr\+\_\+t}} p, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{a}})
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{namespacecslt_a1a93f18dc32c8917b230e2f81e8e924e}{cslt\+::\+\_\+mul\+\_\+div\+\_\+ceil}} (\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} x, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{mul}}, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{div}})
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{static}} \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{namespacecslt_a1a06c1e4c5dbab32901c9fe01126977d}{cslt\+::\+\_\+next\+\_\+chunk\+\_\+size}} (\mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{prev\+\_\+data\+\_\+alloc}}, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{need}}, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{align}}, \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{classcslt_1_1Expected}{min\+\_\+chunk}})
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+static constexpr size\+\_\+t \mbox{\hyperlink{allocator_8cpp_a7cd69f8e32aa835c643005dfa83ec0ee}{k\+\_\+growth\+\_\+limit}} = 4 \texorpdfstring{$\ast$}{*} 1024 \texorpdfstring{$\ast$}{*} 1024
+\item 
+static constexpr size\+\_\+t \mbox{\hyperlink{allocator_8cpp_aadf2157e3fbb8c01b000597571a67367}{k\+\_\+max\+\_\+chunk}} = 64 \texorpdfstring{$\ast$}{*} 1024 \texorpdfstring{$\ast$}{*} 1024
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{constexpr}} \mbox{\hyperlink{classcslt_1_1Expected}{size\+\_\+t}} \mbox{\hyperlink{namespacecslt_a4ec7e90836050cc1616ba87b82f322f5}{cslt\+::\+DEFAULT\+\_\+\+FREELIST\+\_\+\+SIZE}} = 4096
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Variable Documentation}
+\Hypertarget{allocator_8cpp_a7cd69f8e32aa835c643005dfa83ec0ee}\label{allocator_8cpp_a7cd69f8e32aa835c643005dfa83ec0ee} 
+\index{allocator.cpp@{allocator.cpp}!k\_growth\_limit@{k\_growth\_limit}}
+\index{k\_growth\_limit@{k\_growth\_limit}!allocator.cpp@{allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{k\_growth\_limit}{k\_growth\_limit}}
+{\footnotesize\ttfamily constexpr size\+\_\+t k\+\_\+growth\+\_\+limit = 4 \texorpdfstring{$\ast$}{*} 1024 \texorpdfstring{$\ast$}{*} 1024\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+
+\Hypertarget{allocator_8cpp_aadf2157e3fbb8c01b000597571a67367}\label{allocator_8cpp_aadf2157e3fbb8c01b000597571a67367} 
+\index{allocator.cpp@{allocator.cpp}!k\_max\_chunk@{k\_max\_chunk}}
+\index{k\_max\_chunk@{k\_max\_chunk}!allocator.cpp@{allocator.cpp}}
+\doxysubsubsection{\texorpdfstring{k\_max\_chunk}{k\_max\_chunk}}
+{\footnotesize\ttfamily constexpr size\+\_\+t k\+\_\+max\+\_\+chunk = 64 \texorpdfstring{$\ast$}{*} 1024 \texorpdfstring{$\ast$}{*} 1024\hspace{0.3cm}{\ttfamily [static]}, {\ttfamily [constexpr]}}
+

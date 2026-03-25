@@ -1,16 +1,18 @@
-\hypertarget{Non-resizable-example}{}\doxysection{Non-\/resizable}
+\doxysection{Non-\/resizable}
+\hypertarget{Non-resizable-example}{}\label{Non-resizable-example}fixed-\/size arena
+
 fixed-\/size arena 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(result.value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(8192,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(result.value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Fill arena}}
-\DoxyCodeLine{\textcolor{keywordflow}{while} (arena-\/>remaining() >= 64) \{}
-\DoxyCodeLine{    arena-\/>alloc(64);}
+\DoxyCodeLine{\textcolor{comment}{//\ Fill\ arena}}
+\DoxyCodeLine{\textcolor{keywordflow}{while}\ (arena-\/>remaining()\ >=\ 64)\ \{}
+\DoxyCodeLine{\ \ \ \ arena-\/>alloc(64);}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// This will fail -\/ no space and resize disabled}}
-\DoxyCodeLine{\textcolor{keyword}{auto} fail = arena-\/>alloc(1024);}
+\DoxyCodeLine{\textcolor{comment}{//\ This\ will\ fail\ -\/\ no\ space\ and\ resize\ disabled}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ fail\ =\ arena-\/>alloc(1024);}
 \DoxyCodeLine{assert(!fail.hasValue());}
 
 \end{DoxyCode}

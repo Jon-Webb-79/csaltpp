@@ -1,0 +1,1086 @@
+\doxysection{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/allocator.\+hpp}
+\hypertarget{_2home_2jonwebb_2Code_Dev_2C_09_09_2csaltpp_2csaltpp_2include_2allocator_8hpp-example}{}\label{_2home_2jonwebb_2Code_Dev_2C_09_09_2csaltpp_2csaltpp_2include_2allocator_8hpp-example}Get the default alignment.
+
+Get the default alignment\begin{DoxyReturn}{Returns}
+Default alignment in bytes
+\end{DoxyReturn}
+Returns the alignment value that will be used for allocations when no specific alignment is requested.
+
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator(32);\ \textcolor{comment}{//\ 32-\/byte\ alignment}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t}\ align\ =\ allocator.default\_alignment();}
+\DoxyCodeLine{std::cout\ <<\ \textcolor{stringliteral}{"{}Default\ alignment:\ "{}}\ <<\ align\ <<\ \textcolor{stringliteral}{"{}\ bytes\(\backslash\)n"{}};}
+\DoxyCodeLine{\textcolor{comment}{//\ Output:\ Default\ alignment:\ 32\ bytes}}
+
+\end{DoxyCode}
+
+
+
+\begin{DoxyCodeInclude}{0}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/\ File:\ \ \ \ allocator.hpp}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/\ Purpose:\ This\ file\ contains\ the\ prototypes\ for\ custom\ allocators\ as\ part\ of\ the\ }}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ \ \ \ \ \ \ \ \ \ \ \ cslt\ namespace}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Source\ Metadata}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/\ Author:\ \ Jonathan\ A.\ Webb}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/\ Date:\ \ \ \ December\ 28,\ 2025}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/\ Version:\ 1.0}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/\ Copyright:\ Copyright\ 2022,\ Jon\ Webb\ Inc.}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Include\ modules\ here}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#ifndef\ allocator\_HPP}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#define\ allocator\_HPP}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Compile\ for\ static\ or\ dynamic\ memory\ allocation\ for\ MISRA\ compliance}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#ifndef\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#\ \ ifdef\ STATIC\_ONLY}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#\ \ \ \ define\ ARENA\_ENABLE\_DYNAMIC\ 0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#\ \ else}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#\ \ \ \ define\ ARENA\_ENABLE\_DYNAMIC\ 1}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#\ \ endif}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ defined(STATIC\_ONLY)\ \&\&\ defined(ARENA\_ENABLE\_DYNAMIC)\ \&\&\ (ARENA\_ENABLE\_DYNAMIC+0)!=0}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#\ \ error\ "{}STATIC\_ONLY\ set\ but\ ARENA\_ENABLE\_DYNAMIC\ !=\ 0"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{error_8hpp}{error.hpp}}"{}}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{pointers_8hpp}{pointers.hpp}}"{}}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{\textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacecslt}{cslt}}\ \{}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{enum}\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edafe9db55c66dd1368b469bd19ac7f7732}{ALLOC\_INVALID}}\ =\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956eda0af05f0e42195dea493d9fb04af1414b}{STATIC}}\ =\ 1,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}}\ =\ 2}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }Allocator\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_ae915028e563a4d04f80f273037e1584a}{default\_alignment\_}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}};\ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}};\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a5ef6bd69fbf7f2363aa5bb6cae49b923}{total\_alloc\_}};\ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint8\_t\ \mbox{\hyperlink{classcslt_1_1Allocator_a7183bacd2973b4d8b822b01d081600ba}{mem\_type\_}};\ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint8\_t\ \mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classcslt_1_1Allocator_aa4603a4a1a33e3519c6e30dbc3223ec6}{Allocator}}(\textcolor{keywordtype}{size\_t}\ alignment\ =\ \textcolor{keyword}{alignof}(max\_align\_t),\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a91c8438280ddbe1fa7ecaf8cc555daaf}{total\_alloc}}\ =\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\ type\ =\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edafe9db55c66dd1368b469bd19ac7f7732}{ALLOC\_INVALID}},\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ owns\_mem\ =\ \textcolor{keyword}{false})\ noexcept}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classcslt_1_1Allocator_ae915028e563a4d04f80f273037e1584a}{default\_alignment\_}}(alignment),\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}}(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}}(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator_a5ef6bd69fbf7f2363aa5bb6cae49b923}{total\_alloc\_}}(\mbox{\hyperlink{classcslt_1_1Allocator_a91c8438280ddbe1fa7ecaf8cc555daaf}{total\_alloc}}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator_a7183bacd2973b4d8b822b01d081600ba}{mem\_type\_}}(\textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(type)),\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}}(\textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(owns\_mem))\ \{\}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{classcslt_1_1Allocator_afaec0741935d3b33af37c535565ce719}{\string~Allocator}}()\ \textcolor{keyword}{noexcept}\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Allocator_ae915028e563a4d04f80f273037e1584a}{default\_alignment\_}};\ \}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1Allocator_ad6ad566633d84e86b690149ecc86af8a}{alloc}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ =\ 0;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1Allocator_a80e18df73f2aaf7b846b905f526fb902}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ =\ 0;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1Allocator_a3c6b02d6007ceb1be520969be1bea2cd}{realloc}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ =\ 0;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1Allocator_af41f1c914986b5cf247fec4cd2cefbd7}{realloc\_aligned}}(\textcolor{keywordtype}{void}\ *ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ =\ 0;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{return\_element}}(\textcolor{keywordtype}{void}\ *ptr,\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ \textcolor{keyword}{alignof}(max\_align\_t))\ =\ 0;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\ \mbox{\hyperlink{classcslt_1_1Allocator_ab32af42a412bd9d92ca7bd3d8ee4ecae}{memory\_type}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Allocator_a7183bacd2973b4d8b822b01d081600ba}{mem\_type\_}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1Allocator_a794cb0fe500dc3a698015474ad8a7c86}{stats}}(\textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_size)\ \textcolor{keyword}{const}\ =\ 0;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1Allocator_a5eed4e825db775062f2a8d72b0a80185}{owns\_memory}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}});}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a1b34a9c4860a9e28255745b1d1e7cb62}{remaining}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}}\ >\ \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}})\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}}\ -\/\ \mbox{\hyperlink{classcslt_1_1Allocator_ab76cd7ab2a5756223580eda667b38cb6}{size\_}};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_ac5a7770e8ed38355d7ae996b3475a4c5}{allocated}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Allocator_a711b3e63e9c8bc79a55fdf5e52222992}{alloc\_}};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a91c8438280ddbe1fa7ecaf8cc555daaf}{total\_alloc}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Allocator_a5ef6bd69fbf7f2363aa5bb6cae49b923}{total\_alloc\_}};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1Allocator_a8b9fcb5da49538257f1272d2a11b832c}{is\_ptr}}(\textcolor{keywordtype}{void}*\ ptr)\textcolor{keyword}{\ const\ }\{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)ptr;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ Default:\ can't\ verify\ pointers}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1Allocator_a9174d07a2777d286188e0221558505dc}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes)\textcolor{keyword}{\ const\ }\{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)ptr;\ (void)bytes;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ Default:\ can't\ verify\ sized\ pointers}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classcslt_1_1Allocator_a18f19d2babbec7f2a1477b0d7b65690c}{save}}()\textcolor{keyword}{\ const\ }\{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};\ \ \textcolor{comment}{//\ Default:\ doesn't\ support\ save/restore}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1Allocator_ab96e7b76511d29b505c5da81fb8b3cba}{restore}}(\textcolor{keywordtype}{void}*\ checkpoint)\ \{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)checkpoint;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ \ \textcolor{comment}{//\ Default:\ doesn't\ support\ save/restore}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1Allocator_a63cbbfc6cfeb46e51a14a91f8f5c48ea}{reset}}(\textcolor{keywordtype}{bool}\ trim\_extra\_chunks\ =\ \textcolor{keyword}{false})\ \{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)trim\_extra\_chunks;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }HeapAllocator\ :\ \textcolor{keyword}{public}\ Allocator\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_a3f01101edebcc07b7c33dcbc261d21ac}{HeapAllocator}}(\textcolor{keywordtype}{size\_t}\ alignment\ =\ \textcolor{keyword}{alignof}(max\_align\_t))\ noexcept}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classcslt_1_1Allocator_aa4603a4a1a33e3519c6e30dbc3223ec6}{Allocator}}(alignment,\ 0,\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}},\ \textcolor{keyword}{false})\ \{\}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1HeapAllocator_a7e2a721eaaee3ecc3b68118de8b1812b}{\string~HeapAllocator}}()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_a11de81a6f52b82e6578b69332482735d}{alloc}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_a53a1b9b301c70c4ce6035075385317e7}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_a7a3330d0681e32e1e31245d24e109d57}{realloc}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_aac4dc418d8906892495d0a6fcf965fa1}{realloc\_aligned}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(\textcolor{keywordtype}{void}\ *ptr,\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ \textcolor{keyword}{alignof}(max\_align\_t))\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_a8638f377e7dcb4d83d241e2a94dbb6e2}{stats}}(\textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_size)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1HeapAllocator_afd627e0b4b4edef30d8b90db649a6a25}{reset}}(\textcolor{keywordtype}{bool}\ trim\_extra\_chunks\ =\ \textcolor{keyword}{false})\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)trim\_extra\_chunks;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ ARENA\_ENABLE\_DYNAMIC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{int}\ \mbox{\hyperlink{namespacecslt_adb04c13835953770d190921376af439f}{is\_pow2}}(\textcolor{keywordtype}{size\_t}\ x)\ \{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ x\ \&\&\ !(x\ \&\ (x\ -\/\ 1));\ }
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{namespacecslt_a82dac9d13bcd6ec525fdf92686383736}{next\_pow2}}(\textcolor{keywordtype}{size\_t}\ x)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ ==\ 0)\ \textcolor{keywordflow}{return}\ 0;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{namespacecslt_adb04c13835953770d190921376af439f}{is\_pow2}}(x))\ \textcolor{keywordflow}{return}\ x;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ if\ x\ is\ too\ large\ to\ round\ up\ to\ a\ power\ of\ 2}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ The\ largest\ power\ of\ 2\ that\ fits\ in\ size\_t\ is\ SIZE\_MAX\ /\ 2\ +\ 1}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ (which\ is\ 0x8000...\ with\ only\ the\ high\ bit\ set)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (x\ >\ (SIZE\_MAX\ /\ 2\ +\ 1))\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;\ \ \textcolor{comment}{//\ Overflow\ -\/\ no\ power\ of\ 2\ can\ represent\ this}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ power\ =\ 1;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (power\ <\ x)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Check\ overflow\ before\ shifting}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (power\ >\ SIZE\_MAX\ /\ 2)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ 0;\ \ \textcolor{comment}{//\ Would\ overflow\ on\ next\ shift}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ power\ <<=\ 1;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ power;}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }BuddyAllocator;}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif\ }}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }ArenaAllocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{struct\ }ArenaDeleter\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{operator()}}(ArenaAllocator*\ arena)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }ArenaAllocator\ :\ \textcolor{keyword}{public}\ Allocator\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a3643101e7551d3473848a0441a7b99e5}{ArenaDeleter}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }Chunk\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint8\_t\ *chunk;\ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alloc;\ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ Chunk*\ next;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }CheckpointData\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ Chunk*\ chunk;\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint8\_t*\ cur;\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint8\_t\ *cur\_;\ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Chunk*\ head\_;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Chunk*\ tail\_;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_chunk\_;\ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint8\_t\ resize\_;\ \ \ \ \ }
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator*\ buddy\_owner\_\ =\ \textcolor{keyword}{nullptr};\ \ }
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ backing\_bytes\_\ =\ 0;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Chunk*\ find\_chunk\_in\_chain(Chunk*\ target,\ Chunk**\ out\_prev\ =\ \textcolor{keyword}{nullptr})\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{/*\ Private\ constructor\ for\ factory\ methods\ only}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ This\ initializes\ the\ base\ Allocator\ with\ default\ values}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ *\ The\ factory\ methods\ will\ then\ set\ the\ proper\ values\ directly}}
+\DoxyCodeLine{\textcolor{comment}{\ \ \ \ \ */}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ArenaAllocator()\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classcslt_1_1Allocator_aa4603a4a1a33e3519c6e30dbc3223ec6}{Allocator}}(\textcolor{keyword}{alignof}(max\_align\_t),\ 0,\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edafe9db55c66dd1368b469bd19ac7f7732}{ALLOC\_INVALID}},\ \textcolor{keyword}{false}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ head\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ tail\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ min\_chunk\_(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ resize\_(0)\ \{\}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a91150136502502b877a6deb7abf95e82}{\string~ArenaAllocator}}()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{bool}\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Allocator_a423d19bef35c2505d3d32cfe6b768776}{owns\_memory\_}}))\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Free\ additional\ chunks\ (NOT\ the\ head)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Chunk*\ current\ =\ head\_\ ?\ head\_-\/>next\ :\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (current\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Chunk*\ next\ =\ current-\/>next;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ::operator\ \textcolor{keyword}{delete}(current);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ current\ =\ next;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<ArenaAllocator,\ ArenaDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{Heap}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ resize\ =\ \textcolor{keyword}{false},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\_chunk\_size}}\ =\ 4096,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ base\_align\_in\ =\ \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ ARENA\_ENABLE\_DYNAMIC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<ArenaAllocator,\ ArenaDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a6d245f99bc1ba17a2785f66c43a61e95}{Stack}}(\textcolor{keywordtype}{void}*\ buffer,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ base\_align\_in\ =\ \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<ArenaAllocator,\ ArenaDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ae44d42c85dbd78b7a424e7a76c3fce32}{SubArena}}(ArenaAllocator\&\ parent,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ base\_align\_in\ =\ \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<ArenaAllocator,\ ArenaDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a3276f24d8c473e6f4d70de287b516119}{WithBuddy}}(BuddyAllocator\&\ buddy,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ base\_align\_in\ =\ \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a00688da293e6682906b33dc0bd955389}{alloc}}(\textcolor{keywordtype}{size\_t}\ bytes,\ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab0c53e0a43ba95fc09b75ded7d926554}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a60a6b8aa87cf0cb7f9a83451acb45b15}{realloc}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a7ae9f73f0df57cab73cf2b9fe3c3f9b1}{realloc\_aligned}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ac709ae6498290a5a4c12eeb65034969e}{is\_ptr}}(\textcolor{keywordtype}{void}*\ ptr)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a29fe5661a722f554829c480ee040ebd5}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a7fe8fbcdba4b1e2ee15c850ca12549e7}{return\_element}}(\textcolor{keywordtype}{void}\ *ptr,\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ \textcolor{keyword}{alignof}(max\_align\_t))\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a33e3302b97aed2d9c6bd764ca028e191}{reset}}(\textcolor{keywordtype}{bool}\ trim\_extra\_chunks\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a1b7407a444c6ca47d4ba995e9335a77b}{save}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_af1b43a92fa1c3bf0e77e1284eab4f7c8}{restore}}(\textcolor{keywordtype}{void}*\ checkpoint)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a13698c33d4b6e47073bf0ca823e7d94c}{remaining}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab128304aeae005b402dbf4fbc105df3f}{stats}}(\textcolor{keywordtype}{char}\ *buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_size)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a15d84f50e78476e1112f00cf63e90b00}{chunk\_count}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a76f827485553a4b7bb284827f81df308}{min\_chunk\_size}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1ArenaAllocator_a1510ea6b6c62a51247b0b0b785c8a161}{toggle\_resize}}(\textcolor{keywordtype}{bool}\ toggle)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }PoolAllocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{struct\ }PoolDeleter\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1PoolDeleter_a995981aea9e4715122dc8e1703c71e9b}{operator()}}(PoolAllocator*\ pool)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }PoolAllocator\ :\ \textcolor{keyword}{public}\ Allocator\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{classcslt_1_1PoolAllocator_a4db56c6e01e00bd05ffcf0147a484df9}{PoolDeleter}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }PoolCheckpointData\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \ \ \ free\_list;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ free\_blocks;\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint8\_t*\ cur;\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ total\_blocks;\ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ArenaAllocator*\ arena\_;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ owns\_arena\_;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ block\_size\_;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ stride\_;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ blocks\_per\_chunk\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint8\_t*\ \ \ \ \ \ \ \ cur\_;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint8\_t*\ \ \ \ \ \ \ \ end\_;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \ \ \ \ \ \ \ \ \ \ free\_list\_;\ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ total\_blocks\_;\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ free\_blocks\_;\ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ grow\_enabled\_;\ \ \ \ }
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ PoolAllocator()}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ :\ \mbox{\hyperlink{classcslt_1_1Allocator_aa4603a4a1a33e3519c6e30dbc3223ec6}{Allocator}}(\textcolor{keyword}{alignof}(max\_align\_t),\ 0,\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edafe9db55c66dd1368b469bd19ac7f7732}{ALLOC\_INVALID}},\ \textcolor{keyword}{false}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ arena\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ owns\_arena\_(\textcolor{keyword}{false}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ block\_size\_(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ stride\_(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ blocks\_per\_chunk\_(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ free\_list\_(\textcolor{keyword}{nullptr}),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ total\_blocks\_(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ free\_blocks\_(0),}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ grow\_enabled\_(\textcolor{keyword}{false})\ \{\}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ grow\_pool();}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ pop\_free();}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ push\_free(\textcolor{keywordtype}{void}*\ blk);}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a3e78d611aaf3bce16001b8e606e63252}{\string~PoolAllocator}}()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<PoolAllocator,\ PoolDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1PoolAllocator_ab4355fdddca9ff22210c5b5f658fc509}{Heap}}(\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_adcbe53a0cd188e2bd639a4f2772bcbaf}{block\_size}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks\_per\_chunk,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ arena\_initial\_bytes\ =\ 4096,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ min\_chunk\_bytes\ =\ 4096,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ grow\_enabled\ =\ \textcolor{keyword}{true},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ prewarm\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<PoolAllocator,\ PoolDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1PoolAllocator_aba7d6b8001492558a41a8880952a8ec0}{Stack}}(\textcolor{keywordtype}{void}*\ buffer,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buffer\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_adcbe53a0cd188e2bd639a4f2772bcbaf}{block\_size}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<PoolAllocator,\ PoolDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a0c326119acf6c989582eb93585990133}{WithArena}}(ArenaAllocator\&\ arena,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_adcbe53a0cd188e2bd639a4f2772bcbaf}{block\_size}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ blocks\_per\_chunk,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ grow\_enabled\ =\ \textcolor{keyword}{false},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ prewarm\ =\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_ad0bc8ae3b4e0dfba9bd1fc249871e1ad}{alloc}}(\textcolor{keywordtype}{size\_t}\ bytes,\ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a60017f4ac27e670899fee8cf83614ff3}{alloc\_pool}}(\textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_ad7120090b154102a0487eceeb314c266}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a255488b39d1deab13ee70cba9d654497}{realloc}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a7714e34698f34991e086dcf4250ed7b2}{realloc\_aligned}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_ae06d33c7738ae591c06cff4ab777ce5a}{return\_element}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ \textcolor{keyword}{alignof}(max\_align\_t))\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_af5664d161af7b55ce3c22d23c745b917}{reset}}(\textcolor{keywordtype}{bool}\ trim\_extra\_chunks\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a9e6ee76c7b903bc5b686dcbf9ccc62b3}{save}}()\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_aedaddd14dee2b0cf12a5ae7b30606703}{restore}}(\textcolor{keywordtype}{void}*\ checkpoint)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a40b37c013a8f0b135259c3a60bb5a6f1}{is\_ptr}}(\textcolor{keywordtype}{void}*\ ptr)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a5863352d0f96684741cdf182aafe8ad7}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_aded567137597d76ef1d5385157170008}{stats}}(\textcolor{keywordtype}{char}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_size)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_adcbe53a0cd188e2bd639a4f2772bcbaf}{block\_size}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ block\_size\_;\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a601f268b0606695ecba2acd4f9ca9570}{stride}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ stride\_;\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a9e6bcc7b7dd338b1d1b352adeae33fe6}{total\_blocks}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ total\_blocks\_;\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a815be7568fb17a80731a22b4741c4506}{free\_blocks}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ free\_blocks\_;\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_a3f58239d0f1e825c7129e13cf5d9ee57}{allocated\_blocks}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ total\_blocks\_\ -\/\ free\_blocks\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_ad10b30f42fc38dcd785a19018002fc53}{can\_grow}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ grow\_enabled\_;\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1PoolAllocator_ac2964c7ba47f7bb79f56a16f01989cc5}{toggle\_grow}}(\textcolor{keywordtype}{bool}\ enable)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1PoolDeleter_a995981aea9e4715122dc8e1703c71e9b}{PoolDeleter::operator()}}(PoolAllocator*\ pool)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!pool)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ owns\_arena\ =\ pool-\/>owns\_arena\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ArenaAllocator*\ arena\ =\ pool-\/>arena\_;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Call\ destructor}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ pool-\/>\string~PoolAllocator();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ If\ pool\ owned\ its\ arena,\ the\ arena\ was\ created\ by\ the\ pool}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ and\ needs\ to\ be\ destroyed}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (owns\_arena\ \&\&\ arena)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ArenaDeleter\{\}(arena);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }FreeListAllocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{struct\ }FreeListDeleter\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}{operator()}}(FreeListAllocator*\ freelist)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{//\ FreeListAllocator\ Class}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }FreeListAllocator\ :\ \textcolor{keyword}{public}\ Allocator\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Friend\ declaration\ so\ deleter\ can\ access\ private\ members}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a6dfc32c23f25fe7a664c8f60b58ee12c}{FreeListDeleter}};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }FreeBlock\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ size;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ FreeBlock*\ next;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }FreeListHeader\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ block\_size;\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ offset;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Member\ variables}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ FreeBlock*\ \ \ \ \ \ \ head\_;\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint8\_t*\ \ \ \ \ \ \ \ \ cur\_;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ \ \ \ len\_;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \ \ \ \ \ \ \ \ \ \ \ memory\_;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ArenaAllocator*\ \ arena\_;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \ \ \ \ \ \ owns\_arena\_;\ \ \ \ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ constructor\ (use\ factory\ methods)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ FreeListAllocator();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Helper\ methods}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{size\_t}\ min\_request();}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_adc0f45a2991e99648609f1fb84d22f0a}{\string~FreeListAllocator}}()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Factory\ methods\ cannot\ be\ copied\ or\ moved\ after\ construction}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ FreeListAllocator(\textcolor{keyword}{const}\ FreeListAllocator\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ FreeListAllocator\&\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_abf3560866b7abec6c6a192b630156b2c}{operator=}}(\textcolor{keyword}{const}\ FreeListAllocator\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ FreeListAllocator(FreeListAllocator\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ FreeListAllocator\&\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_abf3560866b7abec6c6a192b630156b2c}{operator=}}(FreeListAllocator\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Factory\ Methods}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ ============================================================================}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<UniquePtr<FreeListAllocator,\ FreeListDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a81cf8b97326d92fb429429a894cfc248}{Heap}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ resize\ =\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<UniquePtr<FreeListAllocator,\ FreeListDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{WithArena}}(ArenaAllocator\&\ arena,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<UniquePtr<FreeListAllocator,\ FreeListDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a00da504efb8f8317abf7498c697cf891}{Stack}}(\textcolor{keywordtype}{void}*\ buffer,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ buffer\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa290f402dabf95b51f352235c77809ed}{alloc}}(\textcolor{keywordtype}{size\_t}\ bytes,\ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a683d799ad03202bc7b6aef3ad020d2e8}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t}\ bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_af100ec762c3ebda5e255af32e4ba594d}{realloc}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a5e4f1b888388ebc7b60ec719c9a3aa5b}{realloc\_aligned}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ old\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a92297e3568123854b9c2ea7398f4058f}{return\_element}}(\textcolor{keywordtype}{void}*\ ptr,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ bytes\ =\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a51baa0c6eb9df1a576b63237ad226bf3}{reset}}(\textcolor{keywordtype}{bool}\ trim\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a79163fc9aea930755f26d0652e105529}{is\_ptr}}(\textcolor{keywordtype}{void}*\ ptr)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a90a7d9f260434769fefd96bffc592fc2}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a11d836fb3a2b2d22257999cabdf9756f}{stats}}(\textcolor{keywordtype}{char}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_size)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a59626d72b6725ad3012c06bc9b1069e4}{remaining}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa9401b9dcb3bea5ce169b94ecbf978b6}{used}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a3b2f9e190bc3751d679d1c75f1d5b8f5}{owns\_arena}}()\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_ad4cc52f5406b6cc5f0a7801618a7c7a0}{save}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1FreeListAllocator_a7f22b04d167f05865cfa7dfd1f6ca8cf}{restore}}(\textcolor{keywordtype}{void}*\ checkpoint)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)checkpoint;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}{FreeListDeleter::operator()}}(FreeListAllocator*\ freelist)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!freelist)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ owns\_arena\ =\ freelist-\/>owns\_arena\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ArenaAllocator*\ arena\ =\ freelist-\/>arena\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\ mem\_type\ =\ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\textcolor{keyword}{>}(freelist-\/>mem\_type\_);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Call\ freelist\ destructor}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ freelist-\/>\string~FreeListAllocator();}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Only\ delete\ arena\ if:}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1.\ Freelist\ owns\ it\ AND}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2.\ It's\ DYNAMIC\ (heap-\/allocated)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ STATIC\ arenas\ (Stack\ freelists),\ the\ arena\ is\ in\ the\ user\ buffer}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (owns\_arena\ \&\&\ arena\ \&\&\ mem\_type\ ==\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}})\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ArenaDeleter\{\}(arena);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ For\ STATIC\ freelists,\ we\ still\ need\ to\ call\ arena\ destructor}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ but\ NOT\ delete\ it,\ since\ it's\ in\ the\ user\ buffer}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{else}\ \textcolor{keywordflow}{if}\ (owns\_arena\ \&\&\ arena\ \&\&\ mem\_type\ ==\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956eda0af05f0e42195dea493d9fb04af1414b}{STATIC}})\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ arena-\/>\string~ArenaAllocator();}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\textcolor{preprocessor}{\#if\ ARENA\_ENABLE\_DYNAMIC}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{struct\ }BuddyDeleter\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1BuddyDeleter_a137fb0e64ce5ebbee9a34e2080cdd445}{operator()}}(BuddyAllocator*\ buddy)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }BuddyAllocator\ :\ \textcolor{keyword}{public}\ Allocator\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }BuddyBlock\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ BuddyBlock*\ next;\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }BuddyHeader\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ order;\ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ block\_offset;\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Member\ variables}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \ \ \ \ \ \ \ \ base\_;\ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyBlock**\ \ free\_lists\_;\ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ pool\_size\_;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ base\_align\_;\ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \ \ \ user\_offset\_;\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ min\_order\_;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ max\_order\_;\ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint32\_t\ \ \ \ \ \ num\_levels\_;\ \ \ \ \ }
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ constructor\ (use\ factory\ methods)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Helper\ methods}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ uint32\_t\ ilog2(\textcolor{keywordtype}{size\_t}\ x);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//static\ size\_t\ next\_pow2(size\_t\ x);}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint32\_t\ order\_to\_level(uint32\_t\ order)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ uint32\_t\ level\_to\_order(uint32\_t\ level)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ int32\_t\ find\_nonempty\_level(uint32\_t\ desired\_level)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ freelist\_push(BuddyBlock**\ head,\ BuddyBlock*\ block);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ freelist\_remove(BuddyBlock**\ head,\ BuddyBlock*\ block);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyBlock*\ freelist\_find(BuddyBlock*\ head,\ \textcolor{keywordtype}{void}*\ addr)\ \textcolor{keyword}{const};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}*\ os\_alloc(\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}});}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{void}\ os\_free(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Allocator_a4ebb5393b6462a066d6a8f8fbd1c6f37}{size}});}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ ptr\_in\_pool\_(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ p)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a19051ba1bef638b5069726ae8b81b21a}{\string~BuddyAllocator}}()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator(\textcolor{keyword}{const}\ BuddyAllocator\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator\&\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a50282db56253429a5ede8bb90ee94421}{operator=}}(\textcolor{keyword}{const}\ BuddyAllocator\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator(BuddyAllocator\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator\&\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a50282db56253429a5ede8bb90ee94421}{operator=}}(BuddyAllocator\&\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<UniquePtr<BuddyAllocator,\ BuddyDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a69a50bda25e3c419eaea7c7181b21bb5}{Heap}}(\textcolor{keywordtype}{size\_t}\ pool\_size,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}{min\_block\_size}},}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ base\_align\ =\ 0);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aee7a4c90c8b3c39dc243f5bff7e9c624}{alloc}}(\textcolor{keywordtype}{size\_t}\ bytes,\ \textcolor{keywordtype}{bool}\ zeroed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a2b096665435178ffca68d9ada6093265}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t}\ bytes,\ \textcolor{keywordtype}{size\_t}\ alignment,\ \textcolor{keywordtype}{bool}\ zeroed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6d08026be9b991bc1f142b37c7476a1b}{realloc}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ old\_bytes,\ \textcolor{keywordtype}{size\_t}\ new\_bytes,\ \textcolor{keywordtype}{bool}\ zeroed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a409bb66d1e09136816216cbb96f3bd21}{realloc\_aligned}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ old\_bytes,\ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,\ \textcolor{keywordtype}{bool}\ zeroed)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a4293ba9f8f0cbd4fb55ea860ddafb05a}{return\_element}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes\ =\ 0,\ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0)\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aa923e1e70ca1361b07780e973d0bc298}{reset}}(\textcolor{keywordtype}{bool}\ trim\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a460c8ef9bfaeaeaa9669f00ee002cc2e}{is\_ptr}}(\textcolor{keywordtype}{void}*\ ptr)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_ac4f166211e89a427db128ae66dd7b800}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_aed85f994879d6e6b7a1f4c7166da4b55}{stats}}(\textcolor{keywordtype}{char}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_size)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a1a05d4c28353926c6029ecd0f9f2080d}{remaining}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_ab1b7786509eaeefcb4f5a1777d30db52}{save}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a6f9ddce102a19221c35757842a00979b}{restore}}(\textcolor{keywordtype}{void}*\ checkpoint)\textcolor{keyword}{\ override\ }\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)checkpoint;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_abd0fddad8adb07f77464d53c39ba41d7}{largest\_block}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a350ccd54381a41e1e2987c2cda330d54}{min\_block\_size}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{size\_t})1\ <<\ min\_order\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1BuddyAllocator_a294bb228c89b3534204d287775aa3bd6}{max\_block\_size}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\textcolor{keywordtype}{size\_t})1\ <<\ max\_order\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{classcslt_1_1BuddyAllocator_ab1324f8665b378d17c18336c2262808e}{BuddyDeleter}};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1BuddyDeleter_a137fb0e64ce5ebbee9a34e2080cdd445}{BuddyDeleter::operator()}}(BuddyAllocator*\ buddy)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!buddy)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Free\ OS-\/backed\ memory\ pool}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buddy-\/>base\_\ \&\&\ buddy-\/>pool\_size\_)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ BuddyAllocator::os\_free(buddy-\/>base\_,\ buddy-\/>pool\_size\_);}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Free\ free-\/lists\ array}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buddy-\/>free\_lists\_)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{delete}[]\ buddy-\/>free\_lists\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Call\ destructor}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ buddy-\/>\string~BuddyAllocator();}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Free\ the\ BuddyAllocator\ structure\ itself}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ ::operator\ \textcolor{keyword}{delete}(buddy);}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1ArenaDeleter_a3b0af015f298c4e7b89dff9af3d07749}{ArenaDeleter::operator()}}(ArenaAllocator*\ arena)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!arena)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Capture\ teardown\ metadata\ BEFORE\ destructor}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator*\ buddy\ =\ arena-\/>buddy\_owner\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ backing\_bytes\ \ =\ arena-\/>backing\_bytes\_;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956ed}{MemType}}\ type\ =\ arena-\/>memory\_type();}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ owns\ \ \ \ =\ arena-\/>owns\_memory();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Run\ destructor\ first\ (frees\ extra\ chunks\ if\ any)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ arena-\/>\string~ArenaAllocator();}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Buddy-\/backed\ arena:\ return\ entire\ region\ to\ buddy,\ NOT\ operator\ delete}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buddy\ \&\&\ backing\_bytes)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ buddy-\/>return\_element(arena,\ backing\_bytes,\ \textcolor{keyword}{alignof}(ArenaAllocator));}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Heap\ arena:\ free\ base\ allocation}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (type\ ==\ \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}}\ \&\&\ owns)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ::operator\ \textcolor{keyword}{delete}(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(arena));}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }SlabAllocator;}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{struct\ }SlabDeleter\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1SlabDeleter_afd2842a50068f47e3d8a5eda3ae0bb14}{operator()}}(SlabAllocator*\ slab)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{class\ }SlabAllocator\ :\ \textcolor{keyword}{public}\ Allocator\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{classcslt_1_1SlabAllocator_ab69b104653fffd31c3dbad0d2b021888}{SlabDeleter}};}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator*\ buddy\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ backing\ buddy\ allocator\ (non-\/owning)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ obj\_size\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ user-\/visible\ object\ size}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slot\_size\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ internal\ stride\ >=\ obj\_size\ and\ >=\ sizeof(Slot)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ align\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ slot\ alignment\ (pow2)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slab\_bytes\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ per-\/page\ allocation\ size}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ page\_hdr\_bytes\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ aligned\ sizeof(Page)}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ objs\_per\_slab\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ slots\ per\ page}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Tracking}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ len\_bytes\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ logical\ payload\ bytes\ in\ use\ (obj\_size\ *\ live\ objects)}}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }Slot\ \{\ Slot*\ next;\ \};\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ intrusive\ freelist\ node}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }Page\ \{\ Page*\ next;\ \};\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ page\ header\ at\ beginning\ of\ each\ page}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Page*\ pages\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Slot*\ free\_list\_;}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{explicit}\ SlabAllocator(BuddyAllocator\&\ buddy)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{size\_t}\ align\_up(\textcolor{keywordtype}{size\_t}\ x,\ \textcolor{keywordtype}{size\_t}\ a)\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ grow\_();\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ allocate\ a\ page\ and\ populate\ free\ list}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Page*\ find\_page\_(\textcolor{keyword}{const}\ \textcolor{keywordtype}{void}*\ ptr)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a9bdbc421069a66ffa2507d3b2c6036aa}{\string~SlabAllocator}}()\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ Expected<cslt::UniquePtr<SlabAllocator,\ SlabDeleter>>}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a6a681790bea29900146bdaec1a233aab}{WithBuddy}}(BuddyAllocator\&\ buddy,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ obj\_size,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ align\ =\ 0,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slab\_bytes\_hint\ =\ 0);}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_ae82a6b86f5ce311987d82120338b5249}{alloc}}(\textcolor{keywordtype}{size\_t}\ bytes,\ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a54b386924cb58c7d9bbd7b5fcc4647f3}{alloc\_aligned}}(\textcolor{keywordtype}{size\_t}\ bytes,\ \textcolor{keywordtype}{size\_t}\ alignment,\ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a151b449da25dab69e033036dd27255db}{realloc}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ old\_bytes,\ \textcolor{keywordtype}{size\_t}\ new\_bytes,\ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ Expected<void*>\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_aa2fd7ae8b816c67c15bd94cc0730f69a}{realloc\_aligned}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ old\_bytes,\ \textcolor{keywordtype}{size\_t}\ new\_bytes,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ alignment,\ \textcolor{keywordtype}{bool}\ zeroed\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a5428a1eeb7110ad52a5c69ae1e79057d}{return\_element}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes\ =\ 0,\ \textcolor{keywordtype}{size\_t}\ alignment\ =\ 0)\ \textcolor{keyword}{override};\ \ \textcolor{comment}{//\ FIXED:\ defaults}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a2b1dc0c2ce12e87b6043471987bcb18a}{stats}}(\textcolor{keywordtype}{char}*\ buffer,\ \textcolor{keywordtype}{size\_t}\ buffer\_size)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1da4e13544b8c601bb44ecd65de9ea1c}{reset}}(\textcolor{keywordtype}{bool}\ trim\ =\ \textcolor{keyword}{false})\ \textcolor{keyword}{override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}*\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_ac38d2e5e8062fc465c7beef3054a5572}{save}}()\textcolor{keyword}{\ const\ override\ }\{\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8be2184622f6278b44b1ad64a095014a}{restore}}(\textcolor{keywordtype}{void}*\ checkpoint)\textcolor{keyword}{\ override\ }\{\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ (void)checkpoint;\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a4b3e556caeaf0593c2b20e22c6c341d4}{is\_ptr}}(\textcolor{keywordtype}{void}*\ ptr)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a8c89fc6f199a228390361a74f687e252}{is\_ptr\_sized}}(\textcolor{keywordtype}{void}*\ ptr,\ \textcolor{keywordtype}{size\_t}\ bytes)\ \textcolor{keyword}{const\ override};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_aefe8cd35779be22199fd242f3bf5c7b5}{remaining}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \textcolor{keyword}{override};\ \ \textcolor{comment}{//\ ADDED:\ base\ class\ requirement}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a822fe0c63c76f2fb7a7543dd6a7f77b7}{stride}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{\ \textcolor{keywordflow}{return}\ slot\_size\_;\ \}}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a57709b8ad1a9f7b4c2d0df1943800e96}{total\_blocks}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_ab60bb66048fcb808efb8d45c9fe72ed6}{free\_blocks}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SlabAllocator_a1f67d338b5051f57bd9c5ea98734f2a9}{in\_use\_blocks}}()\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept};}
+\DoxyCodeLine{\ \ \ \ \};}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keyword}{inline}\ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{structcslt_1_1SlabDeleter_afd2842a50068f47e3d8a5eda3ae0bb14}{SlabDeleter::operator()}}(SlabAllocator*\ slab)\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slab)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Save\ the\ buddy\ pointer\ before\ calling\ destructor}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ BuddyAllocator*\ buddy\ =\ slab-\/>buddy\_;}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calculate\ the\ size\ that\ was\ allocated\ for\ the\ slab\ structure}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ slab\_struct\_bytes\ =\ SlabAllocator::align\_up(\textcolor{keyword}{sizeof}(SlabAllocator),\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Call\ destructor\ to\ free\ pages}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ slab-\/>\string~SlabAllocator();}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ Now\ free\ the\ SlabAllocator\ structure\ itself\ back\ to\ buddy}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{comment}{//\ CRITICAL:\ Use\ return\_element,\ NOT\ operator\ delete!}}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (buddy)\ \{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ buddy-\/>return\_element(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(slab),\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slab\_struct\_bytes,\ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{alignof}(max\_align\_t));}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{\ \ \ \ \}\ }
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ ARENA\_ENABLE\_DYNAMIC\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\}\ \textcolor{comment}{/*\ cslt\ namespace\ */}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{\textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ allocator\_HPP\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{\textcolor{comment}{//\ eof}}
+
+\end{DoxyCodeInclude}
+ 

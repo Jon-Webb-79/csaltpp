@@ -1,4 +1,6 @@
-\hypertarget{Reallocate-example}{}\doxysection{Reallocate}
+\doxysection{Reallocate}
+\hypertarget{Reallocate-example}{}\label{Reallocate-example}Reallocate aligned memory from system heap.
+
 Reallocate aligned memory from system heap
 \begin{DoxyParams}{Parameters}
 {\em ptr} & Pointer to existing aligned allocation \\
@@ -13,7 +15,7 @@ Reallocate aligned memory from system heap
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-Expected$<$void$\ast$$>$ containing pointer to reallocated aligned memory or error
+Expected$<$void\texorpdfstring{$\ast$}{*}$>$ containing pointer to reallocated aligned memory or error
 \end{DoxyReturn}
 Like realloc(), but maintains the specified alignment. The returned pointer is guaranteed to be aligned to the specified boundary.
 
@@ -35,21 +37,21 @@ Like realloc(), but maintains the specified alignment. The returned pointer is g
 \end{DoxyRetVals}
 cache-\/aligned buffer 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Initial 64-\/byte aligned allocation}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result1 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(512, 64, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result1.value();}
+\DoxyCodeLine{\textcolor{comment}{//\ Initial\ 64-\/byte\ aligned\ allocation}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result1\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a53a1b9b301c70c4ce6035075385317e7}{alloc\_aligned}}(512,\ 64,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ ptr\ =\ result1.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Grow while maintaining 64-\/byte alignment}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_adeb125664bb070ffb9522604fe753aa1}{realloc\_aligned}}(ptr, 512, 1024, 64, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (result2.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{keywordtype}{void}* new\_ptr = result2.value();}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    \textcolor{comment}{// Verify alignment maintained}}
-\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr) \% 64 == 0);}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(new\_ptr, 1024, 64);}
+\DoxyCodeLine{\textcolor{comment}{//\ Grow\ while\ maintaining\ 64-\/byte\ alignment}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result2\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aac4dc418d8906892495d0a6fcf965fa1}{realloc\_aligned}}(ptr,\ 512,\ 1024,\ 64,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result2.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}*\ new\_ptr\ =\ result2.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Verify\ alignment\ maintained}}
+\DoxyCodeLine{\ \ \ \ assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(new\_ptr)\ \%\ 64\ ==\ 0);}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(new\_ptr,\ 1024,\ 64);}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

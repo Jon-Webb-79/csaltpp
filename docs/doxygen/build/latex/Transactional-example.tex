@@ -1,4 +1,6 @@
-\hypertarget{Transactional-example}{}\doxysection{Transactional}
+\doxysection{Transactional}
+\hypertarget{Transactional-example}{}\label{Transactional-example}Save current arena state as a checkpoint.
+
 Save current arena state as a checkpoint\begin{DoxyReturn}{Returns}
 Opaque checkpoint pointer, or nullptr on failure
 \end{DoxyReturn}
@@ -17,24 +19,24 @@ You must call restore() on the checkpoint to free it. Losing the checkpoint poin
 \end{DoxyWarning}
 allocations 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(8192).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(8192).value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Make some permanent allocations}}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* permanent1 = arena-\/>alloc(256).value();}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* permanent2 = arena-\/>alloc(512).value();}
+\DoxyCodeLine{\textcolor{comment}{//\ Make\ some\ permanent\ allocations}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ permanent1\ =\ arena-\/>alloc(256).value();}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ permanent2\ =\ arena-\/>alloc(512).value();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Save checkpoint before temporary work}}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* checkpoint = arena-\/>save();}
+\DoxyCodeLine{\textcolor{comment}{//\ Save\ checkpoint\ before\ temporary\ work}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ checkpoint\ =\ arena-\/>save();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Make temporary allocations}}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* temp1 = arena-\/>alloc(1024).value();}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* temp2 = arena-\/>alloc(2048).value();}
+\DoxyCodeLine{\textcolor{comment}{//\ Make\ temporary\ allocations}}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ temp1\ =\ arena-\/>alloc(1024).value();}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ temp2\ =\ arena-\/>alloc(2048).value();}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Rollback -\/ frees temp1 and temp2}}
+\DoxyCodeLine{\textcolor{comment}{//\ Rollback\ -\/\ frees\ temp1\ and\ temp2}}
 \DoxyCodeLine{arena-\/>restore(checkpoint);}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// permanent1 and permanent2 still valid}}
-\DoxyCodeLine{\textcolor{comment}{// temp1 and temp2 now INVALID}}
+\DoxyCodeLine{\textcolor{comment}{//\ permanent1\ and\ permanent2\ still\ valid}}
+\DoxyCodeLine{\textcolor{comment}{//\ temp1\ and\ temp2\ now\ INVALID}}
 
 \end{DoxyCode}
 

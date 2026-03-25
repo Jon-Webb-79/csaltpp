@@ -1,4 +1,6 @@
-\hypertarget{Cache-example}{}\doxysection{Cache}
+\doxysection{Cache}
+\hypertarget{Cache-example}{}\label{Cache-example}Allocate aligned memory from system heap.
+
 Allocate aligned memory from system heap
 \begin{DoxyParams}{Parameters}
 {\em bytes} & Number of bytes to allocate \\
@@ -9,14 +11,14 @@ Allocate aligned memory from system heap
 \hline
 \end{DoxyParams}
 \begin{DoxyReturn}{Returns}
-Expected$<$void$\ast$$>$ containing pointer to aligned memory or error
+Expected$<$void\texorpdfstring{$\ast$}{*}$>$ containing pointer to aligned memory or error
 \end{DoxyReturn}
 Allocates memory aligned to the specified boundary. The alignment must be a power of 2. If alignment is 0, uses default\+\_\+alignment\+\_\+.
 
 Implementation strategy\+:
 \begin{DoxyItemize}
-\item If alignment $<$= max\+\_\+align\+\_\+t\+: uses operator new
-\item If alignment $>$ max\+\_\+align\+\_\+t\+: uses posix\+\_\+memalign (POSIX) or \+\_\+aligned\+\_\+malloc (Windows)
+\item If alignment \texorpdfstring{$<$}{<}= max\+\_\+align\+\_\+t\+: uses operator new
+\item If alignment \texorpdfstring{$>$}{>} max\+\_\+align\+\_\+t\+: uses posix\+\_\+memalign (POSIX) or \+\_\+aligned\+\_\+malloc (Windows)
 \end{DoxyItemize}
 
 
@@ -35,17 +37,17 @@ Implementation strategy\+:
 \end{DoxyRetVals}
 line alignment 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Allocate aligned to 64-\/byte cache line}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8d1cea2c096a86dda84a7f46e6c750f9}{alloc\_aligned}}(4096, 64, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (result.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{keywordtype}{void}* ptr = result.value();}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    \textcolor{comment}{// Verify alignment}}
-\DoxyCodeLine{    assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr) \% 64 == 0);}
-\DoxyCodeLine{    }
-\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr, 4096, 64);}
+\DoxyCodeLine{\textcolor{comment}{//\ Allocate\ aligned\ to\ 64-\/byte\ cache\ line}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a53a1b9b301c70c4ce6035075385317e7}{alloc\_aligned}}(4096,\ 64,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{void}*\ ptr\ =\ result.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Verify\ alignment}}
+\DoxyCodeLine{\ \ \ \ assert(\textcolor{keyword}{reinterpret\_cast<}uintptr\_t\textcolor{keyword}{>}(ptr)\ \%\ 64\ ==\ 0);}
+\DoxyCodeLine{\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(ptr,\ 4096,\ 64);}
 \DoxyCodeLine{\}}
 
 \end{DoxyCode}

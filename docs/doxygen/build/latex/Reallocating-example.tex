@@ -1,22 +1,24 @@
-\hypertarget{Reallocating-example}{}\doxysection{Reallocating}
+\doxysection{Reallocating}
+\hypertarget{Reallocating-example}{}\label{Reallocating-example}a buffer
+
 a buffer 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}} allocator;}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1HeapAllocator}{cslt::HeapAllocator}}\ allocator;}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Start with 256 bytes}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result1 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a1fad90e150abc4f14cccaa2a9899dcde}{alloc}}(256, \textcolor{keyword}{false});}
-\DoxyCodeLine{\textcolor{keywordtype}{void}* ptr = result1.value();}
-\DoxyCodeLine{memset(ptr, 0xAA, 256);}
+\DoxyCodeLine{\textcolor{comment}{//\ Start\ with\ 256\ bytes}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result1\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a11de81a6f52b82e6578b69332482735d}{alloc}}(256,\ \textcolor{keyword}{false});}
+\DoxyCodeLine{\textcolor{keywordtype}{void}*\ ptr\ =\ result1.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
+\DoxyCodeLine{memset(ptr,\ 0xAA,\ 256);}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Grow to 512 bytes, zero new space}}
-\DoxyCodeLine{\textcolor{keyword}{auto} result2 = allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a8da5b4e9dc6e8d13020a66d384835363}{realloc}}(ptr, 256, 512, \textcolor{keyword}{true});}
-\DoxyCodeLine{\textcolor{keywordflow}{if} (result2.hasValue()) \{}
-\DoxyCodeLine{    \textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}* data = \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned} \textcolor{keywordtype}{char}*\textcolor{keyword}{>}(result2.value());}
-\DoxyCodeLine{    \textcolor{comment}{// First 256 bytes: 0xAA (preserved)}}
-\DoxyCodeLine{    \textcolor{comment}{// Next 256 bytes: 0x00 (zeroed)}}
-\DoxyCodeLine{    allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(data, 512, allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{\textcolor{comment}{//\ Grow\ to\ 512\ bytes,\ zero\ new\ space}}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ result2\ =\ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_a7a3330d0681e32e1e31245d24e109d57}{realloc}}(ptr,\ 256,\ 512,\ \textcolor{keyword}{true});}
+\DoxyCodeLine{\textcolor{keywordflow}{if}\ (result2.hasValue())\ \{}
+\DoxyCodeLine{\ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\ data\ =\ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{char}*\textcolor{keyword}{>}(result2.value());}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ First\ 256\ bytes:\ 0xAA\ (preserved)}}
+\DoxyCodeLine{\ \ \ \ \textcolor{comment}{//\ Next\ 256\ bytes:\ 0x00\ (zeroed)}}
+\DoxyCodeLine{\ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1HeapAllocator_aee2691eca10efc6a09848cfcdcec9c2c}{return\_element}}(data,\ 512,\ allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
 \DoxyCodeLine{\}}
-\DoxyCodeLine{\textcolor{comment}{// Original ptr is now invalid -\/ don't use it!}}
+\DoxyCodeLine{\textcolor{comment}{//\ Original\ ptr\ is\ now\ invalid\ -\/\ don't\ use\ it!}}
 
 \end{DoxyCode}
 

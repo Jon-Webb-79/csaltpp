@@ -1,22 +1,24 @@
-\hypertarget{Reset-example}{}\doxysection{Reset}
+\doxysection{Reset}
+\hypertarget{Reset-example}{}\label{Reset-example}with trim
+
 with trim 
 \begin{DoxyCode}{0}
-\DoxyCodeLine{\textcolor{keyword}{auto} arena = \mbox{\hyperlink{namespacecslt_a837bbe872aff901c868b62bb782b9600}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_a322c802722e6491f4b1112d0893660a3}{cslt::ArenaAllocator::Heap}}(512, \textcolor{keyword}{true}, 512).value());}
+\DoxyCodeLine{\textcolor{keyword}{auto}\ arena\ =\ \mbox{\hyperlink{namespacecslt_ad55f4168d9f1832627c6d75e60d14a6c}{cslt::move}}(\mbox{\hyperlink{classcslt_1_1ArenaAllocator_ab71e5fc5e1cf3e9b07ad7208465a7b0f}{cslt::ArenaAllocator::Heap}}(512,\ \textcolor{keyword}{true},\ 512).value());}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Fill initial chunk}}
-\DoxyCodeLine{\textcolor{keywordflow}{while} (arena-\/>remaining() >= 64) \{}
-\DoxyCodeLine{    arena-\/>alloc(64);}
+\DoxyCodeLine{\textcolor{comment}{//\ Fill\ initial\ chunk}}
+\DoxyCodeLine{\textcolor{keywordflow}{while}\ (arena-\/>remaining()\ >=\ 64)\ \{}
+\DoxyCodeLine{\ \ \ \ arena-\/>alloc(64);}
 \DoxyCodeLine{\}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Trigger growth}}
+\DoxyCodeLine{\textcolor{comment}{//\ Trigger\ growth}}
 \DoxyCodeLine{arena-\/>alloc(256);}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{keywordtype}{size\_t} chunks = arena-\/>chunk\_count();  \textcolor{comment}{// > 1}}
+\DoxyCodeLine{\textcolor{keywordtype}{size\_t}\ chunks\ =\ arena-\/>chunk\_count();\ \ \textcolor{comment}{//\ >\ 1}}
 \DoxyCodeLine{}
-\DoxyCodeLine{\textcolor{comment}{// Reset and trim extra chunks}}
+\DoxyCodeLine{\textcolor{comment}{//\ Reset\ and\ trim\ extra\ chunks}}
 \DoxyCodeLine{arena-\/>reset(\textcolor{keyword}{true});}
 \DoxyCodeLine{}
-\DoxyCodeLine{assert(arena-\/>chunk\_count() == 1);  \textcolor{comment}{// Back to single chunk}}
+\DoxyCodeLine{assert(arena-\/>chunk\_count()\ ==\ 1);\ \ \textcolor{comment}{//\ Back\ to\ single\ chunk}}
 
 \end{DoxyCode}
 

@@ -1,58 +1,58 @@
-\hypertarget{structcslt_1_1FreeListDeleter}{}\doxysection{cslt\+::Free\+List\+Deleter Struct Reference}
-\label{structcslt_1_1FreeListDeleter}\index{cslt::FreeListDeleter@{cslt::FreeListDeleter}}
+\doxysection{cslt\+::Free\+List\+Deleter Struct Reference}
+\hypertarget{structcslt_1_1FreeListDeleter}{}\label{structcslt_1_1FreeListDeleter}\index{cslt::FreeListDeleter@{cslt::FreeListDeleter}}
 
 
-Custom deleter for \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} unique pointers.  
+Custom deleter for \doxylink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator} unique pointers.  
 
 
 
 
 {\ttfamily \#include $<$allocator.\+hpp$>$}
 
-\doxysubsection*{Public Member Functions}
+\doxysubsubsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-void \mbox{\hyperlink{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}{operator()}} (\mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} $\ast$freelist) const noexcept
-\begin{DoxyCompactList}\small\item\em Custom deleter for \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} cleanup. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}{operator()}} (\mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{freelist}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Custom deleter for \doxylink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator} \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr} cleanup. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
-Custom deleter for \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} unique pointers. 
+Custom deleter for \doxylink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator} unique pointers. 
 
-This deleter properly cleans up \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} instances created by factory methods (Heap, With\+Arena, Stack). It handles the complex ownership relationships between freelists and their backing arenas\+:
+This deleter properly cleans up \doxylink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator} instances created by factory methods (Heap, With\+Arena, Stack). It handles the complex ownership relationships between freelists and their backing arenas\+:
 
 Arena ownership patterns\+:
 \begin{DoxyItemize}
-\item {\bfseries{Heap()}}\+: Free\+List owns arena → \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} frees arena and memory
+\item {\bfseries{Heap()}}\+: Free\+List owns arena → \doxylink{structcslt_1_1ArenaDeleter}{Arena\+Deleter} frees arena and memory
 \item {\bfseries{With\+Arena()}}\+: Free\+List borrows arena → Arena not deleted (caller owns it)
-\item {\bfseries{Stack()}}\+: Free\+List owns arena object → \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} destructs arena (but doesn\textquotesingle{}t free buffer, user owns it)
+\item {\bfseries{Stack()}}\+: Free\+List owns arena object → \doxylink{structcslt_1_1ArenaDeleter}{Arena\+Deleter} destructs arena (but doesn\textquotesingle{}t free buffer, user owns it)
 \end{DoxyItemize}
 
 \begin{DoxySeeAlso}{See also}
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_aa2f748bf100ae9f46a7927f890709857}{Free\+List\+Allocator\+::\+Heap()}} 
+\doxylink{classcslt_1_1FreeListAllocator_a81cf8b97326d92fb429429a894cfc248}{Free\+List\+Allocator\+::\+Heap()} 
 
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{Free\+List\+Allocator\+::\+With\+Arena()}} 
+\doxylink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{Free\+List\+Allocator\+::\+With\+Arena()} 
 
-\mbox{\hyperlink{classcslt_1_1FreeListAllocator_a00da504efb8f8317abf7498c697cf891}{Free\+List\+Allocator\+::\+Stack()}} 
+\doxylink{classcslt_1_1FreeListAllocator_a00da504efb8f8317abf7498c697cf891}{Free\+List\+Allocator\+::\+Stack()} 
 
-\mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}} 
+\doxylink{structcslt_1_1ArenaDeleter}{Arena\+Deleter} 
 \end{DoxySeeAlso}
 
 
 \doxysubsection{Member Function Documentation}
-\mbox{\Hypertarget{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}\label{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}} 
+\Hypertarget{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e}\label{structcslt_1_1FreeListDeleter_a504beab7d06fe29fc0d4c147aa05d78e} 
 \index{cslt::FreeListDeleter@{cslt::FreeListDeleter}!operator()@{operator()}}
 \index{operator()@{operator()}!cslt::FreeListDeleter@{cslt::FreeListDeleter}}
 \doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
-{\footnotesize\ttfamily void cslt\+::\+Free\+List\+Deleter\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} $\ast$}]{freelist }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classcslt_1_1Expected}{void}} cslt\+::\+Free\+List\+Deleter\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} \texorpdfstring{$\ast$}{*}}]{freelist }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
 
 
 
-Custom deleter for \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} cleanup. 
+Custom deleter for \doxylink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator} \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr} cleanup. 
 
 
 \begin{DoxyParams}{Parameters}
-{\em freelist} & Pointer to \mbox{\hyperlink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator}} to delete. May be nullptr.\\
+{\em freelist} & Pointer to \doxylink{classcslt_1_1FreeListAllocator}{Free\+List\+Allocator} to delete. May be nullptr.\\
 \hline
 \end{DoxyParams}
 This custom deleter is invoked when a Unique\+Ptr$<$\+Free\+List\+Allocator$>$ goes out of scope or is explicitly reset. It handles proper cleanup of the freelist and its backing arena based on ownership semantics.
@@ -60,13 +60,13 @@ This custom deleter is invoked when a Unique\+Ptr$<$\+Free\+List\+Allocator$>$ g
 {\bfseries{Cleanup sequence\+:}}
 \begin{DoxyEnumerate}
 \item Extract ownership information (owns\+\_\+arena, arena, mem\+\_\+type)
-\item Call $\sim$\+Free\+List\+Allocator() destructor
+\item Call \texorpdfstring{$\sim$}{\string~}\+Free\+List\+Allocator() destructor
 \item Conditionally clean up arena based on ownership and type\+:
 \end{DoxyEnumerate}
 
 {\bfseries{Heap() freelists}} (owns\+\_\+arena=true, mem\+\_\+type=DYNAMIC)\+:
 \begin{DoxyItemize}
-\item Calls \mbox{\hyperlink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}}\{\}(arena)
+\item Calls \doxylink{structcslt_1_1ArenaDeleter}{Arena\+Deleter}\{\}(arena)
 \item Arena and all memory is freed back to heap
 \end{DoxyItemize}
 
@@ -78,7 +78,7 @@ This custom deleter is invoked when a Unique\+Ptr$<$\+Free\+List\+Allocator$>$ g
 
 {\bfseries{Stack() freelists}} (owns\+\_\+arena=true, mem\+\_\+type=STATIC)\+:
 \begin{DoxyItemize}
-\item Calls arena-\/$>$$\sim$\+Arena\+Allocator() destructor
+\item Calls arena-\/\texorpdfstring{$>$}{>}\texorpdfstring{$\sim$}{\string~}\+Arena\+Allocator() destructor
 \item Does NOT free buffer (user owns it)
 \item Arena object destroyed, buffer remains valid
 \end{DoxyItemize}
@@ -92,22 +92,22 @@ Null pointer is safely handled (early return, no crash).
 
 The freelist destructor is always called before arena cleanup to ensure proper cleanup ordering.
 
-Users should never call this directly -\/ it is automatically invoked by \mbox{\hyperlink{classcslt_1_1UniquePtr}{Unique\+Ptr}} when the freelist goes out of scope.
+Users should never call this directly -\/ it is automatically invoked by \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr} when the freelist goes out of scope.
 \end{DoxyNote}
 \begin{DoxySeeAlso}{See also}
-Heap() Creates freelist with owned \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC}} arena (arena will be freed) 
+Heap() Creates freelist with owned \doxylink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956edab68928b40816a41286d6190a3a30a4da}{DYNAMIC} arena (arena will be freed) 
 
 With\+Arena() Creates freelist with borrowed arena (arena not touched) 
 
-Stack() Creates freelist with owned \mbox{\hyperlink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956eda0af05f0e42195dea493d9fb04af1414b}{STATIC}} arena (destructor only) 
+Stack() Creates freelist with owned \doxylink{namespacecslt_a96b27f1a16d21546d14d4f25a4c956eda0af05f0e42195dea493d9fb04af1414b}{STATIC} arena (destructor only) 
 
-$\sim$\+Free\+List\+Allocator() Freelist destructor called before arena cleanup 
+\texorpdfstring{$\sim$}{\string~}\+Free\+List\+Allocator() Freelist destructor called before arena cleanup 
 \end{DoxySeeAlso}
 \begin{Desc}
 \item[Examples]\par
-\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csalt_09_09_2csalt_09_09_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/allocator.\+hpp}}.\end{Desc}
+\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csaltpp_2csaltpp_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/allocator.\+hpp}}.\end{Desc}
 
 
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csalt++/csalt++/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\end{DoxyCompactItemize}
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/\mbox{\hyperlink{allocator_8hpp}{allocator.\+hpp}}\end{DoxyCompactItemize}

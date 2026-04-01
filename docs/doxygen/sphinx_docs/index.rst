@@ -102,6 +102,18 @@ Dictionary
 * **Templated iteration** - ``foreach()`` accepts any callable with signature ``void(const K&, const V&)``
 * **Copy and merge** - ``copy()`` and ``merge()`` factory methods build new dictionaries from existing ones
 
+List
+----
+* **Generic singly linked container** - ``SList<T>`` stores elements of any type ``T`` using a node-based template design
+* **Allocator-backed** - The list struct, slab storage, and optional overflow nodes are all allocated through the provided allocator
+* **Factory pattern** - Creation via ``SList<T>::init()`` returning ``Expected<SList<T>*>`` prevents uninitialised instances
+* **Hybrid node storage** - Initial nodes are drawn from a contiguous slab for improved locality, with optional overflow allocation beyond slab capacity
+* **Recycled slab nodes** - Removed slab-backed nodes are tracked internally and reused by future push operations
+* **Configurable overflow** - Overflow allocation can be enabled for dynamic growth or disabled for deterministic fixed-capacity behavior
+* **Safe list operations** - ``push_*()``, ``pop_*()``, ``get()``, and peek functions return explicit success or error state where appropriate
+* **List-oriented algorithms** - ``reverse()``, ``clear()``, ``concat()``, ``copy()``, ``contains()``, and ``foreach()`` provide common linked-list functionality
+* **RAII cleanup** - ``SListDeleter<T>`` works with ``UniquePtr`` to automatically reclaim all list-owned memory
+
 Typical Use Cases
 #################
 
@@ -121,6 +133,7 @@ Typical Use Cases
    String <String>
    Array <Array>
    Dictionary <Dict>
+   List <List>
     
 Indices and tables
 ==================

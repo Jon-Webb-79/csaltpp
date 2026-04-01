@@ -1,0 +1,956 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ List Overview &mdash; csalt++-lib 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="C++ Dictionary Overview" href="Dict.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            csalt++-lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pointers.html">Smart Pointers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html">Error</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Allocator.html">Allocator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="String.html">String</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">List</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-allocators"><strong>Recommended Allocators</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#memory-model"><strong>Memory Model</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slab-reuse-strategy"><strong>Slab Reuse Strategy</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overflow-behavior"><strong>Overflow Behavior</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#element-type-requirements"><strong>Element Type Requirements</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#operations"><strong>Operations</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complexity-notes"><strong>Complexity Notes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases"><strong>Use Cases</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-class">List Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE"><code class="docutils literal notranslate"><span class="pre">cslt::SList</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList9push_backERK1T"><code class="docutils literal notranslate"><span class="pre">push_back()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList10push_frontERK1T"><code class="docutils literal notranslate"><span class="pre">push_front()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList7push_atE6size_tRK1T"><code class="docutils literal notranslate"><span class="pre">push_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList9pop_frontEv"><code class="docutils literal notranslate"><span class="pre">pop_front()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList8pop_backEv"><code class="docutils literal notranslate"><span class="pre">pop_back()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList6pop_atE6size_t"><code class="docutils literal notranslate"><span class="pre">pop_at()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList3getE6size_t"><code class="docutils literal notranslate"><span class="pre">get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList10peek_frontEv"><code class="docutils literal notranslate"><span class="pre">peek_front()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList9peek_backEv"><code class="docutils literal notranslate"><span class="pre">peek_back()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList5clearEv"><code class="docutils literal notranslate"><span class="pre">clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList7reverseEv"><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList6concatERK5SListI1TE"><code class="docutils literal notranslate"><span class="pre">concat()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList8containsERK1T"><code class="docutils literal notranslate"><span class="pre">contains()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt5SList7foreachEb4Func"><code class="docutils literal notranslate"><span class="pre">foreach()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList4sizeEv"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList13slab_capacityEv"><code class="docutils literal notranslate"><span class="pre">slab_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList9slab_usedEv"><code class="docutils literal notranslate"><span class="pre">slab_used()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList15slab_free_countEv"><code class="docutils literal notranslate"><span class="pre">slab_free_count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList15slab_live_countEv"><code class="docutils literal notranslate"><span class="pre">slab_live_count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList14slab_remainingEv"><code class="docutils literal notranslate"><span class="pre">slab_remaining()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList14overflow_countEv"><code class="docutils literal notranslate"><span class="pre">overflow_count()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList8is_emptyEv"><code class="docutils literal notranslate"><span class="pre">is_empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList12is_slab_fullEv"><code class="docutils literal notranslate"><span class="pre">is_slab_full()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt5SList11in_overflowEv"><code class="docutils literal notranslate"><span class="pre">in_overflow()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList4initE6size_tbR9Allocator"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList4copyERK5SListI1TER9Allocator"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt5SList4copyERK5SListI1TE"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">csalt++-lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">C++ List Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/List.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-list-overview">
+<span id="list-file"></span><h1>C++ List Overview<a class="headerlink" href="#c-list-overview" title="Link to this heading"></a></h1>
+<p>Linked-list handling in C++ is traditionally performed with <code class="docutils literal notranslate"><span class="pre">std::list</span></code> or
+<code class="docutils literal notranslate"><span class="pre">std::forward_list</span></code>. While these standard containers provide flexible node-
+based storage, they rely on allocator behavior that is often opaque and not
+well suited to deterministic, embedded, real-time, or safety-regulated
+environments. In such systems, explicit control over memory placement,
+allocation strategy, and failure behavior is often more important than full
+generality.</p>
+<p>The <em>C++ List module</em> in this library provides a lightweight, allocator-aware
+generic singly linked list container implemented in C++ and declared in
+<code class="docutils literal notranslate"><span class="pre">list.hpp</span></code>. Unlike <code class="docutils literal notranslate"><span class="pre">std::forward_list</span></code>, this container:</p>
+<ul class="simple">
+<li><p>Integrates directly with custom allocator hierarchies</p></li>
+<li><p>Supports allocator-controlled overflow behavior</p></li>
+<li><p>Uses a contiguous slab region for initial node storage to improve locality</p></li>
+<li><p>Recycles popped slab nodes for future reuse</p></li>
+<li><p>Enforces initialization through a factory pattern preventing invalid state</p></li>
+<li><p>Provides automatic cleanup via RAII with custom deleters</p></li>
+<li><p>Returns explicit success/error state using the <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code> pattern</p></li>
+<li><p>Supports insertion, removal, reversal, concatenation, copying, and traversal</p></li>
+</ul>
+<p>The list implementation is intended for environments where the developer wants
+node-based semantics without surrendering control over memory layout or
+allocation policy.</p>
+<p>The only dependencies this module has within the CSalt library are the
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, <code class="docutils literal notranslate"><span class="pre">error.hpp</span></code>, and <code class="docutils literal notranslate"><span class="pre">pointers.hpp</span></code> files, keeping the
+container relatively self-contained and suitable for use in larger systems
+with minimal coupling.</p>
+<section id="allocator-integration">
+<h2><strong>Allocator Integration</strong><a class="headerlink" href="#allocator-integration" title="Link to this heading"></a></h2>
+<p>By integrating directly with the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class defined in
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, the list container supports multiple allocation strategies
+without changing the public API. The list allocates:</p>
+<ul class="simple">
+<li><p>the <code class="docutils literal notranslate"><span class="pre">SList&lt;T&gt;</span></code> object itself</p></li>
+<li><p>the initial contiguous slab used for node storage</p></li>
+<li><p>optional overflow nodes when slab capacity is exhausted and overflow is enabled</p></li>
+</ul>
+<p>This makes the container compatible with the following allocator strategies:</p>
+<ul class="simple">
+<li><p><strong>HeapAllocator</strong> — Best general-purpose choice for testing and normal host-side use</p></li>
+<li><p><strong>ArenaAllocator</strong> — Useful when the list has bulk lifetime semantics and is destroyed all at once</p></li>
+<li><p><strong>BuddyAllocator</strong> — Useful when deterministic block allocation and returnable memory are important</p></li>
+<li><p><strong>PoolAllocator</strong> — Potentially useful for overflow nodes if the pool block size matches node size</p></li>
+<li><p><strong>SlabAllocator</strong> — A strong fit for overflow nodes when the node size is fixed and known</p></li>
+<li><p><strong>Custom allocators</strong> — Any user-defined class inheriting from <code class="docutils literal notranslate"><span class="pre">Allocator</span></code></p></li>
+</ul>
+<p>Because the list internally maintains a contiguous slab for its primary storage,
+it already behaves partly like a pool-backed container. The allocator therefore
+has the most influence over:</p>
+<ul class="simple">
+<li><p>where the list object itself lives</p></li>
+<li><p>where the slab lives</p></li>
+<li><p>how overflow nodes are obtained</p></li>
+<li><p>whether allocation failure is deterministic or environment-dependent</p></li>
+</ul>
+</section>
+<section id="recommended-allocators">
+<h2><strong>Recommended Allocators</strong><a class="headerlink" href="#recommended-allocators" title="Link to this heading"></a></h2>
+<p>Different allocators are appropriate depending on how the list is used:</p>
+<ul>
+<li><p><strong>HeapAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>general-purpose use</p></li>
+<li><p>unit testing</p></li>
+<li><p>host-side applications</p></li>
+<li><p>debugging container logic independent of allocator complexity</p></li>
+</ul>
+<p>This is usually the best allocator to use first because failure modes are
+simple and easy to reason about.</p>
+</li>
+<li><p><strong>ArenaAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>build-then-discard workflows</p></li>
+<li><p>temporary lists used during parsing or transformation passes</p></li>
+<li><p>scenarios where the full list lifetime matches a larger arena lifetime</p></li>
+</ul>
+<p>This works especially well when overflow is disabled or rare. If overflow
+is frequent, the arena must still have enough capacity to satisfy those
+extra node allocations.</p>
+</li>
+<li><p><strong>BuddyAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>deterministic dynamic allocation</p></li>
+<li><p>environments where memory should be returnable and coalesced</p></li>
+<li><p>systems requiring more structure than a heap allocator</p></li>
+</ul>
+<p>This is a reasonable choice when the list may grow dynamically and later
+release memory through normal destruction.</p>
+</li>
+<li><p><strong>PoolAllocator / SlabAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>overflow-heavy workloads with uniform node sizes</p></li>
+<li><p>fixed-type deployments where the node footprint is stable</p></li>
+<li><p>performance-sensitive paths with many push/pop operations</p></li>
+</ul>
+<p>These allocators can be particularly effective because list nodes are
+fixed-size objects for a given <code class="docutils literal notranslate"><span class="pre">T</span></code>. They are less useful when only the
+primary slab is used and overflow is disabled.</p>
+</li>
+</ul>
+</section>
+<section id="factory-pattern-and-raii">
+<h2><strong>Factory Pattern and RAII</strong><a class="headerlink" href="#factory-pattern-and-raii" title="Link to this heading"></a></h2>
+<p>Unlike direct constructor-based creation, list creation uses a static factory
+function <code class="docutils literal notranslate"><span class="pre">SList::init()</span></code> that returns <code class="docutils literal notranslate"><span class="pre">Expected&lt;SList&lt;T&gt;*&gt;</span></code>. This design:</p>
+<ul class="simple">
+<li><p>Prevents creation of partially initialized lists</p></li>
+<li><p>Ensures the slab and list object are allocated together through the chosen allocator</p></li>
+<li><p>Provides explicit error handling at the point of creation</p></li>
+<li><p>Returns typed error objects such as <code class="docutils literal notranslate"><span class="pre">ArgumentError</span></code> and <code class="docutils literal notranslate"><span class="pre">MemoryError</span></code></p></li>
+</ul>
+<p>Memory cleanup is automatic through the <code class="docutils literal notranslate"><span class="pre">SListDeleter</span></code> custom deleter, which
+works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to provide RAII semantics:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">SList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">SList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">SListDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">        </span><span class="n">list</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">list</span><span class="o">-&gt;</span><span class="n">push_back</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="w">        </span><span class="n">list</span><span class="o">-&gt;</span><span class="n">push_front</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// list, slab, and any overflow nodes automatically freed here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This ownership model is especially important because the list may allocate from
+multiple internal sources: a slab region plus optional overflow nodes.</p>
+</section>
+<section id="memory-model">
+<h2><strong>Memory Model</strong><a class="headerlink" href="#memory-model" title="Link to this heading"></a></h2>
+<p>The list is implemented as a singly linked node chain, but unlike a traditional
+linked list where every node is allocated independently, this implementation
+starts with a <em>contiguous slab</em> of node storage.</p>
+<p>This gives the container a hybrid memory model:</p>
+<ul class="simple">
+<li><p><strong>Primary slab storage</strong> — a contiguous region reserved at initialization for
+up to <code class="docutils literal notranslate"><span class="pre">N</span></code> nodes</p></li>
+<li><p><strong>Recycled slab nodes</strong> — popped slab nodes are returned to an internal free
+list and reused before any fresh slab slot is consumed</p></li>
+<li><p><strong>Overflow storage</strong> — optional allocator-backed nodes used only after all
+slab capacity has been consumed or recycled capacity is unavailable</p></li>
+</ul>
+<p>This design provides several benefits over a conventional linked list:</p>
+<ul class="simple">
+<li><p>improved cache locality for early inserts</p></li>
+<li><p>reduced allocator overhead for the first <code class="docutils literal notranslate"><span class="pre">N</span></code> nodes</p></li>
+<li><p>deterministic bounded operation when overflow is disabled</p></li>
+<li><p>efficient reuse of popped slab slots without external metadata</p></li>
+</ul>
+</section>
+<section id="slab-reuse-strategy">
+<h2><strong>Slab Reuse Strategy</strong><a class="headerlink" href="#slab-reuse-strategy" title="Link to this heading"></a></h2>
+<p>Unlike a monotonic arena-style node reservoir, the list tracks whether a node
+belongs to the internal slab by checking whether its address lies within the
+slab memory range. When a slab-backed node is removed:</p>
+<ul class="simple">
+<li><p>its stored value is destroyed</p></li>
+<li><p>the node itself is returned to an internal slab free list</p></li>
+<li><p>future push operations reuse that node before consuming a new slab slot</p></li>
+</ul>
+<p>This makes the slab behave like an internal node pool.</p>
+<p>Allocation order is therefore:</p>
+<ol class="arabic simple">
+<li><p>Reuse a recycled slab node if one is available</p></li>
+<li><p>Consume the next fresh slab slot if unused slab capacity remains</p></li>
+<li><p>Allocate an overflow node through the external allocator if overflow is enabled</p></li>
+<li><p>Fail the operation if overflow is disabled and no slab nodes remain available</p></li>
+</ol>
+<p>This approach gives the list predictable bounded behavior while avoiding the
+surprising “write-once slab” behavior that would otherwise occur after repeated
+push/pop cycles.</p>
+</section>
+<section id="overflow-behavior">
+<h2><strong>Overflow Behavior</strong><a class="headerlink" href="#overflow-behavior" title="Link to this heading"></a></h2>
+<p>The list can be configured in one of two modes:</p>
+<ul>
+<li><p><strong>Overflow enabled</strong></p>
+<p>When slab capacity is exhausted, additional nodes are allocated individually
+through the provided allocator. This allows the list to continue growing
+beyond its initial slab size.</p>
+</li>
+<li><p><strong>Overflow disabled</strong></p>
+<p>The list acts as a bounded-capacity container. Once all slab nodes are in use
+and no recycled slab nodes remain available, further push operations fail.</p>
+</li>
+</ul>
+<p>This makes the container suitable for both:</p>
+<ul class="simple">
+<li><p>flexible host-side usage where growth is acceptable</p></li>
+<li><p>deterministic or embedded usage where fixed upper bounds are required</p></li>
+</ul>
+</section>
+<section id="element-type-requirements">
+<h2><strong>Element Type Requirements</strong><a class="headerlink" href="#element-type-requirements" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">SList&lt;T&gt;</span></code> container supports any element type <code class="docutils literal notranslate"><span class="pre">T</span></code> that is:</p>
+<ul class="simple">
+<li><p>copy-constructible</p></li>
+<li><p>destructible</p></li>
+<li><p>movable or copyable in contexts where values are returned from pop/get operations</p></li>
+</ul>
+<p>Internally, nodes store the value in raw aligned storage and construct it with
+placement new. This means:</p>
+<ul class="simple">
+<li><p>default construction of all slab entries is avoided</p></li>
+<li><p>each value is only constructed when a node becomes live</p></li>
+<li><p>each value is explicitly destroyed when the node is removed or the list is destroyed</p></li>
+</ul>
+<p>This is especially useful for non-trivial element types such as strings or
+small user-defined objects, because unused slab slots do not incur object
+construction cost.</p>
+</section>
+<section id="operations">
+<h2><strong>Operations</strong><a class="headerlink" href="#operations" title="Link to this heading"></a></h2>
+<p>The list supports common singly-linked-list operations including:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">push_back()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">push_front()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">push_at()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pop_back()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pop_front()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pop_at()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">get()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">peek_front()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">peek_back()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contains()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clear()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">reverse()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">concat()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">copy()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foreach()</span></code></p></li>
+</ul>
+<p>All operations preserve allocator ownership semantics and maintain consistency
+between:</p>
+<ul class="simple">
+<li><p>live node count</p></li>
+<li><p>slab usage</p></li>
+<li><p>recycled slab capacity</p></li>
+<li><p>overflow node count</p></li>
+</ul>
+</section>
+<section id="complexity-notes">
+<h2><strong>Complexity Notes</strong><a class="headerlink" href="#complexity-notes" title="Link to this heading"></a></h2>
+<p>Because the container is singly linked, operation complexity follows standard
+linked-list expectations:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operation</p></th>
+<th class="head"><p>Complexity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">push_front</span></code></p></td>
+<td><p>O(1)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">push_back</span></code></p></td>
+<td><p>O(1) with maintained tail</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">push_at</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pop_front</span></code></p></td>
+<td><p>O(1)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pop_back</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">pop_at</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">get</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">contains</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">reverse</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">clear</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+</tbody>
+</table>
+<p>The key advantage over a conventional linked list is not asymptotic complexity,
+but improved control over memory behavior and better early-node locality.</p>
+</section>
+<section id="use-cases">
+<h2><strong>Use Cases</strong><a class="headerlink" href="#use-cases" title="Link to this heading"></a></h2>
+<p>This list implementation is particularly useful in the following scenarios:</p>
+<ul class="simple">
+<li><p>deterministic embedded software requiring bounded storage</p></li>
+<li><p>safety-regulated applications needing explicit allocator control</p></li>
+<li><p>workloads with frequent head/tail insertion but no need for random access</p></li>
+<li><p>temporary work queues or task chains</p></li>
+<li><p>graph, parser, or token structures where node semantics are useful</p></li>
+<li><p>applications where <code class="docutils literal notranslate"><span class="pre">std::forward_list</span></code> is too allocator-opaque</p></li>
+</ul>
+<p>When random indexing is common, the array container is usually the better
+choice. When node insertion/removal semantics are more important than random
+access, the list container is a better fit.</p>
+</section>
+<section id="list-class">
+<h2>List Class<a class="headerlink" href="#list-class" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I0EN4cslt5SListE">
+<span id="_CPPv3I0EN4cslt5SListE"></span><span id="_CPPv2I0EN4cslt5SListE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1SList"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">SList</span></span></span><a class="headerlink" href="#_CPPv4I0EN4cslt5SListE" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocator-backed generic singly-linked list container. </p>
+<p>Implements a singly-linked list backed by a pre-allocated contiguous node slab. Nodes obtained from the slab are physically adjacent in memory, improving cache behavior during traversal.</p>
+<p>Popped slab nodes are recycled through an internal free list and reused before consuming fresh slab slots. Once all reusable slab slots are exhausted, behavior is controlled by <code class="docutils literal notranslate"><span class="pre">allow_overflow:</span></code></p>
+<p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> — overflow nodes are allocated individually through the allocator</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> — push operations fail once no slab nodes remain available</p></li>
+</ul>
+</p>
+<p>The container supports allocator-aware ownership, deterministic bounded operation when overflow is disabled, and RAII cleanup through ::SListDeleter.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Values are constructed in-place inside node storage using placement new and explicitly destroyed when removed or when the list itself is destroyed.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This container is not thread-safe. External synchronization is required if multiple threads may access the same instance concurrently. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> – Element type stored in the list.</p>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList9push_backERK1T">
+<span id="_CPPv3N4cslt5SList9push_backERK1T"></span><span id="_CPPv2N4cslt5SList9push_backERK1T"></span><span id="cslt::SList::push_back__TCR"></span><span class="target" id="classcslt_1_1SList_1a5b16468fb325e12a7a0f4d13ea869a38"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_back</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList9push_backERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Append a value to the end of the list. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This operation is O(1) because the list maintains a tail pointer. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Value to append.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> on success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> if node allocation fails or the bounded list is full</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList10push_frontERK1T">
+<span id="_CPPv3N4cslt5SList10push_frontERK1T"></span><span id="_CPPv2N4cslt5SList10push_frontERK1T"></span><span id="cslt::SList::push_front__TCR"></span><span class="target" id="classcslt_1_1SList_1ac3688974abd2a70ba9e413a53e5200b6"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_front</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList10push_frontERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Insert a value at the front of the list. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This operation is O(1). </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Value to insert.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> on success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> if node allocation fails or the bounded list is full</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList7push_atE6size_tRK1T">
+<span id="_CPPv3N4cslt5SList7push_atE6size_tRK1T"></span><span id="_CPPv2N4cslt5SList7push_atE6size_tRK1T"></span><span id="cslt::SList::push_at__s.TCR"></span><span class="target" id="classcslt_1_1SList_1a6446b00083349a87b74a712cd3e4ac51"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push_at</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList7push_atE6size_tRK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Insert a value at a specific index. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Inserting at index 0 is equivalent to <a class="reference internal" href="#classcslt_1_1SList_1ac3688974abd2a70ba9e413a53e5200b6"><span class="std std-ref">push_front()</span></a>. Inserting at index <code class="docutils literal notranslate"><a class="reference internal" href="#classcslt_1_1SList_1ae533d2fdf0ac0d79894b56bdf52d36ce"><span class="std std-ref"><span class="pre">size()</span></span></a></code> is equivalent to <a class="reference internal" href="#classcslt_1_1SList_1a5b16468fb325e12a7a0f4d13ea869a38"><span class="std std-ref">push_back()</span></a>. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index</strong> – Zero-based insertion index. Valid range is <code class="docutils literal notranslate"><span class="pre">[0,</span> <a class="reference internal" href="#classcslt_1_1SList_1ae533d2fdf0ac0d79894b56bdf52d36ce"><span class="std std-ref"><span class="pre">size()</span></span></a><span class="pre">]</span></code>.</p></li>
+<li><p><strong>value</strong> – Value to insert.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> on success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> if <code class="docutils literal notranslate"><span class="pre">index</span></code> is invalid, allocation fails, or bounded capacity is exhausted</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList9pop_frontEv">
+<span id="_CPPv3N4cslt5SList9pop_frontEv"></span><span id="_CPPv2N4cslt5SList9pop_frontEv"></span><span id="cslt::SList::pop_front"></span><span class="target" id="classcslt_1_1SList_1aa51ff2d148d77800abbc5e51c47b6b95"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList9pop_frontEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove and return the first element. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This operation is O(1). </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;T&gt;</span></code> containing the removed value on success, or an <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref"><span class="pre">OutOfBoundsError</span></span></a></code> if the list is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList8pop_backEv">
+<span id="_CPPv3N4cslt5SList8pop_backEv"></span><span id="_CPPv2N4cslt5SList8pop_backEv"></span><span id="cslt::SList::pop_back"></span><span class="target" id="classcslt_1_1SList_1a15476cca2c36d448112604a044a0dd4c"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList8pop_backEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove and return the last element. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This operation is O(n) because the predecessor of the tail must be found by traversal. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;T&gt;</span></code> containing the removed value on success, or an <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref"><span class="pre">OutOfBoundsError</span></span></a></code> if the list is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList6pop_atE6size_t">
+<span id="_CPPv3N4cslt5SList6pop_atE6size_t"></span><span id="_CPPv2N4cslt5SList6pop_atE6size_t"></span><span id="cslt::SList::pop_at__s"></span><span class="target" id="classcslt_1_1SList_1ab001f35435c7423f68845c0a700059d4"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop_at</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList6pop_atE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove and return the element at a specific index. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Zero-based index of the element to remove.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;T&gt;</span></code> containing the removed value on success, or an <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref"><span class="pre">OutOfBoundsError</span></span></a></code> if the list is empty or the index is invalid. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList3getE6size_t">
+<span id="_CPPv3NK4cslt5SList3getE6size_t"></span><span id="_CPPv2NK4cslt5SList3getE6size_t"></span><span id="cslt::SList::get__sC"></span><span class="target" id="classcslt_1_1SList_1ad960d62ed4540bdfd58d7b408e6092ed"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">get</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">index</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList3getE6size_t" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a copy of the element at a specific index. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This operation is O(n). </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index</strong> – Zero-based element index.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;T&gt;</span></code> containing the value on success, or an <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref"><span class="pre">OutOfBoundsError</span></span></a></code> if the index is invalid.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList10peek_frontEv">
+<span id="_CPPv3NK4cslt5SList10peek_frontEv"></span><span id="_CPPv2NK4cslt5SList10peek_frontEv"></span><span id="cslt::SList::peek_frontC"></span><span class="target" id="classcslt_1_1SList_1a16caa96fa2e7e2f1a8a75eee196194d5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">peek_front</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList10peek_frontEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a copy of the first element without removing it. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;T&gt;</span></code> containing the first value on success, or an <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref"><span class="pre">OutOfBoundsError</span></span></a></code> if the list is empty. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList9peek_backEv">
+<span id="_CPPv3NK4cslt5SList9peek_backEv"></span><span id="_CPPv2NK4cslt5SList9peek_backEv"></span><span id="cslt::SList::peek_backC"></span><span class="target" id="classcslt_1_1SList_1afdfc13f2f9cfbc9db2c203ed884f9a9d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">peek_back</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList9peek_backEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a copy of the last element without removing it. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;T&gt;</span></code> containing the last value on success, or an <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref"><span class="pre">OutOfBoundsError</span></span></a></code> if the list is empty. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList5clearEv">
+<span id="_CPPv3N4cslt5SList5clearEv"></span><span id="_CPPv2N4cslt5SList5clearEv"></span><span id="cslt::SList::clear"></span><span class="target" id="classcslt_1_1SList_1a67b8f2e6e191a50ef446a47a8fb7820f"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList5clearEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove all live elements from the list. </p>
+<p>
+Destroys all live values, returns overflow nodes to the allocator, and rebuilds the recycled slab free list from all slab slots that have ever been consumed.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The slab itself remains allocated for reuse. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Always returns <code class="docutils literal notranslate"><span class="pre">true</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList7reverseEv">
+<span id="_CPPv3N4cslt5SList7reverseEv"></span><span id="_CPPv2N4cslt5SList7reverseEv"></span><span id="cslt::SList::reverse"></span><span class="target" id="classcslt_1_1SList_1aa08f7637d15f4cfd7b6d87be75887dc7"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">reverse</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList7reverseEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Reverse the list in place. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Reversal is O(n) and does not allocate memory. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> on success</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> if the list is not properly initialized</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList6concatERK5SListI1TE">
+<span id="_CPPv3N4cslt5SList6concatERK5SListI1TE"></span><span id="_CPPv2N4cslt5SList6concatERK5SListI1TE"></span><span id="cslt::SList::concat__SList:T:CR"></span><span class="target" id="classcslt_1_1SList_1afe68865c93b5875524b277227006b170"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">concat</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList"><span class="n"><span class="pre">SList</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList6concatERK5SListI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Append all elements from another list. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The source list is not modified. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>src</strong> – Source list whose elements will be copied and appended.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if all elements are appended successfully</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> if any insertion fails</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList8containsERK1T">
+<span id="_CPPv3NK4cslt5SList8containsERK1T"></span><span id="_CPPv2NK4cslt5SList8containsERK1T"></span><span id="cslt::SList::contains__TCRC"></span><span class="target" id="classcslt_1_1SList_1a21d6dca37e226210651ffe23efbe7838"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><span class="n"><span class="pre">size_t</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">contains</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">needle</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList8containsERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Search for a value and return its first index. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>needle</strong> – Value to search for.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;size_t&gt;</span></code> containing the zero-based index of the first matching element on success, or an <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1OutOfBoundsError"><span class="std std-ref"><span class="pre">OutOfBoundsError</span></span></a></code> if not found. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK4cslt5SList7foreachEb4Func">
+<span id="_CPPv3I0ENK4cslt5SList7foreachE4Func"></span><span id="_CPPv2I0ENK4cslt5SList7foreachE4Func"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1SList_1a53a64587600c381a81728c9c1e783a7e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">foreach</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0ENK4cslt5SList7foreachEb4Func" title="cslt::SList::foreach::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">fn</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK4cslt5SList7foreachEb4Func" title="Link to this definition"></a><br /></dt>
+<dd><p>Visit every element in order using a callable. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not allocate and traverses the list exactly once. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable type accepting <code class="docutils literal notranslate"><span class="pre">(const</span> <span class="pre">T&amp;,</span> <span class="pre">size_t)</span></code>.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fn</strong> – Callable invoked for each element and its zero-based index.</p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if iteration completes</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> if the list is not properly initialized</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList4sizeEv">
+<span id="_CPPv3NK4cslt5SList4sizeEv"></span><span id="_CPPv2NK4cslt5SList4sizeEv"></span><span id="cslt::SList::sizeC"></span><span class="target" id="classcslt_1_1SList_1ae533d2fdf0ac0d79894b56bdf52d36ce"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of live elements in the list. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Current live element count. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList13slab_capacityEv">
+<span id="_CPPv3NK4cslt5SList13slab_capacityEv"></span><span id="_CPPv2NK4cslt5SList13slab_capacityEv"></span><span id="cslt::SList::slab_capacityC"></span><span class="target" id="classcslt_1_1SList_1a2feb276752fd71304bf2731ff950f089"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slab_capacity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList13slab_capacityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the total number of node slots reserved in the slab. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Slab capacity in nodes. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList9slab_usedEv">
+<span id="_CPPv3NK4cslt5SList9slab_usedEv"></span><span id="_CPPv2NK4cslt5SList9slab_usedEv"></span><span id="cslt::SList::slab_usedC"></span><span class="target" id="classcslt_1_1SList_1a3ccd31fa15427fc7a8732511954733ea"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slab_used</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList9slab_usedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of fresh slab slots ever consumed. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is not the same as the number of currently live slab nodes. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Count of slab slots that have been assigned at least once.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList15slab_free_countEv">
+<span id="_CPPv3NK4cslt5SList15slab_free_countEv"></span><span id="_CPPv2NK4cslt5SList15slab_free_countEv"></span><span id="cslt::SList::slab_free_countC"></span><span class="target" id="classcslt_1_1SList_1abc7fb45ef29ae1859cfd4834354c813d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slab_free_count</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList15slab_free_countEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of recycled slab nodes currently available. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Count of nodes on the recycled slab free list. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList15slab_live_countEv">
+<span id="_CPPv3NK4cslt5SList15slab_live_countEv"></span><span id="_CPPv2NK4cslt5SList15slab_live_countEv"></span><span id="cslt::SList::slab_live_countC"></span><span class="target" id="classcslt_1_1SList_1ad016765eb0e26b1bd622ba9af42d78e5"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slab_live_count</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList15slab_live_countEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of currently live slab-backed nodes. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Live slab node count computed as <code class="docutils literal notranslate"><a class="reference internal" href="#classcslt_1_1SList_1a3ccd31fa15427fc7a8732511954733ea"><span class="std std-ref"><span class="pre">slab_used()</span></span></a> <span class="pre">-</span> <a class="reference internal" href="#classcslt_1_1SList_1abc7fb45ef29ae1859cfd4834354c813d"><span class="std std-ref"><span class="pre">slab_free_count()</span></span></a></code>. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList14slab_remainingEv">
+<span id="_CPPv3NK4cslt5SList14slab_remainingEv"></span><span id="_CPPv2NK4cslt5SList14slab_remainingEv"></span><span id="cslt::SList::slab_remainingC"></span><span class="target" id="classcslt_1_1SList_1a4ba6507b0af45dd4541d15dc12588107"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slab_remaining</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList14slab_remainingEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return total slab slots currently available for allocation. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of allocatable slab nodes, including both:<ul class="simple">
+<li><p>fresh unused slab slots</p></li>
+<li><p>recycled slab nodes on the free list </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList14overflow_countEv">
+<span id="_CPPv3NK4cslt5SList14overflow_countEv"></span><span id="_CPPv2NK4cslt5SList14overflow_countEv"></span><span id="cslt::SList::overflow_countC"></span><span class="target" id="classcslt_1_1SList_1a74b22a857c705d077bef282444574033"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">overflow_count</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList14overflow_countEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the number of currently live overflow nodes. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Count of allocator-backed overflow nodes still present in the list. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList8is_emptyEv">
+<span id="_CPPv3NK4cslt5SList8is_emptyEv"></span><span id="_CPPv2NK4cslt5SList8is_emptyEv"></span><span id="cslt::SList::is_emptyC"></span><span class="target" id="classcslt_1_1SList_1a016af506d4dbfb4c7bbd7dc546ec5f39"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_empty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList8is_emptyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Test whether the list contains no live elements. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if the list is empty</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList12is_slab_fullEv">
+<span id="_CPPv3NK4cslt5SList12is_slab_fullEv"></span><span id="_CPPv2NK4cslt5SList12is_slab_fullEv"></span><span id="cslt::SList::is_slab_fullC"></span><span class="target" id="classcslt_1_1SList_1a21f3a3c47622c2f776b74c624c8a5f86"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_slab_full</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList12is_slab_fullEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Test whether slab allocation capacity is exhausted. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This does not indicate whether overflow allocation is permitted. </p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if no fresh or recycled slab nodes remain available</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt5SList11in_overflowEv">
+<span id="_CPPv3NK4cslt5SList11in_overflowEv"></span><span id="_CPPv2NK4cslt5SList11in_overflowEv"></span><span id="cslt::SList::in_overflowC"></span><span class="target" id="classcslt_1_1SList_1a6ee41283f64c4e7dc306bde8d409ece0"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">in_overflow</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt5SList11in_overflowEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Test whether the list currently contains any overflow nodes. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">true</span></code> if one or more live overflow nodes exist</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">false</span></code> otherwise </p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList4initE6size_tbR9Allocator">
+<span id="_CPPv3N4cslt5SList4initE6size_tbR9Allocator"></span><span id="_CPPv2N4cslt5SList4initE6size_tbR9Allocator"></span><span id="cslt::SList::init__s.b.AllocatorR"></span><span class="target" id="classcslt_1_1SList_1a7f0558100c86466709b9b23b8112a727"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList"><span class="n"><span class="pre">SList</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">num_nodes</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">allow_overflow</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList4initE6size_tbR9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate and initialize a new list. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">SList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">SList</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">SListDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">list</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+</pre></div>
+</div>
+ <dl class="simple">
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">num_nodes</span> <span class="pre">==</span> <span class="pre">0</span></code> → <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1ArgumentError"><span class="std std-ref"><span class="pre">ArgumentError</span></span></a></code></p></li>
+<li><p>failure allocating the list object → <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref"><span class="pre">MemoryError</span></span></a></code></p></li>
+<li><p>failure allocating the slab → <code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref"><span class="pre">MemoryError</span></span></a></code></p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>num_nodes</strong> – Number of primary slab-backed nodes to reserve. Must be greater than zero.</p></li>
+<li><p><strong>allow_overflow</strong> – If true, the list may allocate overflow nodes after slab capacity is exhausted. If false, the list becomes fixed-capacity.</p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> used for the list object, slab, and optional overflow nodes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;</span><a class="reference internal" href="#classcslt_1_1SList"><span class="std std-ref"><span class="pre">SList</span></span></a><span class="pre">&lt;T&gt;*&gt;</span></code> containing a valid list pointer on success, or an error on failure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList4copyERK5SListI1TER9Allocator">
+<span id="_CPPv3N4cslt5SList4copyERK5SListI1TER9Allocator"></span><span id="_CPPv2N4cslt5SList4copyERK5SListI1TER9Allocator"></span><span id="cslt::SList::copy__SList:T:CR.AllocatorR"></span><span class="target" id="classcslt_1_1SList_1a10638fe57a1aad0bcbbe955b9756392c"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList"><span class="n"><span class="pre">SList</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList"><span class="n"><span class="pre">SList</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList4copyERK5SListI1TER9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a deep copy of a list using a caller-supplied allocator. </p>
+<p>
+The destination preserves the source slab capacity and overflow policy, but owns independent storage. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> – Source list to copy.</p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> used for the copied list and its storage.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;</span><a class="reference internal" href="#classcslt_1_1SList"><span class="std std-ref"><span class="pre">SList</span></span></a><span class="pre">&lt;T&gt;*&gt;</span></code> containing the copied list on success, or an error if initialization or insertion fails.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt5SList4copyERK5SListI1TE">
+<span id="_CPPv3N4cslt5SList4copyERK5SListI1TE"></span><span id="_CPPv2N4cslt5SList4copyERK5SListI1TE"></span><span id="cslt::SList::copy__SList:T:CR"></span><span class="target" id="classcslt_1_1SList_1a6aa63657b1fa89ef25cbb5da7460f078"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList"><span class="n"><span class="pre">SList</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList"><span class="n"><span class="pre">SList</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I0EN4cslt5SListE" title="cslt::SList::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt5SList4copyERK5SListI1TE" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a deep copy using the source list’s own allocator. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>src</strong> – Source list to copy.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref"><span class="pre">Expected</span></span></a><span class="pre">&lt;</span><a class="reference internal" href="#classcslt_1_1SList"><span class="std std-ref"><span class="pre">SList</span></span></a><span class="pre">&lt;T&gt;*&gt;</span></code> containing the copied list on success. </p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Dict.html" class="btn btn-neutral float-left" title="C++ Dictionary Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

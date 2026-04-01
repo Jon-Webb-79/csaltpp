@@ -1,0 +1,64 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classcslt_1_1SListDeleter" kind="class" language="C++" prot="public">
+    <compoundname>cslt::SListDeleter</compoundname>
+    <includes refid="list_8hpp" local="no">list.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1SListDeleter_1a4169981142deeb00c7aac8d654419463" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>void cslt::SListDeleter&lt; T &gt;::operator()</definition>
+        <argsstring>(SList&lt; T &gt; *l) const noexcept</argsstring>
+        <name>operator()</name>
+        <qualifiedname>cslt::SListDeleter::operator()</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1SList" kindref="compound">SList</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &gt; *</type>
+          <declname>l</declname>
+        </param>
+        <briefdescription>
+<para>Destroy a list and return its storage to the allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>l</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Pointer to the list to destroy. May be <computeroutput>nullptr</computeroutput>.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="note"><para>This method first calls <computeroutput>l-&gt;~SList&lt;T&gt;()</computeroutput> to release slab and node contents, then returns the list object memory itself to the allocator. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/list.hpp" line="1181" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/list.hpp" bodystart="1181" bodyend="1192"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Custom deleter enabling RAII cleanup for ::SList. </para>
+    </briefdescription>
+    <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element type stored by the list.</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+Intended for use with <computeroutput><ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>&lt;<ref refid="classcslt_1_1SList" kindref="compound">SList</ref>&lt;T&gt;, <ref refid="classcslt_1_1SListDeleter" kindref="compound">SListDeleter</ref>&lt;T&gt;&gt;</computeroutput>. The deleter runs the list destructor and then returns the list object itself to the allocator that created it. </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/list.hpp" line="1158" column="1" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/list.hpp" bodystart="1169" bodyend="1193"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1SListDeleter_1a4169981142deeb00c7aac8d654419463" prot="public" virt="non-virtual"><scope>cslt::SListDeleter</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

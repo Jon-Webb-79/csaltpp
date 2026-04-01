@@ -889,16 +889,23 @@ TEST_F(DictTest, MergeDoesNotModifySources) {
     auto rb = cslt::Dict<int, float>::init(8, true, alloc);
     ASSERT_TRUE(ra.hasValue());
     ASSERT_TRUE(rb.hasValue());
-    DictPtr<int,float> a(ra.value());
-    DictPtr<int,float> b(rb.value());
- 
+
+    DictPtr<int, float> a(ra.value());
+    DictPtr<int, float> b(rb.value());
+
     a->insert(1, 1.0f);
     b->insert(2, 2.0f);
- 
-    cslt::Dict<int, float>::merge(*a, *b, true, alloc);
- 
+
+    auto rm = cslt::Dict<int, float>::merge(*a, *b, true, alloc);
+    ASSERT_TRUE(rm.hasValue());
+    DictPtr<int, float> merged(rm.value());
+
     EXPECT_EQ(a->hash_size(), 1u);
     EXPECT_EQ(b->hash_size(), 1u);
+
+    EXPECT_EQ(merged->hash_size(), 2u);
+    EXPECT_TRUE(merged->has_key(1));
+    EXPECT_TRUE(merged->has_key(2));
 }
  
 // ============================================================================

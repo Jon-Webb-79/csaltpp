@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="String.html">String</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
 </ul>
 
         </div>
@@ -184,6 +185,20 @@ involves challenges:</p>
 <li><p><strong>Copy and merge</strong> - <code class="docutils literal notranslate"><span class="pre">copy()</span></code> and <code class="docutils literal notranslate"><span class="pre">merge()</span></code> factory methods build new dictionaries from existing ones</p></li>
 </ul>
 </section>
+<section id="list">
+<h3>List<a class="headerlink" href="#list" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Generic singly linked container</strong> - <code class="docutils literal notranslate"><span class="pre">SList&lt;T&gt;</span></code> stores elements of any type <code class="docutils literal notranslate"><span class="pre">T</span></code> using a node-based template design</p></li>
+<li><p><strong>Allocator-backed</strong> - The list struct, slab storage, and optional overflow nodes are all allocated through the provided allocator</p></li>
+<li><p><strong>Factory pattern</strong> - Creation via <code class="docutils literal notranslate"><span class="pre">SList&lt;T&gt;::init()</span></code> returning <code class="docutils literal notranslate"><span class="pre">Expected&lt;SList&lt;T&gt;*&gt;</span></code> prevents uninitialised instances</p></li>
+<li><p><strong>Hybrid node storage</strong> - Initial nodes are drawn from a contiguous slab for improved locality, with optional overflow allocation beyond slab capacity</p></li>
+<li><p><strong>Recycled slab nodes</strong> - Removed slab-backed nodes are tracked internally and reused by future push operations</p></li>
+<li><p><strong>Configurable overflow</strong> - Overflow allocation can be enabled for dynamic growth or disabled for deterministic fixed-capacity behavior</p></li>
+<li><p><strong>Safe list operations</strong> - <code class="docutils literal notranslate"><span class="pre">push_*()</span></code>, <code class="docutils literal notranslate"><span class="pre">pop_*()</span></code>, <code class="docutils literal notranslate"><span class="pre">get()</span></code>, and peek functions return explicit success or error state where appropriate</p></li>
+<li><p><strong>List-oriented algorithms</strong> - <code class="docutils literal notranslate"><span class="pre">reverse()</span></code>, <code class="docutils literal notranslate"><span class="pre">clear()</span></code>, <code class="docutils literal notranslate"><span class="pre">concat()</span></code>, <code class="docutils literal notranslate"><span class="pre">copy()</span></code>, <code class="docutils literal notranslate"><span class="pre">contains()</span></code>, and <code class="docutils literal notranslate"><span class="pre">foreach()</span></code> provide common linked-list functionality</p></li>
+<li><p><strong>RAII cleanup</strong> - <code class="docutils literal notranslate"><span class="pre">SListDeleter&lt;T&gt;</span></code> works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to automatically reclaim all list-owned memory</p></li>
+</ul>
+</section>
 </section>
 <section id="typical-use-cases">
 <h2>Typical Use Cases<a class="headerlink" href="#typical-use-cases" title="Link to this heading"></a></h2>
@@ -203,6 +218,7 @@ involves challenges:</p>
 <li class="toctree-l1"><a class="reference internal" href="String.html">String</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
 </ul>
 </div>
 </section>

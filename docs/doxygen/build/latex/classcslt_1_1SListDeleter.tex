@@ -1,0 +1,55 @@
+\doxysection{cslt\+::SList\+Deleter\texorpdfstring{$<$}{<} T \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classcslt_1_1SListDeleter}{}\label{classcslt_1_1SListDeleter}\index{cslt::SListDeleter$<$ T $>$@{cslt::SListDeleter$<$ T $>$}}
+
+
+Custom deleter enabling RAII cleanup for \+::\+SList.  
+
+
+
+
+{\ttfamily \#include $<$list.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1SListDeleter_a4169981142deeb00c7aac8d654419463}{operator()}} (\mbox{\hyperlink{classcslt_1_1SList}{SList}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$ \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{l}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\begin{DoxyCompactList}\small\item\em Destroy a list and return its storage to the allocator. \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{T}}$>$\newline
+class cslt\+::\+SList\+Deleter$<$ T $>$}
+Custom deleter enabling RAII cleanup for \+::\+SList. 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Element type stored by the list.\\
+\hline
+\end{DoxyTemplParams}
+Intended for use with {\ttfamily \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr}\texorpdfstring{$<$}{<}\doxylink{classcslt_1_1SList}{SList}\texorpdfstring{$<$}{<}T\texorpdfstring{$>$}{>}, \doxylink{classcslt_1_1SListDeleter}{SList\+Deleter}\texorpdfstring{$<$}{<}T\texorpdfstring{$>$}{>}\texorpdfstring{$>$}{>}}. The deleter runs the list destructor and then returns the list object itself to the allocator that created it. 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classcslt_1_1SListDeleter_a4169981142deeb00c7aac8d654419463}\label{classcslt_1_1SListDeleter_a4169981142deeb00c7aac8d654419463} 
+\index{cslt::SListDeleter$<$ T $>$@{cslt::SListDeleter$<$ T $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!cslt::SListDeleter$<$ T $>$@{cslt::SListDeleter$<$ T $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1SListDeleter}{cslt\+::\+SList\+Deleter}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1SList}{SList}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}} $>$ \texorpdfstring{$\ast$}{*}}]{l }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+Destroy a list and return its storage to the allocator. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em l} & Pointer to the list to destroy. May be {\ttfamily nullptr}.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyNote}{Note}
+This method first calls {\ttfamily l-\/\texorpdfstring{$>$}{>}\texorpdfstring{$\sim$}{\string~}\+SList\texorpdfstring{$<$}{<}T\texorpdfstring{$>$}{>}()} to release slab and node contents, then returns the list object memory itself to the allocator. 
+\end{DoxyNote}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/\mbox{\hyperlink{list_8hpp}{list.\+hpp}}\end{DoxyCompactItemize}

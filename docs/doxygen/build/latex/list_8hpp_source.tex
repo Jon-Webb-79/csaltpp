@@ -1,0 +1,715 @@
+\doxysection{list.\+hpp}
+\hypertarget{list_8hpp_source}{}\label{list_8hpp_source}\index{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/include/list.hpp@{/home/jonwebb/Code\_Dev/C++/csaltpp/csaltpp/include/list.hpp}}
+\mbox{\hyperlink{list_8hpp}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ -\/\ File:\ \ \ \ list.hpp}}
+\DoxyCodeLine{00004\ \textcolor{comment}{//\ -\/\ Purpose:\ Describe\ the\ file\ purpose\ here}}
+\DoxyCodeLine{00005\ \textcolor{comment}{//}}
+\DoxyCodeLine{00006\ \textcolor{comment}{//\ Source\ Metadata}}
+\DoxyCodeLine{00007\ \textcolor{comment}{//\ -\/\ Author:\ \ Jonathan\ A.\ Webb}}
+\DoxyCodeLine{00008\ \textcolor{comment}{//\ -\/\ Date:\ \ \ \ April\ 01,\ 2026}}
+\DoxyCodeLine{00009\ \textcolor{comment}{//\ -\/\ Version:\ 1.0}}
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ -\/\ Copyright:\ Copyright\ 2026,\ Jon\ Webb\ Inc.}}
+\DoxyCodeLine{00011\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00012\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00013\ \textcolor{comment}{//\ Include\ modules\ here}}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#ifndef\ list\_HPP}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ list\_HPP}}
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{error_8hpp}{error.hpp}}"{}}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#include\ "{}\mbox{\hyperlink{allocator_8hpp}{allocator.hpp}}"{}}}
+\DoxyCodeLine{00020\ \ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#include\ <cstring>}}
+\DoxyCodeLine{00024\ \textcolor{preprocessor}{\#include\ <new>}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#include\ <type\_traits>}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#include\ <utility>}}
+\DoxyCodeLine{00027\ \textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{00028\ \textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{keyword}{namespace\ }\mbox{\hyperlink{namespacecslt}{cslt}}\ \{}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#ifndef\ CSLT\_HAS\_EQUALITY\_OP\_V}}
+\DoxyCodeLine{00032\ \textcolor{preprocessor}{\#define\ CSLT\_HAS\_EQUALITY\_OP\_V}}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{namespace\ }detail\ \{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T,\ \textcolor{keyword}{typename}\ =\ \textcolor{keywordtype}{void}>}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1detail_1_1has__eq__op}{has\_eq\_op}}\ :\ std::false\_type\ \{\};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structcslt_1_1detail_1_1has__eq__op}{has\_eq\_op}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}},}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ std::\mbox{\hyperlink{classcslt_1_1Expected}{void\_t}}<decltype(std::declval<const\ T\&>()\ ==}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ std::declval<const\ T\&>())>>}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ :\ std::true\_type\ \{\};}
+\DoxyCodeLine{00042\ \ \ \ \ \}\ \textcolor{comment}{//\ namespace\ detail}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00045\ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{namespacecslt_a8d631823d4c4d1d7075cc7aea4d4cd44}{has\_eq\_op\_v}}\ =\ \mbox{\hyperlink{structcslt_1_1detail_1_1has__eq__op}{detail::has\_eq\_op<T>::value}};}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ CSLT\_HAS\_EQUALITY\_OP\_V\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{00047\ \ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00048\ \ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \textcolor{comment}{//\ Forward\ declaration\ so\ SListDeleter\ is\ visible\ inside\ SList}}
+\DoxyCodeLine{00051\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classcslt_1_1SListDeleter}{SListDeleter}};}
+\DoxyCodeLine{00052\ }
+\DoxyCodeLine{00053\ \ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00086\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{00087\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classcslt_1_1SList}{SList}}\ \{}
+\DoxyCodeLine{00088\ }
+\DoxyCodeLine{00089\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Node\ layout}}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }Node\ \{}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \ \ \ \ \ \ \ \ \ \ \ \ \ next;}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{alignas}(\mbox{\hyperlink{classcslt_1_1Expected}{T}})\ \mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}\ value\_[\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{T}})];}
+\DoxyCodeLine{00108\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00109\ }
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00111\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ data\ members}}
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \ \ \ \ Node*\ \ \ \ \ \ head\_;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ Node*\ \ \ \ \ \ tail\_;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ len\_;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}*\ \ \ slab\_;\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ slab\_cap\_;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ slab\_used\_;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ Node*\ \ \ \ \ \ slab\_free\_;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ slab\_free\_count\_;\ \ }
+\DoxyCodeLine{00123\ }
+\DoxyCodeLine{00124\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ allow\_overflow\_;\ \ \ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ overflow\_live\_;\ \ \ \ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}*\ allocator\_;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ constructor\ /\ destructor}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SList}{SList}}(\mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}*\ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{slab}},}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{slab\_cap}},}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{allow\_overflow}},}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}\&\ allocator)\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ :\ head\_(\textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ tail\_(\textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ len\_(0\mbox{\hyperlink{classcslt_1_1Expected}{u}})}
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ slab\_(\mbox{\hyperlink{classcslt_1_1Expected}{slab}})}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ slab\_cap\_(\mbox{\hyperlink{classcslt_1_1Expected}{slab\_cap}})}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ slab\_used\_(0\mbox{\hyperlink{classcslt_1_1Expected}{u}})}
+\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ slab\_free\_(\textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ slab\_free\_count\_(0\mbox{\hyperlink{classcslt_1_1Expected}{u}})}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ allow\_overflow\_(\mbox{\hyperlink{classcslt_1_1Expected}{allow\_overflow}})}
+\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ overflow\_live\_(0\mbox{\hyperlink{classcslt_1_1Expected}{u}})}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \ \ \ \ ,\ allocator\_(\&allocator)}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \{\}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SList}{\string~SList}}()\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ cur\ =\ head\_;}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (cur\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{nxt}}\ =\ cur-\/>next;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_node\_value(cur)-\/>\string~T();}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_return\_node(cur);}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{nxt}};}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00190\ }
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ head\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00192\ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ len\_\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ slab\_free\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00195\ \ \ \ \ \ \ \ \ \ \ \ \ slab\_free\_count\_\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ overflow\_live\_\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00197\ }
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (slab\_\ \&\&\ allocator\_)\ \{}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator\_-\/>\mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{return\_element}}(}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(slab\_),}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slab\_cap\_\ *\ \_node\_stride(),}
+\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator\_-\/>\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slab\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00206\ }
+\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SList}{SList}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1SList}{SList}}\&)\ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SList}{SList}}\&\ operator=(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1SList}{SList}}\&)\ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SList}{SList}}(\mbox{\hyperlink{classcslt_1_1SList}{SList}}\&\&)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1SList}{SList}}\&\ operator=(\mbox{\hyperlink{classcslt_1_1SList}{SList}}\&\&)\ \ \ \ \ \ =\ \textcolor{keyword}{delete};}
+\DoxyCodeLine{00211\ }
+\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ helpers\ —\ node\ stride\ and\ value\ access}}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00215\ }
+\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \_node\_stride()\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{raw}}\ \ \ =\ \textcolor{keyword}{sizeof}(Node);}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{align}}\ =\ \textcolor{keyword}{alignof}(Node);}
+\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (\mbox{\hyperlink{classcslt_1_1Expected}{raw}}\ +\ \mbox{\hyperlink{classcslt_1_1Expected}{align}}\ -\/\ 1u)\ \&\ \string~(\mbox{\hyperlink{classcslt_1_1Expected}{align}}\ -\/\ 1u);}
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00231\ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}*\ \_node\_value(Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{n}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{reinterpret\_cast<}\mbox{\hyperlink{classcslt_1_1Expected}{T}}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{n}}-\/>value\_);}
+\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00244\ }
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}*\ \_node\_value\_c(\textcolor{keyword}{const}\ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{n}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{classcslt_1_1Expected}{T}}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{n}}-\/>value\_);}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00257\ }
+\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ helpers\ —\ slab\ bounds\ /\ slab\ free\ list}}
+\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00276\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \_in\_slab(\textcolor{keyword}{const}\ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{node}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00277\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{node}}\ ||\ !slab\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00278\ }
+\DoxyCodeLine{00279\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}*\ p\ \ =\ \textcolor{keyword}{reinterpret\_cast<}\textcolor{keyword}{const\ }\mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{node}});}
+\DoxyCodeLine{00280\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{lo}}\ =\ slab\_;}
+\DoxyCodeLine{00281\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{hi}}\ =\ slab\_\ +\ slab\_cap\_\ *\ \_node\_stride();}
+\DoxyCodeLine{00282\ }
+\DoxyCodeLine{00283\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (p\ >=\ \mbox{\hyperlink{classcslt_1_1Expected}{lo}})\ \&\&\ (p\ <\ \mbox{\hyperlink{classcslt_1_1Expected}{hi}});}
+\DoxyCodeLine{00284\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00285\ }
+\DoxyCodeLine{00296\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_push\_slab\_free(Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{node}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00297\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{node}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00298\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{node}}-\/>next\ =\ slab\_free\_;}
+\DoxyCodeLine{00299\ \ \ \ \ \ \ \ \ \ \ \ \ slab\_free\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00300\ \ \ \ \ \ \ \ \ \ \ \ \ ++slab\_free\_count\_;}
+\DoxyCodeLine{00301\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00302\ }
+\DoxyCodeLine{00310\ \ \ \ \ \ \ \ \ Node*\ \_pop\_slab\_free()\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00311\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slab\_free\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00312\ }
+\DoxyCodeLine{00313\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{n}}\ =\ slab\_free\_;}
+\DoxyCodeLine{00314\ \ \ \ \ \ \ \ \ \ \ \ \ slab\_free\_\ =\ slab\_free\_-\/>next;}
+\DoxyCodeLine{00315\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{n}}-\/>next\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00316\ }
+\DoxyCodeLine{00317\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (slab\_free\_count\_\ >\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}})\ \{}
+\DoxyCodeLine{00318\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/slab\_free\_count\_;}
+\DoxyCodeLine{00319\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00320\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{n}};}
+\DoxyCodeLine{00321\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00322\ }
+\DoxyCodeLine{00323\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00324\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ helpers\ —\ node\ allocation\ /\ deallocation}}
+\DoxyCodeLine{00325\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00326\ }
+\DoxyCodeLine{00341\ \ \ \ \ \ \ \ \ Node*\ \_alloc\_node\_raw()\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00342\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 1.\ Reuse\ recycled\ slab\ node\ first}}
+\DoxyCodeLine{00343\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (slab\_free\_)\ \{}
+\DoxyCodeLine{00344\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \_pop\_slab\_free();}
+\DoxyCodeLine{00345\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00346\ }
+\DoxyCodeLine{00347\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 2.\ Consume\ fresh\ slab\ slot}}
+\DoxyCodeLine{00348\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (slab\_used\_\ <\ slab\_cap\_)\ \{}
+\DoxyCodeLine{00349\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{n}}\ =\ \textcolor{keyword}{reinterpret\_cast<}Node*\textcolor{keyword}{>}(}
+\DoxyCodeLine{00350\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slab\_\ +\ slab\_used\_\ *\ \_node\_stride());}
+\DoxyCodeLine{00351\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{n}}-\/>next\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00352\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ++slab\_used\_;}
+\DoxyCodeLine{00353\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{n}};}
+\DoxyCodeLine{00354\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00355\ }
+\DoxyCodeLine{00356\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ 3.\ Fall\ back\ to\ overflow\ allocation}}
+\DoxyCodeLine{00357\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!allow\_overflow\_)\ \{}
+\DoxyCodeLine{00358\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00359\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00360\ }
+\DoxyCodeLine{00361\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classcslt_1_1Expected}{r}}\ =\ allocator\_-\/>\mbox{\hyperlink{classcslt_1_1Allocator_ad6ad566633d84e86b690149ecc86af8a}{alloc}}(\textcolor{keyword}{sizeof}(Node),\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00362\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{r}}.\mbox{\hyperlink{classcslt_1_1Expected_a457cd7aa736a7cc327310c75a2e30661}{hasValue}}())\ \{}
+\DoxyCodeLine{00363\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00364\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00365\ }
+\DoxyCodeLine{00366\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{n}}\ =\ \textcolor{keyword}{static\_cast<}Node*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{r}}.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}());}
+\DoxyCodeLine{00367\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{n}}-\/>next\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00368\ \ \ \ \ \ \ \ \ \ \ \ \ ++overflow\_live\_;}
+\DoxyCodeLine{00369\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{n}};}
+\DoxyCodeLine{00370\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00371\ }
+\DoxyCodeLine{00386\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \_return\_node(Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{node}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00387\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{node}}\ ||\ !allocator\_)\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00388\ }
+\DoxyCodeLine{00389\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_in\_slab(\mbox{\hyperlink{classcslt_1_1Expected}{node}}))\ \{}
+\DoxyCodeLine{00390\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_push\_slab\_free(\mbox{\hyperlink{classcslt_1_1Expected}{node}});}
+\DoxyCodeLine{00391\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{00392\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00393\ }
+\DoxyCodeLine{00394\ \ \ \ \ \ \ \ \ \ \ \ \ allocator\_-\/>\mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{return\_element}}(}
+\DoxyCodeLine{00395\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{node}}),}
+\DoxyCodeLine{00396\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(Node),}
+\DoxyCodeLine{00397\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator\_-\/>\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{00398\ }
+\DoxyCodeLine{00399\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (overflow\_live\_\ >\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}})\ \{}
+\DoxyCodeLine{00400\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/overflow\_live\_;}
+\DoxyCodeLine{00401\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00402\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00403\ }
+\DoxyCodeLine{00404\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00405\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Private\ helpers\ —\ key\ equality}}
+\DoxyCodeLine{00406\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00407\ }
+\DoxyCodeLine{00425\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keywordtype}{bool}\ \_values\_equal(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{a}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{b}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00426\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ \textcolor{keyword}{constexpr}\ (\mbox{\hyperlink{classcslt_1_1Expected}{has\_eq\_op\_v<T>}})\ \{}
+\DoxyCodeLine{00427\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{a}}\ ==\ \mbox{\hyperlink{classcslt_1_1Expected}{b}};}
+\DoxyCodeLine{00428\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00429\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ std::memcmp(\&\mbox{\hyperlink{classcslt_1_1Expected}{a}},\ \&\mbox{\hyperlink{classcslt_1_1Expected}{b}},\ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{T}}))\ ==\ 0;}
+\DoxyCodeLine{00430\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00431\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00432\ }
+\DoxyCodeLine{00433\ \ \ \ \ \ \ \ \ \textcolor{keyword}{friend}\ \textcolor{keyword}{class\ }\mbox{\hyperlink{classcslt_1_1SListDeleter}{SListDeleter}}<\mbox{\hyperlink{classcslt_1_1Expected}{T}}>;}
+\DoxyCodeLine{00434\ }
+\DoxyCodeLine{00435\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00436\ }
+\DoxyCodeLine{00437\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00438\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Factory}}
+\DoxyCodeLine{00439\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00440\ }
+\DoxyCodeLine{00472\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<SList<T>}}*>\ \mbox{\hyperlink{classcslt_1_1SList_a7f0558100c86466709b9b23b8112a727}{init}}(\textcolor{keywordtype}{size\_t}\ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{num\_nodes}},}
+\DoxyCodeLine{00473\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{allow\_overflow}},}
+\DoxyCodeLine{00474\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}\&\ allocator)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00475\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<SList<T>}}*>\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00476\ }
+\DoxyCodeLine{00477\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{num\_nodes}}\ ==\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}})\ \{}
+\DoxyCodeLine{00478\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1ArgumentError}{ArgumentError}}(}
+\DoxyCodeLine{00479\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SList::init:\ num\_nodes\ must\ be\ >\ 0"{}}));}
+\DoxyCodeLine{00480\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00481\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00482\ }
+\DoxyCodeLine{00483\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classcslt_1_1Expected}{obj\_r}}\ =\ allocator.\mbox{\hyperlink{classcslt_1_1Allocator_ad6ad566633d84e86b690149ecc86af8a}{alloc}}(\textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}),\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00484\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{obj\_r}}.\mbox{\hyperlink{classcslt_1_1Expected_a457cd7aa736a7cc327310c75a2e30661}{hasValue}}())\ \{}
+\DoxyCodeLine{00485\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1MemoryError}{MemoryError}}(}
+\DoxyCodeLine{00486\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SList::init:\ failed\ to\ allocate\ SList\ struct"{}}));}
+\DoxyCodeLine{00487\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00488\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00489\ }
+\DoxyCodeLine{00490\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classcslt_1_1Expected}{slab\_r}}\ =\ allocator.\mbox{\hyperlink{classcslt_1_1Allocator_ad6ad566633d84e86b690149ecc86af8a}{alloc}}(\mbox{\hyperlink{classcslt_1_1Expected}{num\_nodes}}\ *\ \_node\_stride(),\ \textcolor{keyword}{true});}
+\DoxyCodeLine{00491\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{slab\_r}}.\mbox{\hyperlink{classcslt_1_1Expected_a457cd7aa736a7cc327310c75a2e30661}{hasValue}}())\ \{}
+\DoxyCodeLine{00492\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{return\_element}}(\mbox{\hyperlink{classcslt_1_1Expected}{obj\_r}}.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}(),}
+\DoxyCodeLine{00493\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}),}
+\DoxyCodeLine{00494\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator.\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{00495\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1MemoryError}{MemoryError}}(}
+\DoxyCodeLine{00496\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SList::init:\ failed\ to\ allocate\ node\ slab"{}}));}
+\DoxyCodeLine{00497\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00498\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00499\ }
+\DoxyCodeLine{00500\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{l}}\ =\ \textcolor{keyword}{new}\ (\mbox{\hyperlink{classcslt_1_1Expected}{obj\_r}}.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}())\ \mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}(}
+\DoxyCodeLine{00501\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{static\_cast<}\mbox{\hyperlink{classcslt_1_1Expected}{uint8\_t}}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{slab\_r}}.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}()),}
+\DoxyCodeLine{00502\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{num\_nodes}},}
+\DoxyCodeLine{00503\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{allow\_overflow}},}
+\DoxyCodeLine{00504\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator);}
+\DoxyCodeLine{00505\ }
+\DoxyCodeLine{00506\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(\mbox{\hyperlink{classcslt_1_1Expected}{l}});}
+\DoxyCodeLine{00507\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00508\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00509\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00510\ }
+\DoxyCodeLine{00528\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<SList<T>}}*>\ \mbox{\hyperlink{classcslt_1_1SList_a10638fe57a1aad0bcbbe955b9756392c}{copy}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{src}},}
+\DoxyCodeLine{00529\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}\&\ \ \ \ \ \ allocator)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00530\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<SList<T>}}*>\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00531\ }
+\DoxyCodeLine{00532\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ \mbox{\hyperlink{classcslt_1_1Expected}{ir}}\ =\ \mbox{\hyperlink{classcslt_1_1SList_a7f0558100c86466709b9b23b8112a727}{SList<T>::init}}(\mbox{\hyperlink{classcslt_1_1Expected}{src}}.slab\_cap\_,\ \mbox{\hyperlink{classcslt_1_1Expected}{src}}.allow\_overflow\_,\ allocator);}
+\DoxyCodeLine{00533\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{ir}}.\mbox{\hyperlink{classcslt_1_1Expected_a457cd7aa736a7cc327310c75a2e30661}{hasValue}}())\ \{}
+\DoxyCodeLine{00534\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1Expected}{ir}}.\mbox{\hyperlink{classcslt_1_1Expected_ac30487446828083efb81438432e8c721}{error}}());}
+\DoxyCodeLine{00535\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00536\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00537\ }
+\DoxyCodeLine{00538\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{dst}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{ir}}.\mbox{\hyperlink{classcslt_1_1Expected_a5d4e95808d25a88c3e7b2935a654f92f}{value}}();}
+\DoxyCodeLine{00539\ }
+\DoxyCodeLine{00540\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ Node*\ cur\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{src}}.head\_;\ cur\ !=\ \textcolor{keyword}{nullptr};\ cur\ =\ cur-\/>next)\ \{}
+\DoxyCodeLine{00541\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{dst}}-\/>push\_back(*\_node\_value\_c(cur)))\ \{}
+\DoxyCodeLine{00542\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{a}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{dst}}-\/>allocator\_;}
+\DoxyCodeLine{00543\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{dst}}-\/>\string~SList<\mbox{\hyperlink{classcslt_1_1Expected}{T}}>();}
+\DoxyCodeLine{00544\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{a}}-\/>return\_element(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{dst}}),}
+\DoxyCodeLine{00545\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}),}
+\DoxyCodeLine{00546\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{a}}-\/>default\_alignment());}
+\DoxyCodeLine{00547\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1MemoryError}{MemoryError}}(}
+\DoxyCodeLine{00548\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SList::copy:\ failed\ to\ push\ during\ copy"{}}));}
+\DoxyCodeLine{00549\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00550\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00551\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00552\ }
+\DoxyCodeLine{00553\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(\mbox{\hyperlink{classcslt_1_1Expected}{dst}});}
+\DoxyCodeLine{00554\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00555\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00556\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00557\ }
+\DoxyCodeLine{00567\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<SList<T>}}*>\ \mbox{\hyperlink{classcslt_1_1SList_a6aa63657b1fa89ef25cbb5da7460f078}{copy}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{src}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00568\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1SList_a10638fe57a1aad0bcbbe955b9756392c}{copy}}(\mbox{\hyperlink{classcslt_1_1Expected}{src}},\ *\mbox{\hyperlink{classcslt_1_1Expected}{src}}.allocator\_);}
+\DoxyCodeLine{00569\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00570\ }
+\DoxyCodeLine{00571\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00572\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Push\ operations}}
+\DoxyCodeLine{00573\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00574\ }
+\DoxyCodeLine{00588\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_a5b16468fb325e12a7a0f4d13ea869a38}{push\_back}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ value)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00589\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slab\_\ ||\ !allocator\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00590\ }
+\DoxyCodeLine{00591\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{node}}\ =\ \_alloc\_node\_raw();}
+\DoxyCodeLine{00592\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{node}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00593\ }
+\DoxyCodeLine{00594\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{node}}-\/>value\_))\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}(value);}
+\DoxyCodeLine{00595\ }
+\DoxyCodeLine{00596\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!tail\_)\ \{}
+\DoxyCodeLine{00597\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ head\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00598\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00599\ \ \ \ \ \ \ \ \ \ \ \ \ \}\ \textcolor{keywordflow}{else}\ \{}
+\DoxyCodeLine{00600\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tail\_-\/>next\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00601\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00602\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00603\ }
+\DoxyCodeLine{00604\ \ \ \ \ \ \ \ \ \ \ \ \ ++len\_;}
+\DoxyCodeLine{00605\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00606\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00607\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00608\ }
+\DoxyCodeLine{00622\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_ac3688974abd2a70ba9e413a53e5200b6}{push\_front}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ value)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00623\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slab\_\ ||\ !allocator\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00624\ }
+\DoxyCodeLine{00625\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{node}}\ =\ \_alloc\_node\_raw();}
+\DoxyCodeLine{00626\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{node}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00627\ }
+\DoxyCodeLine{00628\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{node}}-\/>value\_))\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}(value);}
+\DoxyCodeLine{00629\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{node}}-\/>next\ =\ head\_;}
+\DoxyCodeLine{00630\ \ \ \ \ \ \ \ \ \ \ \ \ head\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00631\ }
+\DoxyCodeLine{00632\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!tail\_)\ \{}
+\DoxyCodeLine{00633\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00634\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00635\ }
+\DoxyCodeLine{00636\ \ \ \ \ \ \ \ \ \ \ \ \ ++len\_;}
+\DoxyCodeLine{00637\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00638\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00639\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00640\ }
+\DoxyCodeLine{00659\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_a6446b00083349a87b74a712cd3e4ac51}{push\_at}}(\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{index}},\ \textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ value)\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00660\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slab\_\ ||\ !allocator\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00661\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{index}}\ >\ len\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00662\ }
+\DoxyCodeLine{00663\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{index}}\ ==\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}})\ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1SList_ac3688974abd2a70ba9e413a53e5200b6}{push\_front}}(value);}
+\DoxyCodeLine{00664\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{index}}\ ==\ len\_)\ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1SList_a5b16468fb325e12a7a0f4d13ea869a38}{push\_back}}(value);}
+\DoxyCodeLine{00665\ }
+\DoxyCodeLine{00666\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{node}}\ =\ \_alloc\_node\_raw();}
+\DoxyCodeLine{00667\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{node}})\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00668\ }
+\DoxyCodeLine{00669\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{new}\ (\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{node}}-\/>value\_))\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}(value);}
+\DoxyCodeLine{00670\ }
+\DoxyCodeLine{00671\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ head\_;}
+\DoxyCodeLine{00672\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ <\ \mbox{\hyperlink{classcslt_1_1Expected}{index}}\ -\/\ 1u;\ ++\mbox{\hyperlink{classcslt_1_1Expected}{i}})\ \{}
+\DoxyCodeLine{00673\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next;}
+\DoxyCodeLine{00674\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00675\ }
+\DoxyCodeLine{00676\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{node}}-\/>next\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next;}
+\DoxyCodeLine{00677\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}};}
+\DoxyCodeLine{00678\ \ \ \ \ \ \ \ \ \ \ \ \ ++len\_;}
+\DoxyCodeLine{00679\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00680\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00681\ }
+\DoxyCodeLine{00682\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00683\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pop\ operations}}
+\DoxyCodeLine{00684\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00685\ }
+\DoxyCodeLine{00696\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1SList_aa51ff2d148d77800abbc5e51c47b6b95}{pop\_front}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{00697\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00698\ }
+\DoxyCodeLine{00699\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!head\_)\ \{}
+\DoxyCodeLine{00700\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(\textcolor{stringliteral}{"{}SList::pop\_front:\ list\ is\ empty"{}}));}
+\DoxyCodeLine{00701\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00702\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00703\ }
+\DoxyCodeLine{00704\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{old\_head}}\ =\ head\_;}
+\DoxyCodeLine{00705\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\ \mbox{\hyperlink{classcslt_1_1Expected}{val}}(*\_node\_value(\mbox{\hyperlink{classcslt_1_1Expected}{old\_head}}));}
+\DoxyCodeLine{00706\ }
+\DoxyCodeLine{00707\ \ \ \ \ \ \ \ \ \ \ \ \ head\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{old\_head}}-\/>next;}
+\DoxyCodeLine{00708\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!head\_)\ \{}
+\DoxyCodeLine{00709\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00710\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00711\ }
+\DoxyCodeLine{00712\ \ \ \ \ \ \ \ \ \ \ \ \ \_node\_value(\mbox{\hyperlink{classcslt_1_1Expected}{old\_head}})-\/>\string~T();}
+\DoxyCodeLine{00713\ \ \ \ \ \ \ \ \ \ \ \ \ \_return\_node(\mbox{\hyperlink{classcslt_1_1Expected}{old\_head}});}
+\DoxyCodeLine{00714\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/len\_;}
+\DoxyCodeLine{00715\ }
+\DoxyCodeLine{00716\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(std::move(\mbox{\hyperlink{classcslt_1_1Expected}{val}}));}
+\DoxyCodeLine{00717\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00718\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00719\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00720\ }
+\DoxyCodeLine{00732\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1SList_a15476cca2c36d448112604a044a0dd4c}{pop\_back}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{00733\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00734\ }
+\DoxyCodeLine{00735\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!head\_)\ \{}
+\DoxyCodeLine{00736\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(\textcolor{stringliteral}{"{}SList::pop\_back:\ list\ is\ empty"{}}));}
+\DoxyCodeLine{00737\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00738\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00739\ }
+\DoxyCodeLine{00740\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (head\_\ ==\ tail\_)\ \{}
+\DoxyCodeLine{00741\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1SList_aa51ff2d148d77800abbc5e51c47b6b95}{pop\_front}}();}
+\DoxyCodeLine{00742\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00743\ }
+\DoxyCodeLine{00744\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ head\_;}
+\DoxyCodeLine{00745\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (\mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next\ !=\ tail\_)\ \{}
+\DoxyCodeLine{00746\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next;}
+\DoxyCodeLine{00747\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00748\ }
+\DoxyCodeLine{00749\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{old\_tail}}\ =\ tail\_;}
+\DoxyCodeLine{00750\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\ \mbox{\hyperlink{classcslt_1_1Expected}{val}}(*\_node\_value(\mbox{\hyperlink{classcslt_1_1Expected}{old\_tail}}));}
+\DoxyCodeLine{00751\ }
+\DoxyCodeLine{00752\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00753\ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}};}
+\DoxyCodeLine{00754\ }
+\DoxyCodeLine{00755\ \ \ \ \ \ \ \ \ \ \ \ \ \_node\_value(\mbox{\hyperlink{classcslt_1_1Expected}{old\_tail}})-\/>\string~T();}
+\DoxyCodeLine{00756\ \ \ \ \ \ \ \ \ \ \ \ \ \_return\_node(\mbox{\hyperlink{classcslt_1_1Expected}{old\_tail}});}
+\DoxyCodeLine{00757\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/len\_;}
+\DoxyCodeLine{00758\ }
+\DoxyCodeLine{00759\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(std::move(\mbox{\hyperlink{classcslt_1_1Expected}{val}}));}
+\DoxyCodeLine{00760\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00761\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00762\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00763\ }
+\DoxyCodeLine{00774\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1SList_ab001f35435c7423f68845c0a700059d4}{pop\_at}}(\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{index}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00775\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00776\ }
+\DoxyCodeLine{00777\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!head\_)\ \{}
+\DoxyCodeLine{00778\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(\textcolor{stringliteral}{"{}SList::pop\_at:\ list\ is\ empty"{}}));}
+\DoxyCodeLine{00779\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00780\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00781\ }
+\DoxyCodeLine{00782\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{index}}\ >=\ len\_)\ \{}
+\DoxyCodeLine{00783\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(\textcolor{stringliteral}{"{}SList::pop\_at:\ index\ out\ of\ range"{}}));}
+\DoxyCodeLine{00784\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00785\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00786\ }
+\DoxyCodeLine{00787\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{index}}\ ==\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}})\ \{}
+\DoxyCodeLine{00788\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1SList_aa51ff2d148d77800abbc5e51c47b6b95}{pop\_front}}();}
+\DoxyCodeLine{00789\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00790\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{index}}\ ==\ len\_\ -\/\ 1u)\ \{}
+\DoxyCodeLine{00791\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1SList_a15476cca2c36d448112604a044a0dd4c}{pop\_back}}();}
+\DoxyCodeLine{00792\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00793\ }
+\DoxyCodeLine{00794\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ head\_;}
+\DoxyCodeLine{00795\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ <\ \mbox{\hyperlink{classcslt_1_1Expected}{index}}\ -\/\ 1u;\ ++\mbox{\hyperlink{classcslt_1_1Expected}{i}})\ \{}
+\DoxyCodeLine{00796\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next;}
+\DoxyCodeLine{00797\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00798\ }
+\DoxyCodeLine{00799\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{target}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next;}
+\DoxyCodeLine{00800\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\ \mbox{\hyperlink{classcslt_1_1Expected}{val}}(*\_node\_value(\mbox{\hyperlink{classcslt_1_1Expected}{target}}));}
+\DoxyCodeLine{00801\ }
+\DoxyCodeLine{00802\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}-\/>next\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{target}}-\/>next;}
+\DoxyCodeLine{00803\ }
+\DoxyCodeLine{00804\ \ \ \ \ \ \ \ \ \ \ \ \ \_node\_value(\mbox{\hyperlink{classcslt_1_1Expected}{target}})-\/>\string~T();}
+\DoxyCodeLine{00805\ \ \ \ \ \ \ \ \ \ \ \ \ \_return\_node(\mbox{\hyperlink{classcslt_1_1Expected}{target}});}
+\DoxyCodeLine{00806\ \ \ \ \ \ \ \ \ \ \ \ \ -\/-\/len\_;}
+\DoxyCodeLine{00807\ }
+\DoxyCodeLine{00808\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(std::move(\mbox{\hyperlink{classcslt_1_1Expected}{val}}));}
+\DoxyCodeLine{00809\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00810\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00811\ }
+\DoxyCodeLine{00812\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00813\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Get\ and\ peek}}
+\DoxyCodeLine{00814\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00815\ }
+\DoxyCodeLine{00829\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1SList_ad960d62ed4540bdfd58d7b408e6092ed}{get}}(\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{index}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00830\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00831\ }
+\DoxyCodeLine{00832\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\mbox{\hyperlink{classcslt_1_1Expected}{index}}\ >=\ len\_)\ \{}
+\DoxyCodeLine{00833\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(\textcolor{stringliteral}{"{}SList::get:\ index\ out\ of\ range"{}}));}
+\DoxyCodeLine{00834\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00835\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00836\ }
+\DoxyCodeLine{00837\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{node}}\ =\ head\_;}
+\DoxyCodeLine{00838\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ <\ \mbox{\hyperlink{classcslt_1_1Expected}{index}};\ ++\mbox{\hyperlink{classcslt_1_1Expected}{i}})\ \{}
+\DoxyCodeLine{00839\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{node}}\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{node}}-\/>next;}
+\DoxyCodeLine{00840\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00841\ }
+\DoxyCodeLine{00842\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(*\_node\_value\_c(\mbox{\hyperlink{classcslt_1_1Expected}{node}}));}
+\DoxyCodeLine{00843\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00844\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00845\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00846\ }
+\DoxyCodeLine{00854\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1SList_a16caa96fa2e7e2f1a8a75eee196194d5}{peek\_front}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{00855\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00856\ }
+\DoxyCodeLine{00857\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!head\_)\ \{}
+\DoxyCodeLine{00858\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(}
+\DoxyCodeLine{00859\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SList::peek\_front:\ list\ is\ empty"{}}));}
+\DoxyCodeLine{00860\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00861\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00862\ }
+\DoxyCodeLine{00863\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(*\_node\_value\_c(head\_));}
+\DoxyCodeLine{00864\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00865\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00866\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00867\ }
+\DoxyCodeLine{00875\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1SList_afdfc13f2f9cfbc9db2c203ed884f9a9d}{peek\_back}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{00876\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<T>}}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00877\ }
+\DoxyCodeLine{00878\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!tail\_)\ \{}
+\DoxyCodeLine{00879\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(}
+\DoxyCodeLine{00880\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{stringliteral}{"{}SList::peek\_back:\ list\ is\ empty"{}}));}
+\DoxyCodeLine{00881\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00882\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00883\ }
+\DoxyCodeLine{00884\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(*\_node\_value\_c(tail\_));}
+\DoxyCodeLine{00885\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{00886\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00887\ }
+\DoxyCodeLine{00888\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00889\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Utility\ operations}}
+\DoxyCodeLine{00890\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00891\ }
+\DoxyCodeLine{00906\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_a67b8f2e6e191a50ef446a47a8fb7820f}{clear}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{00907\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ cur\ =\ head\_;}
+\DoxyCodeLine{00908\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (cur\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00909\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{nxt}}\ =\ cur-\/>next;}
+\DoxyCodeLine{00910\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_node\_value(cur)-\/>\string~T();}
+\DoxyCodeLine{00911\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \_return\_node(cur);}
+\DoxyCodeLine{00912\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{nxt}};}
+\DoxyCodeLine{00913\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00914\ }
+\DoxyCodeLine{00915\ \ \ \ \ \ \ \ \ \ \ \ \ head\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00916\ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00917\ \ \ \ \ \ \ \ \ \ \ \ \ len\_\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00918\ \ \ \ \ \ \ \ \ \ \ \ \ overflow\_live\_\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00919\ }
+\DoxyCodeLine{00920\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Rebuild\ slab\ free\ list\ from\ all\ slab\ nodes\ ever\ consumed.}}
+\DoxyCodeLine{00921\ \ \ \ \ \ \ \ \ \ \ \ \ slab\_free\_\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00922\ \ \ \ \ \ \ \ \ \ \ \ \ slab\_free\_count\_\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{00923\ }
+\DoxyCodeLine{00924\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ <\ slab\_used\_;\ ++\mbox{\hyperlink{classcslt_1_1Expected}{i}})\ \{}
+\DoxyCodeLine{00925\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{n}}\ =\ \textcolor{keyword}{reinterpret\_cast<}Node*\textcolor{keyword}{>}(slab\_\ +\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ *\ \_node\_stride());}
+\DoxyCodeLine{00926\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{n}}-\/>next\ =\ slab\_free\_;}
+\DoxyCodeLine{00927\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ slab\_free\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{n}};}
+\DoxyCodeLine{00928\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ ++slab\_free\_count\_;}
+\DoxyCodeLine{00929\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00930\ }
+\DoxyCodeLine{00931\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00932\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00933\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00934\ }
+\DoxyCodeLine{00945\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_aa08f7637d15f4cfd7b6d87be75887dc7}{reverse}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{00946\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slab\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00947\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (len\_\ <=\ 1u)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00948\ }
+\DoxyCodeLine{00949\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ \textcolor{keyword}{nullptr};}
+\DoxyCodeLine{00950\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ cur\ =\ head\_;}
+\DoxyCodeLine{00951\ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{new\_tail}}\ =\ head\_;}
+\DoxyCodeLine{00952\ }
+\DoxyCodeLine{00953\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{while}\ (cur\ !=\ \textcolor{keyword}{nullptr})\ \{}
+\DoxyCodeLine{00954\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Node*\ \mbox{\hyperlink{classcslt_1_1Expected}{nxt}}\ =\ cur-\/>next;}
+\DoxyCodeLine{00955\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur-\/>next\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}};}
+\DoxyCodeLine{00956\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{prev}}\ =\ cur;}
+\DoxyCodeLine{00957\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ cur\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{nxt}};}
+\DoxyCodeLine{00958\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00959\ }
+\DoxyCodeLine{00960\ \ \ \ \ \ \ \ \ \ \ \ \ head\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{prev}};}
+\DoxyCodeLine{00961\ \ \ \ \ \ \ \ \ \ \ \ \ tail\_\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{new\_tail}};}
+\DoxyCodeLine{00962\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00963\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00964\ \ \ \ \ \textcolor{comment}{//\ -\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/-\/}}
+\DoxyCodeLine{00965\ }
+\DoxyCodeLine{00979\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_afe68865c93b5875524b277227006b170}{concat}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{src}})\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{00980\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keyword}{const}\ Node*\ cur\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{src}}.head\_;\ cur\ !=\ \textcolor{keyword}{nullptr};\ cur\ =\ cur-\/>next)\ \{}
+\DoxyCodeLine{00981\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1SList_a5b16468fb325e12a7a0f4d13ea869a38}{push\_back}}(*\_node\_value\_c(cur)))\ \{}
+\DoxyCodeLine{00982\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00983\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00984\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00985\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00986\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00987\ }
+\DoxyCodeLine{00988\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00989\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Search}}
+\DoxyCodeLine{00990\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{00991\ }
+\DoxyCodeLine{01002\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<size\_t>}}\ \mbox{\hyperlink{classcslt_1_1SList_a21d6dca37e226210651ffe23efbe7838}{contains}}(\textcolor{keyword}{const}\ \mbox{\hyperlink{classcslt_1_1Expected}{T}}\&\ \mbox{\hyperlink{classcslt_1_1Expected}{needle}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{01003\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{Expected<size\_t>}}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{01004\ }
+\DoxyCodeLine{01005\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Node*\ cur\ =\ head\_;}
+\DoxyCodeLine{01006\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};\ cur\ !=\ \textcolor{keyword}{nullptr};\ ++\mbox{\hyperlink{classcslt_1_1Expected}{i}},\ cur\ =\ cur-\/>next)\ \{}
+\DoxyCodeLine{01007\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (\_values\_equal(*\_node\_value\_c(cur),\ \mbox{\hyperlink{classcslt_1_1Expected}{needle}}))\ \{}
+\DoxyCodeLine{01008\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_a7494922b71d0465f02c28dbd86404c7d}{setValue}}(\mbox{\hyperlink{classcslt_1_1Expected}{i}});}
+\DoxyCodeLine{01009\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{01010\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01011\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01012\ }
+\DoxyCodeLine{01013\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{result}}.\mbox{\hyperlink{classcslt_1_1Expected_aebb77bab2c8690dece4fd9b0fbd673c0}{setError}}(\mbox{\hyperlink{classcslt_1_1OutOfBoundsError}{OutOfBoundsError}}(\textcolor{stringliteral}{"{}SList::contains:\ value\ not\ found"{}}));}
+\DoxyCodeLine{01014\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{result}};}
+\DoxyCodeLine{01015\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01016\ }
+\DoxyCodeLine{01017\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{01018\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Iteration}}
+\DoxyCodeLine{01019\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{01020\ }
+\DoxyCodeLine{01037\ \ \ \ \ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ Func>}
+\DoxyCodeLine{01038\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \textcolor{keywordflow}{foreach}(\mbox{\hyperlink{classcslt_1_1Expected}{Func}}\ \mbox{\hyperlink{classcslt_1_1Expected}{fn}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{01039\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!slab\_)\ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{01040\ }
+\DoxyCodeLine{01041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ Node*\ cur\ =\ head\_;}
+\DoxyCodeLine{01042\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (\textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{i}}\ =\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};\ cur\ !=\ \textcolor{keyword}{nullptr};\ ++\mbox{\hyperlink{classcslt_1_1Expected}{i}},\ cur\ =\ cur-\/>next)\ \{}
+\DoxyCodeLine{01043\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{fn}}(*\_node\_value\_c(cur),\ \mbox{\hyperlink{classcslt_1_1Expected}{i}});}
+\DoxyCodeLine{01044\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01045\ }
+\DoxyCodeLine{01046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{01047\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01048\ }
+\DoxyCodeLine{01049\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{01050\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Introspection}}
+\DoxyCodeLine{01051\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ =========================================================================}}
+\DoxyCodeLine{01052\ }
+\DoxyCodeLine{01059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SList_ae533d2fdf0ac0d79894b56bdf52d36ce}{size}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{\ \textcolor{keywordflow}{return}\ len\_;\ \}}
+\DoxyCodeLine{01060\ }
+\DoxyCodeLine{01067\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SList_a2feb276752fd71304bf2731ff950f089}{slab\_capacity}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{\ \textcolor{keywordflow}{return}\ slab\_cap\_;\ \}}
+\DoxyCodeLine{01068\ }
+\DoxyCodeLine{01078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SList_a3ccd31fa15427fc7a8732511954733ea}{slab\_used}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{\ \textcolor{keywordflow}{return}\ slab\_used\_;\ \}}
+\DoxyCodeLine{01079\ }
+\DoxyCodeLine{01086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SList_abc7fb45ef29ae1859cfd4834354c813d}{slab\_free\_count}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{\ \textcolor{keywordflow}{return}\ slab\_free\_count\_;\ \}}
+\DoxyCodeLine{01087\ }
+\DoxyCodeLine{01094\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SList_ad016765eb0e26b1bd622ba9af42d78e5}{slab\_live\_count}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{01095\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (slab\_used\_\ >=\ slab\_free\_count\_)\ ?\ (slab\_used\_\ -\/\ slab\_free\_count\_)\ :\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{01096\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01097\ }
+\DoxyCodeLine{01106\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SList_a4ba6507b0af45dd4541d15dc12588107}{slab\_remaining}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{01107\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1Expected}{fresh\_remaining}}\ =}
+\DoxyCodeLine{01108\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ (slab\_cap\_\ >\ slab\_used\_)\ ?\ (slab\_cap\_\ -\/\ slab\_used\_)\ :\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{01109\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \mbox{\hyperlink{classcslt_1_1Expected}{fresh\_remaining}}\ +\ slab\_free\_count\_;}
+\DoxyCodeLine{01110\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01111\ }
+\DoxyCodeLine{01118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{size\_t}\ \mbox{\hyperlink{classcslt_1_1SList_a74b22a857c705d077bef282444574033}{overflow\_count}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{\ \textcolor{keywordflow}{return}\ overflow\_live\_;\ \}}
+\DoxyCodeLine{01119\ }
+\DoxyCodeLine{01127\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_a016af506d4dbfb4c7bbd7dc546ec5f39}{is\_empty}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{\ \textcolor{keywordflow}{return}\ len\_\ ==\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};\ \}}
+\DoxyCodeLine{01128\ }
+\DoxyCodeLine{01139\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_a21f3a3c47622c2f776b74c624c8a5f86}{is\_slab\_full}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{01140\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ (slab\_used\_\ >=\ slab\_cap\_)\ \&\&\ (slab\_free\_count\_\ ==\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}});}
+\DoxyCodeLine{01141\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01142\ }
+\DoxyCodeLine{01150\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \mbox{\hyperlink{classcslt_1_1SList_a6ee41283f64c4e7dc306bde8d409ece0}{in\_overflow}}()\ \mbox{\hyperlink{classcslt_1_1Expected}{const}}\ \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}\ \{}
+\DoxyCodeLine{01151\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ overflow\_live\_\ >\ 0\mbox{\hyperlink{classcslt_1_1Expected}{u}};}
+\DoxyCodeLine{01152\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01153\ \ \ \ \ \};}
+\DoxyCodeLine{01154\ \ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{01155\ \ \ \ \ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{01156\ }
+\DoxyCodeLine{01168\ \ \ \ \ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ T>}
+\DoxyCodeLine{01169\ \ \ \ \ \textcolor{keyword}{class\ }\mbox{\hyperlink{classcslt_1_1SListDeleter}{SListDeleter}}\ \{}
+\DoxyCodeLine{01170\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{01181\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{classcslt_1_1SListDeleter_a4169981142deeb00c7aac8d654419463}{operator()}}(\mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}*\ \mbox{\hyperlink{classcslt_1_1Expected}{l}})\ \textcolor{keyword}{const}\ \textcolor{keyword}{noexcept}\ \{}
+\DoxyCodeLine{01182\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!\mbox{\hyperlink{classcslt_1_1Expected}{l}})\ \textcolor{keywordflow}{return};}
+\DoxyCodeLine{01183\ }
+\DoxyCodeLine{01184\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Allocator}{Allocator}}*\ allocator\ =\ \mbox{\hyperlink{classcslt_1_1Expected}{l}}-\/>allocator\_;}
+\DoxyCodeLine{01185\ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{l}}-\/>\string~SList<\mbox{\hyperlink{classcslt_1_1Expected}{T}}>();}
+\DoxyCodeLine{01186\ }
+\DoxyCodeLine{01187\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (allocator)\ \{}
+\DoxyCodeLine{01188\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator-\/>\mbox{\hyperlink{classcslt_1_1Allocator_a68ee49ecae412b74b73dcf56ceb6c5ed}{return\_element}}(\textcolor{keyword}{static\_cast<}\textcolor{keywordtype}{void}*\textcolor{keyword}{>}(\mbox{\hyperlink{classcslt_1_1Expected}{l}}),}
+\DoxyCodeLine{01189\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\mbox{\hyperlink{classcslt_1_1Expected}{SList<T>}}),}
+\DoxyCodeLine{01190\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ allocator-\/>\mbox{\hyperlink{classcslt_1_1Allocator_a5efa5aa5b36cca23c9bb94f5ba2756d0}{default\_alignment}}());}
+\DoxyCodeLine{01191\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01192\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{01193\ \ \ \ \ \};\ }
+\DoxyCodeLine{01194\ \}\ \textcolor{comment}{//\ end\ cslt\ namespace}}
+\DoxyCodeLine{01195\ \textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{01196\ \textcolor{comment}{//\ ================================================================================\ }}
+\DoxyCodeLine{01197\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ file\_name\_HPP\ */}\textcolor{preprocessor}{}}
+\DoxyCodeLine{01198\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{01199\ \textcolor{comment}{//\ ================================================================================}}
+\DoxyCodeLine{01200\ \textcolor{comment}{//\ eof}}
+
+\end{DoxyCode}

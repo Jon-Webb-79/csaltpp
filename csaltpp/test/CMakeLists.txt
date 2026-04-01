@@ -16,6 +16,7 @@ add_executable(unit_tests
   test_string.cpp
   test_array.cpp
   test_dict.cpp
+  test_list.cpp
   #  test_matrix.cpp
 )
 

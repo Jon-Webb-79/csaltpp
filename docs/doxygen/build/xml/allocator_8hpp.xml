@@ -14,6 +14,7 @@
     <includedby refid="test__allocator_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_allocator.cpp</includedby>
     <includedby refid="test__array_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_array.cpp</includedby>
     <includedby refid="test__dict_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_dict.cpp</includedby>
+    <includedby refid="test__heap_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_heap.cpp</includedby>
     <includedby refid="test__list_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_list.cpp</includedby>
     <includedby refid="test__string_8cpp" local="yes">/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_string.cpp</includedby>
     <incdepgraph>
@@ -68,10 +69,6 @@
         <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/allocator.cpp</label>
         <link refid="allocator_8cpp"/>
       </node>
-      <node id="4">
-        <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/array.cpp</label>
-        <link refid="array_8cpp"/>
-      </node>
       <node id="1">
         <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/allocator.hpp</label>
         <link refid="allocator_8hpp"/>
@@ -87,9 +84,11 @@
         </childnode>
         <childnode refid="13" relation="include">
         </childnode>
-        <childnode refid="5" relation="include">
+        <childnode refid="4" relation="include">
         </childnode>
         <childnode refid="7" relation="include">
+        </childnode>
+        <childnode refid="5" relation="include">
         </childnode>
         <childnode refid="9" relation="include">
         </childnode>
@@ -134,13 +133,17 @@
         <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_allocator.cpp</label>
         <link refid="test__allocator_8cpp"/>
       </node>
-      <node id="5">
+      <node id="4">
         <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_array.cpp</label>
         <link refid="test__array_8cpp"/>
       </node>
       <node id="7">
         <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_dict.cpp</label>
         <link refid="test__dict_8cpp"/>
+      </node>
+      <node id="5">
+        <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_heap.cpp</label>
+        <link refid="test__heap_8cpp"/>
       </node>
       <node id="9">
         <label>/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/test/test_list.cpp</label>
@@ -503,7 +506,7 @@
 <codeline lineno="1643"><highlight class="normal"></highlight></codeline>
 <codeline lineno="1644"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>ARENA_ENABLE_DYNAMIC</highlight></codeline>
 <codeline lineno="1706"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">Expected&lt;cslt::UniquePtr&lt;ArenaAllocator, ArenaDeleter&gt;</ref>&gt;</highlight></codeline>
-<codeline lineno="1707"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1ArenaAllocator_1ab71e5fc5e1cf3e9b07ad7208465a7b0f" kindref="member">Heap</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">bytes</ref>,</highlight></codeline>
+<codeline lineno="1707"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">bytes</ref>,</highlight></codeline>
 <codeline lineno="1708"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">resize</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">,</highlight></codeline>
 <codeline lineno="1709"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1ArenaAllocator_1a76f827485553a4b7bb284827f81df308" kindref="member">min_chunk_size</ref><sp/>=<sp/>4096,</highlight></codeline>
 <codeline lineno="1710"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">base_align_in</ref><sp/>=<sp/></highlight><highlight class="keyword">alignof</highlight><highlight class="normal">(<ref refid="classcslt_1_1Expected" kindref="compound">max_align_t</ref>));</highlight></codeline>
@@ -818,7 +821,7 @@
 <codeline lineno="3694"><highlight class="normal"></highlight></codeline>
 <codeline lineno="3695"><highlight class="normal"></highlight><highlight class="preprocessor">#if<sp/>ARENA_ENABLE_DYNAMIC</highlight></codeline>
 <codeline lineno="3775"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">Expected&lt;UniquePtr&lt;FreeListAllocator, FreeListDeleter&gt;</ref>&gt;</highlight></codeline>
-<codeline lineno="3776"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Heap(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">bytes</ref>,</highlight></codeline>
+<codeline lineno="3776"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">bytes</ref>,</highlight></codeline>
 <codeline lineno="3777"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">alignment</ref><sp/>=<sp/>0,</highlight></codeline>
 <codeline lineno="3778"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">bool</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">resize</ref><sp/>=<sp/></highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
 <codeline lineno="3779"><highlight class="normal"></highlight><highlight class="preprocessor">#endif</highlight><highlight class="normal"></highlight></codeline>
@@ -996,7 +999,7 @@
 <codeline lineno="5560"><highlight class="normal"></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------------<sp/></highlight><highlight class="normal"></highlight></codeline>
 <codeline lineno="5561"><highlight class="normal"></highlight></codeline>
 <codeline lineno="5687"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keyword">static</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">Expected&lt;UniquePtr&lt;BuddyAllocator, BuddyDeleter&gt;</ref>&gt;</highlight></codeline>
-<codeline lineno="5688"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/>Heap(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">pool_size</ref>,</highlight></codeline>
+<codeline lineno="5688"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref>(</highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">pool_size</ref>,</highlight></codeline>
 <codeline lineno="5689"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/>min_block_size,</highlight></codeline>
 <codeline lineno="5690"><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/></highlight><highlight class="keywordtype">size_t</highlight><highlight class="normal"><sp/><ref refid="classcslt_1_1Expected" kindref="compound">base_align</ref><sp/>=<sp/>0);</highlight></codeline>
 <codeline lineno="5691"><highlight class="normal"></highlight><highlight class="comment">//<sp/>--------------------------------------------------------------------------------<sp/></highlight><highlight class="normal"></highlight></codeline>

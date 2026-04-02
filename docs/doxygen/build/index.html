@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Heap.html">Heap</a></li>
 </ul>
 
         </div>
@@ -199,6 +200,20 @@ involves challenges:</p>
 <li><p><strong>RAII cleanup</strong> - <code class="docutils literal notranslate"><span class="pre">SListDeleter&lt;T&gt;</span></code> works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to automatically reclaim all list-owned memory</p></li>
 </ul>
 </section>
+<section id="heap">
+<h3>Heap<a class="headerlink" href="#heap" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Generic binary heap</strong> - <code class="docutils literal notranslate"><span class="pre">Heap&lt;T,</span> <span class="pre">Compare&gt;</span></code> provides priority-ordered access to any element type <code class="docutils literal notranslate"><span class="pre">T</span></code> with compile-time comparator <code class="docutils literal notranslate"><span class="pre">Compare</span></code></p></li>
+<li><p><strong>Array-backed storage</strong> - All element storage, tiered growth, and buffer management are delegated to an owned <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code> instance</p></li>
+<li><p><strong>Factory pattern</strong> - Creation via <code class="docutils literal notranslate"><span class="pre">Heap&lt;T,Compare&gt;::init()</span></code> returning <code class="docutils literal notranslate"><span class="pre">Expected&lt;Heap&lt;T,Compare&gt;*&gt;</span></code> prevents uninitialised instances</p></li>
+<li><p><strong>Flexible ordering</strong> - Pass <code class="docutils literal notranslate"><span class="pre">std::less&lt;T&gt;</span></code> for a max-heap, <code class="docutils literal notranslate"><span class="pre">std::greater&lt;T&gt;</span></code> for a min-heap, or any lambda/functor for custom priority ordering</p></li>
+<li><p><strong>No operator&lt; requirement</strong> - When a lambda or custom functor is used as the comparator, the element type needs no comparison operators</p></li>
+<li><p><strong>Optional growth</strong> - Automatic buffer growth using Array’s tiered strategy; can be disabled for deterministic fixed-capacity use</p></li>
+<li><p><strong>O(log n) push and pop</strong> - Sift-up and sift-down maintain the heap property on every mutation</p></li>
+<li><p><strong>Templated iteration</strong> - <code class="docutils literal notranslate"><span class="pre">foreach()</span></code> accepts any callable with signature <code class="docutils literal notranslate"><span class="pre">void(const</span> <span class="pre">T&amp;)</span></code>; for ordered traversal, copy the heap and pop in a loop</p></li>
+<li><p><strong>RAII cleanup</strong> - <code class="docutils literal notranslate"><span class="pre">HeapDeleter&lt;T,</span> <span class="pre">Compare&gt;</span></code> works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to automatically reclaim the heap struct and its backing array</p></li>
+</ul>
+</section>
 </section>
 <section id="typical-use-cases">
 <h2>Typical Use Cases<a class="headerlink" href="#typical-use-cases" title="Link to this heading"></a></h2>
@@ -219,6 +234,7 @@ involves challenges:</p>
 <li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Heap.html">Heap</a></li>
 </ul>
 </div>
 </section>

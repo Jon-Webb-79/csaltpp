@@ -20,6 +20,7 @@
 
 #include <cstddef>
 #include <cstring>
+#include <cstdint>
 #include <new>
 #include <type_traits>
 #include <utility>
@@ -1964,6 +1965,9 @@ namespace cslt {
         // ArrayDeleter needs access to private members for cleanup
         template <typename U>
         friend class ArrayDeleter;
+
+        template <typename TT, typename CC>
+        friend class Heap;
     };
 // ================================================================================
 // ================================================================================
@@ -2016,6 +2020,597 @@ namespace cslt {
                 allocator->return_element(static_cast<void*>(a),
                                           sizeof(Array<T>),
                                           allocator->default_alignment());
+            }
+        }
+    };
+// ================================================================================ 
+// ================================================================================ 
+
+    // Forward declaration so HeapDeleter is visible inside Heap
+    template <typename T, typename Compare> class HeapDeleter;
+     
+    // ================================================================================
+    // ================================================================================
+     
+    /**
+     * @class Heap
+     * @brief Allocator-backed generic binary heap backed by cslt::Array<T>.
+     *
+     * @details Implements a binary heap whose element storage, capacity management,
+     *          and tiered growth strategy are provided entirely by an owned
+     *          cslt::Array<T> instance.  The Heap class itself is responsible only
+     *          for maintaining the heap property via sift-up and sift-down
+     *          operations, and for managing the comparator.
+     *
+     * The template parameter @p Compare determines heap ordering.  It must be a
+     * callable with signature @c bool(const T&, const T&) that returns @c true
+     * when its first argument has higher priority than its second:
+     *
+     * @code{.cpp}
+     * // Min-heap — smallest element at root
+     * cslt::Heap<int, std::greater<int>> min_heap;
+     *
+     * // Max-heap — largest element at root
+     * cslt::Heap<int, std::less<int>> max_heap;
+     *
+     * // Lambda comparator — custom priority
+     * auto cmp = [](const Task& a, const Task& b){ return a.priority > b.priority; };
+     * cslt::Heap<Task, decltype(cmp)> task_heap;
+     * @endcode
+     *
+     * Key features:
+     * - All storage, growth, and element lifetime delegated to Array<T>
+     * - No duplicated growth logic — changes to Array<T> growth strategy
+     *   automatically apply to Heap<T, Compare>
+     * - Template parameters T and Compare fix element type and ordering at
+     *   compile time — no runtime type tags or function pointer casts
+     * - Factory pattern via init() prevents uninitialised instances
+     * - RAII cleanup through HeapDeleter and UniquePtr
+     * - Returns explicit success/error state using the Expected<T> pattern
+     * - foreach() iteration accepts any callable with signature void(const T&)
+     *
+     * @tparam T        Element type.  Must be default-constructible,
+     *                  copy-constructible, and destructible.
+     *                  Default-constructibility is required by Expected<T>.
+     * @tparam Compare  Comparator type.  Must be default-constructible and
+     *                  callable as bool(const T&, const T&).  Returns true when
+     *                  the first argument has higher priority than the second.
+     *
+     * @code{.cpp}
+     * cslt::HeapAllocator alloc;
+     * auto r = cslt::Heap<int, std::greater<int>>::init(16, true, alloc);
+     * if (r.hasValue()) {
+     *     cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+     *                     cslt::HeapDeleter<int, std::greater<int>>> h(r.value());
+     *     h->push(5);
+     *     h->push(1);
+     *     h->push(3);
+     *     auto pr = h->pop();   // Expected<int> containing 1  (min-heap)
+     * }
+     * @endcode
+     */
+    template <typename T, typename Compare>
+    class Heap {
+     
+    private:
+     
+        // ========================================================================
+        // Private data members
+        // ========================================================================
+     
+        Array<T>*  array_;      ///< Owned backing array — provides storage and growth
+        bool       growth_;     ///< If false, push() returns false when array is full 
+        Compare    cmp_;        ///< Comparator instance defining heap order
+        Allocator* allocator_;  ///< Allocator used for the Heap struct itself
+     
+        // ========================================================================
+        // Private constructor / destructor
+        // ========================================================================
+       Heap(Array<T>*  array,
+                 bool       growth,
+                 Compare    cmp,
+                 Allocator& allocator) noexcept
+                : array_(array)
+                , growth_(growth)   // <-- this line is missing
+                , cmp_(cmp)
+                , allocator_(&allocator)
+            {} 
+     
+        ~Heap() noexcept {
+            if (array_ && allocator_) {
+                // Destroy and free the backing array through its own deleter
+                ArrayDeleter<T> deleter;
+                deleter(array_);
+                array_ = nullptr;
+            }
+        }
+     
+        Heap(const Heap&)            = delete;
+        Heap& operator=(const Heap&) = delete;
+        Heap(Heap&&)                 = delete;
+        Heap& operator=(Heap&&)      = delete;
+     
+        // ========================================================================
+        // Private helpers — direct element access via Array friendship
+        // ========================================================================
+     
+        /**
+         * @brief Return a reference to the element at index i.
+         *
+         * Bypasses Expected<T> overhead for tight sift loops by accessing
+         * Array::data_ directly.  Safe because Heap is a friend of Array.
+         */
+        T& _at(size_t i) noexcept {
+            return array_->data_[i];
+        }
+     
+        const T& _at(size_t i) const noexcept {
+            return array_->data_[i];
+        }
+     
+        // ========================================================================
+        // Private helpers — swap
+        // ========================================================================
+     
+        /**
+         * @brief Swap the elements at indices i and j.
+         *
+         * Uses memcpy for trivially copyable T and move semantics for
+         * non-trivial T, consistent with Array's own swap strategy.
+         */
+        void _swap(size_t i, size_t j) noexcept {
+            if (i == j) return;
+            if constexpr (std::is_trivially_copyable_v<T>) {
+                alignas(T) uint8_t tmp[sizeof(T)];
+                std::memcpy(tmp,                   &array_->data_[i], sizeof(T));
+                std::memcpy(&array_->data_[i],     &array_->data_[j], sizeof(T));
+                std::memcpy(&array_->data_[j],     tmp,               sizeof(T));
+            } else {
+                T tmp(std::move(array_->data_[i]));
+                new (&array_->data_[i]) T(std::move(array_->data_[j]));
+                array_->data_[j].~T();
+                new (&array_->data_[j]) T(std::move(tmp));
+            }
+        }
+     
+        // ========================================================================
+        // Private helpers — sift operations
+        // ========================================================================
+     
+        /**
+         * @brief Sift the element at index i upward until the heap property is
+         *        restored.  Called after push_back() appends to the array.
+         *
+         * The heap property holds when cmp_(parent, child) is true for every
+         * parent-child pair — the root always has higher priority than every
+         * descendant under the stored comparator.
+         */
+        void _sift_up(size_t i) noexcept {
+            while (i > 0u) {
+                size_t parent = (i - 1u) / 2u;
+                // If parent already has priority over child, stop
+                if (cmp_(_at(parent), _at(i))) break;
+                _swap(parent, i);
+                i = parent;
+            }
+        }
+     
+        /**
+         * @brief Sift the element at index i downward until the heap property is
+         *        restored.  Called after the root is replaced during pop().
+         */
+        void _sift_down(size_t i) noexcept {
+            size_t const n = array_->len_;
+     
+            for (;;) {
+                size_t left  = 2u * i + 1u;
+                size_t right = 2u * i + 2u;
+                size_t best  = i;
+     
+                if (left  < n && cmp_(_at(left),  _at(best))) best = left;
+                if (right < n && cmp_(_at(right), _at(best))) best = right;
+     
+                if (best == i) break;
+     
+                _swap(i, best);
+                i = best;
+            }
+        }
+     
+        // HeapDeleter needs access to private members
+        template <typename TT, typename CC>
+        friend class HeapDeleter;
+     
+    public:
+     
+        // ========================================================================
+        // Factory
+        // ========================================================================
+     
+        /**
+         * @brief Allocate and initialise a new Heap
+         *
+         * @param capacity   Initial element capacity passed to Array<T>::init().
+         *                   Must be > 0.
+         * @param growth     Forwarded to Array<T>::init().  If true, the backing
+         *                   array grows automatically when full using Array's
+         *                   tiered strategy.  If false, push() returns false when
+         *                   the array is at capacity.
+         * @param allocator  Allocator for the Heap struct and, via Array, the
+         *                   backing element buffer.
+         * @param cmp        Comparator instance (default-constructed if omitted).
+         *                   Returns true when its first argument has higher
+         *                   priority than its second.
+         * @return Expected<Heap<T,Compare>*> on success, or an ArgumentError /
+         *         MemoryError on failure
+         *
+         * @par Error conditions
+         * - capacity == 0 (ArgumentError, propagated from Array::init)
+         * - Allocation of the backing Array fails (MemoryError)
+         * - Allocation of the Heap struct fails (MemoryError)
+         *
+         * @code{.cpp}
+         * // Min-heap of integers (smallest value at root)
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::Heap<int, std::greater<int>>::init(16, true, alloc);
+         * if (!r.hasValue()) return;
+         * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+         *                 cslt::HeapDeleter<int, std::greater<int>>> h(r.value());
+         *
+         * h->push(5);
+         * h->push(1);
+         * h->push(3);
+         * // h->peek().value() == 1  (smallest element is at the root)
+         * @endcode
+         */
+        static Expected<Heap<T, Compare>*> init(size_t     capacity,
+                                                 bool       growth,
+                                                 Allocator& allocator,
+                                                 Compare    cmp = Compare{}) noexcept {
+            Expected<Heap<T, Compare>*> result;
+
+            // Delegate array creation — this validates capacity > 0 and handles
+            // all buffer allocation and error reporting
+            auto arr_r = Array<T>::init(capacity, allocator);
+            if (!arr_r.hasValue()) {
+                result.setError(arr_r.error());
+                return result;
+            }
+
+            // Allocate the Heap struct itself
+            auto obj_r = allocator.alloc(sizeof(Heap<T, Compare>), true);
+            if (!obj_r.hasValue()) {
+                ArrayDeleter<T>{}(arr_r.value());
+                result.setError(MemoryError(
+                    "Heap::init: failed to allocate Heap struct"));
+                return result;
+            }
+
+            Heap<T, Compare>* h = new (obj_r.value()) Heap<T, Compare>(
+                arr_r.value(), growth, cmp, allocator);
+
+            result.setValue(h);
+            return result;
+        } 
+    // --------------------------------------------------------------------------------
+     
+        /**
+         * @brief Create a deep copy of @p src using a caller-supplied allocator
+         *
+         * @param src       Heap to copy from
+         * @param allocator Allocator for the new Heap and its backing array
+         * @return Expected<Heap<T,Compare>*> on success, or an error
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::Heap<int, std::greater<int>>::init(8, true, alloc);
+         * if (!r.hasValue()) return;
+         * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+         *                 cslt::HeapDeleter<int, std::greater<int>>> src(r.value());
+         * src->push(3);
+         * src->push(1);
+         * src->push(2);
+         *
+         * // Deep copy — src and dst are fully independent
+         * auto cr = cslt::Heap<int, std::greater<int>>::copy(*src, alloc);
+         * if (!cr.hasValue()) return;
+         * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+         *                 cslt::HeapDeleter<int, std::greater<int>>> dst(cr.value());
+         * @endcode
+         */
+        static Expected<Heap<T, Compare>*> copy(const Heap<T, Compare>& src,
+                                                  Allocator&              allocator) noexcept {
+            Expected<Heap<T, Compare>*> result;
+     
+            // Deep-copy the backing array — Array::copy handles buffer and elements
+            auto arr_r = Array<T>::copy(*src.array_, allocator);
+            if (!arr_r.hasValue()) {
+                result.setError(arr_r.error());
+                return result;
+            }
+     
+            // Allocate the Heap struct
+            auto obj_r = allocator.alloc(sizeof(Heap<T, Compare>), true);
+            if (!obj_r.hasValue()) {
+                ArrayDeleter<T>{}(arr_r.value());
+                result.setError(MemoryError(
+                    "Heap::copy: failed to allocate Heap struct"));
+                return result;
+            }
+     
+            Heap<T, Compare>* h = new (obj_r.value()) Heap<T, Compare>(
+                arr_r.value(), src.growth_, src.cmp_, allocator); 
+            result.setValue(h);
+            return result;
+        }
+    // --------------------------------------------------------------------------------
+     
+        /**
+         * @brief Create a deep copy using the source heap's own allocator
+         *
+         * @param src  Heap to copy from
+         * @return Expected<Heap<T,Compare>*> on success, or an error
+         *
+         * @code{.cpp}
+         * auto cr = cslt::Heap<int, std::greater<int>>::copy(*src);
+         * @endcode
+         */
+        static Expected<Heap<T, Compare>*> copy(const Heap<T, Compare>& src) noexcept {
+            return copy(src, *src.allocator_);
+        }
+     
+        // ========================================================================
+        // Mutation operations
+        // ========================================================================
+     
+        /**
+         * @brief Insert an element into the heap and restore the heap property
+         *
+         * Delegates the actual insertion and any required growth to
+         * Array::push_back(), then sifts the new element upward.
+         *
+         * @param value  Element to copy into the heap
+         * @return true on success; false if the backing array is full and growth
+         *         is disabled, or if allocation fails
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::Heap<int, std::greater<int>>::init(8, true, alloc);
+         * if (!r.hasValue()) return;
+         * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+         *                 cslt::HeapDeleter<int, std::greater<int>>> h(r.value());
+         *
+         * h->push(5);
+         * h->push(1);   // root becomes 1 (min-heap)
+         * h->push(3);
+         * // h->peek().value() == 1
+         * @endcode
+         */
+        bool push(const T& value) noexcept {
+            if (!array_) return false;
+
+            // Enforce fixed-capacity mode before delegating to Array
+            if (!growth_ && array_->len_ == array_->cap_) return false;
+
+            if (!array_->push_back(value)) return false;
+
+            _sift_up(array_->len_ - 1u);
+            return true;
+        }
+    // --------------------------------------------------------------------------------
+     
+        /**
+         * @brief Remove the root (highest-priority) element and return its value
+         *
+         * Copies the root value, moves the last element into the root slot via
+         * Array's internal buffer, decrements the array length, then sifts
+         * downward to restore the heap property.
+         *
+         * @return Expected<T> containing the root value on success, or an
+         *         EmptyError if the heap contains no elements
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::Heap<int, std::greater<int>>::init(8, true, alloc);
+         * if (!r.hasValue()) return;
+         * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+         *                 cslt::HeapDeleter<int, std::greater<int>>> h(r.value());
+         *
+         * h->push(5);
+         * h->push(1);
+         * h->push(3);
+         *
+         * auto pr = h->pop();
+         * if (pr.hasValue()) {
+         *     int v = pr.value();   // v == 1 (min-heap root)
+         * }
+         * @endcode
+         */
+        Expected<T> pop() noexcept {
+            Expected<T> result;
+     
+            if (!array_ || array_->len_ == 0u) {
+                result.setError(EmptyError("Heap::pop: heap is empty"));
+                return result;
+            }
+     
+            // Copy the root value out before we modify the buffer
+            T val(array_->data_[0]);
+     
+            size_t const last = array_->len_ - 1u;
+     
+            if (last == 0u) {
+                // Only one element — just pop it from the array
+                array_->pop_back();
+                result.setValue(std::move(val));
+                return result;
+            }
+     
+            // Move the last element into the root slot in-place
+            array_->data_[0].~T();
+            new (&array_->data_[0]) T(std::move(array_->data_[last]));
+     
+            // Decrement the array length without calling the destructor again
+            // (we already moved out of data_[last])
+            array_->data_[last].~T();
+            --array_->len_;
+     
+            // Restore heap property from the root downward
+            _sift_down(0u);
+     
+            result.setValue(std::move(val));
+            return result;
+        }
+     
+        // ========================================================================
+        // Inspection operations
+        // ========================================================================
+     
+        /**
+         * @brief Return a copy of the root (highest-priority) element
+         *
+         * @return Expected<T> containing a copy of the root value, or an
+         *         EmptyError if the heap is empty
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::Heap<int, std::greater<int>>::init(8, true, alloc);
+         * if (!r.hasValue()) return;
+         * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+         *                 cslt::HeapDeleter<int, std::greater<int>>> h(r.value());
+         *
+         * h->push(5);
+         * h->push(1);
+         * h->push(3);
+         *
+         * auto pr = h->peek();
+         * if (pr.hasValue()) {
+         *     int root = pr.value();   // root == 1 (min-heap)
+         *     // h->size() still == 3 — peek does not remove the element
+         * }
+         * @endcode
+         */
+        Expected<T> peek() const noexcept {
+            Expected<T> result;
+            if (!array_ || array_->len_ == 0u) {
+                result.setError(EmptyError("Heap::peek: heap is empty"));
+                return result;
+            }
+            result.setValue(array_->data_[0]);
+            return result;
+        }
+     
+        // ========================================================================
+        // Iteration
+        // ========================================================================
+     
+        /**
+         * @brief Call @p fn once for every element in heap-internal order
+         *
+         * @details Traversal is in backing-array order, which satisfies the heap
+         *          property but is NOT sorted order.  Do not rely on elements
+         *          being visited highest-priority first.  For ordered traversal,
+         *          copy the heap and pop from the copy in a loop.
+         *
+         * @tparam Func  Callable with signature `void(const T&)`.
+         *               Lambdas, functors, and function pointers are accepted.
+         *               The callback must not call push() or pop() during
+         *               traversal.
+         *
+         * @param fn  Callback invoked for each element
+         * @return true on success; false if the heap is uninitialised or empty
+         *
+         * @code{.cpp}
+         * cslt::HeapAllocator alloc;
+         * auto r = cslt::Heap<int, std::greater<int>>::init(8, true, alloc);
+         * if (!r.hasValue()) return;
+         * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+         *                 cslt::HeapDeleter<int, std::greater<int>>> h(r.value());
+         *
+         * h->push(5);
+         * h->push(1);
+         * h->push(3);
+         *
+         * int total = 0;
+         * h->foreach([&total](const int& v) { total += v; });
+         * // total == 9  (visit order is unspecified beyond heap property)
+         * @endcode
+         */
+        template <typename Func>
+        bool foreach(Func fn) const noexcept {
+            if (!array_ || array_->len_ == 0u) return false;
+            for (size_t i = 0u; i < array_->len_; ++i)
+                fn(array_->data_[i]);
+            return true;
+        }
+     
+        // ========================================================================
+        // Introspection
+        // ========================================================================
+     
+        /**
+         * @brief Number of elements currently stored in the heap
+         *
+         * Delegates directly to the backing array.
+         */
+        size_t size() const noexcept {
+            return array_ ? array_->len_ : 0u;
+        }
+     
+        /**
+         * @brief Allocated capacity in elements
+         *
+         * Delegates directly to the backing array.
+         */
+        size_t capacity() const noexcept {
+            return array_ ? array_->cap_ : 0u;
+        }
+     
+        /**
+         * @brief true if no elements are stored
+         */
+        bool is_empty() const noexcept {
+            return !array_ || array_->len_ == 0u;
+        }
+     
+        /**
+         * @brief true if the heap is at full capacity and growth is disabled
+         */
+        bool is_full() const noexcept {
+            return array_ && !growth_ && array_->len_ == array_->cap_;
+        }
+    };
+    // ================================================================================
+    // ================================================================================
+     
+    /**
+     * @class HeapDeleter
+     * @brief Custom deleter for Heap instances, for use with UniquePtr
+     *
+     * @details Calls the Heap destructor (which in turn calls ArrayDeleter on the
+     *          backing array, destroying all elements and freeing the buffer)
+     *          then returns the Heap struct memory to the allocator.
+     *
+     * @tparam T        Element type of the Heap being deleted
+     * @tparam Compare  Comparator type of the Heap being deleted
+     *
+     * @code{.cpp}
+     * cslt::UniquePtr<cslt::Heap<int, std::greater<int>>,
+     *                 cslt::HeapDeleter<int, std::greater<int>>> h(r.value());
+     * @endcode
+     */
+    template <typename T, typename Compare>
+    class HeapDeleter {
+    public:
+        void operator()(Heap<T, Compare>* h) const noexcept {
+            if (!h) return;
+            Allocator* allocator = h->allocator_;
+            h->~Heap<T, Compare>();
+            if (allocator) {
+                allocator->return_element(
+                    static_cast<void*>(h),
+                    sizeof(Heap<T, Compare>),
+                    allocator->default_alignment());
             }
         }
     };

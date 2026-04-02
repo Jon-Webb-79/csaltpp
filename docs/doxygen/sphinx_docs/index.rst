@@ -114,6 +114,19 @@ List
 * **List-oriented algorithms** - ``reverse()``, ``clear()``, ``concat()``, ``copy()``, ``contains()``, and ``foreach()`` provide common linked-list functionality
 * **RAII cleanup** - ``SListDeleter<T>`` works with ``UniquePtr`` to automatically reclaim all list-owned memory
 
+Heap
+----
+* **Generic binary heap** - ``Heap<T, Compare>`` provides priority-ordered access to any element type ``T`` with compile-time comparator ``Compare``
+* **Array-backed storage** - All element storage, tiered growth, and buffer management are delegated to an owned ``Array<T>`` instance
+* **Factory pattern** - Creation via ``Heap<T,Compare>::init()`` returning ``Expected<Heap<T,Compare>*>`` prevents uninitialised instances
+* **Flexible ordering** - Pass ``std::less<T>`` for a max-heap, ``std::greater<T>`` for a min-heap, or any lambda/functor for custom priority ordering
+* **No operator< requirement** - When a lambda or custom functor is used as the comparator, the element type needs no comparison operators
+* **Optional growth** - Automatic buffer growth using Array's tiered strategy; can be disabled for deterministic fixed-capacity use
+* **O(log n) push and pop** - Sift-up and sift-down maintain the heap property on every mutation
+* **Templated iteration** - ``foreach()`` accepts any callable with signature ``void(const T&)``; for ordered traversal, copy the heap and pop in a loop
+* **RAII cleanup** - ``HeapDeleter<T, Compare>`` works with ``UniquePtr`` to automatically reclaim the heap struct and its backing array
+ 
+
 Typical Use Cases
 #################
 
@@ -134,6 +147,7 @@ Typical Use Cases
    Array <Array>
    Dictionary <Dict>
    List <List>
+   Heap <Heap>
     
 Indices and tables
 ==================

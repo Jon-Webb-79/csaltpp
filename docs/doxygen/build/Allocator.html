@@ -238,6 +238,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Heap.html">Heap</a></li>
 </ul>
 
         </div>
@@ -1729,13 +1730,13 @@ is initialized, and the user does not need to interact with it.</p>
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt12ArenaDeleterE">
 <span id="_CPPv3N4cslt12ArenaDeleterE"></span><span id="_CPPv2N4cslt12ArenaDeleterE"></span><span id="cslt::ArenaDeleter"></span><span class="target" id="structcslt_1_1ArenaDeleter"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">ArenaDeleter</span></span></span><a class="headerlink" href="#_CPPv4N4cslt12ArenaDeleterE" title="Link to this definition"></a><br /></dt>
 <dd><p>Custom deleter for <a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">ArenaAllocator</span></a> unique pointers. </p>
-<p>This deleter properly cleans up <a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">ArenaAllocator</span></a> instances created by factory methods (Heap, Stack, SubArena). It:<ol class="loweralpha simple">
+<p>This deleter properly cleans up <a class="reference internal" href="#classcslt_1_1ArenaAllocator"><span class="std std-ref">ArenaAllocator</span></a> instances created by factory methods (<a class="reference internal" href="Heap.html#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a>, Stack, SubArena). It:<ol class="loweralpha simple">
 <li><p>Calls the arena’s destructor (frees additional chunks)</p></li>
 <li><p>Frees the base memory only if the arena owns it (DYNAMIC only)</p></li>
 </ol>
 </p>
 <p>Memory ownership:<ul class="simple">
-<li><p>DYNAMIC (Heap): Owns memory → frees with ::operator delete</p></li>
+<li><p>DYNAMIC (<a class="reference internal" href="Heap.html#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a>): Owns memory → frees with ::operator delete</p></li>
 <li><p>STATIC (Stack): User owns buffer → doesn’t free</p></li>
 <li><p>SUB (SubArena): Parent owns memory → doesn’t free </p></li>
 </ul>
@@ -2153,7 +2154,7 @@ is initialized, and the user does not need to interact with it.</p>
 <li><p>Pools with borrowed arenas: only frees the pool structure</p></li>
 </ul>
 </p>
-<p>This deleter properly cleans up <a class="reference internal" href="#classcslt_1_1PoolAllocator"><span class="std std-ref">PoolAllocator</span></a> instances created by factory methods (Heap, WithArena, Stack). It handles the complex ownership relationships between pools and their backing arenas:</p>
+<p>This deleter properly cleans up <a class="reference internal" href="#classcslt_1_1PoolAllocator"><span class="std std-ref">PoolAllocator</span></a> instances created by factory methods (<a class="reference internal" href="Heap.html#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a>, WithArena, Stack). It handles the complex ownership relationships between pools and their backing arenas:</p>
 <p><ol class="loweralpha simple">
 <li><p>Calls the pool’s destructor (cleans up pool state)</p></li>
 <li><p>Conditionally destroys the arena based on ownership</p></li>
@@ -2186,7 +2187,7 @@ is initialized, and the user does not need to interact with it.</p>
 <p>Each allocated block carries a small header storing its size and alignment offset. Free blocks maintain a linked list for efficient reuse. The allocator uses a best-fit search strategy to find suitable free blocks.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248"><span class="std std-ref">Heap()</span></a> Create freelist with owned heap-allocated arena </p>
+<p>Heap() Create freelist with owned heap-allocated arena </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -3576,20 +3577,20 @@ Returns the total number of bytes consumed by current allocations, including all
 <p>
 Returns the ownership status of the freelist’s backing arena, which determines cleanup behavior when the freelist is destroyed.</p>
 <p><strong>Ownership by factory method:</strong><ul class="simple">
-<li><p><strong><a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248"><span class="std std-ref">Heap()</span></a></strong>: Returns true - freelist owns the arena (DYNAMIC)</p></li>
+<li><p><strong>Heap()</strong>: Returns true - freelist owns the arena (DYNAMIC)</p></li>
 <li><p><strong><a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a3aeae7f8f210d8507d280375db819e4a"><span class="std std-ref">WithArena()</span></a></strong>: Returns false - arena is borrowed</p></li>
 <li><p><strong><a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a00da504efb8f8317abf7498c697cf891"><span class="std std-ref">Stack()</span></a></strong>: Returns true - freelist owns the arena object (STATIC)</p></li>
 </ul>
 </p>
 <p>When <a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a3b2f9e190bc3751d679d1c75f1d5b8f5"><span class="std std-ref">owns_arena()</span></a> returns true, the <a class="reference internal" href="#structcslt_1_1FreeListDeleter"><span class="std std-ref">FreeListDeleter</span></a> will destroy the arena when the freelist is destroyed:<ul class="simple">
-<li><p>For DYNAMIC arenas (Heap): Arena is deleted</p></li>
+<li><p>For DYNAMIC arenas (<a class="reference internal" href="Heap.html#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a>): Arena is deleted</p></li>
 <li><p>For STATIC arenas (Stack): Arena destructor called, buffer not freed</p></li>
 </ul>
 </p>
 <p>When <a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a3b2f9e190bc3751d679d1c75f1d5b8f5"><span class="std std-ref">owns_arena()</span></a> returns false (WithArena), the arena outlives the freelist and remains valid for use by other allocators.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248"><span class="std std-ref">Heap()</span></a> Creates freelist with owned arena </p>
+<p>Heap() Creates freelist with owned arena </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -3803,7 +3804,7 @@ Creates a freelist within an existing arena’s memory space. The freelist does 
 <p>The freelist inherits its memory type (STATIC/DYNAMIC) from the parent arena. When the freelist is destroyed, the arena remains valid and usable by other allocators.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248"><span class="std std-ref">Heap()</span></a> For standalone freelists with owned arenas </p>
+<p>Heap() For standalone freelists with owned arenas </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -3895,7 +3896,7 @@ Constructs a freelist entirely within a caller-provided memory buffer. No heap a
 <p>Internally, this creates a non-owning STATIC arena over the supplied buffer and then carves the freelist allocator from that arena. The freelist owns the arena object but not the underlying buffer.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248"><span class="std std-ref">Heap()</span></a> For heap-allocated freelists </p>
+<p>Heap() For heap-allocated freelists </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -4019,7 +4020,7 @@ is initialized, and the user does not need to interact with it.</p>
 <dt class="sig sig-object cpp" id="_CPPv4N4cslt15FreeListDeleterE">
 <span id="_CPPv3N4cslt15FreeListDeleterE"></span><span id="_CPPv2N4cslt15FreeListDeleterE"></span><span id="cslt::FreeListDeleter"></span><span class="target" id="structcslt_1_1FreeListDeleter"></span><span class="k"><span class="pre">struct</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">FreeListDeleter</span></span></span><a class="headerlink" href="#_CPPv4N4cslt15FreeListDeleterE" title="Link to this definition"></a><br /></dt>
 <dd><p>Custom deleter for <a class="reference internal" href="#classcslt_1_1FreeListAllocator"><span class="std std-ref">FreeListAllocator</span></a> unique pointers. </p>
-<p>This deleter properly cleans up <a class="reference internal" href="#classcslt_1_1FreeListAllocator"><span class="std std-ref">FreeListAllocator</span></a> instances created by factory methods (Heap, WithArena, Stack). It handles the complex ownership relationships between freelists and their backing arenas:</p>
+<p>This deleter properly cleans up <a class="reference internal" href="#classcslt_1_1FreeListAllocator"><span class="std std-ref">FreeListAllocator</span></a> instances created by factory methods (<a class="reference internal" href="Heap.html#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a>, WithArena, Stack). It handles the complex ownership relationships between freelists and their backing arenas:</p>
 <p>Arena ownership patterns:<ul class="simple">
 <li><p><strong>Heap()</strong>: FreeList owns arena → <a class="reference internal" href="#structcslt_1_1ArenaDeleter"><span class="std std-ref">ArenaDeleter</span></a> frees arena and memory</p></li>
 <li><p><strong>WithArena()</strong>: FreeList borrows arena → Arena not deleted (caller owns it)</p></li>
@@ -4133,7 +4134,7 @@ This custom deleter is invoked when a UniquePtr&lt;FreeListAllocator&gt; goes ou
 <p>Performance: O(log n) for allocation, deallocation, and coalescing, where n is the number of size levels. Memory overhead is ~16 bytes per allocation for the header. This allocator is implemented on the heap. In order to drive compliance with MISRA standards, this class can be ommitted from compilation with the <code class="docutils literal notranslate"><span class="pre">STATIC</span> <span class="pre">ONLY</span></code> flag.</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a> Primary factory method </p>
+<p>Heap() Primary factory method </p>
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -4276,7 +4277,7 @@ This custom deleter is invoked when a UniquePtr&lt;FreeListAllocator&gt; goes ou
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a> Factory method that creates the UniquePtr with <a class="reference internal" href="#structcslt_1_1BuddyDeleter"><span class="std std-ref">BuddyDeleter</span></a></p>
+<p>Heap() Factory method that creates the UniquePtr with <a class="reference internal" href="#structcslt_1_1BuddyDeleter"><span class="std std-ref">BuddyDeleter</span></a></p>
 </div>
 </p>
 <div class="admonition note">
@@ -4310,7 +4311,7 @@ Allocates memory using the buddy allocation algorithm. The actual block size wil
 <li><p>Request 1000 bytes → 1000 + 16 (header) = 1016 → rounds to 1024 bytes</p></li>
 </ul>
 </p>
-<p><strong>Alignment:</strong> The returned pointer has natural alignment based on block position in the pool. It is NOT guaranteed to match base_align from <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a>. Use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
+<p><strong>Alignment:</strong> The returned pointer has natural alignment based on block position in the pool. It is NOT guaranteed to match base_align from Heap(). Use <a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265"><span class="std std-ref">alloc_aligned()</span></a> for specific alignment requirements.</p>
 <p><strong>Internal Fragmentation:</strong> Power-of-2 rounding creates internal fragmentation. A 100-byte request wastes ~12 bytes within the 128-byte block (after accounting for header).</p>
 <p><div class="admonition seealso">
 <p class="admonition-title">See also</p>
@@ -5732,7 +5733,7 @@ Returns the smallest block size (in bytes) that this <a class="reference interna
 </div>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="#classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5"><span class="std std-ref">Heap()</span></a> <a class="reference internal" href="#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> creation and normalization rules </p>
+<p>Heap() <a class="reference internal" href="#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> creation and normalization rules </p>
 </div>
 <dl>
 <dt><strong>Example:</strong></dt><dd><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">buddy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BuddyAllocator</span><span class="o">::</span><span class="n">Heap</span><span class="p">(</span><span class="mi">4096</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">).</span><span class="n">value</span><span class="p">();</span>

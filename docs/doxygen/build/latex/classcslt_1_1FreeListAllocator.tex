@@ -159,7 +159,7 @@ Not thread-\/safe -\/ requires external synchronization for concurrent access
 Best suited for general-\/purpose allocation with varying sizes
 \end{DoxyNote}
 \begin{DoxySeeAlso}{See also}
-\doxylink{classcslt_1_1FreeListAllocator_a81cf8b97326d92fb429429a894cfc248}{Heap()} Create freelist with owned heap-\/allocated arena 
+Heap() Create freelist with owned heap-\/allocated arena 
 
 \doxylink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{With\+Arena()} Create freelist sharing an existing arena 
 
@@ -585,9 +585,6 @@ All pointers obtained from this freelist become invalid once the freelist is des
 
 \doxylink{structcslt_1_1FreeListDeleter}{Free\+List\+Deleter} For cleanup behavior 
 \end{DoxySeeAlso}
-\begin{Desc}
-\item[Examples]\par
-\mbox{\hyperlink{_2home_2jonwebb_2Code_Dev_2C_09_09_2csaltpp_2csaltpp_2include_2allocator_8hpp-example}{/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/allocator.\+hpp}}.\end{Desc}
 \Hypertarget{classcslt_1_1FreeListAllocator_a79163fc9aea930755f26d0652e105529}\label{classcslt_1_1FreeListAllocator_a79163fc9aea930755f26d0652e105529} 
 \index{cslt::FreeListAllocator@{cslt::FreeListAllocator}!is\_ptr@{is\_ptr}}
 \index{is\_ptr@{is\_ptr}!cslt::FreeListAllocator@{cslt::FreeListAllocator}}
@@ -726,14 +723,14 @@ Returns the ownership status of the freelist\textquotesingle{}s backing arena, w
 
 {\bfseries{Ownership by factory method\+:}}
 \begin{DoxyItemize}
-\item {\bfseries{\doxylink{classcslt_1_1FreeListAllocator_a81cf8b97326d92fb429429a894cfc248}{Heap()}}}\+: Returns true -\/ freelist owns the arena (DYNAMIC)
+\item {\bfseries{Heap()}}\+: Returns true -\/ freelist owns the arena (DYNAMIC)
 \item {\bfseries{\doxylink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{With\+Arena()}}}\+: Returns false -\/ arena is borrowed
 \item {\bfseries{\doxylink{classcslt_1_1FreeListAllocator_a00da504efb8f8317abf7498c697cf891}{Stack()}}}\+: Returns true -\/ freelist owns the arena object (STATIC)
 \end{DoxyItemize}
 
 When \doxylink{classcslt_1_1FreeListAllocator_a3b2f9e190bc3751d679d1c75f1d5b8f5}{owns\+\_\+arena()} returns true, the \doxylink{structcslt_1_1FreeListDeleter}{Free\+List\+Deleter} will destroy the arena when the freelist is destroyed\+:
 \begin{DoxyItemize}
-\item For DYNAMIC arenas (Heap)\+: Arena is deleted
+\item For DYNAMIC arenas (\doxylink{classcslt_1_1Heap}{Heap})\+: Arena is deleted
 \item For STATIC arenas (Stack)\+: Arena destructor called, buffer not freed
 \end{DoxyItemize}
 
@@ -745,7 +742,7 @@ This indicates ownership of the arena OBJECT, not necessarily the underlying mem
 This value is set at construction time and never changes.
 \end{DoxyNote}
 \begin{DoxySeeAlso}{See also}
-\doxylink{classcslt_1_1FreeListAllocator_a81cf8b97326d92fb429429a894cfc248}{Heap()} Creates freelist with owned arena 
+Heap() Creates freelist with owned arena 
 
 \doxylink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{With\+Arena()} Creates freelist with borrowed arena 
 
@@ -1789,7 +1786,7 @@ Buffer must outlive the freelist. Destroying the buffer before the freelist resu
 
 \end{DoxyParagraph}
 \begin{DoxySeeAlso}{See also}
-\doxylink{classcslt_1_1FreeListAllocator_a81cf8b97326d92fb429429a894cfc248}{Heap()} For heap-\/allocated freelists 
+Heap() For heap-\/allocated freelists 
 
 \doxylink{classcslt_1_1FreeListAllocator_a3aeae7f8f210d8507d280375db819e4a}{With\+Arena()} For sharing arenas 
 \end{DoxySeeAlso}
@@ -2130,7 +2127,7 @@ Destroying the arena while freelists still reference it results in undefined beh
 
 \end{DoxyParagraph}
 \begin{DoxySeeAlso}{See also}
-\doxylink{classcslt_1_1FreeListAllocator_a81cf8b97326d92fb429429a894cfc248}{Heap()} For standalone freelists with owned arenas 
+Heap() For standalone freelists with owned arenas 
 
 \doxylink{classcslt_1_1FreeListAllocator_a00da504efb8f8317abf7498c697cf891}{Stack()} For stack-\/based freelists 
 \end{DoxySeeAlso}

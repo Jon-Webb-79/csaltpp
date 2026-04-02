@@ -1,0 +1,770 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ Heap Overview &mdash; csalt++-lib 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="C++ List Overview" href="List.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            csalt++-lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pointers.html">Smart Pointers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html">Error</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Allocator.html">Allocator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="String.html">String</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Heap</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#comparator-convention"><strong>Comparator Convention</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-allocators"><strong>Recommended Allocators</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#backing-storage"><strong>Backing Storage</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#heap-property"><strong>Heap Property</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#element-type-requirements"><strong>Element Type Requirements</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ordered-traversal"><strong>Ordered Traversal</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases"><strong>Use Cases</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#heap-class">Heap Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE"><code class="docutils literal notranslate"><span class="pre">cslt::Heap</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt4Heap4pushERK1T"><code class="docutils literal notranslate"><span class="pre">push()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt4Heap3popEv"><code class="docutils literal notranslate"><span class="pre">pop()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt4Heap4peekEv"><code class="docutils literal notranslate"><span class="pre">peek()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt4Heap7foreachEb4Func"><code class="docutils literal notranslate"><span class="pre">foreach()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt4Heap4sizeEv"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt4Heap8capacityEv"><code class="docutils literal notranslate"><span class="pre">capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt4Heap8is_emptyEv"><code class="docutils literal notranslate"><span class="pre">is_empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt4Heap7is_fullEv"><code class="docutils literal notranslate"><span class="pre">is_full()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt4Heap4initE6size_tbR9Allocator7Compare"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt4Heap4copyERK4HeapI1T7CompareER9Allocator"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt4Heap4copyERK4HeapI1T7CompareE"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">csalt++-lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">C++ Heap Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Heap.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-heap-overview">
+<span id="heap-file"></span><h1>C++ Heap Overview<a class="headerlink" href="#c-heap-overview" title="Link to this heading"></a></h1>
+<p>Binary heap handling in C++ is traditionally performed with
+<code class="docutils literal notranslate"><span class="pre">std::priority_queue</span></code>. While this standard container provides convenient
+priority-ordered access, it wraps <code class="docutils literal notranslate"><span class="pre">std::deque</span></code> or <code class="docutils literal notranslate"><span class="pre">std::vector</span></code> with an
+allocator interface that is opaque and not well suited to deterministic,
+embedded, real-time, or safety-regulated environments. In such systems,
+explicit control over memory placement, allocation strategy, and failure
+behavior is often more important than full generality.</p>
+<p>The <em>C++ Heap module</em> in this library provides a lightweight, allocator-aware
+generic binary heap container implemented in C++ and declared in <code class="docutils literal notranslate"><span class="pre">array.hpp</span></code>.
+Unlike <code class="docutils literal notranslate"><span class="pre">std::priority_queue</span></code>, this container:</p>
+<ul class="simple">
+<li><p>Integrates directly with custom allocator hierarchies</p></li>
+<li><p>Delegates all element storage and tiered growth to <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code></p></li>
+<li><p>Fixes the element type and comparator at compile time via template parameters</p></li>
+<li><p>Enforces initialization through a factory pattern preventing invalid state</p></li>
+<li><p>Provides automatic cleanup via RAII with custom deleters</p></li>
+<li><p>Returns explicit success/error state using the <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code> pattern</p></li>
+<li><p>Supports push, pop, peek, copy, and templated iteration via <code class="docutils literal notranslate"><span class="pre">foreach()</span></code></p></li>
+</ul>
+<p>The heap is implemented on top of <code class="docutils literal notranslate"><span class="pre">cslt::Array&lt;T&gt;</span></code>, which means all growth
+strategy, buffer management, and element lifetime handling are inherited
+directly. Changes to <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code>'s growth policy automatically apply to
+<code class="docutils literal notranslate"><span class="pre">Heap&lt;T,</span> <span class="pre">Compare&gt;</span></code> without any duplication.</p>
+<p>The only dependencies this module has within the CSalt library are the
+<code class="docutils literal notranslate"><span class="pre">array.hpp</span></code>, <code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, and <code class="docutils literal notranslate"><span class="pre">error.hpp</span></code> files, keeping the
+container self-contained and suitable for use in larger systems with minimal
+coupling.</p>
+<section id="comparator-convention">
+<h2><strong>Comparator Convention</strong><a class="headerlink" href="#comparator-convention" title="Link to this heading"></a></h2>
+<p>The template parameter <code class="docutils literal notranslate"><span class="pre">Compare</span></code> determines heap ordering. It must be a
+callable with signature <code class="docutils literal notranslate"><span class="pre">bool(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code> that returns <code class="docutils literal notranslate"><span class="pre">true</span></code>
+when its first argument has <em>higher priority</em> than its second. This convention
+matches <code class="docutils literal notranslate"><span class="pre">std::priority_queue</span></code> and the standard library comparator types:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Comparator</p></th>
+<th class="head"><p>Heap type</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">std::less&lt;T&gt;</span></code></p></td>
+<td><p>Max-heap — largest element at root</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std::greater&lt;T&gt;</span></code></p></td>
+<td><p>Min-heap — smallest element at root</p></td>
+</tr>
+<tr class="row-even"><td><p>Lambda / custom functor</p></td>
+<td><p>Any total ordering</p></td>
+</tr>
+</tbody>
+</table>
+<p>For <code class="docutils literal notranslate"><span class="pre">std::less&lt;T&gt;</span></code> and <code class="docutils literal notranslate"><span class="pre">std::greater&lt;T&gt;</span></code> to work, <code class="docutils literal notranslate"><span class="pre">T</span></code> must define
+<code class="docutils literal notranslate"><span class="pre">operator&lt;</span></code>. When a lambda or custom functor is used, the element type
+needs no comparison operators at all — the ordering logic is provided
+entirely by the comparator.</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Max-heap of integers — largest value at root</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+<span class="c1">// Min-heap of integers — smallest value at root</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">;</span>
+
+<span class="c1">// Custom struct heap ordered by a field — T needs no operator&lt;</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">Particle</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">mass</span><span class="p">;</span><span class="w"> </span><span class="kt">float</span><span class="w"> </span><span class="n">charge</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">cmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Particle</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">mass</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">mass</span><span class="p">;</span><span class="w">   </span><span class="c1">// max-heap by mass</span>
+<span class="p">};</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="n">Particle</span><span class="p">,</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">cmp</span><span class="p">)</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">,</span><span class="w"> </span><span class="n">cmp</span><span class="p">);</span>
+</pre></div>
+</div>
+</section>
+<section id="allocator-integration">
+<h2><strong>Allocator Integration</strong><a class="headerlink" href="#allocator-integration" title="Link to this heading"></a></h2>
+<p>By integrating directly with the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class defined in
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, the heap container supports multiple allocation strategies
+without changing the public API. The heap allocates:</p>
+<ul class="simple">
+<li><p>the <code class="docutils literal notranslate"><span class="pre">Heap&lt;T,</span> <span class="pre">Compare&gt;</span></code> object itself</p></li>
+<li><p>the backing <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code> and its element buffer, through the same allocator</p></li>
+</ul>
+<p>This makes the container compatible with the following allocator strategies:</p>
+<ul class="simple">
+<li><p><strong>HeapAllocator</strong> — Best general-purpose choice for testing and normal host-side use</p></li>
+<li><p><strong>ArenaAllocator</strong> — Useful when the heap has bulk lifetime semantics and is destroyed all at once</p></li>
+<li><p><strong>BuddyAllocator</strong> — Useful when deterministic block allocation and returnable memory are important</p></li>
+<li><p><strong>PoolAllocator</strong> — Suitable for small heaps with a bounded element count</p></li>
+<li><p><strong>SlabAllocator</strong> — Appropriate when the element type is fixed-size and uniform</p></li>
+<li><p><strong>Custom allocators</strong> — Any user-defined class inheriting from <code class="docutils literal notranslate"><span class="pre">Allocator</span></code></p></li>
+</ul>
+<p>Because the heap delegates to <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code> for storage, the allocator is used
+for both the initial element buffer and any subsequent growth. The allocator
+therefore has direct influence over:</p>
+<ul class="simple">
+<li><p>where the heap object itself lives</p></li>
+<li><p>where the element buffer lives</p></li>
+<li><p>whether growth allocations succeed or fail deterministically</p></li>
+</ul>
+</section>
+<section id="recommended-allocators">
+<h2><strong>Recommended Allocators</strong><a class="headerlink" href="#recommended-allocators" title="Link to this heading"></a></h2>
+<p>Different allocators are appropriate depending on how the heap is used:</p>
+<ul>
+<li><p><strong>HeapAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>general-purpose use</p></li>
+<li><p>unit testing</p></li>
+<li><p>host-side applications</p></li>
+<li><p>debugging heap logic independent of allocator complexity</p></li>
+</ul>
+<p>This is usually the best allocator to start with because failure modes are
+simple and easy to reason about.</p>
+</li>
+<li><p><strong>ArenaAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>build-then-query workflows</p></li>
+<li><p>heaps used transiently during scheduling or sorting passes</p></li>
+<li><p>scenarios where the full heap lifetime matches a larger arena lifetime</p></li>
+</ul>
+<p>Works well when the heap size is bounded and growth is rare. If the heap
+grows frequently, the arena must have sufficient capacity.</p>
+</li>
+<li><p><strong>BuddyAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>deterministic dynamic allocation</p></li>
+<li><p>environments where memory should be returnable and coalesced after use</p></li>
+<li><p>systems requiring more structure than a raw heap allocator</p></li>
+</ul>
+<p>A reasonable choice when the heap may grow and the buffer should be
+returneable on destruction.</p>
+</li>
+<li><p><strong>PoolAllocator / SlabAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>fixed-capacity heaps with a known maximum element count</p></li>
+<li><p>performance-sensitive paths with many push/pop operations</p></li>
+<li><p>safety-regulated environments where growth must be prevented</p></li>
+</ul>
+<p>These allocators pair well with <code class="docutils literal notranslate"><span class="pre">growth</span> <span class="pre">=</span> <span class="pre">false</span></code> in <code class="docutils literal notranslate"><span class="pre">init()</span></code>, producing
+a bounded-capacity heap with fully deterministic allocation behavior.</p>
+</li>
+</ul>
+</section>
+<section id="factory-pattern-and-raii">
+<h2><strong>Factory Pattern and RAII</strong><a class="headerlink" href="#factory-pattern-and-raii" title="Link to this heading"></a></h2>
+<p>Unlike direct constructor-based creation, heap creation uses a static factory
+function <code class="docutils literal notranslate"><span class="pre">Heap::init()</span></code> that returns <code class="docutils literal notranslate"><span class="pre">Expected&lt;Heap&lt;T,</span> <span class="pre">Compare&gt;*&gt;</span></code>. This
+design:</p>
+<ul class="simple">
+<li><p>Prevents creation of partially initialized heaps</p></li>
+<li><p>Ensures the backing array and heap struct are allocated through the chosen allocator</p></li>
+<li><p>Provides explicit error handling at the point of creation</p></li>
+<li><p>Returns typed error objects such as <code class="docutils literal notranslate"><span class="pre">ArgumentError</span></code> and <code class="docutils literal notranslate"><span class="pre">MemoryError</span></code></p></li>
+</ul>
+<p>Memory cleanup is automatic through the <code class="docutils literal notranslate"><span class="pre">HeapDeleter</span></code> custom deleter, which
+works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to provide RAII semantics. The deleter calls
+<code class="docutils literal notranslate"><span class="pre">ArrayDeleter&lt;T&gt;</span></code> on the backing array before freeing the heap struct,
+ensuring all elements are correctly destroyed and all memory is returned to
+the allocator in the right order:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                        </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">        </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="w">        </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">        </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// heap and backing buffer automatically freed here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="backing-storage">
+<h2><strong>Backing Storage</strong><a class="headerlink" href="#backing-storage" title="Link to this heading"></a></h2>
+<p>The heap stores its elements in a contiguous <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code> buffer using the
+standard binary heap array encoding:</p>
+<ul class="simple">
+<li><p>the root is at index 0</p></li>
+<li><p>the children of node at index <code class="docutils literal notranslate"><span class="pre">i</span></code> are at indices <code class="docutils literal notranslate"><span class="pre">2i</span> <span class="pre">+</span> <span class="pre">1</span></code> and <code class="docutils literal notranslate"><span class="pre">2i</span> <span class="pre">+</span> <span class="pre">2</span></code></p></li>
+<li><p>the parent of node at index <code class="docutils literal notranslate"><span class="pre">i</span></code> is at index <code class="docutils literal notranslate"><span class="pre">(i</span> <span class="pre">-</span> <span class="pre">1)</span> <span class="pre">/</span> <span class="pre">2</span></code></p></li>
+</ul>
+<p>This layout means the entire heap is stored in a single contiguous allocation,
+which provides good cache behaviour during sift operations. The sift helpers
+access <code class="docutils literal notranslate"><span class="pre">Array::data_</span></code> directly through a C++ friendship declaration, bypassing
+the <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code>-returning public API to avoid overhead in tight sift loops.</p>
+<p>When growth is enabled the buffer expands using <code class="docutils literal notranslate"><span class="pre">Array</span></code>'s tiered growth
+strategy:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Current capacity</p></th>
+<th class="head"><p>New capacity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0 elements</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt; 1,024 elements</p></td>
+<td><p>2× current</p></td>
+</tr>
+<tr class="row-even"><td><p>&lt; 8,192 elements</p></td>
+<td><p>1.5× current (cap + cap/2)</p></td>
+</tr>
+<tr class="row-odd"><td><p>&lt; 65,536 elements</p></td>
+<td><p>1.25× current (cap + cap/4)</p></td>
+</tr>
+<tr class="row-even"><td><p>≥ 65,536 elements</p></td>
+<td><p>current + 256 (linear increment)</p></td>
+</tr>
+</tbody>
+</table>
+<p>When growth is disabled, <code class="docutils literal notranslate"><span class="pre">push()</span></code> returns <code class="docutils literal notranslate"><span class="pre">false</span></code> once the buffer is full,
+giving the caller full control over the maximum memory footprint.</p>
+</section>
+<section id="heap-property">
+<h2><strong>Heap Property</strong><a class="headerlink" href="#heap-property" title="Link to this heading"></a></h2>
+<p>The heap maintains the invariant that for every element at index <code class="docutils literal notranslate"><span class="pre">i</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Compare()(element[i],</span> <span class="pre">element[child])</span></code> is <code class="docutils literal notranslate"><span class="pre">true</span></code> for all children of
+<code class="docutils literal notranslate"><span class="pre">i</span></code>. This means the root always has the highest priority element under
+the stored comparator.</p>
+<p>Two internal operations maintain this invariant:</p>
+<ul class="simple">
+<li><p><strong>Sift-up</strong> — called after <code class="docutils literal notranslate"><span class="pre">push()</span></code>. The new element is appended to the
+end of the backing array and bubbled upward by repeatedly swapping with its
+parent until the comparator is satisfied.</p></li>
+<li><p><strong>Sift-down</strong> — called after <code class="docutils literal notranslate"><span class="pre">pop()</span></code>. The last element is moved to the
+root and pushed downward by repeatedly swapping with the higher-priority
+child until the comparator is satisfied at every level.</p></li>
+</ul>
+<p>The swap operation uses <code class="docutils literal notranslate"><span class="pre">memcpy</span></code> for trivially copyable <code class="docutils literal notranslate"><span class="pre">T</span></code> and
+move-construction with explicit destructor calls for non-trivial <code class="docutils literal notranslate"><span class="pre">T</span></code>,
+consistent with the strategy used in <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code>.</p>
+</section>
+<section id="element-type-requirements">
+<h2><strong>Element Type Requirements</strong><a class="headerlink" href="#element-type-requirements" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">Heap&lt;T,</span> <span class="pre">Compare&gt;</span></code> container supports any element type <code class="docutils literal notranslate"><span class="pre">T</span></code> that is:</p>
+<ul class="simple">
+<li><p>default-constructible (required by <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code>, which is returned by
+<code class="docutils literal notranslate"><span class="pre">pop()</span></code> and <code class="docutils literal notranslate"><span class="pre">peek()</span></code>)</p></li>
+<li><p>copy-constructible (elements are copied into the buffer on <code class="docutils literal notranslate"><span class="pre">push()</span></code>)</p></li>
+<li><p>destructible (elements are destroyed explicitly during sift swaps and on
+<code class="docutils literal notranslate"><span class="pre">pop()</span></code> and destruction)</p></li>
+</ul>
+<p>The comparator type <code class="docutils literal notranslate"><span class="pre">Compare</span></code> must be:</p>
+<ul class="simple">
+<li><p>default-constructible (used when <code class="docutils literal notranslate"><span class="pre">cmp</span></code> is omitted from <code class="docutils literal notranslate"><span class="pre">init()</span></code>)</p></li>
+<li><p>callable as <code class="docutils literal notranslate"><span class="pre">bool(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code></p></li>
+</ul>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Requirement</p></th>
+<th class="head"><p>Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>T default-constructible</p></td>
+<td><p>Expected&lt;T&gt; default constructor</p></td>
+</tr>
+<tr class="row-odd"><td><p>T copy-constructible</p></td>
+<td><p>Placement-new into backing buffer on push</p></td>
+</tr>
+<tr class="row-even"><td><p>T destructible</p></td>
+<td><p>Explicit destructor calls during sift and pop</p></td>
+</tr>
+<tr class="row-odd"><td><p>Compare default-ctible</p></td>
+<td><p>Default cmp argument in init()</p></td>
+</tr>
+<tr class="row-even"><td><p>Compare callable</p></td>
+<td><p>Used in _sift_up and _sift_down</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ordered-traversal">
+<h2><strong>Ordered Traversal</strong><a class="headerlink" href="#ordered-traversal" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">foreach()</span></code> method visits elements in backing-array (heap-internal)
+order, which satisfies the heap property but is not sorted order. If ordered
+traversal is required, copy the heap and pop from the copy in a loop:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">7</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c1">// Ordered traversal — copy the heap, then pop from the copy</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">cr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">tmp</span><span class="p">(</span><span class="n">cr</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">tmp</span><span class="o">-&gt;</span><span class="n">is_empty</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">tmp</span><span class="o">-&gt;</span><span class="n">pop</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// elements visited in descending order: 7, 5, 3, 1</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// h is unchanged — still contains all 4 elements</span>
+</pre></div>
+</div>
+</section>
+<section id="use-cases">
+<h2><strong>Use Cases</strong><a class="headerlink" href="#use-cases" title="Link to this heading"></a></h2>
+<p>This heap implementation is particularly useful in the following scenarios:</p>
+<ul class="simple">
+<li><p>priority queues for task scheduling in embedded or real-time systems</p></li>
+<li><p>Dijkstra's algorithm and other graph searches requiring a priority queue</p></li>
+<li><p>event-driven simulations ordered by event timestamp</p></li>
+<li><p>top-K selection from a large dataset without full sorting</p></li>
+<li><p>stream processing where only the current minimum or maximum is needed</p></li>
+<li><p>any workload requiring O(log n) insert and O(log n) remove-root</p></li>
+</ul>
+<p>When elements need to be accessed by index or sorted in place, <code class="docutils literal notranslate"><span class="pre">Array&lt;T&gt;</span></code>
+with its <code class="docutils literal notranslate"><span class="pre">sort()</span></code> method is usually the better choice. When the priority of
+the next element to process must always be available in O(1) and insertions
+arrive dynamically, the heap is the right container.</p>
+</section>
+<section id="heap-class">
+<h2>Heap Class<a class="headerlink" href="#heap-class" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I00EN4cslt4HeapE">
+<span id="_CPPv3I00EN4cslt4HeapE"></span><span id="_CPPv2I00EN4cslt4HeapE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Compare</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Heap"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Heap</span></span></span><a class="headerlink" href="#_CPPv4I00EN4cslt4HeapE" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocator-backed generic binary heap backed by cslt::Array&lt;T&gt;. </p>
+<p>Implements a binary heap whose element storage, capacity management, and tiered growth strategy are provided entirely by an owned cslt::Array&lt;T&gt; instance. The <a class="reference internal" href="#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a> class itself is responsible only for maintaining the heap property via sift-up and sift-down operations, and for managing the comparator.</p>
+<p>The template parameter <code class="docutils literal notranslate"><span class="pre">Compare</span></code> determines heap ordering. It must be a callable with signature <code class="docutils literal notranslate"><span class="pre">bool(const</span> <span class="pre">T&amp;,</span> <span class="pre">const</span> <span class="pre">T&amp;)</span></code> that returns <code class="docutils literal notranslate"><span class="pre">true</span></code> when its first argument has higher priority than its second:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Min-heap — smallest element at root</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">min_heap</span><span class="p">;</span>
+
+<span class="c1">// Max-heap — largest element at root</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">less</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">max_heap</span><span class="p">;</span>
+
+<span class="c1">// Lambda comparator — custom priority</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">cmp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[](</span><span class="k">const</span><span class="w"> </span><span class="n">Task</span><span class="o">&amp;</span><span class="w"> </span><span class="n">a</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">Task</span><span class="o">&amp;</span><span class="w"> </span><span class="n">b</span><span class="p">){</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">priority</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">.</span><span class="n">priority</span><span class="p">;</span><span class="w"> </span><span class="p">};</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="n">Task</span><span class="p">,</span><span class="w"> </span><span class="k">decltype</span><span class="p">(</span><span class="n">cmp</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="n">task_heap</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>Key features:<ul class="simple">
+<li><p>All storage, growth, and element lifetime delegated to Array&lt;T&gt;</p></li>
+<li><p>No duplicated growth logic — changes to Array&lt;T&gt; growth strategy automatically apply to Heap&lt;T, Compare&gt;</p></li>
+<li><p>Template parameters T and Compare fix element type and ordering at compile time — no runtime type tags or function pointer casts</p></li>
+<li><p>Factory pattern via <a class="reference internal" href="#classcslt_1_1Heap_1ac2035e0d1503d8d0dd57174f9fd6bd4e"><span class="std std-ref">init()</span></a> prevents uninitialised instances</p></li>
+<li><p>RAII cleanup through HeapDeleter and UniquePtr</p></li>
+<li><p>Returns explicit success/error state using the Expected&lt;T&gt; pattern</p></li>
+<li><p><a class="reference internal" href="#classcslt_1_1Heap_1a73ab8c636dc85610a905f833dbe0ce79"><span class="std std-ref">foreach()</span></a> iteration accepts any callable with signature void(const T&amp;)</p></li>
+</ul>
+</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                    </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">    </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="w">    </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">pop</span><span class="p">();</span><span class="w">   </span><span class="c1">// Expected&lt;int&gt; containing 1  (min-heap)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> – Element type. Must be default-constructible, copy-constructible, and destructible. Default-constructibility is required by Expected&lt;T&gt;. </p></li>
+<li><p><strong>Compare</strong> – Comparator type. Must be default-constructible and callable as bool(const T&amp;, const T&amp;). Returns true when the first argument has higher priority than the second.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt4Heap4pushERK1T">
+<span id="_CPPv3N4cslt4Heap4pushERK1T"></span><span id="_CPPv2N4cslt4Heap4pushERK1T"></span><span id="cslt::Heap::push__TCR"></span><span class="target" id="classcslt_1_1Heap_1ad27310c018750ef633381d9fa2bea86b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">push</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt4Heap4pushERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Insert an element into the heap and restore the heap property. </p>
+<p>Delegates the actual insertion and any required growth to <a class="reference internal" href="Array.html#classcslt_1_1Array_1a726d2a2a623ba9b343d2188df90ef528"><span class="std std-ref">Array::push_back()</span></a>, then sifts the new element upward.</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">   </span><span class="c1">// root becomes 1 (min-heap)</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="c1">// h-&gt;peek().value() == 1</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> – Element to copy into the heap </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>true on success; false if the backing array is full and growth is disabled, or if allocation fails</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt4Heap3popEv">
+<span id="_CPPv3N4cslt4Heap3popEv"></span><span id="_CPPv2N4cslt4Heap3popEv"></span><span id="cslt::Heap::pop"></span><span class="target" id="classcslt_1_1Heap_1a865c8f343db1002a77cfced1dd6d7de2"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">pop</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt4Heap3popEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove the root (highest-priority) element and return its value. </p>
+<p>Copies the root value, moves the last element into the root slot via <a class="reference internal" href="Array.html#classcslt_1_1Array"><span class="std std-ref">Array</span></a>’s internal buffer, decrements the array length, then sifts downward to restore the heap property.</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">pr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">pop</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pr</span><span class="p">.</span><span class="n">value</span><span class="p">();</span><span class="w">   </span><span class="c1">// v == 1 (min-heap root)</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected&lt;T&gt; containing the root value on success, or an <a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a> if the heap contains no elements</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt4Heap4peekEv">
+<span id="_CPPv3NK4cslt4Heap4peekEv"></span><span id="_CPPv2NK4cslt4Heap4peekEv"></span><span id="cslt::Heap::peekC"></span><span class="target" id="classcslt_1_1Heap_1abd5893612f0980b060e498e042f99e8e"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">peek</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt4Heap4peekEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return a copy of the root (highest-priority) element. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+<span class="k">auto</span><span class="w"> </span><span class="n">pr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">h</span><span class="o">-&gt;</span><span class="n">peek</span><span class="p">();</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">pr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pr</span><span class="p">.</span><span class="n">value</span><span class="p">();</span><span class="w">   </span><span class="c1">// root == 1 (min-heap)</span>
+<span class="w">    </span><span class="c1">// h-&gt;size() still == 3 — peek does not remove the element</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected&lt;T&gt; containing a copy of the root value, or an <a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a> if the heap is empty</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK4cslt4Heap7foreachEb4Func">
+<span id="_CPPv3I0ENK4cslt4Heap7foreachE4Func"></span><span id="_CPPv2I0ENK4cslt4Heap7foreachE4Func"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Func</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1Heap_1a73ab8c636dc85610a905f833dbe0ce79"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">foreach</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0ENK4cslt4Heap7foreachEb4Func" title="cslt::Heap::foreach::Func"><span class="n"><span class="pre">Func</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">fn</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK4cslt4Heap7foreachEb4Func" title="Link to this definition"></a><br /></dt>
+<dd><p>Call <code class="docutils literal notranslate"><span class="pre">fn</span></code> once for every element in heap-internal order. </p>
+<p>Traversal is in backing-array order, which satisfies the heap property but is NOT sorted order. Do not rely on elements being visited highest-priority first. For ordered traversal, copy the heap and pop from the copy in a loop.</p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">foreach</span><span class="p">([</span><span class="o">&amp;</span><span class="n">total</span><span class="p">](</span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="o">&amp;</span><span class="w"> </span><span class="n">v</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">v</span><span class="p">;</span><span class="w"> </span><span class="p">});</span>
+<span class="c1">// total == 9  (visit order is unspecified beyond heap property)</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Func</strong> – Callable with signature <code class="docutils literal notranslate"><span class="pre">void(const</span> <span class="pre">T&amp;)</span></code>. Lambdas, functors, and function pointers are accepted. The callback must not call <a class="reference internal" href="#classcslt_1_1Heap_1ad27310c018750ef633381d9fa2bea86b"><span class="std std-ref">push()</span></a> or <a class="reference internal" href="#classcslt_1_1Heap_1a865c8f343db1002a77cfced1dd6d7de2"><span class="std std-ref">pop()</span></a> during traversal.</p>
+</dd>
+<dt class="field-even">Parameters<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>fn</strong> – Callback invoked for each element </p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>true on success; false if the heap is uninitialised or empty</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt4Heap4sizeEv">
+<span id="_CPPv3NK4cslt4Heap4sizeEv"></span><span id="_CPPv2NK4cslt4Heap4sizeEv"></span><span id="cslt::Heap::sizeC"></span><span class="target" id="classcslt_1_1Heap_1a29ba4ea4f73fe6e24173ff773d46f165"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt4Heap4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of elements currently stored in the heap. </p>
+<p>Delegates directly to the backing array. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt4Heap8capacityEv">
+<span id="_CPPv3NK4cslt4Heap8capacityEv"></span><span id="_CPPv2NK4cslt4Heap8capacityEv"></span><span id="cslt::Heap::capacityC"></span><span class="target" id="classcslt_1_1Heap_1ad1e8ee81cca056eec1346f76a1b14a45"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">capacity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt4Heap8capacityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocated capacity in elements. </p>
+<p>Delegates directly to the backing array. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt4Heap8is_emptyEv">
+<span id="_CPPv3NK4cslt4Heap8is_emptyEv"></span><span id="_CPPv2NK4cslt4Heap8is_emptyEv"></span><span id="cslt::Heap::is_emptyC"></span><span class="target" id="classcslt_1_1Heap_1a0c536cdfa0f5f177e15076909809526b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_empty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt4Heap8is_emptyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>true if no elements are stored </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt4Heap7is_fullEv">
+<span id="_CPPv3NK4cslt4Heap7is_fullEv"></span><span id="_CPPv2NK4cslt4Heap7is_fullEv"></span><span id="cslt::Heap::is_fullC"></span><span class="target" id="classcslt_1_1Heap_1af70a4c11130197fed78bad13708b0a4d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">is_full</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt4Heap7is_fullEv" title="Link to this definition"></a><br /></dt>
+<dd><p>true if the heap is at full capacity and growth is disabled </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt4Heap4initE6size_tbR9Allocator7Compare">
+<span id="_CPPv3N4cslt4Heap4initE6size_tbR9Allocator7Compare"></span><span id="_CPPv2N4cslt4Heap4initE6size_tbR9Allocator7Compare"></span><span id="cslt::Heap::init__s.b.AllocatorR.Compare"></span><span class="target" id="classcslt_1_1Heap_1ac2035e0d1503d8d0dd57174f9fd6bd4e"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap"><span class="n"><span class="pre">Heap</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">capacity</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">growth</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span>, <a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="w"> </span><span class="n sig-param"><span class="pre">cmp</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt4Heap4initE6size_tbR9Allocator7Compare" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocate and initialise a new <a class="reference internal" href="#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a>. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// Min-heap of integers (smallest value at root)</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">h</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">h</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="c1">// h-&gt;peek().value() == 1  (smallest element is at the root)</span>
+</pre></div>
+</div>
+ <dl class="simple">
+<dt><strong>Error conditions</strong></dt><dd><p><ul class="simple">
+<li><p>capacity == 0 (<a class="reference internal" href="Error.html#classcslt_1_1ArgumentError"><span class="std std-ref">ArgumentError</span></a>, propagated from <a class="reference internal" href="Array.html#classcslt_1_1Array_1a12ebee9f380a77e34e6f30362faefbc4"><span class="std std-ref">Array::init</span></a>)</p></li>
+<li><p>Allocation of the backing <a class="reference internal" href="Array.html#classcslt_1_1Array"><span class="std std-ref">Array</span></a> fails (<a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a>)</p></li>
+<li><p>Allocation of the <a class="reference internal" href="#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a> struct fails (<a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a>)</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>capacity</strong> – Initial element capacity passed to <a class="reference internal" href="Array.html#classcslt_1_1Array_1a12ebee9f380a77e34e6f30362faefbc4"><span class="std std-ref">Array&lt;T&gt;::init()</span></a>. Must be &gt; 0. </p></li>
+<li><p><strong>growth</strong> – Forwarded to <a class="reference internal" href="Array.html#classcslt_1_1Array_1a12ebee9f380a77e34e6f30362faefbc4"><span class="std std-ref">Array&lt;T&gt;::init()</span></a>. If true, the backing array grows automatically when full using <a class="reference internal" href="Array.html#classcslt_1_1Array"><span class="std std-ref">Array</span></a>’s tiered strategy. If false, <a class="reference internal" href="#classcslt_1_1Heap_1ad27310c018750ef633381d9fa2bea86b"><span class="std std-ref">push()</span></a> returns false when the array is at capacity. </p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> for the <a class="reference internal" href="#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a> struct and, via <a class="reference internal" href="Array.html#classcslt_1_1Array"><span class="std std-ref">Array</span></a>, the backing element buffer. </p></li>
+<li><p><strong>cmp</strong> – Comparator instance (default-constructed if omitted). Returns true when its first argument has higher priority than its second. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Heap&lt;T,Compare&gt;*&gt; on success, or an <a class="reference internal" href="Error.html#classcslt_1_1ArgumentError"><span class="std std-ref">ArgumentError</span></a> / <a class="reference internal" href="Error.html#classcslt_1_1MemoryError"><span class="std std-ref">MemoryError</span></a> on failure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt4Heap4copyERK4HeapI1T7CompareER9Allocator">
+<span id="_CPPv3N4cslt4Heap4copyERK4HeapI1T7CompareER9Allocator"></span><span id="_CPPv2N4cslt4Heap4copyERK4HeapI1T7CompareER9Allocator"></span><span id="cslt::Heap::copy__Heap:T.Compare:CR.AllocatorR"></span><span class="target" id="classcslt_1_1Heap_1a984386bfcea06ac548f9aa728a70050a"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap"><span class="n"><span class="pre">Heap</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap"><span class="n"><span class="pre">Heap</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt4Heap4copyERK4HeapI1T7CompareER9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a deep copy of <code class="docutils literal notranslate"><span class="pre">src</span></code> using a caller-supplied allocator. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">alloc</span><span class="p">;</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">r</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">src</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="n">src</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="n">src</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">src</span><span class="o">-&gt;</span><span class="n">push</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="c1">// Deep copy — src and dst are fully independent</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">cr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">src</span><span class="p">,</span><span class="w"> </span><span class="n">alloc</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">cr</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="k">return</span><span class="p">;</span>
+<span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="p">,</span>
+<span class="w">                </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;&gt;</span><span class="w"> </span><span class="n">dst</span><span class="p">(</span><span class="n">cr</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>src</strong> – <a class="reference internal" href="#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a> to copy from </p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> for the new <a class="reference internal" href="#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a> and its backing array </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Heap&lt;T,Compare&gt;*&gt; on success, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt4Heap4copyERK4HeapI1T7CompareE">
+<span id="_CPPv3N4cslt4Heap4copyERK4HeapI1T7CompareE"></span><span id="_CPPv2N4cslt4Heap4copyERK4HeapI1T7CompareE"></span><span id="cslt::Heap::copy__Heap:T.Compare:CR"></span><span class="target" id="classcslt_1_1Heap_1abf1f29ee47e062e6b0b3d423b4253585"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap"><span class="n"><span class="pre">Heap</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap"><span class="n"><span class="pre">Heap</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt4HeapE" title="cslt::Heap::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt4Heap4copyERK4HeapI1T7CompareE" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a deep copy using the source heap’s own allocator. </p>
+<p><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="k">auto</span><span class="w"> </span><span class="n">cr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">Heap</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">greater</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;::</span><span class="n">copy</span><span class="p">(</span><span class="o">*</span><span class="n">src</span><span class="p">);</span>
+</pre></div>
+</div>
+ </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>src</strong> – <a class="reference internal" href="#classcslt_1_1Heap"><span class="std std-ref">Heap</span></a> to copy from </p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1Expected"><span class="std std-ref">Expected</span></a>&lt;Heap&lt;T,Compare&gt;*&gt; on success, or an error</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="List.html" class="btn btn-neutral float-left" title="C++ List Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

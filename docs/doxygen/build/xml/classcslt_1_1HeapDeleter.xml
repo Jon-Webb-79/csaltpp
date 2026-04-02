@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classcslt_1_1HeapDeleter" kind="class" language="C++" prot="public">
+    <compoundname>cslt::HeapDeleter</compoundname>
+    <includes refid="array_8hpp" local="no">array.hpp</includes>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref></type>
+      </param>
+      <param>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1HeapDeleter_1a90d70bbfc911340b9dfef2c04c27e2f6" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>void cslt::HeapDeleter&lt; T, Compare &gt;::operator()</definition>
+        <argsstring>(Heap&lt; T, Compare &gt; *h) const noexcept</argsstring>
+        <name>operator()</name>
+        <qualifiedname>cslt::HeapDeleter::operator()</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">T</ref>, <ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref> &gt; *</type>
+          <declname>h</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/array.hpp" line="2605" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/array.hpp" bodystart="2605" bodyend="2615"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Custom deleter for <ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref> instances, for use with <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref>. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Calls the <ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref> destructor (which in turn calls <ref refid="classcslt_1_1ArrayDeleter" kindref="compound">ArrayDeleter</ref> on the backing array, destroying all elements and freeing the buffer) then returns the <ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref> struct memory to the allocator.</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Element type of the <ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref> being deleted </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Compare</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Comparator type of the <ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref> being deleted</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<programlisting filename=".cpp"><codeline><highlight class="normal"><ref refid="classcslt_1_1Expected" kindref="compound">cslt::UniquePtr&lt;cslt::Heap&lt;int, std::greater&lt;int&gt;</ref>&gt;,</highlight></codeline>
+<codeline><highlight class="normal"><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><sp/><ref refid="classcslt_1_1Expected" kindref="compound">cslt::HeapDeleter&lt;int, std::greater&lt;int&gt;</ref>&gt;&gt;<sp/>h(r.value());</highlight></codeline>
+</programlisting> </para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/array.hpp" line="2587" column="1" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/array.hpp" bodystart="2603" bodyend="2616"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1HeapDeleter_1a90d70bbfc911340b9dfef2c04c27e2f6" prot="public" virt="non-virtual"><scope>cslt::HeapDeleter</scope><name>operator()</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

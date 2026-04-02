@@ -1,0 +1,53 @@
+\doxysection{cslt\+::Heap\+Deleter\texorpdfstring{$<$}{<} T, Compare \texorpdfstring{$>$}{>} Class Template Reference}
+\hypertarget{classcslt_1_1HeapDeleter}{}\label{classcslt_1_1HeapDeleter}\index{cslt::HeapDeleter$<$ T, Compare $>$@{cslt::HeapDeleter$<$ T, Compare $>$}}
+
+
+Custom deleter for \doxylink{classcslt_1_1Heap}{Heap} instances, for use with \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr}.  
+
+
+
+
+{\ttfamily \#include $<$array.\+hpp$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1HeapDeleter_a90d70bbfc911340b9dfef2c04c27e2f6}{operator()}} (\mbox{\hyperlink{classcslt_1_1Heap}{Heap}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}}, \mbox{\hyperlink{classcslt_1_1Expected}{Compare}} $>$ \texorpdfstring{$\ast$}{*}\mbox{\hyperlink{classcslt_1_1Expected}{h}}) \mbox{\hyperlink{classcslt_1_1Expected}{const}} \mbox{\hyperlink{classcslt_1_1Expected}{noexcept}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\subsubsection*{template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{T}}, \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{Compare}}$>$\newline
+class cslt\+::\+Heap\+Deleter$<$ T, Compare $>$}
+Custom deleter for \doxylink{classcslt_1_1Heap}{Heap} instances, for use with \doxylink{classcslt_1_1UniquePtr}{Unique\+Ptr}. 
+
+Calls the \doxylink{classcslt_1_1Heap}{Heap} destructor (which in turn calls \doxylink{classcslt_1_1ArrayDeleter}{Array\+Deleter} on the backing array, destroying all elements and freeing the buffer) then returns the \doxylink{classcslt_1_1Heap}{Heap} struct memory to the allocator.
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & Element type of the \doxylink{classcslt_1_1Heap}{Heap} being deleted \\
+\hline
+{\em Compare} & Comparator type of the \doxylink{classcslt_1_1Heap}{Heap} being deleted\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\mbox{\hyperlink{classcslt_1_1Expected}{cslt::UniquePtr<cslt::Heap<int,\ std::greater<int>}}>,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \mbox{\hyperlink{classcslt_1_1Expected}{cslt::HeapDeleter<int,\ std::greater<int>}}>>\ h(r.value());}
+
+\end{DoxyCode}
+ 
+
+\doxysubsection{Member Function Documentation}
+\Hypertarget{classcslt_1_1HeapDeleter_a90d70bbfc911340b9dfef2c04c27e2f6}\label{classcslt_1_1HeapDeleter_a90d70bbfc911340b9dfef2c04c27e2f6} 
+\index{cslt::HeapDeleter$<$ T, Compare $>$@{cslt::HeapDeleter$<$ T, Compare $>$}!operator()@{operator()}}
+\index{operator()@{operator()}!cslt::HeapDeleter$<$ T, Compare $>$@{cslt::HeapDeleter$<$ T, Compare $>$}}
+\doxysubsubsection{\texorpdfstring{operator()()}{operator()()}}
+{\footnotesize\ttfamily template$<$\mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{T}} , \mbox{\hyperlink{classcslt_1_1Expected}{typename}} \mbox{\hyperlink{classcslt_1_1Expected}{Compare}} $>$ \\
+\mbox{\hyperlink{classcslt_1_1Expected}{void}} \mbox{\hyperlink{classcslt_1_1HeapDeleter}{cslt\+::\+Heap\+Deleter}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}}, \mbox{\hyperlink{classcslt_1_1Expected}{Compare}} $>$\+::operator() (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classcslt_1_1Heap}{Heap}}$<$ \mbox{\hyperlink{classcslt_1_1Expected}{T}}, \mbox{\hyperlink{classcslt_1_1Expected}{Compare}} $>$ \texorpdfstring{$\ast$}{*}}]{h }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [noexcept]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/home/jonwebb/\+Code\+\_\+\+Dev/\+C++/csaltpp/csaltpp/include/\mbox{\hyperlink{array_8hpp}{array.\+hpp}}\end{DoxyCompactItemize}

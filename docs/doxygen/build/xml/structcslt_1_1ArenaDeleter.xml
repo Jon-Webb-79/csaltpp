@@ -27,13 +27,13 @@
 <para>Custom deleter for <ref refid="classcslt_1_1ArenaAllocator" kindref="compound">ArenaAllocator</ref> unique pointers. </para>
     </briefdescription>
     <detaileddescription>
-<para>This deleter properly cleans up <ref refid="classcslt_1_1ArenaAllocator" kindref="compound">ArenaAllocator</ref> instances created by factory methods (Heap, Stack, SubArena). It:<orderedlist>
+<para>This deleter properly cleans up <ref refid="classcslt_1_1ArenaAllocator" kindref="compound">ArenaAllocator</ref> instances created by factory methods (<ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref>, Stack, SubArena). It:<orderedlist>
 <listitem><para>Calls the arena&apos;s destructor (frees additional chunks)</para>
 </listitem><listitem><para>Frees the base memory only if the arena owns it (DYNAMIC only)</para>
 </listitem></orderedlist>
 </para>
 <para>Memory ownership:<itemizedlist>
-<listitem><para>DYNAMIC (Heap): Owns memory → frees with ::operator delete</para>
+<listitem><para>DYNAMIC (<ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref>): Owns memory → frees with ::operator delete</para>
 </listitem><listitem><para>STATIC (Stack): User owns buffer → doesn&apos;t free</para>
 </listitem><listitem><para>SUB (SubArena): Parent owns memory → doesn&apos;t free </para>
 </listitem></itemizedlist>

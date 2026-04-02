@@ -386,7 +386,7 @@
 </simplesect>
 <simplesect kind="see"><para><ref refid="structcslt_1_1BuddyDeleter" kindref="compound">BuddyDeleter</ref> Custom deleter that performs resource cleanup </para>
 </simplesect>
-<simplesect kind="see"><para><ref refid="classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5" kindref="member">Heap()</ref> Factory method that creates the <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref> with <ref refid="structcslt_1_1BuddyDeleter" kindref="compound">BuddyDeleter</ref> </para>
+<simplesect kind="see"><para>Heap() Factory method that creates the <ref refid="classcslt_1_1UniquePtr" kindref="compound">UniquePtr</ref> with <ref refid="structcslt_1_1BuddyDeleter" kindref="compound">BuddyDeleter</ref> </para>
 </simplesect>
 </para>
         </detaileddescription>
@@ -516,7 +516,7 @@ Allocates memory using the buddy allocation algorithm. The actual block size wil
 </listitem><listitem><para>Request 1000 bytes → 1000 + 16 (header) = 1016 → rounds to 1024 bytes</para>
 </listitem></itemizedlist>
 </para>
-<para><bold>Alignment:</bold> The returned pointer has natural alignment based on block position in the pool. It is NOT guaranteed to match base_align from <ref refid="classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5" kindref="member">Heap()</ref>. Use <ref refid="classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265" kindref="member">alloc_aligned()</ref> for specific alignment requirements.</para>
+<para><bold>Alignment:</bold> The returned pointer has natural alignment based on block position in the pool. It is NOT guaranteed to match base_align from Heap(). Use <ref refid="classcslt_1_1BuddyAllocator_1a2b096665435178ffca68d9ada6093265" kindref="member">alloc_aligned()</ref> for specific alignment requirements.</para>
 <para><bold>Internal Fragmentation:</bold> Power-of-2 rounding creates internal fragmentation. A 100-byte request wastes ~12 bytes within the 128-byte block (after accounting for header).</para>
 <para><simplesect kind="note"><para>The returned pointer is NOT the start of the block. The block starts 16 bytes earlier with the BuddyHeader.</para>
 </simplesect>
@@ -2118,7 +2118,7 @@ Returns the smallest block size (in bytes) that this <ref refid="classcslt_1_1Bu
 </simplesect>
 <simplesect kind="see"><para><ref refid="classcslt_1_1BuddyAllocator_1a294bb228c89b3534204d287775aa3bd6" kindref="member">max_block_size()</ref> Maximum possible block <ref refid="classcslt_1_1Allocator_1a4ebb5393b6462a066d6a8f8fbd1c6f37" kindref="member">size</ref> </para>
 </simplesect>
-<simplesect kind="see"><para><ref refid="classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5" kindref="member">Heap()</ref> <ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> creation and normalization rules </para>
+<simplesect kind="see"><para>Heap() <ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> creation and normalization rules </para>
 </simplesect>
 </para>
         </detaileddescription>
@@ -2444,7 +2444,7 @@ Creates a buddy allocator with memory obtained directly from the operating syste
 <codeline><highlight class="normal"></highlight><highlight class="comment">//<sp/>Largest<sp/>block<sp/>increased<sp/>due<sp/>to<sp/>coalescing</highlight></codeline>
 </programlisting></para>
 </simplesect>
-<simplesect kind="see"><para><ref refid="classcslt_1_1BuddyAllocator_1a69a50bda25e3c419eaea7c7181b21bb5" kindref="member">Heap()</ref> Primary factory method </para>
+<simplesect kind="see"><para>Heap() Primary factory method </para>
 </simplesect>
 <simplesect kind="see"><para><ref refid="classcslt_1_1BuddyAllocator_1aee7a4c90c8b3c39dc243f5bff7e9c624" kindref="member">alloc()</ref> Basic allocation </para>
 </simplesect>

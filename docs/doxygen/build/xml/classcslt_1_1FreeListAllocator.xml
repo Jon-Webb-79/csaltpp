@@ -1785,13 +1785,13 @@ Returns the total number of bytes consumed by current allocations, including all
 </simplesect>
 Returns the ownership status of the freelist&apos;s backing arena, which determines cleanup behavior when the freelist is destroyed.</para>
 <para><bold>Ownership by factory method:</bold><itemizedlist>
-<listitem><para><bold><ref refid="classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248" kindref="member">Heap()</ref></bold>: Returns true - freelist owns the arena (DYNAMIC)</para>
+<listitem><para><bold>Heap()</bold>: Returns true - freelist owns the arena (DYNAMIC)</para>
 </listitem><listitem><para><bold><ref refid="classcslt_1_1FreeListAllocator_1a3aeae7f8f210d8507d280375db819e4a" kindref="member">WithArena()</ref></bold>: Returns false - arena is borrowed</para>
 </listitem><listitem><para><bold><ref refid="classcslt_1_1FreeListAllocator_1a00da504efb8f8317abf7498c697cf891" kindref="member">Stack()</ref></bold>: Returns true - freelist owns the arena object (STATIC)</para>
 </listitem></itemizedlist>
 </para>
 <para>When <ref refid="classcslt_1_1FreeListAllocator_1a3b2f9e190bc3751d679d1c75f1d5b8f5" kindref="member">owns_arena()</ref> returns true, the <ref refid="structcslt_1_1FreeListDeleter" kindref="compound">FreeListDeleter</ref> will destroy the arena when the freelist is destroyed:<itemizedlist>
-<listitem><para>For DYNAMIC arenas (Heap): Arena is deleted</para>
+<listitem><para>For DYNAMIC arenas (<ref refid="classcslt_1_1Heap" kindref="compound">Heap</ref>): Arena is deleted</para>
 </listitem><listitem><para>For STATIC arenas (Stack): Arena destructor called, buffer not freed</para>
 </listitem></itemizedlist>
 </para>
@@ -1800,7 +1800,7 @@ Returns the ownership status of the freelist&apos;s backing arena, which determi
 </simplesect>
 <simplesect kind="note"><para>This value is set at construction time and never changes.</para>
 </simplesect>
-<simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248" kindref="member">Heap()</ref> Creates freelist with owned arena </para>
+<simplesect kind="see"><para>Heap() Creates freelist with owned arena </para>
 </simplesect>
 <simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a3aeae7f8f210d8507d280375db819e4a" kindref="member">WithArena()</ref> Creates freelist with borrowed arena </para>
 </simplesect>
@@ -2183,7 +2183,7 @@ Creates a freelist within an existing arena&apos;s memory space. The freelist do
 <codeline><highlight class="normal"></highlight><highlight class="keyword">auto</highlight><highlight class="normal"><sp/>fixed_sized<sp/>=<sp/>pool-&gt;alloc_pool(</highlight><highlight class="keyword">false</highlight><highlight class="normal">);</highlight></codeline>
 </programlisting></para>
 </simplesect>
-<simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248" kindref="member">Heap()</ref> For standalone freelists with owned arenas </para>
+<simplesect kind="see"><para>Heap() For standalone freelists with owned arenas </para>
 </simplesect>
 <simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a00da504efb8f8317abf7498c697cf891" kindref="member">Stack()</ref> For stack-based freelists </para>
 </simplesect>
@@ -2351,7 +2351,7 @@ Constructs a freelist entirely within a caller-provided memory buffer. No heap a
 <codeline><highlight class="normal"></highlight><highlight class="keyword">delete</highlight><highlight class="normal">[]<sp/>buffer;</highlight></codeline>
 </programlisting></para>
 </simplesect>
-<simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248" kindref="member">Heap()</ref> For heap-allocated freelists </para>
+<simplesect kind="see"><para>Heap() For heap-allocated freelists </para>
 </simplesect>
 <simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a3aeae7f8f210d8507d280375db819e4a" kindref="member">WithArena()</ref> For sharing arenas </para>
 </simplesect>
@@ -2399,7 +2399,7 @@ Constructs a freelist entirely within a caller-provided memory buffer. No heap a
 </simplesect>
 <simplesect kind="note"><para>Best suited for general-purpose allocation with varying sizes</para>
 </simplesect>
-<simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a81cf8b97326d92fb429429a894cfc248" kindref="member">Heap()</ref> Create freelist with owned heap-allocated arena </para>
+<simplesect kind="see"><para>Heap() Create freelist with owned heap-allocated arena </para>
 </simplesect>
 <simplesect kind="see"><para><ref refid="classcslt_1_1FreeListAllocator_1a3aeae7f8f210d8507d280375db819e4a" kindref="member">WithArena()</ref> Create freelist sharing an existing arena </para>
 </simplesect>

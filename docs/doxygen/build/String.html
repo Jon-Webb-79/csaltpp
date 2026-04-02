@@ -53,6 +53,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Allocator.html">Allocator</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">String</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-allocators"><strong>Recommended Allocators</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#string-class">String Class</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#_CPPv4N4cslt6StringE"><code class="docutils literal notranslate"><span class="pre">cslt::String</span></code></a><ul>
@@ -157,6 +158,56 @@ without changing the public API:</p>
 real-time, or safety-regulated environments where allocation patterns must
 be controlled and predictable.  The user can also develop their own
 allocators as long as it conforms to the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class.</p>
+</section>
+<section id="recommended-allocators">
+<h2><strong>Recommended Allocators</strong><a class="headerlink" href="#recommended-allocators" title="Link to this heading"></a></h2>
+<p>Different allocators are appropriate depending on how strings are created,
+resized, and destroyed:</p>
+<ul>
+<li><p><strong>HeapAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>general-purpose string manipulation</p></li>
+<li><p>variable-length strings with frequent resizing</p></li>
+<li><p>host-side applications and utilities</p></li>
+<li><p>debugging string behavior independent of allocator complexity</p></li>
+</ul>
+<p>Strings often reallocate and copy memory during growth. A heap allocator
+provides predictable behavior and is the easiest to reason about during
+development and testing.</p>
+</li>
+<li><p><strong>ArenaAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>short-lived string collections (e.g., parsing, tokenization)</p></li>
+<li><p>append-only or immutable string usage</p></li>
+<li><p>batch construction followed by bulk discard</p></li>
+</ul>
+<p>This is highly efficient when strings are not individually freed. However,
+repeated resizing may lead to unused memory if older buffers cannot be
+reclaimed.</p>
+</li>
+<li><p><strong>BuddyAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>dynamically sized strings with controlled fragmentation</p></li>
+<li><p>systems requiring deterministic allocation patterns</p></li>
+<li><p>workloads with frequent allocation and release</p></li>
+</ul>
+<p>Since strings often grow geometrically, a buddy allocator can help reduce
+fragmentation compared to a general heap in long-running systems.</p>
+</li>
+<li><p><strong>PoolAllocator / SlabAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>fixed-capacity strings</p></li>
+<li><p>preallocated buffers</p></li>
+<li><p>embedded systems with strict memory layouts</p></li>
+</ul>
+<p>These allocators are less suitable for dynamically growing strings, but can
+be effective when string sizes are bounded or known in advance.</p>
+</li>
+</ul>
 </section>
 <section id="factory-pattern-and-raii">
 <h2><strong>Factory Pattern and RAII</strong><a class="headerlink" href="#factory-pattern-and-raii" title="Link to this heading"></a></h2>

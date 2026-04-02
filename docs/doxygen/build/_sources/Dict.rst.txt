@@ -45,6 +45,57 @@ deterministic memory behaviour suitable for embedded, real-time, or
 safety-regulated environments. The user can also develop their own allocators
 as long as they conform to the ``Allocator`` base class.
 
+**Recommended Allocators**
+==========================
+
+Different allocators are appropriate depending on how dictionaries are used
+and how frequently elements are inserted and removed:
+
+* **HeapAllocator**
+
+  Best for:
+
+  * general-purpose hash maps
+  * development and testing
+  * workloads with unpredictable insertion and removal patterns
+
+  The heap allocator is flexible and easy to debug, making it the default
+  choice for most use cases.
+
+* **ArenaAllocator**
+
+  Best for:
+
+  * build-once dictionaries
+  * read-only lookup tables
+  * configuration or initialization data
+
+  This is highly efficient when the dictionary is constructed once and not
+  modified or individually freed.
+
+* **BuddyAllocator**
+
+  Best for:
+
+  * dynamic dictionaries with frequent insertions and deletions
+  * systems requiring controlled fragmentation
+  * long-running applications
+
+  Buddy allocation helps manage fragmentation when many nodes are allocated
+  and returned over time.
+
+* **PoolAllocator / SlabAllocator**
+
+  Best for:
+
+  * high-frequency insert/remove workloads
+  * uniform key/value sizes
+  * performance-critical systems
+
+  Dictionary nodes are typically uniform in size, making them an excellent
+  match for pool or slab allocators. This can significantly reduce allocation
+  overhead and improve cache locality.
+
 **Factory Pattern and RAII**
 =============================
 

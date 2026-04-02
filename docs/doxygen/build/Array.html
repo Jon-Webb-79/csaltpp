@@ -54,6 +54,7 @@
 <li class="toctree-l1"><a class="reference internal" href="String.html">String</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Array</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-allocators"><strong>Recommended Allocators</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#growth-strategy"><strong>Growth Strategy</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#element-type-requirements"><strong>Element Type Requirements</strong></a></li>
@@ -165,6 +166,53 @@ without changing the public API:</p>
 real-time, or safety-regulated environments where allocation patterns must
 be controlled and predictable. The user can also develop their own allocators
 as long as they conform to the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class.</p>
+</section>
+<section id="recommended-allocators">
+<h2><strong>Recommended Allocators</strong><a class="headerlink" href="#recommended-allocators" title="Link to this heading"></a></h2>
+<p>Different allocators are appropriate depending on how arrays are constructed,
+resized, and accessed:</p>
+<ul>
+<li><p><strong>HeapAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>general-purpose dynamic arrays</p></li>
+<li><p>frequent resizing and reallocation</p></li>
+<li><p>applications where simplicity and correctness are priorities</p></li>
+</ul>
+<p>Arrays rely on contiguous memory and often require reallocation during
+growth. The heap allocator provides flexible and predictable behavior.</p>
+</li>
+<li><p><strong>ArenaAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>append-only arrays</p></li>
+<li><p>batch construction followed by full discard</p></li>
+<li><p>intermediate data structures in algorithms</p></li>
+</ul>
+<p>Arena allocation is efficient when arrays are built once and not resized
+frequently. Reallocation-heavy workloads may result in unused memory.</p>
+</li>
+<li><p><strong>BuddyAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>large arrays with dynamic resizing</p></li>
+<li><p>systems where memory fragmentation must be controlled</p></li>
+<li><p>long-lived arrays with periodic growth</p></li>
+</ul>
+<p>The buddy allocator handles large contiguous allocations well and helps
+manage fragmentation compared to a general heap.</p>
+</li>
+<li><p><strong>PoolAllocator / SlabAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>fixed-capacity arrays</p></li>
+<li><p>small arrays with uniform sizes</p></li>
+<li><p>performance-critical paths with predictable memory use</p></li>
+</ul>
+<p>These allocators are not well suited for resizable arrays but can be very
+efficient when capacity is known in advance.</p>
+</li>
+</ul>
 </section>
 <section id="factory-pattern-and-raii">
 <h2><strong>Factory Pattern and RAII</strong><a class="headerlink" href="#factory-pattern-and-raii" title="Link to this heading"></a></h2>

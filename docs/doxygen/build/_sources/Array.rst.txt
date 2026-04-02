@@ -45,6 +45,56 @@ real-time, or safety-regulated environments where allocation patterns must
 be controlled and predictable. The user can also develop their own allocators
 as long as they conform to the ``Allocator`` base class.
 
+**Recommended Allocators**
+==========================
+
+Different allocators are appropriate depending on how arrays are constructed,
+resized, and accessed:
+
+* **HeapAllocator**
+
+  Best for:
+
+  * general-purpose dynamic arrays
+  * frequent resizing and reallocation
+  * applications where simplicity and correctness are priorities
+
+  Arrays rely on contiguous memory and often require reallocation during
+  growth. The heap allocator provides flexible and predictable behavior.
+
+* **ArenaAllocator**
+
+  Best for:
+
+  * append-only arrays
+  * batch construction followed by full discard
+  * intermediate data structures in algorithms
+
+  Arena allocation is efficient when arrays are built once and not resized
+  frequently. Reallocation-heavy workloads may result in unused memory.
+
+* **BuddyAllocator**
+
+  Best for:
+
+  * large arrays with dynamic resizing
+  * systems where memory fragmentation must be controlled
+  * long-lived arrays with periodic growth
+
+  The buddy allocator handles large contiguous allocations well and helps
+  manage fragmentation compared to a general heap.
+
+* **PoolAllocator / SlabAllocator**
+
+  Best for:
+
+  * fixed-capacity arrays
+  * small arrays with uniform sizes
+  * performance-critical paths with predictable memory use
+
+  These allocators are not well suited for resizable arrays but can be very
+  efficient when capacity is known in advance.
+
 **Factory Pattern and RAII**
 ============================
 

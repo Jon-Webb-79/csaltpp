@@ -43,6 +43,59 @@ real-time, or safety-regulated environments where allocation patterns must
 be controlled and predictable.  The user can also develop their own 
 allocators as long as it conforms to the ``Allocator`` base class.
 
+**Recommended Allocators**
+==========================
+
+Different allocators are appropriate depending on how strings are created,
+resized, and destroyed:
+
+* **HeapAllocator**
+
+  Best for:
+
+  * general-purpose string manipulation
+  * variable-length strings with frequent resizing
+  * host-side applications and utilities
+  * debugging string behavior independent of allocator complexity
+
+  Strings often reallocate and copy memory during growth. A heap allocator
+  provides predictable behavior and is the easiest to reason about during
+  development and testing.
+
+* **ArenaAllocator**
+
+  Best for:
+
+  * short-lived string collections (e.g., parsing, tokenization)
+  * append-only or immutable string usage
+  * batch construction followed by bulk discard
+
+  This is highly efficient when strings are not individually freed. However,
+  repeated resizing may lead to unused memory if older buffers cannot be
+  reclaimed.
+
+* **BuddyAllocator**
+
+  Best for:
+
+  * dynamically sized strings with controlled fragmentation
+  * systems requiring deterministic allocation patterns
+  * workloads with frequent allocation and release
+
+  Since strings often grow geometrically, a buddy allocator can help reduce
+  fragmentation compared to a general heap in long-running systems.
+
+* **PoolAllocator / SlabAllocator**
+
+  Best for:
+
+  * fixed-capacity strings
+  * preallocated buffers
+  * embedded systems with strict memory layouts
+
+  These allocators are less suitable for dynamically growing strings, but can
+  be effective when string sizes are bounded or known in advance.
+
 **Factory Pattern and RAII**
 =============================
 

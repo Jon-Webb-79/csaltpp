@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Dictionary</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-allocators"><strong>Recommended Allocators</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#template-type-requirements"><strong>Template Type Requirements</strong></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#hash-function"><strong>Hash Function</strong></a></li>
@@ -165,6 +166,54 @@ value buffer) are allocated through the provided allocator, enabling fully
 deterministic memory behaviour suitable for embedded, real-time, or
 safety-regulated environments. The user can also develop their own allocators
 as long as they conform to the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class.</p>
+</section>
+<section id="recommended-allocators">
+<h2><strong>Recommended Allocators</strong><a class="headerlink" href="#recommended-allocators" title="Link to this heading"></a></h2>
+<p>Different allocators are appropriate depending on how dictionaries are used
+and how frequently elements are inserted and removed:</p>
+<ul>
+<li><p><strong>HeapAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>general-purpose hash maps</p></li>
+<li><p>development and testing</p></li>
+<li><p>workloads with unpredictable insertion and removal patterns</p></li>
+</ul>
+<p>The heap allocator is flexible and easy to debug, making it the default
+choice for most use cases.</p>
+</li>
+<li><p><strong>ArenaAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>build-once dictionaries</p></li>
+<li><p>read-only lookup tables</p></li>
+<li><p>configuration or initialization data</p></li>
+</ul>
+<p>This is highly efficient when the dictionary is constructed once and not
+modified or individually freed.</p>
+</li>
+<li><p><strong>BuddyAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>dynamic dictionaries with frequent insertions and deletions</p></li>
+<li><p>systems requiring controlled fragmentation</p></li>
+<li><p>long-running applications</p></li>
+</ul>
+<p>Buddy allocation helps manage fragmentation when many nodes are allocated
+and returned over time.</p>
+</li>
+<li><p><strong>PoolAllocator / SlabAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>high-frequency insert/remove workloads</p></li>
+<li><p>uniform key/value sizes</p></li>
+<li><p>performance-critical systems</p></li>
+</ul>
+<p>Dictionary nodes are typically uniform in size, making them an excellent
+match for pool or slab allocators. This can significantly reduce allocation
+overhead and improve cache locality.</p>
+</li>
+</ul>
 </section>
 <section id="factory-pattern-and-raii">
 <h2><strong>Factory Pattern and RAII</strong><a class="headerlink" href="#factory-pattern-and-raii" title="Link to this heading"></a></h2>

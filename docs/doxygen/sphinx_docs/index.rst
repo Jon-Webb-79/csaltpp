@@ -125,6 +125,21 @@ Heap
 * **O(log n) push and pop** - Sift-up and sift-down maintain the heap property on every mutation
 * **Templated iteration** - ``foreach()`` accepts any callable with signature ``void(const T&)``; for ordered traversal, copy the heap and pop in a loop
 * **RAII cleanup** - ``HeapDeleter<T, Compare>`` works with ``UniquePtr`` to automatically reclaim the heap struct and its backing array
+
+AVL Tree
+--------
+* **Generic balanced binary search tree** - ``AVLTree<T, Compare>`` provides ordered storage and lookup for any element type ``T`` using a compile-time comparator ``Compare``
+* **Allocator-backed** - The tree struct, node slab, and optional overflow nodes are all allocated through the provided allocator
+* **Factory pattern** - Creation via ``AVLTree<T,Compare>::init()`` returning ``Expected<AVLTree<T,Compare>*>`` prevents uninitialised instances
+* **Self-balancing structure** - Maintains AVL height invariants through rotations, ensuring O(log n) insertion, removal, and lookup
+* **Hybrid node storage** - Initial nodes are allocated from a contiguous slab for improved locality, with optional overflow allocation beyond slab capacity
+* **Recycled slab nodes** - Removed slab-backed nodes are returned to an internal free list and reused before allocating new nodes
+* **Configurable overflow** - Overflow allocation can be enabled for dynamic growth or disabled for deterministic fixed-capacity behavior
+* **Comparator-driven ordering** - Ordering is defined by a three-way comparator, allowing custom sort behavior without requiring ``operator<``
+* **Duplicate policy control** - Duplicate insertion can be enabled (multiset behavior) or disabled (set behavior) at initialization
+* **Safe tree operations** - ``insert()``, ``remove()``, ``find()``, ``min()``, ``max()``, and traversal methods return explicit success or error state where appropriate
+* **Ordered traversal** - ``foreach()`` provides in-order traversal; ``foreach_range()`` supports efficient range queries with subtree pruning
+* **RAII cleanup** - ``AVLTreeDeleter<T, Compare>`` works with ``UniquePtr`` to automatically reclaim the tree, slab, and any overflow nodes
  
 
 Typical Use Cases
@@ -148,6 +163,7 @@ Typical Use Cases
    Dictionary <Dict>
    List <List>
    Heap <Heap>
+   Tree <Tree>
     
 Indices and tables
 ==================

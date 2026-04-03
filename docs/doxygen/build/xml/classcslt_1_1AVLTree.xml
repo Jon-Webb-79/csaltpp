@@ -1,0 +1,1315 @@
+<?xml version='1.0' encoding='UTF-8' standalone='no'?>
+<doxygen xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="compound.xsd" version="1.9.8" xml:lang="en-US">
+  <compounddef id="classcslt_1_1AVLTree" kind="class" language="C++" prot="public">
+    <compoundname>cslt::AVLTree</compoundname>
+    <includes refid="tree_8hpp" local="no">tree.hpp</includes>
+    <innerclass refid="structcslt_1_1AVLTree_1_1Node" prot="private">cslt::AVLTree::Node</innerclass>
+    <templateparamlist>
+      <param>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref></type>
+      </param>
+      <param>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref></type>
+      </param>
+    </templateparamlist>
+    <sectiondef kind="private-attrib">
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1a9f66ac5e05aa3ef61b9e708371a6705c" prot="private" static="no" mutable="no">
+        <type>Node *</type>
+        <definition>Node* cslt::AVLTree&lt; T, Compare &gt;::root_</definition>
+        <argsstring></argsstring>
+        <name>root_</name>
+        <qualifiedname>cslt::AVLTree::root_</qualifiedname>
+        <briefdescription>
+<para>Root node of the AVL tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="106" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="106" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1aaa6535b394619ebc288c971baa97a8e5" prot="private" static="no" mutable="no">
+        <type>Node *</type>
+        <definition>Node* cslt::AVLTree&lt; T, Compare &gt;::slab_</definition>
+        <argsstring></argsstring>
+        <name>slab_</name>
+        <qualifiedname>cslt::AVLTree::slab_</qualifiedname>
+        <briefdescription>
+<para>Primary slab allocation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="107" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="107" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1a4bc866ff8d80b29a7d703e5fe6428b61" prot="private" static="no" mutable="no">
+        <type>Node *</type>
+        <definition>Node* cslt::AVLTree&lt; T, Compare &gt;::free_list_</definition>
+        <argsstring></argsstring>
+        <name>free_list_</name>
+        <qualifiedname>cslt::AVLTree::free_list_</qualifiedname>
+        <briefdescription>
+<para>Recycled-node free list. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="108" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="108" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1a99324a573b0dd5ca2ab3a22105ba8841" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::AVLTree&lt; T, Compare &gt;::slab_cap_</definition>
+        <argsstring></argsstring>
+        <name>slab_cap_</name>
+        <qualifiedname>cslt::AVLTree::slab_cap_</qualifiedname>
+        <briefdescription>
+<para>Number of nodes in the slab. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="109" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="109" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1ac82d96a7ddce0a6863a8b28f43b82373" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::AVLTree&lt; T, Compare &gt;::slab_used_</definition>
+        <argsstring></argsstring>
+        <name>slab_used_</name>
+        <qualifiedname>cslt::AVLTree::slab_used_</qualifiedname>
+        <briefdescription>
+<para>Number of slab slots ever carved. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="110" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="110" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1aa395eba7952336e7914bf8960acb1f95" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::AVLTree&lt; T, Compare &gt;::len_</definition>
+        <argsstring></argsstring>
+        <name>len_</name>
+        <qualifiedname>cslt::AVLTree::len_</qualifiedname>
+        <briefdescription>
+<para>Number of active elements in the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="111" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="111" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1ac10251220ecd46e821a727cfa2a9d0d6" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::AVLTree&lt; T, Compare &gt;::overflow_</definition>
+        <argsstring></argsstring>
+        <name>overflow_</name>
+        <qualifiedname>cslt::AVLTree::overflow_</qualifiedname>
+        <briefdescription>
+<para>Allow overflow node allocation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="112" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="112" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1aec6ef9b31f3d4844e333f954ffe45621" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::AVLTree&lt; T, Compare &gt;::allow_duplicates_</definition>
+        <argsstring></argsstring>
+        <name>allow_duplicates_</name>
+        <qualifiedname>cslt::AVLTree::allow_duplicates_</qualifiedname>
+        <briefdescription>
+<para>Allow equal keys to be inserted. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="113" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="113" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1a303f433bd0e1d0bfc83180b10353c648" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> *</type>
+        <definition>Allocator* cslt::AVLTree&lt; T, Compare &gt;::allocator_</definition>
+        <argsstring></argsstring>
+        <name>allocator_</name>
+        <qualifiedname>cslt::AVLTree::allocator_</qualifiedname>
+        <briefdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used for all memory operations. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="114" column="19" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="114" bodyend="-1"/>
+      </memberdef>
+      <memberdef kind="variable" id="classcslt_1_1AVLTree_1ad39a7817132b32d57f853a2e5a332794" prot="private" static="no" mutable="no">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref></type>
+        <definition>Compare cslt::AVLTree&lt; T, Compare &gt;::compare_</definition>
+        <argsstring></argsstring>
+        <name>compare_</name>
+        <qualifiedname>cslt::AVLTree::compare_</qualifiedname>
+        <briefdescription>
+<para>Comparator used for ordering. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="115" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="115" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="friend">
+      <memberdef kind="friend" id="classcslt_1_1AVLTree_1ad22290823c15549dbc8943f6485cfe78" prot="public" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">U</ref></type>
+          </param>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">C</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">class</ref></type>
+        <definition>friend class AVLTreeDeleter</definition>
+        <argsstring></argsstring>
+        <name>AVLTreeDeleter</name>
+        <qualifiedname>cslt::AVLTree::AVLTreeDeleter</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1AVLTreeDeleter" kindref="compound">AVLTreeDeleter</ref></type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="886" column="22" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="886" bodyend="-1"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-static-func">
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a9e542a23e7d79adc70478dd23c31e6cc" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>static bool cslt::AVLTree&lt; T, Compare &gt;::_is_no_error</definition>
+        <argsstring>(const Error &amp;err) noexcept</argsstring>
+        <name>_is_no_error</name>
+        <qualifiedname>cslt::AVLTree::_is_no_error</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Error" kindref="compound">Error</ref> &amp;</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="120" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="120" bodyend="122"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a91fefc426274de8975f4e3859e94c265" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">int</ref></type>
+        <definition>static int cslt::AVLTree&lt; T, Compare &gt;::_height</definition>
+        <argsstring>(const Node *n) noexcept</argsstring>
+        <name>_height</name>
+        <qualifiedname>cslt::AVLTree::_height</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Return the cached height of a node, or 0 for nullptr. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="127" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="127" bodyend="129"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a48a41b166e6c6a6a76c0109df8e57e2a" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>static void cslt::AVLTree&lt; T, Compare &gt;::_update_height</definition>
+        <argsstring>(Node *n) noexcept</argsstring>
+        <name>_update_height</name>
+        <qualifiedname>cslt::AVLTree::_update_height</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Recompute the cached height of a node from its children. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="135" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="135" bodyend="139"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a7999eee85ba2c2f8e66982d7fc6e3326" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">int</ref></type>
+        <definition>static int cslt::AVLTree&lt; T, Compare &gt;::_balance</definition>
+        <argsstring>(const Node *n) noexcept</argsstring>
+        <name>_balance</name>
+        <qualifiedname>cslt::AVLTree::_balance</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Return the AVL balance factor of a node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Defined as height(right) - height(left). </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="147" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="147" bodyend="149"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a537491d2208b84823029410ef83ac7c2" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>static void cslt::AVLTree&lt; T, Compare &gt;::_destroy_value</definition>
+        <argsstring>(Node *n) noexcept</argsstring>
+        <name>_destroy_value</name>
+        <qualifiedname>cslt::AVLTree::_destroy_value</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Destroy the value stored in a node. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Used when removing active nodes or clearing the tree. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="157" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="157" bodyend="159"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1ac9eba6157a717ea556a2eb7db1b7ed7b" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>static Node * cslt::AVLTree&lt; T, Compare &gt;::_rotate_right</definition>
+        <argsstring>(Node *y) noexcept</argsstring>
+        <name>_rotate_right</name>
+        <qualifiedname>cslt::AVLTree::_rotate_right</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>y</declname>
+        </param>
+        <briefdescription>
+<para>Right rotation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="248" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="248" bodyend="258"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a60a35a834d1ae4bf022436b364db153d" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>static Node * cslt::AVLTree&lt; T, Compare &gt;::_rotate_left</definition>
+        <argsstring>(Node *x) noexcept</argsstring>
+        <name>_rotate_left</name>
+        <qualifiedname>cslt::AVLTree::_rotate_left</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>x</declname>
+        </param>
+        <briefdescription>
+<para>Left rotation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="264" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="264" bodyend="274"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a8028f53f6908b653579bc5a7d42beba8" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>static Node * cslt::AVLTree&lt; T, Compare &gt;::_rebalance</definition>
+        <argsstring>(Node *n) noexcept</argsstring>
+        <name>_rebalance</name>
+        <qualifiedname>cslt::AVLTree::_rebalance</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>n</declname>
+        </param>
+        <briefdescription>
+<para>Rebalance a subtree if required. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="280" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="280" bodyend="301"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1aa422d4bc4626aee44068328f1bf60c5d" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>static Node * cslt::AVLTree&lt; T, Compare &gt;::_detach_min</definition>
+        <argsstring>(Node *node, Node *&amp;min_out) noexcept</argsstring>
+        <name>_detach_min</name>
+        <qualifiedname>cslt::AVLTree::_detach_min</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type>Node *&amp;</type>
+          <declname>min_out</declname>
+        </param>
+        <briefdescription>
+<para>Detach the leftmost node in a subtree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Used to find the in-order successor during two-child removal. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="356" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="356" bodyend="364"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a00ab5701a991495f67795cac79e982d8" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>static void cslt::AVLTree&lt; T, Compare &gt;::_preorder</definition>
+        <argsstring>(Node *node, Fn &amp;&amp;fn) noexcept</argsstring>
+        <name>_preorder</name>
+        <qualifiedname>cslt::AVLTree::_preorder</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref> &amp;&amp;</type>
+          <declname>fn</declname>
+        </param>
+        <briefdescription>
+<para>Mutable pre-order traversal over active tree nodes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="438" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="438" bodyend="447"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1aaf839e92c90cbf43edb24657595cf7bf" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>static void cslt::AVLTree&lt; T, Compare &gt;::_inorder</definition>
+        <argsstring>(const Node *node, Fn &amp;&amp;fn) noexcept</argsstring>
+        <name>_inorder</name>
+        <qualifiedname>cslt::AVLTree::_inorder</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref> &amp;&amp;</type>
+          <declname>fn</declname>
+        </param>
+        <briefdescription>
+<para>Const in-order traversal over active tree nodes. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="454" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="454" bodyend="460"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a13054526330ba982304215cb0d948903" prot="private" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>static void cslt::AVLTree&lt; T, Compare &gt;::_inorder_range</definition>
+        <argsstring>(const Node *node, const T &amp;low, const T &amp;high, const Compare &amp;compare, Fn &amp;&amp;fn) noexcept</argsstring>
+        <name>_inorder_range</name>
+        <qualifiedname>cslt::AVLTree::_inorder_range</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>low</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>high</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref> &amp;</type>
+          <declname>compare</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref> &amp;&amp;</type>
+          <declname>fn</declname>
+        </param>
+        <briefdescription>
+<para>Selective in-order traversal within inclusive range [low, high]. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="467" column="21" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="467" bodyend="496"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="private-func">
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a9378b01992df77caf0d1e1d0a4b4db81" prot="private" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::AVLTree&lt; T, Compare &gt;::_is_overflow_node</definition>
+        <argsstring>(const Node *node) const noexcept</argsstring>
+        <name>_is_overflow_node</name>
+        <qualifiedname>cslt::AVLTree::_is_overflow_node</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Return true if a node lies outside the slab allocation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Such nodes are overflow nodes and must be individually returned to the allocator. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="168" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="168" bodyend="176"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1abc30ea59077f727423bad5d9cbb29067" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>Node * cslt::AVLTree&lt; T, Compare &gt;::_alloc_node</definition>
+        <argsstring>(const T &amp;value) noexcept</argsstring>
+        <name>_alloc_node</name>
+        <qualifiedname>cslt::AVLTree::_alloc_node</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Allocate one node using free-list, slab, or overflow allocation. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Constructs <computeroutput>value</computeroutput> in-place.</para>
+<para><simplesect kind="return"><para>Pointer to a live node on success, nullptr on failure. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="186" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="186" bodyend="229"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a5527dbcccbe12196254e409d86207e8a" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>void cslt::AVLTree&lt; T, Compare &gt;::_free_node</definition>
+        <argsstring>(Node *node) noexcept</argsstring>
+        <name>_free_node</name>
+        <qualifiedname>cslt::AVLTree::_free_node</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>node</declname>
+        </param>
+        <briefdescription>
+<para>Return a removed node to the free list. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>The value must already have been destroyed by the caller. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="237" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="237" bodyend="242"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1aed44fca36ebd2bf6583bd8e56ca1ece1" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>Node * cslt::AVLTree&lt; T, Compare &gt;::_insert</definition>
+        <argsstring>(Node *node, const T &amp;value, Error &amp;err) noexcept</argsstring>
+        <name>_insert</name>
+        <qualifiedname>cslt::AVLTree::_insert</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Error" kindref="compound">Error</ref> &amp;</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Recursive insert helper. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Existing subtree root </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>value</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to insert </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Error" kindref="compound">Error</ref> output </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>New subtree root </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="312" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="312" bodyend="348"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a205b757f542cd700a874502503da01ce" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type>Node *</type>
+        <definition>Node * cslt::AVLTree&lt; T, Compare &gt;::_remove</definition>
+        <argsstring>(Node *node, const T &amp;key, Node *&amp;removed, Error &amp;err) noexcept</argsstring>
+        <name>_remove</name>
+        <qualifiedname>cslt::AVLTree::_remove</qualifiedname>
+        <param>
+          <type>Node *</type>
+          <declname>node</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <param>
+          <type>Node *&amp;</type>
+          <declname>removed</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Error" kindref="compound">Error</ref> &amp;</type>
+          <declname>err</declname>
+        </param>
+        <briefdescription>
+<para>Recursive remove helper. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>node</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Existing subtree root </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>key</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Value to remove </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>removed</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Receives detached node on success </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>err</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Error" kindref="compound">Error</ref> output </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>New subtree root </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="376" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="376" bodyend="412"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1abefb1216ab205247efadf364e0523733" prot="private" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> Node *</type>
+        <definition>const Node * cslt::AVLTree&lt; T, Compare &gt;::_find_node</definition>
+        <argsstring>(const T &amp;key) const noexcept</argsstring>
+        <name>_find_node</name>
+        <qualifiedname>cslt::AVLTree::_find_node</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Find a node matching key. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="418" column="20" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="418" bodyend="431"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1aadd653fd5eca47a66d52dd873ae8c87f" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::AVLTree&lt; T, Compare &gt;::AVLTree</definition>
+        <argsstring>(size_t capacity, bool overflow, bool allow_duplicates, Allocator &amp;allocator, const Compare &amp;compare) noexcept</argsstring>
+        <name>AVLTree</name>
+        <qualifiedname>cslt::AVLTree::AVLTree</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>capacity</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+          <declname>overflow</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+          <declname>allow_duplicates</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref> &amp;</type>
+          <declname>compare</declname>
+        </param>
+        <briefdescription>
+<para>Private constructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Allocates the slab through the allocator. The tree object itself is allocated separately by <ref refid="classcslt_1_1AVLTree_1a193330d8fd7b75cb2f2cc76a3a48b33c" kindref="member">init()</ref> using placement new. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="505" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="505" bodyend="524"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a7b5e13601161ebe3d20071bd5b1de7fb" prot="private" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type></type>
+        <definition>cslt::AVLTree&lt; T, Compare &gt;::~AVLTree</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>~AVLTree</name>
+        <qualifiedname>cslt::AVLTree::~AVLTree</qualifiedname>
+        <briefdescription>
+<para>Private destructor. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Cleans active nodes and overflow allocations. The tree object itself is freed by <ref refid="classcslt_1_1AVLTreeDeleter" kindref="compound">AVLTreeDeleter</ref>. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="533" column="9" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="533" bodyend="542"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a791e932d89497b4d3a9e060f4ee60ae6" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::AVLTree&lt; T, Compare &gt;::AVLTree</definition>
+        <argsstring>(const AVLTree &amp;)=delete</argsstring>
+        <name>AVLTree</name>
+        <qualifiedname>cslt::AVLTree::AVLTree</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="545" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a3856211bc547b7df3b5bdcbb1cc1a52c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> &amp;</type>
+        <definition>AVLTree &amp; cslt::AVLTree&lt; T, Compare &gt;::operator=</definition>
+        <argsstring>(const AVLTree &amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>cslt::AVLTree::operator=</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> &amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="546" column="17"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1af9bfcb687e7663ef598de51386cb82d8" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type></type>
+        <definition>cslt::AVLTree&lt; T, Compare &gt;::AVLTree</definition>
+        <argsstring>(AVLTree &amp;&amp;)=delete</argsstring>
+        <name>AVLTree</name>
+        <qualifiedname>cslt::AVLTree::AVLTree</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="547" column="9"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a16d5c705b5042566aad24ed5269f153c" prot="private" static="no" const="no" explicit="no" inline="no" virt="non-virtual">
+        <type><ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> &amp;</type>
+        <definition>AVLTree &amp; cslt::AVLTree&lt; T, Compare &gt;::operator=</definition>
+        <argsstring>(AVLTree &amp;&amp;)=delete</argsstring>
+        <name>operator=</name>
+        <qualifiedname>cslt::AVLTree::operator=</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> &amp;&amp;</type>
+        </param>
+        <briefdescription>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="548" column="17"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-static-func">
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a193330d8fd7b75cb2f2cc76a3a48b33c" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> * &gt;</type>
+        <definition>static Expected&lt; AVLTree * &gt; cslt::AVLTree&lt; T, Compare &gt;::init</definition>
+        <argsstring>(size_t capacity, Allocator &amp;allocator, bool overflow=true, bool allow_duplicates=false, const Compare &amp;compare=Compare{}) noexcept</argsstring>
+        <name>init</name>
+        <qualifiedname>cslt::AVLTree::init</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+          <declname>capacity</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+          <declname>overflow</declname>
+          <defval><ref refid="classcslt_1_1Expected" kindref="compound">true</ref></defval>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+          <declname>allow_duplicates</declname>
+          <defval><ref refid="classcslt_1_1Expected" kindref="compound">false</ref></defval>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref> &amp;</type>
+          <declname>compare</declname>
+          <defval><ref refid="classcslt_1_1Expected" kindref="compound">Compare</ref>{}</defval>
+        </param>
+        <briefdescription>
+<para>Initialise an allocator-backed AVL tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="param"><parameteritem>
+<parameternamelist>
+<parametername>capacity</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Number of primary slab nodes (must be &gt; 0) </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allocator</parametername>
+</parameternamelist>
+<parameterdescription>
+<para><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> used for all tree memory </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>overflow</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, allocate overflow nodes beyond the slab </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>allow_duplicates</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>If true, equal values are inserted on the right </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>compare</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Comparator for tree ordering</para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para>Expected&lt;AVLTree*&gt; containing a pointer to the tree or an error </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="566" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="566" bodyend="598"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a8e2b40be781ffce6a5fbe830e424d4d3" prot="public" static="yes" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> * &gt;</type>
+        <definition>static Expected&lt; AVLTree * &gt; cslt::AVLTree&lt; T, Compare &gt;::copy</definition>
+        <argsstring>(const AVLTree &amp;src, Allocator &amp;allocator) noexcept</argsstring>
+        <name>copy</name>
+        <qualifiedname>cslt::AVLTree::copy</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1AVLTree" kindref="compound">AVLTree</ref> &amp;</type>
+          <declname>src</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Allocator" kindref="compound">Allocator</ref> &amp;</type>
+          <declname>allocator</declname>
+        </param>
+        <briefdescription>
+<para>Create a deep copy of an existing AVL tree using a caller-supplied allocator. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="605" column="25" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="605" bodyend="636"/>
+      </memberdef>
+    </sectiondef>
+    <sectiondef kind="public-func">
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1aea88561d3091fe5a6bcc67647d8e8d2a" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">void</ref></type>
+        <definition>void cslt::AVLTree&lt; T, Compare &gt;::clear</definition>
+        <argsstring>() noexcept</argsstring>
+        <name>clear</name>
+        <qualifiedname>cslt::AVLTree::clear</qualifiedname>
+        <briefdescription>
+<para>Remove all elements from the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para>Active node values are destroyed. Overflow nodes are individually returned to the allocator. Recycled free-list nodes are also released if they are overflow nodes. Slab memory remains allocated for reuse by the tree. </para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="646" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="646" bodyend="674"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a71d506c5e47b8cb0aca86e25ec3ba7fa" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Error" kindref="compound">Error</ref></type>
+        <definition>Error cslt::AVLTree&lt; T, Compare &gt;::insert</definition>
+        <argsstring>(const T &amp;value) noexcept</argsstring>
+        <name>insert</name>
+        <qualifiedname>cslt::AVLTree::insert</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>value</declname>
+        </param>
+        <briefdescription>
+<para>Insert a value into the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para><ref refid="classcslt_1_1NoError" kindref="compound">NoError</ref> on success, or an appropriate error object. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="682" column="15" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="682" bodyend="686"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a8b610c699765fb1fc3518ec23c02b626" prot="public" static="no" const="no" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &gt;</type>
+        <definition>Expected&lt; T &gt; cslt::AVLTree&lt; T, Compare &gt;::remove</definition>
+        <argsstring>(const T &amp;key) noexcept</argsstring>
+        <name>remove</name>
+        <qualifiedname>cslt::AVLTree::remove</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Remove a value from the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><simplesect kind="return"><para>Expected&lt;T&gt; containing the removed value or an error. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="694" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="694" bodyend="719"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a3a6ff5ec1f9ed595892f354dd6c31563" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::AVLTree&lt; T, Compare &gt;::contains</definition>
+        <argsstring>(const T &amp;key) const noexcept</argsstring>
+        <name>contains</name>
+        <qualifiedname>cslt::AVLTree::contains</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Return true if the tree contains key. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="725" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="725" bodyend="727"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1aba17c7b55960049f9b28ce80368e5f01" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &gt;</type>
+        <definition>Expected&lt; T &gt; cslt::AVLTree&lt; T, Compare &gt;::find</definition>
+        <argsstring>(const T &amp;key) const noexcept</argsstring>
+        <name>find</name>
+        <qualifiedname>cslt::AVLTree::find</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>key</declname>
+        </param>
+        <briefdescription>
+<para>Find a value equal to key. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="733" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="733" bodyend="749"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a5233ec183a2025c1f0c8b80ec0e1dc53" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &gt;</type>
+        <definition>Expected&lt; T &gt; cslt::AVLTree&lt; T, Compare &gt;::min</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>min</name>
+        <qualifiedname>cslt::AVLTree::min</qualifiedname>
+        <briefdescription>
+<para>Get the minimum value in the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="755" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="755" bodyend="768"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a29271af86c4a9252a376e8f933ab7005" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">Expected</ref>&lt; <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &gt;</type>
+        <definition>Expected&lt; T &gt; cslt::AVLTree&lt; T, Compare &gt;::max</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>max</name>
+        <qualifiedname>cslt::AVLTree::max</qualifiedname>
+        <briefdescription>
+<para>Get the maximum value in the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="774" column="18" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="774" bodyend="787"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a026b1194d6b64988b7c23c0bb7aaeb4b" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Error" kindref="compound">Error</ref></type>
+        <definition>Error cslt::AVLTree&lt; T, Compare &gt;::foreach</definition>
+        <argsstring>(Fn &amp;&amp;fn) const noexcept</argsstring>
+        <name>foreach</name>
+        <qualifiedname>cslt::AVLTree::foreach</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref> &amp;&amp;</type>
+          <declname>fn</declname>
+        </param>
+        <briefdescription>
+<para>Visit every element in sorted order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Fn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable taking <computeroutput>const T&amp;</computeroutput> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1NoError" kindref="compound">NoError</ref> on success, or <ref refid="classcslt_1_1EmptyError" kindref="compound">EmptyError</ref> if the tree is empty. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="797" column="15" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="797" bodyend="804"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a5ee103bda482bb3c5305bb3e1450d3d1" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <templateparamlist>
+          <param>
+            <type><ref refid="classcslt_1_1Expected" kindref="compound">typename</ref> <ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref></type>
+          </param>
+        </templateparamlist>
+        <type><ref refid="classcslt_1_1Error" kindref="compound">Error</ref></type>
+        <definition>Error cslt::AVLTree&lt; T, Compare &gt;::foreach_range</definition>
+        <argsstring>(const T &amp;low, const T &amp;high, Fn &amp;&amp;fn) const noexcept</argsstring>
+        <name>foreach_range</name>
+        <qualifiedname>cslt::AVLTree::foreach_range</qualifiedname>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>low</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">const</ref> <ref refid="classcslt_1_1Expected" kindref="compound">T</ref> &amp;</type>
+          <declname>high</declname>
+        </param>
+        <param>
+          <type><ref refid="classcslt_1_1Expected" kindref="compound">Fn</ref> &amp;&amp;</type>
+          <declname>fn</declname>
+        </param>
+        <briefdescription>
+<para>Visit every element in inclusive range [low, high] in sorted order. </para>
+        </briefdescription>
+        <detaileddescription>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>Fn</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Callable taking <computeroutput>const T&amp;</computeroutput> </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+<simplesect kind="return"><para><ref refid="classcslt_1_1NoError" kindref="compound">NoError</ref> on success, or an error if the range is invalid or tree empty. </para>
+</simplesect>
+</para>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="814" column="15" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="814" bodyend="827"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a7d7c8e227945f67a9949e48c10509812" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::AVLTree&lt; T, Compare &gt;::size</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>size</name>
+        <qualifiedname>cslt::AVLTree::size</qualifiedname>
+        <briefdescription>
+<para>Number of active elements in the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="833" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="833" bodyend="835"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a2292e98c7de56056a78cf7188c550f26" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::AVLTree&lt; T, Compare &gt;::empty</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>empty</name>
+        <qualifiedname>cslt::AVLTree::empty</qualifiedname>
+        <briefdescription>
+<para>Return true if the tree is empty. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="841" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="841" bodyend="843"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a8ae4a32fc91c7a011482f6cfa291f101" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">int</ref></type>
+        <definition>int cslt::AVLTree&lt; T, Compare &gt;::height</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>height</name>
+        <qualifiedname>cslt::AVLTree::height</qualifiedname>
+        <briefdescription>
+<para>Return the height of the tree. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="849" column="13" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="849" bodyend="851"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1a9c85bedf3144582d5c08d0e005bf51fe" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::AVLTree&lt; T, Compare &gt;::slab_capacity</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>slab_capacity</name>
+        <qualifiedname>cslt::AVLTree::slab_capacity</qualifiedname>
+        <briefdescription>
+<para>Number of nodes in the primary slab allocation. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="857" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="857" bodyend="859"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1af42ddef3ae3defcbc637521d8ebed370" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">size_t</ref></type>
+        <definition>size_t cslt::AVLTree&lt; T, Compare &gt;::slab_used</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>slab_used</name>
+        <qualifiedname>cslt::AVLTree::slab_used</qualifiedname>
+        <briefdescription>
+<para>Number of slab slots ever carved since last <ref refid="classcslt_1_1AVLTree_1aea88561d3091fe5a6bcc67647d8e8d2a" kindref="member">clear()</ref>. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="865" column="16" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="865" bodyend="867"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1ad33e51ef73fbd804876368775fcaf00d" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::AVLTree&lt; T, Compare &gt;::overflow_enabled</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>overflow_enabled</name>
+        <qualifiedname>cslt::AVLTree::overflow_enabled</qualifiedname>
+        <briefdescription>
+<para>Return whether overflow allocation is enabled. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="873" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="873" bodyend="875"/>
+      </memberdef>
+      <memberdef kind="function" id="classcslt_1_1AVLTree_1ad7f8285f43c90dbf4ed4c8ddd2f39d84" prot="public" static="no" const="yes" explicit="no" inline="yes" noexcept="yes" virt="non-virtual">
+        <type><ref refid="classcslt_1_1Expected" kindref="compound">bool</ref></type>
+        <definition>bool cslt::AVLTree&lt; T, Compare &gt;::duplicates_allowed</definition>
+        <argsstring>() const noexcept</argsstring>
+        <name>duplicates_allowed</name>
+        <qualifiedname>cslt::AVLTree::duplicates_allowed</qualifiedname>
+        <briefdescription>
+<para>Return whether duplicates are allowed. </para>
+        </briefdescription>
+        <detaileddescription>
+        </detaileddescription>
+        <inbodydescription>
+        </inbodydescription>
+        <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="881" column="14" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="881" bodyend="883"/>
+      </memberdef>
+    </sectiondef>
+    <briefdescription>
+<para>Allocator-backed generic AVL tree container. </para>
+    </briefdescription>
+    <detaileddescription>
+<para>Provides a self-balancing binary search tree that stores values of type <computeroutput>T</computeroutput> inline within each node. The tree object itself, its primary slab of nodes, and any overflow nodes are all allocated through the supplied allocator.</para>
+<para>Key features:<itemizedlist>
+<listitem><para>Custom allocator support</para>
+</listitem><listitem><para>AVL balancing with O(log n) insert / remove / find</para>
+</listitem><listitem><para>Slab-backed primary node storage</para>
+</listitem><listitem><para>Internal free-list reuse for removed nodes</para>
+</listitem><listitem><para>Optional overflow allocation when the slab is exhausted</para>
+</listitem><listitem><para>Comparator-driven ordering</para>
+</listitem><listitem><para>Optional duplicate support</para>
+</listitem><listitem><para>RAII cleanup through <ref refid="classcslt_1_1AVLTreeDeleter" kindref="compound">AVLTreeDeleter</ref></para>
+</listitem></itemizedlist>
+</para>
+<para>Usage pattern:<itemizedlist>
+<listitem><para>Must be initialised via the static factory function <ref refid="classcslt_1_1AVLTree_1a193330d8fd7b75cb2f2cc76a3a48b33c" kindref="member">init()</ref></para>
+</listitem><listitem><para>Cannot be constructed directly (private constructor)</para>
+</listitem><listitem><para>Cleaned up through <ref refid="classcslt_1_1AVLTreeDeleter" kindref="compound">AVLTreeDeleter</ref></para>
+</listitem></itemizedlist>
+</para>
+<para><parameterlist kind="templateparam"><parameteritem>
+<parameternamelist>
+<parametername>T</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Stored element type </para>
+</parameterdescription>
+</parameteritem>
+<parameteritem>
+<parameternamelist>
+<parametername>Compare</parametername>
+</parameternamelist>
+<parameterdescription>
+<para>Comparator type returning negative / zero / positive </para>
+</parameterdescription>
+</parameteritem>
+</parameterlist>
+</para>
+    </detaileddescription>
+    <location file="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" line="64" column="1" bodyfile="/home/jonwebb/Code_Dev/C++/csaltpp/csaltpp/include/tree.hpp" bodystart="91" bodyend="887"/>
+    <listofallmembers>
+      <member refid="classcslt_1_1AVLTree_1abc30ea59077f727423bad5d9cbb29067" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_alloc_node</name></member>
+      <member refid="classcslt_1_1AVLTree_1a7999eee85ba2c2f8e66982d7fc6e3326" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_balance</name></member>
+      <member refid="classcslt_1_1AVLTree_1a537491d2208b84823029410ef83ac7c2" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_destroy_value</name></member>
+      <member refid="classcslt_1_1AVLTree_1aa422d4bc4626aee44068328f1bf60c5d" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_detach_min</name></member>
+      <member refid="classcslt_1_1AVLTree_1abefb1216ab205247efadf364e0523733" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_find_node</name></member>
+      <member refid="classcslt_1_1AVLTree_1a5527dbcccbe12196254e409d86207e8a" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_free_node</name></member>
+      <member refid="classcslt_1_1AVLTree_1a91fefc426274de8975f4e3859e94c265" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_height</name></member>
+      <member refid="classcslt_1_1AVLTree_1aaf839e92c90cbf43edb24657595cf7bf" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_inorder</name></member>
+      <member refid="classcslt_1_1AVLTree_1a13054526330ba982304215cb0d948903" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_inorder_range</name></member>
+      <member refid="classcslt_1_1AVLTree_1aed44fca36ebd2bf6583bd8e56ca1ece1" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_insert</name></member>
+      <member refid="classcslt_1_1AVLTree_1a9e542a23e7d79adc70478dd23c31e6cc" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_is_no_error</name></member>
+      <member refid="classcslt_1_1AVLTree_1a9378b01992df77caf0d1e1d0a4b4db81" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_is_overflow_node</name></member>
+      <member refid="classcslt_1_1AVLTree_1a00ab5701a991495f67795cac79e982d8" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_preorder</name></member>
+      <member refid="classcslt_1_1AVLTree_1a8028f53f6908b653579bc5a7d42beba8" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_rebalance</name></member>
+      <member refid="classcslt_1_1AVLTree_1a205b757f542cd700a874502503da01ce" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_remove</name></member>
+      <member refid="classcslt_1_1AVLTree_1a60a35a834d1ae4bf022436b364db153d" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_rotate_left</name></member>
+      <member refid="classcslt_1_1AVLTree_1ac9eba6157a717ea556a2eb7db1b7ed7b" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_rotate_right</name></member>
+      <member refid="classcslt_1_1AVLTree_1a48a41b166e6c6a6a76c0109df8e57e2a" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>_update_height</name></member>
+      <member refid="classcslt_1_1AVLTree_1a303f433bd0e1d0bfc83180b10353c648" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>allocator_</name></member>
+      <member refid="classcslt_1_1AVLTree_1aec6ef9b31f3d4844e333f954ffe45621" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>allow_duplicates_</name></member>
+      <member refid="classcslt_1_1AVLTree_1aadd653fd5eca47a66d52dd873ae8c87f" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>AVLTree</name></member>
+      <member refid="classcslt_1_1AVLTree_1a791e932d89497b4d3a9e060f4ee60ae6" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>AVLTree</name></member>
+      <member refid="classcslt_1_1AVLTree_1af9bfcb687e7663ef598de51386cb82d8" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>AVLTree</name></member>
+      <member refid="classcslt_1_1AVLTree_1ad22290823c15549dbc8943f6485cfe78" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>AVLTreeDeleter</name></member>
+      <member refid="classcslt_1_1AVLTree_1aea88561d3091fe5a6bcc67647d8e8d2a" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>clear</name></member>
+      <member refid="classcslt_1_1AVLTree_1ad39a7817132b32d57f853a2e5a332794" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>compare_</name></member>
+      <member refid="classcslt_1_1AVLTree_1a3a6ff5ec1f9ed595892f354dd6c31563" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>contains</name></member>
+      <member refid="classcslt_1_1AVLTree_1a8e2b40be781ffce6a5fbe830e424d4d3" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>copy</name></member>
+      <member refid="classcslt_1_1AVLTree_1ad7f8285f43c90dbf4ed4c8ddd2f39d84" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>duplicates_allowed</name></member>
+      <member refid="classcslt_1_1AVLTree_1a2292e98c7de56056a78cf7188c550f26" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>empty</name></member>
+      <member refid="classcslt_1_1AVLTree_1aba17c7b55960049f9b28ce80368e5f01" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>find</name></member>
+      <member refid="classcslt_1_1AVLTree_1a026b1194d6b64988b7c23c0bb7aaeb4b" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>foreach</name></member>
+      <member refid="classcslt_1_1AVLTree_1a5ee103bda482bb3c5305bb3e1450d3d1" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>foreach_range</name></member>
+      <member refid="classcslt_1_1AVLTree_1a4bc866ff8d80b29a7d703e5fe6428b61" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>free_list_</name></member>
+      <member refid="classcslt_1_1AVLTree_1a8ae4a32fc91c7a011482f6cfa291f101" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>height</name></member>
+      <member refid="classcslt_1_1AVLTree_1a193330d8fd7b75cb2f2cc76a3a48b33c" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>init</name></member>
+      <member refid="classcslt_1_1AVLTree_1a71d506c5e47b8cb0aca86e25ec3ba7fa" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>insert</name></member>
+      <member refid="classcslt_1_1AVLTree_1aa395eba7952336e7914bf8960acb1f95" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>len_</name></member>
+      <member refid="classcslt_1_1AVLTree_1a29271af86c4a9252a376e8f933ab7005" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>max</name></member>
+      <member refid="classcslt_1_1AVLTree_1a5233ec183a2025c1f0c8b80ec0e1dc53" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>min</name></member>
+      <member refid="classcslt_1_1AVLTree_1a3856211bc547b7df3b5bdcbb1cc1a52c" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1AVLTree_1a16d5c705b5042566aad24ed5269f153c" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>operator=</name></member>
+      <member refid="classcslt_1_1AVLTree_1ac10251220ecd46e821a727cfa2a9d0d6" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>overflow_</name></member>
+      <member refid="classcslt_1_1AVLTree_1ad33e51ef73fbd804876368775fcaf00d" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>overflow_enabled</name></member>
+      <member refid="classcslt_1_1AVLTree_1a8b610c699765fb1fc3518ec23c02b626" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>remove</name></member>
+      <member refid="classcslt_1_1AVLTree_1a9f66ac5e05aa3ef61b9e708371a6705c" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>root_</name></member>
+      <member refid="classcslt_1_1AVLTree_1a7d7c8e227945f67a9949e48c10509812" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>size</name></member>
+      <member refid="classcslt_1_1AVLTree_1aaa6535b394619ebc288c971baa97a8e5" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>slab_</name></member>
+      <member refid="classcslt_1_1AVLTree_1a99324a573b0dd5ca2ab3a22105ba8841" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>slab_cap_</name></member>
+      <member refid="classcslt_1_1AVLTree_1a9c85bedf3144582d5c08d0e005bf51fe" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>slab_capacity</name></member>
+      <member refid="classcslt_1_1AVLTree_1af42ddef3ae3defcbc637521d8ebed370" prot="public" virt="non-virtual"><scope>cslt::AVLTree</scope><name>slab_used</name></member>
+      <member refid="classcslt_1_1AVLTree_1ac82d96a7ddce0a6863a8b28f43b82373" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>slab_used_</name></member>
+      <member refid="classcslt_1_1AVLTree_1a7b5e13601161ebe3d20071bd5b1de7fb" prot="private" virt="non-virtual"><scope>cslt::AVLTree</scope><name>~AVLTree</name></member>
+    </listofallmembers>
+  </compounddef>
+</doxygen>

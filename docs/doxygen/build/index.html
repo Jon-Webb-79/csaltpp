@@ -55,6 +55,7 @@
 <li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heap.html">Heap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
 </ul>
 
         </div>
@@ -214,6 +215,23 @@ involves challenges:</p>
 <li><p><strong>RAII cleanup</strong> - <code class="docutils literal notranslate"><span class="pre">HeapDeleter&lt;T,</span> <span class="pre">Compare&gt;</span></code> works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to automatically reclaim the heap struct and its backing array</p></li>
 </ul>
 </section>
+<section id="avl-tree">
+<h3>AVL Tree<a class="headerlink" href="#avl-tree" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Generic balanced binary search tree</strong> - <code class="docutils literal notranslate"><span class="pre">AVLTree&lt;T,</span> <span class="pre">Compare&gt;</span></code> provides ordered storage and lookup for any element type <code class="docutils literal notranslate"><span class="pre">T</span></code> using a compile-time comparator <code class="docutils literal notranslate"><span class="pre">Compare</span></code></p></li>
+<li><p><strong>Allocator-backed</strong> - The tree struct, node slab, and optional overflow nodes are all allocated through the provided allocator</p></li>
+<li><p><strong>Factory pattern</strong> - Creation via <code class="docutils literal notranslate"><span class="pre">AVLTree&lt;T,Compare&gt;::init()</span></code> returning <code class="docutils literal notranslate"><span class="pre">Expected&lt;AVLTree&lt;T,Compare&gt;*&gt;</span></code> prevents uninitialised instances</p></li>
+<li><p><strong>Self-balancing structure</strong> - Maintains AVL height invariants through rotations, ensuring O(log n) insertion, removal, and lookup</p></li>
+<li><p><strong>Hybrid node storage</strong> - Initial nodes are allocated from a contiguous slab for improved locality, with optional overflow allocation beyond slab capacity</p></li>
+<li><p><strong>Recycled slab nodes</strong> - Removed slab-backed nodes are returned to an internal free list and reused before allocating new nodes</p></li>
+<li><p><strong>Configurable overflow</strong> - Overflow allocation can be enabled for dynamic growth or disabled for deterministic fixed-capacity behavior</p></li>
+<li><p><strong>Comparator-driven ordering</strong> - Ordering is defined by a three-way comparator, allowing custom sort behavior without requiring <code class="docutils literal notranslate"><span class="pre">operator&lt;</span></code></p></li>
+<li><p><strong>Duplicate policy control</strong> - Duplicate insertion can be enabled (multiset behavior) or disabled (set behavior) at initialization</p></li>
+<li><p><strong>Safe tree operations</strong> - <code class="docutils literal notranslate"><span class="pre">insert()</span></code>, <code class="docutils literal notranslate"><span class="pre">remove()</span></code>, <code class="docutils literal notranslate"><span class="pre">find()</span></code>, <code class="docutils literal notranslate"><span class="pre">min()</span></code>, <code class="docutils literal notranslate"><span class="pre">max()</span></code>, and traversal methods return explicit success or error state where appropriate</p></li>
+<li><p><strong>Ordered traversal</strong> - <code class="docutils literal notranslate"><span class="pre">foreach()</span></code> provides in-order traversal; <code class="docutils literal notranslate"><span class="pre">foreach_range()</span></code> supports efficient range queries with subtree pruning</p></li>
+<li><p><strong>RAII cleanup</strong> - <code class="docutils literal notranslate"><span class="pre">AVLTreeDeleter&lt;T,</span> <span class="pre">Compare&gt;</span></code> works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to automatically reclaim the tree, slab, and any overflow nodes</p></li>
+</ul>
+</section>
 </section>
 <section id="typical-use-cases">
 <h2>Typical Use Cases<a class="headerlink" href="#typical-use-cases" title="Link to this heading"></a></h2>
@@ -235,6 +253,7 @@ involves challenges:</p>
 <li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
 <li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Heap.html">Heap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Tree.html">Tree</a></li>
 </ul>
 </div>
 </section>

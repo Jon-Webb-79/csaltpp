@@ -1,0 +1,738 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>C++ AVL Tree Overview &mdash; csalt++-lib 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d45e8c67"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+      <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="C++ Heap Overview" href="Heap.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            csalt++-lib
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Modules:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Utilities.html">Utilities</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Pointers.html">Smart Pointers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Error.html">Error</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Allocator.html">Allocator</a></li>
+<li class="toctree-l1"><a class="reference internal" href="String.html">String</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Array.html">Array</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dict.html">Dictionary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="List.html">List</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Heap.html">Heap</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tree</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#allocator-integration"><strong>Allocator Integration</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recommended-allocators"><strong>Recommended Allocators</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#factory-pattern-and-raii"><strong>Factory Pattern and RAII</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#memory-model"><strong>Memory Model</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#slab-reuse-strategy"><strong>Slab Reuse Strategy</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#overflow-behavior"><strong>Overflow Behavior</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#avl-balancing-model"><strong>AVL Balancing Model</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#element-type-requirements"><strong>Element Type Requirements</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comparator-requirements"><strong>Comparator Requirements</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#duplicate-handling"><strong>Duplicate Handling</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#traversal-and-range-queries"><strong>Traversal and Range Queries</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#operations"><strong>Operations</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#complexity-notes"><strong>Complexity Notes</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-cases"><strong>Use Cases</strong></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tree-class">Tree Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE"><code class="docutils literal notranslate"><span class="pre">cslt::AVLTree</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt7AVLTree5clearEv"><code class="docutils literal notranslate"><span class="pre">clear()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt7AVLTree6insertERK1T"><code class="docutils literal notranslate"><span class="pre">insert()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt7AVLTree6removeERK1T"><code class="docutils literal notranslate"><span class="pre">remove()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree8containsERK1T"><code class="docutils literal notranslate"><span class="pre">contains()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree4findERK1T"><code class="docutils literal notranslate"><span class="pre">find()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree3minEv"><code class="docutils literal notranslate"><span class="pre">min()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree3maxEv"><code class="docutils literal notranslate"><span class="pre">max()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt7AVLTree7foreachE5ErrorRR2Fn"><code class="docutils literal notranslate"><span class="pre">foreach()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4I0ENK4cslt7AVLTree13foreach_rangeE5ErrorRK1TRK1TRR2Fn"><code class="docutils literal notranslate"><span class="pre">foreach_range()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree4sizeEv"><code class="docutils literal notranslate"><span class="pre">size()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree5emptyEv"><code class="docutils literal notranslate"><span class="pre">empty()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree6heightEv"><code class="docutils literal notranslate"><span class="pre">height()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree13slab_capacityEv"><code class="docutils literal notranslate"><span class="pre">slab_capacity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree9slab_usedEv"><code class="docutils literal notranslate"><span class="pre">slab_used()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree16overflow_enabledEv"><code class="docutils literal notranslate"><span class="pre">overflow_enabled()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4NK4cslt7AVLTree18duplicates_allowedEv"><code class="docutils literal notranslate"><span class="pre">duplicates_allowed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt7AVLTree4initE6size_tR9AllocatorbbRK7Compare"><code class="docutils literal notranslate"><span class="pre">init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#_CPPv4N4cslt7AVLTree4copyERK7AVLTreeR9Allocator"><code class="docutils literal notranslate"><span class="pre">copy()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">csalt++-lib</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">C++ AVL Tree Overview</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Tree.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="c-avl-tree-overview">
+<span id="tree-file"></span><h1>C++ AVL Tree Overview<a class="headerlink" href="#c-avl-tree-overview" title="Link to this heading"></a></h1>
+<p>Balanced ordered containers in C++ are traditionally provided by <code class="docutils literal notranslate"><span class="pre">std::set</span></code>
+and <code class="docutils literal notranslate"><span class="pre">std::map</span></code>, or by application-specific binary tree implementations.
+While these containers provide logarithmic lookup and ordered traversal, they
+typically rely on allocator behavior that is opaque, implementation-defined,
+and not always well suited to deterministic, embedded, real-time, or
+safety-regulated environments. In such systems, explicit control over memory
+placement, allocation strategy, failure behavior, and object lifetime is often
+more important than full generality.</p>
+<p>The <em>C++ AVL Tree module</em> in this library provides a lightweight,
+allocator-aware generic self-balancing binary search tree container
+implemented in C++ and declared in <code class="docutils literal notranslate"><span class="pre">tree.hpp</span></code>. Unlike standard ordered tree
+containers, this implementation:</p>
+<ul class="simple">
+<li><p>Integrates directly with custom allocator hierarchies</p></li>
+<li><p>Supports allocator-controlled overflow behavior</p></li>
+<li><p>Uses a contiguous slab region for initial node storage to improve locality</p></li>
+<li><p>Recycles removed slab nodes for future reuse</p></li>
+<li><p>Enforces initialization through a factory pattern preventing invalid state</p></li>
+<li><p>Provides automatic cleanup via RAII with custom deleters</p></li>
+<li><p>Returns explicit success/error state using the <code class="docutils literal notranslate"><span class="pre">Expected&lt;T&gt;</span></code> pattern</p></li>
+<li><p>Supports insertion, removal, lookup, ordered traversal, range traversal,
+copying, and introspection</p></li>
+</ul>
+<p>The AVL tree implementation is intended for environments where the developer
+wants ordered-search semantics without surrendering control over memory layout,
+allocation policy, or failure behavior.</p>
+<p>The only dependencies this module has within the CSalt library are the
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, <code class="docutils literal notranslate"><span class="pre">error.hpp</span></code>, and <code class="docutils literal notranslate"><span class="pre">pointers.hpp</span></code> files, keeping the
+container relatively self-contained and suitable for use in larger systems
+with minimal coupling.</p>
+<section id="allocator-integration">
+<h2><strong>Allocator Integration</strong><a class="headerlink" href="#allocator-integration" title="Link to this heading"></a></h2>
+<p>By integrating directly with the <code class="docutils literal notranslate"><span class="pre">Allocator</span></code> base class defined in
+<code class="docutils literal notranslate"><span class="pre">allocator.hpp</span></code>, the AVL tree container supports multiple allocation
+strategies without changing the public API. The tree allocates:</p>
+<ul class="simple">
+<li><p>the <code class="docutils literal notranslate"><span class="pre">AVLTree&lt;T&gt;</span></code> object itself</p></li>
+<li><p>the initial contiguous slab used for node storage</p></li>
+<li><p>optional overflow nodes when slab capacity is exhausted and overflow is enabled</p></li>
+</ul>
+<p>This makes the container compatible with the following allocator strategies:</p>
+<ul class="simple">
+<li><p><strong>HeapAllocator</strong> — Best general-purpose choice for testing and normal host-side use</p></li>
+<li><p><strong>ArenaAllocator</strong> — Useful when the tree has bulk lifetime semantics and is destroyed all at once</p></li>
+<li><p><strong>BuddyAllocator</strong> — Useful when deterministic block allocation and returnable memory are important</p></li>
+<li><p><strong>PoolAllocator</strong> — Potentially useful for overflow nodes if the pool block size matches node size</p></li>
+<li><p><strong>SlabAllocator</strong> — A strong fit for overflow nodes when the node size is fixed and known</p></li>
+<li><p><strong>Custom allocators</strong> — Any user-defined class inheriting from <code class="docutils literal notranslate"><span class="pre">Allocator</span></code></p></li>
+</ul>
+<p>Because the tree internally maintains a contiguous slab for its primary node
+storage, it already behaves partly like a pool-backed ordered container. The
+allocator therefore has the most influence over:</p>
+<ul class="simple">
+<li><p>where the tree object itself lives</p></li>
+<li><p>where the slab lives</p></li>
+<li><p>how overflow nodes are obtained</p></li>
+<li><p>whether allocation failure is deterministic or environment-dependent</p></li>
+</ul>
+</section>
+<section id="recommended-allocators">
+<h2><strong>Recommended Allocators</strong><a class="headerlink" href="#recommended-allocators" title="Link to this heading"></a></h2>
+<p>Different allocators are appropriate depending on how the tree is used:</p>
+<ul>
+<li><p><strong>HeapAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>general-purpose use</p></li>
+<li><p>unit testing</p></li>
+<li><p>host-side applications</p></li>
+<li><p>debugging tree logic independent of allocator complexity</p></li>
+</ul>
+<p>This is usually the best allocator to use first because failure modes are
+simple and easy to reason about.</p>
+</li>
+<li><p><strong>ArenaAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>build-then-discard workflows</p></li>
+<li><p>temporary ordered structures used during parsing or transformation passes</p></li>
+<li><p>scenarios where the full tree lifetime matches a larger arena lifetime</p></li>
+</ul>
+<p>This works especially well when overflow is disabled or rare. If overflow is
+frequent, the arena must still have enough capacity to satisfy those extra
+node allocations.</p>
+</li>
+<li><p><strong>BuddyAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>deterministic dynamic allocation</p></li>
+<li><p>environments where memory should be returnable and coalesced</p></li>
+<li><p>systems requiring more structure than a heap allocator</p></li>
+</ul>
+<p>This is a reasonable choice when the tree may grow dynamically and later
+release memory through normal destruction.</p>
+</li>
+<li><p><strong>PoolAllocator / SlabAllocator</strong></p>
+<p>Best for:</p>
+<ul class="simple">
+<li><p>overflow-heavy workloads with uniform node sizes</p></li>
+<li><p>fixed-type deployments where the node footprint is stable</p></li>
+<li><p>performance-sensitive paths with frequent insertion and removal</p></li>
+</ul>
+<p>These allocators can be particularly effective because AVL tree nodes are
+fixed-size objects for a given <code class="docutils literal notranslate"><span class="pre">T</span></code>. They are less useful when only the
+primary slab is used and overflow is disabled.</p>
+</li>
+</ul>
+</section>
+<section id="factory-pattern-and-raii">
+<h2><strong>Factory Pattern and RAII</strong><a class="headerlink" href="#factory-pattern-and-raii" title="Link to this heading"></a></h2>
+<p>Unlike direct constructor-based creation, tree creation uses a static factory
+function <code class="docutils literal notranslate"><span class="pre">AVLTree::init()</span></code> that returns <code class="docutils literal notranslate"><span class="pre">Expected&lt;AVLTree&lt;T&gt;*&gt;</span></code>. This
+design:</p>
+<ul class="simple">
+<li><p>Prevents creation of partially initialized trees</p></li>
+<li><p>Ensures the slab and tree object are allocated together through the chosen allocator</p></li>
+<li><p>Provides explicit error handling at the point of creation</p></li>
+<li><p>Returns typed error objects such as <code class="docutils literal notranslate"><span class="pre">ArgumentError</span></code> and <code class="docutils literal notranslate"><span class="pre">MemoryError</span></code></p></li>
+</ul>
+<p>Memory cleanup is automatic through the <code class="docutils literal notranslate"><span class="pre">AVLTreeDeleter</span></code> custom deleter,
+which works with <code class="docutils literal notranslate"><span class="pre">UniquePtr</span></code> to provide RAII semantics:</p>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">    </span><span class="n">cslt</span><span class="o">::</span><span class="n">HeapAllocator</span><span class="w"> </span><span class="n">allocator</span><span class="p">;</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">AVLTree</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;::</span><span class="n">init</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="n">allocator</span><span class="p">,</span><span class="w"> </span><span class="nb">true</span><span class="p">,</span><span class="w"> </span><span class="nb">false</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">hasValue</span><span class="p">())</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="n">cslt</span><span class="o">::</span><span class="n">UniquePtr</span><span class="o">&lt;</span><span class="n">cslt</span><span class="o">::</span><span class="n">AVLTree</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">cslt</span><span class="o">::</span><span class="n">AVLTreeDeleter</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">tree</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">value</span><span class="p">());</span>
+<span class="w">        </span><span class="n">tree</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+<span class="w">        </span><span class="n">tree</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+<span class="w">        </span><span class="n">tree</span><span class="o">-&gt;</span><span class="n">insert</span><span class="p">(</span><span class="mi">20</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span><span class="w"> </span><span class="c1">// tree object, slab, and any overflow nodes automatically freed here</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>This ownership model is especially important because the tree may allocate from
+multiple internal sources: a slab region plus optional overflow nodes.</p>
+</section>
+<section id="memory-model">
+<h2><strong>Memory Model</strong><a class="headerlink" href="#memory-model" title="Link to this heading"></a></h2>
+<p>The tree is implemented as a pointer-linked AVL node hierarchy, but unlike a
+traditional tree where every node is allocated independently, this
+implementation starts with a <em>contiguous slab</em> of node storage.</p>
+<p>This gives the container a hybrid memory model:</p>
+<ul class="simple">
+<li><p><strong>Primary slab storage</strong> — a contiguous region reserved at initialization for
+up to <code class="docutils literal notranslate"><span class="pre">N</span></code> nodes</p></li>
+<li><p><strong>Recycled slab nodes</strong> — removed slab nodes are returned to an internal free
+list and reused before any fresh slab slot is consumed</p></li>
+<li><p><strong>Overflow storage</strong> — optional allocator-backed nodes used only after all
+slab capacity has been consumed or recycled capacity is unavailable</p></li>
+</ul>
+<p>This design provides several benefits over a conventional tree:</p>
+<ul class="simple">
+<li><p>improved cache locality for early insertions</p></li>
+<li><p>reduced allocator overhead for the first <code class="docutils literal notranslate"><span class="pre">N</span></code> nodes</p></li>
+<li><p>deterministic bounded operation when overflow is disabled</p></li>
+<li><p>efficient reuse of removed slab slots without external metadata</p></li>
+</ul>
+</section>
+<section id="slab-reuse-strategy">
+<h2><strong>Slab Reuse Strategy</strong><a class="headerlink" href="#slab-reuse-strategy" title="Link to this heading"></a></h2>
+<p>Unlike a monotonic arena-style node reservoir, the tree tracks whether a node
+belongs to the internal slab by checking whether its address lies within the
+slab memory range. When a slab-backed node is removed:</p>
+<ul class="simple">
+<li><p>its stored value is destroyed</p></li>
+<li><p>the node itself is returned to an internal slab free list</p></li>
+<li><p>future insert operations reuse that node before consuming a new slab slot</p></li>
+</ul>
+<p>This makes the slab behave like an internal node pool.</p>
+<p>Allocation order is therefore:</p>
+<ol class="arabic simple">
+<li><p>Reuse a recycled slab node if one is available</p></li>
+<li><p>Consume the next fresh slab slot if unused slab capacity remains</p></li>
+<li><p>Allocate an overflow node through the external allocator if overflow is enabled</p></li>
+<li><p>Fail the operation if overflow is disabled and no slab nodes remain available</p></li>
+</ol>
+<p>This approach gives the tree predictable bounded behavior while avoiding the
+surprising “write-once slab” behavior that would otherwise occur after repeated
+insert/remove cycles.</p>
+</section>
+<section id="overflow-behavior">
+<h2><strong>Overflow Behavior</strong><a class="headerlink" href="#overflow-behavior" title="Link to this heading"></a></h2>
+<p>The tree can be configured in one of two modes:</p>
+<ul>
+<li><p><strong>Overflow enabled</strong></p>
+<p>When slab capacity is exhausted, additional nodes are allocated individually
+through the provided allocator. This allows the tree to continue growing
+beyond its initial slab size.</p>
+</li>
+<li><p><strong>Overflow disabled</strong></p>
+<p>The tree acts as a bounded-capacity ordered container. Once all slab nodes
+are in use and no recycled slab nodes remain available, further insert
+operations fail.</p>
+</li>
+</ul>
+<p>This makes the container suitable for both:</p>
+<ul class="simple">
+<li><p>flexible host-side usage where growth is acceptable</p></li>
+<li><p>deterministic or embedded usage where fixed upper bounds are required</p></li>
+</ul>
+</section>
+<section id="avl-balancing-model">
+<h2><strong>AVL Balancing Model</strong><a class="headerlink" href="#avl-balancing-model" title="Link to this heading"></a></h2>
+<p>The tree maintains the AVL invariant, meaning that for every live node, the
+height difference between the left and right subtrees is kept within one. To
+enforce this invariant, the implementation stores a cached height in every
+node and performs rotations after insertions and removals when needed.</p>
+<p>This gives the container the following asymptotic behavior:</p>
+<ul class="simple">
+<li><p>O(log n) insertion</p></li>
+<li><p>O(log n) removal</p></li>
+<li><p>O(log n) lookup</p></li>
+<li><p>O(1) access to cached tree height</p></li>
+<li><p>O(n) ordered traversal</p></li>
+</ul>
+<p>Balancing is maintained through the standard AVL rotation cases:</p>
+<ul class="simple">
+<li><p>left-left</p></li>
+<li><p>left-right</p></li>
+<li><p>right-right</p></li>
+<li><p>right-left</p></li>
+</ul>
+<p>This makes the container appropriate when ordered lookup and predictable
+logarithmic behavior are more important than append-heavy semantics.</p>
+</section>
+<section id="element-type-requirements">
+<h2><strong>Element Type Requirements</strong><a class="headerlink" href="#element-type-requirements" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">AVLTree&lt;T&gt;</span></code> container supports any element type <code class="docutils literal notranslate"><span class="pre">T</span></code> that is:</p>
+<ul class="simple">
+<li><p>copy-constructible</p></li>
+<li><p>destructible</p></li>
+<li><p>movable or copyable in contexts where values are returned from remove/find/min/max</p></li>
+</ul>
+<p>Internally, nodes store the value inline and construct it with placement new.
+This means:</p>
+<ul class="simple">
+<li><p>default construction of all slab entries is avoided</p></li>
+<li><p>each value is only constructed when a node becomes live</p></li>
+<li><p>each value is explicitly destroyed when the node is removed or the tree is destroyed</p></li>
+</ul>
+<p>This is especially useful for non-trivial element types such as strings or
+small user-defined objects, because unused slab slots do not incur object
+construction cost.</p>
+</section>
+<section id="comparator-requirements">
+<h2><strong>Comparator Requirements</strong><a class="headerlink" href="#comparator-requirements" title="Link to this heading"></a></h2>
+<p>Unlike unordered containers, the AVL tree relies on a comparison function to
+define node ordering. The comparator type passed as the second template
+parameter must behave as a three-way comparison returning:</p>
+<ul class="simple">
+<li><p>a negative value if <code class="docutils literal notranslate"><span class="pre">lhs</span></code> should sort before <code class="docutils literal notranslate"><span class="pre">rhs</span></code></p></li>
+<li><p>zero if <code class="docutils literal notranslate"><span class="pre">lhs</span></code> and <code class="docutils literal notranslate"><span class="pre">rhs</span></code> are equivalent</p></li>
+<li><p>a positive value if <code class="docutils literal notranslate"><span class="pre">lhs</span></code> should sort after <code class="docutils literal notranslate"><span class="pre">rhs</span></code></p></li>
+</ul>
+<p>The default comparator follows this convention for scalar-like types.</p>
+<p>This design mirrors the C AVL implementation and keeps insertion, removal, and
+range traversal logic consistent across the C and C++ container layers.</p>
+<p>A custom comparator can be supplied to support:</p>
+<ul class="simple">
+<li><p>reverse ordering</p></li>
+<li><p>lexicographic structure comparison</p></li>
+<li><p>domain-specific sort criteria</p></li>
+<li><p>custom numeric or string ordering policies</p></li>
+</ul>
+</section>
+<section id="duplicate-handling">
+<h2><strong>Duplicate Handling</strong><a class="headerlink" href="#duplicate-handling" title="Link to this heading"></a></h2>
+<p>The tree supports a configurable duplicate policy selected at initialization.</p>
+<ul>
+<li><p><strong>Duplicates disabled</strong></p>
+<p>Inserting a value equivalent to an existing node fails with an error.</p>
+</li>
+<li><p><strong>Duplicates enabled</strong></p>
+<p>Equivalent values are inserted into the right subtree of the matching node.</p>
+</li>
+</ul>
+<p>This allows the same implementation to be used both as a strict ordered-set
+style container and as an ordered multiset-style container.</p>
+</section>
+<section id="traversal-and-range-queries">
+<h2><strong>Traversal and Range Queries</strong><a class="headerlink" href="#traversal-and-range-queries" title="Link to this heading"></a></h2>
+<p>The tree supports:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">foreach()</span></code> — in-order traversal across the entire tree</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foreach_range()</span></code> — in-order traversal across an inclusive value range</p></li>
+</ul>
+<p>Because AVL trees are ordered structures, <code class="docutils literal notranslate"><span class="pre">foreach()</span></code> visits elements in
+sorted order according to the comparator.</p>
+<p>The range traversal is especially useful because it prunes branches that cannot
+contain in-range values. This allows subset queries to avoid visiting large
+unrelated portions of the tree.</p>
+<p>This makes the container useful for:</p>
+<ul class="simple">
+<li><p>ordered reporting</p></li>
+<li><p>interval and threshold queries</p></li>
+<li><p>subset extraction</p></li>
+<li><p>sorted iteration without external sorting</p></li>
+</ul>
+</section>
+<section id="operations">
+<h2><strong>Operations</strong><a class="headerlink" href="#operations" title="Link to this heading"></a></h2>
+<p>The tree supports common ordered-container operations including:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">insert()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">remove()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">contains()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">find()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">min()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">max()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">clear()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">copy()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foreach()</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">foreach_range()</span></code></p></li>
+</ul>
+<p>All operations preserve allocator ownership semantics and maintain consistency
+between:</p>
+<ul class="simple">
+<li><p>live node count</p></li>
+<li><p>slab usage</p></li>
+<li><p>recycled slab capacity</p></li>
+<li><p>overflow node count</p></li>
+<li><p>AVL height invariants</p></li>
+</ul>
+</section>
+<section id="complexity-notes">
+<h2><strong>Complexity Notes</strong><a class="headerlink" href="#complexity-notes" title="Link to this heading"></a></h2>
+<p>Because the container is an AVL tree, operation complexity follows standard
+balanced-binary-search-tree expectations:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Operation</p></th>
+<th class="head"><p>Complexity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">insert</span></code></p></td>
+<td><p>O(log n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">remove</span></code></p></td>
+<td><p>O(log n)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">contains</span></code></p></td>
+<td><p>O(log n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">find</span></code></p></td>
+<td><p>O(log n)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">min</span></code></p></td>
+<td><p>O(log n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max</span></code></p></td>
+<td><p>O(log n)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">foreach</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">foreach_range</span></code></p></td>
+<td><p>O(log n + k) typical</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">clear</span></code></p></td>
+<td><p>O(n)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">copy</span></code></p></td>
+<td><p>O(n log n)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Here, <code class="docutils literal notranslate"><span class="pre">k</span></code> is the number of elements visited in the requested range.</p>
+<p>The key advantage over a conventional dynamically allocated tree is not a
+different asymptotic complexity class, but improved control over memory
+behavior, allocator integration, and better early-node locality.</p>
+</section>
+<section id="use-cases">
+<h2><strong>Use Cases</strong><a class="headerlink" href="#use-cases" title="Link to this heading"></a></h2>
+<p>This AVL tree implementation is particularly useful in the following scenarios:</p>
+<ul class="simple">
+<li><p>deterministic embedded software requiring bounded ordered storage</p></li>
+<li><p>safety-regulated applications needing explicit allocator control</p></li>
+<li><p>workloads requiring ordered lookup and traversal</p></li>
+<li><p>interval or threshold filtering over ordered values</p></li>
+<li><p>temporary ordered sets built during parsing or transformation passes</p></li>
+<li><p>applications where standard balanced tree containers are too allocator-opaque</p></li>
+</ul>
+<p>When random indexing is common, the array container is usually the better
+choice. When ordered lookup and sorted traversal are more important than random
+access, the AVL tree container is a better fit.</p>
+</section>
+<section id="tree-class">
+<h2>Tree Class<a class="headerlink" href="#tree-class" title="Link to this heading"></a></h2>
+<blockquote>
+<div><dl class="cpp class">
+<dt class="sig sig-object cpp" id="_CPPv4I00EN4cslt7AVLTreeE">
+<span id="_CPPv3I00EN4cslt7AVLTreeE"></span><span id="_CPPv2I00EN4cslt7AVLTreeE"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">T</span></span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Compare</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1AVLTree"></span><span class="k"><span class="pre">class</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">AVLTree</span></span></span><a class="headerlink" href="#_CPPv4I00EN4cslt7AVLTreeE" title="Link to this definition"></a><br /></dt>
+<dd><p>Allocator-backed generic AVL tree container. </p>
+<p>Provides a self-balancing binary search tree that stores values of type <code class="docutils literal notranslate"><span class="pre">T</span></code> inline within each node. The tree object itself, its primary slab of nodes, and any overflow nodes are all allocated through the supplied allocator.</p>
+<p>Key features:<ul class="simple">
+<li><p>Custom allocator support</p></li>
+<li><p>AVL balancing with O(log n) insert / remove / find</p></li>
+<li><p>Slab-backed primary node storage</p></li>
+<li><p>Internal free-list reuse for removed nodes</p></li>
+<li><p>Optional overflow allocation when the slab is exhausted</p></li>
+<li><p>Comparator-driven ordering</p></li>
+<li><p>Optional duplicate support</p></li>
+<li><p>RAII cleanup through AVLTreeDeleter</p></li>
+</ul>
+</p>
+<p>Usage pattern:<ul class="simple">
+<li><p>Must be initialised via the static factory function <a class="reference internal" href="#classcslt_1_1AVLTree_1a193330d8fd7b75cb2f2cc76a3a48b33c"><span class="std std-ref">init()</span></a></p></li>
+<li><p>Cannot be constructed directly (private constructor)</p></li>
+<li><p>Cleaned up through AVLTreeDeleter</p></li>
+</ul>
+</p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> – Stored element type </p></li>
+<li><p><strong>Compare</strong> – Comparator type returning negative / zero / positive </p></li>
+</ul>
+</dd>
+</dl>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-functions">Public Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt7AVLTree5clearEv">
+<span id="_CPPv3N4cslt7AVLTree5clearEv"></span><span id="_CPPv2N4cslt7AVLTree5clearEv"></span><span id="cslt::AVLTree::clear"></span><span class="target" id="classcslt_1_1AVLTree_1aea88561d3091fe5a6bcc67647d8e8d2a"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">void</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">clear</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt7AVLTree5clearEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove all elements from the tree. </p>
+<p>Active node values are destroyed. Overflow nodes are individually returned to the allocator. Recycled free-list nodes are also released if they are overflow nodes. Slab memory remains allocated for reuse by the tree. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt7AVLTree6insertERK1T">
+<span id="_CPPv3N4cslt7AVLTree6insertERK1T"></span><span id="_CPPv2N4cslt7AVLTree6insertERK1T"></span><span id="cslt::AVLTree::insert__TCR"></span><span class="target" id="classcslt_1_1AVLTree_1a71d506c5e47b8cb0aca86e25ec3ba7fa"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4N4cslt5ErrorE" title="cslt::Error"><span class="n"><span class="pre">Error</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">insert</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">value</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt7AVLTree6insertERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Insert a value into the tree. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="Error.html#classcslt_1_1NoError"><span class="std std-ref">NoError</span></a> on success, or an appropriate error object. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt7AVLTree6removeERK1T">
+<span id="_CPPv3N4cslt7AVLTree6removeERK1T"></span><span id="_CPPv2N4cslt7AVLTree6removeERK1T"></span><span id="cslt::AVLTree::remove__TCR"></span><span class="target" id="classcslt_1_1AVLTree_1a8b610c699765fb1fc3518ec23c02b626"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">remove</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt7AVLTree6removeERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Remove a value from the tree. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected&lt;T&gt; containing the removed value or an error. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree8containsERK1T">
+<span id="_CPPv3NK4cslt7AVLTree8containsERK1T"></span><span id="_CPPv2NK4cslt7AVLTree8containsERK1T"></span><span id="cslt::AVLTree::contains__TCRC"></span><span class="target" id="classcslt_1_1AVLTree_1a3a6ff5ec1f9ed595892f354dd6c31563"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">contains</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree8containsERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if the tree contains key. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree4findERK1T">
+<span id="_CPPv3NK4cslt7AVLTree4findERK1T"></span><span id="_CPPv2NK4cslt7AVLTree4findERK1T"></span><span id="cslt::AVLTree::find__TCRC"></span><span class="target" id="classcslt_1_1AVLTree_1aba17c7b55960049f9b28ce80368e5f01"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">find</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">key</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree4findERK1T" title="Link to this definition"></a><br /></dt>
+<dd><p>Find a value equal to key. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree3minEv">
+<span id="_CPPv3NK4cslt7AVLTree3minEv"></span><span id="_CPPv2NK4cslt7AVLTree3minEv"></span><span id="cslt::AVLTree::minC"></span><span class="target" id="classcslt_1_1AVLTree_1a5233ec183a2025c1f0c8b80ec0e1dc53"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">min</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree3minEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the minimum value in the tree. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree3maxEv">
+<span id="_CPPv3NK4cslt7AVLTree3maxEv"></span><span id="_CPPv2NK4cslt7AVLTree3maxEv"></span><span id="cslt::AVLTree::maxC"></span><span class="target" id="classcslt_1_1AVLTree_1a29271af86c4a9252a376e8f933ab7005"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">max</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree3maxEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Get the maximum value in the tree. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK4cslt7AVLTree7foreachE5ErrorRR2Fn">
+<span id="_CPPv3I0ENK4cslt7AVLTree7foreachERR2Fn"></span><span id="_CPPv2I0ENK4cslt7AVLTree7foreachERR2Fn"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Fn</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1AVLTree_1a026b1194d6b64988b7c23c0bb7aaeb4b"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4N4cslt5ErrorE" title="cslt::Error"><span class="n"><span class="pre">Error</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">foreach</span></span></span><span class="sig-paren">(</span><a class="reference internal" href="#_CPPv4I0ENK4cslt7AVLTree7foreachE5ErrorRR2Fn" title="cslt::AVLTree::foreach::Fn"><span class="n"><span class="pre">Fn</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">fn</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK4cslt7AVLTree7foreachE5ErrorRR2Fn" title="Link to this definition"></a><br /></dt>
+<dd><p>Visit every element in sorted order. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Fn</strong> – Callable taking <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">T&amp;</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1NoError"><span class="std std-ref">NoError</span></a> on success, or <a class="reference internal" href="Error.html#classcslt_1_1EmptyError"><span class="std std-ref">EmptyError</span></a> if the tree is empty. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4I0ENK4cslt7AVLTree13foreach_rangeE5ErrorRK1TRK1TRR2Fn">
+<span id="_CPPv3I0ENK4cslt7AVLTree13foreach_rangeERK1TRK1TRR2Fn"></span><span id="_CPPv2I0ENK4cslt7AVLTree13foreach_rangeERK1TRK1TRR2Fn"></span><span class="k"><span class="pre">template</span></span><span class="p"><span class="pre">&lt;</span></span><span class="k"><span class="pre">typename</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">Fn</span></span></span><span class="p"><span class="pre">&gt;</span></span><br /><span class="target" id="classcslt_1_1AVLTree_1a5ee103bda482bb3c5305bb3e1450d3d1"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4N4cslt5ErrorE" title="cslt::Error"><span class="n"><span class="pre">Error</span></span></a><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">foreach_range</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">low</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::T"><span class="n"><span class="pre">T</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">high</span></span>, <a class="reference internal" href="#_CPPv4I0ENK4cslt7AVLTree13foreach_rangeE5ErrorRK1TRK1TRR2Fn" title="cslt::AVLTree::foreach_range::Fn"><span class="n"><span class="pre">Fn</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">fn</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4I0ENK4cslt7AVLTree13foreach_rangeE5ErrorRK1TRK1TRR2Fn" title="Link to this definition"></a><br /></dt>
+<dd><p>Visit every element in inclusive range [low, high] in sorted order. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Template Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>Fn</strong> – Callable taking <code class="docutils literal notranslate"><span class="pre">const</span> <span class="pre">T&amp;</span></code></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="Error.html#classcslt_1_1NoError"><span class="std std-ref">NoError</span></a> on success, or an error if the range is invalid or tree empty. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree4sizeEv">
+<span id="_CPPv3NK4cslt7AVLTree4sizeEv"></span><span id="_CPPv2NK4cslt7AVLTree4sizeEv"></span><span id="cslt::AVLTree::sizeC"></span><span class="target" id="classcslt_1_1AVLTree_1a7d7c8e227945f67a9949e48c10509812"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">size</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree4sizeEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of active elements in the tree. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree5emptyEv">
+<span id="_CPPv3NK4cslt7AVLTree5emptyEv"></span><span id="_CPPv2NK4cslt7AVLTree5emptyEv"></span><span id="cslt::AVLTree::emptyC"></span><span class="target" id="classcslt_1_1AVLTree_1a2292e98c7de56056a78cf7188c550f26"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">empty</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree5emptyEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return true if the tree is empty. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree6heightEv">
+<span id="_CPPv3NK4cslt7AVLTree6heightEv"></span><span id="_CPPv2NK4cslt7AVLTree6heightEv"></span><span id="cslt::AVLTree::heightC"></span><span class="target" id="classcslt_1_1AVLTree_1a8ae4a32fc91c7a011482f6cfa291f101"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">int</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">height</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree6heightEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return the height of the tree. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree13slab_capacityEv">
+<span id="_CPPv3NK4cslt7AVLTree13slab_capacityEv"></span><span id="_CPPv2NK4cslt7AVLTree13slab_capacityEv"></span><span id="cslt::AVLTree::slab_capacityC"></span><span class="target" id="classcslt_1_1AVLTree_1a9c85bedf3144582d5c08d0e005bf51fe"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slab_capacity</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree13slab_capacityEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of nodes in the primary slab allocation. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree9slab_usedEv">
+<span id="_CPPv3NK4cslt7AVLTree9slab_usedEv"></span><span id="_CPPv2NK4cslt7AVLTree9slab_usedEv"></span><span id="cslt::AVLTree::slab_usedC"></span><span class="target" id="classcslt_1_1AVLTree_1af42ddef3ae3defcbc637521d8ebed370"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">slab_used</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree9slab_usedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Number of slab slots ever carved since last <a class="reference internal" href="#classcslt_1_1AVLTree_1aea88561d3091fe5a6bcc67647d8e8d2a"><span class="std std-ref">clear()</span></a>. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree16overflow_enabledEv">
+<span id="_CPPv3NK4cslt7AVLTree16overflow_enabledEv"></span><span id="_CPPv2NK4cslt7AVLTree16overflow_enabledEv"></span><span id="cslt::AVLTree::overflow_enabledC"></span><span class="target" id="classcslt_1_1AVLTree_1ad33e51ef73fbd804876368775fcaf00d"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">overflow_enabled</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree16overflow_enabledEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return whether overflow allocation is enabled. </p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4NK4cslt7AVLTree18duplicates_allowedEv">
+<span id="_CPPv3NK4cslt7AVLTree18duplicates_allowedEv"></span><span id="_CPPv2NK4cslt7AVLTree18duplicates_allowedEv"></span><span id="cslt::AVLTree::duplicates_allowedC"></span><span class="target" id="classcslt_1_1AVLTree_1ad7f8285f43c90dbf4ed4c8ddd2f39d84"></span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">duplicates_allowed</span></span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4NK4cslt7AVLTree18duplicates_allowedEv" title="Link to this definition"></a><br /></dt>
+<dd><p>Return whether duplicates are allowed. </p>
+</dd></dl>
+
+</div>
+<div class="breathe-sectiondef docutils container">
+<p class="breathe-sectiondef-title rubric" id="breathe-section-title-public-static-functions">Public Static Functions</p>
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt7AVLTree4initE6size_tR9AllocatorbbRK7Compare">
+<span id="_CPPv3N4cslt7AVLTree4initE6size_tR9AllocatorbbRK7Compare"></span><span id="_CPPv2N4cslt7AVLTree4initE6size_tR9AllocatorbbRK7Compare"></span><span id="cslt::AVLTree::init__s.AllocatorR.b.b.CompareCR"></span><span class="target" id="classcslt_1_1AVLTree_1a193330d8fd7b75cb2f2cc76a3a48b33c"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree"><span class="n"><span class="pre">AVLTree</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">init</span></span></span><span class="sig-paren">(</span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">capacity</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">overflow</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">true</span></span>, <span class="kt"><span class="pre">bool</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">allow_duplicates</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="k"><span class="pre">false</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">compare</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree::Compare"><span class="n"><span class="pre">Compare</span></span></a><span class="p"><span class="pre">{</span></span><span class="p"><span class="pre">}</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt7AVLTree4initE6size_tR9AllocatorbbRK7Compare" title="Link to this definition"></a><br /></dt>
+<dd><p>Initialise an allocator-backed AVL tree. </p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>capacity</strong> – Number of primary slab nodes (must be &gt; 0) </p></li>
+<li><p><strong>allocator</strong> – <a class="reference internal" href="Allocator.html#classcslt_1_1Allocator"><span class="std std-ref">Allocator</span></a> used for all tree memory </p></li>
+<li><p><strong>overflow</strong> – If true, allocate overflow nodes beyond the slab </p></li>
+<li><p><strong>allow_duplicates</strong> – If true, equal values are inserted on the right </p></li>
+<li><p><strong>compare</strong> – Comparator for tree ordering</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected&lt;AVLTree*&gt; containing a pointer to the tree or an error </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt class="sig sig-object cpp" id="_CPPv4N4cslt7AVLTree4copyERK7AVLTreeR9Allocator">
+<span id="_CPPv3N4cslt7AVLTree4copyERK7AVLTreeR9Allocator"></span><span id="_CPPv2N4cslt7AVLTree4copyERK7AVLTreeR9Allocator"></span><span id="cslt::AVLTree::copy__AVLTreeCR.AllocatorR"></span><span class="target" id="classcslt_1_1AVLTree_1a8e2b40be781ffce6a5fbe830e424d4d3"></span><span class="k"><span class="pre">static</span></span><span class="w"> </span><span class="k"><span class="pre">inline</span></span><span class="w"> </span><a class="reference internal" href="Error.html#_CPPv4I0EN4cslt8ExpectedE" title="cslt::Expected"><span class="n"><span class="pre">Expected</span></span></a><span class="p"><span class="pre">&lt;</span></span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree"><span class="n"><span class="pre">AVLTree</span></span></a><span class="p"><span class="pre">*</span></span><span class="p"><span class="pre">&gt;</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">copy</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><a class="reference internal" href="#_CPPv4I00EN4cslt7AVLTreeE" title="cslt::AVLTree"><span class="n"><span class="pre">AVLTree</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">src</span></span>, <a class="reference internal" href="Allocator.html#_CPPv4N4cslt9AllocatorE" title="cslt::Allocator"><span class="n"><span class="pre">Allocator</span></span></a><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">allocator</span></span><span class="sig-paren">)</span><span class="w"> </span><span class="k"><span class="pre">noexcept</span></span><a class="headerlink" href="#_CPPv4N4cslt7AVLTree4copyERK7AVLTreeR9Allocator" title="Link to this definition"></a><br /></dt>
+<dd><p>Create a deep copy of an existing AVL tree using a caller-supplied allocator. </p>
+</dd></dl>
+
+</div>
+</dd></dl>
+
+</div></blockquote>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Heap.html" class="btn btn-neutral float-left" title="C++ Heap Overview" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jonathan A. Webb.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

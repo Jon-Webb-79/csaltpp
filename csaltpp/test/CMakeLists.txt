@@ -18,6 +18,7 @@ add_executable(unit_tests
   test_dict.cpp
   test_list.cpp
   test_heap.cpp
+  test_avl.cpp
   #  test_matrix.cpp
 )
 

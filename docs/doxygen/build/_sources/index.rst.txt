@@ -233,6 +233,18 @@ Optional:
 * valgrind (memory leak detection)
 * Python 3.10+ and Sphinx (for documentation)
 
+Work Forward
+############
+
+* Complete development of List, BTree, Queue, and Matrix containers
+* Refactor SIMD fast paths into classes to simplify type based ingestion
+* Test on a wider array of platforms and compilers to exercise all SIMD instruction sets 
+* Add basic matrix solvers for Dense and Sparse (i.e. COO, CSR, CSC) matrices 
+  in ``lin_alg.hpp`` file
+* Add root solvers, numerical integration, and numerical differentiation in 
+  ``numerical.hpp`` file.
+* Add more advancec matrix solvers such as JFNK method.
+
 Development & Contribution
 ##########################
 
